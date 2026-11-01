@@ -3948,4 +3948,43 @@ workaround. Freeze the actual admitted source/version/settings before generating
 new confirmation inputs, and require target-only/spec parity, actual acceptance,
 independent quality and repeated matched requests before any migration claim.
 
+### Upstream foundation passes development; final launched — November 1, 20:18 UTC
+
+Unmodified PyPI vLLM0.32.0 successfully loaded retained dense Qwen3-4B BF16 and
+ordinary AngelSlim EAGLE3. Source audit confirms explicit SM120/Qwen3-4B tuned
+batch-invariant matrix configurations and ordinary loader/backend support.
+`VLLM_BATCH_INVARIANT=1`, TRITON_ATTN, BF16, context2048, maxseq1, no prefixcache,
+standard greedy rejection, three speculative tokens, default nonparallel drafting.
+All24 borrowed development prompts match token/text/stop; EAGLE accepted736 of
+2211 proposed including warmups. This gate is not held-out or a Binary win.
+Gate01 failed before model loading on new Transformers BatchEncoding return;
+normal return_dict=False API repaired it. Gate02 hit supervisor TMPDIR IPC path
+length; documented VLLM_RPC_BASE_PATH in owned short /tmp repaired it. All source
+and receipts retained; no engine source patches or original .venv modifications.
+
+Fresh final source/settings were frozen before generating24 new prompts and24
+quality cases,24 correct/24 wrong controls executed. Exact target/draft shard
+hashes and packages are in `runs/clean-engine-qualification-20261101/final-freeze.json`.
+Final actual supervisor `runs/local-vllm-final-20261101-01/state.json`, local tmux
+binary-eagle-runtime/session same name. Root owns lane. Boot/birth/stop identity
+in its run directory; authenticate before TERM supervisor/group reap. Local
+engine-root STOP/global pause check between requests. Completion signals tmux
+channel stock-engine-confirmation-20261101-complete.
+
+Four fixed cells: invariant/target-only, invariant/EAGLE3, stock/target-only,
+stock/EAGLE3. Five alternating repetitions×24prompts=480 performance requests;
+first repetition includes24 independent quality cases per cell=96. Full public
+LLM.generate per-request wall includes scheduling/prefill/decoding, not HTTP;
+model load/JIT/warmups separately retained. Require invariant target/spec and
+repetition identity, actual acceptance, independent quality, useful request-time
+benefit; record stock-mode speed/quality/identity differences rather than assume
+normal mode is equivalent. No tuning on fresh panel. No training or migration.
+
+The native F16 no-override fresh gate's10 paired failures and invalid raw quality
+protocol are explicitly preserved, not relabeled as solution. Ordinary upstream
+engine success would establish a foundation only: custom binary execution and
+same-engine primary Q4_0 control remain separate implementation/research choices.
+No generic feature guarantee, cross-engine speed claim or quantized-target
+baseline substitution is authorized by the current qualification.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

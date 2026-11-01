@@ -1,24 +1,34 @@
 # Current project status
 
-## Follow-up: clean-engine qualification — November 1, 20:04 UTC
+## Follow-up: upstream engine final qualification — November 1, 20:18 UTC
 
-The user rejected developing around the broad CUDA workaround. Root tested the
-existing F16 path with target width-mask overrides OFF. Both small development
-screens passed, but fresh frozen confirmation FAILED: 2 of 24 new prompts differ
-between Q4_0 EAGLE and target-only in all five repetitions (10 paired failures).
-All 240 performance requests and 48 quality requests executed; no training.
-Quality outputs match but raw scores0/24 are invalid as admission evidence because
-the older API returns empty thinking tags in answer content. These failed gates
-are preserved in `runs/clean-f16-qualification-20261101/`. No baseline migration.
+The user requests a clean solution without a custom numerical workaround.
+The old native F16 alternative FAILED its fresh test (two new prompts differ in
+all five repetitions), despite passing the small development screen. No training
+or baseline migration was started; evidence is preserved in
+`experiments/clean-baseline-20261101/f16-rejection.json`.
 
-Root is now qualifying ONE ordinary upstream-engine candidate, vLLM0.32.0 with
-retained dense Qwen3-4B BF16 and ordinary EAGLE3 HF weights. Separate environment:
-`runs/clean-engine-qualification-20261101/venv`. Package preparation only at this
-checkpoint; no new engine GPU process yet. Existing training environment and
-models remain untouched. No source patches/custom binary port are authorized
-by this qualification. A candidate requiring engine source patches is rejected.
-Only a verified normal-EAGLE foundation could justify a later binary port.
-Root owns GPU scheduling; all native F16 test supervisors are terminal.
+Unmodified upstream vLLM0.32.0, retained Qwen3-4B BF16 and ordinary AngelSlim
+EAGLE3 passed a 24-prompt development gate with positive draft acceptance and
+exact token/text/stop equality under its supported batch-invariant mode.
+Separate environment `runs/clean-engine-qualification-20261101/venv`; original
+training environment untouched. No engine source patch or custom binary port.
+Two failed preparation attempts (client API return type, long IPC path) are
+preserved; fixed using normal API and documented RPC path setting.
+
+Fresh final confirmation is ACTUALLY running as
+`runs/local-vllm-final-20261101-01/state.json`, same-named tmux session on local
+socket `binary-eagle-runtime`; root owns GPU launch/stop. It runs five alternating
+repetitions over 24 fresh prompts in four cells (stock/invariant × target/EAGLE),
+plus 24 independent quality cases per cell. Expected480 performance and96 quality
+requests. Source/settings/model files froze before fresh inputs; each quality
+control actually passed/rejected. Full public LLM.generate wall is measured,
+not HTTP capacity; loading, JIT and warmups are separate. Stop/identity details
+are in the run directory; global pause and local STOP check between requests.
+
+No final correctness/quality/speed claim or engine migration is made yet.
+This qualifies an ordinary upstream foundation only. Binary integration and a
+same-engine primary Q4_0 control would still need review before a project switch.
 
 ## Local RTX 5080 investigation completed — November 1, 2026
 
