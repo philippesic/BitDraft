@@ -903,3 +903,16 @@ additional proof protocols or redoing completed audit work.
 - Explain the concrete code change, exact comparison baseline, training performed
   and deployment status before presenting percentages. Keep these two outcomes
   separate in ordinary language as well as in technical evidence.
+
+### 2026-11-01: Do not turn an upstream question into a policy decision
+
+- Root described a maintainer's question about guaranteeing bitwise batch
+  invariance as upstream discussing whether consistency should be guaranteed.
+  The user reasonably asked whether that meant knowingly declining a fix.
+  No decision to leave speculative divergence unfixed was established.
+- The actual October 27 comment asks about bitwise batch invariance, possibly
+  opt-in, and presents diagnostic changes whose performance costs are explicit:
+  https://github.com/ggml-org/llama.cpp/issues/25618#issuecomment-6441719728
+- Attribute a proposal or question to its author. Separate exact numeric
+  reproducibility, matching greedy tokens and answer quality; explain the
+  performance tradeoff without imputing motives or project-wide policy.
