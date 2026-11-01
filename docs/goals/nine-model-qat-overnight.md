@@ -3662,4 +3662,145 @@ existing `configs/training.json` link) to recover the current workaround and
 matched controls; review the dispatched source worker; then run informative local
 GPU experiments with one owner and current source/correctness validation.
 
+
+### Local source investigations dispatched after cleanup
+
+Current local-execution cleanup is committed; no push. Validation passed TOML
+parsing, actual startup-hook execution, changed local links, exact original
+status archival and unchanged worktree inventory. No new GPU job started.
+
+Recovered newer ignored evidence roots: `runs/spec-cuda-fix-20261031/`
+(existing conservative patch, runtime and regression evidence),
+`runs/spec-parity-gpu-20261031/`, `runs/5080-broader-training-20261031/`
+(SESSION-CLOSED, final selection, frozen receipts) and
+`runs/training-transfer-diagnosis-20261027/`. Read bounded summaries; do not
+replay old launch scripts or conflate frozen tracks.
+
+Root dispatched two additional isolated read-only research owners: Luna high
+for modern serving/control/cost recovery, Astra medium for the focused
+training-to-serving diagnosis. Exact task records are in ignored
+`runs/local-execution-correction-20261101/delegates.json`. Both are CPU/source
+only, have no GPU/SSH/push authority, and own separate report paths under
+`experiments/local-resume-20261101/` in tool-created isolated worktrees.
+The earlier Sol source owner received the local-execution correction and exact
+existing CUDA-patch artifact paths. Task completions wake this session; no
+polling. Review outputs, then root executes matched local GPU experiments.
+
+
+### Actual local experiments — November 1, 01:27 PDT
+
+User declined the unnecessary machine-link card. This is not a research pause.
+Root verified local resources, backed up shared gpu-control.json, applied the
+authorized RTX5080 resume and verified RTX2080Ti state unchanged. Receipts:
+`runs/upstream-consistency-20261101/local-resume.json` and original-control backup.
+
+Modern target-only reference characterization is ACTUALLY running locally:
+`runs/local-target-refs-20261101-02/state.json`, local tmux socket
+`binary-eagle-runtime`, session `local-target-refs-20261101-02`. Root sole owner.
+Supervisor/child identity is in that receipt; authenticate /proc birth/boot
+before any stop. Child group is supervised/reaped. Graceful stop: create
+`runs/upstream-consistency-20261101/target-reference-02/STOP` or authenticate and
+TERM the supervisor. Eighty exploratory original/conservative target-only
+requests are planned: five old development prompts, two alternating-order
+repetitions, four exact Qwen3.5 targets; no performance or heldout claim.
+First attempt failed after model startup on a Python str/Path library-hash bug,
+before measured requests; driver/source/logs preserved, server reaped and fixed.
+Do not erase the failed attempt or count preparation as evaluation/training.
+
+An isolated root-owned native source worktree now pins modern runtime792fcf4e
+plus the conservative patch with only one ablation: restore the stock two-query
+column VEC-attention specialization. Exact4000file source manifest, patch and
+preparation receipt live in the same run root. Recovered old patched-source
+comparison found exactly the five expected changed tracked files. No parent
+gitlink changed. CPU-only candidate compilation is supervised in
+`runs/local-attn2col-build-20261101-01/` and same-named local tmux session.
+No claim of candidate CUDA correctness or speed yet.
+
+All three T3 research workers completed; reports/source checks are integrated.
+Root reran historical-evidence hash recomputation and host-control-flow checks.
+Modern performance and answer-quality qualification remain pending. A native
+read-only Sol worker `/root/historical_profile_plan` is locating actual historical
+F16 live-history/component diagnostic config; it has no GPU or file-edit authority.
+Original85h/EAL32400 jobs are preserved; no old training job is restarted.
+
+
+### Source-qualified development and targeted history replay — November 1, 09:45 UTC
+
+Root completed the upstream lead audit, local reference characterization and
+actual source/runtime experiments. Current report and reviewable full patch:
+`experiments/local-resume-20261101/runtime-and-transfer.md` and its patches/.
+The source base is modern llama.cpp792fcf4e, not parent5eb221ec. Isolated native
+source worktree `runs/upstream-consistency-20261101/attention2col-source` now
+contains private commits b79c76e (attention) and aff0cbd (grouped quant columns).
+Immutable library copies/overlays preserve both variants. Parent gitlink unchanged.
+
+Fresh tests: conservative and attention-only each4,272 native score/state checks;
+grouped candidate5,496 including widths2/3/4/5/7/8/16/17/32. All zero drift/flips.
+Unmodified wrong control actually fails. Two development screens,240 requests,
+match all output IDs; MTP3 is selected for final confirmation on allfour targets.
+Independent development quality is unchanged across original/conservative/B but
+contains baseline failures. Judge v1 lambda restriction was corrected/rejudged
+with originals retained; v2 and its actually rejected wrong controls are frozen.
+
+Original/default versus conservative target-only:80 actual requests;15/20 unique
+prompt/model pairs differ reproducibly. Final claims use explicitly matched
+conservative arithmetic, not transparent equivalence to the unmodified backend.
+
+Historical F16 diagnostic:72 token-exact requests and synchronized component
+costs measured; extra verification dominates the gap. Observable-frontier
+analysis finds +67 difficult-frontier gains but -92 losses on previously
+full-five frontiers. All32 damaged plus64 matched controls preselected.
+Capture01–03 failures are preserved, not data. Capture04 uses the existing
+DSpark-only server adapter, same numerical libraries, required capture context
+constraints; outputs and every ordinary/forced draft decision match original.
+The receipt's inherited logits caption has an explicit correction addendum.
+
+Actual96-frontier input preparation is complete:32damaged/32unchanged/32improved,
+no exclusions,1,007,513,600 feature bytes, exact parent history/chunks/seed and
+seven true labels, eight12-case batches. `frontier-replay-inputs/manifest.json`
+pins source/joins. Root is ACTUALLY running both parent/fresh through the SAME
+inputs under `runs/local-frontier-replay-20261101-01/state.json`, tmux socket
+`binary-eagle-runtime`, session `local-frontier-replay-20261101-01`. Authenticate
+current /proc birth/boot before stopping; normal supervisor TERM/reap with30s
+grace or `HISTORICAL-STOP` between batches. No new training; no old job resumed.
+The native CPU helper completed all bounded source/quality/frontier tasks and
+currently owns no GPU or process. Root remains sole GPU operator.
+
+Final source/settings/evaluators were frozen BEFORE generating24 fresh request
+prompts and24 quality tasks (eight templates, parameterized). The generation
+receipt proves zero old-development hash overlap and24 correct/24 wrong control
+checks. Do not inspect/tune on final outputs or change frozen evaluators.
+`final-freeze.json`, `confirmation-inputs/receipt.json`, `run_confirmation.py`
+and final-only runners are in the run root. Final model requests have NOT yet
+started at this checkpoint: finish96-state replay/analysis, then run final
+quality plus five matched full-request repetitions with source/ID/stop/counter
+checks. No CPU builds or other GPU work during clean final timing.
+
+Costs remain separate in individual receipts. New training0. First CUDA build
+585.486s, configure10.9s; incremental compile wall unmeasured. Captures/replays,
+HTTP evaluation, startup and excluded warmups have separate actual clocks.
+About32.6GB remained before the96-state native output. All paid checkpoints and
+pre-existing dirty source/worktrees remain protected. No push.
+
+### Frozen confirmation launched — November 1, 09:54 UTC
+
+The 96-frontier replay completed all 16 model/batch invocations successfully;
+CPU analysis is pending. Root verified no existing CUDA compute application,
+the local RTX 5080, and the unchanged resumed control before launching final
+confirmation. No new training, other GPU experiment or CPU build is running.
+
+Final confirmation is ACTUALLY running in local tmux socket
+`binary-eagle-runtime`, session `local-confirmation-20261101-01`, through the
+existing `scripts/remote_job.py` supervisor. Run state and boot/start-tick
+identity are `runs/local-confirmation-20261101-01/{state,identity}.json`.
+Root owns the GPU lane. To stop: authenticate those identities, TERM the
+supervisor and verify its child group is gone. The supervisor reaps the group;
+`CONFIRMATION-STOP` only checks between phases, global pause between requests.
+
+The immutable source/settings/input preflight precedes 288 independent quality
+requests, then 1,920 matched full requests. Timing excludes loading and warmups;
+the receipts account for these separately. Completion signals tmux channel
+`local-confirmation-20261101-complete`. A passive reader may await that channel
+but receives no launch/stop/model-selection authority. No final claim yet.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

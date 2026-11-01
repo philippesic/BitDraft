@@ -875,3 +875,18 @@ additional proof protocols or redoing completed audit work.
 - Lesson: Check hostname, local GPU and actual processes before treating a
   missing remote address as a blocker. Maintain current state separately from
   dated access history, and propagate corrections into active agent instructions.
+
+### 2026-11-01: Distinguish serving builds from capture adapters
+
+- Root tried to add the retained DSpark feature-capture flags to the ordinary
+  serving runtime without first checking the adapter's complete source contract.
+  Three diagnostic starts failed (context/cache guard, backend-sampling guard,
+  then missing DSpark head rows). No training or measured comparison was lost;
+  failures and partial files are preserved. No user mistake occurred.
+- The existing DSpark capture adapter changes only server instrumentation and
+  reuses the same numerical libraries. Reusing it succeeded. All 48 request
+  outputs and all 1,444 ordinary / 1,433 forced round decisions matched the
+  original diagnostic before its data was admitted.
+- Inspect the actual capture binary, patch, required flags and data producer
+  together before launch. Do not infer hook support from a shared runtime base
+  or flags alone. Preserve failed receipts and verify observer neutrality.
