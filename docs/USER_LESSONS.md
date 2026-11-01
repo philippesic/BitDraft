@@ -852,6 +852,9 @@ additional proof protocols or redoing completed audit work.
   working state. Earlier agents had also left local changes and source files
   outside main, increasing reconciliation risk.
 - Resolution and lesson: Keep the artifact-bearing original directory in place,
-  back up local edits, reconcile history, and point T3 at it. The duplicate path
-  now aliases the original; preserve source/worktree ancestry before retiring
-  redundant clones. Recovery evidence is linked from the active goal checkpoint.
+  back up local edits, reconcile history, and point T3 at it. The duplicate clone
+  and its temporary alias are removed. Preserve source/worktree ancestry before
+  retiring redundant clones. Recovery evidence is linked from the active goal.
+- Follow-up correction: The agent kept a compatibility alias without an ongoing
+  need; the human reiterated that only one repo was wanted. Remove the redundant
+  path once the project uses the original, instead of retaining it by default.

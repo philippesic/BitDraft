@@ -7,7 +7,7 @@ The target/verifier model precision remains as frozen for each experiment.
 ## Local repository reconciled — November 1
 
 The canonical checkout and T3 project root are `/home/philip/binary-eagle-decoding`.
-The former `binary-eagle-decoding-2` clone is now a symlink to that directory.
+The former `binary-eagle-decoding-2` clone and its temporary alias are removed.
 Newer main history and unique local source work are reconciled; existing model,
 data, run, environment and pinned worktree directories are preserved. See the
 [maintenance checkpoint](goals/nine-model-qat-overnight.md#local-repository-reconciliation--november-1).
