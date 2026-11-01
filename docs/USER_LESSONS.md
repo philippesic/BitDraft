@@ -916,3 +916,15 @@ additional proof protocols or redoing completed audit work.
 - Attribute a proposal or question to its author. Separate exact numeric
   reproducibility, matching greedy tokens and answer quality; explain the
   performance tradeoff without imputing motives or project-wide policy.
+
+### 2026-11-01: Distinguish optimization experiments from promised restoration
+
+- The user challenged whether restoring all acceleration features at stock speed
+  with correctness is feasible. Root's recommendation to restore features could
+  imply an outcome that has not been demonstrated. No user mistake is established.
+- Existing fast paths can use incompatible precision or reduction order. Some
+  may be restored selectively; others may require redesign or a separately
+  validated numerical reference. Full feature restoration at stock speed is an
+  open research question, not a commitment or prerequisite for all project work.
+- State the unknown cost floor, measure restrictions individually, and avoid
+  treating a drafter ranking under the temporary runtime as universal.
