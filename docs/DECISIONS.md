@@ -1,5 +1,29 @@
 # Decision log
 
+## Pending: adopt a maintained verifier foundation — November 1, 2026
+
+The user rejected a complicated private CUDA workaround and requested a solution.
+Unmodified vLLM 0.32.0 with its built-in invariant mode passes the frozen ordinary
+Qwen3-4B BF16/EAGLE3 foundation test: 120/120 paired performance requests and all
+24 quality outputs match target-only, with 1.609× observed full-generate speed.
+The independent judge gives both 14/24; model quality remains limited. Default
+mode fails parity. The earlier native F16 mask-zero candidate also failed fresh
+parity and is rejected. See [evidence and costs](../experiments/clean-baseline-20261101/report.md).
+
+Recommendation: use this pinned upstream stack for future binary-drafter work,
+if a dense BF16 Qwen3 target and engine change are acceptable. The maintained
+mode costs 4.01% target-only and 11.78% EAGLE observed request time versus default;
+outputs differ across modes and JIT phase attribution is incomplete. The mode is
+upstream beta, not a universal or cost-free correctness guarantee.
+
+The alternative constraint is keeping modern quantized Qwen3.5 as mandatory;
+this result does not provide that replacement. Either choice preserves historical
+F16 and modern quantized evidence separately. A migration also needs custom
+binary execution and a same-engine primary Q4_0 control, followed by fresh
+admission. Ordinary BF16 EAGLE is not a substitute for that primary benchmark.
+No migration, teacher replacement or training is selected by this qualification.
+The major research decision remains with the user; GPU is released.
+
 ## Under discussion: trusted offline teacher and alternative serving route — November 1, 2026
 
 The user asked for alternatives to approximate quantized-target speculation or

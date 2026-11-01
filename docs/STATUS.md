@@ -1,6 +1,6 @@
 # Current project status
 
-## Follow-up: upstream engine final qualification — November 1, 20:18 UTC
+## Follow-up: upstream foundation qualified — November 1, 2026
 
 The user requests a clean solution without a custom numerical workaround.
 The old native F16 alternative FAILED its fresh test (two new prompts differ in
@@ -16,19 +16,36 @@ training environment untouched. No engine source patch or custom binary port.
 Two failed preparation attempts (client API return type, long IPC path) are
 preserved; fixed using normal API and documented RPC path setting.
 
-Fresh final confirmation is ACTUALLY running as
-`runs/local-vllm-final-20261101-01/state.json`, same-named tmux session on local
-socket `binary-eagle-runtime`; root owns GPU launch/stop. It runs five alternating
-repetitions over 24 fresh prompts in four cells (stock/invariant × target/EAGLE),
-plus 24 independent quality cases per cell. Expected480 performance and96 quality
-requests. Source/settings/model files froze before fresh inputs; each quality
-control actually passed/rejected. Full public LLM.generate wall is measured,
-not HTTP capacity; loading, JIT and warmups are separate. Stop/identity details
-are in the run directory; global pause and local STOP check between requests.
+Final confirmation completed all 20 cells, 480 performance and 96 quality
+requests: five alternating repetitions with source/settings frozen before fresh
+inputs. Invariant EAGLE3 equals target-only token/text/stop on 120/120 paired
+performance requests and 24/24 quality cases; every arm repeats identically.
+Both invariant arms score 14/24 on the frozen independent judge, with the same
+ten failures. All 24 correct and 24 wrong controls behave correctly. EAGLE
+acceptance is real: 7,965/22,155 draft tokens. Default mode fails parity on 14/24
+prompts in every repetition.
 
-No final correctness/quality/speed claim or engine migration is made yet.
-This qualifies an ordinary upstream foundation only. Binary integration and a
-same-engine primary Q4_0 control would still need review before a project switch.
+Invariant EAGLE averages 19.951s versus 32.092s target-only per 24-request panel:
+1.609× observed full LLM.generate speed, 37.8% lower time. Mode cost versus
+default is 4.01% target-only and 11.78% EAGLE; cross-mode outputs differ.
+Repetition CVs are 0.25–0.38%. Inference JIT warnings are not fully phase-localized:
+these are observed full API wall times, not pure-GPU or fully warmed steady-state
+costs, HTTP capacity, concurrency, a binary result or a Q4_0 win.
+
+Recommend this pinned ordinary upstream foundation if dense Qwen3-4B BF16 and
+an engine change are acceptable. No migration, new teacher, training or binary
+port is adopted. Same-engine primary Q4_0 and custom binary execution remain
+required before a project-level win. The user owns that major research choice;
+see the pending decision in DECISIONS and
+[full evidence](../experiments/clean-baseline-20261101/report.md).
+
+Final phase wall 1117.33s: 503.74 performance, 53.24 quality, 368.02 initialization,
+44.71 excluded warmups; remaining time is integrity/subprocess/harness work.
+Development gate 177.30s; aggregate preparation clock unavailable; training zero.
+Supervisor `runs/local-vllm-final-20261101-01/state.json` finished exit 0 at 20:37UTC.
+Root rechecked same boot, absent process groups and no GPU compute apps. Removed
+21 owned RPC scratch directories; reusable environment/evidence retained. Storage
+and release receipt: `runs/clean-engine-qualification-20261101/release-and-storage.json`.
 
 ## Local RTX 5080 investigation completed — November 1, 2026
 

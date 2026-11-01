@@ -1,0 +1,18 @@
+{
+  "created_at_utc": "2026-11-01T20:17:21.679221+00:00",
+  "seed": "8cceaea9cc8a04a493cc96a7309532e9",
+  "freeze_sha256": "ad22257d62ce19d5843d59ed951b557a73e5835ce2d22202635200f33315eff1",
+  "performance_prompts": 24,
+  "quality_tasks": 24,
+  "quality_templates": 8,
+  "quality_correct_controls_passed": 24,
+  "quality_known_wrong_controls_rejected": 24,
+  "development_prompt_hash_overlap": 0,
+  "model_requests_executed_before_freeze": 0,
+  "scope": "new project confirmation inputs generated after source/settings freeze; no claim of pretraining novelty",
+  "files": {
+    "requests.json": "6fb614ae3c32118bf7cc7286394328694d84a3a4b69d6546dc955ae1ecf77e0c",
+    "quality-cases.json": "d9c9f4debefae61dc36c595596c3ca9e2d5bdaa3dec406276a8fe06e29d94c9a",
+    "quality-controls.json": "44d26537cea48054725b319a455adcbbbfac64b9b4a5c64cbfbcfe859f51d415"
+  }
+}

@@ -1,9 +1,12 @@
 # Clean verifier foundation qualification
 
-No clean replacement is adopted yet. The user rejected developing around the
-broad local CUDA correctness workaround. This follow-up qualifies ordinary
-target computation and an unmodified upstream engine before further training.
-It does not start a binary port, migrate baselines or relabel historical runs.
+Unmodified vLLM 0.32.0 with its built-in batch-invariant mode qualifies as an
+ordinary Qwen3-4B BF16/EAGLE3 foundation on the local RTX 5080 within the frozen
+test below. Recommend this maintained implementation over further development
+of our private target-math workaround, if changing target precision/model and
+engine is acceptable. No project migration or binary port has been implemented.
+The user rejected developing around the broad local CUDA correctness workaround.
+This investigation preserves historical evidence and does not relabel old runs.
 
 ## Native F16 alternative: rejected
 
@@ -66,7 +69,7 @@ Neither repair changes engine computation or package source.
 Evidence is under `runs/clean-engine-qualification-20261101/`: exact package
 versions, PyPI metadata, installation logs, gate commands, output IDs and metrics.
 
-## Fresh final confirmation is running
+## Fresh final confirmation: bounded foundation pass
 
 Source, settings and target/draft file hashes were frozen before generating
 another 24 performance prompts and 24 independent quality cases. All 24 correct
@@ -76,21 +79,93 @@ The final four cells are stock/invariant mode crossed with target-only/EAGLE3.
 Five alternating repetitions give 480 performance requests, with 96 quality
 requests in repetition zero. The public `LLM.generate` call wall includes
 scheduling, prompt processing and decoding; it is not HTTP serving capacity.
-Model loading, first-use JIT and warmups must be distinguished. Any JIT observed
-inside measured calls will be disclosed rather than treated as pure GPU cost.
+Model loading and warmups are excluded from measured calls. Inference-time JIT
+warnings occur, without enough phase markers to assign all of them to warmups
+versus measured calls. Timings therefore describe the observed full API calls,
+including any compilation within them; they do not establish pure GPU or fully
+warmed steady-state cost. No requests or repetitions were removed after inspection.
 
 Admission requires invariant target-only/speculative output and repetition
 identity, positive actual acceptance, independent quality agreement and useful
 request-time benefit. Stock-mode correctness, quality and cost are measured for
 context; equality to stock-mode arithmetic is not assumed.
 
-Root is sole GPU operator. The local supervisor is
-`runs/local-vllm-final-20261101-01/state.json`, with authenticated birth/boot and
-stop details in its `identity.json`. No engine or baseline switch is adopted
-while confirmation is pending.
+The run completed all 20 cells with exit zero. Root independently recomputed the
+raw token/text/stop comparisons, native metric deltas, exact quality outputs and
+frozen judge scores. Source/input hashes and cell kwargs still match the freeze.
+[The recomputation script](analyze.py) produces [the compact result](engine-confirmation.json)
+using only the standard library and retained run evidence.
 
-Even a successful ordinary-engine result would establish a clean verifier
-foundation only. Our custom binary execution and a same-engine primary Q4_0
+| Mode | Target-only seconds | EAGLE3 seconds | EAGLE3 / target speed |
+| --- | ---: | ---: | ---: |
+| Built-in invariant | 32.092 | 19.951 | 1.609× |
+| Default | 30.855 | 17.849 | 1.729× |
+
+These are mean total request seconds per 24-prompt repetition. All performance
+requests generate 128 tokens. The invariant arms measure 95.72 and 153.97 output
+tokens per full-generate second. Every repetition favors EAGLE3; across the four
+cells repetition CVs are 0.25–0.38%. This is a matched single-sequence API result,
+not HTTP capacity, concurrent serving or a cross-engine benchmark.
+
+Invariant EAGLE3 matches target-only on all 120 paired performance requests and
+all 24 quality cases, including token IDs, text and stop state. Each arm repeats
+identically. In default mode, EAGLE3 differs on 14/24 performance prompts in every
+repetition. Default versus invariant arithmetic also changes 15/24 target-only
+and 11/24 EAGLE outputs; invariant mode is not stock-output preservation.
+
+The invariant mode's observed wall cost versus default is 4.01% for target-only
+and 11.78% for EAGLE3. Equal output lengths make these useful operational cost
+comparisons, but the generated contents differ across modes. Its 1.609× benefit
+uses the invariant target-only denominator, whose outputs actually match.
+Actual invariant draft acceptance is 7,965/22,155 proposed tokens (35.95%);
+all five cells have positive draft and acceptance counts. No fallback-only gain.
+
+The frozen independent judge scores all four arms 14/24 with the same ten failed
+cases. Candidate invariant outputs equal its target-only quality outputs exactly.
+All 24 correct controls pass and 24 known-wrong controls fail. These are eight
+parameterized task templates, not a broad answer-quality certification. Strict
+JSON/answer errors remain real model limitations; no scorer repair was applied.
+
+Final cost: 503.74 seconds performance calls, 53.24 seconds quality calls,
+368.02 seconds engine initialization, 44.71 seconds excluded warmups, and
+1117.33 seconds total phase wall (18.62 minutes). The balance is subprocess,
+integrity-check and harness overhead. Inference JIT cannot be separately billed
+from those clocks. The earlier successful development gate costs 177.30 seconds
+total wall. Installation, failed preparations and source/model integrity work
+are preparation, not evaluation or training; their complete aggregate clock was
+not recorded, so no exact total preparation cost is claimed. No new training.
+
+Root rechecked the terminal local supervisor
+`runs/local-vllm-final-20261101-01/state.json`, matching boot and absent recorded
+process groups. `nvidia-smi` lists no compute applications. Twenty-one owned short
+RPC directories/sockets were removed after release. Useful environment, caches,
+models and evidence remain; the engine evidence/environment tree occupies
+8.69 GB of allocated blocks, including shared package data (not a unique growth
+or reclaim estimate). WSL free space measured 22.05 GB before and after that
+small cleanup; no Windows-volume reclaim is claimed. Ignored release/storage
+receipt: `runs/clean-engine-qualification-20261101/release-and-storage.json`.
+
+This establishes an ordinary verifier foundation only. Our custom binary
+execution and a same-engine primary Q4_0
 EAGLE comparator would still need implementation/admission before claiming a
 Binary EAGLE win. Existing historical F16 and modern quantized-target evidence
 remain separate and unchanged.
+
+## Recommended decision and limits
+
+Use this pinned upstream stack as the next foundation if the research can use
+dense Qwen3-4B BF16. It avoids maintaining custom target arithmetic, with a
+measured cost that still leaves useful ordinary EAGLE acceleration. The tested
+settings are the freeze above: one sequence, context 2048, greedy generation,
+three draft tokens and Triton attention. Quantized Qwen3.5, longer contexts,
+sampling and concurrent batches are not admitted by these results.
+
+Upstream calls [batch invariance](https://docs.vllm.ai/en/latest/features/batch_invariance/)
+beta and documents both deterministic kernels and disabled optimizations. This
+is a maintained implementation with bounded local validation, not a promise
+that correctness is universally solved or free. Ordinary [EAGLE3 support](https://docs.vllm.ai/en/latest/features/speculative_decoding/eagle/)
+does not provide our packed binary execution automatically.
+
+The user owns the major engine/target migration decision. Until that is chosen,
+preserve checkpoints and the primary Q4_0 requirement; do not resume training on
+a new teacher or silently substitute BF16 EAGLE for the primary comparison.

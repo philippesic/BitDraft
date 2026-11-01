@@ -3987,4 +3987,39 @@ same-engine primary Q4_0 control remain separate implementation/research choices
 No generic feature guarantee, cross-engine speed claim or quantized-target
 baseline substitution is authorized by the current qualification.
 
+### Maintained foundation confirmed; migration decision pending — November 1, 2026
+
+Final unmodified vLLM 0.32.0 Qwen3-4B BF16/ordinary EAGLE3 qualification completed
+all20 cells with exit0: 480 performance and96 quality requests. Independent root
+analysis rechecks frozen sources/input hashes, actual kwargs, exact token/text/stop
+identity, quality judgements and native acceptance Counter deltas. Invariant
+EAGLE matches120/120 paired performance and24/24 quality outputs; own repetitions
+are identical. Default mode differs on14/24 performance prompts in everyrep.
+Both invariant arms score14/24 independently, with the same ten failedcases;
+all24 correct and24 known-wrong judge controls behave as expected. Real invariant
+acceptance7965/22155. No speculative fallback or training.
+
+Mean24-request panels32.092s target-only versus19.951s EAGLE,1.609× observed full
+LLM.generate speed. Default30.855/17.849s; invariant mode cost4.01%/11.78%, with
+cross-mode output differences. Repetition CVs0.25–0.38%. JIT warnings cannot all
+be phase-localized, so do not claim fully warmed pureGPU cost, HTTP capacity or
+concurrency. Finalwall1117.33s:503.74performance,53.24quality,368.02startup,
+44.71excludedwarmup; balanceintegrity/subprocess/harness. Devgate177.30s;
+aggregatepreparation unrecorded; trainingzero.
+
+Report and recomputation under experiments/clean-baseline-20261101/. Rawrun and
+package/source/input/model freeze runs/clean-engine-qualification-20261101/.
+Recommend maintained upstream foundation if changing engine and using dense
+Qwen3-4B BF16 is acceptable; user owns that major decision (DECISIONS). No binary
+port, new teacher, primaryQ4_0 substitution or baseline migration started.
+QuantizedQwen3.5 support is not established here. OldnativeF16 rejection preserved.
+
+Supervisor runs/local-vllm-final-20261101-01 terminalexit0 at20:37UTC; root independently
+checks sameboot, absentgroups and no CUDAcomputeapps. GPU released. Twenty-one
+owned short RPCscratchdirectories/sockets removed after release; unknown/shared
+resources untouched. Keep usefulenv/cache/evidence/models/checkpoints. WSLfree
+22.05GB before/after smallcleanup; engine tree8.69GBallocated includes shareddata,
+not uniquegrowth. Ignored release/storageinventory records exactpaths and ownership.
+No push. Broader historicalgoal remains at its prior checkpoint with no job revived.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->
