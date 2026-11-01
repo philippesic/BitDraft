@@ -3892,4 +3892,60 @@ Final reviewable report: `experiments/local-resume-20261101/runtime-and-transfer
 No more candidate selection or measurements on this confirmation panel. Future
 runtime/data/objective changes need independent development and fresh confirmation.
 
+### Follow-up: simpler baseline admission — November 1, 19:56 UTC
+
+The user requests a solution rather than an expanding workaround. Root is
+qualifying one existing F16 route, with no new training or migration chosen.
+Source audit found historical target_width_mask3 enables MMVF + serial-FA
+policies; mask0 disables their graph tags and CUDA overrides. Global fusion-off
+is separately unset. Existing private drafter integration and external CUDA
+library remain, so no upstream-stock equivalence is claimed.
+
+Two actual preliminary gates completed: target-only versus DSpark Q4_K_M D5,
+then versus primary Q4_0 EAGLE D5, each12 old development prompts×2 reps×2arms,
+all48 outputs exact and repeated. Mask0 target-only also matches old mask3
+reference24/24. Source audit helper completed without GPU or modifications.
+These are screens, not a final speed/quality or universal parity claim.
+
+Freeze before fresh input generation: `runs/clean-f16-qualification-20261101/`
+contains confirmation-freeze.json, generator/evaluator source hashes and fresh
+24 request/24 quality cases;24 correct/24 wrong judge controls executed. Root
+launched `local-clean-f16-confirmation-20261101-01` through remote_job.py in local
+tmux socket binary-eagle-runtime. Actual state/boot-birth identity and stop
+procedure are stored in its run directory. Root retains sole GPU ownership.
+Scope: target/KV F16, context2048/batch32/ubatch32, Q4_0 EAGLE D5, temp0/seed42,
+no prompt cache, output128 performance/384 quality, five alternating performance
+repetitions, independent quality and exact token/text/stop/repeat checks.
+Existing frozen runs/checkpoints are untouched. Revalidate any admitted route
+before new training and retain this track distinct from modern quantized targets.
+
+### Patch-free native F16 candidate rejected; upstream-engine admission — November 1, 20:04 UTC
+
+Fresh confirmation completed normally but FAILED parity: two new prompts differ
+in every repetition;10 paired failures among120 EAGLE/reference comparisons.
+The12-prompt development success did not generalize. All240 performance and48
+quality requests are preserved; no target overrides, no new training. Raw
+quality0/24 botharms reflects an empty-thinking-tag API format mismatch, with
+some genuine task errors too. Source review confirms supported deepseek parsing
+would separate reasoning from answer without changing ordinary no-tool Qwen3
+prompt construction, but root is not refreezing that protocol because numerical
+parity already fails. No quality or clean-runtime adoption claim.
+
+Current independent qualification uses unmodified PyPI vLLM0.32.0 in separate
+`runs/clean-engine-qualification-20261101/venv`. Torch2.13.0 and Transformers5.19.0
+are isolated from established Torch2.14.0/Transformers4.57.6 training environment.
+Models already retained: models/hf/Qwen3-4B (three BF16shards,8.045GB) and
+models/hf/Qwen3-4B_eagle3 (0.437GB plus target/draft vocabulary maps). A native
+helper authenticated layouts from headers only; inference support remains open.
+No model download or custom binary port is needed for this foundation check.
+
+Install/dry-run logs and PyPI metadata are in the ignored engine run root.
+At this checkpoint preparation only: uv install session11351, no engine GPU
+launch yet, about24.4GB WSLfree during downloads. Root owns the lane. Preserve
+models/checkpoints/old environment. Use standard supported engine settings only;
+if the candidate needs source patches, reject it rather than create another
+workaround. Freeze the actual admitted source/version/settings before generating
+new confirmation inputs, and require target-only/spec parity, actual acceptance,
+independent quality and repeated matched requests before any migration claim.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

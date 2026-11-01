@@ -1,5 +1,25 @@
 # Current project status
 
+## Follow-up: clean-engine qualification — November 1, 20:04 UTC
+
+The user rejected developing around the broad CUDA workaround. Root tested the
+existing F16 path with target width-mask overrides OFF. Both small development
+screens passed, but fresh frozen confirmation FAILED: 2 of 24 new prompts differ
+between Q4_0 EAGLE and target-only in all five repetitions (10 paired failures).
+All 240 performance requests and 48 quality requests executed; no training.
+Quality outputs match but raw scores0/24 are invalid as admission evidence because
+the older API returns empty thinking tags in answer content. These failed gates
+are preserved in `runs/clean-f16-qualification-20261101/`. No baseline migration.
+
+Root is now qualifying ONE ordinary upstream-engine candidate, vLLM0.32.0 with
+retained dense Qwen3-4B BF16 and ordinary EAGLE3 HF weights. Separate environment:
+`runs/clean-engine-qualification-20261101/venv`. Package preparation only at this
+checkpoint; no new engine GPU process yet. Existing training environment and
+models remain untouched. No source patches/custom binary port are authorized
+by this qualification. A candidate requiring engine source patches is rejected.
+Only a verified normal-EAGLE foundation could justify a later binary port.
+Root owns GPU scheduling; all native F16 test supervisors are terminal.
+
 ## Local RTX 5080 investigation completed — November 1, 2026
 
 The requested runtime and training-transfer investigation reached its bounded
