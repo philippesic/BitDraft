@@ -71,7 +71,7 @@ def main() -> None:
         context(
             f"This session has compacted {count} times. At the next safe boundary, "
             "checkpoint docs/STATUS.md and the active docs/goals/ file: objective, "
-            "completed work, commits, tests, live agents, remote jobs, exact next "
+            "completed work, commits, tests, live agents, local GPU jobs, exact next "
             "actions, and unresolved user decisions. Finish or explicitly transfer "
             "live work; rotate bounded native workers when useful. Create a fresh "
             "successor user-owned chat only with explicit human authorization; "

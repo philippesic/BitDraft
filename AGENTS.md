@@ -48,11 +48,12 @@ task; do not load every document for a small edit.
   work. Do not leave a parent gitlink pointing to an unpublished llama.cpp commit.
 - Commit coherent progress regularly; push within existing user authorization.
   Commit subjects are short and simple, with no body or coauthor trailers.
-- SSH to either WSL GPU host only through the tmux MCP tool. Consult the shared
-  local host file described in `docs/AGENT_OPERATIONS.md`; never guess a rotated
-  IP. Keep each remote experiment in its own project directory and stop its
-  process group before reporting the GPU free. A user request to pause GPU work
-  takes priority over new experiments.
+- This project runs locally in WSL on the RTX 5080 machine, from
+  `/home/philip/binary-eagle-decoding`. Use the local shell and GPU directly;
+  verify hardware with `nvidia-smi` before experiment work. No SSH connection,
+  host registry, machine-link card, or separate device checkout is needed.
+  Keep experiments in unique run directories and stop owned process groups
+  before reporting release. A user request to pause GPU work takes priority.
 - Keep model weights, datasets, captures, and raw runs out of Git. Record versions
   and hashes in experiment reports. CPU/Metal checks do not validate SM75
   performance; identify actual hardware and precision in every result.
@@ -65,8 +66,9 @@ task; do not load every document for a small edit.
   and host defaults are not live state. Reconcile STATUS with actual job evidence.
 - Automatically delegate useful independent CPU/source work when permitted,
   normally up to four active workers. Parent schedules topology; workers report
-  opportunities without recursively expanding the team. Only the verified remote
-  operator controls a GPU lane. Local tests/builds must respect any quiet window.
+  opportunities without recursively expanding the team. Only the verified
+  experiment operator controls the local GPU lane. Tests/builds must respect
+  any quiet window.
 - Preserve healthy training and passive endpoint watchers through unrelated
   configuration edits or context rotation. Handoffs require exact host/run,
   process birth/boot identity, source/checkpoint pins, owner acknowledgment, and

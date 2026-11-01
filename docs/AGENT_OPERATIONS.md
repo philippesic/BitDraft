@@ -3,12 +3,11 @@
 ## Local repository
 
 On Philip's Linux machine, `/home/philip/binary-eagle-decoding` is the canonical
-checkout and the registered T3 project root. The duplicate
-`/home/philip/binary-eagle-decoding-2` path has been removed. Maintain only the
-original repository. Existing pinned experiment worktrees,
-local artifacts and the Python environment remain under the original directory.
-The November 1 reconciliation checkpoint in the active goal records recovery
-evidence and the retained local source changes.
+checkout and the registered T3 project root. This session runs directly in WSL
+on the RTX 5080 machine. Use this local shell and GPU for experiment work.
+Existing pinned worktrees are historical or isolated source snapshots, not
+separate device installations. Keep local artifacts and the Python environment
+in place.
 
 ## Starting and coordinating a goal
 
@@ -38,7 +37,7 @@ integration and acceptance.
 
 At each milestone and before a handoff, update the active goal file with what
 actually happened: commit IDs, checks, results, decisions, active task IDs,
-worktrees, remote tmux sessions/run directories, and the next action. The status
+worktrees, local tmux sessions/run directories, and the next action. The status
 file points to that checkpoint. Keep long logs elsewhere.
 
 Project config asks Codex to compact at 630,000 tokens, 60% of the locally
@@ -77,63 +76,56 @@ submodule, push that commit to the fork, then commit the updated gitlink in the
 parent repository and push `main`. Keep the upstream revision and experimental
 baselines recorded when updating it.
 
-## Shared GPU hosts
+## Local GPU execution
 
-All local worktrees read the machine-local
-`~/.config/binary-eagle-decoding/hosts.toml`. Initialize it with
-`python3 scripts/agent_env.py init`. When the user supplies a rotated address:
+The RTX 5080 is attached to this WSL environment. Before experiment work, check
+`hostname`, `nvidia-smi`, current processes and resource headroom locally. No
+SSH transport, tmux MCP, host-address lookup, machine linking, code transfer, or
+separate device checkout is part of the current workflow. Historical reports'
+addresses, transport panes and device checkouts are provenance, not launch
+instructions. The RTX 2080 Ti track is historical and outside the current task;
+local SM120 evidence does not validate SM75.
+
+Use `/home/philip/binary-eagle-decoding` as the project root. An isolated source
+worktree may be used for a candidate; it is still on this same machine. Keep
+models, datasets, captures and raw outputs outside Git, under their existing
+local paths. Each new experiment has a unique `runs/<run-id>/` directory.
+
+One verified operator owns the GPU lane. Preserve healthy jobs and authenticate
+process birth/boot identity, run paths and source pins before adopting or stopping
+a recorded job. Reconcile current process/GPU evidence rather than assuming a
+historical running status is live. Do not interrupt unrelated processes.
+
+Run long experiments through the existing `scripts/remote_job.py` supervisor
+(the filename is retained for compatibility) in a detached **local** Linux tmux
+session. For example, from the selected source checkout:
 
 ```sh
-python3 scripts/agent_env.py set-host rtx5080 <host-or-ip> <ssh-user> --port 22
-python3 scripts/agent_env.py set-host rtx2080ti <host-or-ip> <ssh-user> --port 22
-python3 scripts/agent_env.py status
+tmux -L binary-eagle-runtime new-session -d -s RUN_ID -c "$PWD" \
+  'exec .venv/bin/python scripts/remote_job.py RUN_ID -- COMMAND ARGUMENTS'
 ```
 
-The file stores host, user, port, and a remote project directory; no keys or
-passwords. IPs are deliberately outside Git and shared through the home
-directory. Never use an old address after the user reports a rotation.
+Replace the placeholders and use the selected checkout's actual Python path.
+Record the local tmux socket/session, supervisor and child process identities,
+source/config pins, run directory and stop procedure. The supervisor creates the
+child process group, stores `state.json` and `stdout.log`, and keeps its caches
+and temporary files inside the run directory. Do not launch detached GPU jobs
+outside this supervisor. Preserve checkpoints, accounting and useful artifacts
+before removing a completed run directory.
 
-**Every SSH connection to either WSL device must go through tmux MCP.** Do not
-run `ssh`, `scp`, or `rsync` through the ordinary shell. Use the tmux MCP session
-to log in, run commands, inspect processes, transfer code via Git on the remote
-shell, and disconnect. The RTX 5080 is the normal experiment device. Reserve
-RTX 2080 Ti for SM75 binary instruction and end-to-end measurements; record the
-hardware for every result. A GPU has one active project experiment owner unless
-the orchestrator explicitly coordinates sharing.
+The machine-local pause control remains
+`~/.config/binary-eagle-decoding/gpu-control.json`. Existing launchers consume
+this control; it does not require a host address. For a requested pause, run
+`python3 scripts/agent_env.py pause rtx5080`, stop the authenticated owned
+supervisors locally, and verify terminal receipts, process-group absence and
+GPU release. If graceful stop fails, terminate the authenticated owned group
+and verify again. A flag alone does not stop a job or prove release.
 
-Keep the remote checkout, models, caches, logs, and outputs under the host file's
-`workdir` (default `~/binary-eagle-decoding`). A run has a unique `runs/<run-
-id>/`. Connect through tmux MCP, but start the supervisor in a detached **Linux
-tmux session on the WSL host**, not foreground inside SSH protected only by local
-tmux. Use a dedicated host socket such as`binary-eagle-runtime` and `tmux -L
-binary-eagle-runtime new-session -d -s <session> -c <project> 'exec python3
-scripts/remote_job.py <run-id> -- <command> [args...]'`. Record the host
-socket/session/server and supervisor identities separately from the local MCP
-transport window. On this WSL2.7host, verify the user's `.wslconfig`
-contains`[general] instanceIdleTimeout=-1`: background Linux services alone did
-not prevent distro auto-shutdown after SSH closed. Preserve existing settings and
-backup any authorized edit. Before a long GPU launch, require one bounded CPU
-disconnect proof beyond the idle boundary and a fresh reconnect; do not claim
-durability from a startup snapshot. The supervisor puts the child in its own
-process group and places common caches and temporary files inside that run
-directory. It records `state.json` and `stdout.log`. Do not start detached GPU
-processes outside this supervisor. A run directory can be removed only after its
-job has stopped and its artifacts are preserved.
-
-For **“pause GPU work”**, immediately mark the relevant host paused with
-`python3 scripts/agent_env.py pause rtx5080` (or `all`) so agents start no new
-runs. Via tmux MCP, send an interrupt to each active remote supervisor, wait for
-its `state.json` to show stopped, inspect the process group and `nvidia-smi` for
-remaining project GPU use, then report that the machine is free. If graceful
-stop fails, terminate the recorded process group through the remote tmux MCP
-session and verify again. Checkpoint the experiment and task before leaving it.
-`pause` alone is only a local request flag; it does not free GPU memory. Resume
-new runs only after the user asks to resume, with `python3 scripts/agent_env.py
-resume rtx5080` and a fresh host/resource check.
-
-The host registry is machine-local. Historical scaffold defaults are not live
-state: consult the current registry and active-goal checkpoint, then verify exact
-job identities before acting. Never overwrite configured hosts with blank defaults.
+After an explicit resume, use `python3 scripts/agent_env.py resume rtx5080`
+and perform fresh local ownership/resource checks before new work. Back up
+shared control files and verify they have not changed before updating them.
+Leave other devices' pause state unchanged. No new user confirmation is needed
+for work already authorized within the active investigation.
 
 Codex may ask the user to review and trust the repository hook before it runs. The
 [Codex hooks reference](https://learn.chatgpt.com/docs/hooks) describes that trust

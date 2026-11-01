@@ -1,5 +1,9 @@
 # Early CUDA validation during CPU dataset audit
 
+Dated experiment reference. Current job state is in [STATUS.md](STATUS.md);
+execution uses the [local GPU procedure](AGENT_OPERATIONS.md#local-gpu-execution).
+Saved jobs, owners and paths below do not imply a live process or device assignment.
+
 ## Latest human authorization
 
 The human instructed on October2: if preparation is CPU-only, have the optimizer
@@ -10,8 +14,9 @@ current launch gates or concurrent GPU computation without coordination.
 
 QAT/validation owner01a0f934-dd65-7e33-a5bf-0ba591e713a4 and current preparation
 owner01a0fb62-cbdb-72f0-8e86-4055b2ccb4ed have received direct coordination
-instructions. RTX2080Ti remains paused. All SSH must use tmux MCP and the shared
-host registry. Existing QAT overnight/on-credits protection remains in force.
+instructions. RTX2080Ti remains paused. Current execution uses this local RTX
+5080 WSL checkout and the local procedures in `AGENT_OPERATIONS.md`. Existing
+QAT overnight/on-credits protection remains in force.
 
 ## Validation reservation
 

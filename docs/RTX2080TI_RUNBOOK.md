@@ -1,12 +1,11 @@
 # RTX 2080 Ti execution gate
 
-**Access state:** the user supplied the current RTX 2080 Ti address and it is
-stored only in the shared local `hosts.toml`; the username is `philip`.
-Ubuntu 24.04 WSL2 and SSH became reachable on 2026-09-24. The fresh host lacks
-system CUDA and build tools, so a user-space toolchain is being prepared before
-the SM75 correctness gate.
-All SSH to this WSL GPU must use tmux MCP and all experiments must use
-`scripts/remote_job.py` with unique run IDs.
+**Historical SM75 procedure; not a current device assignment.** This project
+currently executes locally on RTX 5080/SM120. The RTX 2080 Ti is outside the
+active investigation. Its former transport, addresses and device-checkout setup
+are retired. The numerical and performance requirements below remain historical
+reference; fresh hardware authorization and validation would be needed for a
+future SM75 experiment.
 
 The [active benchmark goal](goals/rtx2080ti-quantization-suite.md) and
 [evaluation protocol](EVALUATION.md) govern this gate. The 5080
@@ -18,11 +17,10 @@ SM75 and passed numerical checks only on an SM120 proxy path.
 
 ## Access and preflight
 
-1. Register the user-supplied IP with `python3 scripts/agent_env.py set-host
-   rtx2080ti <ip> philip --port 22`; verify the pause flag and recorded
-   workdir. Use tmux MCP for the SSH session. Check actual GPU name, compute
-   capability 7.5, VRAM, driver, toolkit, compiler, glibc, free disk, and
-   other active processes. Give the 2080 Ti one experiment owner.
+1. For any separately authorized future SM75 experiment, check actual GPU name,
+   compute capability 7.5, VRAM, driver, toolkit, compiler, glibc, free disk and
+   active processes on that execution machine. Assign one experiment owner;
+   do not use historical addresses or checkout locators as current setup.
 2. Fetch pinned parent `main` and its llama.cpp submodule. Hash the exact
    source, model snapshots, config and prompts. Start every compile, test,
    conversion, and inference under a supervised unique run directory. Keep

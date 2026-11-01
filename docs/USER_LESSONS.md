@@ -858,3 +858,20 @@ additional proof protocols or redoing completed audit work.
 - Follow-up correction: The agent kept a compatibility alias without an ongoing
   need; the human reiterated that only one repo was wanted. Remove the redundant
   path once the project uses the original, instead of retaining it by default.
+
+### 2026-11-01: Verify local hardware before applying old access instructions
+
+- Context: The user resumed RTX 5080 research. Root read old SSH/tmux MCP
+  instructions and a blank host registry, reported an access blocker and opened
+  a machine-link card without checking local hardware. The user correctly
+  challenged this; no user mistake occurred.
+- Evidence: Local `nvidia-smi` identifies the RTX 5080 and the kernel is WSL2.
+  This session already runs in the canonical GPU-machine checkout. Root's
+  reliance on dated project procedures caused the confusion and delay.
+- Resolution: The user requested removal of obsolete access-route and
+  device-checkout references. Current instructions and operator/launch guidance
+  now use direct local execution; old status is explicitly historical. Saved
+  checkpoint/source locators remain provenance, not setup requirements.
+- Lesson: Check hostname, local GPU and actual processes before treating a
+  missing remote address as a blocker. Maintain current state separately from
+  dated access history, and propagate corrections into active agent instructions.

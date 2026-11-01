@@ -1,5 +1,9 @@
 # Continuous W1A8 / W1A1 joint QAT
 
+Dated experiment reference. Current job state is in [STATUS.md](STATUS.md);
+execution uses the [local GPU procedure](AGENT_OPERATIONS.md#local-gpu-execution).
+Saved jobs, owners and paths below do not imply a live process or device assignment.
+
 CPU preparation is complete after the final audit. Native capture, CUDA gates,
 training and monitor activation are **manual**. Public prompts are not training
 tensors. Q4_0 is the primary native comparison; target/verifier FP16 precision,
@@ -59,15 +63,13 @@ sealed/reserve prompt payloads are omitted. The local full freeze also preserves
 reproduction/expansion commands are in the [data report](../experiments/continuous-w1ax-data-preparation.md).
 No finite tier is promised sufficient; repeated presentations are counted.
 
-Read the registered RTX5080 host/workdir via `python3 scripts/agent_env.py status`
-and `~/.config/binary-eagle-decoding/hosts.toml`. All agent SSH/transfers must use
-tmux MCP. Transfer the packet through that session; no transfer occurred in
-preparation. On the registered artifact host, inside its project directory:
+Use this local RTX 5080 WSL checkout at `/home/philip/binary-eagle-decoding`.
+Verify the actual local artifacts and pinned source before preparing a config.
+The packet is already local; extract it only if the required inputs are absent
+and the destination will not overwrite retained data:
 
 ```sh
-git pull --ff-only
-git submodule update --init
-tar -xf <transferred-launch-inputs.tar>
+tar -xf data/continuous-w1ax/launch-inputs.tar
 .venv/bin/python scripts/w1ax_continuous_stages.py prepare-config \
   --corpus-manifest data/continuous-w1ax/freeze-002/manifest.json \
   --output runs/continuous-preparation/stages.json
@@ -85,12 +87,10 @@ Use the existing pinned `.venv` (Torch2.14); no new service is needed.
 
 ## Manual start
 
-Choose an absolute experiment directory under the registered project and a
-unique supervisor ID. Through the tmux MCP SSH connection, launch inside a
-detached Linux tmux session on the GPU host. Local tmux around SSH is insufficient.
-The WSL distro must also persist after the last client disconnects; verified
-host setting is`[general] instanceIdleTimeout=-1`, preserving`memory=20GB`.
-Use the host-side pattern (replace experiment path before execution):
+Choose an absolute experiment directory under this local project and a unique
+supervisor ID. Launch directly in a detached local Linux tmux session using
+the existing supervisor. Use the following pattern with the selected local
+source/environment paths (replace the experiment path before execution):
 
 ```sh
 tmux -L binary-eagle-runtime new-session -d -s continuous-a8-a1-001 -c "$PWD" \

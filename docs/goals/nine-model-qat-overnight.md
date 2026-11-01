@@ -1,12 +1,16 @@
 # Nine-model RTX5080 overnight QAT
 
-**Current state: ACTIVE under revised human schedule, October 5, 23:11 PDT.**
-RTX5080 explicitly available again. Evaluate preserved EAGLE A8 first; then
-DSpark A8, DFlash A8, EAGLE A1, DSpark A1, DFlash A1. Allocations12 cumulative
-trainer-hours; native acceptance at4/8/12h; healthchecks every2h plus operational
-startup checks5/15minutes. Preserve actual old EAGLE14.43h accounting. Former
-jobs/watcher stay stopped; fresh execution gates required. Full six+three
-scope/F16/ancestry/held-out constraints preserved; operative checkpoint at end.
+**Current state — November 1:** continue the user-authorized local RTX 5080
+CUDA-correctness and training-to-serving investigation. The session is already
+on the GPU machine, at `/home/philip/binary-eagle-decoding`; follow
+[local execution](../AGENT_OPERATIONS.md#local-gpu-execution) and
+[current status](../STATUS.md). The latest correction is at
+[the end of this record](#local-execution-correction--november-1).
+
+The dated campaign entries below retain historical scientific scope, allocations,
+source/checkpoint provenance and observations. Old access routes, addresses,
+transport handles and device-checkout paths are not current instructions or
+claims of live state. Preserve their evidence; verify current state locally.
 
 ## Unfinished objective and original authorization
 
@@ -3574,5 +3578,88 @@ No research launch, GPU ownership transfer, allocation change or remote-state
 claim follows from this maintenance. Reauthenticate the historical October 7
 handles before any future remote action; no local workload was found in the
 original checkout during the bounded process audit.
+
+
+## Resumed investigation — November 1
+
+User explicitly resumed RTX 5080 work with two objectives: verify the narrower
+CUDA consistency changes linked from upstream llama.cpp issue 25618 for Qwen3.5
+4B/9B Q4_K_M and NVFP4; and diagnose why training/native evaluation improvements
+have not produced serving throughput gains. This extends the existing unfinished
+project investigation; it does not restart or shorten historical allocations.
+Modern quantized-target experiments and the historical Qwen3 F16-target training
+track must remain separate, with frozen controls within each comparison.
+
+No arbitrary GPU-hour or candidate-count cap is authorized. Prioritize informative
+experiments and require token correctness, independent quality, target-only
+references, repeated matched full-request measurements and final held-out
+confirmation. Runtime changes invalidate earlier runtime qualification. Report
+training, evaluation and preparation costs separately; no acceptance-only success.
+
+Local reconciliation: main and the llama.cpp gitlink match the November 1 local
+maintenance state; pre-existing dirty/untracked work is preserved. Shared host
+registry currently has blank address/user fields for both devices and pause/stop
+flags for both. These are local flags, not current remote job evidence. No GPU
+process or October 7 job identity has been authenticated in this session. No
+SSH, GPU launch, stop, or checkpoint mutation occurred. Do not infer GPU release.
+The authorized RTX 5080 resume supersedes the pause for that device only, but
+operational resumption still needs current access/ownership verification.
+
+The current tool catalog has no tmux MCP tool; a direct tool-name attempt failed
+as unavailable. Only the MacBook Pro is listed as a linked T3 environment. A T3
+RTX 5080 linking card is pending. Do not bypass the project's tmux-only SSH rule.
+ResearchGraph runtime.json says unavailable on this host; no substitute controller
+or second goal/scheduler was created.
+
+Upstream issue comments were fetched from the GitHub API into ignored
+`runs/upstream-consistency-20261101/issue-comments.json`. These are unverified
+leads, including narrow Ada+ flash-attention/MMVQ/MMVF changes, GB10 diagnostic
+overrides and a separate Qwen3.5 CPU divergence report. An isolated Sol high
+source worker is running under T3 task
+`node:delegated-task:command%3Amcp%3A9cece4df-3dd3-489f-b64a-3e0b21a570ee%3Adelegate-task%3A23075b87-0d7c-4e3e-a331-1a4b6e36bd0f`.
+It owns only its tool-created worktree and has no GPU/SSH/push authority. Its
+completion wakes this session; do not poll it. Root retains sole GPU scheduling
+responsibility, without claiming custody of unauthenticated historical jobs.
+
+Next: integrate the worker's source findings; recover current modern-track runtime,
+workaround, models and matched controls; authenticate live GPU jobs before any
+launch; reconstruct historical serving costs from preserved evidence. Current
+preparation used CPU/source inspection and a small API snapshot only; new actual
+training and GPU evaluation costs are zero. Existing filesystem has about 42 GiB
+free; avoid large downloads and preserve useful artifacts/caches.
+
+
+## Local execution correction — November 1
+
+The human correctly pointed out that this session is already running on the
+RTX 5080 machine. Root checked the local host, WSL kernel, `/dev/dxg`,
+`nvidia-smi` and process census: NVIDIA GeForce RTX 5080, 16,303 MiB VRAM,
+driver 617.42, 0% utilization, no listed CUDA compute apps and no project
+trainer/supervisor found. Exact identity/census evidence and before-edit backups
+are in ignored `runs/local-execution-correction-20261101/`. This is a snapshot,
+not a promise of availability or proof that graphics allocations are absent.
+
+The preceding resume entry's access blocker is withdrawn. Root failed to test
+local hardware before applying historical remote-host instructions, unnecessarily
+opened a machine-link card and stopped at an invented access barrier. No user
+mistake occurred. The machine-link card is unnecessary; no linking action is
+required. No SSH was used and no live jobs were changed.
+
+At the user's request, current project instructions, operator profile, launch
+guides and compaction reminder now use direct local WSL execution and the sole
+canonical project root. The old status is retained in `docs/STATUS_HISTORY.md`
+with original relative evidence links; current STATUS is concise and explicitly
+separates measured local facts from unfinished research. Existing worktrees,
+models, checkpoints, raw results and frozen comparison artifacts are preserved.
+Historical source locators are evidence, not device setup. No experiment
+configuration, allocation, data semantics or runtime was changed by this cleanup.
+
+Original two-objective authorization remains active, with modern quantized and
+historical F16 tracks separate, unchanged matched controls and final held-out
+confirmation. No new training or GPU evaluation has yet run in this session.
+Next: use local saved modern-track artifacts and configurations (including the
+existing `configs/training.json` link) to recover the current workaround and
+matched controls; review the dispatched source worker; then run informative local
+GPU experiments with one owner and current source/correctness validation.
 
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

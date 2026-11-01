@@ -9,6 +9,10 @@ build instructions and [evaluation](docs/EVALUATION.md) for measurement rules.
 For Codex desktop teamwork, see [agent operations](docs/AGENT_OPERATIONS.md).
 Invoke `$start-goal-team` with a rough objective to open the next official goal.
 
+This checkout runs directly in WSL on the RTX 5080 machine at
+`/home/philip/binary-eagle-decoding`. Use the local shell and GPU; current
+work and historical results are distinguished in [status](docs/STATUS.md).
+
 ## Quick start
 
 Requires Git, Python 3.11+, [uv](https://docs.astral.sh/uv/), and a C/C++ compiler.

@@ -69,10 +69,10 @@ inputs remain PENDING.
 It rejects unbound stage hooks. Training/export/evaluation commands invoke the
 implemented source APIs and are pinned with current source bytes.
 
-After human availability and recipe/budget selection, the operator uses the
-shared host registry and tmux MCP to connect to the authorized RTX5080. The
-prepared local-host command below must run inside a detached Linux tmux session
-through `remote_job.py`. Replace the uppercase arguments with the frozen
+After the required availability and recipe/budget selection, the operator uses
+the RTX 5080 directly from this local WSL checkout. Run the command below in a
+detached local Linux tmux session through the existing `remote_job.py`
+supervisor. Replace the uppercase arguments with the frozen
 artifact paths/hash and fresh exclusive availability lease; they are artifact
 arguments, not source edits:
 

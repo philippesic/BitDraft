@@ -1,5 +1,9 @@
 # QAT optimization readiness runbook
 
+Dated experiment reference. Current job state is in [STATUS.md](STATUS.md);
+execution uses the [local GPU procedure](AGENT_OPERATIONS.md#local-gpu-execution).
+Saved jobs, owners and paths below do not imply a live process or device assignment.
+
 ## Current boundary — October 3, 2026
 
 The current fixed A8/A1 reference recipe has actual RTX5080/SM120 native and
@@ -26,10 +30,9 @@ for future work, not replay of the completed run's permits.
 The completed transaction's GPU contexts/groups and local transport are returned.
 RTX2080Ti and supporting research remain paused. A new budget/recipe is a separate
 user-owned research decision; underperformance does not authorize an automatic
-restart or another goal. Read current STATUS and the shared host registry before
-any new authorized GPU work. All SSH uses the same owner-coordinated tmux MCP
-operator and fresh occupancy/source/resource/precision controls; newer human pause
-wins. Preserve weights, raw failures/data and sealed finals. During validation,
+restart or another goal. Read current STATUS before new authorized GPU work.
+Execute directly in this local RTX 5080 WSL checkout, with fresh ownership,
+resource, source and precision checks; newer human pause wins. Preserve weights, raw failures/data and sealed finals. During validation,
 zero real-data optimizer updates remain mandatory; training requires every
 current gate and the explicit authorization in the [handoff](QAT_TRAINING_HANDOFF.md).
 
@@ -60,13 +63,12 @@ make a test pass.
 ## Native and actual CUDA proof
 
 After explicit verified exclusive lease or final GPU release, the sole operator
-creates a separate source-bound project worktree
-under the registry workdir and a unique run directory. Fetch published parent
-and native commits through Git. Build a new CUDA runtime with the actual RTX5080
+uses an isolated source-bound local worktree and a unique run directory.
+Resolve the exact parent and native source revisions before building. Build a new CUDA runtime with the actual RTX5080
 architecture and record toolkit, compiler, driver, native/project revision,
 hashes, placement, precision and live resources. Keep the old binary/source
-intact. Supervise remote work through `scripts/remote_job.py` in a new detached
-Linux host tmux session, with the ownership and disconnect procedures from
+intact. Supervise work through `scripts/remote_job.py` in a new detached local
+Linux tmux session, with the local execution procedures from
 `docs/AGENT_OPERATIONS.md`.
 
 The native backend fixture supports an explicit CUDA request and rejects CPU

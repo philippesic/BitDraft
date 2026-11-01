@@ -382,8 +382,8 @@ python3 scripts/check_continuous_w1ax_health.py <experiment>/status.json \
   --supervisor runs/<supervisor-id>/state.json --check-process
 ```
 
-SSH must use the shared host registry and tmux MCP. No remote actions were
-performed during preparation. Hashing a full dual checkpoint reads roughly
+Run the checker directly in this local RTX 5080 WSL checkout.
+Hashing a full dual checkpoint reads roughly
 4.88 GiB; do it after checkpoint publication, never on a pending generation.
 Preparation uses stage/per-prompt heartbeats before models exist; the checker
 accepts that declared phase and distinguishes it from optimizer progress.
