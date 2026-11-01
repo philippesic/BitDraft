@@ -928,3 +928,22 @@ additional proof protocols or redoing completed audit work.
   open research question, not a commitment or prerequisite for all project work.
 - State the unknown cost floor, measure restrictions individually, and avoid
   treating a drafter ranking under the temporary runtime as universal.
+
+### 2026-11-01: Separate teacher-label integrity from serving consistency
+
+- The user felt stuck between training on incorrect accepted drafts and adopting
+  a broad workaround that distorts performance. Root's framing did not first
+  inspect the existing target-only capture/current-prefix teacher paths, which
+  made that choice sound more restrictive than the repository requires.
+- `capture_block_qat_teacher.py` already supports a frozen native teacher with no
+  drafter, one-token target-only continuation and exact decode-history ancestry.
+  `block_qat.py` labels actual student prefixes through native teacher argmax or
+  masks unsupported static predecessor histories. Accepted tokens need not be
+  treated as teacher truth. No evidence establishes wholesale corruption of the
+  historical training labels; retained label audits pass their narrow checks.
+- An offline trusted-label route separates training preparation cost from online
+  performance experiments. It does not establish lossless stock serving or erase
+  teacher/serving feature differences. Explain those remaining limitations.
+- Neither higher precision nor an engine's deterministic flag automatically
+  establishes speculative parity. Historical BF16 parity failed a bounded probe,
+  and published engine support must be checked for the actual model/GPU/method.

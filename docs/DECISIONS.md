@@ -1,5 +1,31 @@
 # Decision log
 
+## Under discussion: trusted offline teacher and alternative serving route — November 1, 2026
+
+The user asked for alternatives to approximate quantized-target speculation or
+the broad local CUDA workaround. No engine/model migration or new training was
+selected or launched. Repository inspection confirms target-only native capture
+and current-prefix teacher labeling already exist; speculative acceptance need
+not supply training labels. Trusted offline capture/relabeling can isolate that
+cost from fast serving exploration, while serving correctness remains a separate
+admission requirement and original prefix/cache/chunk ancestry must be retained.
+
+Least-disruptive higher-precision admission candidate is the existing historical
+Qwen3-4B F16 target and controls. It remains distinct from modern Qwen3.5; the old
+BF16 tree-parity failure means precision alone is no guarantee. Modern Qwen3.5-4B
+full-precision target weights were not in the inspected shortlist manifest;
+the existing 0.8B BF16 target is a pipeline diagnostic, not an equivalent teacher.
+Full-resident 9B BF16 exceeds the RTX 5080's memory before runtime allocations.
+
+vLLM/SGLang consistency modes are qualification candidates, not assumed fixes.
+vLLM's public speculative forward-pass RFC #54506 and still-open stochastic
+invariance PR #52522 show why generic deterministic-mode support does not prove
+the exact Qwen3.5/SM120/speculative combination. A migration would also require
+native feature-capture/custom-binary integration and new matched baselines.
+Qualify the exact target-only/speculative path before committing to migration,
+and keep the modern quantized-target compatibility track independent of core
+drafter-training research.
+
 ## Evidence-backed direction: runtime gain and serving-aware training — November 1, 2026
 
 The user's autonomous investigation produced a validated 32.0–51.0% matched
