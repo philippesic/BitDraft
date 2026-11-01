@@ -1,0 +1,36 @@
+diff --git a/ggml/src/ggml-cuda/ggml-cuda.cu b/ggml/src/ggml-cuda/ggml-cuda.cu
+--- a/ggml/src/ggml-cuda/ggml-cuda.cu
++++ b/ggml/src/ggml-cuda/ggml-cuda.cu
+@@ -935,7 +935,9 @@
+     static const bool enabled = getenv("GGML_CUDA_MATMUL_AUDIT") != nullptr;
+     if (!enabled) return;
+     if (weights->type != GGML_TYPE_F16 && weights->type != GGML_TYPE_F32 && weights->type != GGML_TYPE_Q4_0 &&
+-            weights->type != GGML_TYPE_Q8_0 && weights->type != GGML_TYPE_I32) return;
++            weights->type != GGML_TYPE_Q8_0 && weights->type != GGML_TYPE_I32 && weights->type != GGML_TYPE_Q4_K &&
++            weights->type != GGML_TYPE_Q5_K && weights->type != GGML_TYPE_Q6_K && weights->type != GGML_TYPE_MXFP4 &&
++            weights->type != GGML_TYPE_NVFP4) return;
+     const char * name = weights->name;
+     if (strncmp(name, "blk.0.", 6) && strcmp(name, "fc.weight") && strcmp(name, "output.weight") &&
+             strcmp(name, "fc.w1a1_packed") && strcmp(name, "output.w1a1_packed")) return;
+diff --git a/ggml/src/ggml-cuda/mmq.cu b/ggml/src/ggml-cuda/mmq.cu
+--- a/ggml/src/ggml-cuda/mmq.cu
++++ b/ggml/src/ggml-cuda/mmq.cu
+@@ -87,8 +87,6 @@
+     GGML_ASSERT(        src1->type == GGML_TYPE_F32);
+     GGML_ASSERT(        dst->type  == GGML_TYPE_F32);
+     GGML_ASSERT(!ids || ids->type  == GGML_TYPE_I32); // Optional, used for batched GGML_MUL_MAT_ID.
+-
+-    ggml_cuda_matmul_audit(ctx, src0, src1, "MMQ", "Q8_1", "I32_dot_F32_scaled_sum", "separate_MMQ_Q8_1_pack");
+ 
+     GGML_TENSOR_BINARY_OP_LOCALS;
+ 
+@@ -131,6 +129,9 @@
+     const bool fallback = ne01 % 128 != 0;
+ 
+     const bool use_native_fp4 = blackwell_mma_available(cc) && (src0->type == GGML_TYPE_MXFP4 || src0->type == GGML_TYPE_NVFP4);
++    ggml_cuda_matmul_audit(ctx, src0, src1, "MMQ", use_native_fp4 ? "FP4_E2M1" : "Q8_1",
++        use_native_fp4 ? "F32_MMA" : "I32_dot_F32_scaled_sum",
++        use_native_fp4 ? (src0->type == GGML_TYPE_NVFP4 ? "separate_MMQ_NVFP4_pack_F32_column_scale" : "separate_MMQ_MXFP4_pack") : "separate_MMQ_Q8_1_pack");
+     const size_t y_block_size       = use_native_fp4 ? sizeof(block_fp4_mmq) : sizeof(block_q8_1_mmq);
+     const size_t y_values_per_block = use_native_fp4 ? QK_FP4_MMQ            : QK8_1_MMQ;
+ 
