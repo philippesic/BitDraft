@@ -1,5 +1,29 @@
 # Decision log
 
+## Candidate alternative targets: Llama 3B and 8B — November 1, 2026
+
+The user requests a relatively plug-and-play replacement family near 4B/9B.
+Closest conventional shortlist: meta-llama/Llama-3.2-3B-Instruct and
+meta-llama/Llama-3.1-8B-Instruct. Both have released EAGLE3 drafts:
+[Thoughtworks 3B](https://huggingface.co/thoughtworks/Llama-3.2-3B-Instruct-Eagle3)
+and [EAGLE authors' 8B](https://huggingface.co/yuhuili/EAGLE3-LLaMA3.1-Instruct-8B).
+The 8B draft is explicitly listed in upstream llama.cpp; 3B matches the local
+converter's one-layer Llama/draft_vocab_size detection, but conversion has not
+been executed. Additional released sidecars: rasyosef/Llama-3.2-3B-Instruct-DSpark-GGUF
+(Qwen3 draft backbone) and z-lab/LLaMA3.1-8B-Instruct-DFlash-UltraChat. No complete
+EAGLE/DSpark/DFlash/MTP matrix at both sizes is established. Target GGUFs exist;
+binary training checkpoints remain target-specific and cannot simply transfer.
+
+This is a compatibility shortlist, not a correctness qualification. Ordinary
+attention removes Qwen3.5's recurrent-state complication but shared CUDA kernels
+can still vary by verification batch size. No local Llama GPU parity test ran.
+The upstream investigation also reports Gemma4 Q4/MTP divergence, so changing
+to Gemma is not evidence of immunity. Ministral3 3B/8B fits the sizes but no
+similarly ready drafter pair was verified. Recommend qualifying unmodified
+Llama target-only versus ordinary EAGLE, then Q4_0 and W1A8, before choosing a
+replacement. No downloads of weights, new training or model migration from this
+source/metadata search; existing evidence and checkpoints remain unchanged.
+
 ## Pending: adopt a maintained verifier foundation — November 1, 2026
 
 The user rejected a complicated private CUDA workaround and requested a solution.
