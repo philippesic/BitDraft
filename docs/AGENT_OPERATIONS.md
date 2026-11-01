@@ -1,5 +1,15 @@
 # Agent operations
 
+## Local repository
+
+On Philip's Linux machine, `/home/philip/binary-eagle-decoding` is the canonical
+checkout and the registered T3 project root. `/home/philip/binary-eagle-decoding-2`
+is a symlink to it, retained for existing session paths. Use the original path
+for future work; maintain one repository. Existing pinned experiment worktrees,
+local artifacts and the Python environment remain under the original directory.
+The November 1 reconciliation checkpoint in the active goal records recovery
+evidence and the retained local source changes.
+
 ## Starting and coordinating a goal
 
 The user requests one goal at a time with a rough objective; `$start-goal-team` is

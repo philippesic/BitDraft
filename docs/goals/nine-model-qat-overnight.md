@@ -3536,4 +3536,40 @@ model-boundbaseline/policy, same12h/hourly/4-8-12h. ThenA1orderunchanged. No
 pendinghumanchoice ornewpermissionrequest; independentDFlashprep maycontinue
 withouttouchingactiveC968 orconcurrentGPUuse. Goal/fullninecampaign unfinished.
 
+## Local repository reconciliation — November 1
+
+Human requested consolidating this T3 checkout and the original into one repo.
+Canonical directory and T3 registration: `/home/philip/binary-eagle-decoding`.
+`/home/philip/binary-eagle-decoding-2` is now a relative symlink to the original;
+the redundant clean clone was removed after importing its refs and verifying a
+recovery bundle. The original directory stayed in place so absolute environment,
+build, linked-worktree and artifact paths remain valid.
+
+Original main advanced by fast-forward from `7547d253` to the clone's `dc42ce48`;
+the clean llama.cpp submodule was aligned to its published gitlink `5eb221ec`.
+Existing build outputs are preserved and have not been rebuilt or validated
+against that source. All pre-existing experiment worktrees retain their pins.
+
+Unique working versions of `scripts/capture_block_qat_teacher.py`,
+`scripts/agent_env.py` and `src/w1a1_eagle/__init__.py` remain uncommitted, along
+with original untracked source. Original preparation safeguards are already in
+newer `scripts/train_continuous_w1ax.py`. Current main's agent/operations rules
+retain the user-supplied coordination and SSH policy. Exact prior versions of
+all five modified tracked files and the conflicting capture script, original
+patch/status/refs/worktree inventory, source hashes, duplicate recovery bundle
+and project settings backup are machine-local under
+`runs/repo-reconciliation/20261101T072339Z/`.
+
+Verification: both paths share the same Git directory and working status;
+100 original source-file hashes are preserved in place or in the recovery
+snapshot; all 21 pre-existing linked worktrees retain their exact revisions and
+resolve to the original common Git directory. The existing Python environment
+imports the canonical source with the project's `src` import path. T3 lists one
+project registration for this repository, rooted in the original directory.
+
+No research launch, GPU ownership transfer, allocation change or remote-state
+claim follows from this maintenance. Reauthenticate the historical October 7
+handles before any future remote action; no local workload was found in the
+original checkout during the bounded process audit.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

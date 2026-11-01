@@ -4,6 +4,16 @@
 latency and total throughput. FP16 EAGLE is secondary diagnostic context.
 The target/verifier model precision remains as frozen for each experiment.
 
+## Local repository reconciled — November 1
+
+The canonical checkout and T3 project root are `/home/philip/binary-eagle-decoding`.
+The former `binary-eagle-decoding-2` clone is now a symlink to that directory.
+Newer main history and unique local source work are reconciled; existing model,
+data, run, environment and pinned worktree directories are preserved. See the
+[maintenance checkpoint](goals/nine-model-qat-overnight.md#local-repository-reconciliation--november-1).
+The dated GPU observations below are historical; this local maintenance did not
+authenticate current remote jobs or transfer experiment ownership.
+
 ## DSpark A8 running — October 7, 01:21 PDT
 
 DSpark A8 is progressing on5080 at192.168.4.53. Latest authenticated snapshot:

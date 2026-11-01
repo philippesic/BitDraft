@@ -840,3 +840,18 @@ additional proof protocols or redoing completed audit work.
   complete optimizer/RNG/cursor state on between-transaction failures; reject
   partial mid-update state. Restore only the last genuine checkpoint and disclose
   rollback, retaining charged time rather than calling lost updates exact recovery.
+
+### 2026-11-01: Reconcile local state before treating matching origins as one repo
+
+- Context: The human could not start the T3 project in the original directory,
+  opened a second clone, and requested one maintained repo. The launch failure's
+  cause was not established; no user mistake was inferred.
+- Evidence: Both clones had the same GitHub origin, but the original held older
+  main, unique working source, local artifacts and many pinned worktrees. The
+  second clone was clean and held newer main. Shared origin did not imply equal
+  working state. Earlier agents had also left local changes and source files
+  outside main, increasing reconciliation risk.
+- Resolution and lesson: Keep the artifact-bearing original directory in place,
+  back up local edits, reconcile history, and point T3 at it. The duplicate path
+  now aliases the original; preserve source/worktree ancestry before retiring
+  redundant clones. Recovery evidence is linked from the active goal checkpoint.
