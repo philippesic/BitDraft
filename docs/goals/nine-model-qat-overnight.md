@@ -3803,4 +3803,24 @@ the receipts account for these separately. Completion signals tmux channel
 `local-confirmation-20261101-complete`. A passive reader may await that channel
 but receives no launch/stop/model-selection authority. No final claim yet.
 
+### Counterfactual checked; confirmation continuing — November 1, 10:00 UTC
+
+Root independently reran `analyze_frontier_counterfactual.py --verify` and all
+192 case/label/schema joins passed. Parent fidelity 94/96, fresh 90/96. On the
+32 damaged states actual parent/fresh prefixes total 160/68, same-input replay
+154/71. Damage remains on 28/32; among 30 faithful-parent states it remains on
+27, with three ties. All 32 improved controls still improve. This supports a
+model tradeoff without uniquely identifying objective/data-selection causality.
+Tracked compact summary and ignored exact discrepancies/source hashes are in
+`experiments/local-resume-20261101/frontier-counterfactual-summary.json` and the
+linked run analysis. The native CPU helper finished with no processes or GPU
+ownership; root remains the operator.
+
+All 288 final independent quality requests completed. Conservative and candidate
+scores are equal: 13/24 (4B Q4_K_M), 9/24 (4B NVFP4), 11/24 (9B Q4_K_M),
+14/24 (9B NVFP4). Original scores differ only at 4B Q4_K_M, 12/24. Absolute
+baseline failures remain visible; this is a small restricted-task judge, not
+broad model-quality proof. The 1,920-request clean confirmation is now running.
+No evaluator, source, settings or candidate selection changed after freeze.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

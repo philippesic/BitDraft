@@ -42,7 +42,8 @@ throughput improves; final confirmation is pending. See the
 
 The historical F16 diagnostic identifies losses on previously successful serving
 frontiers, despite gains on difficult ones. A 96-state identical-input native
-counterfactual has completed; analysis is in progress. No new training or historical restart occurred.
+counterfactual confirms that most damaged positions remain worse with the same
+captured inputs; the replay has bounded fidelity. No new training or historical restart occurred.
 Final source/settings are frozen and fresh confirmation inputs are generated;
 final model requests are running under the frozen plan. Current job/stop details are at the
 end of the goal file.

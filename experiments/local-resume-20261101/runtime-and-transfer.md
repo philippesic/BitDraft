@@ -118,12 +118,24 @@ Common output prefixes do not prove identical hidden states.
 
 The deterministic selection retains all 32 damaged frontiers plus 32 unchanged
 and 32 improved controls. An identical-feature/history counterfactual capture
-and replay has completed; CPU analysis is in progress to distinguish a model/data/objective tradeoff
-from state or numerical differences. Capture startup failures and added capture
+and replay tests a model/data/objective tradeoff against state or numerical
+differences. Capture startup failures and added capture
 constraints are preserved; no failed capture is treated as valid data. The capture reproduces all 48 requests, 1,444 ordinary round decisions and
 1,433 complete forced-round records from the original diagnostic before any
 features are used. Both models then replay the exact same captured features,
 chunk sequence and seed for all 96 selected states.
+
+The identical-input replay retains damage on 28 of 32 selected damaged states
+(three ties, one reversal). Parent accepted-prefix fidelity is 94/96 and fresh
+fidelity is 90/96 against their actual serving histories. Of the 30 damaged
+states with faithful parent replay, 27 retain the loss and three tie. Across the
+32 damaged states the actual parent/fresh totals are 160/68; identical-input
+replay yields 154/71. All 32 improved controls retain an improvement. This supports
+a learned tradeoff under fixed native inputs, while the residual replay mismatch
+limits any claim that all state/numerical explanations have been excluded.
+
+The [counterfactual summary](frontier-counterfactual-summary.json) records the
+reproducible checks, source hashes and limitations.
 
 The most justified direction is preserving successful full-prefix behavior
 while improving difficult states, with serving-occupancy and continuation-depth
