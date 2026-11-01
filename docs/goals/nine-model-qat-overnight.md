@@ -3823,4 +3823,73 @@ baseline failures remain visible; this is a small restricted-task judge, not
 broad model-quality proof. The 1,920-request clean confirmation is now running.
 No evaluator, source, settings or candidate selection changed after freeze.
 
+### Final confirmation and release — November 1, 2026
+
+The two resumed investigation objectives reached their requested bounded end
+goal. Frozen confirmation completed at 10:53 UTC, supervisor exit zero; all
+four phases succeeded. Root independently recomputed all 1,920 performance
+response/counter joins and the 288 independent quality records. Every output
+matches the conservative target-only reference and all five repetitions. No
+truncation, token/text/stop mismatch or counter mismatch. The frozen source and
+input hashes remain intact. MTP maximum 3, F16 KV, context 4096, concurrency one.
+
+Full-request rates, conservative MTP -> candidate MTP: 4B Q4_K_M 173.18 ->
+244.05 tok/s (+40.9%); 4B NVFP4 188.68 -> 248.99 (+32.0%); 9B Q4_K_M
+120.58 -> 182.11 (+51.0%); 9B NVFP4 127.31 -> 191.70 (+50.6%). All matched
+repetitions and all 24 prompt clusters improve. Candidate also beats both
+target-only controls. The paired prompt-cluster bootstrap and repetition ranges
+are in `experiments/local-resume-20261101/confirmation-summary.json`; reproduce
+with its `analyze_confirmation.py --verify` using .venv/bin/python.
+
+Independent quality outputs/scores equal conservative on all 96 paired cases,
+47/96 passing overall, versus 46/96 original. The restricted runner and eight
+parameterized task families limit general quality inference. Native 5,496 checks
+establish candidate serial/batch score consistency, not full-logit equality to
+the conservative runtime. Cross-runtime evidence proves tested response equality.
+The measured gain combines attention and grouped projections; individual cost
+contributions were not measured. Acceptance counters are unchanged.
+
+Read-only source/evidence review found no blocker to this bounded runtime claim;
+it prompted the two distinctions above. Upstream ports/logging patch remain
+reference-only. The validated full patch, source pin and immutable overlays stay
+isolated; no unpublished parent gitlink or push. Original default target-only
+outputs differ from conservative arithmetic, as explicitly measured. No
+W1A1/Q4_0 EAGLE success is claimed.
+
+Historical F16 diagnostic is complete: 72 exact requests, 48 decision-identical
+capture requests, 549 common-frontier analysis and 96 identical-input states.
+Most damaged successful states remain damaged; extra target verification accounts
+for 91.5% of the synchronized diagnostic round-time gap to Q4_K_M. This is not
+kernel profiling or proof of a unique data/objective cause. The justified next
+experiment balances serving occupancy and successful-prefix retention against
+hard-state gains at matched exposure and original-group held-out ancestry.
+No new training or historical campaign restart occurred. The broader nine-model
+goal history and existing allocations remain preserved.
+
+Costs: new trainer time zero; full initial CUDA compile 585.486s, configure 10.9s,
+incremental compile wall unmeasured. Final measured performance HTTP 2,967.32s,
+excluded load 107.59s/warmup 244.30s, phase wall 3,356.27s. Final quality HTTP 126.53s;
+complete confirmation wall 3,530.64s includes all phases and integrity preparation.
+Nested clocks must not be summed twice. `cost-summary.json` accounts separately
+for exploratory evaluation, native diagnostics, captures, preparation and failed
+starts. Earlier aggregate/fresh trainer-clock overlap is not resolved or summed.
+
+Root authenticated boot/start identities and absent supervisor/runner groups at
+11:02 UTC. All 14 owned supervisors are terminal; no CUDA compute applications,
+0% utilization, 1,182 MiB graphics memory. Evidence:
+`runs/upstream-consistency-20261101/release-proof.json`. No live GPU ownership or
+watcher remains. The resumed control is unchanged; other device pause unchanged.
+
+Two clean integrated worker worktrees/branches were removed after patch-equivalence
+and empty-submodule checks. The source-audit worker is protected because of its
+pre-existing staged submodule state. Captures, native arrays, immutable builds,
+source worktree and original checkpoints are retained. Bounded inventory is
+`runs/upstream-consistency-20261101/retained-inventory.json`; WSL free bytes rose
+28,869,906,432 -> 28,901,277,696 during checkout cleanup. No Windows volume
+reclamation claimed. No pre-existing dirty file was staged or removed.
+
+Final reviewable report: `experiments/local-resume-20261101/runtime-and-transfer.md`.
+No more candidate selection or measurements on this confirmation panel. Future
+runtime/data/objective changes need independent development and fresh confirmation.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

@@ -1,0 +1,234 @@
+{
+  "new_training_updates": 0,
+  "new_trainer_seconds": 0,
+  "entries": [
+    {
+      "stage": "target-reference-02",
+      "source": "runs/upstream-consistency-20261101/target-reference-02/summary.json",
+      "sha256": "25279a98ecabefa200ecbe6a658dda2dd5393f130bb6682413eb55c5bc0e8187",
+      "measured_seconds": {
+        "evaluation_full_request_seconds": 105.68213325721445,
+        "excluded_warmup_seconds": 2.4716784101328813,
+        "preparation_seconds": 11.141567707061768,
+        "server_startup_seconds": 28.65345799404895,
+        "total_elapsed_seconds": 152.05728125572205,
+        "training_seconds": 0
+      },
+      "notes": "Development HTTP evaluation, startup/warmup/preparation separate."
+    },
+    {
+      "stage": "development-stock-01",
+      "source": "runs/upstream-consistency-20261101/development-stock-01/summary.json",
+      "sha256": "770171cab9a33a6efc9caa27d10956a9d19c52a1fb923245151ffb16fd6b622d",
+      "measured_seconds": {
+        "evaluation_full_request_seconds": 223.3412807562854,
+        "excluded_server_startup_seconds": 52.51175277592847,
+        "excluded_warmup_seconds": 112.06701568211429,
+        "total_wall_seconds": 397.31514458497986,
+        "training_seconds": 0
+      },
+      "notes": "Development HTTP evaluation, startup/warmup/preparation separate."
+    },
+    {
+      "stage": "development-9b-mtp-01",
+      "source": "runs/upstream-consistency-20261101/development-9b-mtp-01/summary.json",
+      "sha256": "6d5e75685cd3ba673509092cbb4afb26b0e72f94cf3a83852f0ca6aad42e4d3b",
+      "measured_seconds": {
+        "evaluation_full_request_seconds": 106.73371678701369,
+        "excluded_server_startup_seconds": 25.46762753999792,
+        "excluded_warmup_seconds": 50.46429545612773,
+        "total_wall_seconds": 187.08187793800607,
+        "training_seconds": 0
+      },
+      "notes": "Development HTTP evaluation, startup/warmup/preparation separate."
+    },
+    {
+      "stage": "quality-original",
+      "source": "runs/upstream-consistency-20261101/quality-original-01/summary.json",
+      "sha256": "40d8fc3f0d2c6b134e4cfd8daa1b773717d7f75d9780e79ede673b1b0b360b27",
+      "measured_seconds": {
+        "evaluation_full_request_seconds": 17.450309505860787,
+        "total_wall_seconds": 28.763132704014424,
+        "training_seconds": 0
+      },
+      "notes": "HTTP evaluation and total including model load/harness overhead; final quality is 288 requests across 3 variants."
+    },
+    {
+      "stage": "final-quality-original",
+      "source": "runs/upstream-consistency-20261101/final-quality-original-01/summary.json",
+      "sha256": "4a9e36273e22d26c1192397b9a822e518f594aa42250941337b5259ad3138115",
+      "measured_seconds": {
+        "evaluation_full_request_seconds": 43.277050756209064,
+        "total_wall_seconds": 54.57662570098182,
+        "training_seconds": 0
+      },
+      "notes": "HTTP evaluation and total including model load/harness overhead; final quality is 288 requests across 3 variants."
+    },
+    {
+      "stage": "quality-conservative32",
+      "source": "runs/upstream-consistency-20261101/quality-conservative32-01/summary.json",
+      "sha256": "f87006246419dcdfbd199ebfb5496ebbe9830038a6b24ac899c7905f619dfa46",
+      "measured_seconds": {
+        "evaluation_full_request_seconds": 14.298785613267682,
+        "total_wall_seconds": 24.57552030403167,
+        "training_seconds": 0
+      },
+      "notes": "HTTP evaluation and total including model load/harness overhead; final quality is 288 requests across 3 variants."
+    },
+    {
+      "stage": "final-quality-conservative32",
+      "source": "runs/upstream-consistency-20261101/final-quality-conservative32-01/summary.json",
+      "sha256": "147dead87a12503022250cf21dc1816003040ca7c96b746e07ae7aaa70715381",
+      "measured_seconds": {
+        "evaluation_full_request_seconds": 41.44523096777266,
+        "total_wall_seconds": 52.586665113049094,
+        "training_seconds": 0
+      },
+      "notes": "HTTP evaluation and total including model load/harness overhead; final quality is 288 requests across 3 variants."
+    },
+    {
+      "stage": "quality-quant4group",
+      "source": "runs/upstream-consistency-20261101/quality-quant4group-01/summary.json",
+      "sha256": "79d059ef2a0f8ed1740b663a9f3257bc967ff7121eb40990b71b8e7ed66d2214",
+      "measured_seconds": {
+        "evaluation_full_request_seconds": 13.653380696894601,
+        "total_wall_seconds": 22.79724492999958,
+        "training_seconds": 0
+      },
+      "notes": "HTTP evaluation and total including model load/harness overhead; final quality is 288 requests across 3 variants."
+    },
+    {
+      "stage": "final-quality-quant4group",
+      "source": "runs/upstream-consistency-20261101/final-quality-quant4group-01/summary.json",
+      "sha256": "478ebd112d3d5a278f8c0aea8bcd1dd15ff6e14ce24dac8f72c086406ce94911",
+      "measured_seconds": {
+        "evaluation_full_request_seconds": 41.808826156833675,
+        "total_wall_seconds": 55.270974412036594,
+        "training_seconds": 0
+      },
+      "notes": "HTTP evaluation and total including model load/harness overhead; final quality is 288 requests across 3 variants."
+    },
+    {
+      "stage": "native-gates-01/summary.json",
+      "source": "runs/upstream-consistency-20261101/native-gates-01/summary.json",
+      "sha256": "a11542cc9a72c905b69a5dac5f2e6543a68cb9d41ca828d4187f25d18b07f97c",
+      "measured_seconds": {
+        "native_process_wall_seconds_including_load": 435.6166937359958
+      },
+      "notes": "Native process wall including negative controls; not kernel time."
+    },
+    {
+      "stage": "native-groups-01/summary.json",
+      "source": "runs/upstream-consistency-20261101/native-groups-01/summary.json",
+      "sha256": "3e13536ab9ec75464350f157bed9267e93ce233c0ea98a6b88a421934a4c9e7a",
+      "measured_seconds": {
+        "native_process_wall_seconds_including_load": 303.9607988279895
+      },
+      "notes": "Native process wall including negative controls; not kernel time."
+    },
+    {
+      "stage": "Historical synchronized component diagnostic",
+      "source": "runs/upstream-consistency-20261101/historical-component-receipt.json",
+      "sha256": "76a5ede9f261a5389d22e91f550ac7dee89aa127795c8c528f1e869a956c21a1",
+      "measured_seconds": {
+        "diagnostic_total_wall_seconds": 81.4753294410184
+      },
+      "notes": "Startup/hashing included; not clean throughput timing."
+    },
+    {
+      "stage": "Historical 12-state replay",
+      "source": "runs/upstream-consistency-20261101/historical-replay-01/receipt.json",
+      "sha256": "fb012fe3fa9ded610007ff0c0b43e9f9132a54d46455d4c3afa7e7c6e0a22334",
+      "measured_seconds": {
+        "native_process_wall_seconds_including_load": 9.762840113020502
+      },
+      "notes": "Per-process sum, not kernel time."
+    },
+    {
+      "stage": "Historical 96-state replay",
+      "source": "runs/upstream-consistency-20261101/frontier-counterfactual-01/receipt.json",
+      "sha256": "cca430f3c2336ce11711510660ea329cd72b9483ef7ed80c315ee85944858f32",
+      "measured_seconds": {
+        "native_process_wall_seconds_including_load": 44.17973203887232
+      },
+      "notes": "Per-process sum, not kernel time."
+    },
+    {
+      "stage": "Historical actual-history capture",
+      "source": "runs/upstream-consistency-20261101/historical-frontier-capture-04/receipt.json",
+      "sha256": "49b79d96405669057fa6c78f3c6af6a15e05529c6c323ab78cde7d2d80751f2d",
+      "measured_seconds": {
+        "capture_total_seconds": 46.28374020301271
+      },
+      "notes": "48 requests, features and quality logits; see caption-addendum.json."
+    },
+    {
+      "stage": "Full candidate CUDA build",
+      "source": "runs/upstream-consistency-20261101/attention2col-build-receipt.json",
+      "sha256": "accdcbeb0c426b61e15e3edf04804d8780e474d1555df39d5ea764245dc172c5",
+      "measured_seconds": {
+        "cpu_compilation_seconds": 585.4858908660244
+      },
+      "notes": "Configure additionally 10.9 seconds; incremental grouped build wall unmeasured."
+    },
+    {
+      "stage": "Final performance",
+      "source": "runs/upstream-consistency-20261101/confirmation-requests-01/summary.json",
+      "sha256": "1590ea0c2aa98b4b5fa829c2342012a9faa85b92c58b89a01fbc957728ebca68",
+      "measured_seconds": {
+        "evaluation_full_request_seconds": 2967.3218446341925,
+        "excluded_server_startup_seconds": 107.59291745262453,
+        "excluded_warmup_seconds": 244.3010808340623,
+        "total_wall_seconds": 3356.2672251969925,
+        "training_seconds": 0
+      },
+      "notes": "1920 measured full requests, 160 excluded warmups, 80 server startups."
+    },
+    {
+      "stage": "Complete frozen confirmation",
+      "source": "runs/upstream-consistency-20261101/confirmation-receipt.json",
+      "sha256": "8e704920b8f9300dcf529f460c32bf4430cc73f8e1d9e236a2fc4f450f29c7bd",
+      "measured_seconds": {
+        "phase_total_wall_seconds": [
+          54.70118538098177,
+          52.6928669490153,
+          55.416882382007316,
+          3356.4850463760085
+        ],
+        "total_wall_seconds": 3530.6356334639713
+      },
+      "notes": "Includes final quality and performance already itemized; do not add twice."
+    }
+  ],
+  "failed_preparation": [
+    {
+      "source": "runs/local-target-refs-20261101-01/state.json",
+      "exit_code": 1,
+      "supervisor_wall_seconds": 15.504595,
+      "scope": "failed preparation/startup; no valid measured request/capture"
+    },
+    {
+      "source": "runs/local-frontier-capture-20261101-01/state.json",
+      "exit_code": 1,
+      "supervisor_wall_seconds": 14.024951,
+      "scope": "failed preparation/startup; no valid measured request/capture"
+    },
+    {
+      "source": "runs/local-frontier-capture-20261101-02/state.json",
+      "exit_code": 1,
+      "supervisor_wall_seconds": 14.504045,
+      "scope": "failed preparation/startup; no valid measured request/capture"
+    },
+    {
+      "source": "runs/local-frontier-capture-20261101-03/state.json",
+      "exit_code": 1,
+      "supervisor_wall_seconds": 18.505395,
+      "scope": "failed preparation/startup; no valid measured request/capture"
+    }
+  ],
+  "limits": [
+    "Clocks have different boundaries and can overlap; do not sum into GPU utilization or billable GPU hours.",
+    "No complete preparation wall total: incremental build and some manual/source/preparation work were not timed.",
+    "Historical closure records 8516.06 aggregate trainer seconds and separately 3146.14 fresh seconds; overlap unresolved, no sum asserted."
+  ]
+}

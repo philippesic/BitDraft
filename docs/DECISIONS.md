@@ -1,5 +1,26 @@
 # Decision log
 
+## Evidence-backed direction: runtime gain and serving-aware training — November 1, 2026
+
+The user's autonomous investigation produced a validated 32.0–51.0% matched
+Qwen3.5 MTP runtime gain on local RTX 5080, with final exact-output and
+independent-quality checks. Keep the candidate isolated and opt-in; it does not
+establish default-backend equivalence or a W1A1/Q4_0 EAGLE win. See the
+[final report](../experiments/local-resume-20261101/runtime-and-transfer.md).
+
+Historical F16 evidence supports a learned tradeoff: improvements on difficult
+states coexist with damage to successful continuations and extra verification.
+Most damage persists with identical captured inputs. The recommended next
+training experiment crosses serving-history coverage with the existing versus
+acceptance/depth-weighted objective, includes successful-prefix retention,
+freezes initialization/exposure and splits original group ancestry before
+capture. This discriminates data from objective effects. Neither cause is yet
+uniquely established; a longer blind continuation or head-only optimization is
+less justified by the measured bottleneck. No new recipe, allocation, target
+precision or historical checkpoint was changed. The requested investigation has
+finished; these remain evidence-backed next directions rather than a silently
+started replacement campaign.
+
 ## Selected: twelve-hour sequential campaign — October 5, 23:11 PDT
 
 Human resumed RTX5080: evaluate preserved EAGLE A8 now, then DSpark A8,
