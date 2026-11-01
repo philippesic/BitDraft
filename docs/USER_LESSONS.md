@@ -890,3 +890,16 @@ additional proof protocols or redoing completed audit work.
 - Inspect the actual capture binary, patch, required flags and data producer
   together before launch. Do not infer hook support from a shared runtime base
   or flags alone. Preserve failed receipts and verify observer neutrality.
+
+### 2026-11-01: Lead with which system improved
+
+- After the final investigation report, the user asked what the agent had done.
+  The report led with a throughput percentage without making the distinction
+  between the modern MTP runtime patch and trained Binary EAGLE prominent enough.
+  This is a communication failure; no user mistake is established.
+- The measured gain is against the conservative CUDA workaround in the modern
+  Qwen3.5 MTP track. Historical F16 drafter work produced a diagnosis, with no
+  new training. It does not establish a Binary EAGLE or stock-runtime speed win.
+- Explain the concrete code change, exact comparison baseline, training performed
+  and deployment status before presenting percentages. Keep these two outcomes
+  separate in ordinary language as well as in technical evidence.
