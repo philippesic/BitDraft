@@ -43,7 +43,23 @@ function name(r){return families[r.family]+(r.family==='target_only'?'':r.family
 function row(label,value,c,kind='',hint=''){const e=document.createElement('div');e.className='r '+kind;e.title=hint;const l=document.createElement('span');l.className='label';l.textContent=label;const tr=document.createElement('div');tr.className='track';const b=document.createElement('div');b.className='bar';b.style.width=(value/300*100)+'%';b.style.background=c;tr.append(b);const v=document.createElement('span');v.className='v';v.textContent=Number(value).toFixed(1);e.append(l,tr,v);return e}
 const select=document.getElementById('target');
 for(const [target,t] of Object.entries(DATA.targets)){const group=document.createElement('div');group.className='group';const head=document.createElement('div');head.className='grouphead';const label=document.createElement('strong');label.textContent=title(target);const best=document.createElement('span');best.className='bestname';best.textContent=name(t.fastest_observed);head.append(label,best);group.append(head,row('Target only',t.target_only.tokens_per_second,color.target),row('Q4_0 EAGLE',t.primary_q4_0_eagle.tokens_per_second,color.primary),row('Fastest observed',t.fastest_observed.tokens_per_second,color.best));document.getElementById('overview').append(group);const option=document.createElement('option');option.value=target;option.textContent=title(target);select.append(option)}
-function detail(){const t=DATA.targets[select.value];const rows=DATA.rows.filter(r=>r.target===select.value).sort((a,b)=>Number(b.tokens_per_second)-Number(a.tokens_per_second));const box=document.getElementById('detail');box.replaceChildren();for(const r of rows){const primary=r.arm_id===t.primary_q4_0_eagle.arm_id;const best=r.arm_id===t.fastest_observed.arm_id;const c=primary?color.primary:best?color.best:r.family==='target_only'?color.target:color.other;const hint=name(r)+'; '+Number(r.speedup_vs_target_only).toFixed(3)+'× target-only; '+Number(r.speedup_vs_primary_q4_0).toFixed(3)+'× Q4_0 EAGLE; accepted '+r.accepted+'/'+r.proposed+'; quality '+r.quality_passed+'/'+r.quality_cases; repetition wall CV '+Number(r.repetition_wall_cv_percent).toFixed(2)+'%';box.append(row(name(r)+(primary?' (primary)':''),Number(r.tokens_per_second),c,primary?'primary':'',hint))}}
+function detail(){
+ const t=DATA.targets[select.value];
+ const rows=DATA.rows.filter(r=>r.target===select.value).sort((a,b)=>Number(b.tokens_per_second)-Number(a.tokens_per_second));
+ const box=document.getElementById('detail');box.replaceChildren();
+ for(const r of rows){
+  const primary=r.arm_id===t.primary_q4_0_eagle.arm_id;
+  const best=r.arm_id===t.fastest_observed.arm_id;
+  const c=primary?color.primary:best?color.best:r.family==='target_only'?color.target:color.other;
+  const hint=name(r)
+   +'; '+Number(r.speedup_vs_target_only).toFixed(3)+'× target-only'
+   +'; '+Number(r.speedup_vs_primary_q4_0).toFixed(3)+'× Q4_0 EAGLE'
+   +'; accepted '+r.accepted+'/'+r.proposed
+   +'; quality '+r.quality_passed+'/'+r.quality_cases
+   +'; repetition wall CV '+Number(r.repetition_wall_cv_percent).toFixed(2)+'%';
+  box.append(row(name(r)+(primary?' (primary)':''),Number(r.tokens_per_second),c,primary?'primary':'',hint));
+ }
+}
 select.addEventListener('change',detail);detail();</script></body></html>'''
     args.output.write_text(html.replace('__PAYLOAD__', payload))
 
