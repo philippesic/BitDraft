@@ -5,10 +5,12 @@ direction, `docs/EVALUATION.md` for measurements, and `docs/AGENT_OPERATIONS.md`
 for team, handoff, Git, and GPU procedures. Read the document relevant to the
 task; do not load every document for a small edit.
 
-- Q4_0 EAGLE is the primary comparison baseline and the model to beat for
-  acceptance, latency, and total throughput. FP16 EAGLE is a secondary diagnostic
-  reference, not the primary success target. This does not change target/verifier
-  model precision or previously frozen experiments.
+- For modern Qwen3.5 4B/9B × Q4_K_M/NVFP4 work, DFlash Q4_K_M is the
+  user-selected primary baseline to beat under the same correctness runtime.
+  Use the frozen per-target settings in experiments/w1a8-standing-20261102/baseline.json.
+  Target-only remains the correctness reference; Q4_0 EAGLE and FP16 EAGLE are
+  diagnostic controls. Historical Qwen3 F16/SM75 experiments retain their frozen
+  comparators; do not change target precision or retroactively relabel results.
 - Favor development speed and decisive native acceptance/throughput tests over
   bit-exact cross-backend parity. Timebox numerical diagnostics and require each
   one to address a concrete training or deployment risk. Hugging Face versus
@@ -75,7 +77,7 @@ task; do not load every document for a small edit.
   stop procedure. A queued message or written checkpoint does not transfer control.
 - Require actual drafter/export/admission/native evaluation evidence. Acceptance
   rate or an isolated kernel speedup alone does not prove total-throughput benefit
-  over Q4_0 EAGLE. Keep held-out inputs, target/verifier semantics, precision,
+  over the selected matched baseline. Keep held-out inputs, target/verifier semantics, precision,
   hardware, data ancestry and matched baseline immutable within a comparison.
 - Fresh worker contexts receive a bounded assignment and evidence links. Refresh
   durable state after compaction; rotate workers at safe boundaries. A successor

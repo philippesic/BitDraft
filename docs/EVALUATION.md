@@ -25,18 +25,23 @@ distribution across prompts/runs, rather than averaging speedup ratios alone.
 
 ## Baselines and precision labels
 
-**User decision, 2026-09-27:** Q4_0 EAGLE is the primary comparison baseline
-and success target for draft acceptance, latency, and total model throughput.
-Lead summaries and improvement ratios with Q4_0. Keep FP16 EAGLE as a secondary
-diagnostic control; do not use beating FP16 as the primary decision gate. This
-is a choice of comparison drafter, not a change to the target/verifier model
-precision, and it does not retroactively change frozen measurements.
+**User decision, 2026-11-02:** for modern Qwen3.5 4B/9B × Q4_K_M/NVFP4,
+DFlash Q4_K_M is the primary matched throughput/latency baseline under the
+selected correctness runtime. Preserve its frozen per-target depths and
+[artifact/settings pins](../experiments/w1a8-standing-20261102/baseline.json).
+Target-only is mandatory for correctness; Q4_0 EAGLE is a secondary architecture
+control. Acceptance remains diagnostic and cannot substitute for request speed.
+
+**Historical decision, 2026-09-27:** frozen Qwen3 F16/SM75 studies use Q4_0 EAGLE
+as primary. Retain their original comparisons; the modern baseline choice does
+not change target precision, old denominators, or previously frozen measurements.
 
 | Variant | Requirement |
 | --- | --- |
+| DFlash Q4_K_M | Primary for modern Qwen3.5 correctness-mode comparisons; unchanged target, runtime and frozen per-target depth. |
 | No speculation | Same target and runtime settings; mandatory reference. |
 | FP16 EAGLE | Existing draft checkpoint converted to FP16; secondary diagnostic reference. |
-| Q4_0 EAGLE | Same target and verifier with the standard Q4_0 draft GGUF; primary acceptance, latency and throughput comparison for future W1A1/QAT work. Record its actual activation and CUDA path; do not label it genuine W4A4. |
+| Q4_0 EAGLE | Same target and verifier with the standard Q4_0 draft GGUF; historical primary and modern secondary architecture control. Record its actual activation and CUDA path; do not label it genuine W4A4. |
 | W8A8 / W4A4 EAGLE | Desired comparisons; identify whether kernels actually execute at that operand precision. |
 | W1A1 simulation | Accuracy/acceptance experiment; floating-point simulation is not binary acceleration. |
 | W1A1 native | Packed binary operands and XOR/POPCOUNT computation; identify normal-precision exceptions. |
@@ -85,11 +90,12 @@ and distributional behavior instead of requiring identical random sequences.
 Evaluate W1A1 acceptance on held-out prompts before kernel investment. During
 the direct comparison, estimate an optimistic upper bound using measured emitted
 tokens per round and verification cost with draft time reduced toward zero. If
-that bound cannot beat Q4_0 EAGLE, prioritize diagnosing
+that bound cannot beat the selected matched baseline, prioritize diagnosing
 acceptance over further kernel optimization.
 
 For future W1A1 candidates, report both FP16 EAGLE and Q4_0 EAGLE comparisons;
-evaluate success against Q4_0, using FP16 as diagnostic context. Draft-call speed alone is insufficient. Publish a
+evaluate modern-track success against DFlash Q4_K_M and historical-track success
+against the frozen Q4_0 control, using FP16 as diagnostic context. Draft-call speed alone is insufficient. Publish a
 positive result only when repeated end-to-end measurements support it and
 variability is disclosed. Otherwise quantify the bottleneck and which
 assumptions failed. A correct, well-instrumented negative result meets the goal.

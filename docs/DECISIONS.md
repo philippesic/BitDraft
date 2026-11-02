@@ -1,5 +1,25 @@
 # Decision log
 
+## Selected: DFlash Q4_K_M is the modern baseline — November 2, 2026
+
+The user chose one draft family and format for simplicity across Qwen3.5 4B/9B
+Q4_K_M and NVFP4 targets. DFlash Q4_K_M now supersedes Q4_0 EAGLE as the primary
+success comparator for this modern correctness-mode track. Keep target-only as
+the correctness reference and Q4_0 EAGLE as a secondary architecture diagnostic.
+Historical frozen experiments retain their original denominators and conclusions.
+
+The frozen depth is 2 on 4B Q4_K_M and 3 on the other three targets. Existing
+held-out full-request rates are 235.9 / 258.3 / 200.8 / 209.2 tok/s in that order.
+One family/format does not require an identical depth across targets. This
+selection does not claim Q4_K_M is the numerical winner in every cell: Q8_0's
+nominal 4B Q4_K_M lead was unresolved against Q4_K_M/MTP.
+
+[Selected baseline pins and settings](../experiments/w1a8-standing-20261102/baseline.json)
+and [W1A8 inventory](../experiments/w1a8-standing-20261102/report.md) record the
+comparison. No W1A8 measurement exists for the modern four-target matrix.
+Recording this decision does not port models, resume training or authorize a
+new training recipe. Existing historical EAGLE/DSpark W1A8 results stay separate.
+
 ## Selected: retain Qwen3.5 correctness mode and remeasure — November 1, 2026
 
 The user selected the existing Qwen compatibility/correctness route and asked

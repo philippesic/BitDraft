@@ -1,5 +1,15 @@
 # Project overview: W1A1 EAGLE speculative decoding
 
+## Current comparison policy — November 2, 2026
+
+For the modern Qwen3.5 4B/9B × Q4_K_M/NVFP4 correctness-mode track, the user
+selected **DFlash Q4_K_M** as the primary baseline. Target-only is the correctness
+reference; Q4_0 EAGLE remains an architecture diagnostic. Use the pinned
+[baseline settings](../experiments/w1a8-standing-20261102/baseline.json).
+The historical Qwen3 F16/SM75 studies below retain their frozen Q4_0 comparators;
+they are not direct measurements against these modern targets. The
+[W1A8 inventory](../experiments/w1a8-standing-20261102/report.md) explains the gap.
+
 ## Purpose and central question
 
 Investigate whether an EAGLE speculative drafter with true one-bit weights and

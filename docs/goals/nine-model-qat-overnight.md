@@ -4158,4 +4158,16 @@ No engine change, parent gitlink change, push, historical training restart or
 major teacher decision occurred. This completes the user's remeasurement,
 not every historical nine-model objective.
 
+### User selected DFlash Q4_K_M baseline — November 2, 2026
+
+Use DFlash Q4_K_M for all modern Qwen3.5 4B/9B Q4_K_M/NVFP4 comparisons,
+superseding Q4_0 EAGLE as primary in that track. Target-only stays mandatory;
+Q4_0 EAGLE becomes secondary. Existing final rows/settings are unchanged:
+d2 235.9 / d3 258.3 / d3 200.8 / d3 209.2 tok/s in standard target order.
+Baseline pins and full W1A8 inventory: experiments/w1a8-standing-20261102/.
+Historical EAGLE and actual trained/GPU-served DSpark W1A8 remain Qwen3 F16
+experiments with their original denominators. No modern W1A8 matrix cell exists;
+DFlash W1A8 has no production-trained serving endpoint in the audited records.
+No training, port, new target, GPU evaluation or allocation change was started.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

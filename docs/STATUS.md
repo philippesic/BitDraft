@@ -1,5 +1,27 @@
 # Current project status
 
+## Selected baseline and W1A8 standing — November 2, 2026
+
+DFlash Q4_K_M is now the user-selected primary baseline for all four modern
+Qwen3.5 correctness-mode targets. Frozen depths/rates: 4B Q4_K_M d2 235.9;
+4B NVFP4 d3 258.3; 9B Q4_K_M d3 200.8; 9B NVFP4 d3 209.2 tok/s. Target-only
+remains the correctness reference; Q4_0 EAGLE is a secondary diagnostic for this
+track. This supersedes the primary-comparator language in the dated matrix
+checkpoint below, without changing its measurements or historical controls.
+
+There is no modern-target W1A8 checkpoint/measurement in this matrix. Historical
+EAGLE W1A8 reached 51.7–70.5% of paired Q4_0 EAGLE request throughput in the
+reported trained comparisons. Actual trained/native-served historical DSpark
+W1A8 exists; the latest panel reaches 87.3–92.8% of same-family Q4_K_M, with
+no untouched release or proven win. Earlier panel ratios differ. No production
+trained DFlash W1A8 serving endpoint was found. Historical targets are Qwen3 F16,
+not the four modern Qwen3.5 targets; do not compare their raw tok/s directly.
+
+[Baseline pins](../experiments/w1a8-standing-20261102/baseline.json) and
+[full W1A8 inventory](../experiments/w1a8-standing-20261102/report.md) retain
+model coverage, measured results and limitations. This update used CPU evidence
+inspection only: no new training, GPU evaluation or runtime change.
+
 ## Completed: Qwen3.5 correctness-mode baseline matrix — November 1, 2026
 
 The requested 4B/9B × Q4_K_M/NVFP4 remeasurement is complete on the local RTX

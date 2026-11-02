@@ -947,3 +947,17 @@ additional proof protocols or redoing completed audit work.
 - Neither higher precision nor an engine's deterministic flag automatically
   establishes speculative parity. Historical BF16 parity failed a bounded probe,
   and published engine support must be checked for the actual model/GPU/method.
+
+### 2026-11-02: Reconcile readiness snapshots with later executed evidence
+
+- During the W1A8 inventory, workers initially described historical DSpark as
+  CPU-only, using October 4/6 readiness records. Root identified later actual
+  8h/16h exports, explicit A8 precision inventory, and October 31 GPU request
+  results. Workers corrected their findings before the user-facing inventory.
+- No user mistake occurred. Readiness records establish what existed then;
+  they do not prove current absence. Cross-check dated reports against latest
+  executed closure and artifact precision, and keep historical Qwen3 F16
+  results separate from modern Qwen3.5 measurements.
+- Scope correctness per experiment: the two-hour EAGLE report records target-only
+  parity on its panel; the later 14.43h EAGLE comparison fails it. Do not carry
+  that failure backward or carry a small earlier pass forward as qualification.

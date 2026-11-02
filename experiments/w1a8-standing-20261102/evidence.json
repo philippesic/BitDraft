@@ -1,0 +1,185 @@
+{
+  "scope": "Historical W1A8 evidence inventory; each ratio uses its own matched historical control. No cross-target or modern DFlash ratio is defined.",
+  "training_seconds_this_inventory": 0,
+  "gpu_evaluation_seconds_this_inventory": 0,
+  "new_gpu_requests_this_inventory": 0,
+  "history": [
+    {
+      "label": "Untrained EAGLE W1A8, fixed D5",
+      "hardware": "RTX 2080 Ti",
+      "target": "Qwen3-4B F16",
+      "w1a8_tps": 41.411,
+      "control_tps": 79.743,
+      "control": "Q4_0 EAGLE",
+      "scope": "12-cell development grid; no QAT; fixed D5 row shown.",
+      "source": "experiments/w1ax-policy-grid-results.md",
+      "relative_to_own_control": 0.5193057697854357
+    },
+    {
+      "label": "EAGLE fixed-A8, two-hour reference",
+      "hardware": "RTX 5080",
+      "target": "Qwen3-4B F16",
+      "w1a8_tps": 95.689,
+      "control_tps": 135.787,
+      "control": "Q4_0 EAGLE",
+      "scope": "Five repetitions / 24 development prompts; target-only parity passed on this panel.",
+      "source": "experiments/a8-qat-recovery/comparison.md",
+      "relative_to_own_control": 0.7046992716533983
+    },
+    {
+      "label": "EAGLE combined learned-A8 recipe",
+      "hardware": "RTX 5080",
+      "target": "Qwen3-4B F16",
+      "w1a8_tps": 69.623,
+      "control_tps": 134.728,
+      "control": "Q4_0 EAGLE",
+      "scope": "Two-hour accounted budget; five repetitions / 24 development prompts; target-only parity passed on this panel.",
+      "source": "experiments/a8-qat-recovery/comparison.md",
+      "relative_to_own_control": 0.5167671159669853
+    },
+    {
+      "label": "EAGLE calibrated, 14.43h snapshot",
+      "hardware": "RTX 5080",
+      "target": "Qwen3-4B F16",
+      "w1a8_tps": 92.85,
+      "control_tps": 143.87,
+      "control": "Q4_0 EAGLE",
+      "scope": "Five repetitions / 24 development prompts; strict target-only parity failed on one prompt.",
+      "source": "experiments/nine-model-qat-overnight/current-eagle-a8-acceptance-20261006.md",
+      "relative_to_own_control": 0.6453742962396607
+    },
+    {
+      "label": "DSpark parent",
+      "hardware": "RTX 5080",
+      "target": "Qwen3-4B F16",
+      "w1a8_tps": 204.06110306943552,
+      "control_tps": 222.45121745562332,
+      "control": "same-family DSpark Q4_K_M",
+      "scope": "Latest historical panel: five repetitions / 24 reused development prompts; no untouched release. EAL aggregate lead over parent not robustly established.",
+      "source": "runs/5080-broader-training-20261031/SESSION-CLOSED.json",
+      "cell_key": "parent3504",
+      "requests": 120,
+      "output_tokens": 14290,
+      "rounds": 3815,
+      "accepted_per_round": 2.7169069462647446,
+      "relative_to_own_control": 0.9173296752585477
+    },
+    {
+      "label": "DSpark earlier acceptance-objective checkpoint",
+      "hardware": "RTX 5080",
+      "target": "Qwen3-4B F16",
+      "w1a8_tps": 206.53144008768373,
+      "control_tps": 222.45121745562332,
+      "control": "same-family DSpark Q4_K_M",
+      "scope": "Latest historical panel: five repetitions / 24 reused development prompts; no untouched release. EAL aggregate lead over parent not robustly established.",
+      "source": "runs/5080-broader-training-20261031/SESSION-CLOSED.json",
+      "cell_key": "previous_eal_best",
+      "requests": 120,
+      "output_tokens": 14290,
+      "rounds": 3790,
+      "accepted_per_round": 2.737467018469657,
+      "relative_to_own_control": 0.9284347483010947
+    },
+    {
+      "label": "DSpark fresh-training selected checkpoint",
+      "hardware": "RTX 5080",
+      "target": "Qwen3-4B F16",
+      "w1a8_tps": 202.65473759178855,
+      "control_tps": 222.45121745562332,
+      "control": "same-family DSpark Q4_K_M",
+      "scope": "Latest historical panel: five repetitions / 24 reused development prompts; no untouched release. EAL aggregate lead over parent not robustly established.",
+      "source": "runs/5080-broader-training-20261031/SESSION-CLOSED.json",
+      "cell_key": "fresh_best",
+      "requests": 120,
+      "output_tokens": 14290,
+      "rounds": 3825,
+      "accepted_per_round": 2.7019607843137257,
+      "relative_to_own_control": 0.9110075454283186
+    },
+    {
+      "label": "DSpark fresh early checkpoint",
+      "hardware": "RTX 5080",
+      "target": "Qwen3-4B F16",
+      "w1a8_tps": 194.19328892339868,
+      "control_tps": 222.45121745562332,
+      "control": "same-family DSpark Q4_K_M",
+      "scope": "Latest historical panel: five repetitions / 24 reused development prompts; no untouched release. EAL aggregate lead over parent not robustly established.",
+      "source": "runs/5080-broader-training-20261031/SESSION-CLOSED.json",
+      "cell_key": "fresh_early96",
+      "requests": 120,
+      "output_tokens": 14290,
+      "rounds": 4045,
+      "accepted_per_round": 2.5067985166872684,
+      "relative_to_own_control": 0.8729702230653703
+    }
+  ],
+  "coverage": {
+    "modern_Qwen35_W1A8": "No trained/exported/measured candidate for any of four modern targets found.",
+    "historical_EAGLE_W1A8": "Trained/exported/native GPU serving; negative matched comparisons.",
+    "historical_DSpark_W1A8": "Actual trained/exported/native GPU serving, including 16-projection scale-only and 13-projection later lineages; no matched Q4 serving win established.",
+    "historical_DFlash_W1A8": "Actual CPU calibrated exports and graph checks, plus later preparation; no production-trained GPU serving endpoint found."
+  },
+  "limitations": [
+    "This is an inventory of consequential model/training/runtime families, not a claim that every raw execution attempt was individually reread.",
+    "Historical acceptance and timing panels are reused development; modern held-out correctness qualification does not retroactively qualify historical runtimes.",
+    "Some historical reports cite external archived paths; the latest closure and compact precision inventory were read locally.",
+    "Full historical preparation/training/search costs are not reconciled; preserve per-lineage accounting and do not add overlapping clocks."
+  ],
+  "sources": [
+    {
+      "path": "experiments/w1ax-policy-grid-results.md",
+      "bytes": 17338,
+      "sha256": "440709aab1853c0b2da5f8b67ee9afd5b2e95cf1f207406bd067e6c583db6976"
+    },
+    {
+      "path": "experiments/a8-qat-recovery/comparison.md",
+      "bytes": 14719,
+      "sha256": "264990282e859d15e33c04c8cdd5b3bbb0b0ae40f00050ba2ea8da3371de96ed"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/current-eagle-a8-acceptance-20261006.md",
+      "bytes": 3827,
+      "sha256": "0d7a9bdbad85702ab3b7f989b71ce29bf303de44c9d7bd569fa071d7d3e643c9"
+    },
+    {
+      "path": "experiments/local-resume-20261101/transfer-diagnosis.md",
+      "bytes": 13066,
+      "sha256": "94d2e1f2953cb9e078920eefce9837f17ef3e9c95bacf441dc125f6171b66877"
+    },
+    {
+      "path": "experiments/local-resume-20261101/runtime-and-transfer.md",
+      "bytes": 26995,
+      "sha256": "797c9128201b70c260a67933fa54d04271102dd40ef09e53ca9b9bb1a4fa939b"
+    },
+    {
+      "path": "experiments/local-resume-20261101/frontier-counterfactual-summary.json",
+      "bytes": 5738,
+      "sha256": "04693c6b0a731a789acfbddf0979e19b39df3e2d4969a7eef4f718240f648351"
+    },
+    {
+      "path": "runs/5080-broader-training-20261031/SESSION-CLOSED.json",
+      "bytes": 33476,
+      "sha256": "6381d4a490b03a76140e0a95d55235d8cc177f775a3cd5bf15d87df9e505e40d"
+    },
+    {
+      "path": "runs/5080-broader-training-20261031/phase2-selection06.json",
+      "bytes": 35668,
+      "sha256": "8033a8919112c8519eafb62b8feecefa3001248f7ab2c30149e490659a5304d3"
+    },
+    {
+      "path": "runs/training-transfer-diagnosis-20261027/precision-inventory.json",
+      "bytes": 64530,
+      "sha256": "e2fb539dc5955e14ff5cf55f754c76bf3ba9844947c1aecb995524e3e0ffd216"
+    },
+    {
+      "path": "runs/w1a8-algorithms-20261020/acceptance-loop2-frozen-result-astra11.md",
+      "bytes": 17316,
+      "sha256": "ba388e96d4e7230a8d23906a73ba2addc0554951e4c8f75710d8f45279dae5ab"
+    },
+    {
+      "path": "runs/w1a8-campaign-20261023/dynamic_head01/report.md",
+      "bytes": 8384,
+      "sha256": "eef9fc904bd8a0b69c15d6682229aba168b24cd581ccbeb764f40bc619430ea8"
+    }
+  ]
+}
