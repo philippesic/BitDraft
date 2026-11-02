@@ -4,11 +4,12 @@
 
 The user selected the existing Qwen3.5 correctness runtime and requested fresh
 4B/9B × Q4_K_M/NVFP4 measurements. vLLM and Llama migrations are not selected.
-Root is sole local RTX5080 operator. Actual supervised admission pilot began
-November2 00:07UTC (November1 local), run
-`runs/local-qwen35-matrix-pilot-20261101-01/state.json`; birth/boot/stop details
+Root is sole local RTX5080 operator. Actual supervised development-depth screen
+began November2 00:19UTC (November1 local), run
+`runs/local-qwen35-matrix-screen-20261101-01/state.json`; birth/boot/stop details
 are in its identity.json. Local tmux socket binary-eagle-runtime, same session
-name. GPU control is resumed; no other compute job was present before launch.
+name. GPU control is resumed; pilot release and empty compute-app list were
+independently checked before this launch.
 
 Canonical artifacts: `runs/qwen35-correctness-matrix-20261101-01/`. The target
 runtime is the immutable previously validated quant4group CUDA overlay with
@@ -29,11 +30,20 @@ metadata-only negativecontrol pass. This changes drafter artifacts, not target
 arithmetic; full native graph parity is not yet established. Q4_0/Q4_K_M/Q8_0
 were exported from corrected BF16. Historical Qwen3 training is unchanged.
 
-Pilot rechecks target serial/batched/state parity with an executed original
-negativecontrol, then target-only/MTP/correctedEAGLE BF16/Q4_0 on reused development
-inputs. Fullscreen is prepared:166 development depth configurations, not final
-rankings. Fresh final input/settings freeze and at least five matched repetitions
-remain. No new training. Current source commit1742aa7e; no push.
+Pilot finished exit0 at00:16UTC. All four target serial/batched/state gates pass
+1374 checks each with zero measured drift/flips; the executed original negative
+control fails687 checks with53 flips. All16 pilot configurations pass exact
+token/text/stop checks on8 performance+8 quality cases each (256 requests total).
+Independent root recomputation agrees; shared target quality scores3–5/8 are
+unchanged by speculation. This is development admission, not final ranking or
+full native-versus-training graph parity. Raw/analysis: pilot-01/ and
+root-pilot-analysis.json under the canonical run.
+
+The166-configuration screen is ACTUALLY running with draft lengths varied on
+reused development inputs, one repetition,8 performance+8 quality cases percell.
+Depth selection/refinement remains; fresh final input/settings freeze and at
+least five matched repetitions follow. No new training or throughput winner
+claim. Source commits1742aa7e/7d09acb1; no push.
 
 ## Follow-up: upstream foundation qualified — November 1, 2026
 

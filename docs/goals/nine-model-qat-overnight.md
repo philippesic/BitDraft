@@ -4062,4 +4062,31 @@ Nextindependentlyanalyzepilot,repairroutinefailures,run166depthscreen,refine
 informativeboundaries,freezeallfinalsource/settingsbeforegeneratingnewheldout
 panels,andrunatleast5matchedfullrequestrepswithtokens/text/stop/qualitychecks.
 
+### Pilot admitted; complete development-depth screen running — November 1 local
+
+Pilot supervisor local-qwen35-matrix-pilot-20261101-01 finishedexit0 atNov2
+00:16:32UTC. Root read passive review thread, reran originalanalyzer and separately
+comparedall256rawresponses token/text/stop/truncation vs same-target references.
+All16configs admitted. Nativequant4group gates1374each×4=5496checks,max_abs0,
+zero flips; actualoriginalnegative687checks53flips rejected. Quality3–5/8 per
+targetsharedidentically acrossarms. Do notsellone-repetitionpilot as finalranking
+or fullnativegraphfidelity. Pilotprocessesabsent and noGPUcomputeapps checked.
+
+ActualnextGPUjob runs/local-qwen35-matrix-screen-20261101-01/state.json launched
+Nov2 00:19:40UTC, localtmux binary-eagle-runtime/session same name. Root soleowner;
+identity.json storesboot/birth/cmdline andTERM-supervisor/group-reap procedure.
+Launcher canonicalrun/run_screen.py with separatelauncher-source receipt. Source,
+target and CUDAlibrary pins unchanged. Globalpause and canonicalrun/STOP checks
+betweenrequests. Nativeworkersdone; no workerGPUauthority.
+
+Screenmanifest screen-freeze.json:166configs covering58groups×fourtargets,
+singledevelopmentrep,8performancerequests+8qualitycases/cell,twoexcludedwarmups.
+Outputs screen-01/. Root must review terminal/failures, exactoutput/quality/
+nativecounters andboundary optima before final selection. select_final.py is
+trackedat7d09acb1; it freezes pertarget/group admitteddevelopmentwinners and
+requires explicitrecordingofexcludedgroups. Do notcreatefinalinputs orfreeze
+rankings yet. Finalrequiresfresh24performance+24qualitycases aftersource/settings
+freeze and5matchedreps. Rootremainsresponsibleforfollow-through, routinefailures,
+storagecleanupandreleaseproof. No newtraining/push/enginechange/migration.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->
