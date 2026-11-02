@@ -44,6 +44,7 @@ def main():
                     "scientific_protocol": original["scientific_protocol"],
                     "precision": original["precision"],
                     "initialization": "exact inherited parent3504 Adam/RNG; original 48 parameters and 13 binary buffers",
+                    "retention_reference": "intersection of captured native accepted prefix and actor-correct reachable prefix; detached actor margin capped at2",
                     "training_scope": "all captured serving TRAIN groups; inherited exposure is not unseen",
                     "first_stage_updates": 1920,
                     "stage_note": "Assistant-selected discriminating checkpoint, not a user time limit or a quick-screen rejection threshold",

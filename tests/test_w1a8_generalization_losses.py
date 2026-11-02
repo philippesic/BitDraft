@@ -38,6 +38,13 @@ class RetentionTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             losses.parent_reference(torch.tensor([[float("nan"), 1.]]), torch.tensor([0]))
 
+    def test_actor_only_success_cannot_become_native_retention_target(self):
+        logits = torch.tensor([[3., 0.], [3., 0.], [3., 0.]])
+        ref = losses.parent_reference(logits, torch.tensor([0, 0, 0]), native_prefix=1)
+        self.assertEqual(ref["protected"], [True, False, False])
+        with self.assertRaises(ValueError):
+            losses.parent_reference(logits, torch.tensor([0, 0, 0]), native_prefix=-1)
+
 
 if __name__ == "__main__":
     unittest.main()

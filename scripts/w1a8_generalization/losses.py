@@ -14,11 +14,15 @@ def margins(logits, labels):
     return correct - wrong
 
 
-def parent_reference(logits, labels, depth=5, cap=2.0):
+def parent_reference(logits, labels, depth=5, cap=2.0, native_prefix=None):
     """Protect only positions reachable before the parent's first wrong token."""
     logits, labels = logits[:depth], labels[:depth].to(logits.device)
     with torch.no_grad():
         reachable = logits.argmax(-1).eq(labels).long().cumprod(0).bool()
+        if native_prefix is not None:
+            if type(native_prefix) is not int or not 0 <= native_prefix <= depth:
+                raise ValueError("valid captured native accepted-prefix count required")
+            reachable &= torch.arange(len(reachable), device=logits.device) < native_prefix
         return {"protected": reachable.cpu().tolist(),
                 "margins": margins(logits, labels).clamp(0, cap).cpu().tolist()}
 

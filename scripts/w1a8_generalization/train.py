@@ -149,7 +149,8 @@ def train(args):
                 guard()
                 batch = tensor_batch(block(window, spec["manifest"]))
                 result = model(batch)
-                refs.append(parent_reference(result.logits, batch.labels, cap=spec["margin_cap"]))
+                refs.append(parent_reference(result.logits, batch.labels, cap=spec["margin_cap"],
+                                             native_prefix=window["accepted_drafts"]))
                 del batch, result
                 if index % 48 == 0:
                     print(json.dumps({"stage": "parent_reference", "windows": index + 1, "total": len(fit)}), flush=True)
@@ -208,7 +209,7 @@ def train(args):
         if teacher is not None or not bool(supported.all()):
             raise ValueError("complete captured-prefix rows required")
         return student.new_zeros(()), {"supported_rows": 7, "normalized_error_sum": 0.}
-    status = "EXPOSURE_COMPLETE"
+    status = "READOUT_COMPLETE" if args.readout_only else "EXPOSURE_COMPLETE"
     data_seconds, step_seconds, diagnostics_seconds = 0., 0., 0.
     started = time.perf_counter()
     pause_file = Path(spec["project"]).parent / ".config/binary-eagle-decoding/gpu-control.json"
