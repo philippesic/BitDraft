@@ -16,6 +16,7 @@ def main():
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument('--project', type=Path, required=True)
     parser.add_argument('--run', type=Path, required=True)
+    parser.add_argument('--reuse-exports', action='store_true', help='Reuse successful owned exports from the preserved preparation attempt')
     args = parser.parse_args()
     project, run = args.project.resolve(), args.run.resolve()
     run.mkdir(exist_ok=True)
@@ -35,8 +36,14 @@ def main():
         assert source.is_file()
         for dtype in ('Q4_0', 'Q4_K_M', 'Q8_0'):
             output = models / f'Qwen3.5-{size}-eagle3-sourcefaithful-{dtype}.gguf'
-            assert not output.exists(), 'preserve prior exports; choose a new run directory'
             command = [str(original / 'build/bin/llama-quantize'), str(source), str(output), dtype, '4']
+            if output.exists():
+                assert args.reuse_exports, 'preserve prior exports; choose a new run directory'
+                previous = read(run / 'quantization-costs-attempt01.json')
+                assert any(row['command'] == command and row['exit_code'] == 0 for row in previous)
+                conversions.append({'command': command, 'exit_code': 0, 'wall_seconds': 0,
+                                    'reused': pin(output), 'original_cost_receipt': str(run / 'quantization-costs-attempt01.json')})
+                continue
             begin = time.perf_counter()
             with (run / f'quantize-{size}-{dtype}.log').open('w') as log:
                 result = subprocess.run(command, cwd=project, env=environment, stdout=log, stderr=subprocess.STDOUT)
@@ -72,7 +79,7 @@ def main():
     assert cuda['sha256'] == old_freeze['candidate_library']['sha256']
     for target in targets.values():
         assert target['sha256'] in {t['sha256'] for t in old_freeze['targets'].values()}
-    sources = [pin(Path(__file__).parent / name) for name in ('run_matrix.py', 'prepare.py', 'generate_inputs.py', 'repair_eagle_export.py', 'analyze.py')]
+    sources = [pin(Path(__file__).parent / name) for name in ('run_matrix.py', 'prepare.py', 'generate_inputs.py', 'repair_eagle_export.py', 'analyze.py', 'run_pilot.py')]
     judge_pin = pin(fix / 'quality_judge.py')
     pins = sources + [judge_pin, pin(project / 'scripts/benchmark_native_eagle.py'), cuda,
                       pin(original / 'build/bin/llama-server'), pin(original / 'build/bin/llama-quantize'),
@@ -83,7 +90,11 @@ def main():
     sys.path.insert(0, str(project / 'third_party/llama.cpp/gguf-py'))
     from gguf import GGUFReader
     inventories = []
+    if args.reuse_exports:
+        inventories = read(run / 'model-inventory.json')
     for path in dict.fromkeys([t['path'] for t in targets.values()] + [arm['draft']['path'] for arm in arms if arm['draft']]):
+        if any(row['path'] == path for row in inventories):
+            continue
         reader = GGUFReader(path)
         inventories.append({'path': path,
                             'metadata': {k: v.contents() for k, v in reader.fields.items() if any(s in k for s in ('architecture', 'target_layers', 'block_size', 'dimension_count', 'file_type'))},
@@ -114,7 +125,7 @@ def main():
             good, bad = json.dumps(case['expected']), '{}'
         elif case['kind'] == 'python':
             if case['function'] == 'first_unique':
-                good = 'def first_unique(s):\n    return next((x for x in s if s.count(x)==1),None)\n'
+                good = 'def first_unique(s):\n    for x in s:\n        if s.count(x)==1:\n            return x\n    return None\n'
             else:
                 good = 'def merge_intervals(intervals):\n    out=[]\n    for a,b in sorted(intervals):\n        if out and a<=out[-1][1]: out[-1][1]=max(out[-1][1],b)\n        else: out.append([a,b])\n    return out\n'
             bad = f"def {case['function']}(x):\n    return None\n"
