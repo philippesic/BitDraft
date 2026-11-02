@@ -13,7 +13,14 @@ def main():
     args = parser.parse_args()
     summary = json.loads(args.summary.read_text())
     rows = list(csv.DictReader(args.matrix.open()))
-    payload = json.dumps({'targets': summary['targets'], 'rows': rows})
+    role_keys = ('family', 'draft_precision', 'draft_depth', 'tokens_per_second', 'arm_id')
+    targets = {target: {role: {key: data[role][key] for key in role_keys}
+                        for role in ('target_only', 'primary_q4_0_eagle', 'fastest_observed')}
+               for target, data in summary['targets'].items()}
+    row_keys = ('target', 'family', 'draft_precision', 'draft_depth', 'tokens_per_second', 'arm_id',
+                'speedup_vs_target_only', 'speedup_vs_primary_q4_0', 'accepted', 'proposed',
+                'quality_passed', 'quality_cases', 'repetition_wall_cv_percent')
+    payload = json.dumps({'targets': targets, 'rows': [{key: row[key] for key in row_keys} for row in rows]}, separators=(',', ':'))
     html = r'''<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>
 html,body{margin:0;background:transparent;color:var(--foreground);font-family:var(--font-sans)}
 h2{font-size:17px;margin:0 0 5px;font-weight:650}.sub,.note{font-size:12px;line-height:1.5;color:var(--muted-foreground)}
