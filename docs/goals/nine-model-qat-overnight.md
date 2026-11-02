@@ -4170,4 +4170,79 @@ experiments with their original denominators. No modern W1A8 matrix cell exists;
 DFlash W1A8 has no production-trained serving endpoint in the audited records.
 No training, port, new target, GPU evaluation or allocation change was started.
 
+### Ordered W1A8 continuation and real-data coverage repair — November 2, 2026
+
+User explicitly authorizes autonomous work in strict prerequisite order:
+generalization -> validated short-training/native predictor -> all backlog
+segments -> survivor combinations -> modern four-target DFlash Q4_K_M
+correctness-mode confirmation. Keep one existing project goal. The current
+thread's native Goal mirrors this continuation, without creating another project
+goal file. No push or new user-owned thread is authorized.
+
+Root reconciled local RTX 5080: no CUDA jobs, no historical supervisor alive,
+rtx5080 resumed; 2080Ti remains paused. Existing dirty/untracked canonical work
+is untouched. Two bounded native workers completed CPU/source audits; one then
+implemented the explicitly partitioned data module/tests. No worker has GPU
+custody. Root owns all local experiment operations.
+
+Concrete defect: old Oct31 selector prioritizes four difficult starts, yielding
+50/960 fit and 8/192 dev full-five successes. New ledger join authenticates
+committed/rejected rows, prompt/continuation labels, native positions/chunks and
+group split. It exactly reproduces old counts, then uniformly samples four
+eligible starts/task and records N/4 round-occupancy weights: 346/960 fit and
+86/192 dev full-five successes from 4,529 eligible starts (1,472 successful).
+Raw full-vocabulary teacher file was previously deleted; the adapter uses only
+retained genuine native features and committed hard labels. Both policy data
+files total about 11.4MB; shared views avoid 6.1/6.9GB prefix duplication.
+
+Implementation integrated as ea567f6f (isolated branch original43c610c3):
+scripts/w1a8_generalization/{data,losses,prepare,train,native}.py plus 11 passing
+CPU tests. Existing source03 model-cache loader authenticates actual parent3504
+all48/13 buffers, inherited Adam/RNG, original sign/norm references and frozen
+native operands. The new training adapter reuses its exact optimizer transaction
+and native exporter, with explicit new loss/source pins. No old packets changed.
+Specs freeze coverage x retention coefficient0/.1, capped parent margins2,
+same 1,920-update first checkpoint and original target/verifier F16 protocol.
+19,200 immutable horizon permits longer continuation. These are assistant
+planning checkpoints, not a human cap or valid early rejection rule.
+
+This first discriminating experiment is historical Qwen3 F16 DSpark W1A8.
+All 240fit/48dev groups have inherited TRAIN ancestry; parent-unseen=false.
+Nothing establishes modern W1A8 or untouched transfer yet. A 48-state stratified
+native development panel and zero-update actor readout precede training. Gate
+uses retained <=5/96 disagreements and <=.1 mean prefix error as a bounded
+diagnostic, with explicit scrutiny when drift changes protected decisions or
+conclusions. Full-request timing and independent answer/token/text/stop checks,
+then new post-selection untouched inputs, remain necessary.
+
+Backlog located exactly: catalog-source08.json under
+runs/unattended-training-preparation-20261028/gpu-resume-20261028/ contains
+98 unique training segments/34 families/51 source receipts (18 control labels,
+80 treatments/continuations). Retained inventory+source index hashes match.
+These are not98 independent mechanisms or scientifically screened options.
+Earlier nominal120sec objective pilots actually stopped72updates/16.52–16.71
+trainersec; no prospective early/long predictor validation was found. Preserve
+all98 IDs in later coverage ledger; later phases have not started.
+
+Actual live GPU job: runs/local-w1a8-parent-readout-20261102-01/state.json,
+started08:50:21UTC. It is zero-update parent restoration/reference/readout, not
+training. Canonical output runs/w1a8-generalization-20261102/parent-readout01.
+Root sole owner. identity.json retains exact boot/start_ticks/cmdline, supervisor
+and child group. tmux socket binary-eagle-runtime, session same as run name.
+Stop: authenticate those identities, TERM supervisor, allow180s graceful group
+cleanup, then verify terminal receipt/group absence/GPU release. Global control
+and new experiment STOP are checked at optimizer boundaries; old stopped
+campaigns remain unchanged. No ownership transfer is implied by this record.
+
+Policy data-policies03/prepared.json, specs01/design.json and native-panel01/
+manifest.json are under the canonical new run. data-policies02 is an owned
+duplicate to remove after exact comparison; empty failed data-policies01 already
+removed. Windows~2GB/ext4~17GB free: Windows inputs stay read-only, new outputs
+bounded in WSL. Preserve paid states and compressed-recoverable experiment
+checkpoints; budget raw panels separately. Report and active status link the
+evidence. Next: inspect zero-update terminal state, execute native raw gate,
+compare actor/native decisions, then train the matched2x2 without stopping at
+preparation. Repeat clean native requests, inspect retention by state/domain,
+continue informative curves, and reserve untouched confirmation until selection.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

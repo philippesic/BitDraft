@@ -1,5 +1,30 @@
 # Current project status
 
+## Active: ordered W1A8 generalization work — November 2, 2026
+
+The user authorized autonomous continuation in this strict order: establish
+generalization, validate a quick training/native-serving predictor against longer
+runs, then screen the full backlog and test survivor combinations. Final modern
+confirmation uses the frozen DFlash Q4_K_M correctness-mode controls across all
+four targets. The existing [goal](goals/nine-model-qat-overnight.md) continues;
+later phases have not started.
+
+The retained serving-data selector preferentially chose difficult starts: only
+50/960 fit and 8/192 development windows were full-five parent successes. A new
+CPU-validated ledger join reproduces those counts and samples serving occupancy
+from the same histories, recovering 346/960 and 86/192 successes. This is data
+preparation, not a trained improvement. An isolated 2x2 coverage/parent-prefix
+retention experiment reuses the authenticated historical DSpark full48 native-A8
+trainer, Adam/RNG and original guards. These inherited Qwen3 F16 groups are not
+untouched or modern Qwen3.5 data. Eleven focused tests pass.
+
+The known backlog is 98 historical training segments in 34 families; preparation
+and adapter availability are not scientific screening. The early/long predictor
+is unvalidated. Current experiment, exact source and live GPU custody are in the
+[generalization report](../experiments/w1a8-generalization-20261102/report.md)
+and the latest goal checkpoint. Root is the sole RTX 5080 operator; paid states
+and existing dirty work are preserved. No push.
+
 ## Selected baseline and W1A8 standing — November 2, 2026
 
 DFlash Q4_K_M is now the user-selected primary baseline for all four modern
