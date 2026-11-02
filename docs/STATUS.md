@@ -1,5 +1,40 @@
 # Current project status
 
+## Active: Qwen3.5 correctness-mode baseline matrix — November 1, 2026
+
+The user selected the existing Qwen3.5 correctness runtime and requested fresh
+4B/9B × Q4_K_M/NVFP4 measurements. vLLM and Llama migrations are not selected.
+Root is sole local RTX5080 operator. Actual supervised admission pilot began
+November2 00:07UTC (November1 local), run
+`runs/local-qwen35-matrix-pilot-20261101-01/state.json`; birth/boot/stop details
+are in its identity.json. Local tmux socket binary-eagle-runtime, same session
+name. GPU control is resumed; no other compute job was present before launch.
+
+Canonical artifacts: `runs/qwen35-correctness-matrix-20261101-01/`. The target
+runtime is the immutable previously validated quant4group CUDA overlay with
+GGML_CUDA_DECODE_CONSISTENT=32, unchanged target weights, F16 target/draft KV,
+context4096, batch/ubatch512, concurrency1, greedy generation and no prompt cache.
+58 baseline groups: per4Btarget16, per9Btarget13. Target-only, embeddedMTP,
+EAGLE3(BF16/Q4_0/Q4_K_M/Q8_0), DFlash(BF16/Q4_K_M/Q8_0),4BDSpark(sameformats),
+and standalone0.8B(BF16/Q4_K_M/Q8_0/NVFP4). No matched9BDSpark identified;
+NVFP4target does not imply an NVFP4sidecar. Q4_0EAGLE remains primary comparison;
+the practical hurdle is the fastest correct deployable baseline pertarget.
+
+Admission audit found two concrete modern EAGLE export defects: fullheadRoPE
+instead of partial.25, and output-layer IDs interpreted as input-layer IDs.
+Preserved originalexports and created separate derivatives with rotary40/64,
+Q/Kpermutation restricted to the rotated slice, and input taps[2,16,29]. CPU
+real-weight Q/K+RoPE checks, exact untouched-weight/header checks and a rejected
+metadata-only negativecontrol pass. This changes drafter artifacts, not target
+arithmetic; full native graph parity is not yet established. Q4_0/Q4_K_M/Q8_0
+were exported from corrected BF16. Historical Qwen3 training is unchanged.
+
+Pilot rechecks target serial/batched/state parity with an executed original
+negativecontrol, then target-only/MTP/correctedEAGLE BF16/Q4_0 on reused development
+inputs. Fullscreen is prepared:166 development depth configurations, not final
+rankings. Fresh final input/settings freeze and at least five matched repetitions
+remain. No new training. Current source commit1742aa7e; no push.
+
 ## Follow-up: upstream foundation qualified — November 1, 2026
 
 The user requests a clean solution without a custom numerical workaround.

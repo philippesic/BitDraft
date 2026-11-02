@@ -1,5 +1,22 @@
 # Decision log
 
+## Selected: retain Qwen3.5 correctness mode and remeasure — November 1, 2026
+
+The user selected the existing Qwen compatibility/correctness route and asked
+for the full 4B/9B × Q4_K_M/NVFP4 baseline matrix. Use the previously validated
+faster grouped-column correctness runtime, not a vLLM or Llama migration. Keep
+target weights and matched references fixed. Q4_0 EAGLE remains the primary
+research comparator; also identify the fastest correct available serving option
+per target, including no speculation, MTP, DFlash, DSpark and standalone draft.
+The older pending engine/model proposals below are not adopted.
+
+Before measuring, source audit found concrete modern EAGLE conversion errors
+(partialRoPE and layer-output/input indexing). Separate corrected derivatives
+and Q4_0/Q4_K_M/Q8_0 exports are necessary to benchmark the released drafter
+fairly. Original artifacts/results remain preserved. CPU transformation checks
+pass; numerical native admission and fresh matched measurements remain required.
+This does not authorize restarting historical training or changing target math.
+
 ## Candidate alternative targets: Llama 3B and 8B — November 1, 2026
 
 The user requests a relatively plug-and-play replacement family near 4B/9B.

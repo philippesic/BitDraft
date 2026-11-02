@@ -4022,4 +4022,44 @@ resources untouched. Keep usefulenv/cache/evidence/models/checkpoints. WSLfree
 not uniquegrowth. Ignored release/storageinventory records exactpaths and ownership.
 No push. Broader historicalgoal remains at its prior checkpoint with no job revived.
 
+### Qwen correctness baseline matrix authorized; pilot running — November 1 local
+
+User selected existingQwen3.5correctnessmode, remeasure4B/9B Q4_K_M/NVFP4.
+NoLlama/vLLMmigration or historicaltrainingrestart. Root owns5080; verified no
+othercomputejob, sufficientheadroom and resumedcontrol. Actualpilot supervisor
+runs/local-qwen35-matrix-pilot-20261101-01/state.json beganNov2 00:07UTC;
+birth/boot/stopidentity.json, localtmux binary-eagle-runtime/session same name.
+AuthenticatebeforeTERM; supervisorreapschildgroup. Globalpause/matrixrunSTOP
+checkedbetweenrequests. NoGPUauthoritydelegated.
+
+Runroot runs/qwen35-correctness-matrix-20261101-01. Immutablepreviousquant4group
+CUDAoverlay, mode32, samefourtargets/F16KV/context4096/batch512/concurrency1.
+58baselinegroups (16per4Btarget,13per9Btarget),166initialdevelopmentdepthconfigs.
+Target-only/MTP;EAGLEBF16/Q4_0/Q4KM/Q8;DFlashBF16/Q4KM/Q8;4BDSparkBF16/Q4KM/Q8;
+standalone0.8BBF16/Q4KM/Q8/NVFP4. No9BDSparkidentified; sidecarNVFP4unavailable.
+PrimaryQ4_0EAGLEplusfastestcorrectservingbaselinearethehurdles, notoldstockrankings.
+
+SourceauditfixedtwoMODERN EAGLEartifactdefects inisolatedderivatives: partialRoPE
+dimension40/64andQ/Kpermutation;trainingoutputtaps[1,15,28]=>nativeinputs[2,16,29].
+ActualtrainingcodeandSGLangindependentlysupportboth. CPUrealweightQK/RoPEerror0,
+bitroundtrips, untouched12tensors/header/paddingchecks pass; knownwrongmetadata-only
+controlrejected. Originalexportsandpartial-onlyderivativespreserved. Receipt
+eagle-sourcefaithful-repair.json; newquantsfromcorrectedBF16. Fullnativegraph
+fidelityunexecuted, no claimsfromCPUalone. HistoricalQwen3weights/datauntouched.
+
+Initialpreparationfailed its own correct-answerfixture (next unavailable in
+frozenjudge); caughtbeforeGPU. Fixedfixture withnormalforloop, judgeunchanged,
+preservedattemptsource/manifest/log/partialinputs andsuccessfulquantizationcosts.
+Secondpreparationcompleted29.24s usingverifiedownedexports. Exportrepaircosts
+27.16s intermediate+26.92s source-aligned; quantizationcosts separatelyretained.
+Failedaggregatepreparationwallnotrecorded; noneis training/evalGPUtime.
+
+Sourceworktree /home/philip/.codex/worktrees/qwen35-matrix-20261101,branch
+research/qwen35-correctness-matrix-20261101 integratedbycherry-pick to1742aa7e.
+Noenginecode/gitlinkchanges/push. Pilotfirstrevalidatesnativegroupedtargetparity
+withoriginalnegativecontrol,then16cells target/MTP/EAGLEBF16/Q4_0 d3×4targets.
+Nextindependentlyanalyzepilot,repairroutinefailures,run166depthscreen,refine
+informativeboundaries,freezeallfinalsource/settingsbeforegeneratingnewheldout
+panels,andrunatleast5matchedfullrequestrepswithtokens/text/stop/qualitychecks.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->
