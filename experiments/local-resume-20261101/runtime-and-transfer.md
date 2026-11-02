@@ -271,3 +271,151 @@ The requested runtime result and historical bottleneck diagnosis are complete
 within these boundaries. Further generalization to longer contexts, concurrency,
 other KV types, stochastic decoding or a new training recipe needs its own
 comparison and fresh confirmation; none is implied by this result.
+
+## Qwen correctness-mode baseline matrix — November 1 follow-up
+
+The user selected the retained Qwen3.5 correctness runtime and requested a fresh
+4B/9B × Q4_K_M/NVFP4 matrix. All 58 rows passed the final bounded correctness
+and quality-preservation checks. DFlash is the fastest observed family on this
+panel; MTP is also in the unresolved leading group for 4B Q4_K_M. These are the
+modern quantized-target hurdles, not results for our trained W1A8 model.
+
+The research comparator remains **Q4_0 EAGLE**. A useful deployment result also
+needs to beat target-only and the fastest correct serving alternative. Ordinary
+EAGLE, MTP, DFlash, DSpark and the standalone draft were all measured where a
+target-matched artifact exists; one historical Qwen3 checkpoint was not reused
+as a substitute for a modern Qwen3.5 model.
+
+| Target | Target-only tok/s | Q4_0 EAGLE tok/s (depth) | Fastest observed tok/s (draft, depth) | Fastest / Q4_0 EAGLE |
+| --- | ---: | ---: | --- | ---: |
+| 4B Q4_K_M | 173.2 | 187.3 (2) | 237.8 — DFlash Q8_0 (3) | 1.269× |
+| 4B NVFP4 | 181.1 | 180.8 (1) | 258.3 — DFlash Q4_K_M (3) | 1.429× |
+| 9B Q4_K_M | 117.8 | 173.1 (3) | 200.8 — DFlash Q4_K_M (3) | 1.160× |
+| 9B NVFP4 | 126.4 | 184.6 (3) | 209.2 — DFlash Q4_K_M (3) | 1.133× |
+
+Rates pool returned output token IDs over full HTTP request wall, including
+prompt processing and generation. They exclude server startup, two warmups per
+cell, metrics reads and judge execution. These are single-request measurements,
+with a 256-token output limit; they are not concurrent serving capacity or
+unbounded natural-answer latency. Five repetitions run each selected row with
+alternating/rotating cell order and reversed prompt order. Targets, F16 target
+and draft KV, context4096, batch/ubatch512, temperature0, seed1234, thinking off
+and disabled prompt caching remain fixed within each comparison. All use the
+same immutable quant4group CUDA library and opt-in mode32; no new engine build
+or target-math change was introduced for this matrix.
+
+### Coverage and selection
+
+Each 4B target has16 rows; each9B target has13. Both sizes include target-only,
+embedded MTP, EAGLE3 BF16/Q4_0/Q4_K_M/Q8_0, DFlash BF16/Q4_K_M/Q8_0 and a
+standalone Qwen3.5-0.8B draft in BF16/Q4_K_M/Q8_0/NVFP4. The4B targets also have
+DSpark BF16/Q4_K_M/Q8_0. No matching9B DSpark was identified. NVFP4 target
+storage does not imply an NVFP4 EAGLE/DFlash/DSpark sidecar. Formats here describe
+weight storage; they do not certify W4A4 arithmetic.
+
+The complete [58-row CSV](../qwen35-correctness-matrix-20261101/matrix.csv) records
+the selected depth, pooled and per-repetition range, variability, counters,
+acceptance and quality for each row. The [audited summary and intervals](../qwen35-correctness-matrix-20261101/summary.json)
+and [recomputation script](../qwen35-correctness-matrix-20261101/report.py) retain
+the numerical evidence. An interactive chart is retained outside Git at
+`runs/qwen35-correctness-matrix-20261101-01/matrix-chart.html`.
+
+Development used166 initial depth configurations and145 refinements on reused
+inputs, in addition to the16-cell admission pilot. Adjacent depths and repeated
+primary/practical controls were checked. Latest repeated settings were ranked
+against their own phase's target-only reference; all development outputs were
+required to equal the original development references. Source/settings froze
+before generating24 new performance prompts and24 independent quality cases.
+The final panel was not used to select or retune depth. Selection is best tested
+and locally checked, not proof of a global optimum across prompts or settings.
+
+### Uncertainty and practical alternatives
+
+For4B Q4_K_M, DFlash Q8_0 at237.8, DFlash Q4_K_M at235.9 and MTP at235.0 tok/s
+are not separated by the paired prompt intervals. Treat them as a competitive
+group. The fastest-versus-MTP ratio is1.012, with conditional95% interval
+0.976–1.051; fastest versus DFlash Q4_K_M is1.008 (0.984–1.031).
+
+For4B NVFP4, DFlash Q4_K_M measures258.3 versus MTP246.7 tok/s:1.047
+(1.004–1.094), a modest panel-specific lead. For9B Q4_K_M and NVFP4, DFlash
+Q4_K_M measures200.8/209.2 versus MTP182.7/189.7: ratios1.099 (1.065–1.135)
+and1.103 (1.065–1.141). These20,000-resample paired prompt-cluster intervals keep
+all five repetitions together. They are conditional comparisons on24 tasks,
+not a multiple-comparison winner guarantee or production confidence interval.
+
+The fastest rows' ratios over primaryQ4_0 have respective intervals
+1.163–1.393,1.325–1.543,1.079–1.253 and1.049–1.229. PrimaryQ4_0 does not show a
+clear target-only speed gain on either4B panel; it does on both9B panels.
+The best observed4B DSpark rows are Q4_K_M at209.3/217.0 tok/s. The standalone
+0.8B family peaks around65.5–72.8 tok/s and is not competitive here. BF16/Q8
+EAGLE and other weight-format rows remain available as diagnostic controls.
+
+### Correctness, quality and export admission
+
+All8,352 final HTTP requests completed across290 cells:6,960 performance and
+1,392 quality requests. All7,776 speculative requests match the same-target,
+same-repetition target-only token IDs, text, stop state and truncation state.
+All5,568 repeated performance comparisons also match their first repetition.
+Counter totals reconcile with raw responses; every speculative row proposes
+tokens, with no fallback-only result. The separate runtime regression gate
+passes5,496 serial/batched/state checks with zero measured drift/flips; the
+executed original-runtime negative control fails with53 flips. This is bounded
+native evidence, not a mathematical guarantee for every input or runtime mode.
+
+Independent target-only quality is12/24,9/24,12/24 and13/24 in target-table order.
+Every speculative quality output and case score matches its target-only
+reference. The judge's24 correct and24 known-wrong controls were executed and
+rechecked. A separate oracle audit verified the mathematical/sort/logic/Python/
+SQL expectations, all1,392 prompt associations and all96 target-only judgements.
+The failures include genuine arithmetic, schema and function errors. For example,
+38×11−364 should be54, but checked targets answer2 or4; a combined308-minute
+duration should be18480 seconds, but checked outputs say15780. Eight parameterized
+templates do not establish broad answer quality or a suitable training teacher.
+
+A post-confirmation diagnostic replays the same rep-zero request sequence with
+the original CUDA library and no speculation, then repeats the24 quality cases.
+Default quality is11/24,9/24,12/24,13/24 versus correctness-mode12/24,9/24,12/24,
+13/24. There are no case-score regressions and one improvement on this panel;
+9/96 quality outputs change token IDs. Poor quality therefore also occurs in
+the default runtime; this check does not uniquely attribute it to model,
+quantization or prompting. It is not a stock-speed comparison or stock-output
+equivalence claim, and it did not change final selections or the frozen judge.
+
+Before measuring modern EAGLE, source audit found two concrete old-export
+defects: full-head RoPE instead of the released partial factor.25, and output-layer
+IDs passed directly as native input-layer IDs. Separate derivatives fix rotary
+dimensions160→40/256→64, permute only the rotated Q/K slice and translate native
+taps[1,15,28]→[2,16,29]. Real-weight CPU Q/K+RoPE checks, exact untouched-tensor/
+header checks and a rejected metadata-only negative control pass. Source training
+and documented SGLang inference independently support the translations. These
+checks do not certify the complete native-versus-training forward graph. Original
+exports, checkpoints and old measurements remain preserved; old poor modern
+EAGLE acceptance cannot be interpreted without acknowledging these defects.
+
+### Costs and release
+
+No new training ran. Final confirmation phase wall is16,539.82 seconds (4.59h):
+14,044.55 performance-request seconds,621.54 quality-request seconds,535.81 server
+initialization,1,104.14 excluded warmups,16.70 preflight and217.08 remaining
+judge/harness/unitemized overhead. GPU kernel time was not separately measured.
+
+The inclusive refinement/confirmation job is18,972.99 supervised seconds;
+its constituent phase walls must not be added to that number. Summing the four
+nonoverlapping pilot, screen, refinement/confirmation and default-quality
+supervisor intervals gives22,962.72 seconds (6.38h). The default-quality diagnostic
+itself is271.68 phase seconds. Native-regression wall is307.46 seconds, already
+inside the pilot supervisor. Recorded CPU export preparation is27.16 seconds
+for the intermediate check plus26.92 for corrected derivatives; quantization
+is12.43 seconds and successful preparation retry29.24 seconds. The failed
+preparation's complete wall was not recorded. Prep is separate from training
+and model evaluation; a precise all-in preparation total is unavailable.
+
+All48 frozen pins, including25 complete GGUF files (33.02GB total pinned bytes),
+were rehashed after the run. Every290-cell CUDA loader map matches the immutable
+runtime. Raw source, inputs, model lineage, export checks, quality diagnostic and
+release/retention evidence are under
+`runs/qwen35-correctness-matrix-20261101-01/`. The [cost ledger](../qwen35-correctness-matrix-20261101/cost-ledger.json)
+separates overlapping and nonoverlapping totals. Final GPU release and cleanup
+are recorded in that run's `release-and-storage.json`. This completes the
+requested baseline remeasurement; it does not restart the historical training
+campaign, establish a W1A8 win or certify other contexts, sampling or concurrency.
