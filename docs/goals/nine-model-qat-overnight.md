@@ -4089,4 +4089,39 @@ rankings yet. Finalrequiresfresh24performance+24qualitycases aftersource/setting
 freeze and5matchedreps. Rootremainsresponsibleforfollow-through, routinefailures,
 storagecleanupandreleaseproof. No newtraining/push/enginechange/migration.
 
+### All166developmentconfigs admitted; refinement and held-out job launched
+
+Screen completedcleanly3156.83s/2656requests,166/166admitted,58groupscomplete.
+Rootreadreviewthreadandindependentlycomparedallrawtoken/text/stop/truncation
+signaturesagainstoriginaltargetrefs. Noidentity/counterfailures; quality3–5/8
+sharedper-target, not speculative drift. Allcell/supervisorprocessesabsent,
+compute-appsempty, sameboot andresumedcontrolcheckedbeforefreshlaunch.
+Screen measured1684.85s performance,596.56s quality,307.15s startup,443.33s
+warmup,20.09s preflight;104.85s balanceharness/unitemized. No training.
+
+Actualcurrentjob runs/local-qwen35-matrix-confirmation-20261101-01/state.json
+startedNov2 01:25:58UTC. SoleGPUownerroot. Localtmuxsocketbinary-eagle-runtime,
+session local-qwen35-matrix-confirmation-20261101-01. Identity.json storesexact
+boot/birth/command andstopprocedure: authenticate,TERMsupervisor,reapchildgroup.
+Canonicalrun/STOP or sharedGPUcontrolchecksbetweenrequests. NoGPUhandoff.
+
+Reviewedfinitecontroller experiments/qwen35-correctness-matrix-20261101/
+refine_and_confirm.py committedd8c642a9 andintegratedbeforelaunch. CPUrealdata
+merge166configs/58groups passed; independentnativeworkerreviewfoundno blocker.
+Firstrefinement145cells: depth2/4all54groups, blockdepth1, one selected7->15,
+repeatedprimaryEAGLEQ4_0/MTP/bestDFlash/DSpark plusall4targetcontrols. Further
+missingimmediateneighbors onlyforprimary orpathsalreadybeatingtargetonly;
+trainedblockbounds15/16 andactualwidth32runtimedraftbound31. Noarbitraryhours
+oriterationcap. Allnewphaseoutputs MUSTmatchoriginaldevelopmentreferences.
+Repeatedsettinglatestobservation; choosebestspeedupvsmatchedphase-targetonly,
+notcross-phaseabsolutewall. Thisisbesttested/local, notglobaloptimalityproof.
+
+Onanydevelopmentadmissionfailure, preservesanalysis/error andstops beforefresh
+inputs. Onsuccess, freezes58groups, thenfresh24performance/24qualitycases and
+5matchedreps execute viaunchangedrun_matrix.py. Finalanalysis andcampaignreceipt
+areexecutionrecords;rootmustreviewallcorrectness/quality/costs/variabilityand
+release beforedeclaringcomplete. Currentstage refinement-01/, futurefinal-01/.
+Completionchannel qwen35-matrix-confirmation-20261101-complete. Models,teacher,
+runtime,weights,targetprotocolunchanged; no training, gitlinkchange or push.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

@@ -4,11 +4,11 @@
 
 The user selected the existing Qwen3.5 correctness runtime and requested fresh
 4B/9B × Q4_K_M/NVFP4 measurements. vLLM and Llama migrations are not selected.
-Root is sole local RTX5080 operator. Actual supervised development-depth screen
-began November2 00:19UTC (November1 local), run
-`runs/local-qwen35-matrix-screen-20261101-01/state.json`; birth/boot/stop details
+Root is sole local RTX5080 operator. Actual supervised refinement/confirmation
+job began November2 01:25UTC (November1 local), run
+`runs/local-qwen35-matrix-confirmation-20261101-01/state.json`; birth/boot/stop details
 are in its identity.json. Local tmux socket binary-eagle-runtime, same session
-name. GPU control is resumed; pilot release and empty compute-app list were
+name. GPU control is resumed; screen release and empty compute-app list were
 independently checked before this launch.
 
 Canonical artifacts: `runs/qwen35-correctness-matrix-20261101-01/`. The target
@@ -39,11 +39,26 @@ unchanged by speculation. This is development admission, not final ranking or
 full native-versus-training graph parity. Raw/analysis: pilot-01/ and
 root-pilot-analysis.json under the canonical run.
 
-The166-configuration screen is ACTUALLY running with draft lengths varied on
-reused development inputs, one repetition,8 performance+8 quality cases percell.
-Depth selection/refinement remains; fresh final input/settings freeze and at
-least five matched repetitions follow. No new training or throughput winner
-claim. Source commits1742aa7e/7d09acb1; no push.
+The166-configuration screen completed all2656requests with zero identity/counter
+mismatches; all58groups have admitted configurations. Root independently checked
+every rawresponse against its target-only reference. Sharedquality3–5/8 persists.
+Screenphase3156.83s:1684.85performance,596.56quality,307.15startup,443.33warmups,
+20.09preflight; remaining104.85s harness/unitemizedoverhead. No training.
+
+The ACTUAL running job tests adjacent depths2/4 in all54speculative groups,
+depth1 for blockmodels, the one selected depth7 boundary at15, and repeats
+primary/practicalcontrols (145initialrefinementcells). It then checks missing
+immediate neighbors for primaryQ4_0EAGLE and target-beatingpaths within actual
+trained/runtimewidthlimits. Below-target secondarypaths retain besttested
+settings. No globaloptimality claim. Selection uses latest repeatedsettings and
+matchedphase-target speedup; every output acrossdevelopmentphases must equal
+the originalreference. CPUreal-data checks and independent source review passed.
+
+Only after development admission, the job freezes58settings, generates fresh
+24performance/24qualitycases, and runs5matchedrepetitions. Any newdevelopment
+admission failure stops before held-out generation. Finalexecutioncompletion is
+not matrixacceptance: root must audit correctness, quality, variability, costs
+and release. Source d8c642a9; no runtime/model changes, training or push.
 
 ## Follow-up: upstream foundation qualified — November 1, 2026
 
