@@ -4245,4 +4245,68 @@ compare actor/native decisions, then train the matched2x2 without stopping at
 preparation. Repeat clean native requests, inspect retention by state/domain,
 continue informative curves, and reserve untouched confirmation until selection.
 
+### Native gate passed; actual matched control training — November 2 follow-up
+
+Zero-update parent readout completed0updates/0TRAINsec. Its separate phases:
+dataauth11.50s, parentrestore67.83s, parentreference91.30s, actorreadouts22.76/
+20.35s. Supervisor local-w1a8-parent-readout-20261102-01 exited0. Next native
+supervisor local-w1a8-parent-native-20261102-01 exited0, all48 raw arrays were
+recomputed, gate47/48prefixagreement, meanerror.08333 <=.1. Root authenticated
+both recorded boot/birth identities absent and noCUDAapps before training.
+
+Single discrepant reasoningstate actor5/native1 has nativefirsterrormargin
+-.0188465 then autoregressive predecessor cascade. Avoid reinforcing actor-only
+success: beforeanyupdate, lossreference now intersects actor-correct reachable
+prefix with actualcaptured nativeaccepted prefix. Tests explicitly reject
+protection of actor-only tail; no attempt at bit-exactbackend rewrite. Source
+032ca648 (branch6ade0f46), new four-arm specs02 retain same group/exposure/native
+contracts. Old specs01/readout sources remain recoverable at ea567f6f; no paid
+training was performed under the superseded reference policy. Numeric receipt
+runs/w1a8-generalization-20261102/numeric-policy01.json.
+
+ACTUAL currentGPUowner=root/currentthread; job
+runs/local-w1a8-legacy-control-20261102-01/{state,identity}.json, output
+runs/w1a8-generalization-20261102/legacy-control01; started under032ca648/specs02
+legacy_errors_control.json, target1920localupdates. Already1008updates/
+223.19trainerseconds at latest sampled milestone; do not present this sample as
+terminal. Per-update log, readouts96/480, eventual finish/checkpoint/export are
+canonical. Original sign/norm guards healthy. Parent restoration/reference are
+preparation, optimizer updates are real. No trained serving win yet.
+
+Root custody/stop: tmuxsocketbinary-eagle-runtime/session
+local-w1a8-legacy-control-20261102-01. Authenticate identity.json boot/startticks/
+cmdline, TERM supervisor, allow180s checkpoint/groupgrace, verifyterminal/groups
+andGPUrelease. Global GPUcontrol/newexperimentSTOP checkedbetweenupdates. No
+GPUworker/handoff. Do not interrupt healthy training for context rotation.
+
+Independent sourceworker implemented requests.py/tests, integrated62f6cc48
+(branch94755753): exact evaluator/config pins; preserve q4_k_m,parent3504,
+previous_eal_best,target_only; require1920 completedupdates and authentic
+checkpoint/spec/auditednativeexport; fivealternatingreps/24developmentrequests;
+independentlyjoin rawIDs/textSHA/finishreason/truncated/stoptype/stoppingword
+acrossarms/reps.20focusedtests pass, realretainedcontrol/runtimepinsauthenticated.
+No source/data/loss file pinned to running training changed. Newwrapperfiles
+are independent of frozen training sourceclosure.
+
+Next actions after currenttraining: read finish/status0 and authenticate process
+release; evaluate model.gguf on common native-panel01 (omit--actor for legacy
+policy because its actorreadout has different developmentwindows); compare
+nativeprefix/successretention vs parent-native01. Prepare/run repeated clean
+development requests via requests.py with actualfinish, preserving fourcontrols.
+Only then losslesslycompress paidcheckpoint with streamroundtripSHA proof if
+space requires; preserve original rawSHA/recoveryreceipt beforeunlinking owned
+uncompressedcopy. Wrapper requires rawcheckpoint while preparing/running, so
+compress after its servingevaluation. Run eacharm with its matchedcontrol
+repetitions beforecompression; compare normalized samephasecontrols, not raw
+crossphase rates. Continue otherthree frozen1920arms and informative longer
+curves. Do not shortenallocations or call preparedadapter/dataset a success.
+
+New worker generalization_audit has read-only bounded modernport feasibility
+assignment, noedits/GPU; final responsepending. Workflowworker isdone, noGPU.
+Sourceworktree /home/philip/.codex/worktrees/w1a8-generalization-20261102 branch
+research/w1a8-generalization-20261102 isclean/allpatchesintegrated, removable
+aftercheckingitsagents/refs; canonicaltrainingdoesnotdependonit. Existingroot
+dirtyfilesprotected. WSL~15GBfreebeforepaidcheckpoint, Windows~2GB; use only
+ownedWSLspace, monitoractualcheckpoint/exportcosts. No push.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

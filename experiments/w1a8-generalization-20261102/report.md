@@ -22,7 +22,8 @@ The 2x2 experiment crosses legacy difficult-state sampling versus serving-histor
 sampling/occupancy weighting with existing smooth accepted-prefix loss versus
 that same loss plus a parent-prefix margin penalty. This separates the coverage
 package from retention at matched initialization, optimizer exposure and group
-splits. The penalty protects only positions preceding the parent's first error;
+splits. The penalty protects only positions preceding the parent's first error
+in both the captured native decisions and the training actor;
 it does not preserve wrong predictions or alter the native verifier. Parent
 margins are capped at two logits, and the coefficient is fixed before training.
 
@@ -45,7 +46,7 @@ remain intact. No new modern W1A8 endpoint exists yet.
 
 `scripts/w1a8_generalization/` provides the source-pinned dataset adapter,
 retention loss, experiment freeze, reused training transaction and bounded native
-decision gate. Eleven CPU tests cover rejected speculative rows, corrupt history,
+decision gate. Twenty CPU tests cover rejected speculative rows, corrupt history,
 original-group leakage, terminal bonuses, exact shared-feature materialization,
 and the retention gradient. The real-data join passed. Shared views avoid
 approximately 6.1/6.9 GB of feature duplication for the two policies. This is
@@ -78,7 +79,7 @@ failures from inconclusive/slow-learning candidates and record actual costs.
 
 Prepared policy manifests, coverage, source-pinned four-arm specs and the
 48-state native development panel are under `runs/w1a8-generalization-20261102/`.
-Root alone owns the RTX 5080. The first supervised job is
+Root alone owns the RTX 5080. The first supervised job was
 `runs/local-w1a8-parent-readout-20261102-01/`: authentic parent restore and
 zero-update actor readout, not optimizer training. `state.json` and
 `identity.json` retain boot/birth/command identity and the exact stop procedure.
@@ -91,3 +92,22 @@ paid checkpoints; verify recoverability before removing owned duplicate data or
 raw arrays. Source commit and live transitions are recorded in the goal file.
 Preparation, parent restore/reference, optimizer time, diagnostics, export and
 native evaluation are accounted separately. No push or new user-owned thread.
+
+The parent readout and native replay completed exit zero, with authenticated
+owned processes absent before training. All native raw arrays were independently
+recomputed. Prefix decisions agree on 47/48 states; the single reasoning-state
+disagreement is actor5 versus native1. Native's first-error margin is -0.01885,
+followed by free-running predecessor differences. The practical gate passes
+(mean prefix error0.0833), but this is material to retention: before any optimizer
+update the reference was restricted to the intersection of native and actor
+successes. `numeric-policy01.json` preserves the discrepancy and mitigation.
+
+Final training source032ca648/specs02 keeps the complete matched2x2 frozen. The
+first actual control, `local-w1a8-legacy-control-20261102-01`, is training toward
+1,920 updates, with durable per-update receipts and original guards. Its raw
+checkpoint/export and native serving outcome are pending. The source-pinned
+development request adapter62f6cc48 reuses the unchanged evaluator with four
+controls (target-only, same-family Q4_K_M, parent3504, prior bestEAL), five
+alternating repetitions and an independent raw token/text/stopping audit. These
+are reused development inputs, not final untouched examples. Future stages stay
+gated on genuine generalization evidence.

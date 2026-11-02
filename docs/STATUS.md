@@ -16,7 +16,9 @@ from the same histories, recovering 346/960 and 86/192 successes. This is data
 preparation, not a trained improvement. An isolated 2x2 coverage/parent-prefix
 retention experiment reuses the authenticated historical DSpark full48 native-A8
 trainer, Adam/RNG and original guards. These inherited Qwen3 F16 groups are not
-untouched or modern Qwen3.5 data. Eleven focused tests pass.
+untouched or modern Qwen3.5 data. Twenty focused tests pass. The first matched
+control is performing actual optimizer updates after a 48-state native gate;
+no trained serving improvement is established yet.
 
 The known backlog is 98 historical training segments in 34 families; preparation
 and adapter availability are not scientific screening. The early/long predictor
