@@ -1,64 +1,47 @@
 # Current project status
 
-## Active: Qwen3.5 correctness-mode baseline matrix — November 1, 2026
+## Completed: Qwen3.5 correctness-mode baseline matrix — November 1, 2026
 
-The user selected the existing Qwen3.5 correctness runtime and requested fresh
-4B/9B × Q4_K_M/NVFP4 measurements. vLLM and Llama migrations are not selected.
-Root is sole local RTX5080 operator. Actual supervised refinement/confirmation
-job began November2 01:25UTC (November1 local), run
-`runs/local-qwen35-matrix-confirmation-20261101-01/state.json`; birth/boot/stop details
-are in its identity.json. Local tmux socket binary-eagle-runtime, same session
-name. GPU control is resumed; screen release and empty compute-app list were
-independently checked before this launch.
+The requested 4B/9B × Q4_K_M/NVFP4 remeasurement is complete on the local RTX
+5080, using the existing immutable quant4group correctness runtime (mode32).
+All 58 selected configurations completed five held-out repetitions: 290 cells,
+8,352 measured HTTP requests. Root audited all raw responses, all 48 frozen
+source/model pins (including full hashes of 25 GGUFs), and every cell's CUDA
+library map. All 7,776 speculative requests exactly match their target-only
+control's tokens, text and stopping state; repeated outputs also match.
 
-Canonical artifacts: `runs/qwen35-correctness-matrix-20261101-01/`. The target
-runtime is the immutable previously validated quant4group CUDA overlay with
-GGML_CUDA_DECODE_CONSISTENT=32, unchanged target weights, F16 target/draft KV,
-context4096, batch/ubatch512, concurrency1, greedy generation and no prompt cache.
-58 baseline groups: per4Btarget16, per9Btarget13. Target-only, embeddedMTP,
-EAGLE3(BF16/Q4_0/Q4_K_M/Q8_0), DFlash(BF16/Q4_K_M/Q8_0),4BDSpark(sameformats),
-and standalone0.8B(BF16/Q4_K_M/Q8_0/NVFP4). No matched9BDSpark identified;
-NVFP4target does not imply an NVFP4sidecar. Q4_0EAGLE remains primary comparison;
-the practical hurdle is the fastest correct deployable baseline pertarget.
+Q4_0 EAGLE remains the primary research comparator. Its held-out rates are
+187.3/180.8/173.1/184.6 tok/s for 4B Q4_K_M, 4B NVFP4, 9B Q4_K_M and 9B NVFP4.
+The fastest observed rates are 237.8/258.3/200.8/209.2 tok/s, from DFlash Q8_0
+for the first target and DFlash Q4_K_M for the other three. On 4B Q4_K_M,
+DFlash Q8_0, DFlash Q4_K_M (235.9) and embedded MTP (235.0) are statistically
+unresolved on this panel. A deployment win must also beat these alternatives
+and target-only; this is not a W1A8 result. See the
+[full 58-row matrix](../experiments/qwen35-correctness-matrix-20261101/matrix.csv)
+and [report](../experiments/local-resume-20261101/runtime-and-transfer.md#qwen-correctness-mode-baseline-matrix--november-1-follow-up).
 
-Admission audit found two concrete modern EAGLE export defects: fullheadRoPE
-instead of partial.25, and output-layer IDs interpreted as input-layer IDs.
-Preserved originalexports and created separate derivatives with rotary40/64,
-Q/Kpermutation restricted to the rotated slice, and input taps[2,16,29]. CPU
-real-weight Q/K+RoPE checks, exact untouched-weight/header checks and a rejected
-metadata-only negativecontrol pass. This changes drafter artifacts, not target
-arithmetic; full native graph parity is not yet established. Q4_0/Q4_K_M/Q8_0
-were exported from corrected BF16. Historical Qwen3 training is unchanged.
+Independent quality scores are 12/24, 9/24, 12/24 and 13/24, identical across
+speculative arms and controls. An independent oracle audit confirms genuine
+answer errors. A post-confirmation default-runtime replay scores 11/24, 9/24,
+12/24 and 13/24, with no case-score regressions from correctness mode on this
+panel. Exact parity does not establish strong answer quality. Original and
+correctness-mode outputs differ, so this is not stock-output equivalence.
 
-Pilot finished exit0 at00:16UTC. All four target serial/batched/state gates pass
-1374 checks each with zero measured drift/flips; the executed original negative
-control fails687 checks with53 flips. All16 pilot configurations pass exact
-token/text/stop checks on8 performance+8 quality cases each (256 requests total).
-Independent root recomputation agrees; shared target quality scores3–5/8 are
-unchanged by speculation. This is development admission, not final ranking or
-full native-versus-training graph parity. Raw/analysis: pilot-01/ and
-root-pilot-analysis.json under the canonical run.
+Modern EAGLE was measured using separately corrected exports: partial RoPE,
+Q/K permutation restricted to the rotated slice, and native input taps
+[2,16,29]. Source/real-weight CPU checks pass; complete native-versus-training
+forward-graph fidelity remains unproven. Original exports and trained checkpoints
+are preserved. Historical Qwen3 F16 training is unchanged.
 
-The166-configuration screen completed all2656requests with zero identity/counter
-mismatches; all58groups have admitted configurations. Root independently checked
-every rawresponse against its target-only reference. Sharedquality3–5/8 persists.
-Screenphase3156.83s:1684.85performance,596.56quality,307.15startup,443.33warmups,
-20.09preflight; remaining104.85s harness/unitemizedoverhead. No training.
-
-The ACTUAL running job tests adjacent depths2/4 in all54speculative groups,
-depth1 for blockmodels, the one selected depth7 boundary at15, and repeats
-primary/practicalcontrols (145initialrefinementcells). It then checks missing
-immediate neighbors for primaryQ4_0EAGLE and target-beatingpaths within actual
-trained/runtimewidthlimits. Below-target secondarypaths retain besttested
-settings. No globaloptimality claim. Selection uses latest repeatedsettings and
-matchedphase-target speedup; every output acrossdevelopmentphases must equal
-the originalreference. CPUreal-data checks and independent source review passed.
-
-Only after development admission, the job freezes58settings, generates fresh
-24performance/24qualitycases, and runs5matchedrepetitions. Any newdevelopment
-admission failure stops before held-out generation. Finalexecutioncompletion is
-not matrixacceptance: root must audit correctness, quality, variability, costs
-and release. Source d8c642a9; no runtime/model changes, training or push.
+Training cost is zero. Nonoverlapping supervised experiment intervals total
+6.38 hours, including 4.59 hours for held-out confirmation. Preparation and CPU
+audits are separate; the failed preparation's aggregate wall was not recorded.
+The [cost ledger](../experiments/qwen35-correctness-matrix-20261101/cost-ledger.json)
+records components and overlap. All four supervisors exited zero; root verified
+same-boot process-group absence and no CUDA compute applications. Release and
+bounded cleanup evidence: `runs/qwen35-correctness-matrix-20261101-01/release-and-storage.json`.
+No further job is running, no new training or migration was selected, and no
+push occurred. The broader nine-model history remains open in its existing goal.
 
 ## Follow-up: upstream foundation qualified — November 1, 2026
 

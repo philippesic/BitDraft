@@ -4124,4 +4124,38 @@ release beforedeclaringcomplete. Currentstage refinement-01/, futurefinal-01/.
 Completionchannel qwen35-matrix-confirmation-20261101-complete. Models,teacher,
 runtime,weights,targetprotocolunchanged; no training, gitlinkchange or push.
 
+### Correctness-mode baseline matrix completed — November 1 local
+
+All 58 final configurations completed 290 cells / five repetitions, with 8,352
+HTTP requests and 7,776 exact speculative-versus-target comparisons. Root
+recomputed raw totals, verified all 48 frozen pins including 25 full GGUF hashes,
+and checked all CUDA process maps. No output, counter or repeat mismatch was
+found. Final inputs were generated after source/settings freeze; no retuning.
+
+Primary Q4_0 EAGLE rates: 187.3 / 180.8 / 173.1 / 184.6 tok/s in target order
+4B Q4_K_M / 4B NVFP4 / 9B Q4_K_M / 9B NVFP4. Practical leading rates:
+237.8 / 258.3 / 200.8 / 209.2. DFlash Q8_0 is nominally fastest on the first;
+DFlash Q4_K_M on the other three. The first target's DFlash Q8_0, DFlash Q4_K_M
+and MTP are unresolved with paired prompt intervals. These alternatives,
+target-only and Q4_0 EAGLE are the matched hurdles. No W1A8 candidate was
+trained or measured in this matrix.
+
+Quality is 12/24 / 9/24 / 12/24 / 13/24, shared by every same-target arm.
+Independent oracle/prompt-association audit confirms genuine failures. Default
+runtime post-confirmation replay scores 11/24 / 9/24 / 12/24 / 13/24, with no
+case-score regression from correctness mode on this panel. It changes 9/96
+quality outputs and does not establish stock equivalence or broad teacher quality.
+Full report, 58 CSV rows, intervals and cost ledger are linked from STATUS.
+Corrected EAGLE exports fix concrete RoPE/tap defects; complete native drafter
+graph fidelity remains unproven. Original exports/checkpoints are preserved;
+unused partial-only intermediates are covered by the cleanup receipt.
+
+All four supervisors finished exit zero. Final release/storage proof is under
+the canonical run; no GPU job remains. Nonoverlapping supervised wall totals
+22,962.72 seconds, including 16,539.82 final-phase seconds; training zero.
+Preparation/CPU audit components are separate and failed-prep aggregate unknown.
+No engine change, parent gitlink change, push, historical training restart or
+major teacher decision occurred. This completes the user's remeasurement,
+not every historical nine-model objective.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

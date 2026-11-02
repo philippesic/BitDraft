@@ -14,7 +14,12 @@ Before measuring, source audit found concrete modern EAGLE conversion errors
 (partialRoPE and layer-output/input indexing). Separate corrected derivatives
 and Q4_0/Q4_K_M/Q8_0 exports are necessary to benchmark the released drafter
 fairly. Original artifacts/results remain preserved. CPU transformation checks
-pass; numerical native admission and fresh matched measurements remain required.
+pass; subsequent native admission and held-out measurements completed successfully.
+All speculative requests in the final 58-row matrix match target-only exactly.
+Q4_0 EAGLE remains the research control; deployment must also beat target-only
+and the DFlash/MTP leaders. The 4B Q4_K_M leaders are unresolved within paired
+prompt uncertainty. Quality remains limited and full native drafter graph
+fidelity is unproven. See STATUS and its linked final report.
 This does not authorize restarting historical training or changing target math.
 
 ## Candidate alternative targets: Llama 3B and 8B — November 1, 2026
