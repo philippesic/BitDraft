@@ -2,43 +2,53 @@
 
 ## Active: ordered W1A8 generalization work — November 3, 2026
 
-Phase 1 remains active. Modern 4B Q4_K_M W1A8 now has a measured development-set
-full-request gain after 480 updates: CE +3.98% and retention +4.25% over the
-unchanged initializer, across 300 requests/five repetitions with exact token,
-text and stopping parity. The retention candidate is still only 58.7% of matched
-DFlash Q4_K_M throughput. Untouched generalization and independent quality remain
-unconfirmed. Historical F16 results stay separate.
+Phase 1 remains incomplete. Actual-serving-state W1A8 training produces repeatable
+speed gains on reused development examples, but no untouched correctness,
+independent answer-quality or fresh throughput result exists yet. Phase 2's
+short-to-long predictor and Phase 3's backlog screen remain gated.
 
-Actual-serving data now supplies 2,138 source-indexed windows from 24 fit and
-12 development groups. Matched CE/retention training and a stronger-retention
-arm reach 1,920 updates with verified compact checkpoints/native exports.
-Model-side prefix totals improve, but 35–40 previously successful native/actor
-prefix tokens regress; preservation is unresolved. The longer checkpoints have
-not had repeated native timing. Two isolated runtime fixes address overwritten
-bridge features and unnecessary zero-output head work; smoke checks pass, with
-no repeated timing claim. The original runtime/data lineage is preserved.
+The matched quiet-logging panel completes 480 measured requests across eight
+arms/five repetitions with exact token/text/stop/repeat parity. Balanced protected
+replay improves full-request throughput 13.44% over unchanged initialization
+(95% interval 10.01–17.80%), but reaches only 63.89% of matched DFlash Q4_K_M.
+Head-only training is weak; head-skip and logging changes show no reliable gain.
 
-Fresh confirmation tooling is implemented and synthetic-tested, but no real
-untouched cases have been generated. The quick-screen predictor is unvalidated;
-the 98-ID/34-family backlog has not been screened. Combinations and frozen DFlash
-confirmation across all four modern targets remain later gates. The two historical
-full-state retention arms remain unrun pending storage; compact work can proceed.
+Further 3,840-update continuations improve aggregate model scores but still damage
+previously successful drafts. Native fixed-history replay confirms this is a real
+model tradeoff. Restoring the original output head and retaining one quarter of
+the trained body-scale change preserves 548/549 original native successes: all
+356 fit successes and 192/193 development successes. This experimental candidate
+is 5.01% faster than its matched initializer (95% interval 3.43–7.22%), at
+116.606 versus 111.039 tokens/s; matched DFlash is 196.722 and target-only 154.748.
+These are reused development results, with exact full-response parity, not fresh
+confirmation or a baseline win. One old draft regression remains explicit.
 
-The longer-checkpoint eight-arm panel now completes480measured/80warmup requests,
-all exactly correct over five repetitions. Original-runtime retention at1920
-improves13.20% over matched initialization (95%interval8.44–18.98%) but remains
-62.71% of DFlash. Head-skip speed effects are inconclusive; stronger retention
-has indistinguishable native speed. All owned native servers are reaped and GPU
-compute is released. Next: deterministic protected fit replay and head-only
-optimizer scope, with unchanged controls and development readout only. Fresh
-serving confirmation adapter is in progress; no untouched case is exposed.
-Paid states/source worktree remain retained, some additions await integration.
-No push; storage remains about2.1GiB WSL/2.4GiB C:.
+The latest wrapper stopped on its storage guard after all five primary-arm
+repetitions completed: 240 primary and 48 partial Q4 diagnostic measured requests
+survive. Primary comparisons were independently audited; the diagnostic's fifth
+cell is incomplete. No completed primary comparison was discarded or rerun.
 
-[Latest detailed checkpoint](../experiments/w1a8-modern-native-20261103/progress.md)
-contains results, limitations, failures, costs, evidence and next actions. Continue
-the existing [goal](goals/nine-model-qat-overnight.md); no new goal or completion
-is declared. The canceled audit worker has no recovered final report.
+Candidate/model/runtime selection was frozen before new-input generation. The
+fresh generator and serving adapter pass synthetic/CPU admission and cleanup
+checks, but real fresh cases have not been generated. The intended next gate is
+24 new performance and 24 independent quality cases, with five timing repetitions
+and unchanged target/DFlash/initializer/Q4 controls. The 98-ID/34-family backlog
+is inventoried, not screened; combinations and final four-target confirmation
+remain later work. Historical Qwen3 F16 results stay separate.
+
+After the completed user check-in, the goal continuation resumes. Root is sole
+GPU owner for `local-w1a8-modern-fresh-quarter-20261103-01`, running the frozen
+five-arm confirmation. Its identity.json records live supervisor/child identities
+and stop procedure. A timing quiet window is active. All 48 newly generated cases
+pass exact/normalized overlap and oracle admission, and native context geometry;
+no completed fresh result is claimed. All paid checkpoints and source survive;
+three older exports have proven compact archives/restores. A fourth older export
+was byte-verified and moved to C: with its original path preserved as a symlink.
+No push or completion declared.
+
+[Detailed progress and evidence](../experiments/w1a8-modern-native-20261103/progress.md)
+records the completed panels, limitations, failures, preservation tests and next
+actions. Continue the existing [goal](goals/nine-model-qat-overnight.md).
 
 ## Selected baseline and W1A8 standing — November 2, 2026
 

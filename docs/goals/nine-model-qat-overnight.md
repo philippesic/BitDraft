@@ -4889,4 +4889,73 @@ optimizer experiments are next; no dev labels for training. Fresh native adapter
 is being implemented, generator review fixes pass9synthetic tests; no real fresh
 examples generated. Phase1 stays active; later ordered phases remain gated.
 
+## Protected replay trained; matched quiet native panel active — November 3
+
+Separate trainer/protected replay triple completes1920updates each; outputs are
+under `/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-modern-protected-20261103-01`.
+Exact allCE scale+optimizer equality against earlier CE1920 passes. Balanced replay
+all-scales improves fit prefix970→984 and reduces fit losses25→4; development
+398→410, losses40→27. Head-only development200/lost33, weaker than all-scales;
+no slow-learner rejection or untouched claim. Three native qualification cells
+pass42fullresponses and nine-loader receipts, accepting305/315/202draft tokens on
+the12development prompts; these single passes are not timing claims.
+
+Independent source review found W1A8-only trace logging in prior timing panels.
+An eight-arm quiet comparison is now live, root soleGPUowner. Target/DFlash remain
+frozen defaultINFO3; W1A8 quiet3 is separately qualified with source/model/runtime
+bound loader receipts. Include initialtrace4/quiet3 pair, originalret1920quiet,
+CE1920quiet, balanced1920quiet and head1920quiet. No headskip/bridgefix combined.
+Run `local-w1a8-modern-balanced-quiet-20261103-01`, localtmuxsocket
+`binary-eagle-runtime`; its `identity.json` authenticates boot/birth/cmdline and
+stop procedure. Quiet window forbids tests/builds/compression/large hashes.
+
+Fresh runner fixes now include strict finished-response/token/cache accounting,
+valid draft counters, true6round startup/warmup accounting, and interruptible
+blocked HTTP with protected owned-server reaping. Fourteen CPUtests including
+real-generator synthetic admission and a real blocked localCPUserver cleanup
+pass; no actual fresh cohort is generated. Frozen selection/fresh confirmation
+remain next after preservation and matched-serving evidence. Original source and
+allcontinuable checkpoints preserved; newer code not yet integrated. No push.
+
+## Full check-in after preservation and longer-training panels — November 3
+
+User requests a wait and complete recap; no new launch during this check-in.
+All GPU jobs are terminal and current compute-process query is empty. The
+[progress checkpoint](../../experiments/w1a8-modern-native-20261103/progress.md)
+now supersedes the earlier live quiet-panel claim and records all later results.
+
+Matched quiet native timing: balanced1920 +13.44% over initialization, but only
+63.89% of DFlash and unresolved speed difference versus CE. Longer3840 control
+and all-native-FIT protection improve aggregate scores without fixing development
+retention. Native fixed-history replay confirms genuine damage. Restored original
+head plus quarter trained body-scale change preserves 548/549 native successes;
+its complete five-repeat primary comparison is +5.01% over initializer, interval
++3.43–7.22%, and 59.27% of DFlash, with exact final-response parity. One old draft
+regression remains. Storage guard interrupts only the fifth Q4 diagnostic cell;
+240 primary and 48 partial diagnostic measured requests are independently audited.
+
+Candidate selection is frozen in protected run `fresh-quarter-confirmation01/`;
+real fresh cases are not generated. Stage1 remains incomplete, Stage2 predictor
+and Stage3 backlog remain gated. Static parent-only reachability withholding
+newly reachable second-step training labels is an audited future hypothesis, not
+implemented. All paid states/source survive; three older GGUF exports have proven
+compact archives/restores. No push or new goal. Await the user's next direction
+following this explicit wait; do not interpret this checkpoint as permission to
+launch during their check-in.
+
+## Fresh confirmation admitted and live — November 3
+
+The goal continuation resumes after the user's completed check-in. Root owns
+`local-w1a8-modern-fresh-quarter-20261103-01`; live identity.json authenticates
+supervisor/child boot/birth/cmdline and180s graceful stop. Localtmuxsocket
+binary-eagle-runtime. Timing quiet window active; no tests/builds/compression or
+unrelated large hashes. Output: protected run fresh-quarter-confirmation01/serving01.
+All48new cases admitted with zero exact/normalized exclusions, passing oracle
+controls and native context geometry. Frozen five-arm panel expects600performance,
+120quality,60warmups; no completed result claimed. Selection predates generation.
+60prior source files yield512TRAIN/12dev/5pilot/147old-matrix unique prompts per
+role. Preserve explicit inventory and 12-family-cluster uncertainty. Full details
+and source-audit limitations in progress checkpoint. Source and paid states kept;
+retention10old export relocated losslessly to C: with original path alias.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

@@ -168,3 +168,131 @@ separately, sharing frozen runtime validation and native lifecycle methods.
 A source refactor revalidates all560previous request/gold bodies without launching
 GPU (`hook-refactor-input-check.json`). Source is committed in the retained
 actual-training worktree; integration and further trainer/adapter work remain.
+
+
+## Complete check-in after longer training and preservation tests — November 3
+
+This checkpoint supersedes earlier live-job/next-action claims above. User asks
+for a wait and the complete account since authorizing the ordered continuation;
+no new experiment is launched during this check-in. GPU compute query is empty.
+
+The eight-arm quiet-logging comparison completes 480 measured requests plus 80
+warmups in 449.10 seconds whole-job wall. All exact token/text/stop/repeat checks
+pass and all 40 server groups are released. Balanced protected replay reaches
+125.452 tokens/s against unchanged quiet initializer 110.587: +13.44%, paired
+whole-prompt 95% interval +10.01–17.80%. DFlash is 196.359, so W1A8 reaches only
+63.89% of it. Balanced versus ordinary CE is +0.90%, interval spanning no effect;
+its additional preservation benefit is clearer than any extra serving speed.
+Head-only training is approximately unchanged from initialization. Trace versus
+quiet logging and the separately tested zero-output head skip show no reliable
+speed advantage. The bridge-ownership fix remains isolated and unadopted.
+Evidence: protected run `requests-balanced-quiet01/`,
+`native-analysis-balanced-quiet.json`, `quiet-protocol-release.json`.
+
+Two matched continuations reach 3,840 updates: the prior balanced replay control
+and a separately source-pinned migration protecting all 356 native FIT successes,
+including five excluded from the old actor/native intersection. Model-side
+results improve but old development preservation does not: both lose 42 native
+successes in the actor readout. No development labels enter the optimizer.
+A native replay helper reconstructs actual frozen-history inputs using original
+packed libraries, native target embeddings and F16 KV. On 96 diagnostic windows,
+the unchanged parent preserves all 53 successes while the full candidate loses
+11; this confirms model damage beyond a Torch-only numeric artifact.
+Evidence: `stage2-plan.json`, `stage2-cpu-admission.json`,
+`actual-native-{parent,candidate}01/`, matched continuation outputs on C:.
+
+Controlled export choices restore the original output head, then reduce the
+trained body-scale change to one half and one quarter. On the 53-success panel,
+losses fall from 11 to 4 to 1 to 0. The quarter candidate is then tested across
+ALL 549 original native successes, without an outcome-selected subset: 548 are
+preserved, including all 356 FIT and 192/193 development successes. One reasoning
+proposal regresses; this is not an observed final-answer error because the target
+verifier corrects drafts. Selection uses reused development and cannot establish
+untouched generalization. Evidence: `body-quarter-plan.json`,
+`body-quarter-export.json`, `quarter-all-native01/result.json`.
+
+The conservative quarter candidate completes all five repetitions of target-only,
+DFlash, initializer and candidate: 240 measured primary requests. Rates are
+154.748, 196.722, 111.039 and 116.606 tokens/s respectively. Candidate/init is
++5.01%, paired whole-prompt 95% interval +3.43–7.22%; candidate/DFlash is 59.27%.
+All primary responses match tokens/text/stopping and repeat exactly. Candidate
+accepts 251 drafts per repetition versus initializer 193. This remains a reused
+12-prompt development panel. The wrapper stops on its storage floor after an
+additional 48/60 Q4 diagnostic requests; that diagnostic is incomplete. Root
+preserves the original failure, recovers the complete primary comparisons, audits
+all 288 measured raw responses, rehashes 40 images and verifies all 25 server
+releases. No inference failure is disguised as a completed five-arm panel.
+Evidence: `quarter-requests01/{failure,recovered-primary}.json`,
+`native-analysis-quarter.json`.
+
+The quarter model and full runtime are frozen before fresh-input generation in
+`fresh-quarter-confirmation01/{candidate-selection,models}.json`. No real fresh
+cases have been generated. Generator and runner tests cover selection binding,
+prior-input exclusions, independently judged JSON/Python/SQL answers, oracle
+positive/negative controls, native context limits, exact HTTP accounting and
+interruptible owned-server cleanup. These are implementation checks, not a
+validated short-to-long screen or actual fresh answer-quality evidence.
+
+A separate source audit identifies a next objective hypothesis: second-step CE
+still uses the OLD parent's reachability mask, withholding labels even when the
+current actor correctly reaches that step. At the 3,840-update FIT snapshot, a
+detached union of old reachability and the current actor's correct prefix would
+add 573 supported second-step labels, including 270 currently wrong predictions.
+This was audited only; no implementation or fresh-result-driven retuning occurred.
+A future isolated comparison must account for changed effective loss mass and
+keep development labels out of gradients.
+
+Operations: the restarted historical control ultimately publishes verified full
+checkpoints, and occupancy-only history sampling fails to show a reliable serving
+win. Two full-state retention arms remain unrun for storage, not scientifically
+rejected. Modern compact training changes 76,880 scale parameters across nine
+projections; signs/norms remain frozen. Paid optimizer/RNG/cursor checkpoints and
+successful continuations are preserved. Source remains in the pinned actual-
+training worktree; newer native helpers are not yet integrated. No push.
+
+Storage recovery consolidates byte-verified duplicate cache/raw payloads while
+preserving paths. Exact duplicate CE1920 GGUF aliases the original. Three older
+materializations (CE480, retention480 and head-only1920) are replaced by compact
+native-scale archives with full-file reconstruction/hash proof; checkpoints and
+restore instructions remain. These are recoverable archives, not currently
+materialized GGUF files. No unique paid state is deleted. Current free-space
+snapshots are volatile and recorded separately; storage remains a practical risk.
+The canceled background audit has no recovered final report and is not counted
+as completed. Later focused source/native audits supply the findings above.
+
+All references in this checkpoint without an absolute path are relative to
+`runs/w1a8-modern-protected-20261103-01/`. No Phase 1 completion, predictive-screen
+validation, backlog classification, survivor combination or four-target W1A8 win
+is claimed. Historical F16 remains separate from modern Qwen3.5 Q4_K_M/NVFP4.
+
+
+## Frozen fresh confirmation launched after check-in — November 3
+
+The preceding turn was a status-only check-in, without new experimental evidence.
+The explicit goal continuation now resumes real work. Root revalidates idle RTX
+5080, pause=false, terminal prior jobs and available storage, then completes the
+post-selection exclusion inventory from 60 explicit already-used source files:
+512 unique TRAIN prompts, 12 development, five pilot and 147 old-matrix prompts.
+Raw extraction/deduplication counts and pins are retained; indices cannot by
+themselves prove global exclusion completeness. No unopened sealed data is read.
+
+The generator admits 24 new performance and 24 quality instances, zero exact or
+normalized overlaps. All independent positive/semantic-negative judge controls
+pass. Model/runtime selection remains frozen. Independent bounded read-only
+source audit finds no run blocker, but confirms narrow Python task variation and
+the need for 12-family-cluster uncertainty. No broad task/pretraining novelty
+claim is justified. The exact frozen five-arm file is supplied, avoiding the
+adapter's permissive subset admission.
+
+Root launches `local-w1a8-modern-fresh-quarter-20261103-01` through the existing
+180s-grace supervisor/local tmux socket. Live boot/birth/cmdline identities and
+stop procedure are in that run's identity.json. Sole GPU owner=root; no tests,
+builds, compression or unrelated large hashes during timing. Output:
+protected run `fresh-quarter-confirmation01/serving01/`. Native tokenization
+already verifies all 48 tasks plus output reserve fit context4096. Expected600
+performance,120quality,60warmup requests across30startups; no complete outcome yet.
+
+Before launch, one unused retention10-1920 GGUF is copied to C:, whole-file hash
+verified, then the original WSL path atomically replaced with a symlink. This
+recovers40,804,352WSL bytes without changing payload or paid checkpoint. Receipt:
+`retention10-export-relocation.json`. Timing protocol/source/candidate is unchanged.
