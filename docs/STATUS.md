@@ -41,32 +41,43 @@ continuation, all readouts and native export. An erroneous root audit assumed
 unit-magnitude starting values; direct comparison confirms the actual ±0.5 values
 remain unchanged. The failed audit and corrected proof are both preserved.
 
-The unchanged 5760 control completes. The head run saves update 5280 (1440 new
-updates) before a storage guard stops its next metadata write. Every paid update
-is intact; the latest pointer remains older, so root explicitly verifies and uses
-the saved 5280 checkpoint. Root owns `local-w1a8-head-resume5760-20261103-01`,
-started 21:57:25 UTC in local tmux with 180-second grace and immediate identities.
-It resumes the remaining 480 updates into a unique output directory, with the
-same source/optimizer/RNG/data order. All 1920 updates remain allocated. Old update
-logs are losslessly archived; two more derived exports have exact restore patches.
-Native preservation and serving outcomes remain pending. No new fresh inputs are
-selected. At 1440 head updates, no signs have flipped yet; maximum movement is
-0.4935 from the actual ±0.5 starting values. This is a slow-learning observation.
+Both matched 5760 endpoints are now complete. The head treatment changes only
+17 of 1,310,720 signs after 1920 updates (zero flips at 480/960/1440), so this is
+inconclusive for capacity rather than a general rejection. Its actual saved final
+checkpoint reproduces the existing GGUF byte for byte using the frozen GPU
+exporter. Two storage failures affected metadata publication; all paid updates
+and readouts survived. Root finished publication without repeating training.
+
+On the frozen 96-window native diagnostic, both control and head lose the same
+17/113 original successes. All 28 serving responses match target tokens/text/
+stopping; measured development draft counts are 360/1109 for each. Some individual
+requests gain while others lose. This is a single-pass acceptance diagnostic,
+not a repeated throughput or fresh-generalization result. All 32 unique loaded
+images are independently rehashed, and both serving process groups are released.
+The earlier +5.3% fresh candidate remains the best confirmed fresh result.
 
 A separately integrated objective contrast (b889fbf0) is ready: keep the original replay
 stream intact and add preservation replay for the 407 added FIT successes. This
 addresses the observed coverage gap without using development labels for training.
 Its real CPU admission authenticates all 407 positives/24 groups/372 windows in
-2.03 seconds using only recorded native JSON; GPU equivalence and training remain
-pending. Broader natural-confirmation tooling is ready,
+2.03 seconds using only recorded native JSON; Root owns `local-w1a8-added-replay-pair-20261103-01`, started 22:35:09 UTC
+with immediate identities, local tmux and 180-second grace. Its false480 mode
+must exactly reproduce the unchanged resident4320 reference before true1920 mode
+starts from the same3840 parent. The existing unchanged5760 control supplies the
+matched longer endpoint. Current work remains Phase1, pending the preservation
+clarification. Broader natural-confirmation tooling is ready,
 with all 512 historical TRAIN exposures and DEV/sealed indices excluded; actual
 unused-pool eligibility remains untested until candidate/runtime freeze.
 
-Related source has 196 distinct passing CPU tests plus real GPU/native evidence.
+Related source has 202 distinct passing CPU tests plus real GPU/native evidence.
 Pinned worktree and all paid checkpoints remain. Eight derived exports now
 have verified lossless archives with restore commands; two exact duplicates use
-hardlinks. New training outputs use an owned NTFS-compressed directory, verified
-with WSL writes; no system or VHDX compression setting changed. Storage remains
+hardlinks. New training outputs use an owned NTFS-compressed directory. Root also merges
+one exact duplicate pair wholly inside a dated runs archive, retaining all paths/
+bytes and leaving the independent untracked rescue tree unchanged. This recovers
+191.37MB in WSL; all 361 build objects are then restored to their original WSL
+paths, with readable C aliases, recovering 130.63MB on C. Runtime binaries, models,
+source and checkpoints are unaffected. No system or VHDX setting changed. Storage remains
 tight. No push.
 
 [Fresh confirmation](../experiments/w1a8-modern-native-20261103/fresh-confirmation.json),
@@ -74,7 +85,7 @@ tight. No push.
 [active goal](goals/nine-model-qat-overnight.md) retain measured costs, failures,
 source pins and next actions. Current evidence includes
 `head-real-qualification-root-audit.json`, `head-false4320-parity02.json`, and
-`head-matched5760-plan.json` under `runs/w1a8-modern-protected-20261103-01/`.
+`added-replay-pair-plan.json` under `runs/w1a8-modern-protected-20261103-01/`.
 
 ## Selected baseline and W1A8 standing — November 2, 2026
 

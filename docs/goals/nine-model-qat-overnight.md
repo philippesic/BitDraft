@@ -5325,4 +5325,46 @@ actual+5.3%freshgain/exactoutputs/548of549draftsuccesses; answer pending. Do not
 silently relax userconstraints or promote assistant-inferred requirements to user
 mandates. Current Phase1 experiments continue independently; no phasechange yet.
 
+
+## Head endpoint recovered and admitted; added replay control live
+
+Both1920-update endpoints from3840 arecomplete. Headcheckpoint5760 and all3603
+readouts/GGUF survive a second metadatafloor failure. Root GPUexport-only finalizer
+22.27s reconstructs frozen actor+real lazy nativeembedding interface (0lookups/0
+forward/0trainingupdates), loads exactpaidstate and reexports toRAM: fullGGUFhash
+matches persistedmodel. Publishes head-finalization5760-proof.json/result metadata;
+no trainingrepeated. Head17flips at1920 vs0through1440; lowLR remains slow/inconclusive.
+Incrementaltraining195.7484scontrol/201.5032shead; observedtrainingprocesswalls
+769.5849/697.2935s, recoveries/extracontrol/qualification separately recorded in
+head-capacity-costs.json. No inventedaggregatepreparationtime.
+
+Native96 firstpreflight failsstorage beforeinference; retained. Retry02 completes
+108.66s, bothparents113/113, bothcandidates lose SAME17positions/113, no netgain.
+28HTTP qualifier30.99s: allrawtoken/text/stop/cache/requestcontrols correct, nine
+packedlinears, bothgroupsreleased. DEV360accepted/1109proposed each; individual
+requestgains/lossescancel. Root rehashes32unique loadedimages. No repeatedtiming/
+freshwin. head-native96-root-audit.json, head-http-root-audit.json,
+head-loaded-image-root-audit.json. No full956claim for these endpoints.
+
+MatureheadLR source maina659f5c9 passes6rootfixtures/Ruff,202distinctrelatedtests.
+Metadata-only actual5760 preflight passes; .001/.003/.01 newrecipe preservesf4
+constructor and allmatureAdam/state. Actual .001migrationreference6240/treatments
+notrun. Allpaidbranches/horizon19200 retained. CPUworkersfinished.
+
+Root launches local-w1a8-added-replay-pair-20261103-01 at22:35:09UTC, exactIDs/
+180sgrace/localtmux. Source8eab/mainb889 and real407FITadmission pinned. False480
+mustmatch originalresident4320 in scale/Adam/RNG/cursor/exposure/readouts/GGUF with
+zeroaddedforward/cost; onlythen true1920 runs fromf4parent to5760. Old356stream
+unchanged; additional407FITstream costs explicit. No Phase2/backlogstart; user
+preservationmeaning clarification remains pending, independent work continues.
+
+Storage: historical3completedlogs exactXZarchived; paidPTs preserved, oldstale
+runningreceipt has BOTH supervisor/childhandlesmissing, notassumedlive. Root exact
+fresh3copyhash/no-writer check hardlinks only D-head-f16/step0000 within datedruns
+archive, notuntrackedrescue tree: WSL+191,369,216B. Luna restores361.o WSLregular
+paths andCreadablesymlinks, allhashes/mtime verified; WSL-131,510,272/C+130,629,632B.
+Allcaches/source/runtimebinaries unchanged. Rawmodel/paidcheckpoints stayavailable.
+Receipts immutable-rescue-export-dedup.json/build02-object-cache-restoration.json.
+No push. Current baseline/freshcandidate/historicalF16 precision labels unchanged.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->
