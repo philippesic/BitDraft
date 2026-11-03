@@ -89,12 +89,13 @@ diagnostic: oldquarter7/newquarter6/neweighth10 losses. These cannot advance on
 preservation; no full956pass or freshgain claimed. Paidstates remain continuable.
 
 The next isolated capacity contrast is a FIT-selected512row output-head treatment,
-with scales/objective/replay/data held fixed. CPU source work is ongoing; actual
-head training/native qualification not done. Root owns original resident strict
+with scales/objective/replay/data held fixed. Separate trainer and deferred qualifier are now integrated (86bec0ac);15new
+rootCPUfixtures/Ruff pass. Actual head GPU/native qualification is not done. Root owns original resident strict
 3840→4320 reference `local-w1a8-head-reference4320-20261103-01`,21:08:11UTC,
 180sgrace/localtmux, immediatebirth identities; output C:head-resident-reference4320.
-This is its migration control, not a head-capacity result. Broader natural-confirmation
-packet helper940655a2 passes12newrootCPUtests/Ruff (173relatedtests total). It preserves
+Reference finishes0 in353.29s, all480newupdates/readouts/export complete and owned
+process group gone. This is its migration control, not a head-capacity result. Broader natural-confirmation
+packet helper940655a2 passes12newrootCPUtests/Ruff (188relatedtests total). It preserves
 all512historical TRAIN and DEV/sealed exclusions; no real fresh prompts selected,
 actual unused-pool eligibility unknown. Candidate/runtime must freeze first.
 `data-native-root-analysis.json`, `data-http-root-audit.json` and
@@ -105,7 +106,7 @@ identity check preserves2138windows/549protections,36actualmaterializations and
 all1440nativeembedding lookups. This adds0examples and is not expanded-data
 training admission. No new fresh/development training labels used.
 
-Source is integrated with173passing related CPUtests and actual native evidence;
+Source is integrated with188passing related CPUtests and actual native evidence;
 pinned worktree is retained for checkpoint/source contracts. Paid states remain;
 older exports have verified compact archives or readable relocated aliases.
 Storage remains constrained. No push. Quick-screen predictor,98-ID/34-family

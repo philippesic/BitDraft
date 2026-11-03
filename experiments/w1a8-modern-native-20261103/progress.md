@@ -695,3 +695,28 @@ unique model deleted. New data-backoffexports retained. WSL/Cstorage still tight
 headreference uses Coutputs/reusedTorchcache. Phase1active; early/longpredictor,
 98-ID/34-family screen, combinations, four-target DFlash confirmation still gated.
 No push. AllhistoricalF16results separate.
+
+### Strict selected-head migration reference complete
+
+`local-w1a8-head-reference4320-20261103-01` finishes0,353.28637swhole. Original
+frozen resident source ab410 strictly resumes newdata3840→4320, all480newupdates/
+originalFIT/DEV/extraFITreadouts/export complete. NativeGGUF8b6161ee...40,802,176B,
+compactPT1,296,433B. Cumulative newdata-stage trainer232.10090s versus169.45339s
+at3840; incremental480training62.64751s. Root controller/processgroup absent.
+This is a migration equivalence reference only; true5760 capacity outcomes require
+matched false5760, not this shortercontrol. Paidstates/source and allreadouts kept.
+Bounded7terminal-root inventory now records14,268files/780,033,826uniqueinodebytes,
+no deletions; excludes reference output while it waslive. Earlierinventories retained.
+`head-reference4320-result.json` and `retained-inventory-expanded-data-and-backoff.json`.
+
+### Selected-head source accepted; actual qualification next
+
+Main86bec0ac integrates separate trainer/qualifier from workerGit2c5ece0a after
+15rootCPUfixtures/Ruff/review;188relateddistincttests total. FileSHA trainer
+54ed1dd8bb927148abbdc1bdd23d08ebf2bb3b7b23aeb14bfb1aa3ccbc39b961, qualifier
+b9cb00f47c0e30c2c1c6456b3f0397111c511b11cd581ab8374a9c35c6bf34b6.
+Immutable old resident/uncached/readers/headhelper sourcepins unchanged. Both
+CPUworkers finish; pinned worktree retained. RootGPUlane released after reference.
+Next root must run actual512gradient/zero-parentGGUF/exactcompactresume qualifier,
+then false4320 equivalence against completed originalreference, then matched
+false5760/true5760 if qualified. No head-capacity result or quickpredictor claimed.
