@@ -52,16 +52,21 @@ at480 becomes71at960/298at1440. FITprefix1436→1469,DEV489→494, but old nativ
 side losses2→4FIT/42→44DEV. Actual native replay loses49/549;14HTTPresponses match
 but accepted drafts343vsstatic341 establishes no useful benefit or fresh transfer.
 
-Root now owns `local-w1a8-selected-lr-control-20261103-01` ordinary strict resume
-LR1e-3/global3840→4320 (horizon19200); this control has finished0,727Obits,FIT1529/
-DEV499,oldmodel-side losses2/44. HigherLR3e-3 paired treatment source is pending
-review and not launched. No activeGPUjob at this checkpoint. All paid states kept.
+The mature-sign paired LR continuation has finished, global3840→4320 with the
+19200 horizon preserved. New migration at1e-3 exactly reproduces the original
+strict-resume control's model/Adam/RNG/cursor/exposure/readouts. Higher3e-3 changes
+4981Obits versus727; FITprefix1577versus1529,DEV509versus499. Old model-side native
+prefix losses are2FIT/45DEV versus2/44. Neither arm has native preservation or
+repeated-request timing yet, so no serving/generalization benefit is established.
+Driver wall288.37s; incremental training47.75/46.26s. User requested a wait and full
+recap; no new experiment started during check-in. GPU compute is idle. Paid states
+are kept. Evidence: protected run `selected-lr-root-analysis.json`.
 Data-union helper47d87c11 is integrated with9CPUtests/Ruff; real same-capture
 identity check preserves2138windows/549protections,36actualmaterializations and
 all1440nativeembedding lookups. This adds0examples and is not expanded-data
 training admission. No new fresh/development training labels used.
 
-Source is integrated with92passing related CPUtests and actual native evidence;
+Source is integrated with99passing related CPUtests and actual native evidence;
 pinned worktree is retained for checkpoint/source contracts. Paid states remain;
 older exports have verified compact archives or readable relocated aliases.
 Storage remains constrained. No push. Quick-screen predictor,98-ID/34-family

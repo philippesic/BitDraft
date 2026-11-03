@@ -484,7 +484,7 @@ advice recommends a paired mature-LR continuation before larger capacity changes
 
 Root launches ORIGINAL strict-resume LR1e-3 control from global3840→4320, all state/
 Adam/RNG/masks/data unchanged, horizon19200. This finishes0; FITprefix1529,DEV499,
-oldloss2/44,727Obits. Incremental480training49.29988s, wholejob136.11254s. The3e-3
+oldloss2/44,727Obits. Incremental480training47.24414s, wholejob136.11254s. The3e-3
 paired treatment needs a NEW explicit migration validator/source and is not yet
 launched. Source/case/checkpoint/hashes retained in selected-lr-plan.json and
 local-w1a8-selected-lr-control-20261103-01. No GPU job remains live atcheckpoint.
@@ -510,3 +510,29 @@ Root also records an agent-coordination lesson: a Gitcommit label was called a
 sourcepin; worker checked the saved full fileSHA before proceeding. Exactmatching
 parent validator remains unchanged; sourcecommit andfiledigest are separatefields.
 No wrong source/GPU action occurred. No push and all original checkpoints retained.
+
+## Full user check-in; mature-LR training complete — November 3
+
+User asks to wait and account for everything since ordered continuation. No new
+experiment starts during this check-in; the existing paired LR job finished0 at
+18:36:58UTC. Current GPU compute list and owned job process query are empty.
+
+New1e-3 migration exactly reproduces original strict-resume4320 model/Adam/RNG/
+cursor/exposure/nativeGGUF/FIT+DEV decisions. Paired3e-3 ends with4981Obits versus
+727, FITprefix1577versus1529,DEV509versus499; old model-side native prefix losses
+2/45versus2/44. Incremental480training47.74737/46.26450s, paired driver288.36723s.
+These are actor readouts only: neither mature-LR arm has actual native preservation,
+repeated full-request timings or untouched confirmation. No candidate promotion.
+Evidence: selected-lr-result.json,selected-lr-control-parity.json,
+selected-lr-root-analysis.json. All checkpoints and19200horizon preserved.
+
+Legacy final1920 is present as the previously verified externalgzip archive,
+not missing. Root rechecks compressedSHA and full3,887,338,675-byte decodeSHA in
+30.25340s with no raw restore written; both pass. Rawlegacy1440 andprotected3504
+parent untouched. Receipt: legacy-final-archive-current-verification.json.
+This resolves the bounded inventory's initial external-path uncertainty.
+
+Phase1 remains incomplete despite confirmed fresh+5.30% gain (joint95%+4.33–6.21%).
+Phase2predictor,98ID/34family screening,combinations andfour-target finalremain
+unstarted/gated.99relatedCPUtests pass. Currentfree2,231,816,192WSL and
+3,274,629,120C: bytes; storage remains constrained. No push.

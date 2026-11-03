@@ -5061,4 +5061,19 @@ admission.92relatedCPUtests total. Conditionalbridgefix3smokes do not provebranc
 coverage and show no acceptance/speedwin; cadence andalias risks remain separate.
 Paidstates/rawpaths retained; progress/evidence inventories updated; no push.
 
+## User-requested full recap; mature-LR pair finished — November 3
+
+No new experiment starts during the requested wait. Existing paired LR job exits0
+at18:36:58UTC, driver288.36723s. Migration1e-3 exactly matches original strict4320
+control including model/Adam/RNG/exposure/native export/readouts. Higher3e-3 gives
+4981Obits versus727, FITprefix1577versus1529,DEV509versus499; old model-side native
+prefix losses2/45versus2/44. No native admission/repeated timing/fresh confirmation
+for these arms. Actual GPU query is empty.99relatedCPUtests pass; all paid states
+and19200horizon remain. Root evidence selected-lr-root-analysis.json.
+
+Previously archived historicalfinal1920 is located onC:, and compressed plus full
+decoded hashes reverified. Not missing; no raw restore written or paid state
+deleted. Evidence legacy-final-archive-current-verification.json. Phase1 incomplete,
+later ordered phases gated. STATUS/progress updated for the complete user recap.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->
