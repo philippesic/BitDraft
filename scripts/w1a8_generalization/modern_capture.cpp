@@ -1,4 +1,4 @@
-// Native Qwen3.5 input taps; no tokenizer, graph callback, or runtime patch.
+// Native Qwen3.5 input taps and vocabulary-only tokenization; no runtime patch.
 #include "llama.h"
 #include "ggml-backend.h"
 
@@ -83,6 +83,64 @@ static void floats(std::ofstream & out, const float * data, size_t count) {
     require(bool(out), "capture write failed");
 }
 
+static int tokenize_text(int argc, char ** argv) {
+    std::map<std::string, std::string> args;
+    const std::set<std::string> keys = {"--model", "--text-file", "--out"};
+    bool mode = false;
+    for (int i = 1; i < argc; ++i) {
+        const std::string key = argv[i];
+        if (key == "--tokenize") { require(!mode, "duplicate --tokenize"); mode = true; continue; }
+        require(keys.count(key) && i + 1 < argc && !args.count(key), "unknown, duplicate, or incomplete tokenization argument: " + key);
+        args[key] = argv[++i];
+    }
+    for (const char * key : {"--model", "--text-file", "--out"})
+        require(args.count(key), std::string("required for --tokenize: ") + key);
+    const fs::path output = args.at("--out");
+    require(!fs::exists(output), "output directory already exists");
+    require(fs::is_regular_file(args.at("--text-file")), "text input must be a regular file");
+    std::ifstream input(args.at("--text-file"), std::ios::binary);
+    require(bool(input), "cannot open text file");
+    std::string text(65537, '\0');
+    input.read(text.data(), static_cast<std::streamsize>(text.size()));
+    require(!input.bad(), "text read failed");
+    text.resize(static_cast<size_t>(input.gcount()));
+    require(text.size() <= 65536, "text file exceeds 64 KiB");
+
+    // Empty devices skips registry/device enumeration in llama_prepare_model_devices.
+    // vocab_only returns before load_tensors; no backend or context init is needed.
+    ggml_backend_dev_t devices[] = {nullptr};
+    auto params = llama_model_default_params();
+    params.vocab_only = true;
+    params.devices = devices;
+    params.n_gpu_layers = 0;
+    params.split_mode = LLAMA_SPLIT_MODE_NONE;
+    params.load_mtp = false;
+    std::unique_ptr<llama_model, decltype(&llama_model_free)> model(
+        llama_model_load_from_file(args.at("--model").c_str(), params), llama_model_free);
+    require(bool(model), "target vocabulary load failed");
+    std::vector<llama_token> tokens(4096);
+    const int32_t count = llama_tokenize(llama_model_get_vocab(model.get()), text.data(),
+        static_cast<int32_t>(text.size()), tokens.data(), static_cast<int32_t>(tokens.size()), true, true);
+    require(count >= 0 && count <= 4096, "native tokenization failed or exceeds 4096 IDs");
+    tokens.resize(count);
+    require(fs::create_directory(output), "cannot create unique output directory");
+    std::ofstream ids(output / "tokens.ids");
+    for (llama_token token : tokens) ids << token << '\n';
+    ids.close(); require(bool(ids), "token IDs write failed");
+    std::ofstream metadata(output / "tokenization.json");
+    metadata << "{\n\"status\":\"native_tokenization_complete\",\n\"model\":"
+        << quote(fs::absolute(args.at("--model")).string())
+        << ",\n\"model_bytes\":" << fs::file_size(args.at("--model"))
+        << ",\n\"text_file\":" << quote(fs::absolute(args.at("--text-file")).string())
+        << ",\n\"text_bytes\":" << text.size()
+        << ",\n\"add_special\":true,\n\"parse_special\":true,\n\"chat_template_applied\":false,"
+        << "\n\"vocab_only\":true,\n\"backend_initialized\":false,\n\"weights_loaded\":false,"
+        << "\n\"token_ids_file\":\"tokens.ids\",\n\"token_count\":" << count << "\n}\n";
+    metadata.close(); require(bool(metadata), "tokenization metadata write failed");
+    std::cout << "tokenization_complete " << (output / "tokenization.json").string() << '\n';
+    return 0;
+}
+
 static void help() {
     std::cout << "modern_capture --model TARGET.gguf --tokens PROMPT.ids --out NEW_DIRECTORY\n"
         "  --cpu-library LIB --cuda-library IMMUTABLE_LIB\n"
@@ -95,6 +153,10 @@ static void help() {
         "Features: layer-N.f32, shape [all input rows,2560], little endian F32.\n"
         "Logits: logits.f32, shape [selected rows,vocab]; capture.json maps rows.\n"
         "--no-features provides a target-only trajectory control.\n"
+        "modern_capture --tokenize --model TARGET.gguf --text-file RAW.txt --out NEW_DIRECTORY\n"
+        "  Vocabulary-only native tokenization: add_special=true, parse_special=true.\n"
+        "  Raw text <=64 KiB; output <=4096 IDs in tokens.ids and tokenization.json.\n"
+        "  No chat template, backend initialization, context, or weight loading.\n"
         "--abi-check checks linked defaults only, without backend or model loading.\n";
 }
 
@@ -107,6 +169,8 @@ int main(int argc, char ** argv) {
             std::cout << "{\"status\":\"linked_api_only\",\"model_loaded\":false,\"backend_initialized\":false}\n";
             return 0;
         }
+        for (int i = 1; i < argc; ++i)
+            if (std::string(argv[i]) == "--tokenize") return tokenize_text(argc, argv);
         std::map<std::string, std::string> args;
         const std::set<std::string> keys = {"--model", "--tokens", "--out", "--cpu-library", "--cuda-library",
             "--decode-tokens", "--greedy-steps", "--taps", "--logit-positions", "--prefill-chunk", "--threads", "--max-output-mib"};

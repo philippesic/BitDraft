@@ -12,6 +12,7 @@ from pathlib import Path
 import shlex
 import shutil
 import subprocess
+import tempfile
 
 
 def pin(path):
@@ -78,14 +79,47 @@ def main():
     if rejected.returncode != 1 or "unknown" not in rejected.stderr:
         raise RuntimeError("invalid argument was not rejected before backend initialization")
     checks["invalid_argument_rejected"] = True
+    with tempfile.TemporaryDirectory(prefix="tokenize-argument-check-", dir=output) as temporary:
+        directory = Path(temporary)
+        raw_text = directory / "raw.txt"
+        raw_text.write_bytes(b"bounded raw prompt")
+        token_output = directory / "tokens"
+        token_argv = [str(executable), "--tokenize", "--model", "/unopened-target.gguf",
+                      "--text-file", str(raw_text), "--out", str(token_output)]
+        cases = [
+            (token_argv + ["--tokens", "/unopened.ids"], "unknown"),
+            (token_argv + ["--tokenize"], "duplicate --tokenize"),
+            (token_argv + ["--model", "/duplicate.gguf"], "duplicate"),
+            ([str(executable), "--tokenize"], "required for --tokenize"),
+        ]
+        token_checks = []
+        for test_argv, error in cases:
+            result = subprocess.run(test_argv, text=True, capture_output=True, env=env)
+            if result.returncode != 1 or error not in result.stderr or token_output.exists():
+                raise RuntimeError("tokenization argument was not rejected before model opening")
+            token_checks.append({"case": error, "passed": True})
+        raw_text.write_bytes(b"x" * 65537)
+        oversized = subprocess.run(token_argv, text=True, capture_output=True, env=env)
+        if oversized.returncode != 1 or "exceeds 64 KiB" not in oversized.stderr or token_output.exists():
+            raise RuntimeError("oversized tokenization input was not rejected before model opening")
+        token_checks.append({"case": "text above 64 KiB", "passed": True})
+        token_output.mkdir()
+        existing = subprocess.run(token_argv, text=True, capture_output=True, env=env)
+        if existing.returncode != 1 or "already exists" not in existing.stderr:
+            raise RuntimeError("existing tokenization output directory was not rejected")
+        token_checks.append({"case": "existing output directory", "passed": True})
+        checks["tokenization_argument_guards"] = token_checks
     headers = shlex.split(dependency.read_text().replace("\\\n", " ").split(":", 1)[1])
     implementation_files = ["src/llama-context.cpp", "src/llama-context.h", "src/models/qwen35.cpp",
-                            "src/llama-graph.cpp", "src/llama-graph.h", "src/llama.cpp", "ggml/src/ggml-backend-reg.cpp"]
+                            "src/llama-graph.cpp", "src/llama-graph.h", "src/llama.cpp", "ggml/src/ggml-backend-reg.cpp",
+                            "src/llama-model.cpp", "src/llama-model-loader.cpp", "src/llama-vocab.cpp",
+                            "common/common.cpp", "tools/server/server-common.cpp", "tools/server/server-context.cpp"]
     runtime_libraries = [pin(libraries / name) for name in
                          ("libllama.so.0.8.0", "libggml.so.0.28.0", "libggml-base.so.0.28.0", "libggml-cpu.so.0.28.0")]
     receipt = {
         "status": "compiled_linked_cpu_checks_only",
         "native_capture_validated": False,
+        "native_tokenization_validated": False,
         "model_opened": False,
         "backend_initialized": False,
         "source": pin(source), "builder": pin(__file__), "baseline": pin(baseline),
@@ -97,8 +131,17 @@ def main():
         "executable": pin(executable), "compile_argv": list(map(str, argv)),
         "compile_stderr": compiled.stderr, "environment": environment,
         "required_backend_argv": ["--cpu-library", str(libraries / "libggml-cpu.so.0.28.0"), "--cuda-library", cuda["path"]],
+        "tokenization": {
+            "argv": ["--tokenize", "--model", "TARGET.gguf", "--text-file", "RAW.txt", "--out", "NEW_DIRECTORY"],
+            "add_special": True, "parse_special": True, "chat_template_applied": False,
+            "source_verified_path": "explicit empty device list; vocab_only bypasses backend registry guard and returns before load_tensors",
+            "no_backend_initialization": True,
+            "cuda_library_mapping_caveat": "retained libggml transitively links CUDA; loader maps those libraries before main even though tokenization initializes no backend or CUDA context",
+            "server_semantics": "matches raw-string completion true/true; /tokenize defaults false/true; chat messages need the exact rendered template first",
+        },
         "checks": checks,
-        "remaining_checks": ["GPU-owner capture using immutable target IDs and target pin",
+        "remaining_checks": ["real vocabulary-only native tokenization and exact prompt/token ancestry",
+                             "GPU-owner capture using immutable target IDs and target pin",
                              "verify tap dimensions, row order, finite F32 and selected full logits",
                              "compare target-only and tap-enabled native greedy trajectories",
                              "compare chunk512 and chunk1 replay with a practical native trajectory/numeric gate",
