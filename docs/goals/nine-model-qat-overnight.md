@@ -4465,4 +4465,40 @@ modern native endpoint or a substitute for the final four-target comparison.
 No push, unrelated dirty edits untouched, temporary source worktree removed
 after all patches were integrated. Goal remains active; completion is unproven.
 
+### Full recap checkpoint: control serving complete, GPU idle — November 3 UTC
+
+User says “Wait. Update me on everything that's happened since I started you.”
+Hold off starting new experiments while answering. This is a recap, not an
+inferred cancellation of the full objective or a declared goal completion.
+
+local-w1a8-legacy-requests-20261103-01 finished exit0,07:53:03.589828–08:02:41.232517
+UTC.600 measured requests complete (120 per arm). Independent-audit.json passes;
+root reran audit from all raw responses. All25 server releases are reaped,
+authenticated supervisor/child identities absent and compute-app query empty.
+GPU is idle. Raw endpoints/checkpoints remain intact.
+
+Rates(tok/s): new legacy control202.455, parent201.547, prior best202.941,
+same-family Q4_K_M219.996, target-only93.028. New/parent1.0045, paired24-prompt
+95%interval[.9855,1.0248]; new/prior best.9976[.9856,1.0094]; new/Q4.9203
+[.8958,.9458]. No reliable serving improvement; reused historical Qwen3 F16
+development only. Three coverage/retention treatments not run. Untouched quality,
+modern W1A8 deployment, predictor calibration and98segment screen remain undone.
+recap-analysis01.json and recap-throughput.html preserve analysis/chart.
+
+The recap must distinguish measured outcomes from preparation and admit the
+first adapter's late-checkpoint design. Original cause of interruption remains
+unproven. Actual trainer time is847.16s total across failed+rerun attempts;
+only one scientific control recipe has been run. Most work so far was
+diagnosis/infrastructure, not model-feature experimentation.
+
+Storage inspection: only /mnt/c is an additional mounted volume; /mnt/v is an
+empty directory on ext4. Roughly6GiB ext4 and6.5GiB Windows free. No compression
+or archival was run during clean timing. New temporary source worktree:
+/home/philip/.codex/worktrees/w1a8-artifact-recovery-20261103,
+branch research/w1a8-artifact-recovery-20261103. It has an uncommitted archive.py
+draft ONLY; no tests/integration/use yet. This worktree is not disposable until
+the draft is reviewed/checkpointed. Do not modify existing source pins merely
+to make archives pass; preserve lossless recovery and actual available space.
+No push or new GPU job. Goal remains active and full scope unchanged.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

@@ -28,12 +28,19 @@ publication and finalization are now exercised successfully. Twenty-four
 generalization/recovery CPU tests pass. All saved readout decisions match the
 interrupted attempt; its exact original failure remains unresolved.
 
-Common-state native replay is independently recomputed and shows little net
-change, with both gains and damage to prior successes. The clean five-repetition
-historical request comparison is now running under root's sole GPU ownership:
-`runs/local-w1a8-legacy-requests-20261103-01/`. Controls are target-only,
-same-family Q4_K_M, parent3504 and the prior best EAL continuation. Keep this
-timing window quiet. No throughput or untouched-generalization result is claimed.
+The clean historical request comparison completed 600 requests over five
+alternating repetitions. Independent raw token/text/stopping and repeat audits
+pass. New control202.46tok/s, parent201.55, previous best202.94, paired same-family
+Q4_K_M220.00, target-only93.03. The control's difference from parent/prior best
+is unresolved; it remains about8% below paired Q4. These reused historical F16
+inputs do not establish untouched generalization or a modern DFlash result.
+The three coverage/retention treatments have not run yet.
+
+Supervisor `local-w1a8-legacy-requests-20261103-01` exited zero. All25 owned
+server release receipts were verified, supervisor/child identities are absent,
+and the GPU compute query is empty. No new experiment was started while answering
+the user's full-recap request. Results: `recap-analysis01.json` and
+`legacy-requests02/independent-audit.json` under the canonical generalization run.
 
 The known backlog is 98 historical training segments in 34 families; preparation
 and adapter availability are not scientific screening. The early/long predictor

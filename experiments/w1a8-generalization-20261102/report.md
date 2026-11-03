@@ -186,3 +186,27 @@ repeat audits remain required. Root owns
 `local-w1a8-legacy-requests-20261103-01`; no tests/builds/large hashing or
 compression may overlap this clean timing phase. Untouched quality confirmation
 and the three other frozen treatments remain outstanding.
+
+## First full-request comparison completed
+
+All600 requests completed across five arms/five alternating repetitions and24
+reused development prompts. Root reran the independent raw audit: token IDs,
+decoded-text hashes, finish reasons, truncation, stop type and stopping word
+match current target-only and repeat identically. All25 server release receipts
+pass; supervisor exited0, authenticated processes are absent and GPU is idle.
+
+Pooled output tokens divided by full request seconds: paired Q4_K_M219.996;
+previous bestEAL202.941; new control202.455; parent201.547; target-only93.028tok/s.
+The new-control/parent ratio is1.0045, paired-prompt95% interval[.9855,1.0248];
+versus prior best.9976[.9856,1.0094]; versus Q4.9203[.8958,.9458]. Bootstrap keeps
+all five repetitions together per prompt; this is descriptive uncertainty on
+the reused24-prompt panel, not unseen release evidence. There is no reliable
+new-control improvement. The three new coverage/retention treatments remain
+unrun, so this does not reject them.
+
+`recap-analysis01.json` records recomputed totals and intervals;
+`recap-throughput.html` is the chart. Serving supervisor wall577.64s includes
+loading, warmups, authentication and auditing; measured request wall is reported
+separately. The user requested a full recap; no next experiment was launched.
+An archival helper is drafted only in a new isolated worktree, not yet tested,
+integrated or used. No selected/original checkpoint has been removed.
