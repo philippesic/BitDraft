@@ -3,7 +3,8 @@
 This adapter consumes the pinned AngelSlim drafter after all nine linears have
 been replaced by group128/A16 or row-scale W1Ax trainable modules. It reproduces the
 one-token structure of ``llama_model_eagle3::graph<false>``: borrowed F16 token
-embedding, separate F32 RMS norms, embedding-first concatenation, Q/K/V with
+embedding (or explicitly declared external native F32 rows), separate F32 RMS
+norms, embedding-first concatenation, Q/K/V with
 half-rotation RoPE, F16 cache storage, GQA attention, residual and SiLU FFN,
 then the F32 output norm and binary draft head. The cache is an immutable,
 contiguous one-token causal prefix and retains autograd links during unroll.
@@ -36,6 +37,65 @@ NATIVE_NORM_PATHS = {
     "blk.0.ffn_norm.weight": "midlayer.post_attention_layernorm",
     "output_norm.weight": "norm",
 }
+
+
+@dataclass(frozen=True)
+class ExternalNativeF32Embedding:
+    """Caller-declared frozen rows from the quantized target's native get_rows.
+
+    This is a narrow input contract, not proof of target ancestry. The caller
+    must authenticate ``target_identity``, the exact target SHA256 and the
+    capture SHA256 through outer admission, and verify that ``lookup`` reads
+    that target's native F32 rows. HF/dense embeddings and casts are not native
+    sources. Hashes here are checked for syntax only; no files are read.
+
+    ``frozen`` declares an immutable source, not merely detached return values.
+    Every returned row is separately checked for dtype and absent gradients by
+    the adapter. No embedding precision conversion is performed by this wrapper.
+    """
+
+    lookup: Callable[[int], Tensor]
+    vocab_size: int
+    hidden_size: int
+    target_identity: str
+    target_sha256: str
+    capture_sha256: str
+    dtype: torch.dtype = torch.float32
+    frozen: bool = True
+    source: str = "native_get_rows"
+
+    def __post_init__(self) -> None:
+        if not callable(self.lookup) or isinstance(self.lookup, nn.Embedding):
+            raise ValueError("native F32 lookup must be an external native row callable")
+        if isinstance(self.lookup, nn.Module) and any(
+            parameter.requires_grad for parameter in self.lookup.parameters()
+        ):
+            raise ValueError("native F32 lookup must not own trainable parameters")
+        if any(
+            type(value) is not int or value < 1 for value in (self.vocab_size, self.hidden_size)
+        ):
+            raise ValueError("native F32 lookup dimensions must be positive integers")
+        if (
+            self.dtype != torch.float32
+            or self.frozen is not True
+            or self.source != "native_get_rows"
+        ):
+            raise ValueError("native F32 lookup must declare frozen native_get_rows F32 output")
+        if not isinstance(self.target_identity, str) or not self.target_identity.strip():
+            raise ValueError("native F32 lookup requires target identity provenance")
+        for name in ("target_sha256", "capture_sha256"):
+            value = getattr(self, name)
+            if (
+                not isinstance(value, str)
+                or len(value) != 64
+                or any(char not in "0123456789abcdef" for char in value)
+            ):
+                raise ValueError(
+                    f"native F32 lookup requires a lowercase SHA256 provenance pin: {name}"
+                )
+
+    def __call__(self, token: int) -> Tensor:
+        return self.lookup(token)
 
 
 def bind_frozen_norms(drafter: nn.Module, norm_arrays: Mapping[str, Tensor]) -> None:
@@ -120,6 +180,11 @@ class NativeStepAdapter(nn.Module):
     ``decode_step`` returns draft-vocabulary logits; the frozen d2t/t2d map
     belongs to the trace/verifier boundary, not the differentiable head. Tree
     masks, holes in a prefix and scaled RoPE are intentionally rejected.
+
+    Embeddings default to the historical F16 contract. ``embedding_precision``
+    may be ``"external_native_f32"`` only with an ``ExternalNativeF32Embedding``
+    lookup whose target/capture provenance is authenticated by outer admission.
+    This opt-in changes only borrowed row precision, not other native gates.
     """
 
     def __init__(
@@ -127,6 +192,7 @@ class NativeStepAdapter(nn.Module):
         drafter: nn.Module,
         *,
         embedding_lookup: Callable[[int], Tensor] | None = None,
+        embedding_precision: str = "f16",
         attention_mode: str = "f32",
         native_attention_oracle: NativeAttentionForward | None = None,
         native_cpu_operators: NativeCPUDiagnosticOperators | None = None,
@@ -237,6 +303,18 @@ class NativeStepAdapter(nn.Module):
         ):
             raise ValueError("native CPU diagnostic requires ordered binary projections")
 
+        if embedding_precision not in ("f16", "external_native_f32"):
+            raise ValueError("unsupported embedding precision contract")
+        embedding_dtype = torch.float16
+        if embedding_precision == "external_native_f32":
+            if not isinstance(embedding_lookup, ExternalNativeF32Embedding):
+                raise ValueError(
+                    "native F32 embeddings require a declared ExternalNativeF32Embedding"
+                )
+            embedding_dtype = torch.float32
+        elif isinstance(embedding_lookup, ExternalNativeF32Embedding):
+            raise ValueError("native F32 embeddings require explicit external_native_f32 precision")
+
         if embedding_lookup is None:
             embedding = getattr(drafter, "embed_tokens", None)
             if not isinstance(embedding, nn.Embedding) or embedding.weight.device != self.device:
@@ -257,7 +335,7 @@ class NativeStepAdapter(nn.Module):
                 or embedding_vocab_size < 1
                 or getattr(embedding_lookup, "hidden_size", None) != hidden
             ):
-                raise ValueError("external F16 embedding lookup has incompatible dimensions")
+                raise ValueError("external embedding lookup has incompatible dimensions")
         norm_paths = (
             "midlayer.input_layernorm",
             "midlayer.hidden_norm",
@@ -366,6 +444,8 @@ class NativeStepAdapter(nn.Module):
         self.linears = MappingProxyType(linears)
         self.embedding_lookup = embedding_lookup
         self.embedding_vocab_size = embedding_vocab_size
+        self.embedding_precision = embedding_precision
+        self.embedding_dtype = embedding_dtype
         self.hidden_size = hidden
         self.heads = heads
         self.kv_heads = kv_heads
@@ -425,12 +505,13 @@ class NativeStepAdapter(nn.Module):
         if (
             not isinstance(embedding, Tensor)
             or embedding.device != self.device
-            or embedding.dtype != torch.float16
+            or embedding.dtype != self.embedding_dtype
             or embedding.shape != (self.hidden_size,)
             or embedding.requires_grad
             or (self.device.type == "cpu" and not torch.isfinite(embedding).all())
         ):
-            raise ValueError("embedding lookup must return a frozen finite F16 row")
+            precision = "F16" if self.embedding_dtype == torch.float16 else "native F32"
+            raise ValueError(f"embedding lookup must return a frozen finite {precision} row")
         return embedding.to(torch.float32)
 
     def _rope(self, x: Tensor, positions: Tensor) -> Tensor:
@@ -593,17 +674,7 @@ class NativeStepAdapter(nn.Module):
         attn = layer.self_attn
         mlp = layer.mlp
         trace("inp_g_embeddings", feature)
-        embedding_f16 = self.embedding_lookup(token)
-        if (
-            not isinstance(embedding_f16, Tensor)
-            or embedding_f16.device != self.device
-            or embedding_f16.dtype != torch.float16
-            or embedding_f16.shape != (self.hidden_size,)
-            or embedding_f16.requires_grad
-            or (self.device.type == "cpu" and not torch.isfinite(embedding_f16).all())
-        ):
-            raise ValueError("embedding lookup must return a frozen finite CPU F16 row")
-        embedding = embedding_f16.to(torch.float32)
+        embedding = self._embedding(token)
         trace("inp_embd", embedding)
         normalized_embedding = self._rms_norm(embedding, layer.input_layernorm)
         trace("embd_norm-0", normalized_embedding)
