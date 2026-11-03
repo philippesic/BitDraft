@@ -858,3 +858,15 @@ paths andCreadablesymlinks, allhashes/mtime verified; WSL-131,510,272/C+130,629,
 Allcaches/source/runtimebinaries unchanged. Rawmodel/paidcheckpoints stayavailable.
 Receipts immutable-rescue-export-dedup.json/build02-object-cache-restoration.json.
 No push. Current baseline/freshcandidate/historicalF16 precision labels unchanged.
+
+### Added-replay false gate exact; true treatment live
+
+False480 completes341.80529s and matches all scale/Adam/RNG/cursor/exposure/full
+readouts/nativeGGUF against unchangedresident4320; zero addedforward/cost/exposure.
+Proof `added-replay-false4320-parity.json`. Identicalderivedexport hardlinked to
+originalreference, allpaths/bytes retained. Root authenticates truechild live,
+started22:40:52.510955UTC under `local-w1a8-added-replay-pair-20261103-01`.
+Owner evidence `added-replay-true-identity.json` + supervisor/root-owned-identities.
+Same3840parent, true1920→5760/h19200; original356replay untouched plus independent
+407FIT stream. Stop authenticatedsupervisor withTERM/180sgrace, confirmgroupsgone.
+Userpreservationclarification pending; no Phase2/backlog advancement inferred.

@@ -61,9 +61,10 @@ stream intact and add preservation replay for the 407 added FIT successes. This
 addresses the observed coverage gap without using development labels for training.
 Its real CPU admission authenticates all 407 positives/24 groups/372 windows in
 2.03 seconds using only recorded native JSON; Root owns `local-w1a8-added-replay-pair-20261103-01`, started 22:35:09 UTC
-with immediate identities, local tmux and 180-second grace. Its false480 mode
-must exactly reproduce the unchanged resident4320 reference before true1920 mode
-starts from the same3840 parent. The existing unchanged5760 control supplies the
+with immediate identities, local tmux and 180-second grace. False480 exactly reproduces the unchanged resident4320 reference: all weights,
+Adam/RNG/cursor/exposure/readouts/nativeGGUF match, with zero added-forward cost.
+True1920 starts from the same3840 parent at22:40:52UTC; its process birth is
+authenticated live in `added-replay-true-identity.json`. The existing unchanged5760 control supplies the
 matched longer endpoint. Current work remains Phase1, pending the preservation
 clarification. Broader natural-confirmation tooling is ready,
 with all 512 historical TRAIN exposures and DEV/sealed indices excluded; actual
