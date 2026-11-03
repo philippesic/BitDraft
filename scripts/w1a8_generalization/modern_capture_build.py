@@ -128,6 +128,8 @@ def main():
         cadence_checks = []
         for extra, error in [(["--decode-chunk", "0"], "decode chunk must"),
                              (["--decode-chunk", "33"], "decode chunk must"),
+                             (["--output-cap", "0"], "output cap must"),
+                             (["--output-cap", "513"], "output cap must"),
                              (["--greedy-steps", "2", "--decode-chunk", "2"], "greedy continuation requires")]:
             result = subprocess.run(capture_argv + extra, text=True, capture_output=True, env=env)
             if result.returncode != 1 or error not in result.stderr or (directory / "capture").exists():

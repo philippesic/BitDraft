@@ -147,7 +147,7 @@ static void help() {
         "  --cpu-library LIB --cuda-library IMMUTABLE_LIB\n"
         "  [--decode-tokens CONTINUATION.ids | --greedy-steps N] [--decode-chunk 1]\n"
         "  [--taps 2,16,29] [--logit-positions P0,P1,...] [--prefill-chunk 512]\n"
-        "  [--threads 8] [--max-output-mib 256] [--no-features]\n"
+        "  [--threads 8] [--output-cap 512] [--max-output-mib 256] [--no-features]\n"
         "Token files contain decimal token IDs separated by whitespace or commas.\n"
         "Positions are zero based over prompt then continuation. Default logits:\n"
         "last prompt row plus every continuation row. Greedy mode requires these rows.\n"
@@ -175,7 +175,7 @@ int main(int argc, char ** argv) {
             if (std::string(argv[i]) == "--tokenize") return tokenize_text(argc, argv);
         std::map<std::string, std::string> args;
         const std::set<std::string> keys = {"--model", "--tokens", "--out", "--cpu-library", "--cuda-library",
-            "--decode-tokens", "--greedy-steps", "--decode-chunk", "--taps", "--logit-positions", "--prefill-chunk", "--threads", "--max-output-mib"};
+            "--decode-tokens", "--greedy-steps", "--decode-chunk", "--taps", "--logit-positions", "--prefill-chunk", "--threads", "--output-cap", "--max-output-mib"};
         bool features = true;
         for (int i = 1; i < argc; ++i) {
             const std::string key = argv[i];
@@ -197,6 +197,8 @@ int main(int argc, char ** argv) {
         require(!args.count("--greedy-steps") || decode_chunk == 1,
                 "greedy continuation requires decode chunk 1");
         const int threads = integer(get("--threads", "8"));
+        const int output_cap = integer(get("--output-cap", "512"));
+        require(output_cap >= 1 && output_cap <= 512, "output cap must be in [1,512]");
         const int max_mib = integer(get("--max-output-mib", "256"));
         require(chunk >= 1 && chunk <= 512 && threads >= 1 && threads <= 64 && max_mib >= 1 && max_mib <= 1024, "invalid capture limits");
         auto taps = features ? numbers(get("--taps", "2,16,29")) : std::vector<int>{};
@@ -267,6 +269,8 @@ int main(int argc, char ** argv) {
                 "insufficient disk space for bounded capture");
         auto cp = llama_context_default_params();
         cp.n_ctx = 4096; cp.n_batch = 512; cp.n_ubatch = 512; cp.n_seq_max = 1;
+        cp.n_outputs_max = static_cast<uint32_t>(output_cap);
+        cp.n_outputs_max_per_seq = static_cast<uint32_t>(output_cap);
         cp.n_threads = threads; cp.n_threads_batch = threads;
         cp.type_k = GGML_TYPE_F16; cp.type_v = GGML_TYPE_F16;
         cp.flash_attn_type = LLAMA_FLASH_ATTN_TYPE_ENABLED;
@@ -290,6 +294,9 @@ int main(int argc, char ** argv) {
         std::vector<int> greedy_ids;
         int next = -1;
         auto consume = [&](int start, int count) {
+            int output_count = 0;
+            for (int i = 0; i < count; ++i) output_count += selected_set.count(start + i);
+            require(output_count <= output_cap, "selected output rows exceed context output cap");
             auto batch = llama_batch_init(count, 0, 1);
             require(batch.token && batch.pos && batch.logits && batch.seq_id && batch.n_seq_id, "batch allocation failed");
             batch.n_tokens = count;
@@ -347,6 +354,7 @@ int main(int argc, char ** argv) {
         metadata << ",\n\"prompt_tokens\":" << prompt.size() << ",\n\"continuation_mode\":" << quote(args.count("--greedy-steps") ? "native_greedy" : "fixed_token_ids")
             << ",\n\"prefill_chunk\":" << chunk
             << ",\n\"decode_chunk\":" << decode_chunk
+            << ",\n\"output_cap\":" << output_cap
             << ",\n\"threads\":" << threads
             << ",\n\"settings\":{\"context\":4096,\"batch\":512,\"ubatch\":512,\"seq_max\":1,\"kv\":\"F16\",\"flash_attention\":\"on\",\"consistent\":32,\"sampling\":\"raw_argmax_lowest_id_tie\",\"load_mtp\":false},\n\"array_bytes\":" << expected_bytes << "\n}\n";
         metadata.close(); require(bool(metadata), "metadata close failed");
