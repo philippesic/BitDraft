@@ -600,6 +600,104 @@ def require_eligible_rows(receipt, row_ids, *, purpose="supervision"):
     return [rows[x] for x in row_ids]
 
 
+def build_actor_steps(receipt):
+    """Map adjacent teacher rows to shifted, teacher-forced EAGLE actor steps.
+
+    A native teacher row at input position t labels token[t+1]. The actor
+    pairs feature[t] with that token at decoder position t, then predicts
+    token[t+2], supplied by the next teacher row. Both teacher rows must pass
+    the selected numeric gate. The final teacher row has no actor label.
+
+    The caller must authenticate the receipt and its evidence before use.
+    This helper does not grant draft-vocabulary membership, native actor
+    qualification, or parent-success protection. In recurrent free-running
+    training, these labels remain valid only while proposals follow the
+    recorded serving prefix; this mapping alone does not verify that prefix.
+    """
+    require(
+        receipt.get("schema") == "w1a8_modern_capture_admission_v1",
+        "admission receipt required",
+    )
+    rows = receipt.get("rows")
+    require(isinstance(rows, list) and rows, "teacher rows required")
+    start = rows[0].get("input_position")
+    require(type(start) is int and start >= 0, "nonnegative teacher input position required")
+    for index, row in enumerate(rows):
+        require(
+            row.get("row_id") == index
+            and type(row.get("row_id")) is int
+            and type(row.get("input_position")) is int
+            and row["input_position"] == start + index
+            and type(row.get("serving_token_index")) is int
+            and row["serving_token_index"] == index,
+            "teacher row IDs, positions and serving indices must be contiguous",
+        )
+        require(
+            all(
+                type(row.get(key)) is int and 0 <= row[key] < VOCAB
+                for key in ("serving_label", "native_argmax")
+            ),
+            "teacher labels must be target-vocabulary token IDs",
+        )
+    steps = []
+    for index, (source, label) in enumerate(zip(rows, rows[1:])):
+        teacher_ids = [source["row_id"], label["row_id"]]
+        blocked = {}
+        for purpose in ("supervision", "protection_numeric"):
+            blocked[purpose] = []
+            for row_id in teacher_ids:
+                try:
+                    require_eligible_rows(receipt, [row_id], purpose=purpose)
+                except ValueError:
+                    blocked[purpose].append(row_id)
+        position = source["input_position"]
+        steps.append(
+            {
+                "actor_step_id": index,
+                "source_teacher_row_id": source["row_id"],
+                "label_teacher_row_id": label["row_id"],
+                "feature_input_position": position,
+                "decoder_position": position,
+                "input_position": position + 1,
+                "label_position": position + 2,
+                "input_token_id": source["serving_label"],
+                "label_token_id": label["serving_label"],
+                "supervision_eligible": not blocked["supervision"],
+                "protection_numeric_eligible": not blocked["protection_numeric"],
+                "excluded_teacher_row_ids": blocked,
+                "parent_success_protection_proven": False,
+                "draft_vocab_membership_proven": False,
+                "actor_native_qualification_proven": False,
+                "alignment": "feature_t_input_t_plus_1_label_t_plus_2",
+                "interpretation": "teacher_forced_adjacent_transition",
+            }
+        )
+    return steps
+
+
+def require_actor_steps(receipt, step_ids, *, purpose="supervision"):
+    """Recompute shifted actor admission; caller-supplied step flags are unused."""
+    require(purpose in ("supervision", "protection_numeric"), "unsupported admission purpose")
+    require(
+        isinstance(step_ids, (list, tuple))
+        and all(type(value) is int for value in step_ids)
+        and len(set(step_ids)) == len(step_ids),
+        "distinct actor step IDs required",
+    )
+    steps = {step["actor_step_id"]: step for step in build_actor_steps(receipt)}
+    selected = []
+    for step_id in step_ids:
+        require(step_id in steps, "unknown actor step ID or final teacher boundary")
+        step = steps[step_id]
+        require_eligible_rows(
+            receipt,
+            [step["source_teacher_row_id"], step["label_teacher_row_id"]],
+            purpose=purpose,
+        )
+        selected.append(step)
+    return selected
+
+
 def prepare(packet_path, output):
     packet_path, output = Path(packet_path), Path(output)
     require(not output.exists(), "refuse to overwrite admission receipt")

@@ -447,6 +447,127 @@ class NativeAdmissionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "refuse to overwrite"):
             gate.prepare(packet, output)
 
+    def four_teacher_rows(self):
+        """Create a complete authenticated fixture with an excluded middle row."""
+        labels, native = [1, 4, 7, 8], [1, 5, 7, 8]
+        inputs = [1, 2] + labels[:3]
+        logits = np.zeros((4, gate.VOCAB), dtype=np.float32)
+        for index, (label, proposal) in enumerate(zip(labels, native)):
+            logits[index, label] = 0.95
+            logits[index, proposal] = 1
+        self.packet["arrays"]["logits.f32"] = self.array("capture/logits.f32", logits)
+        for tap in [0, 2, 16, 29]:
+            values = np.array(inputs, dtype=np.float32)[:, None].repeat(gate.WIDTH, 1)
+            values *= 0.000123456
+            name = f"layer-{tap}.f32"
+            self.packet["arrays"][name] = self.array(f"capture/{name}", values)
+        fixed = Path(self.packet["continuation_tokens"]["path"])
+        fixed.write_text("1\n4\n7\n")
+        self.packet["continuation_tokens"] = self.pin(fixed)
+        self.rewrite(
+            self.packet["capture"],
+            lambda value: value.update(
+                input_tokens=inputs,
+                feature_shape=[5, gate.WIDTH],
+                logits_shape=[4, gate.VOCAB],
+                logit_positions=[1, 2, 3, 4],
+                greedy_ids=native,
+                array_bytes=sum(ref["bytes"] for ref in self.packet["arrays"].values()),
+            ),
+        )
+        self.rewrite(self.packet["serving"]["request"], lambda value: value.update(n_predict=4))
+
+        def response(value):
+            value.update(tokens=labels, tokens_predicted=4)
+            value["generation_settings"]["n_predict"] = 4
+
+        self.rewrite(self.packet["serving"]["response"], response)
+        return gate.admit_packet(self.packet)
+
+    def test_actor_alignment_uses_next_teacher_label_and_unshifted_cache_position(self):
+        ref = self.packet["arrays"]["logits.f32"]
+        logits = np.fromfile(ref["path"], dtype="<f4").reshape(2, gate.VOCAB)
+        logits[1, 4], logits[1, 5] = 1, 0.95
+        logits.tofile(ref["path"])
+        ref.update(self.pin(Path(ref["path"])))
+        self.rewrite(self.packet["capture"], lambda value: value.update(greedy_ids=[1, 4]))
+        receipt = gate.admit_packet(self.packet)
+        steps = gate.build_actor_steps(receipt)
+        self.assertEqual(len(steps), 1)
+        step = steps[0]
+        self.assertEqual(step["source_teacher_row_id"], 0)
+        self.assertEqual(step["label_teacher_row_id"], 1)
+        self.assertEqual(step["feature_input_position"], 1)
+        self.assertEqual(step["decoder_position"], 1)
+        self.assertEqual(step["input_position"], 2)
+        self.assertEqual(step["label_position"], 3)
+        self.assertEqual(step["input_token_id"], 1)
+        self.assertEqual(step["label_token_id"], 4)
+        self.assertNotEqual(step["label_token_id"], receipt["rows"][0]["serving_label"])
+        self.assertTrue(step["supervision_eligible"])
+        self.assertFalse(step["parent_success_protection_proven"])
+        self.assertFalse(step["draft_vocab_membership_proven"])
+        self.assertFalse(step["actor_native_qualification_proven"])
+        self.assertEqual(gate.require_actor_steps(receipt, [0]), steps)
+        with self.assertRaisesRegex(ValueError, "final teacher boundary"):
+            gate.require_actor_steps(receipt, [1])
+
+    def test_excluded_middle_teacher_row_blocks_both_adjacent_actor_transitions(self):
+        receipt = self.four_teacher_rows()
+        self.assertEqual(receipt["excluded_row_ids"], [1])
+        steps = gate.build_actor_steps(receipt)
+        self.assertEqual([step["actor_step_id"] for step in steps], [0, 1, 2])
+        self.assertEqual([step["supervision_eligible"] for step in steps], [False, False, True])
+        self.assertEqual(steps[0]["excluded_teacher_row_ids"]["supervision"], [1])
+        self.assertEqual(steps[1]["excluded_teacher_row_ids"]["supervision"], [1])
+        for purpose in ("supervision", "protection_numeric"):
+            for step_id in (0, 1):
+                with self.assertRaisesRegex(ValueError, "excluded row"):
+                    gate.require_actor_steps(receipt, [step_id], purpose=purpose)
+            accepted = gate.require_actor_steps(receipt, [2], purpose=purpose)
+            self.assertEqual(accepted[0]["input_token_id"], 7)
+            self.assertEqual(accepted[0]["label_token_id"], 8)
+            self.assertEqual(accepted[0]["decoder_position"], 3)
+            self.assertEqual(accepted[0]["input_position"], 4)
+            self.assertEqual(accepted[0]["label_position"], 5)
+
+    def test_actor_consumer_recomputes_gates_after_forged_flags(self):
+        receipt = self.four_teacher_rows()
+        steps = gate.build_actor_steps(receipt)
+        for step in steps:
+            step["supervision_eligible"] = True
+            step["protection_numeric_eligible"] = True
+        # Neither a fabricated output flag nor fabricated teacher eligibility
+        # replaces actual native/serving agreement.
+        receipt["eligible_row_ids"] = [0, 1, 2, 3]
+        receipt["excluded_row_ids"] = []
+        receipt["rows"][1]["supervision_eligible"] = True
+        receipt["rows"][1]["protection_numeric_eligible"] = True
+        for purpose in ("supervision", "protection_numeric"):
+            with self.assertRaisesRegex(ValueError, "excluded row"):
+                gate.require_actor_steps(receipt, [0, 1], purpose=purpose)
+
+    def test_noncontiguous_teacher_positions_ids_and_indices_are_rejected(self):
+        receipt = self.four_teacher_rows()
+        for field, value in (("input_position", 4), ("row_id", 3), ("serving_token_index", 3)):
+            changed = copy.deepcopy(receipt)
+            changed["rows"][2][field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "contiguous"):
+                gate.build_actor_steps(changed)
+        with self.assertRaisesRegex(ValueError, "distinct actor step IDs"):
+            gate.require_actor_steps(receipt, [2, 2])
+        with self.assertRaisesRegex(ValueError, "distinct actor step IDs"):
+            gate.require_actor_steps(receipt, [True])
+
+    def test_final_teacher_row_alone_has_no_actor_step(self):
+        receipt = gate.admit_packet(self.packet)
+        receipt["rows"] = receipt["rows"][:1]
+        receipt["excluded_row_ids"] = []
+        self.assertEqual(gate.build_actor_steps(receipt), [])
+        self.assertEqual(gate.require_actor_steps(receipt, []), [])
+        with self.assertRaisesRegex(ValueError, "final teacher boundary"):
+            gate.require_actor_steps(receipt, [0])
+
 
 if __name__ == "__main__":
     unittest.main()
