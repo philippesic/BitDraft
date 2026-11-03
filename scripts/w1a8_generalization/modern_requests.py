@@ -33,7 +33,7 @@ import subprocess
 import time
 from pathlib import Path
 
-from modern_collect import Collector, atomic, pin, process_identity, read, require
+from modern_collect import Collector, StopRequested, atomic, pin, process_identity, read, require
 
 PROJECT = Path("/home/philip/binary-eagle-decoding")
 TARGET_SHA = "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
@@ -83,7 +83,37 @@ def signature(response):
     }
 
 
+def draft_counts(response, kind):
+    timing = response.get("timings", {})
+    proposed, accepted = timing.get("draft_n"), timing.get("draft_n_accepted")
+    if kind == "target":
+        require(
+            proposed in (None, 0) and accepted in (None, 0), "target reports speculative tokens"
+        )
+        return 0, 0
+    require(
+        type(proposed) is int
+        and type(accepted) is int
+        and 0 <= accepted <= proposed
+        and accepted <= len(response["tokens"]),
+        "invalid or missing native draft accounting",
+    )
+    return proposed, accepted
+
+
 class Requests(Collector):
+    def request_stop(self, signum, frame):
+        self.stopping = True
+        if self.active is not None and not self.cleaning:
+            raise StopRequested("native request interrupted for supervised cleanup")
+
+    def reap(self, receipt_path):
+        self.cleaning = True
+        try:
+            return super().reap(receipt_path)
+        finally:
+            self.cleaning = False
+
     def guard(self):
         self.permission()
         require(not self.stopping, "signal stop requested")
@@ -133,6 +163,8 @@ class Requests(Collector):
         for arm in self.arms:
             require(arm["id"].replace("-", "").replace("_", "").isalnum(), "unsafe arm ID")
             runtime = arm["runtime"]
+            level = runtime.get("log_verbosity", 4 if arm["kind"] == "w1a8" else 3)
+            require(type(level) is int and level in (3, 4), "explicit native log level3/4 only")
             env = runtime["environment"]
             require(runtime.get("source_pins"), "runtime immutable source pins required")
             require(
@@ -250,6 +282,35 @@ class Requests(Collector):
                 )
             else:
                 require(env.get("GGML_W1AX_ACT_BITS") == "8", "W1A8 activation mode required")
+                if level == 3:
+                    qualification_ref = runtime.get("loader_qualification")
+                    require(
+                        isinstance(qualification_ref, dict),
+                        "quiet W1A8 needs separate native qualification",
+                    )
+                    qualification = read(self.checked(qualification_ref))
+                    for ref in references(qualification):
+                        self.checked(ref)
+                    require(
+                        qualification.get("schema")
+                        == "w1a8_model_runtime_native_loader_qualification_v1"
+                        and qualification["model"]["sha256"] == arm["model"]["sha256"]
+                        and qualification["model"]["bytes"] == arm["model"]["bytes"]
+                        and qualification["runtime"]
+                        == {
+                            k: v
+                            for k, v in runtime.items()
+                            if k not in ("log_verbosity", "loader_qualification")
+                        }
+                        and qualification.get("native_outputs_audited", 0) > 0,
+                        "quiet model/runtime qualification differs",
+                    )
+                    content = self.checked(qualification["raw_log"]).read_text()
+                    require(
+                        "complete nine-linear fixed row W1A8" in content
+                        and content.count("W1A8 packed ") == 9,
+                        "separate packed nine-linear loader evidence missing",
+                    )
             if arm["kind"] != "w1a8":
                 require("GGML_W1AX_ACT_BITS" not in env, "W1A8 mode leaked into baseline")
         initializers = [
@@ -261,9 +322,17 @@ class Requests(Collector):
         )
         if len(initializers) == 2:
             require(
-                {a["runtime"].get("variant", "original") for a in initializers}
-                == {"original", "zero_output_headskip"},
-                "two initializer arms must isolate original versus headskip runtime",
+                len(
+                    {
+                        (
+                            a["runtime"].get("variant", "original"),
+                            a["runtime"].get("log_verbosity", 4),
+                        )
+                        for a in initializers
+                    }
+                )
+                == 2,
+                "two initializer arms must isolate runtime variant or logging",
             )
         self.authenticate_inputs()
         self.guard()
@@ -309,18 +378,16 @@ class Requests(Collector):
                 "hardware": pin(self.output / "hardware.txt"),
                 "source_snapshots": snapshots,
                 "repetitions": self.args.repetitions,
-                "expected_startups": len(self.arms) * self.args.repetitions,
-                "expected_measured_requests": len(self.rows)
-                * len(self.arms)
-                * self.args.repetitions,
-                "expected_excluded_warmups": len(self.warmups)
-                * len(self.arms)
-                * self.args.repetitions,
+                **self.freeze_counts(),
                 "runtime_variants": [
                     {
                         "arm": arm["id"],
                         "variant": arm["runtime"].get("variant", "original"),
                         "variant_build": arm["runtime"].get("variant_build"),
+                        "log_verbosity": arm["runtime"].get(
+                            "log_verbosity", 4 if arm["kind"] == "w1a8" else 3
+                        ),
+                        "loader_qualification": arm["runtime"].get("loader_qualification"),
                     }
                     for arm in self.arms
                 ],
@@ -331,6 +398,14 @@ class Requests(Collector):
                 "scope": self.request_scope,
             },
         )
+
+    def freeze_counts(self):
+        startups = len(self.arms) * self.args.repetitions
+        return {
+            "expected_startups": startups,
+            "expected_measured_requests": len(self.rows) * startups,
+            "expected_excluded_warmups": len(self.warmups) * startups,
+        }
 
     def authenticate_inputs(self):
         self.output_limit = 80
@@ -433,6 +508,7 @@ class Requests(Collector):
             "token/text/stop parity failed: " + arm["id"] + "/" + item["id"],
         )
         timing = response.get("timings", {})
+        proposed, accepted = draft_counts(response, arm["kind"])
         require(math.isfinite(seconds) and seconds > 0, "invalid request wall")
         result = {
             "arm": arm["id"],
@@ -445,8 +521,8 @@ class Requests(Collector):
             "full_http_wall_seconds": seconds,
             "completion_tokens": len(response["tokens"]),
             "timings": timing,
-            "draft_proposed": timing.get("draft_n"),
-            "draft_accepted": timing.get("draft_n_accepted"),
+            "draft_proposed": proposed,
+            "draft_accepted": accepted,
             "token_text_stop_parity": True,
         }
         atomic(cell / (prefix + "-receipt.json"), result)
@@ -541,8 +617,8 @@ class Requests(Collector):
                 "--spec-draft-sampling",
                 "greedy",
             ]
-        if arm["kind"] == "w1a8":
-            argv += ["-lv", "4"]
+        level = runtime.get("log_verbosity", 4 if arm["kind"] == "w1a8" else 3)
+        argv += ["-lv", str(level)]
         atomic(cell / "command.json", {"argv": argv, "environment": runtime["environment"]})
         try:
             with (cell / "server.log").open("x") as log:
@@ -572,7 +648,7 @@ class Requests(Collector):
                 for index, item in enumerate(self.rows, start=2):
                     self.completion(port, item, cell, index, False, arm, rep)
                 self.audit_maps(cell, "final", arm)
-                if arm["kind"] == "w1a8":
+                if arm["kind"] == "w1a8" and level == 4:
                     content = (cell / "server.log").read_text()
                     require(
                         "complete nine-linear fixed row W1A8" in content
@@ -609,11 +685,8 @@ class Requests(Collector):
         self.records = []
         self.stopping = False
 
-        def stop(signum, frame):
-            self.stopping = True
-
-        signal.signal(signal.SIGTERM, stop)
-        signal.signal(signal.SIGINT, stop)
+        signal.signal(signal.SIGTERM, self.request_stop)
+        signal.signal(signal.SIGINT, self.request_stop)
         try:
             self.authenticate()
             for rep in range(self.args.repetitions):
@@ -631,6 +704,10 @@ class Requests(Collector):
                     require(len(rows) == len(self.rows), "incomplete repetition")
                     tokens = sum(r["completion_tokens"] for r in rows)
                     wall = sum(r["full_http_wall_seconds"] for r in rows)
+                    require(
+                        arm["kind"] == "target" or sum(r["draft_proposed"] for r in rows) > 0,
+                        "speculative arm inactive across entire repetition",
+                    )
                     reps.append(
                         {
                             "repetition": rep,
