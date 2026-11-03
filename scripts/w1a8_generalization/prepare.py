@@ -39,6 +39,7 @@ def main():
                     "manifest": policies[policy]["manifest"], "order": policies[policy]["order"],
                     "policy": policy, "retention_coefficient": coefficient, "margin_cap": 2.,
                     "horizon_updates": 19200, "readout_milestones": [96, 480, 1920, 4800, 9600],
+                    "checkpoint_interval": 480, "recovery_checkpoints_keep": 2,
                     "fit_readout_stride": 10, "required_free_bytes": 7 * 1024**3,
                     "stop_path": str(output.parent / "STOP"),
                     "scientific_protocol": original["scientific_protocol"],

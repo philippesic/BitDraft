@@ -16,6 +16,7 @@ import sys
 import time
 
 from losses import parent_reference, retention_penalty
+from recovery import RecoveryCheckpoints, atomic_json, chunked_frozen
 
 
 def sha(path):
@@ -71,7 +72,7 @@ def train(args):
     base = bootstrap(spec)
     import torch
     from data import block
-    from training_system.model_cache import load, validate_frozen
+    from training_system.model_cache import load
     from training_system.step import train_batch, measure_norms
     from shortlist_pilots.binary.parent_loader import equal, copy_named_state
     from shortlist_pilots.objectives.runtime import native_export
@@ -82,6 +83,7 @@ def train(args):
     from w1a1_eagle.block_qat import block_supported_mask
     from eal_loss import make_eal_loss
     from common import guard
+    from native_frozen_actor import frozen_slots
     torch.set_num_threads(1)
     torch.set_num_interop_threads(1)
     output = args.output.resolve()
@@ -89,6 +91,10 @@ def train(args):
     if shutil.disk_usage(output).free < spec["required_free_bytes"]:
         raise ValueError("insufficient ext4 capacity for checkpoint, export and recovery floor")
     phases = {}
+    def phase(name, **details):
+        value = {"stage": name, "unix": time.time(), **details}
+        atomic_json(output / "progress.json", value)
+        print(json.dumps(value), flush=True)
     started = time.perf_counter()
     authenticate(spec["manifest"])
     authenticate(spec["order"])
@@ -126,8 +132,12 @@ def train(args):
         saved = load_private(resume)
         if saved["schema"] != "w1a8_generalization_checkpoint_v1" or saved["contract"] != spec_contract:
             raise ValueError("resume source/data/objective/initializer contract differs")
+        if saved.get("status") == "ORIGINAL_GUARD_STOP":
+            raise ValueError("guard-stopped state is not an ordinary continuation")
         if saved["config"] != asdict(model.config) or not equal(saved["frozen_state"], frozen):
             raise ValueError("resume config or ordinary frozen tensors differ")
+        if any(not equal(saved[key], metadata[key]) for key in ("initial_norms", "initial_sign_hashes")):
+            raise ValueError("resume original sign/norm guard references differ")
         copy_named_state(model, saved, joint_parameters, binary_buffers)
         optimizer.load_state_dict(saved["optimizer"])
         _restore_block_rng(saved["rng"], model.token_embd.device)
@@ -209,6 +219,32 @@ def train(args):
         if teacher is not None or not bool(supported.all()):
             raise ValueError("complete captured-prefix rows required")
         return student.new_zeros(()), {"supported_rows": 7, "normalized_error_sum": 0.}
+    def verify_checkpoint(state, saved):
+        if not equal(saved, state):
+            raise ValueError("checkpoint round trip differs")
+    writer = RecoveryCheckpoints(output, publish_full_state, verify_checkpoint,
+                                 keep=spec["recovery_checkpoints_keep"])
+    checkpoint = None
+    phases["checkpoints"] = []
+    def snapshot(snapshot_status):
+        nonlocal checkpoint
+        optimizer.zero_grad(set_to_none=True)
+        torch.cuda.synchronize()
+        phase("checkpoint_start", local_updates=local, status=snapshot_status)
+        state = {"schema": "w1a8_generalization_checkpoint_v1", "contract": spec_contract,
+                 "local_updates": local, "step": 3504 + local, "pair_index": local % len(pairs),
+                 "parameters": {n: p.detach() for n, p in params.items()}, "binary_buffers": binary_buffers(model),
+                 "optimizer": optimizer.state_dict(), "rng": _block_rng_state(model.token_embd.device),
+                 "config": asdict(model.config), "initial_norms": metadata["initial_norms"],
+                 "initial_sign_hashes": metadata["initial_sign_hashes"], "frozen_state": frozen,
+                 "TRAIN_seconds": metadata["TRAIN_seconds"] + train_seconds, "additional_TRAIN_seconds": train_seconds,
+                 "parent_reference": refs, "sign_displacement": baseline.measure(model), "status": snapshot_status}
+        t0 = time.perf_counter()
+        checkpoint = writer.publish(local, state)
+        phases["checkpoints"].append({"local_updates": local, "wall_seconds": time.perf_counter() - t0})
+        del state
+        gc.collect()
+        phase("checkpoint_verified", local_updates=local, checkpoint=checkpoint)
     status = "READOUT_COMPLETE" if args.readout_only else "EXPOSURE_COMPLETE"
     data_seconds, step_seconds, diagnostics_seconds = 0., 0., 0.
     started = time.perf_counter()
@@ -250,46 +286,43 @@ def train(args):
                     print(json.dumps({"stage": "training", "updates": local, "TRAIN_seconds": train_seconds}), flush=True)
                 if signs["fraction"] > .02 or norms["max_relative_l2"] > .1 or norms["max_absolute_change"] > .5:
                     status = "ORIGINAL_GUARD_STOP"
+                    snapshot(status)
                     break
+                if (local % spec["checkpoint_interval"] == 0 or local in spec["readout_milestones"]
+                        or local == args.updates):
+                    snapshot("EXPOSURE_COMPLETE" if local == args.updates else "RUNNING")
                 if local in spec["readout_milestones"] and local < args.updates:
                     phases["readout_%d" % local] = readout("readout-%08d.json" % local)
                 if local % 240 == 0:
                     gc.collect()
-    phases.update(training_loop_wall=time.perf_counter() - started, data_seconds=data_seconds,
-                  optimizer_seconds=step_seconds, diagnostics_seconds=diagnostics_seconds)
-    phases["after_readout"] = readout("after.json")
-    optimizer.zero_grad(set_to_none=True)
-    torch.cuda.synchronize()
-    if validate_frozen(model, producer["frozen_actor"]["tensors"]) != frozen:
-        raise ValueError("frozen ordinary native operands changed")
-    checkpoint = exported = None
-    if local and not args.readout_only:
-        state = {"schema": "w1a8_generalization_checkpoint_v1", "contract": spec_contract,
-                 "local_updates": local, "step": 3504 + local, "pair_index": local % len(pairs),
-                 "parameters": {n: p.detach() for n, p in params.items()}, "binary_buffers": binary_buffers(model),
-                 "optimizer": optimizer.state_dict(), "rng": _block_rng_state(model.token_embd.device),
-                 "config": asdict(model.config), "initial_norms": metadata["initial_norms"],
-                 "initial_sign_hashes": metadata["initial_sign_hashes"], "frozen_state": frozen,
-                 "TRAIN_seconds": metadata["TRAIN_seconds"] + train_seconds, "additional_TRAIN_seconds": train_seconds,
-                 "parent_reference": refs, "sign_displacement": baseline.measure(model), "status": status}
-        def verify(saved):
-            if not equal(saved, state):
-                raise ValueError("checkpoint round trip differs")
+        phases.update(training_loop_wall=time.perf_counter() - started, data_seconds=data_seconds,
+                      optimizer_seconds=step_seconds, diagnostics_seconds=diagnostics_seconds)
+        # Keep signal handling active through paid-state publication and export.
+        # An interrupted readout/frozen audit must not lose completed updates.
+        if local and not args.readout_only:
+            snapshot(status)
+            write(output / "checkpoint.json", checkpoint)
+        phase("final_readout_start", local_updates=local)
+        phases["after_readout"] = readout("after.json")
+        phase("frozen_verification_start", local_updates=local)
         t0 = time.perf_counter()
-        checkpoint = publish_full_state(output / ("checkpoint-%08d.pt" % local), state, verify)
-        phases["checkpoint"] = time.perf_counter() - t0
-        write(output / "checkpoint.json", checkpoint)
-        del state
-        gc.collect()
-        t0 = time.perf_counter()
-        exported = native_export(model, output / "model.gguf", parent=base["parent"])
-        phases["export"] = time.perf_counter() - t0
-    result = {"status": status, "local_updates": local, "additional_TRAIN_seconds": train_seconds,
-              "checkpoint": checkpoint, "export": exported, "phases": phases, "spec": pin(args.spec),
-              "parent": base["parent"], "whole_parent_unseen_proven": False,
-              "native_evaluation_required": True, "backlog_screening_started": False}
-    write(output / "finish.json", result)
-    print(json.dumps(result), flush=True)
+        if chunked_frozen(model, producer["frozen_actor"]["tensors"], frozen_slots) != frozen:
+            raise ValueError("frozen ordinary native operands changed")
+        phases["frozen_verification"] = time.perf_counter() - t0
+        exported = None
+        if local and not args.readout_only:
+            phase("native_export_start", local_updates=local)
+            t0 = time.perf_counter()
+            exported = native_export(model, output / "model.gguf", parent=base["parent"])
+            phases["export"] = time.perf_counter() - t0
+        result = {"status": status, "local_updates": local, "additional_TRAIN_seconds": train_seconds,
+                  "checkpoint": checkpoint, "export": exported, "phases": phases, "spec": pin(args.spec),
+                  "parent": base["parent"], "whole_parent_unseen_proven": False,
+                  "native_evaluation_required": True, "backlog_screening_started": False,
+                  "stop_received_during_finalization": stop.requested()}
+        write(output / "finish.json", result)
+        phase("finished", local_updates=local, status=status)
+        print(json.dumps(result), flush=True)
 
 
 def main():
