@@ -5,41 +5,50 @@
 Continue the existing [goal](goals/nine-model-qat-overnight.md): establish
 untouched generalization, validate an early/long training predictor, then screen
 the full backlog and test combinations. Final modern confirmation uses frozen
-DFlash Q4_K_M correctness controls on all four targets. Later phases have not
-started; no generalization win or modern W1A8 endpoint exists yet.
+DFlash Q4_K_M correctness controls on all four targets. Phase1 remains active;
+there is no demonstrated generalization or throughput improvement. Later phases
+have not started. Historical Qwen3 F16 results remain separate.
 
-Two historical Qwen3 F16 arms completed matched1,920-update exposure and native
-export. Each passed600 full-request token/text/stop/repetition checks against
-unchanged controls. Original-data control202.46tok/s versus paired parent201.55;
-occupancy-data202.89 versus its paired parent201.67. Both uncertainty intervals
-span no gain; both remain approximately8% below historical same-family Q4_K_M.
-This reused development evidence does not reject longer training and does not
-validate untouched quality or modern DFlash performance. Both continuation-
-protection arms remain unrun. Existing successful continuations are preserved.
+The two completed historical arms each passed600 full-request token/text/stop/
+repeat checks at1,920 updates but showed no reliable serving gain. Both historical
+continuation-protection arms remain unrun. Existing successful states survive.
 
-Modern packed EAGLE W1A8 now has an actual executable native path on4B Q4_K_M:
-zero-update initializer only. Correct partial-RoPE serialization passes independent
-audit of all76,880 rows; fixed-A8 CPU/CUDA operations pass exact integer-reference
-fixtures. Six-arm development smoke passes18 full token/text/stop audits against
-frozen target/DFlash controls; the initialization accepts67/408 draft tokens.
-Loaded runtime images and all nine packed projections are audited. There is no
-trained modern W1A8 improvement, untouched quality or repeated-throughput claim.
-See the [modern native report](../experiments/w1a8-modern-native-20261103/report.md).
+Modern4B Q4_K_M packed W1A8 executes natively. The original zero-update six-arm
+smoke passed18 full-response audits; CPU/CUDA operation fixtures and all nine
+serialized projections pass. A new compact scale-only actor reproduces the
+initializer exactly. Actual GPU backward, a two-update continuation, exact
+optimizer/RNG/cursor resume and native export now pass;16 diagnostic native
+teacher decisions agree with the updated GPU actor. These are plumbing checks
+on reused histories, not an improved model or generalization experiment.
 
-Capture admission and shifted actor-step guards are integrated;17 CPU tests pass.
-Two disagreement rows are excluded, leaving13/16 numeric actor transitions on
-the two recorded histories. A real CPU initializer readout is2/13 correct on
-eligible teacher-forced steps. Native actor trajectory agreement and successful-
-continuation protection sets remain unqualified; aggregate acceptance is not
-that proof. The next step is bounded native/actor replay, followed by broader
-training data and untouched evaluation. Screening/predictor work stays gated.
+A material data discrepancy is now measured: actual serving prefills one55-token
+prompt as51+4. The first51 feature rows match conditional capture exactly, while
+the final4 differ by8.58% relative RMS. Supplying actual serving states restores
+a previously mismatched proposal. On the full recorded request, CPU replay
+matches106/110 native proposals and all20 actually accepted tokens with recorded
+step inputs. A pass recomputing its own FC/pre-norm states matches107/110 and
+retains all20successes, including both depth1tokens. Remaining near-tie
+disagreements are rejected drafts. Native preservation masks
+come from actual emitted/verified serving traces, not conditional replay totals.
 
-All owned GPU/CPU jobs are finished, authenticated processes absent and GPU
-released. Storage is approximately3.6GiB WSL /3.5GiB C:. The pending25GB-or-another-
-destination question still gates full-state training while preserving checkpoints.
-Source snapshots, reusable builds, original paid states and useful caches are
-retained. The latest goal checkpoint and generalization report link exact cost,
-release and retained-storage evidence. No push.
+A frozen24fit/12development modern pilot now has actual native captures and raw
+frozen-target responses:611/612 teacher rows admitted and574/576 shifted steps
+eligible. Group separation and raw ancestry pass independent audit. Development
+has historical F16 TRAIN exposure; pristine final holdout and independent quality
+confirmation remain outstanding. A separate actual-parent collection now passes
+all36full-response/trace audits, retaining356fit and193development native successes
+with exact response-index masks. All19,651trace files rehash. CPU actor coverage
+on all36 remains unqualified; prepare actual-state training views and freeze
+same-actor retention margins before matched generalization training.
+
+Full-state training still needs the pending storage resolution. Compact scale
+training fits current capacity. Exact duplicate driver cache blobs were
+consolidated with all paths/content preserved, reclaiming982,757,376WSL bytes;
+unique caches and paid checkpoints remain. No push. Exact runs, current ownership,
+costs and next actions live in the latest goal checkpoint and the
+[modern native report](../experiments/w1a8-modern-native-20261103/report.md).
+All owned supervisors/servers are terminal and GPU compute is released. Free
+space is approximately2.19GiB WSL /3.43GiB C: after retaining the new data.
 
 ## Selected baseline and W1A8 standing — November 2, 2026
 

@@ -4668,4 +4668,175 @@ classification/combinations and final frozen DFlash comparison across four targe
 advance. This turn is progress through implemented serialization/admission,
 real model readout, actual CUDA operations and real token-correct native serving.
 
+## Serving-state transfer diagnosis and modern data — November 3, 2026
+
+Resume after the requested recap: that check-in launched no new experiment;
+this continuation makes measured progress and keeps the full ordered goal active.
+Main now integrates native replay, compact modern actor, conditional-data
+collection and actual-serving trace tools through6fc966a7; no push. The isolated
+source worktree is `w1a8-modern-replay-20261103`; do not retire it until worker
+recipes/source references have recovery snapshots and live tasks finish.
+
+The original two-history native replay completes16teacher+18recurrent rows,
+all34 proposals matching CPU. Encoded FC maxabs1.526e-5; decoder logit drift
+maxabs0.17836 changes no decisions. Borrowed native embeddings are byte-exact.
+`runs/w1a8-modern-native-replay-20261103-01/comparison02.json` authenticates source,
+map, immutable runtime images and admissions; root independently joins all34.
+Conditional replay alone is explicitly not serving-verifier or rollback proof.
+
+The actual server exposes a material input mismatch. On the same55-token prompt
+it prefills51+4; conditional capture prefills55. First51 feature rows are exact,
+but the last4 have8.58% aggregate relative RMS drift. Actual round2 proposes567
+where conditional replay proposes11. Root records the exact raw comparison in
+`runs/w1a8-modern-serving-trace-20261103-03/prompt-02/feature-cadence-comparison.json`.
+This gives a concrete serving-state data risk; it does not prove chunking explains
+every discrepancy. Correcting data ancestry/cadence takes priority over a new
+numerical parity project.
+
+Actual debug traces preserve every emitted success on three reused requests:
+38/178,20/110 and9/120accepted/proposed, all token/text/stop-equal to unchanged
+target controls. The parser retains exact response-index/round/depth/native
+positions and fails closed on ambiguous/truncated logs. Ten CPU tests include
+checkpoint-replay and final-stop accounting; actual traces here have no checkpoint
+restore. Original traces are `runs/w1a8-modern-serving-trace-20261103-01/`.
+
+A diagnostic interposer captures actual native FC inputs, decoder states and
+outputs without changing graph operations. Its first actual run preserves final
+responses/acceptance but incorrectly treats backend compact top10 logits as dense;
+those logits/proposals are unqualified, while inputs/pre-norm remain useful.
+The corrected v2 uses explicit native candidate IDs/counts. Build02 and actual
+serving run03 pass: all110 captured top1 proposals match server debug logs,
+response unchanged20/110. Original flawed run/build are preserved. This is an
+instrumented correctness/data trace, never a timing measurement.
+
+CPU replay of actual recorded step inputs covers167decode calls/274rows and
+matches106/110 proposals, all20 actually emitted native successes and all55
+accepted-prefix lengths. The four near-tie disagreements are rejected drafts;
+none is silently removed from serving coverage. Native FC agrees within1.526e-5.
+Root rehashes526 input/output pins and recomputes saved totals. Source/independent
+audit and a bounded check carrying CPU-owned FC/pre-norm states live under
+`runs/w1a8-modern-actual-actor-replay-20261103-01/`. The owned-state pass matches
+107/110native decisions and all20successes/all55prefix lengths, including both
+depth1successes;15.65s CPU, peak3.749GB. This is a forward qualification along
+native token/cache paths up to first gold divergence, not autonomous trajectory
+parity or autograd equivalence. Sixty-nine native target layer0 rows were
+captured separately for all used input IDs, without a private embedding table.
+Freeze preservation margins from this same CPU parent/actual-state forward,
+while retaining the complete immutable native success mask. Native margin targets
+alone falsely penalize the unchanged actor on10/20protected rows (max delta0.13209);
+all CPU-owned protected margins are positive. Remaining owned-state mismatches
+are three failed continuations, within the bounded5%decision gate with prefix
+error0. This gate is one reused history, not broad calibration or convergence.
+
+Packed-only actor reconstruction exactly reproduces all34 earlier CPU logit/state
+rows. Scale-only explicitly freezes signs/norms and exposes nine tensors /
+76,880scale parameters. Compact state/optimizer/RNG/cursor resume and native
+scale-only export pass; zero export equals initializer bytes and changed export
+modifies only nine scale payloads. Eight meaningful CPU tests pass. A real GPU
+plumbing run does two CE updates on seven reused diagnostic rows, plus one repeated
+update to verify exact resume: three physical updates, two unique trajectory
+updates. All scale gradients finite, signs frozen, checkpoint round-trip exact;
+updated native export has16/16teacher proposals equal the GPU actor. This is not
+generalization training or evidence of an improved candidate. Full qualification
+wall39.25s; GPU step/readout/export cost remains separated in its raw result.
+Evidence: `runs/w1a8-modern-{compact-qualification,gpu-training-qualification}-20261103-01/`
+and native replay `native02/` /`result02.json`.
+
+Authenticated raw512TRAIN groups supply a frozen balanced24fit/12development
+modern pilot. No exact/normalized overlap with44discovered modern artifacts was
+found; native prompt lengths36–223. The development groups have historical F16
+TRAIN exposure, so are not pristine final holdout. Frozen roster02 preserves and
+pins original roster/freeze after an operational alias extension; that brief
+in-place edit/restoration is disclosed in report02. No label-selected replacement.
+
+Conditional teacher collection completes all36 in116.22s, with611/612teacher
+rows and574/576shifted transitions eligible. Fit has382eligible steps,368labels
+inside the draft vocabulary; development192/174. Unsupported cases remain in
+coverage denominators. One fit-prose native/serving near-tie row and both adjacent
+actor transitions are excluded. Root independently hashes all868,024,320raw array
+bytes, recomputes argmax/labels/splits and source bindings. Nineteen admission
+tests pass, including selected later windows and explicitly hidden
+CUDA tokenizer environments. Evidence is
+`runs/w1a8-modern-generalization-capture-20261103-02/{summary,root-independent-audit}.json`.
+This teacher data is not relabeled actual speculative serving-state coverage.
+
+The first collection attempt stopped before GPU launch on its storage floor.
+Read-only audit found exact duplicate task-owned CUDA cache blobs; after immediate
+process/file revalidation, root consolidated40non-index groups/171paths and
+reverified every byte/path. WSL actually reclaimed982,757,376bytes; C:delta0.
+All unique cache content, mutable indexes, paid checkpoints and existing model
+states survive. Full-state historical/modern training still needs the pending
+storage resolution; compact scale experiments can proceed. Exact inventory,
+plan and measured receipts are under the native-replay run's `cache-dedup-*`.
+
+Root alone currently owns `local-w1a8-modern-actual-parent-capture-20261103-01`:
+36actual parent requests/traces at frozen depth2, per-group native accepted masks,
+all full responses checked against the conditional collection's unchanged target.
+Output `runs/w1a8-modern-actual-parent-capture-20261103-01/capture01/`.
+The supervisor/controller are authenticated live in its `identity.json`; each
+server has independent boot/birth/group identity and cleanup receipts. Local tmux
+socket `binary-eagle-runtime`; revalidate identities then SIGTERM supervisor,
+allow180s for cleanup and verify all captured groups absent. Shared driver cache
+is explicitly reused; do not mutate it while this job is live.
+
+Next: finish actual-parent capture and freeze its protection references,
+freeze actual-state generalization objectives/controls, train matched compact
+candidates, then untouched correctness/quality/five-repeat native request tests.
+The two historical retention arms remain preserved and unrun. Phase2/3,
+combinations and final four-target DFlash confirmation remain unopened. This
+checkpoint is progress, not completion or a blocked state.
+
+## Actual parent capture finalized — November 3, 2026
+
+The owned-state CPU qualification above is complete:107/110native proposals,
+20/20successes and55/55accepted-prefix lengths, including both depth1successes.
+All three remaining disagreements are failed near ties; same CPU-parent margin
+references avoid a spurious unchanged-parent preservation penalty. Both source
+and independent audits survive in actual-actor-replay `summary.json`,
+`owned-report.json` and `owned-independent-audit.json`. Scope remains one reused
+history and forward replay on native token/cache paths, not autograd equivalence.
+
+Actual parent collection completes36/36 in183.30s, all full token/text/stopping
+signatures equal frozen target controls. Fit24groups:1810returnedtokens,
+2814proposed,356actual native emitted successes. Development12groups:937returned,
+1439proposed,193successes. Root rehashes19,651trace files /596,690,320bytes,
+reruns masks from raw logs/responses, verifies every success token at its exact
+response index, and checks all36server process groups reaped/absent. Evidence
+`runs/w1a8-modern-actual-parent-capture-20261103-01/capture01/`
+`{summary,root-independent-audit}.json`. This is actual serving-state data and
+native masks, not CPU actor qualification across36groups, a trained improvement,
+independent answer quality or repeated serving performance.
+
+All10owned supervisors for this continuation are terminal; current compute query
+is empty. `cost-ledger06.json` separates supervised intervals from trainer time:
+the two diagnostic unique updates plus repeated update2consume1.21035physical
+step seconds, versus39.25s whole training qualification. Conditional collection
+116.22s and actual parent collection183.30s include lifecycle, source/data hashing
+and IO. No aggregate assistant/preparation elapsed time is invented.
+
+Exact69-file /1,287,402-byte source recovery bundle is
+`runs/w1a8-modern-replay-source-20261103-01/source-recovery.json`. It preserves
+the clean worktree Python package, modern helpers and tests before retirement;
+original pinned recipes remain immutable with explicit reconstruction guidance.
+Preserve actual-state arrays/caches/checkpoints. Storage is about2.15GiB WSL /
+3.47GiB C:, enough only for bounded compact work; full-state request remains open.
+
+Next concrete action: assemble source-indexed actual-state fit/development views
+from these traces (no full-prefix copies), freeze same-CPU-parent preservation
+margins under every immutable native success mask, broaden the bounded numeric
+gate across pilot examples, then train/evaluate matched compact candidates.
+Keep unsupported target labels and all actual served rounds in denominators.
+Untouched quality/token correctness and five full-request repetitions are still
+required for a generalization claim; early/long predictor and backlog stay gated.
+The goal remains active, and this continuation is measured progress. No push.
+
+Final release/source cleanup: all workers finished; the clean integrated worktree
+and branch were removed only after verifying every recovery-bundle source byte
+and branch ancestry. Original pinned recipes remain unchanged with exact source
+recovery mapping. The byte-identical zero-export fixture now shares the initializer
+inode, preserving both paths and reclaiming40,808,448allocated bytes. Final free
+space is2.19GiB WSL /3.43GiB C:. All10supervisors/children and36actual-parent server
+groups are absent; GPU compute query empty. Receipt:
+`runs/w1a8-modern-replay-source-20261103-01/release-and-storage.json`.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->
