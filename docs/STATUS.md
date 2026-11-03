@@ -67,19 +67,25 @@ summednativegroupstages754.36s omitted substantial setup/integrity/filesystem co
 Independent frozen-target qualifier passes24new+2warmup exactresponses. Actualviews,
 738nativeembeddings and auditedunion complete:48FIT+unchanged12DEV,3603windows,
 2135embeddingIDs,763FIT/193DEV masks. Admission731.07s; no modelgainclaimed.
-Root now owns local-w1a8-expanded-parent-native-20261103-01,19:49:30UTC/180sgrace;
-bounded source reconstruction check covers all407newsuccesses beforetraining.
-Newdata-only trainer898acc5f passes12rootCPUtests/Ruff and unchanged
-forward/inspect/native-bank/scheduleASTchecks. Old356FITreplay staysfixed; falseCE
-control mustexactly reproduce3840 before expandedCEarm. Actualdata/union admission
-complete; actualmodel training has not started. Plans/evidence inprotectedrun
-`fit-expansion-data-root-result.json` and `fit-expansion-plan.json`.
+All407newparent successes reproduce natively. FulloldCEcontrol completes3840 and
+exactlyreproduces oldstate/Adam/RNG/readouts/nativeGGUF. Whole1268.15s versus165.69s
+incrementaltraining exposes file-reader overhead. NewimmutableRAMcache passesall
+3807source matrices/60maxanchorwindows/all2135embeddings byteparity, with paidstates
+preserved. Queueduncachedtruearm replaced aftercontrolchildcompleted normally;
+intentionalcontroller-15 receipt is not a sciencefailure. Originalsource unchanged.
+Separate residenttrainer dca0dd02 passes12rootCPUtests/Ruff and unchangednumeric
+AST/arithmetic. Resident480update qualification exactlymatches original2400 weights,
+Adam/RNG/exposure. Root owns local-w1a8-resident-expanded-ce-20261103-01,20:19:59UTC/
+180sgrace, immediateperprocess identities. TrueexpandedCEarm setup islive, samewarm/
+objective/old356replay/horizon19200. No expandeddata result/native956/repeatedspeed
+yet. `resident-ce-GPU-control-parity.json` and `resident-expanded-ce-plan.json` hold
+currentevidence. Readerqualification doesnotvalidate short-to-longprediction.
 Data-union helper47d87c11 is integrated with9CPUtests/Ruff; real same-capture
 identity check preserves2138windows/549protections,36actualmaterializations and
 all1440nativeembedding lookups. This adds0examples and is not expanded-data
 training admission. No new fresh/development training labels used.
 
-Source is integrated with135passing related CPUtests and actual native evidence;
+Source is integrated with161passing related CPUtests and actual native evidence;
 pinned worktree is retained for checkpoint/source contracts. Paid states remain;
 older exports have verified compact archives or readable relocated aliases.
 Storage remains constrained. No push. Quick-screen predictor,98-ID/34-family

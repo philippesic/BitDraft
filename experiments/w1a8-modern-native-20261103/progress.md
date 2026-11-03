@@ -601,3 +601,44 @@ selected-head-root-cpu-review.json and selected-head-old-fit-coverage.json retai
 scope. Newhead is not mixed into the data-only contrast. Paidstates/rawinputs kept.
 Boundedinventory retained-inventory-selected-and-expansion.json covers1.236GB of
 nonlive newstates/evidence plus activecapture explicitlyunscanned. No push.
+
+## Expanded-data controls exact; resident true arm setup live — November 3
+
+All407newparent native successes reproduce across372windows/4batches,88.01507s.
+Uncached oldCEcontrol completesall1920newupdates→3840, alloriginal+extraFITreadouts
+andnativeexport. Wholechildwall1268.14517s, incrementaltraining165.69239s. Root
+independently proves bitexact rawscales/Adam/RNG/cursor/exposure/olddecisions/native
+GGUF against priornativefit3840; export3143ae22... unchanged. Model-side readouts:
+oldFIT1436/lost2,DEV489/lost42,newFIT881/lost107of407. These are not native serving
+or newdata treatment results. expanded-ce-training-control-parity.json retainsproof.
+
+C:reader repeatedpath-resolution is measured:100same-descriptor hits0.21785s old
+vs0.00246s resident. New immutable hostcache e54ad6ab passes14rootCPUtests/Ruff.
+Realdata CPUproof comparesall3807matrices600,442,880B bitexact,60maxanchorwindows
+(one/group) andall2135embeddinglookups exact,0fallbacks, peakRSS1,448,873,984B,
+56.69281s. Fullproof retained resident-row-real-qualification-full.json; compact
+admission5654B links itsSHA/descriptorinventory, avoiding1.45MBduplication/checkpoint.
+Initial unnecessaryactorimport failed beforedatareads andwasfixed; receiptretained.
+
+Root holds ONLY queuecontroller while completedcontrol's remainingreadouts finish;
+healthyGPUchild continues, finishes0. Then authenticatedpendingTERM+CONT terminates
+queuedcontroller beforeoriginaluncachedtruearm. Supervisor terminal-15 at20:15:46UTC,
+controllerandgroup absent/GPUreleased; this is plannedqueue replacement, not model
+failure or shortenedtraining. All3840paidstates/readouts preserved. Exacthold/release
+receipts under local-w1a8-expanded-ce-training-20261103-01. Frozen764source retained.
+
+Newresident trainer dca0dd02/fullSHAab410b5f... is separate; oldsources unchanged.
+12rootnewCPUtests/Ruff plus original AST/arithmetic regression tests pass;161related
+CPUtests total. Allsource/data/rowhash checks remain, guardpermission cadence<=.25s
+andread-onlystorage<=1s, freshprojectedcapacitybeforeeverywrite; floor2GiB+64MiB.
+Cache/proof/config ancestry immutable in ownschema, cold-resume counters separate.
+
+Root launches local-w1a8-resident-expanded-ce-20261103-01 at20:19:59UTC, immediate
+supervisor/controller AND perstagechildbirth/boot identities, localtmux/180sgrace,
+reusedTorchCUDAcache. Residentfalse480newupdates→2400 finishes294.22717s whole;
+allrawscales/Adam/RNG/cursor/exposure/old-newCEcounters match uncached2400 exactly.
+resident-ce-GPU-control-parity.json PASS permits residenttrue1920newupdates→3840.
+True arm nowauditingdata/setup. Same warm1920/9scales/λ10/original356replay/fixed4CE/
+19200horizon; onlyordinaryCE pool broadens fromold24FIT toold+new48. Newdatatraining
+result/native956preservation/repeatedtiming stillpending. This480qualification is
+reader equivalence, NOT a validatedearly/longpredictor orbacklogscreen. No push.

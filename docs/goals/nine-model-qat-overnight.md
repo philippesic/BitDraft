@@ -5120,4 +5120,28 @@ horizon19200, extraFITreadouts separate. NewhelperCPU sourceed5cdc2e integrated;
 Next: verify all407nativeparent, run matchedold/newCE, nativepreservation andtiming
 as warranted. Phase1active, quickpredictor/backlog/fourtargetfinalstillgated.
 
+## Original control complete; qualified resident expanded-data arm live
+
+All407newnativeparent successes reproduce,88.02s. UncachedoldCE controlall3840updates,
+allreadouts/export done;1268.15s whole/165.69snewtraining. Root exactproof oldnativefit
+state/Adam/RNG/cursor/exposure/olddecisions/GGUF PASS. OldFIT1436/lost2,DEV489/lost42,
+newFIT881/lost107 (model-side only). Allpaidstates/source retained.
+
+FileIO fixis instancehostcache only, fullrealmatrix600.44MB/3807 exact,60wholewindows
+and2135embeddings exact. NoGPUmodel/source change. Cache e54ad6ab andseparateresident
+trainerdca0dd02 integrated,161relatedCPUtests/Ruff. Original764 frozen. Queuecontroller
+held whilehealthycontrolchildfinishes0; thenpendingTERM+CONT removesqueuedoldtrue
+arm. Oldsupervisorterminal-15 plannedreplacement,PGIDabsent, no shortenedtraining.
+
+Root owns local-w1a8-resident-expanded-ce-20261103-01 since20:19:59UTC,180sgrace/
+localtmux; identity.json immediate supervisor/controller, perstagechildidentities
+inprotectedresident-stage-0/1-identity.json. ReusedTorchCUDAcache. Residentfalse480→
+2400 exactrawstate/Adam/RNG/cursor/exposure/CEstage counters vsuncached2400. Full
+3840servingcontrol staysunchanged. Residenttruewarm1920→3840 nowdata-audit/setup,
+old356replay/fixed4CE/9scales/horizon19200 unchanged, ordinaryCE old24→48FIT only.
+Sourceab410b5f...; proofresident-row-real-qualification.json compact5654B linksfull
+1.45MBproof. No actualnewdata benefit/native956/repeatedtiming yet. RemainPhase1,
+not validatedpredictor/backlog/fourtargetcompletion. No push. Nextwaittrue outcome,
+nativeold+newpreservation andmatchedHTTPtimings asinformative.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->
