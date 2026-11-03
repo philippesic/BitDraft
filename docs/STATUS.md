@@ -52,21 +52,29 @@ at480 becomes71at960/298at1440. FITprefix1436→1469,DEV489→494, but old nativ
 side losses2→4FIT/42→44DEV. Actual native replay loses49/549;14HTTPresponses match
 but accepted drafts343vsstatic341 establishes no useful benefit or fresh transfer.
 
-The mature-sign paired LR continuation has finished, global3840→4320 with the
-19200 horizon preserved. New migration at1e-3 exactly reproduces the original
-strict-resume control's model/Adam/RNG/cursor/exposure/readouts. Higher3e-3 changes
-4981Obits versus727; FITprefix1577versus1529,DEV509versus499. Old model-side native
-prefix losses are2FIT/45DEV versus2/44. Neither arm has native preservation or
-repeated-request timing yet, so no serving/generalization benefit is established.
-Driver wall288.37s; incremental training47.75/46.26s. User requested a wait and full
-recap; no new experiment started during check-in. GPU compute is idle. Paid states
-are kept. Evidence: protected run `selected-lr-root-analysis.json`.
+The mature-sign paired LR continuation finishes, global3840→4320/horizon19200.
+Migration1e-3 exactly reproduces original strict-resume model/Adam/RNG/cursor/
+exposure/readouts. Higher3e-3 changes4981Obits versus727; FIT1577versus1529,DEV509
+versus499. Both actual native checks lose46/549old successes; all28HTTPresponses
+matchtarget. HigherLRaccepts354/1122versus347/1135drafts on12reusedDEVrequests;
+no repeatedtiming/promotion. Root evidence `selected-lr-root-native-admission.json`.
+
+After the full check-in, explicit goal continuation resumes Phase1. Root owns
+`local-w1a8-modern-fit-expansion-20261103-01`, launched19:01:36UTC with immediate
+boot/birth identities.24newwholeFITgroups8/domain are frozen, old36/fresh48exact/
+normalized identities excluded. Same6dacparent/target/runtime/80tokenprotocol;
+rawcaptures directC under512MiBbound+futurestatesreserve. First6groups pass exact
+outputs/native trace audits; ~31s/group is slower than priorWSLestimate. Training
+notstarted. Newdata-only trainer898acc5f passes12rootCPUtests/Ruff and unchanged
+forward/inspect/native-bank/scheduleASTchecks. Old356FITreplay staysfixed; falseCE
+control mustexactly reproduce3840 before expandedCEarm. Actualdata/union admission
+stillpending collection. Plans/evidence inprotectedrun `fit-expansion-plan.json`.
 Data-union helper47d87c11 is integrated with9CPUtests/Ruff; real same-capture
 identity check preserves2138windows/549protections,36actualmaterializations and
 all1440nativeembedding lookups. This adds0examples and is not expanded-data
 training admission. No new fresh/development training labels used.
 
-Source is integrated with99passing related CPUtests and actual native evidence;
+Source is integrated with121passing related CPUtests and actual native evidence;
 pinned worktree is retained for checkpoint/source contracts. Paid states remain;
 older exports have verified compact archives or readable relocated aliases.
 Storage remains constrained. No push. Quick-screen predictor,98-ID/34-family

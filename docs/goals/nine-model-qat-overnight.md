@@ -5076,4 +5076,26 @@ decoded hashes reverified. Not missing; no raw restore written or paid state
 deleted. Evidence legacy-final-archive-current-verification.json. Phase1 incomplete,
 later ordered phases gated. STATUS/progress updated for the complete user recap.
 
+## Ordered continuation resumes; broader FIT capture live — November 3
+
+Previous recapturn yields new authoritative completedLR readouts and savedrecords;
+classified progress. Thiscontinuation completesactualmatureLRnativechecks: both
+46/549oldlosses, all28HTTPexact,354/1122versus347/1135accepted/proposed. Native
+storageguardfailure retained,8completeprocessresults reused, onlyunfinishedcells
+retried. Recoveryterminal0; no promotion or repeatedspeedclaim.
+
+Root now owns local-w1a8-modern-fit-expansion-20261103-01,19:01:36UTC/localtmux/
+180sgrace, immediateboot/birth receiptidentity.json.24newFITgroups8/domain under
+C:/Users/philip/binary-eagle-decoding-artifacts/w1a8-modern-fit-expansion-20261103-01;
+same6dacparent/runtime/target/80tokens, old36andconsumedfresh48excluded. First6groups
+pass; ~31s/group. Newdata notyetfinalized/trained. 121relatedCPUtests pass, capture
+e27d7690 andcontrolledCEtrainer898acc5f integrated; exactoldCEcontrol required before
+newCE. Root sourceindex/embedding/postprocessing andpairedtrainingdrivers prepared,
+notlaunchedbeforecompletecaptureadmission. Original356FITreplaybankfixed.
+
+Reusable361buildobjects130.84MBbyte-verified/relocatedwithaliases, binariesandpaid
+statesunchanged; WSLfree+129.78MB/C-130.98MB, plusoldCE1920exportrelocationreceipt.
+Allcontinuations/horizon19200 retained. Phase1active/laterphasesgated; no push.
+Boundedworker prepares selected512headrowsCPUhelper only as fallback; rootsoleGPU.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

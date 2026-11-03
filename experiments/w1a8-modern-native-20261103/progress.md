@@ -536,3 +536,41 @@ Phase1 remains incomplete despite confirmed fresh+5.30% gain (joint95%+4.33–6.
 Phase2predictor,98ID/34family screening,combinations andfour-target finalremain
 unstarted/gated.99relatedCPUtests pass. Currentfree2,231,816,192WSL and
 3,274,629,120C: bytes; storage remains constrained. No push.
+
+## Mature-LR native checks finish; new FIT capture running — November 3
+
+Resumedgoalturn makesprogress. Both mature-LR models lose46/549 original native
+successes (503retained); all28HTTPqualification responses match target. LowerLR
+accepts347/1135development drafts, higher354/1122. No repeated timing or promotion.
+Root audits24native results,27loaded images, all28HTTPbodies and2releasedgroups.
+Initial native job stopped at storage guard after4completebatches; preserved8
+completedprocessresults and retriedonlyunfinishedbatches. Recoveryexits0 in134.89s;
+originalfailure64.52ssupervisedwall retained. selected-lr-root-native-admission.json
+and selected-lr-admission-recovery-plan.json preserve exact evidence and scope.
+
+Read-only bottleneck audit locates fresh gap in native decode: quarter33.879s vs
+DFlash16.456s per5213-output-token panel; acceptance16.32% vs83.92%. Prompt/HTTP
+overhead explains little; logs do not separate drafterkernels/verifiercost.
+generalization-next-advice-20261103.json recommends data-only contrast first.
+
+New isolated FITcollector c1ebdf31 plusroot fixes/format e27d7690 integrates after
+10CPUtests/Ruff pass. Root adds explicit conditional-layer0-bank ancestry required
+by actual-data preparation; conditional hidden features remain excluded. Initial
+preparation's extra8MiBWSLheadroom guardfailed beforeinputs; preparation nowdirectC,
+with2MiBestimatedWSLmetadata reserve aboveunchanged2GiB+64MiBmandatoryfloor.
+Frozen24newFITgroups8/domain, noold36/fresh48identityoverlap, allwholeTRAINgroups;
+55source refs verified and nooutcome-basedreplacement. Roster15573e27... onC:
+w1a8-modern-fit-expansion-20261103-01/inputs01/roster.json. HistoricalTRAIN exposure
+and semantic similarity remain explicit. No newindependentholdoutusedfortraining.
+
+Root launch local-w1a8-modern-fit-expansion-20261103-01 at19:01:36UTC, immediate
+boot/birth identities inidentity.json, localtmux/180sgrace. Same6dacparent/target/
+runtime/80tokenprotocol; rawcapture directC,512MiBplannedbound+80MiBfuturestates.
+No expandedtrainingyet. Newtrainer CPUwork pending review, old356FITreplayfixed.
+
+Storage-steward bounded review relocates oldCE1920GGUF byte-verified with readable
+alias, then361reusablebuildobjects130,844,136B frombuild02 toC with originalpaths
+aliased. Noactivecompiler, no binaries/models/checkpointschanged. Buildcachepass
+WSLfree+129,781,760B,Cfree-130,981,888B; Cremaining3,097,468,928Bbeforecapture.
+Receipts ce1920-export-relocation.json,build02-object-cache-relocation.json.
+Allpaidstates/source retained. Phase1 active; laterphasesgated. No push.
