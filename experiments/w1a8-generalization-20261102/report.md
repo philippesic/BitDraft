@@ -111,3 +111,23 @@ controls (target-only, same-family Q4_K_M, parent3504, prior bestEAL), five
 alternating repetitions and an independent raw token/text/stopping audit. These
 are reused development inputs, not final untouched examples. Future stages stay
 gated on genuine generalization evidence.
+
+## Restart inspection — November 3 UTC
+
+The first control recorded 1,920 optimizer updates / 425.70 trainer seconds and
+completed its after-readout. No checkpoint, partial checkpoint, model export or
+finish receipt exists. The host boot identity has changed, both old process
+identities are absent, and the original supervisor's saved running status is
+stale. The exact original finalization failure cannot be inferred from these
+facts. Preserve the failed attempt and all raw logs; it supplies learning
+readouts but no deployable or resumable new model. No serving improvement has
+been established. `recovery-inspection01.json` records the inspection.
+
+Before rerunning, introduce periodic verified recovery checkpoints and publish
+the final training state before costly final readouts. The original parent and
+other historical successful continuations remain intact. The RTX 5080 is idle
+and resumed. The native feasibility audit was restarted after cancellation and
+completed as read-only work: a modern EAGLE4B port can reuse the one-layer
+NativeStepAdapter, but needs partial RoPE, exact target-GGUF embeddings, native
+W1Ax/capture plumbing, training/export and real native admission. A modern
+trained serving path does not yet exist. This remains phase1 work.

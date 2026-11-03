@@ -4309,4 +4309,49 @@ aftercheckingitsagents/refs; canonicaltrainingdoesnotdependonit. Existingroot
 dirtyfilesprotected. WSL~15GBfreebeforepaidcheckpoint, Windows~2GB; use only
 ownedWSLspace, monitoractualcheckpoint/exportcosts. No push.
 
+### Restart recovery: control unfinalized, GPU free — November 3 UTC
+
+This turn made verified progress by reconciling the restarted host with actual
+artifacts. Do not treat the previous running record as live. Current boot differs
+from identity.json; supervisor and child identities are absent. Absolute
+/usr/lib/wsl/lib/nvidia-smi works (PATH changed) and shows an idle RTX5080; /dev/dxg
+exists. RTX5080 remains resumed; RTX2080Ti remains paused. No signal or GPU job
+was launched during inspection.
+
+First control reached all1920 updates /425.698763 trainer seconds. before/after
+and96/480 readouts survive. There is NO checkpoint, .partial, model export,
+finish or failure receipt. Thus no usable newly trained model and no serving
+result. The old saved state.json saying running is stale; preserve it as original
+evidence. Record runs/w1a8-generalization-20261102/recovery-inspection01.json
+retains the inspection. Exact original finalization failure is unresolved;
+do not attribute it solely to the server restart without stronger evidence.
+
+Immediate next work: repair train.py with periodic verified recovery checkpoints,
+publish final state before costly after-readout/frozen validation, retain latest
+recovery points within measured disk headroom, and diagnose finalization with
+phase receipts. Archive superseded source/spec identities, then create a new
+frozen packet for all four matched arms. Rerun control from intact parent3504;
+there is no1920 checkpoint to resume. No training allocation is being shortened.
+Require actual native model/export/evaluation before interpreting fit readouts.
+
+Canceled source worker was replaced by bounded native modern_port_checkpoint;
+its read-only result completed. EAGLE4B is the smallest apparent modern bridge:
+one layer h2560/FF7680/Q16KV4/head160, rotary40/theta1e7, native taps[2,16,29],
+own50k head+d2t, target vocab248320, borrowed target GGUF embedding.
+src/w1a1_eagle/native_step.py already supports one layer/three taps/external
+embedding/reduced head, but rotates full heads and defaults wrong nested theta.
+Modern runtime has layer-input extraction but lacks old W1Ax loading/ops and
+capture instrumentation. Historical BlockDrafter's5layer/7slot/private-head
+contract does not fit modern16slot DSpark/DFlash. Exact evidence paths:
+runs/spec-shortlist-20261030/models/hf-eagle-4B/config.source.json;
+experiments/qwen35-correctness-matrix-20261101/repair_eagle_export.py;
+runs/qwen35-correctness-matrix-20261101-01/eagle-sourcefaithful-repair.json;
+runs/spec-shortlist-20261030/runtime/src/models/eagle3.cpp;
+src/w1a1_eagle/{native_step,block_qat}.py. No modern port/admission is claimed.
+
+The user asked Status; this is a check-in, not cancellation. Keep the full goal
+active and the strict generalization -> validated quick predictor ->98segment
+screen order. Untouched confirmation and all4 modern DFlash comparisons remain
+outstanding. No live subagent or GPU ownership is transferred by this note.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

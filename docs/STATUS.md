@@ -17,8 +17,15 @@ preparation, not a trained improvement. An isolated 2x2 coverage/parent-prefix
 retention experiment reuses the authenticated historical DSpark full48 native-A8
 trainer, Adam/RNG and original guards. These inherited Qwen3 F16 groups are not
 untouched or modern Qwen3.5 data. Twenty focused tests pass. The first matched
-control is performing actual optimizer updates after a 48-state native gate;
-no trained serving improvement is established yet.
+control recorded all 1,920 updates and 425.70 trainer seconds, but no checkpoint,
+export or completion receipt was published. After the host restart, its old
+process identities are absent and its saved running state is stale. Logs and
+readouts survive; no usable new trained model or serving improvement exists.
+
+Recovery is active: add periodic recovery checkpoints and publish final training
+state before expensive final readouts, then rerun the matched control. The exact
+original finalization failure remains unresolved. The RTX 5080 is available;
+current inspection is in `runs/w1a8-generalization-20261102/recovery-inspection01.json`.
 
 The known backlog is 98 historical training segments in 34 families; preparation
 and adapter availability are not scientific screening. The early/long predictor
