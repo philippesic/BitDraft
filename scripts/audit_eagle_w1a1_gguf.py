@@ -28,16 +28,61 @@ SOURCE_NAMES = {
 }
 
 
-def gguf_qk_row_order(weight: np.ndarray, heads: int) -> np.ndarray:
-    """Apply llama.cpp's RoPE Q/K row permutation before packing."""
+def gguf_qk_row_order(weight: np.ndarray, heads: int, rotary_dim: int | None = None) -> np.ndarray:
+    """Interleave the rotated prefix in each head, preserving its tail rows."""
+    if weight.ndim != 2 or type(heads) is not int or heads <= 0:
+        raise ValueError("Q/K permutation requires a matrix and positive head count")
     rows, logical_k = weight.shape
-    if rows % (2 * heads):
-        raise ValueError("Q/K rows are not divisible by twice the head count")
-    return (
-        weight.reshape(heads, 2, rows // heads // 2, logical_k)
-        .swapaxes(1, 2)
-        .reshape(rows, logical_k)
+    if rows <= 0 or logical_k <= 0 or rows % heads:
+        raise ValueError("Q/K rows are not divisible by the head count")
+    head_dim = rows // heads
+    rotary_dim = head_dim if rotary_dim is None else rotary_dim
+    if type(rotary_dim) is not int or not 0 < rotary_dim <= head_dim or rotary_dim % 2:
+        raise ValueError("rotary dimension must be positive, even and at most the head dimension")
+    order = np.arange(head_dim)
+    order[:rotary_dim] = np.arange(rotary_dim).reshape(2, rotary_dim // 2).T.reshape(-1)
+    return weight.reshape(heads, head_dim, logical_k)[:, order, :].reshape(rows, logical_k)
+
+
+def qk_layout_from_gguf(reader: GGUFReader, shapes: dict) -> dict:
+    """Read complete Q/K layout metadata; retain legacy metadata-free fixtures.
+
+    Real modern files must declare both head counts. A partially missing layout
+    must not silently select the historical Q32/K8 convention.
+    """
+    prefix = "eagle3."
+    names = (
+        "attention.head_count",
+        "attention.head_count_kv",
+        "attention.key_length",
+        "rope.dimension_count",
     )
+    present = {name for name in names if prefix + name in reader.fields}
+    if present and not {names[0], names[1]} <= present:
+        raise ValueError("incomplete Q/K layout metadata: both head counts are required")
+
+    def positive(name, default):
+        value = reader.fields[prefix + name].contents() if name in present else default
+        if type(value) is not int or value <= 0:
+            raise ValueError("positive integer Q/K layout metadata required: " + name)
+        return value
+
+    result = {}
+    for base, name, default in (("blk.0.attn_q", names[0], 32), ("blk.0.attn_k", names[1], 8)):
+        shape = shapes[base]
+        heads = positive(name, default)
+        if len(shape) != 2 or shape[0] <= 0 or shape[0] % heads:
+            raise ValueError(base + ": Q/K rows do not match declared head count")
+        head_dim = shape[0] // heads
+        if positive(names[2], head_dim) != head_dim:
+            raise ValueError(base + ": Q/K head width differs from key-length metadata")
+        rotary = positive(names[3], head_dim)
+        if rotary > head_dim or rotary % 2:
+            raise ValueError("rotary dimension must be even and at most the Q/K head dimension")
+        result[base] = {"heads": heads, "head_dim": head_dim, "rotary_dim": rotary}
+    if result["blk.0.attn_q"]["head_dim"] != result["blk.0.attn_k"]["head_dim"]:
+        raise ValueError("Q and K head widths differ")
+    return result
 
 
 def sha256(path: Path) -> str:
@@ -63,6 +108,13 @@ def audit(source: Path, gguf_path: Path, rows_per_chunk: int = 128) -> dict:
 
     records = []
     with safe_open(source, framework="pt", device="cpu") as checkpoint:
+        layout = qk_layout_from_gguf(
+            reader,
+            {
+                base: checkpoint.get_slice(SOURCE_NAMES[base]).get_shape()
+                for base in ("blk.0.attn_q", "blk.0.attn_k")
+            },
+        )
         for base in bases:
             packed = tensors[f"{base}.w1a1_packed"]
             scales = tensors.get(f"{base}.w1a1_scale")
@@ -79,10 +131,9 @@ def audit(source: Path, gguf_path: Path, rows_per_chunk: int = 128) -> dict:
                 raise ValueError(f"{source_name}: expected a matrix")
             n_rows, logical_k = weight.shape
             canonical = weight.float().numpy()
-            if base == "blk.0.attn_q":
-                canonical = gguf_qk_row_order(canonical, 32)
-            elif base == "blk.0.attn_k":
-                canonical = gguf_qk_row_order(canonical, 8)
+            if base in layout:
+                item = layout[base]
+                canonical = gguf_qk_row_order(canonical, item["heads"], item["rotary_dim"])
             words = (logical_k + 31) // 32
             if packed.data.shape != (n_rows, words) or scales.data.shape != (n_rows,):
                 raise ValueError(f"{base}: GGUF and source shapes differ")
@@ -130,6 +181,7 @@ def audit(source: Path, gguf_path: Path, rows_per_chunk: int = 128) -> dict:
         "gguf_sha256": sha256(gguf_path),
         "packed_tensors": len(records),
         "audited_rows": sum(row["rows"] for row in records),
+        "qk_layout": layout,
         "records": records,
     }
 

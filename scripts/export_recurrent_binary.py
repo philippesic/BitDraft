@@ -29,7 +29,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "third_party/llama.cpp/gguf-py"))
-from audit_eagle_w1a1_gguf import SOURCE_NAMES, gguf_qk_row_order  # noqa: E402
+from audit_eagle_w1a1_gguf import SOURCE_NAMES, gguf_qk_row_order, qk_layout_from_gguf  # noqa: E402
 from gguf import GGMLQuantizationType as Type  # noqa: E402
 from gguf import GGUFReader, GGUFValueType, GGUFWriter  # noqa: E402
 
@@ -172,7 +172,16 @@ def check_affine_weights(value: dict) -> dict:
     return value
 
 
-def load_affine_weights(checkpoint: Path, descriptor: dict, expected: dict) -> dict:
+def qk_permute(array: np.ndarray, base: str, layout: dict | None) -> np.ndarray:
+    config = (layout or {}).get(base)
+    heads = config["heads"] if config else (32 if base.endswith("_q") else 8)
+    rotary_dim = config["rotary_dim"] if config else None
+    return gguf_qk_row_order(array, heads, rotary_dim)
+
+
+def load_affine_weights(
+    checkpoint: Path, descriptor: dict, expected: dict, *, qk_layout: dict | None = None
+) -> dict:
     check_affine_weights(descriptor)
     result = {}
     with np.load(checkpoint, allow_pickle=False) as archive:
@@ -187,7 +196,7 @@ def load_affine_weights(checkpoint: Path, descriptor: dict, expected: dict) -> d
             ):
                 raise ValueError(f"invalid affine midpoint {name}")
             if base in ("blk.0.attn_q", "blk.0.attn_k"):
-                array = gguf_qk_row_order(array[:, None], 32 if base.endswith("_q") else 8)[:, 0]
+                array = qk_permute(array[:, None], base, qk_layout)[:, 0]
             result[name] = np.ascontiguousarray(array)
     return result
 
@@ -282,10 +291,6 @@ def check_manifest(manifest: dict, base_hash: str) -> dict[str, tuple[str, tuple
             or any(type(x) is not int or x <= 0 for x in shape)
         ):
             raise ValueError(f"{base}: invalid declared shape")
-        if base == "blk.0.attn_q" and shape[0] % 64:
-            raise ValueError("Q row count must be divisible by 64")
-        if base == "blk.0.attn_k" and shape[0] % 16:
-            raise ValueError("K row count must be divisible by 16")
         checked[base] = expected_name, tuple(shape)
     return checked
 
@@ -313,9 +318,9 @@ def check_base(reader: GGUFReader, expected: dict) -> dict:
     for base, (_, shape) in expected.items():
         name = base + ".weight"
         tensor = tensors.get(name)
-        if tensor is None or tensor.tensor_type != Type.F16:
-            raise ValueError(f"{name}: missing original F16 tensor")
-        if tuple(map(int, tensor.data.shape)) != shape:
+        if tensor is None or tensor.tensor_type not in (Type.F16, Type.BF16):
+            raise ValueError(f"{name}: missing original F16/BF16 tensor")
+        if tuple(map(int, tensor.shape[::-1])) != shape:
             raise ValueError(f"{name}: base tensor and declared shape differ")
     return tensors
 
@@ -328,7 +333,12 @@ def pack(latent: np.ndarray) -> np.ndarray:
 
 
 def load_checkpoint(
-    checkpoint: Path, expected: dict, *, row_scale: bool = False, extra_names: set = frozenset()
+    checkpoint: Path,
+    expected: dict,
+    *,
+    row_scale: bool = False,
+    extra_names: set = frozenset(),
+    qk_layout: dict | None = None,
 ) -> dict:
     required = {name + suffix for name, _ in expected.values() for suffix in (".latent", ".scale")}
     required |= extra_names
@@ -353,19 +363,12 @@ def load_checkpoint(
                 or ((scale == 0) & np.signbit(scale)).any()
             ):
                 raise ValueError(f"{name}: scales must be finite and nonnegative")
-            if base == "blk.0.attn_q":
-                latent = gguf_qk_row_order(latent, 32)
+            if base in ("blk.0.attn_q", "blk.0.attn_k"):
+                latent = qk_permute(latent, base, qk_layout)
                 scale = (
-                    gguf_qk_row_order(scale[:, None], 32)[:, 0]
+                    qk_permute(scale[:, None], base, qk_layout)[:, 0]
                     if row_scale
-                    else gguf_qk_row_order(scale, 32)
-                )
-            elif base == "blk.0.attn_k":
-                latent = gguf_qk_row_order(latent, 8)
-                scale = (
-                    gguf_qk_row_order(scale[:, None], 8)[:, 0]
-                    if row_scale
-                    else gguf_qk_row_order(scale, 8)
+                    else qk_permute(scale, base, qk_layout)
                 )
             arrays[base] = {
                 "packed": pack(latent),
@@ -400,6 +403,7 @@ def export_model(base_path: Path, checkpoint: Path, manifest_path: Path, output:
         raise ValueError("row checkpoint SHA256 differs from manifest")
     reader = GGUFReader(base_path)
     tensors = check_base(reader, expected)
+    qk_layout = qk_layout_from_gguf(reader, {base: shape for base, (_, shape) in expected.items()})
     correction = manifest.get("fusion_correction")
     correction_arrays = (
         load_fusion_correction(checkpoint, correction, expected["fc"][1])
@@ -407,12 +411,17 @@ def export_model(base_path: Path, checkpoint: Path, manifest_path: Path, output:
         else {}
     )
     affine = manifest.get("affine_weights")
-    affine_arrays = load_affine_weights(checkpoint, affine, expected) if affine is not None else {}
+    affine_arrays = (
+        load_affine_weights(checkpoint, affine, expected, qk_layout=qk_layout)
+        if affine is not None
+        else {}
+    )
     arrays = load_checkpoint(
         checkpoint,
         expected,
         row_scale=row_scale,
         extra_names=set(correction_arrays) | set(affine_arrays),
+        qk_layout=qk_layout,
     )
     selected_names = {base + ".weight" for base in SOURCE_NAMES}
     preserved = {name: tensor for name, tensor in tensors.items() if name not in selected_names}
@@ -561,6 +570,7 @@ def export_model(base_path: Path, checkpoint: Path, manifest_path: Path, output:
             "training_arithmetic": manifest.get("training_arithmetic", "dense_matmul_hard_quant"),
             "scale_layout": "row" if row_scale else "group128",
             "activation_bits": manifest["activation_bits"] if row_scale else 16,
+            "qk_layout": qk_layout,
             "native_loader_gate": "verify loader and full-drafter numeric parity before deployment",
             "serialization_audit_passed": True,
             "projections": {
@@ -597,7 +607,7 @@ def export_model(base_path: Path, checkpoint: Path, manifest_path: Path, output:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--base", type=Path, required=True, help="original F16 EAGLE GGUF")
+    parser.add_argument("--base", type=Path, required=True, help="original F16/BF16 EAGLE GGUF")
     parser.add_argument("--checkpoint", type=Path, required=True, help="F32 latent/scale NPZ")
     parser.add_argument("--manifest", type=Path, required=True, help="shape and name JSON")
     parser.add_argument("--output", type=Path, required=True)
