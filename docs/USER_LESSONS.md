@@ -1026,3 +1026,19 @@ additional proof protocols or redoing completed audit work.
   links the failed check and records the actual values.
 - Check invariants against pinned source and initial tensors. Do not substitute
   a conventional initialization magnitude for the project's observed state.
+
+### 2026-11-03: Distinguish explicit phase gates from research targets
+
+- Root treated perfect preservation of every growing draft-token bank, weak
+  absolute target quality, and the DFlash gap as reasons to hold Phase 1 open.
+  A bounded source audit found that the instructions require fresh gains,
+  correctness/quality checks and repeated serving measurements, but do not state
+  those three conditions as Phase 1 exit gates. No user error is established.
+- "Preserve successful continuations" could refer to retaining training runs
+  and checkpoints, or to draft successes. Root asked a structured clarification
+  with the actual +5.3% fresh gain, exact target outputs and 548/549 draft count.
+  The answer is pending; independent authorized experiments continue.
+- [Scope audit](../runs/w1a8-modern-protected-20261103-01/phase1-exit-scope-audit.json)
+  separates explicit requirements from inferences. Do not silently strengthen a
+  phase until it becomes an open-ended optimization problem, or silently weaken
+  an ambiguous constraint. Record the distinction and resolve consequential scope.

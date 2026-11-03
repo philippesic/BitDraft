@@ -5,7 +5,11 @@
 We remain in Phase 1. One conservative W1A8 candidate improves throughput on
 untouched synthetic instances, but preservation and generalization are not solved.
 The quick-screen predictor, backlog screen, combinations, and final four-target
-confirmation remain gated. Historical Qwen3 F16 results stay separate.
+confirmation remain pending. A user clarification is outstanding: does preserving
+successful continuations mean retaining training runs/checkpoints, or also zero
+losses of prior draft-token successes? A source audit finds no explicit zero-loss,
+absolute quality-score, or DFlash-win requirement before Phase 2. Final target-output
+correctness remains mandatory. Independent Phase 1 experiments continue. Historical Qwen3 F16 results stay separate.
 
 The best confirmed fresh candidate achieves 140.317 tokens/s versus 133.261 for
 the initializer: +5.30%, with a joint family/repetition 95% interval of +4.33–6.21%.
@@ -37,23 +41,29 @@ continuation, all readouts and native export. An erroneous root audit assumed
 unit-magnitude starting values; direct comparison confirms the actual ±0.5 values
 remain unchanged. The failed audit and corrected proof are both preserved.
 
-Root owns `local-w1a8-head-matched5760-20261103-01` in local tmux, started
-21:37:52 UTC with 180-second stop grace and immediate process identities. The
-unchanged resident trainer continues its completed 4320 control to 5760; the head
-treatment runs from the same 3840 parent to 5760. Both represent 1920 new updates
-with the same data, ordinary loss, original 356-token replay and initial optimizer
-state. The treatment includes its optimizer/global-clipping package. Actual native
-preservation and serving outcomes are pending; no new fresh inputs are selected.
+The unchanged 5760 control completes. The head run saves update 5280 (1440 new
+updates) before a storage guard stops its next metadata write. Every paid update
+is intact; the latest pointer remains older, so root explicitly verifies and uses
+the saved 5280 checkpoint. Root owns `local-w1a8-head-resume5760-20261103-01`,
+started 21:57:25 UTC in local tmux with 180-second grace and immediate identities.
+It resumes the remaining 480 updates into a unique output directory, with the
+same source/optimizer/RNG/data order. All 1920 updates remain allocated. Old update
+logs are losslessly archived; two more derived exports have exact restore patches.
+Native preservation and serving outcomes remain pending. No new fresh inputs are
+selected. At 1440 head updates, no signs have flipped yet; maximum movement is
+0.4935 from the actual ±0.5 starting values. This is a slow-learning observation.
 
-A CPU worker separately prepares an objective contrast: keep the original replay
+A separately integrated objective contrast (b889fbf0) is ready: keep the original replay
 stream intact and add preservation replay for the 407 added FIT successes. This
 addresses the observed coverage gap without using development labels for training.
-It is not yet admitted or trained. Broader natural-confirmation tooling is ready,
+Its real CPU admission authenticates all 407 positives/24 groups/372 windows in
+2.03 seconds using only recorded native JSON; GPU equivalence and training remain
+pending. Broader natural-confirmation tooling is ready,
 with all 512 historical TRAIN exposures and DEV/sealed indices excluded; actual
 unused-pool eligibility remains untested until candidate/runtime freeze.
 
-Related source has 188 distinct passing CPU tests plus real GPU/native evidence.
-Pinned worktree and all paid checkpoints remain. Six derived failed exports now
+Related source has 196 distinct passing CPU tests plus real GPU/native evidence.
+Pinned worktree and all paid checkpoints remain. Eight derived exports now
 have verified lossless archives with restore commands; two exact duplicates use
 hardlinks. New training outputs use an owned NTFS-compressed directory, verified
 with WSL writes; no system or VHDX compression setting changed. Storage remains

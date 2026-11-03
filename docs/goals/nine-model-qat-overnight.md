@@ -5294,4 +5294,35 @@ byte/path changes;675,840B observedCgain, allhashes exact. No activepath touched
 Receipts ntfs-owned-checkpoint-compression.json and ntfs-owned-fixture-metadata.json.
 AddedFIT-replay CPUfeature remains in boundedtwofilepartition; no realtraining yet.
 
+
+## Exact recovery at5280; added replay admitted; scope clarification pending
+
+Control5760 completes0 (416.30s current segment; earlier480 reference353.29s).
+Head saves exact5280 checkpoint/1440newupdates, then storage floor blocks latest
+metadata write. Pair wrapper terminal1 at21:50:43UTC; no paid steps lost. Root
+validates5280 state, bypasses older4800pointer, and strictly resumes remaining480
+under local-w1a8-head-resume5760-20261103-01 since21:57:25UTC/180sgrace/localtmux.
+head-resume5760-plan.json pins source/state/recovery and new unique output. No
+training allocation shortened. Master flips0 at480/960/1440; maxmove.2198/.3922/
+.4935 from±.5. Slow learning, not rejection. Native96 driver prepared, not run.
+
+Completed rawlogs exactXZ roundtrips reclaim113.83MB; boundedgzip attempt hit8MiB
+cap without deleting rawinput, thenownedpartialremoved. Two more derived exports
+(qualificationlearned, reachabilityunion) exactchunkarchive/restore verified; paid
+states unchanged. Cfree+80.58MB. No training guards relaxed; projected150MiBextra
+headroom checkedbefore strictresume. Eight derived exports now have restoreproofs.
+
+Added replay source b889fbf0 passes8rootfixtures/Ruff;196relatedtests. RealCPU
+admission2.0324s authenticates407newFITsuccesses/24groups/372windows/26metadata
+sources without models/PT/F32/GPU. added-replay-real-admission.json/full.json.
+FalseGPU480equivalence and true objective remain unrun. Both CPUworkers complete.
+
+Scope audit phase1-exit-scope-audit.json finds no explicit Phase1 gate requiring
+zero draftargmaxlosses, absolute targetqualityfloor, or DFlashwin. User wording
+'preserve successful continuations' remains ambiguous between trainingcontinuation
+preservation and everydraftsuccess. Root asks one structured clarification with
+actual+5.3%freshgain/exactoutputs/548of549draftsuccesses; answer pending. Do not
+silently relax userconstraints or promote assistant-inferred requirements to user
+mandates. Current Phase1 experiments continue independently; no phasechange yet.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->
