@@ -512,6 +512,37 @@ class NativeAdmissionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "final teacher boundary"):
             gate.require_actor_steps(receipt, [1])
 
+    def test_selected_later_window_keeps_serving_offset_and_full_prefix(self):
+        self.four_teacher_rows()
+        ref = self.packet["arrays"]["logits.f32"]
+        logits = np.fromfile(ref["path"], dtype="<f4").reshape(4, gate.VOCAB)[2:].copy()
+        logits.tofile(ref["path"])
+        ref.update(self.pin(Path(ref["path"])))
+        self.rewrite(
+            self.packet["capture"],
+            lambda value: value.update(
+                logits_shape=[2, gate.VOCAB], logit_positions=[3, 4], greedy_ids=[7, 8],
+                array_bytes=sum(item["bytes"] for item in self.packet["arrays"].values()),
+            ),
+        )
+        with self.assertRaisesRegex(ValueError, "explicit capture command"):
+            gate.admit_packet(self.packet)
+        self.rewrite(
+            self.packet["capture_command"],
+            lambda value: value["argv"].extend(["--logit-positions", "3,4"]),
+        )
+        receipt = gate.admit_packet(self.packet)
+        self.assertEqual([row["serving_token_index"] for row in receipt["rows"]], [2, 3])
+        step, = gate.build_actor_steps(receipt)
+        self.assertEqual((step["decoder_position"], step["input_position"], step["label_position"]), (3, 4, 5))
+        self.assertEqual((step["input_token_id"], step["label_token_id"]), (7, 8))
+        self.assertTrue(step["supervision_eligible"])
+        self.rewrite(
+            self.packet["capture_command"], lambda value: value["argv"].__setitem__(-1, "2,3")
+        )
+        with self.assertRaisesRegex(ValueError, "command/build binding"):
+            gate.admit_packet(self.packet)
+
     def test_excluded_middle_teacher_row_blocks_both_adjacent_actor_transitions(self):
         receipt = self.four_teacher_rows()
         self.assertEqual(receipt["excluded_row_ids"], [1])

@@ -262,7 +262,9 @@ def admit_packet(packet):
         capture.get("feature_shape") == [len(inputs), WIDTH]
         and isinstance(positions, list)
         and positions
-        and positions == list(range(prompt_count - 1, len(inputs)))
+        and all(type(position) is int for position in positions)
+        and prompt_count - 1 <= positions[0] <= positions[-1] < len(inputs)
+        and positions == list(range(positions[0], positions[-1] + 1))
         and capture.get("logits_shape") == [len(positions), VOCAB],
         "capture shape or next-token positions differ",
     )
@@ -339,6 +341,7 @@ def admit_packet(packet):
             "--threads",
             "--taps",
             "--max-output-mib",
+            "--logit-positions",
         },
     )
     expected_values = {
@@ -355,6 +358,13 @@ def admit_packet(packet):
         "--taps": "0,2,16,29",
         "--max-output-mib": values.get("--max-output-mib"),
     }
+    if "--logit-positions" in values:
+        expected_values["--logit-positions"] = ",".join(map(str, positions))
+    else:
+        require(
+            positions == list(range(prompt_count - 1, len(inputs))),
+            "selected next-token positions require an explicit capture command",
+        )
     require(
         argv[0] == build["executable"]["path"]
         and values == expected_values
@@ -465,7 +475,7 @@ def admit_packet(packet):
         and response.get("truncated") is False
         and response.get("stop_type") in ("eos", "limit", "word")
         and isinstance(response.get("stopping_word"), str)
-        and len(labels) >= len(positions)
+        and len(labels) >= positions[-1] - prompt_count + 2
         and labels[: len(fixed)] == fixed,
         "serving response, labels or history differ",
     )
@@ -621,7 +631,12 @@ def build_actor_steps(receipt):
     rows = receipt.get("rows")
     require(isinstance(rows, list) and rows, "teacher rows required")
     start = rows[0].get("input_position")
+    serving_start = rows[0].get("serving_token_index")
     require(type(start) is int and start >= 0, "nonnegative teacher input position required")
+    require(
+        type(serving_start) is int and 0 <= serving_start <= start,
+        "nonnegative teacher serving offset required",
+    )
     for index, row in enumerate(rows):
         require(
             row.get("row_id") == index
@@ -629,7 +644,7 @@ def build_actor_steps(receipt):
             and type(row.get("input_position")) is int
             and row["input_position"] == start + index
             and type(row.get("serving_token_index")) is int
-            and row["serving_token_index"] == index,
+            and row["serving_token_index"] == serving_start + index,
             "teacher row IDs, positions and serving indices must be contiguous",
         )
         require(
