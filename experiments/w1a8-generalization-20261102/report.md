@@ -131,3 +131,31 @@ completed as read-only work: a modern EAGLE4B port can reuse the one-layer
 NativeStepAdapter, but needs partial RoPE, exact target-GGUF embeddings, native
 W1Ax/capture plumbing, training/export and real native admission. A modern
 trained serving path does not yet exist. This remains phase1 work.
+
+## Recovery qualification in progress
+
+Source inspection identified two specific hazards without proving the original
+cause. Frozen verification hashed 4.28 GB of tensors using whole-tensor host
+copies; consecutive embedding/head copies could overlap by 3.11 GB. Signal
+protection also ended before finalization. Recovery source23bddcf3 publishes
+verified state before diagnostics, saves periodically, retains the latest two
+owned recovery points, hashes frozen bytes in 4 MiB chunks, and keeps signal
+handling active through final export. Twenty-four CPU tests include interrupted
+publication, failed verification, retention, and exact chunked hashing.
+
+The rerun `local-w1a8-legacy-control-20261103-01` has already published actual
+96/480/960-update checkpoints (3.887 GB each) with fsync and complete round-trip
+state equality. Each took approximately ten seconds. This qualifies real
+recovery publication, not final serving readiness. `legacy-control02/latest.json`
+is the current recovery pointer. Old intermediate recovery files are retired
+only after a newer complete state is verified. Existing paid parent states and
+the failed attempt are unchanged. Superseded source is hash-verified under
+`superseded-source032ca648/`; the new four-arm packet is `specs03/`.
+
+Separately, source8020764f adds modern partial-RoPE parsing/rotation to the
+one-layer training adapter. Five new tests plus existing step/attention tests
+pass on CPU. Historical defaults are preserved, and this code is outside the
+active DSpark training source closure. Modern export, embedding ancestry,
+capture, packed native execution and full-model evaluation remain unqualified.
+The temporary source worktree was removed after every patch was checked as
+integrated; no unmerged work or active dependency was discarded.

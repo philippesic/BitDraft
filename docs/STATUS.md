@@ -22,10 +22,14 @@ export or completion receipt was published. After the host restart, its old
 process identities are absent and its saved running state is stale. Logs and
 readouts survive; no usable new trained model or serving improvement exists.
 
-Recovery is active: add periodic recovery checkpoints and publish final training
-state before expensive final readouts, then rerun the matched control. The exact
-original finalization failure remains unresolved. The RTX 5080 is available;
-current inspection is in `runs/w1a8-generalization-20261102/recovery-inspection01.json`.
+Recovery is implemented and the matched control is running again. Verified
+recovery points have been published at updates 96, 480 and 960; the latest two
+are retained. Final state is now saved before costly diagnostics, frozen tensors
+are hashed in bounded chunks, and signal protection extends through export.
+Twenty-four generalization/recovery CPU tests pass. The exact original failure
+remains unresolved. Root owns the RTX 5080 job
+`runs/local-w1a8-legacy-control-20261103-01/`; final export and serving evaluation
+remain pending.
 
 The known backlog is 98 historical training segments in 34 families; preparation
 and adapter availability are not scientific screening. The early/long predictor

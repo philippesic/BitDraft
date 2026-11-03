@@ -4354,4 +4354,58 @@ active and the strict generalization -> validated quick predictor ->98segment
 screen order. Untouched confirmation and all4 modern DFlash comparisons remain
 outstanding. No live subagent or GPU ownership is transferred by this note.
 
+### Recovery publications verified during rerun — November 3 UTC
+
+This turn is progress: recovery code is integrated and actual paid states have
+been published while training continues. Source check found whole-tensor frozen
+hashing (4.28 GB total, up to 3.11 GB transient overlap) and ended signal handling
+before finalization. These are confirmed hazards, not proof of the original
+termination cause. Keep that uncertainty explicit.
+
+Recovery source23bddcf3 introduces periodic verified state publication, latest-two
+owned recovery retention, 4 MiB chunked exact hashing, final checkpoint before
+readout/audit, and signal protection through export. CPU fault/retention/hash
+tests pass; 24 generalization tests total. Superseded training source032ca648
+is archived and hash-verified in the canonical run before changing source.
+New complete four-arm freeze is specs03/design.json; scientific data/objectives,
+parent/Adam/RNG, target/verifier and 1,920-update stage are unchanged.
+
+Current GPU job is local-w1a8-legacy-control-20261103-01. Root/current thread is
+sole operator. Canonical supervisor state and exact boot/birth/command identity:
+runs/local-w1a8-legacy-control-20261103-01/{state,identity}.json.
+Output: runs/w1a8-generalization-20261102/legacy-control02.
+Local tmux socket binary-eagle-runtime, session same as supervisor name.
+Authenticated supervisor and child were live on the latest inspection. Latest
+observed training milestone is 1,008 updates; this is not a terminal count.
+Checkpoints96/480/960 were actually serialized, fsynced and compared against
+the complete live state. Current latest.json points to960; only480/960 remain
+as raw recovery states. Files are3,887,338,675 bytes each. First publications
+took9.8–11.6 seconds. The original interrupted attempt remains untouched.
+
+To stop: authenticate recorded boot/start ticks/command, TERM supervisor, allow
+180-second checkpoint/group grace, verify terminal receipt and group absence.
+Global pause and experiment STOP are checked at optimizer boundaries. Preserve
+healthy training across compaction. No worker has GPU authority or custody.
+After completion, verify final checkpoint, exact frozen hash, native export and
+finish receipt before claiming operational recovery is fully qualified. Then
+run common native-panel01 replay, independent raw recomputation, and five-rep
+requests.py development timing with all four controls. Wrapper requires the
+raw final checkpoint while preparing/running; archive only afterward.
+
+Modern partial-RoPE prerequisite integrated as8020764f: nested default theta and
+40/160-channel rotation in both Torch paths; historical defaults/tails/F16 cache
+semantics preserved. Worker22 step/attention CPU tests passed; root15 step tests
+passed after integration. No GPU/native/full-model fidelity claim. Existing
+generic exporter still needs the partial-prefix contract; reuse the already
+repaired modern exporter as the source reference. Active historical source
+does not depend on canonical native_step.py, verified before integration.
+
+Both native workers finished; no outstanding delegated task. All five source
+branch commits were patch-equivalent to main and its worktree was clean before
+removal. Temporary worktree and branch are removed, without touching historical
+checkouts or pre-existing root dirty files. Source/main changes remain local;
+no push. WSL free space around7GiB with two checkpoints; Windows free around
+9.6GiB at last sample. Recheck both before archival/new arms. New checkpoints
+are charged recovery artifacts; original paid states remain protected.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->
