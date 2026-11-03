@@ -56,6 +56,17 @@ def main():
     if not all(symbol in demangled for symbol in exports):
         raise RuntimeError("retained libllama does not export required native input tap API")
     output.mkdir()
+    # Preserve the exact small sources with the build so later source edits or
+    # worktree retirement cannot erase the capture's authenticated ancestry.
+    snapshot = output / "source"
+    snapshot.mkdir()
+    compiled_source = snapshot / source.name
+    builder_source = snapshot / Path(__file__).name
+    shutil.copyfile(source, compiled_source)
+    shutil.copyfile(__file__, builder_source)
+    for original, copied in ((source, compiled_source), (Path(__file__), builder_source)):
+        if pin(original)["sha256"] != pin(copied)["sha256"]:
+            raise RuntimeError("source changed during build snapshot")
     overlay = output / "runtime-overlay"
     overlay.mkdir()
     for name in ("libggml-cuda.so", "libggml-cuda.so.0", "libggml-cuda.so.0.28.0"):
@@ -65,7 +76,7 @@ def main():
     executable = output / "modern_capture"
     dependency = output / "modern_capture.d"
     argv = [compiler, "-std=c++17", "-O2", "-Wall", "-Wextra", "-Werror", "-MMD", "-MF", dependency,
-            "-I", runtime / "include", "-I", runtime / "ggml/include", source,
+            "-I", runtime / "include", "-I", runtime / "ggml/include", compiled_source,
             "-L", libraries, "-Wl,-rpath," + str(libraries), "-lllama", "-lggml", "-lggml-base", "-ldl", "-o", executable]
     compiled = command(argv, env=env)
     checks = {
@@ -109,6 +120,20 @@ def main():
             raise RuntimeError("existing tokenization output directory was not rejected")
         token_checks.append({"case": "existing output directory", "passed": True})
         checks["tokenization_argument_guards"] = token_checks
+        prompt_ids = directory / "prompt.ids"
+        prompt_ids.write_text("1\n2\n")
+        capture_argv = [str(executable), "--model", "/unopened-target.gguf",
+                        "--tokens", str(prompt_ids), "--out", str(directory / "capture"),
+                        "--cpu-library", "/unopened-cpu.so", "--cuda-library", "/unopened-cuda.so"]
+        cadence_checks = []
+        for extra, error in [(["--decode-chunk", "0"], "decode chunk must"),
+                             (["--decode-chunk", "33"], "decode chunk must"),
+                             (["--greedy-steps", "2", "--decode-chunk", "2"], "greedy continuation requires")]:
+            result = subprocess.run(capture_argv + extra, text=True, capture_output=True, env=env)
+            if result.returncode != 1 or error not in result.stderr or (directory / "capture").exists():
+                raise RuntimeError("invalid continuation cadence was not rejected before backend/model opening")
+            cadence_checks.append({"case": extra, "passed": True})
+        checks["continuation_cadence_argument_guards"] = cadence_checks
     headers = shlex.split(dependency.read_text().replace("\\\n", " ").split(":", 1)[1])
     implementation_files = ["src/llama-context.cpp", "src/llama-context.h", "src/models/qwen35.cpp",
                             "src/llama-graph.cpp", "src/llama-graph.h", "src/llama.cpp", "ggml/src/ggml-backend-reg.cpp",
@@ -122,11 +147,12 @@ def main():
         "native_tokenization_validated": False,
         "model_opened": False,
         "backend_initialized": False,
-        "source": pin(source), "builder": pin(__file__), "baseline": pin(baseline),
+        "source": pin(compiled_source), "builder": pin(builder_source), "baseline": pin(baseline),
+        "source_origins": {"capture": pin(source), "builder": pin(__file__)},
         "compiler": pin(compiler), "compiler_version": command([compiler, "--version"]).stdout,
         "runtime_revision": command(["git", "-C", runtime, "rev-parse", "HEAD"]).stdout.strip(),
         "runtime_sources": [pin(runtime / name) for name in implementation_files],
-        "included_local_headers": [pin(path) for path in headers if Path(path).resolve() != source],
+        "included_local_headers": [pin(path) for path in headers if Path(path).resolve() != compiled_source],
         "runtime_libraries": runtime_libraries, "cuda_overlay": cuda,
         "executable": pin(executable), "compile_argv": list(map(str, argv)),
         "compile_stderr": compiled.stderr, "environment": environment,

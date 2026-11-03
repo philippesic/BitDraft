@@ -145,12 +145,13 @@ static int tokenize_text(int argc, char ** argv) {
 static void help() {
     std::cout << "modern_capture --model TARGET.gguf --tokens PROMPT.ids --out NEW_DIRECTORY\n"
         "  --cpu-library LIB --cuda-library IMMUTABLE_LIB\n"
-        "  [--decode-tokens CONTINUATION.ids | --greedy-steps N]\n"
+        "  [--decode-tokens CONTINUATION.ids | --greedy-steps N] [--decode-chunk 1]\n"
         "  [--taps 2,16,29] [--logit-positions P0,P1,...] [--prefill-chunk 512]\n"
         "  [--threads 8] [--max-output-mib 256] [--no-features]\n"
         "Token files contain decimal token IDs separated by whitespace or commas.\n"
         "Positions are zero based over prompt then continuation. Default logits:\n"
         "last prompt row plus every continuation row. Greedy mode requires these rows.\n"
+        "Fixed continuation can use decode chunks 1..32; greedy mode requires 1.\n"
         "Features: layer-N.f32, shape [all input rows,2560], little endian F32.\n"
         "Logits: logits.f32, shape [selected rows,vocab]; capture.json maps rows.\n"
         "--no-features provides a target-only trajectory control.\n"
@@ -174,7 +175,7 @@ int main(int argc, char ** argv) {
             if (std::string(argv[i]) == "--tokenize") return tokenize_text(argc, argv);
         std::map<std::string, std::string> args;
         const std::set<std::string> keys = {"--model", "--tokens", "--out", "--cpu-library", "--cuda-library",
-            "--decode-tokens", "--greedy-steps", "--taps", "--logit-positions", "--prefill-chunk", "--threads", "--max-output-mib"};
+            "--decode-tokens", "--greedy-steps", "--decode-chunk", "--taps", "--logit-positions", "--prefill-chunk", "--threads", "--max-output-mib"};
         bool features = true;
         for (int i = 1; i < argc; ++i) {
             const std::string key = argv[i];
@@ -191,6 +192,10 @@ int main(int argc, char ** argv) {
         const int steps = args.count("--greedy-steps") ? integer(args.at("--greedy-steps")) : static_cast<int>(fixed.size());
         require(!prompt.empty() && prompt.size() + steps <= 4096, "require 1..4096 total input tokens");
         const int chunk = integer(get("--prefill-chunk", "512"));
+        const int decode_chunk = integer(get("--decode-chunk", "1"));
+        require(decode_chunk >= 1 && decode_chunk <= 32, "decode chunk must be in [1,32]");
+        require(!args.count("--greedy-steps") || decode_chunk == 1,
+                "greedy continuation requires decode chunk 1");
         const int threads = integer(get("--threads", "8"));
         const int max_mib = integer(get("--max-output-mib", "256"));
         require(chunk >= 1 && chunk <= 512 && threads >= 1 && threads <= 64 && max_mib >= 1 && max_mib <= 1024, "invalid capture limits");
@@ -308,10 +313,13 @@ int main(int argc, char ** argv) {
         };
         for (int start = 0; start < static_cast<int>(prompt.size()); start += chunk)
             consume(start, std::min(chunk, static_cast<int>(prompt.size()) - start));
-        for (int i = 0; i < steps; ++i) {
+        for (int i = 0; i < steps; i += decode_chunk) {
             if (args.count("--greedy-steps")) require(next >= 0, "missing greedy predecessor logits");
-            inputs.push_back(args.count("--greedy-steps") ? next : fixed.at(i));
-            consume(static_cast<int>(inputs.size()) - 1, 1);
+            const int count = std::min(decode_chunk, steps - i);
+            const int start = static_cast<int>(inputs.size());
+            for (int j = 0; j < count; ++j)
+                inputs.push_back(args.count("--greedy-steps") ? next : fixed.at(i + j));
+            consume(start, count);
         }
         logits_file.close(); require(bool(logits_file), "logits close failed");
         for (auto & file : feature_files) { file.close(); require(bool(file), "features close failed"); }
@@ -338,6 +346,7 @@ int main(int argc, char ** argv) {
         metadata << ",\n\"input_tokens\":"; array(metadata, inputs);
         metadata << ",\n\"prompt_tokens\":" << prompt.size() << ",\n\"continuation_mode\":" << quote(args.count("--greedy-steps") ? "native_greedy" : "fixed_token_ids")
             << ",\n\"prefill_chunk\":" << chunk
+            << ",\n\"decode_chunk\":" << decode_chunk
             << ",\n\"threads\":" << threads
             << ",\n\"settings\":{\"context\":4096,\"batch\":512,\"ubatch\":512,\"seq_max\":1,\"kv\":\"F16\",\"flash_attention\":\"on\",\"consistent\":32,\"sampling\":\"raw_argmax_lowest_id_tie\",\"load_mtp\":false},\n\"array_bytes\":" << expected_bytes << "\n}\n";
         metadata.close(); require(bool(metadata), "metadata close failed");
