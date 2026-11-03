@@ -642,3 +642,56 @@ True arm nowauditingdata/setup. Same warm1920/9scales/λ10/original356replay/fix
 19200horizon; onlyordinaryCE pool broadens fromold24FIT toold+new48. Newdatatraining
 result/native956preservation/repeatedtiming stillpending. This480qualification is
 reader equivalence, NOT a validatedearly/longpredictor orbacklogscreen. No push.
+
+## Expanded-data transfer remains flat; output-head capacity contrast next — November 3
+
+Qualified resident expanded-data arm completes1920newupdates→3840,169.45339snew
+training,451.93009schildwall (450.66138sinternaltrainer). Samebalanced1920warm,
+9scales/Adam1e-5/λ10/fixed4ordinaryCE/old356replay/horizon19200. Only ordinaryCE
+pool changes24→48FITgroups. Old/newCEwindows1896/1944,labels2251/2327,total4578
+versuscontrol4561 (+0.37%labelmass). NativeGGUF0b37d424... and compact1,196,657B
+checkpointf4a8d2d3... retained. Model-sideprefix oldFIT1436→1365,DEV489→491,
+addedFIT881→1050. Training fit improves; heldoutreadoutnearlyflat, no freshgain.
+
+Actual native control/expanded panels complete20processeseach/all883unique
+successwindows/all956nativepositions. Parent956/956 each. Control loses151:
+oldFIT2/356,DEV42/193,added107/407. Expanded loses119:oldFIT2,DEV38,added79.
+NativeDEV38 differs model-side39, recordedseparately. Root auditsall40replies,
+source/model/casepins and27loadedimages; walls243.32501/242.54429s. HTTPfirstquiet
+loaderproofpreflight fails beforeinference (wrong inheritedinitializer proof),
+retained separately. Verbose02 actualqualifier passes28rawresponses,targettokens/
+text/stopping,cache0, requestcontrols,ninepackedlinears,twoownedgroupsreleased.
+DEVaccepted341/1148controlvs340/1149expanded, singlepassdiagnostic, notspeedbenefit.
+No repeatedtiming orfreshpromotion justified for this retention-failing fullmodel.
+Evidence: data-native-root-analysis.json, data-http-root-audit.json; actual
+local-w1a8-data-native-comparison-20261103-01 terminal0, HTTP-02terminal0.
+
+Preservation backoff exports auditonlyeightbody scales/originalhead changed,
+allotherGGUFbytes fixed. Parent-margin96window/113positive diagnostic selected
+beforeoutcomes across60groups; not a quickpredictor/fullpreservationproof. Old
+quarterloses7,newquarter6,neweighth10 of113. Allparents113/113. Run
+local-w1a8-data-backoff-native-20261103-01 terminal0,161.47272swhole. Full956/fresh
+promotion not pursued for these failures; paidstates/recipes/results retained.
+
+Root next owns strict ORIGINAL ab410resident3840→4320 reference for selected-head
+migration control: local-w1a8-head-reference4320-20261103-01 started21:08:11UTC,
+180sgrace/localtmux, root-owned-identities.json plus childidentity in protectedroot.
+Output CROOT/w1a8-head-resident-reference4320-01. Source unchanged; complete480new
+updates/readouts preserved. CPUworker builds separate512FIT-selectedhead trainer/
+realqualificationCLI only; root must qualifyzeroexport/realgradients/exactresume,
+then falsemigration againstreference before true1920capacity continuation.
+
+Natural confirmation helper Git771c5d68/main940655a2 integrates after12rootCPUtests/
+Ruff;173relatedCPUtests total. Fixtureonly, no realinputselection/models loaded.
+24unusedwholecorpusperformance+24newsyntheticoraclequality schema, all512historical
+TRAIN/current60/fresh48/pilot/matrix/exact+normalized/opaqueDEV+sealed exclusions
+binding. Root corrected its initial unsuitable same512pool assignment; USER_LESSONS
+recordsagenterror, noevaluation affected. Larger publiccatalog actualeligibility
+unknown; no exclusion exception. Candidate/runtimefreeze precedes actualselection.
+
+Three exactstaticcontrol GGUFduplicates hardlinked to immutable nativefit3840
+canonical, all4originalpaths/digests preserved; Cfree+122,318,848B. No paidstate or
+unique model deleted. New data-backoffexports retained. WSL/Cstorage still tight;
+headreference uses Coutputs/reusedTorchcache. Phase1active; early/longpredictor,
+98-ID/34-family screen, combinations, four-target DFlash confirmation still gated.
+No push. AllhistoricalF16results separate.

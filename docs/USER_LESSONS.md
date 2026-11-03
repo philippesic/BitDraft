@@ -995,3 +995,21 @@ additional proof protocols or redoing completed audit work.
 - Handoffs should say "Git commit" and "file SHA256" separately. The checkpoint's
   full source-file pin is authoritative for strict continuation; never relax a
   validator based on a shorthand commit label.
+
+### 2026-11-03: Reconcile exposure exclusions before choosing fresh input pools
+
+- Root asked a worker to prepare natural confirmation inputs from the same 512
+  historical TRAIN bindings used to expand training. The existing fresh-input
+  exclusion inventory already marks all 512 as training exposure. The worker
+  caught that conflict before selecting any real prompts, then proposed a
+  documented exception. Root rejected the exception and corrected its pool
+  assignment. No user mistake occurred and no evaluation or fresh packet was
+  affected.
+- [The exclusion inventory](../runs/w1a8-modern-protected-20261103-01/fresh-quarter-confirmation01/exclusion-inventory.json)
+  remains authoritative. The worker located a larger local public-source catalog;
+  unused source rows must also respect recorded development and sealed indices.
+  Historical precision differences do not erase earlier project exposure.
+- Before assigning fresh-input generation, check eligibility against the full
+  exclusion inventory. Use a genuinely unused source pool or report that none
+  is available; do not weaken the definition of untouched inputs to fit a chosen
+  pool. Freeze the candidate before selecting real confirmation inputs.

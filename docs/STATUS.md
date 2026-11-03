@@ -76,16 +76,36 @@ intentionalcontroller-15 receipt is not a sciencefailure. Originalsource unchang
 Separate residenttrainer dca0dd02 passes12rootCPUtests/Ruff and unchangednumeric
 AST/arithmetic. Resident480update qualification exactlymatches original2400 weights,
 Adam/RNG/exposure. Root owns local-w1a8-resident-expanded-ce-20261103-01,20:19:59UTC/
-180sgrace, immediateperprocess identities. TrueexpandedCEarm setup islive, samewarm/
-objective/old356replay/horizon19200. No expandeddata result/native956/repeatedspeed
-yet. `resident-ce-GPU-control-parity.json` and `resident-expanded-ce-plan.json` hold
-currentevidence. Readerqualification doesnotvalidate short-to-longprediction.
+180sgrace, immediateperprocess identities. True expanded-data training now completes all1920newupdates→3840,169.45s
+incrementaltraining and451.93schildwall (450.66sinternal trainer). Same old356replay,
+λ10/fixed4CE/horizon19200. Added examples improve training readouts, butdevelopment
+prefix489→491 is nearlyflat. Root audits all956old+newnative positions: control
+loses151 (2oldFIT/42DEV/107addedFIT); expanded loses119 (2/38/79). Both parent panels
+reproduce956/956. All28HTTPresponses independently matchtargettokens/text/stopping,
+cache0, ninepackedlinears andtwoownedservergroups released. On12reusedDEVrequests,
+accepted drafts341/1148→340/1149: no serving benefit established; not repeatedtiming.
+Smaller newdata scale changes also fail a prespecified96window/113positive risk
+diagnostic: oldquarter7/newquarter6/neweighth10 losses. These cannot advance on
+preservation; no full956pass or freshgain claimed. Paidstates remain continuable.
+
+The next isolated capacity contrast is a FIT-selected512row output-head treatment,
+with scales/objective/replay/data held fixed. CPU source work is ongoing; actual
+head training/native qualification not done. Root owns original resident strict
+3840→4320 reference `local-w1a8-head-reference4320-20261103-01`,21:08:11UTC,
+180sgrace/localtmux, immediatebirth identities; output C:head-resident-reference4320.
+This is its migration control, not a head-capacity result. Broader natural-confirmation
+packet helper940655a2 passes12newrootCPUtests/Ruff (173relatedtests total). It preserves
+all512historical TRAIN and DEV/sealed exclusions; no real fresh prompts selected,
+actual unused-pool eligibility unknown. Candidate/runtime must freeze first.
+`data-native-root-analysis.json`, `data-http-root-audit.json` and
+`data-backoff-native-result.json` retain results/costs. Readerqualification doesnot
+validate short-to-longprediction. Phase1 remainsactive.
 Data-union helper47d87c11 is integrated with9CPUtests/Ruff; real same-capture
 identity check preserves2138windows/549protections,36actualmaterializations and
 all1440nativeembedding lookups. This adds0examples and is not expanded-data
 training admission. No new fresh/development training labels used.
 
-Source is integrated with161passing related CPUtests and actual native evidence;
+Source is integrated with173passing related CPUtests and actual native evidence;
 pinned worktree is retained for checkpoint/source contracts. Paid states remain;
 older exports have verified compact archives or readable relocated aliases.
 Storage remains constrained. No push. Quick-screen predictor,98-ID/34-family
