@@ -1,10 +1,14 @@
 """Five-repeat modern native development requests; sole GPU operator only.
 
 --models JSON: {baseline:pin, target:pin, source_pins:[pin], arms:[{id,
-kind:target|dflash|w1a8, model:pin|null, runtime:{server:pin, libraries:[pin],
+kind:target|dflash|w1a8|eagle_q4, model:pin|null, runtime:{server:pin, libraries:[pin],
 environment:{...}, source_pins:[pin]}}]}. Include every executable loaded image
 (including system/CUDA libraries) in runtime.libraries. Supply existing explicit
 CUDA_CACHE_PATH and LD_LIBRARY_PATH per runtime; caches are shared, never copied.
+Four to eight arms must include one frozen target and one frozen DFlash. The
+default W1A8 runtime is original. Its sole optional variant is
+runtime.variant="zero_output_headskip", with runtime.variant_build pin to the
+approved headskip build.json (also include that pin in runtime.source_pins).
 
 --inputs JSON: {roster:pin, source_pins:[pin], rows:[{id, request:pin,
 reference:pin}], warmups:[two entries with the same fields]}. rows must be all
@@ -37,6 +41,8 @@ INITIAL_SHA = "6dacd68773153e7cb84dd415beb64a21b04ba7c77e2c6386673ad3cfc26dc048"
 BASELINE = PROJECT / "experiments/w1a8-standing-20261102/baseline.json"
 NATIVE = PROJECT / "runs/w1a8-modern-native-admission-20261103-01/freeze.json"
 FROZEN = PROJECT / "runs/qwen35-correctness-matrix-20261101-01/final-freeze.json"
+HEADSKIP = PROJECT / "runs/w1a8-modern-headskip-20261103-01/build.json"
+HEADSKIP_LIBRARY_SHA = "3c55f4f0b63104b9859184fffda1eee8fa2d87ef45c0e791677f2ab076247e97"
 PAYLOAD_KEYS = {
     "prompt",
     "n_predict",
@@ -114,13 +120,16 @@ class Requests(Collector):
         )
         self.arms = self.models["arms"]
         require(
-            len(self.arms) == 5 and len({a["id"] for a in self.arms}) == 5,
-            "exactly five unique arms required",
+            4 <= len(self.arms) <= 8 and len({a["id"] for a in self.arms}) == len(self.arms),
+            "four to eight unique arms required",
         )
         require(
-            sorted(a["kind"] for a in self.arms) == ["dflash", "target", "w1a8", "w1a8", "w1a8"],
-            "target,DFlash,initializer,two trained W1A8 arms required",
+            sum(a["kind"] == "target" for a in self.arms) == 1
+            and sum(a["kind"] == "dflash" for a in self.arms) == 1
+            and all(a["kind"] in ("target", "dflash", "w1a8", "eagle_q4") for a in self.arms),
+            "one frozen target,one frozen DFlash,and W1A8 candidate arms required",
         )
+        self.variant_sources = []
         for arm in self.arms:
             require(arm["id"].replace("-", "").replace("_", "").isalnum(), "unsafe arm ID")
             runtime = arm["runtime"]
@@ -156,19 +165,55 @@ class Requests(Collector):
                 "CUDA_MODULE_LOADING",
             }
             require(set(env) <= permitted, "unrecognized runtime environment key")
-            expected_server = candidate_server if arm["kind"] == "w1a8" else frozen["server"]
+            candidate_runtime = arm["kind"] in ("w1a8", "eagle_q4")
+            expected_server = candidate_server if candidate_runtime else frozen["server"]
             require(
                 runtime["server"]["sha256"] == expected_server["sha256"],
                 "frozen/original candidate server differs",
             )
-            original_libraries = (
-                original_build["binaries"] if arm["kind"] == "w1a8" else frozen["pins"]
-            )
+            original_libraries = original_build["binaries"] if candidate_runtime else frozen["pins"]
             native_library_hashes = {
                 Path(r["path"]).resolve().name: r["sha256"]
                 for r in original_libraries
                 if ".so" in Path(r["path"]).name
             }
+            variant = runtime.get("variant", "original")
+            require(variant in ("original", "zero_output_headskip"), "unknown runtime variant")
+            if variant == "zero_output_headskip":
+                require(candidate_runtime, "headskip variant requires an EAGLE candidate")
+                build_ref = runtime.get("variant_build")
+                require(isinstance(build_ref, dict), "headskip variant_build pin required")
+                require(
+                    self.checked(build_ref).resolve() == HEADSKIP.resolve()
+                    and build_ref["sha256"] == pin(HEADSKIP)["sha256"],
+                    "only root-approved headskip build is permitted",
+                )
+                require(
+                    any(
+                        Path(ref["path"]).resolve() == HEADSKIP.resolve()
+                        and ref["sha256"] == build_ref["sha256"]
+                        for ref in runtime["source_pins"]
+                    ),
+                    "headskip variant build must be included in runtime source_pins",
+                )
+                variant_build = read(self.checked(build_ref))
+                for ref in references(variant_build):
+                    self.checked(ref)
+                require(
+                    variant_build["library"]["sha256"] == HEADSKIP_LIBRARY_SHA
+                    and Path(variant_build["library"]["path"]).resolve().name
+                    == "libllama.so.0.8.0",
+                    "approved headskip core hash differs",
+                )
+                native_library_hashes["libllama.so.0.8.0"] = HEADSKIP_LIBRARY_SHA
+                self.variant_sources.extend(
+                    variant_build[key] for key in ("source", "unity", "original", "patch")
+                )
+            else:
+                require(
+                    "variant_build" not in runtime,
+                    "original runtime cannot substitute a variant build",
+                )
             for library in runtime["libraries"]:
                 name = Path(library["path"]).resolve().name
                 if name.startswith(("libllama", "libggml", "libmtmd")):
@@ -183,7 +228,7 @@ class Requests(Collector):
                     for x in original_build["binaries"]
                     if "libggml-cuda.so" in Path(x["path"]).name
                 )
-                if arm["kind"] == "w1a8"
+                if candidate_runtime
                 else self.baseline["cuda"]
             )
             cuda = [x for x in runtime["libraries"] if "libggml-cuda.so" in Path(x["path"]).name]
@@ -198,17 +243,100 @@ class Requests(Collector):
                     arm["model"]["sha256"] == row["draft_pin"]["sha256"],
                     "primary DFlash Q4_K_M differs",
                 )
+            elif arm["kind"] == "eagle_q4":
+                require(
+                    arm["model"]["sha256"] == native["ordinary_eagle"]["sha256"],
+                    "ordinary EAGLE Q4_0 diagnostic differs",
+                )
             else:
                 require(env.get("GGML_W1AX_ACT_BITS") == "8", "W1A8 activation mode required")
             if arm["kind"] != "w1a8":
                 require("GGML_W1AX_ACT_BITS" not in env, "W1A8 mode leaked into baseline")
+        initializers = [
+            a for a in self.arms if a.get("model") and a["model"]["sha256"] == INITIAL_SHA
+        ]
         require(
-            sum(
-                a.get("model", {}).get("sha256") == INITIAL_SHA for a in self.arms if a.get("model")
-            )
-            == 1,
-            "exactly one unchanged W1A8 initializer required",
+            len(initializers) in (1, 2),
+            "one initializer or matched original/headskip initializer pair required",
         )
+        if len(initializers) == 2:
+            require(
+                {a["runtime"].get("variant", "original") for a in initializers}
+                == {"original", "zero_output_headskip"},
+                "two initializer arms must isolate original versus headskip runtime",
+            )
+        self.authenticate_inputs()
+        self.guard()
+        hardware = subprocess.check_output(
+            [
+                "/usr/lib/wsl/lib/nvidia-smi",
+                "--id=0",
+                "--query-gpu=name,uuid,driver_version,memory.total",
+                "--format=csv,noheader",
+            ],
+            text=True,
+            timeout=15,
+        )
+        require(
+            hardware.split(",")[0].strip() == "NVIDIA GeForce RTX 5080", "RTX5080 GPU0 required"
+        )
+        (self.output / "hardware.txt").write_text(hardware)
+        sources = self.output / "source"
+        sources.mkdir()
+        snapshot_refs = [pin(__file__), pin(Path(__file__).with_name("modern_collect.py"))]
+        snapshot_refs += self.models.get("source_pins", []) + self.inputs.get("source_pins", [])
+        snapshot_refs += self.variant_sources + self.input_source_refs
+        for arm in self.arms:
+            snapshot_refs += arm["runtime"]["source_pins"]
+        snapshots = []
+        for i, ref in enumerate(snapshot_refs):
+            source = self.checked(ref)
+            require(source.stat().st_size < 32 * 1024**2, "source snapshot unexpectedly large")
+            dest = sources / f"{i:03d}-{source.name}"
+            shutil.copyfile(source, dest)
+            snapshots.append({"original": ref, "snapshot": pin(dest)})
+        atomic(self.output / "models.json", self.models)
+        atomic(self.output / "inputs.json", self.inputs)
+        atomic(
+            self.output / "freeze.json",
+            {
+                "schema": self.request_schema,
+                "models": pin(self.args.models),
+                "inputs": pin(self.args.inputs),
+                "baseline": self.models["baseline"],
+                "original_native_admission": pin(NATIVE),
+                "original_frozen_runtime": pin(FROZEN),
+                "hardware": pin(self.output / "hardware.txt"),
+                "source_snapshots": snapshots,
+                "repetitions": self.args.repetitions,
+                "expected_startups": len(self.arms) * self.args.repetitions,
+                "expected_measured_requests": len(self.rows)
+                * len(self.arms)
+                * self.args.repetitions,
+                "expected_excluded_warmups": len(self.warmups)
+                * len(self.arms)
+                * self.args.repetitions,
+                "runtime_variants": [
+                    {
+                        "arm": arm["id"],
+                        "variant": arm["runtime"].get("variant", "original"),
+                        "variant_build": arm["runtime"].get("variant_build"),
+                    }
+                    for arm in self.arms
+                ],
+                "arm_order": "forward on even repetition,reverse on odd",
+                "warmups_per_startup": 2,
+                "output_limit": self.output_limit,
+                "metric": "returned token IDs / summed full HTTP wall, startup and warmups excluded",
+                "scope": self.request_scope,
+            },
+        )
+
+    def authenticate_inputs(self):
+        self.output_limit = 80
+        self.request_schema = "w1a8_modern_development_requests_v1"
+        self.request_scope = "reused development pilot; no untouched quality, quick predictor, backlog or optimum claim"
+        self.input_source_refs = []
         roster = read(self.checked(self.inputs["roster"]))
         roster_rows = {r["id"]: r for r in roster["rows"]}
         require(
@@ -255,55 +383,9 @@ class Requests(Collector):
             )
             self.payloads[item["id"]] = payload
             self.gold[item["id"]] = signature(gold)
-        self.guard()
-        hardware = subprocess.check_output(
-            [
-                "/usr/lib/wsl/lib/nvidia-smi",
-                "--id=0",
-                "--query-gpu=name,uuid,driver_version,memory.total",
-                "--format=csv,noheader",
-            ],
-            text=True,
-            timeout=15,
-        )
-        require(
-            hardware.split(",")[0].strip() == "NVIDIA GeForce RTX 5080", "RTX5080 GPU0 required"
-        )
-        (self.output / "hardware.txt").write_text(hardware)
-        sources = self.output / "source"
-        sources.mkdir()
-        snapshot_refs = [pin(__file__), pin(Path(__file__).with_name("modern_collect.py"))]
-        snapshot_refs += self.models.get("source_pins", []) + self.inputs.get("source_pins", [])
-        for arm in self.arms:
-            snapshot_refs += arm["runtime"]["source_pins"]
-        snapshots = []
-        for i, ref in enumerate(snapshot_refs):
-            source = self.checked(ref)
-            require(source.stat().st_size < 32 * 1024**2, "source snapshot unexpectedly large")
-            dest = sources / f"{i:03d}-{source.name}"
-            shutil.copyfile(source, dest)
-            snapshots.append({"original": ref, "snapshot": pin(dest)})
-        atomic(self.output / "models.json", self.models)
-        atomic(self.output / "inputs.json", self.inputs)
-        atomic(
-            self.output / "freeze.json",
-            {
-                "schema": "w1a8_modern_development_requests_v1",
-                "models": pin(self.args.models),
-                "inputs": pin(self.args.inputs),
-                "baseline": self.models["baseline"],
-                "original_native_admission": pin(NATIVE),
-                "original_frozen_runtime": pin(FROZEN),
-                "hardware": pin(self.output / "hardware.txt"),
-                "source_snapshots": snapshots,
-                "repetitions": 5,
-                "arm_order": "forward on even repetition,reverse on odd",
-                "warmups_per_startup": 2,
-                "output_limit": 80,
-                "metric": "returned token IDs / summed full HTTP wall, startup and warmups excluded",
-                "scope": "reused development pilot; no untouched quality, quick predictor, backlog or optimum claim",
-            },
-        )
+
+    def prepare_cell(self, port, cell, arm, rep):
+        """Optional non-timing setup for explicit input adapters."""
 
     def audit_maps(self, cell, tag, arm):
         maps = (Path("/proc") / str(self.active.pid) / "maps").read_text()
@@ -354,6 +436,7 @@ class Requests(Collector):
         require(math.isfinite(seconds) and seconds > 0, "invalid request wall")
         result = {
             "arm": arm["id"],
+            "runtime_variant": arm["runtime"].get("variant", "original"),
             "repetition": rep,
             "id": item["id"],
             "warmup": warmup,
@@ -401,7 +484,12 @@ class Requests(Collector):
         with socket.socket() as sock:
             sock.bind(("127.0.0.1", 0))
             port = sock.getsockname()[1]
-        spec = {"target": "none", "dflash": "draft-dflash", "w1a8": "draft-eagle3"}[arm["kind"]]
+        spec = {
+            "target": "none",
+            "dflash": "draft-dflash",
+            "w1a8": "draft-eagle3",
+            "eagle_q4": "draft-eagle3",
+        }[arm["kind"]]
         argv = [
             runtime["server"]["path"],
             "-m",
@@ -477,6 +565,7 @@ class Requests(Collector):
                 else:
                     raise RuntimeError("server startup timeout")
                 atomic(cell / "startup.json", {"seconds": time.perf_counter() - begin})
+                self.prepare_cell(port, cell, arm, rep)
                 for index, item in enumerate(self.warmups):
                     self.completion(port, item, cell, index, True, arm, rep)
                 self.audit_maps(cell, "warm", arm)
@@ -510,7 +599,7 @@ class Requests(Collector):
                     "stage": "cell_complete",
                     "repetition": rep,
                     "arm": arm["id"],
-                    "measured_requests": 12,
+                    "measured_requests": len(self.rows),
                 }
             ),
             flush=True,
@@ -527,19 +616,19 @@ class Requests(Collector):
         signal.signal(signal.SIGINT, stop)
         try:
             self.authenticate()
-            for rep in range(5):
+            for rep in range(self.args.repetitions):
                 for arm in self.arms if rep % 2 == 0 else list(reversed(self.arms)):
                     self.cell(rep, arm)
             summaries = []
             for arm in self.arms:
                 reps = []
-                for rep in range(5):
+                for rep in range(self.args.repetitions):
                     rows = [
                         r
                         for r in self.records
                         if r["arm"] == arm["id"] and r["repetition"] == rep and not r["warmup"]
                     ]
-                    require(len(rows) == 12, "incomplete repetition")
+                    require(len(rows) == len(self.rows), "incomplete repetition")
                     tokens = sum(r["completion_tokens"] for r in rows)
                     wall = sum(r["full_http_wall_seconds"] for r in rows)
                     reps.append(
@@ -556,6 +645,8 @@ class Requests(Collector):
                     {
                         "arm": arm["id"],
                         "kind": arm["kind"],
+                        "runtime_variant": arm["runtime"].get("variant", "original"),
+                        "variant_build": arm["runtime"].get("variant_build"),
                         "repetitions": reps,
                         "tokens_per_second": sum(r["tokens"] for r in reps)
                         / sum(r["full_http_wall_seconds"] for r in reps),
@@ -574,8 +665,9 @@ class Requests(Collector):
                 {
                     "status": "DEVELOPMENT_NATIVE_REQUESTS_PASS",
                     "token_text_stop_parity": True,
-                    "measured_requests": 300,
-                    "excluded_warmups": 50,
+                    "measured_requests": sum(not row["warmup"] for row in self.records),
+                    "excluded_warmups": sum(row["warmup"] for row in self.records),
+                    "completed_startups": len(self.arms) * self.args.repetitions,
                     "arms": summaries,
                     "records": self.records,
                     "wall_seconds": time.perf_counter() - self.started,
