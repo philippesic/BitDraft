@@ -85,12 +85,41 @@ def _frozen_rms_norm(x: Tensor, module: nn.Module) -> Tensor:
     return x * scale * module.weight
 
 
+def _rope_settings(config: object, head_dim: int) -> tuple[float, int]:
+    """Read unscaled legacy or modern HF RoPE without assuming a full head."""
+    if getattr(config, "rope_scaling", None) is not None:
+        raise ValueError("scaled RoPE is unsupported")
+    parameters = getattr(config, "rope_parameters", None)
+    if parameters is None:
+        parameters = {}
+    if not isinstance(parameters, Mapping):
+        raise ValueError("rope_parameters must be a mapping")
+    if parameters.get("rope_type", "default") != "default" or set(parameters) - {
+        "rope_type", "rope_theta", "partial_rotary_factor"
+    }:
+        raise ValueError("only default unscaled rope_parameters are supported")
+    # New HF configs can retain legacy attributes with default values. The
+    # explicit nested settings therefore take precedence when present.
+    theta = parameters.get("rope_theta", getattr(config, "rope_theta", 10000.0))
+    factor = parameters.get(
+        "partial_rotary_factor", getattr(config, "partial_rotary_factor", 1.0)
+    )
+    if type(theta) not in (int, float) or not math.isfinite(theta) or theta <= 0:
+        raise ValueError("rope_theta must be positive and finite")
+    if type(factor) not in (int, float) or not math.isfinite(factor) or not 0 < factor <= 1:
+        raise ValueError("partial_rotary_factor must be finite and in (0, 1]")
+    dimensions = head_dim * factor
+    if not float(dimensions).is_integer() or int(dimensions) < 2 or int(dimensions) % 2:
+        raise ValueError("partial_rotary_factor must select a positive even integer dimension")
+    return float(theta), int(dimensions)
+
+
 class NativeStepAdapter(nn.Module):
     """One-step binary drafter callable by ``rebuild_prefix_cache`` and rollout.
 
     ``decode_step`` returns draft-vocabulary logits; the frozen d2t/t2d map
     belongs to the trace/verifier boundary, not the differentiable head. Tree
-    masks, holes in a prefix and nondefault RoPE are intentionally rejected.
+    masks, holes in a prefix and scaled RoPE are intentionally rejected.
     """
 
     def __init__(
@@ -117,8 +146,6 @@ class NativeStepAdapter(nn.Module):
             for flag in ("norm_before_fc", "norm_before_residual")
         ):
             raise ValueError("norm_before_fc/residual is unsupported")
-        if getattr(config, "rope_scaling", None) is not None:
-            raise ValueError("scaled RoPE is unsupported")
         if getattr(config, "hidden_act", None) != "silu":
             raise ValueError("the pinned drafter requires SiLU")
         if attention_mode not in ("f32", "native_forward_f32_backward", "native_cpu_diagnostic"):
@@ -142,7 +169,6 @@ class NativeStepAdapter(nn.Module):
         if head_dim is None and type(hidden) is int and type(heads) is int and heads > 0:
             head_dim = hidden // heads
         max_positions = getattr(config, "max_position_embeddings", None)
-        theta = getattr(config, "rope_theta", 10000.0)
         if not all(
             type(value) is int and value > 0
             for value in (hidden, heads, kv_heads, intermediate, head_dim, max_positions)
@@ -150,17 +176,17 @@ class NativeStepAdapter(nn.Module):
             raise ValueError("drafter dimensions must be positive integers")
         if head_dim % 2 or heads % kv_heads:
             raise ValueError("unsupported attention head geometry")
+        theta, rotary_dim = _rope_settings(config, head_dim)
         if attention_mode == "native_cpu_diagnostic" and (
             hidden != 2560
             or heads != 32
             or kv_heads != 8
             or head_dim != 128
+            or rotary_dim != head_dim
             or intermediate != 9728
             or max_positions < 256
         ):
             raise ValueError("native CPU diagnostic requires pinned EAGLE geometry")
-        if not isinstance(theta, (int, float)) or not math.isfinite(theta) or theta <= 0:
-            raise ValueError("rope_theta must be positive and finite")
 
         expected = {
             "fc": (hidden, 3 * hidden),
@@ -344,6 +370,7 @@ class NativeStepAdapter(nn.Module):
         self.heads = heads
         self.kv_heads = kv_heads
         self.head_dim = head_dim
+        self.rotary_dim = rotary_dim
         self.max_positions = max_positions
         self.rope_theta = float(theta)
         self.attention_mode = attention_mode
@@ -413,23 +440,24 @@ class NativeStepAdapter(nn.Module):
         multiplication per position; accelerator uses its declared power form.
         """
         theta_scale = torch.tensor(self.rope_theta, dtype=torch.float32, device=self.device).pow(
-            -2.0 / self.head_dim
+            -2.0 / self.rotary_dim
         )
         if self.device.type == "cpu":
             angle = torch.empty(
-                (positions.numel(), self.head_dim // 2), dtype=torch.float32, device=self.device
+                (positions.numel(), self.rotary_dim // 2), dtype=torch.float32, device=self.device
             )
             theta = positions.to(torch.float32)
             for index in range(angle.shape[-1]):
                 angle[:, index] = theta
                 theta = theta * theta_scale
         else:
-            channels = torch.arange(self.head_dim // 2, device=self.device)
+            channels = torch.arange(self.rotary_dim // 2, device=self.device)
             angle = positions.float()[:, None] * theta_scale.pow(channels)
         full_angle = torch.cat((angle, angle), dim=-1)[:, None, :]
-        half = self.head_dim // 2
-        rotated = torch.cat((-x[..., half:], x[..., :half]), dim=-1)
-        return x * full_angle.cos() + rotated * full_angle.sin()
+        half = self.rotary_dim // 2
+        prefix, tail = x[..., :self.rotary_dim], x[..., self.rotary_dim:]
+        rotated = torch.cat((-prefix[..., half:], prefix[..., :half]), dim=-1)
+        return torch.cat((prefix * full_angle.cos() + rotated * full_angle.sin(), tail), dim=-1)
 
     @torch.no_grad()
     def build_context_cache(
@@ -600,9 +628,9 @@ class NativeStepAdapter(nn.Module):
             # direct power at every channel changes some F16-rounded cache keys.
             theta_scale = torch.tensor(
                 self.rope_theta, dtype=torch.float32, device=self.device
-            ).pow(-2.0 / self.head_dim)
+            ).pow(-2.0 / self.rotary_dim)
             if self.device.type == "cpu":
-                angle = torch.empty(self.head_dim // 2, dtype=torch.float32, device=self.device)
+                angle = torch.empty(self.rotary_dim // 2, dtype=torch.float32, device=self.device)
                 theta = torch.tensor(
                     float(decoder_position), dtype=torch.float32, device=self.device
                 )
@@ -612,13 +640,18 @@ class NativeStepAdapter(nn.Module):
             else:
                 # Vectorized training surrogate; native proposal trajectories
                 # remain the deployment/numeric gate after accelerator access.
-                channels = torch.arange(self.head_dim // 2, device=self.device)
+                channels = torch.arange(self.rotary_dim // 2, device=self.device)
                 angle = float(decoder_position) * theta_scale.pow(channels)
             full_angle = torch.cat((angle, angle))
             cos, sin = full_angle.cos(), full_angle.sin()
-            half = self.head_dim // 2
-            q = q * cos + torch.cat((-q[:, half:], q[:, :half]), dim=-1) * sin
-            k = k * cos + torch.cat((-k[:, half:], k[:, :half]), dim=-1) * sin
+            half = self.rotary_dim // 2
+
+            def rotate_prefix(x: Tensor) -> Tensor:
+                prefix, tail = x[:, :self.rotary_dim], x[:, self.rotary_dim:]
+                rotated = torch.cat((-prefix[:, half:], prefix[:, :half]), dim=-1)
+                return torch.cat((prefix * cos + rotated * sin, tail), dim=-1)
+
+            q, k = rotate_prefix(q), rotate_prefix(k)
         trace("Qcur_rope-0", q)
         trace("Kcur_rope-0", k)
 
