@@ -870,3 +870,24 @@ Owner evidence `added-replay-true-identity.json` + supervisor/root-owned-identit
 Same3840parent, true1920→5760/h19200; original356replay untouched plus independent
 407FIT stream. Stop authenticatedsupervisor withTERM/180sgrace, confirmgroupsgone.
 Userpreservationclarification pending; no Phase2/backlog advancement inferred.
+
+
+### Repeated serving complete; broader confirmation next
+
+The eight-arm/five-repetition panel completes and passes the independent raw
+request/model/runtime audit: 480 measured requests plus 80 warmups, all 490
+speculative responses exactly matching target output, all 40 serving groups
+released. Longer unchanged control132.547 TPS versus earlier quarter118.928:
++11.45%, joint prompt/repetition 95% interval+6.40–17.81%. Added replay133.811
+and head133.904 do not establish incremental gains over control (both intervals
+include no gain). DFlashQ4_K_M198.701 on this same cohort. These 12 reused DEV
+prompts do not establish untouched generalization or short-run prediction.
+Evidence: runs/w1a8-modern-protected-20261103-01/
+capacity-replay-repeated-root-analysis.json; quiet marker is now
+COMPLETE_ROOT_AUDITED_RELEASED.
+
+Select added replay5760 for broader fresh confirmation because similar speed
+combines with better native96 preservation (9/113 losses versus17/113 control).
+No new natural prompts selected or evaluated yet; freeze candidate/runtime
+before preparation. Still Phase1; preservation clarification pending, Phase2
+predictor/backlog not started. All paid checkpoints remain preserved.

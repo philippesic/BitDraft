@@ -5380,4 +5380,42 @@ Same3840parent, true1920→5760/h19200; original356replay untouched plus indepen
 407FIT stream. Stop authenticatedsupervisor withTERM/180sgrace, confirmgroupsgone.
 Userpreservationclarification pending; no Phase2/backlog advancement inferred.
 
+
+### Added replay complete; repeated serving quiet window live
+
+True1920→5760 completes496.42swhole/210.84s incrementaltrainer. Offline newFIT
+loss70→27,DEV42→43; native96control17→9lost/113.28HTTPexact; acceptance360/1109
+controlvs360/1108added. IndependentCPU pair audit verifiesoldCE/356replay unchanged
+and all407newFIT constraints, noDEVselection. No servingthroughput/freshclaim.
+
+Root owns local-w1a8-capacity-replay-requests-20261103-01 since23:13:08UTC,
+localtmux/180sgrace/immediatebirthIDs. Eightarms×12DEV×5reps=480measured+80warmups.
+Fullmodel/runtime qualifications frozen; quiet window: NO otherGPU/tests/builds/
+largehashing/compression. Source capacity-replay-models-quiet01.json, rawCaddedpair/
+repeated-serving01, ownership root-owned-identities.json. Initialcells pass; wait
+allreps androotraw/token/timing/image/release audit. Userpreservationclarification
+pending; no Phase2/backlogadvance. Priorallcheckpoints/sourcehorizon19200 retained.
+
+
+
+### Repeated serving complete; broader confirmation next
+
+The eight-arm/five-repetition panel completes and passes the independent raw
+request/model/runtime audit: 480 measured requests plus 80 warmups, all 490
+speculative responses exactly matching target output, all 40 serving groups
+released. Longer unchanged control132.547 TPS versus earlier quarter118.928:
++11.45%, joint prompt/repetition 95% interval+6.40–17.81%. Added replay133.811
+and head133.904 do not establish incremental gains over control (both intervals
+include no gain). DFlashQ4_K_M198.701 on this same cohort. These 12 reused DEV
+prompts do not establish untouched generalization or short-run prediction.
+Evidence: runs/w1a8-modern-protected-20261103-01/
+capacity-replay-repeated-root-analysis.json; quiet marker is now
+COMPLETE_ROOT_AUDITED_RELEASED.
+
+Select added replay5760 for broader fresh confirmation because similar speed
+combines with better native96 preservation (9/113 losses versus17/113 control).
+No new natural prompts selected or evaluated yet; freeze candidate/runtime
+before preparation. Still Phase1; preservation clarification pending, Phase2
+predictor/backlog not started. All paid checkpoints remain preserved.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

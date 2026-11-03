@@ -56,19 +56,35 @@ not a repeated throughput or fresh-generalization result. All 32 unique loaded
 images are independently rehashed, and both serving process groups are released.
 The earlier +5.3% fresh candidate remains the best confirmed fresh result.
 
-A separately integrated objective contrast (b889fbf0) is ready: keep the original replay
-stream intact and add preservation replay for the 407 added FIT successes. This
-addresses the observed coverage gap without using development labels for training.
-Its real CPU admission authenticates all 407 positives/24 groups/372 windows in
-2.03 seconds using only recorded native JSON; Root owns `local-w1a8-added-replay-pair-20261103-01`, started 22:35:09 UTC
-with immediate identities, local tmux and 180-second grace. False480 exactly reproduces the unchanged resident4320 reference: all weights,
-Adam/RNG/cursor/exposure/readouts/nativeGGUF match, with zero added-forward cost.
-True1920 starts from the same3840 parent at22:40:52UTC; its process birth is
-authenticated live in `added-replay-true-identity.json`. The existing unchanged5760 control supplies the
-matched longer endpoint. Current work remains Phase1, pending the preservation
-clarification. Broader natural-confirmation tooling is ready,
-with all 512 historical TRAIN exposures and DEV/sealed indices excluded; actual
-unused-pool eligibility remains untested until candidate/runtime freeze.
+The added-FIT replay contrast completes all1920 updates. Its false control is
+bit-exact with the unchanged trainer. An independent CPU audit confirms identical
+ordinary-label and original356-token replay exposure, optimizer settings, target,
+runtime and row masks; only the extra407-token FIT replay stream changes.
+Offline added-FIT losses fall70→27 while development losses42→43. Native96 loses
+9/113 versus control17/113. All28serving responses match target output, but DEV
+acceptance remains360/1108 versus360/1109. These are diagnostics, not throughput
+or fresh-gain evidence. Its checkpoint remains continuable to horizon19200.
+
+The eight-arm repeated serving panel is complete and independently audited:
+480 measured requests plus 80 warmups, five repetitions, all speculative outputs
+exactly matching target tokens/text/stopping. On these 12 reused development
+prompts, the longer-trained unchanged control reaches 132.547 tokens/s versus
+118.928 for the earlier conservative candidate: +11.45% (95% interval
++6.40–17.81%). Added replay reaches 133.811 and the head treatment 133.904;
+neither establishes an incremental speed gain over the matched control. DFlash
+Q4_K_M reaches 198.701 on this same panel. These are development results, not
+untouched confirmation or validation of a short-run predictor. All serving groups
+are released and the quiet window is closed.
+
+The added-replay endpoint is selected for the next broader fresh-example test
+because it combines comparable measured speed with fewer losses on the frozen
+native diagnostic (9/113 versus control 17/113). This is a confirmation selection,
+not deployment promotion. Candidate/runtime freeze and new input preparation
+remain pending; no new natural confirmation prompts have been selected.
+
+Preservation clarification remains unanswered; Phase2/backlog stay pending.
+Broader natural-confirmation tooling is ready but no new fresh inputs selected.
+All512historicalTRAIN exposures and DEV/sealed indices remain excluded.
 
 Related source has 202 distinct passing CPU tests plus real GPU/native evidence.
 Pinned worktree and all paid checkpoints remain. Eight derived exports now
