@@ -10,6 +10,24 @@ Consult relevant entries when needed. These lessons provide context; the user's
 current instructions take precedence. Correct or retire entries when new
 evidence changes the lesson.
 
+### 2026-11-03: Publish paid training state before final diagnostics
+
+- Context: The W1A8 generalization control recorded 1,920 updates and an after-readout,
+  but the restarted host had no checkpoint, partial checkpoint, export or completion
+  receipt. Original logs are retained under `runs/w1a8-generalization-20261102/legacy-control01`.
+- Confirmed agent contribution: The new adapter deferred all checkpointing until
+  after final readout and frozen-weight verification. That verification copied whole
+  vocabulary tensors to host memory, and stop-signal protection had already ended.
+  The exact interruption cause remains unknown; no user mistake is established.
+- Practical lesson: Exercise an actual recovery publication early, save periodically,
+  and publish paid state before optional final diagnostics. Keep memory use bounded
+  and stop handling active through publication. Report a completed update count
+  separately from a preserved, exportable checkpoint.
+- Repair status: Periodic verified publication, latest-two recovery retention,
+  chunked exact hashing and protected finalization are implemented with fault tests.
+  The rerun must demonstrate real checkpoint/export completion before this repair
+  is called operationally qualified. Superseded source and failed-run evidence remain.
+
 ## Entry format
 
 - Date and context:
