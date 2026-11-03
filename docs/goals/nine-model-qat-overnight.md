@@ -4408,4 +4408,61 @@ no push. WSL free space around7GiB with two checkpoints; Windows free around
 9.6GiB at last sample. Recheck both before archival/new arms. New checkpoints
 are charged recovery artifacts; original paid states remain protected.
 
+### Control endpoint verified; repeated requests live — November 3 UTC
+
+The recovery rerun completed: local-w1a8-legacy-control-20261103-01 exited0,
+all1,920 updates/421.4641746 trainer seconds, checkpoint verified/fsynced, final
+frozen verification1.8503s and native export11.7566s. Full supervisor interval
+07:36:36.979437–07:50:52.190575UTC. Root authenticated supervisor/child absence
+and empty compute-app query before the next GPU operation. Failed attempt's
+425.6987634 trainer seconds stay separately charged. cost-ledger02.json tracks
+new physical updates3,840 and trainer total847.16293798 seconds, with preparation,
+diagnostics, checkpoint/export and loop wall distinguished.
+
+Recovery-trajectory-comparison01.json independently joins all288 saved decisions
+at before/96/480/after: zero ID/prefix/label/domain/group/anchor differences.
+This is a bounded decision-trajectory check, not old/full checkpoint equality.
+Final paid checkpoint and1440 recovery remain raw under legacy-control02/;
+do not archive until requests wrapper has finished authenticating/using them.
+
+Common native-panel01 replay completed48states and exited0 under
+local-w1a8-legacy-native-20261103-01. All raw arrays independently recomputed.
+Parent/control prefix sums162/163; six gains/six losses, two of24 full-five
+parent states harmed. This does not establish generalization or request speed.
+Per-state receipt legacy-native-retention02.json; raw legacy-native02/ retained.
+That supervisor/child were authenticated absent before serving launch.
+
+CURRENT GPU owner is root/current thread. Live supervised serving job:
+runs/local-w1a8-legacy-requests-20261103-01/{state,identity}.json.
+Output: runs/w1a8-generalization-20261102/legacy-requests02.
+Prepared packet: legacy-requests-prep02/prepared.json. tmux socket
+binary-eagle-runtime, session same as supervisor name. Exact boot/start-ticks/
+command/stop procedure are in identity.json. Latest check authenticated the
+child live, running status and64 actual measured requests, last in repetition0
+previous_eal_best. Five arms ×24prompts ×5reps =600 planned measured requests,
+plus excluded warmups. Do not infer completion from the prepared packet.
+
+QUIET WINDOW: no tests, builds, large input hashing, checkpoint compression or
+other GPU producers during clean request timings. All native workers finished;
+no delegation/GPU transfer is pending. To stop, authenticate identity then TERM
+supervisor; allow180s. The evaluator owns separately grouped serial servers and
+must reap them. Verify every owned server release receipt/group plus empty GPU
+compute query at termination. Preserve healthy requests across context rotation.
+
+Next: inspect terminal supervisor and independent-audit.json; verify600 complete
+raw token/text/finish/truncation/stop-type/stop-word comparisons and repetitions.
+Recompute pooled full-request rates and paired prompt/repetition uncertainty;
+normalize each candidate against its same-phase controls. Then account resources
+and preserve selected checkpoints with verified lossless archival if needed,
+measuring both ext4 and Windows free bytes. Do not delete valuable checkpoints
+or begin another arm without actual storage headroom. Run remaining three
+specs03 arms to matched1,920 updates with unchanged controls, native replay and
+repeated requests; continue informative curves, then post-selection untouched
+quality/token/request confirmation. Stage2 predictor validation and stage3 all98
+screen remain gated. Modern partial-RoPE is only a CPU prerequisite, not a
+modern native endpoint or a substitute for the final four-target comparison.
+
+No push, unrelated dirty edits untouched, temporary source worktree removed
+after all patches were integrated. Goal remains active; completion is unproven.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

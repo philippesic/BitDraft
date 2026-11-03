@@ -159,3 +159,30 @@ active DSpark training source closure. Modern export, embedding ancestry,
 capture, packed native execution and full-model evaluation remain unqualified.
 The temporary source worktree was removed after every patch was checked as
 integrated; no unmerged work or active dependency was discarded.
+
+## Control finalized; matched serving comparison running
+
+The rerun completed 1,920 updates /421.46 trainer seconds and exited zero.
+Its 3.887 GB full checkpoint round-tripped exactly, native export preserved all
+ordinary payloads/metadata, and chunked frozen verification passed in1.85s.
+Checkpoint publication, readout, export and preparation are charged separately.
+The original failed attempt's425.70 trainer seconds remain additional physical
+cost, not resumed or duplicated lineage. `cost-ledger02.json` records this scope.
+All288 saved decisions at before/96/480/after readouts match the interrupted
+attempt; `recovery-trajectory-comparison01.json` limits this claim to recorded
+IDs/prefixes because the original full weights did not survive.
+
+The common48-state native panel independently recomputes to prefix totals
+162parent versus163control, with six improved and six damaged states. Two of
+24 previously full-five states lose acceptance. This is stratified reused
+development evidence and does not demonstrate a serving or generalization win.
+Per-state results are in `legacy-native-retention02.json`; raw outputs survive.
+
+Five alternating full-request repetitions over the original24 development
+prompts are now running with the trained control, target-only, same-family
+Q4_K_M, parent3504 and previous bestEAL. The prepared packet pins the authentic
+checkpoint/export and unchanged controls. Independent token/text/stopping and
+repeat audits remain required. Root owns
+`local-w1a8-legacy-requests-20261103-01`; no tests/builds/large hashing or
+compression may overlap this clean timing phase. Untouched quality confirmation
+and the three other frozen treatments remain outstanding.

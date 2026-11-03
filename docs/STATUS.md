@@ -22,14 +22,18 @@ export or completion receipt was published. After the host restart, its old
 process identities are absent and its saved running state is stale. Logs and
 readouts survive; no usable new trained model or serving improvement exists.
 
-Recovery is implemented and the matched control is running again. Verified
-recovery points have been published at updates 96, 480 and 960; the latest two
-are retained. Final state is now saved before costly diagnostics, frozen tensors
-are hashed in bounded chunks, and signal protection extends through export.
-Twenty-four generalization/recovery CPU tests pass. The exact original failure
-remains unresolved. Root owns the RTX 5080 job
-`runs/local-w1a8-legacy-control-20261103-01/`; final export and serving evaluation
-remain pending.
+The control rerun completed all 1,920 updates, verified its full checkpoint,
+passed exact frozen-weight checks and published its native export. Recovery
+publication and finalization are now exercised successfully. Twenty-four
+generalization/recovery CPU tests pass. All saved readout decisions match the
+interrupted attempt; its exact original failure remains unresolved.
+
+Common-state native replay is independently recomputed and shows little net
+change, with both gains and damage to prior successes. The clean five-repetition
+historical request comparison is now running under root's sole GPU ownership:
+`runs/local-w1a8-legacy-requests-20261103-01/`. Controls are target-only,
+same-family Q4_K_M, parent3504 and the prior best EAL continuation. Keep this
+timing window quiet. No throughput or untouched-generalization result is claimed.
 
 The known backlog is 98 historical training segments in 34 families; preparation
 and adapter availability are not scientific screening. The early/long predictor
