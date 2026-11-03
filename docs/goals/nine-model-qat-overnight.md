@@ -5098,4 +5098,26 @@ statesunchanged; WSLfree+129.78MB/C-130.98MB, plusoldCE1920exportrelocationrecei
 Allcontinuations/horizon19200 retained. Phase1active/laterphasesgated; no push.
 Boundedworker prepares selected512headrowsCPUhelper only as fallback; rootsoleGPU.
 
+## New24FIT capture/data admitted; all-new native replay checking — November 3
+
+Collection finishes0,2079.81415sfullwall,24/24pass/407new native successes. Captured
+13467tracefiles417,997,547B; originalquoted31s/group omitted setup/integrity costs
+(summednativegroupstages754.36497s). Frozen baseline target-only independently agrees
+onall24newrequests+2warmups,24.60817squalifier. Actualviews1465newFITwindows,738new
+layer0embeddings andsourceindexunion complete under local-w1a8-modern-fit-admission-
+20261103-01 terminal0. Wholeadmission731.06508s; preparation262.72+262.26s, union166.81s.
+Finalunion60groups/3603windows/3768rawfiles/17122rows/2135embeddingIDs, native masks
+763FIT/193DEV. Fixedold356replay unchanged; dataexpansion not yet trained.
+
+Root soleGPU owns local-w1a8-expanded-parent-native-20261103-01 at19:49:30UTC,
+boot/birth IDs immediateidentity.json/localtmux/180sgrace. Started while other
+root job was CPU-only union finalization, after its embedding child terminal;
+no overlappingGPUuse. Source reconstruction checks all407neworiginalparent successes.
+Pairedtrainer guards this PASS plus rootdataadmission beforelaunch. Root driver
+run-expanded-ce-training.py preparesfalseexactcontrol first thentrue, final3840/
+horizon19200, extraFITreadouts separate. NewhelperCPU sourceed5cdc2e integrated;
+135relatedCPUtests, no realheadcapacityclaim. STATUS/progress/evidence updated.
+Next: verify all407nativeparent, run matchedold/newCE, nativepreservation andtiming
+as warranted. Phase1active, quickpredictor/backlog/fourtargetfinalstillgated.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

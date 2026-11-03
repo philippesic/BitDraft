@@ -574,3 +574,30 @@ aliased. Noactivecompiler, no binaries/models/checkpointschanged. Buildcachepass
 WSLfree+129,781,760B,Cfree-130,981,888B; Cremaining3,097,468,928Bbeforecapture.
 Receipts ce1920-export-relocation.json,build02-object-cache-relocation.json.
 Allpaidstates/source retained. Phase1 active; laterphasesgated. No push.
+
+## All new FIT captured; independent target parity passes — November 3
+
+Collection terminal0:24/24balanced8/domain groups pass,407newnative successes.
+Allold549+new407=956positions remain visible; new successes do not enter the
+fixedold356trainingreplaybank. Capture wholewall2079.81415s versus summed native
+groupstages754.36497s. Earlier31s/group and historical2minute estimates did not
+include all current setup/integrity/filesystem overhead; full observedcost kept.
+Metadata-only declaredtracefile/byte inventory in fit-expansion-capture-milestone.json.
+Bounded32-file C:diagnostic measures~0.1005s isfile+stat and~0.1155s open+SHA per
+6.91MBbatch; repeated filesystem audit overhead matters, not serving speed evidence.
+
+Independent frozen-target cell completes26responses (24newFIT+2oldwarmups) exact
+token/text/stop;24.60817swhole qualifier. Root now owns
+local-w1a8-modern-fit-admission-20261103-01,19:37:24UTC/180sgrace, immediatebirth/boot
+identity. Actualviews/nativeembedding/old+newunion preparation running; no new
+training or repeatedthroughput yet. No fresh/DEVtraining labels introduced.
+
+Fallback selected512head helper ed5cdc2e integrates after14rootCPUtests/Ruff;
+135relatedCPUtests total. Sparse custombackward preserves fullforward/inputgradient,
+trains1.31Mselectedsigns plus9scales withoutdenseheadAdam. CPUonly, no actualmodel/
+nativequalification or capacityclaim. OldFIT512rows cover93.51% supportedfirstmistakes
+underreachable-label filter; futurecaller mustapplysamefilter, noDEV/freshselection.
+selected-head-root-cpu-review.json and selected-head-old-fit-coverage.json retain
+scope. Newhead is not mixed into the data-only contrast. Paidstates/rawinputs kept.
+Boundedinventory retained-inventory-selected-and-expansion.json covers1.236GB of
+nonlive newstates/evidence plus activecapture explicitlyunscanned. No push.
