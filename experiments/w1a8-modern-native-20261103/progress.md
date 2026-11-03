@@ -763,3 +763,27 @@ respectively; qualificationzero-parent export exactduplicate hardlink adds40,738
 No VHDXcompaction/uniquecheckpointdeletion/push. No cleanservingtimingduringCPUarchive.
 Evidence failed-backoff-export-archives.json, old-sign-export-chunk-archives.json.
 Phase1active; predictor/backlog/combinations/fourtargetconfirmation remain gated.
+
+## Disabled head exact; matched long endpoints running
+
+False480→4320 trainer completes normally,339.35s whole including root audit.
+Every scale/Adam/RNG/cursor/exposure/readout/nativeGGUF matches originalresident.
+Root's extra abs(master)==1 check fails because actualinitialmasters are±0.5;
+controller2 is analysis failure after trainer0. Original receipt retained; exact
+comparison to qualified3840 initial tensor passes in head-false4320-parity02.json.
+USER_LESSONS records root error. No source or training-state repair was required.
+
+Root owns local-w1a8-head-matched5760-20261103-01 since21:37:52UTC, localtmux/
+180sgrace/immediatebirth identities. Unchanged originalresidentab410 control
+strictly continues4320→5760, preserving its paid480updates from3840. Headtrue54ed
+runs3840→5760. Both1920newupdates total; disabledwrapper equivalence alreadyproved.
+Use originalimmutablecontrol rather than repeating disabled sparse wrappers/logs.
+Plans pin both sources and sameparent/data/optimizer. No matched outcomes yet.
+
+False4320 export exactlyhardlinked to originalreference; paths/fullbytes unchanged.
+Newowned head-pair outputroot marked NTFS compression, no system/VHDXsetting changes.
+Luna verifies8.39MBWSLwrittenfixture stores1.05MB (8:1) with identicalfullSHA, then
+removes ownedfixture. Seven oldterminalO checkpoints individuallycompressed without
+byte/path changes;675,840B observedCgain, allhashes exact. No activepath touched.
+Receipts ntfs-owned-checkpoint-compression.json and ntfs-owned-fixture-metadata.json.
+AddedFIT-replay CPUfeature remains in boundedtwofilepartition; no realtraining yet.

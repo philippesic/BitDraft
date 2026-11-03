@@ -2,126 +2,69 @@
 
 ## Active: ordered W1A8 generalization work — November 3, 2026
 
-Phase 1 now has positive untouched-instance transfer on the modern 4B Q4_K_M
-track, but remains incomplete: preservation has one known old draft regression,
-absolute answer quality is weak, and W1A8 remains far behind DFlash. All other
-modern target configurations and the later ordered phases remain unconfirmed.
+We remain in Phase 1. One conservative W1A8 candidate improves throughput on
+untouched synthetic instances, but preservation and generalization are not solved.
+The quick-screen predictor, backlog screen, combinations, and final four-target
+confirmation remain gated. Historical Qwen3 F16 results stay separate.
 
-The frozen conservative candidate completes600new performance requests across
-five arms/five repetitions plus120independently judged quality requests. Root
-audits every raw response,40loaded images and30server releases. All576speculative
-responses equal target tokens/text/stopping; repeated performance outputs agree.
-Fresh W1A8 throughput140.317tokens/s versus initializer133.261: +5.30%, 12-family
-cluster95% interval+4.55–6.02%. Gains are+5.70%code/+5.07%reasoning/+5.07%prose.
-DFlash262.857,target-only176.780,Q4_0EAGLE235.493: candidate reaches only53.38%
-of DFlash. All five arms score13/24 independent quality cases (5/8code,1/8reasoning,
-7/8prose), with24positive/50semantic-negative judge controls verified. This supports
-new synthetic instances within12related task families, not broad task novelty,
-pretraining novelty or unrestricted prose quality. Fresh cohort is consumed and
-excluded from future confirmation. Whole runner wall907.79s.
+The best confirmed fresh candidate achieves 140.317 tokens/s versus 133.261 for
+the initializer: +5.30%, with a joint family/repetition 95% interval of +4.33–6.21%.
+DFlash reaches 262.857 tokens/s on the same inputs, so W1A8 reaches only 53.38% of
+DFlash. All 576 speculative responses match target tokens/text/stopping, and all
+five arms score 13/24 on independently checked answer quality. These are new
+instances within 12 related synthetic families, not broad task or pretraining
+novelty. The cohort is consumed. This candidate preserves 548/549 original native
+draft successes; its known loss remains explicit.
 
-Earlier aggressive balanced1920 training gives+13.44%reused-development speed,
-but damages more old successes. Conservative original-head/quarter-body choice
-preserves548/549native old successes, all356FIT and192/193development; one loss
-remains explicit. Checkpoints and isolated runtime/data contracts survive.
+The latest controlled data expansion adds 24 whole FIT groups (48 total), while
+keeping the original 12 development groups unchanged. All 407 added parent
+successes reproduce natively. Training fit improves, but development prefix
+correctness moves only 489→491. Across all 956 original and added native successes,
+control loses 151 versus 119 for expanded data: original FIT 2→2, development
+42→38, added FIT 107→79. All 28 serving responses match the target, but development
+draft acceptance is flat (341/1148→340/1149); no speed benefit is established.
+Three conservative backoffs also fail a prespecified preservation diagnostic.
+Earlier reachability and attention-output sign treatments likewise establish no
+useful serving gain; their paid continuations remain available to horizon 19200.
 
-The static/current-prefix-union comparison finishes both continuations. Static
-control exactly reproduces prior full state/export. Union adds1272supported CE
-labels (+27.9%mass): fit prefix1436→1466, development489→487; old native model-side
-losses2→3fit and42→40development. Native replay independently loses42/549old
-successes;28HTTPqualification responses match target, accepted drafts341→345 on
-the12reused development requests. No transfer or speed benefit established yet.
+The current experiment adds trainable signs in 512 output rows selected only
+from reachable FIT labels. These cover 83.35% of supported FIT labels across all
+48 groups. Real qualification passes: finite nonzero gradients for all 1,310,720
+selected values, unchanged initial export, and exact two-step Adam/RNG/counter
+resume. No signs flip after two updates; that is plumbing evidence, not a capacity
+result. Disabling the treatment exactly reproduces the original 480-update
+continuation, all readouts and native export. An erroneous root audit assumed
+unit-magnitude starting values; direct comparison confirms the actual ±0.5 values
+remain unchanged. The failed audit and corrected proof are both preserved.
 
-The seven-arm panel completes420measured+70warmups, all exact,35server releases,
-40images independently rehashed. Union125.318tokens/s versus static126.783: ratio
-0.98845. Joint prompt/repetition resampling gives95%interval0.93245–1.02817, so no
-speed benefit is established. All measurements are retained, including late-round
-HTTPoverhead variation. Union remains inconclusive at this checkpoint; continuable
-states survive. Conservative fresh gain remains positive under joint family/
-repetition resampling: +5.30%,95%interval+4.33–6.21%.
+Root owns `local-w1a8-head-matched5760-20261103-01` in local tmux, started
+21:37:52 UTC with 180-second stop grace and immediate process identities. The
+unchanged resident trainer continues its completed 4320 control to 5760; the head
+treatment runs from the same 3840 parent to 5760. Both represent 1920 new updates
+with the same data, ordinary loss, original 356-token replay and initial optimizer
+state. The treatment includes its optimizer/global-clipping package. Actual native
+preservation and serving outcomes are pending; no new fresh inputs are selected.
 
-Separate attention-output sign-QAT support now passes14CPUfixtures and actual
-GPU plumbing: finite nonzero sign gradient, exact compact Adam/RNG/cursor resume,
-zero-export identity,79,603,493-byte checkpoints,3.150GBpeak allocated CUDA memory.
-Three physical/two unique updates move signs but flip0learned bits. A separate
-forced one-bit diagnostic is clearly labelled. Both exports pass16bounded native
-proposal comparisons and28exactHTTPresponses. This is NOT a capacity/generalization
-result. Matched selected-sign training finishes: control exactly reproduces prior
-state/readouts/nativeGGUF; true mode changes570Obits after1920newupdates. Zero flips
-at480 becomes71at960/298at1440. FITprefix1436→1469,DEV489→494, but old native model-
-side losses2→4FIT/42→44DEV. Actual native replay loses49/549;14HTTPresponses match
-but accepted drafts343vsstatic341 establishes no useful benefit or fresh transfer.
+A CPU worker separately prepares an objective contrast: keep the original replay
+stream intact and add preservation replay for the 407 added FIT successes. This
+addresses the observed coverage gap without using development labels for training.
+It is not yet admitted or trained. Broader natural-confirmation tooling is ready,
+with all 512 historical TRAIN exposures and DEV/sealed indices excluded; actual
+unused-pool eligibility remains untested until candidate/runtime freeze.
 
-The mature-sign paired LR continuation finishes, global3840→4320/horizon19200.
-Migration1e-3 exactly reproduces original strict-resume model/Adam/RNG/cursor/
-exposure/readouts. Higher3e-3 changes4981Obits versus727; FIT1577versus1529,DEV509
-versus499. Both actual native checks lose46/549old successes; all28HTTPresponses
-matchtarget. HigherLRaccepts354/1122versus347/1135drafts on12reusedDEVrequests;
-no repeatedtiming/promotion. Root evidence `selected-lr-root-native-admission.json`.
+Related source has 188 distinct passing CPU tests plus real GPU/native evidence.
+Pinned worktree and all paid checkpoints remain. Six derived failed exports now
+have verified lossless archives with restore commands; two exact duplicates use
+hardlinks. New training outputs use an owned NTFS-compressed directory, verified
+with WSL writes; no system or VHDX compression setting changed. Storage remains
+tight. No push.
 
-After the full check-in, explicit goal continuation resumes Phase1. Root owns
-`local-w1a8-modern-fit-expansion-20261103-01` completed0:24newwholeFITgroups8/domain,
-407native successes, all exact/native trace audits pass. Old36/fresh48exact/normalized
-identities excluded; same6dacparent/target/runtime/80tokens. Fullcapture2079.81s;
-summednativegroupstages754.36s omitted substantial setup/integrity/filesystem costs.
-Independent frozen-target qualifier passes24new+2warmup exactresponses. Actualviews,
-738nativeembeddings and auditedunion complete:48FIT+unchanged12DEV,3603windows,
-2135embeddingIDs,763FIT/193DEV masks. Admission731.07s; no modelgainclaimed.
-All407newparent successes reproduce natively. FulloldCEcontrol completes3840 and
-exactlyreproduces oldstate/Adam/RNG/readouts/nativeGGUF. Whole1268.15s versus165.69s
-incrementaltraining exposes file-reader overhead. NewimmutableRAMcache passesall
-3807source matrices/60maxanchorwindows/all2135embeddings byteparity, with paidstates
-preserved. Queueduncachedtruearm replaced aftercontrolchildcompleted normally;
-intentionalcontroller-15 receipt is not a sciencefailure. Originalsource unchanged.
-Separate residenttrainer dca0dd02 passes12rootCPUtests/Ruff and unchangednumeric
-AST/arithmetic. Resident480update qualification exactlymatches original2400 weights,
-Adam/RNG/exposure. Root owns local-w1a8-resident-expanded-ce-20261103-01,20:19:59UTC/
-180sgrace, immediateperprocess identities. True expanded-data training now completes all1920newupdates→3840,169.45s
-incrementaltraining and451.93schildwall (450.66sinternal trainer). Same old356replay,
-λ10/fixed4CE/horizon19200. Added examples improve training readouts, butdevelopment
-prefix489→491 is nearlyflat. Root audits all956old+newnative positions: control
-loses151 (2oldFIT/42DEV/107addedFIT); expanded loses119 (2/38/79). Both parent panels
-reproduce956/956. All28HTTPresponses independently matchtargettokens/text/stopping,
-cache0, ninepackedlinears andtwoownedservergroups released. On12reusedDEVrequests,
-accepted drafts341/1148→340/1149: no serving benefit established; not repeatedtiming.
-Smaller newdata scale changes also fail a prespecified96window/113positive risk
-diagnostic: oldquarter7/newquarter6/neweighth10 losses. These cannot advance on
-preservation; no full956pass or freshgain claimed. Paidstates remain continuable.
-
-The next isolated capacity contrast is a FIT-selected512row output-head treatment,
-with scales/objective/replay/data held fixed. Separate trainer and deferred qualifier are now integrated (86bec0ac);15new
-rootCPUfixtures/Ruff pass. Actual512row GPU plumbing now qualifies; native/head-capacity outcomes remain untested. Root original resident strict3840→4320 reference completes0,353.29s/all480updates/
-readouts/export. Real selected-head qualifier completes0,238.74s:512x2560 finite
-nonzero gradients/all512rows, exact two-unique-step Adam/RNG/counter resume (three
-physicalupdates), zero-parent export identical0b37. PeakCUDA2.715GB; hardflips0,
-expected after2updates, not a capacityfailure. Selected512 cover83.35%reachableFIT
-labels across48groups. Originalheadgradnorm0.2855 versus total131.81; optimizer/
-globalclip package remains part of treatment. Root owns false4320 migration gate
-`local-w1a8-head-false4320-20261103-01` since21:27:45UTC, immediatebirth IDs/
-180sgrace/localtmux; compare with originalreference before true5760. No serving/
-capacity/freshclaim. CPUworker prepares separate addedFIT replay objective, preserving
-old356stream and adding407FIT-only margins; no actual treatment yet.
-Broader natural-confirmation
-packet helper940655a2 passes12newrootCPUtests/Ruff (188relatedtests total). It preserves
-all512historical TRAIN and DEV/sealed exclusions; no real fresh prompts selected,
-actual unused-pool eligibility unknown. Candidate/runtime must freeze first.
-`data-native-root-analysis.json`, `data-http-root-audit.json` and
-`data-backoff-native-result.json` retain results/costs. Readerqualification doesnot
-validate short-to-longprediction. Phase1 remainsactive.
-Data-union helper47d87c11 is integrated with9CPUtests/Ruff; real same-capture
-identity check preserves2138windows/549protections,36actualmaterializations and
-all1440nativeembedding lookups. This adds0examples and is not expanded-data
-training admission. No new fresh/development training labels used.
-
-Source is integrated with188passing related CPUtests and actual native evidence;
-pinned worktree is retained for checkpoint/source contracts. Paid states remain;
-older exports have verified compact archives or readable relocated aliases.
-Storage remains constrained. No push. Quick-screen predictor,98-ID/34-family
-backlog screen, combinations and final four-target DFlash confirmation remain gated.
-Historical Qwen3 F16 is separate. [Fresh result](../experiments/w1a8-modern-native-20261103/fresh-confirmation.json)
-and [detailed progress](../experiments/w1a8-modern-native-20261103/progress.md)
-retain scope, costs, failures and next actions under the existing
-[goal](goals/nine-model-qat-overnight.md).
+[Fresh confirmation](../experiments/w1a8-modern-native-20261103/fresh-confirmation.json),
+[latest progress](../experiments/w1a8-modern-native-20261103/progress.md), and the
+[active goal](goals/nine-model-qat-overnight.md) retain measured costs, failures,
+source pins and next actions. Current evidence includes
+`head-real-qualification-root-audit.json`, `head-false4320-parity02.json`, and
+`head-matched5760-plan.json` under `runs/w1a8-modern-protected-20261103-01/`.
 
 ## Selected baseline and W1A8 standing — November 2, 2026
 

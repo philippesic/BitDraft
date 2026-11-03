@@ -1013,3 +1013,16 @@ additional proof protocols or redoing completed audit work.
   exclusion inventory. Use a genuinely unused source pool or report that none
   is available; do not weaken the definition of untouched inputs to fit a chosen
   pool. Freeze the candidate before selecting real confirmation inputs.
+
+### 2026-11-03: Compare trainable sign values with their actual initializer
+
+- Root's extra disabled-head audit assumed sign-training values had magnitude 1.
+  The actual initializer uses ±0.5. Every model/Adam/RNG/readout/native-export
+  comparison already passed; this additional assumption caused controller exit 2
+  after the trainer completed normally. No user mistake or training failure occurred.
+- Root preserved the failed receipt, compared every selected value bit for bit
+  against the qualified initial checkpoint, and obtained an exact match. The
+  [corrected proof](../runs/w1a8-modern-protected-20261103-01/head-false4320-parity02.json)
+  links the failed check and records the actual values.
+- Check invariants against pinned source and initial tensors. Do not substitute
+  a conventional initialization magnitude for the project's observed state.
