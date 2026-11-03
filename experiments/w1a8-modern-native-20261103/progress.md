@@ -720,3 +720,46 @@ CPUworkers finish; pinned worktree retained. RootGPUlane released after referenc
 Next root must run actual512gradient/zero-parentGGUF/exactcompactresume qualifier,
 then false4320 equivalence against completed originalreference, then matched
 false5760/true5760 if qualified. No head-capacity result or quickpredictor claimed.
+
+## Actual512head plumbing qualifies; false migration gate running — November 3
+
+Previousgoalturn madeprogress: source/data/native evidence and checkpointed controls
+changed nextaction. Root now runs head real qualifier with frozen trainer54ed1d.../
+qualifierb9cb00..., root-native supervisor local-w1a8-head-real-qualification-20261103-01
+terminal0,238.73606s. Body26.71881s versus234.53392s internalwhole; setup dominates.
+All512x2560=1,310,720 masters receivefinite nonzero gradients (512rows), norm0.28554,
+totalgradientnorm131.81099. Threephysical/twouniqueFITupdates; exact model/Adam/RNG/
+cursor/exposure repeatedupdate2, bothpaiduniquecheckpoints saved before rewind.
+ZeroGGUFbyteidenticalnewdata0b37; learnedexport has0hardflips/1,310,403movedlatents,
+maxdisplacement0.00199994. No forcedbit changes. This is not a capacity/nativewin.
+PeakCUDAallocated2,714,932,736B/RSS4,215,570,432B. All48FITgroups supply selector;
+512rows cover83.3527%reachableFITlabels, distinct from old24-only93.51%coverage.
+Root independently audits3PTs/sourcepins/bothrawexports/actualgradient/counts and
+terminalprocessgroup absence. head-real-qualification-root-audit.json retainsproof.
+Globalclipping pool changes with truecapacity; earlyhead/totalnormratio0.002166,
+so label treatment as capacity+optimizerpackage, not pureparameter-count causality.
+
+Root false480migration launches local-w1a8-head-false4320-20261103-01 at21:27:45UTC,
+180sgrace/localtmux/immediate supervisor/controller AND trainer birthIDs. Sameparent
+f4a8, data/proof/CE/replay; fullnumerical Adam/scales/RNG/cursor/exposure/readouts/
+GGUF compared against originalresident4320. Running; do notclaimmatchbefore receipt.
+Next realtrue5760 requiresfalsemigrationpass andmatchedfalse5760 endpoint.
+
+Astra bounded source/data advice completes in generalization-capacity-next-advice.json.
+Oldreplay356loss2/356 vsadded79/407 andDEV38/193 highlight replaycoverage mismatch;
+DEV preservation still mustgeneralize. Sol prepares separate new added-replay trainer
+andfixtures only, twofilepartition. Preserveold356sampler/arithmeticeveryupdate;
+true addsone independent407token/24newFIT-group stream (lambda10) with frozen native
+parent margins; false skipsnewforward/arithmetic for exact originalreference. Costs/
+exposures separate: update-matched objective contrast, not equalcompute. Actualsource/
+training pending, noDEVselection/noactualreplies/models/PT/arrays readbyCPUworker.
+
+Storage stewardship: twofailedbackoffexports keep exactscale patches; fourcompleted
+old O sign exports keep exact differing4KiBchunks againstprotected6dacinitializer,
+including learnedOsignbytes. Allsix full40.8MBGGUF roundtrips verified inRAMbefore
+retiringderivedfiles; original paidPTs/source/checkpoints remain. Receipts include
+standalonerestorecommand andfulloriginalSHA. ObservedCfree+80,941,056B and+160,301,056B
+respectively; qualificationzero-parent export exactduplicate hardlink adds40,738,816B.
+No VHDXcompaction/uniquecheckpointdeletion/push. No cleanservingtimingduringCPUarchive.
+Evidence failed-backoff-export-archives.json, old-sign-export-chunk-archives.json.
+Phase1active; predictor/backlog/combinations/fourtargetconfirmation remain gated.

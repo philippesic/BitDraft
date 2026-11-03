@@ -90,11 +90,18 @@ preservation; no full956pass or freshgain claimed. Paidstates remain continuable
 
 The next isolated capacity contrast is a FIT-selected512row output-head treatment,
 with scales/objective/replay/data held fixed. Separate trainer and deferred qualifier are now integrated (86bec0ac);15new
-rootCPUfixtures/Ruff pass. Actual head GPU/native qualification is not done. Root owns original resident strict
-3840→4320 reference `local-w1a8-head-reference4320-20261103-01`,21:08:11UTC,
-180sgrace/localtmux, immediatebirth identities; output C:head-resident-reference4320.
-Reference finishes0 in353.29s, all480newupdates/readouts/export complete and owned
-process group gone. This is its migration control, not a head-capacity result. Broader natural-confirmation
+rootCPUfixtures/Ruff pass. Actual512row GPU plumbing now qualifies; native/head-capacity outcomes remain untested. Root original resident strict3840→4320 reference completes0,353.29s/all480updates/
+readouts/export. Real selected-head qualifier completes0,238.74s:512x2560 finite
+nonzero gradients/all512rows, exact two-unique-step Adam/RNG/counter resume (three
+physicalupdates), zero-parent export identical0b37. PeakCUDA2.715GB; hardflips0,
+expected after2updates, not a capacityfailure. Selected512 cover83.35%reachableFIT
+labels across48groups. Originalheadgradnorm0.2855 versus total131.81; optimizer/
+globalclip package remains part of treatment. Root owns false4320 migration gate
+`local-w1a8-head-false4320-20261103-01` since21:27:45UTC, immediatebirth IDs/
+180sgrace/localtmux; compare with originalreference before true5760. No serving/
+capacity/freshclaim. CPUworker prepares separate addedFIT replay objective, preserving
+old356stream and adding407FIT-only margins; no actual treatment yet.
+Broader natural-confirmation
 packet helper940655a2 passes12newrootCPUtests/Ruff (188relatedtests total). It preserves
 all512historical TRAIN and DEV/sealed exclusions; no real fresh prompts selected,
 actual unused-pool eligibility unknown. Candidate/runtime must freeze first.
