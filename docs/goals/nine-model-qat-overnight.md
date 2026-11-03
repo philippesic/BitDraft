@@ -5040,4 +5040,25 @@ with originalpath alias,WSL+40,804,352,C:-40,804,352bytes; paidPTsafe. Separate 
 only actual-manifest union helper underway, no olddata/helper edits and no new
 capture. Continue informative phase1; all later ordered phases remain gated.
 
+## Selected-O native result weak; mature-LR control complete; union admitted narrowly
+
+Full false/true sign comparison terminal0. False exactly matches prior nativefit3840
+model/scaleAdam/RNG/exposure/readouts/export. True570real packedObits; zero at480,
+71at960,298at1440 demonstrates delayed deployedchanges. FIT1436→1469,DEV489→494;
+oldloss2→4FIT/42→44DEV. Nativeall549 loses49,14HTTPexact accepted343vsstatic341:
+not a demonstrated serving/generalization win. Model/checkpoints/source allkept.
+
+Original-source strictresume1e-3 control3840→4320 finishes0:727Obits,FIT1529/DEV499,
+oldloss2/44. Source-only3e-3matureLRmigration pending review; no treatment launched.
+No GPUjob live atcheckpoint. Parent sourcefullSHAmatches checkpoint; commitID and
+fileSHA distinction clarified without relaxinggate. See selected-lr-plan.json and
+USER_LESSONS. Horizon19200/noDEVorfreshgradients unchanged.
+
+Unionhelper47d87c11 passes9CPUtests/Ruff plus real same-capture identity admission:
+2138windows/549protections metadata preserved,36actualtensorwindows and1440embedding
+lookups byte-equal.0newexamples, distincthonestunionschema, not expandedtraining
+admission.92relatedCPUtests total. Conditionalbridgefix3smokes do not provebranch
+coverage and show no acceptance/speedwin; cadence andalias risks remain separate.
+Paidstates/rawpaths retained; progress/evidence inventories updated; no push.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

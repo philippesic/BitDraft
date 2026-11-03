@@ -979,3 +979,19 @@ additional proof protocols or redoing completed audit work.
 - Scope correctness per experiment: the two-hour EAGLE report records target-only
   parity on its panel; the later 14.43h EAGLE comparison fails it. Do not carry
   that failure backward or carry a small earlier pass forward as qualification.
+
+
+### 2026-11-03: Label source commits and file digests separately
+
+- During selected-sign learning-rate continuation preparation, root called an
+  eight-character Git commit ID a "source pin". A worker correctly checked the
+  saved checkpoint freeze, found the full source-file SHA256, and asked whether
+  another validator copy was intended. No wrong source was used and no user
+  mistake occurred; root's wording caused the ambiguity.
+- The saved freeze and current source file matched. Root clarified the commit
+  identifier versus file digest and kept the original validator/source unchanged.
+  [Comparison plan](../runs/w1a8-modern-protected-20261103-01/selected-lr-plan.json)
+  retains both identities with explicit names.
+- Handoffs should say "Git commit" and "file SHA256" separately. The checkpoint's
+  full source-file pin is authoritative for strict continuation; never relax a
+  validator based on a shorthand commit label.

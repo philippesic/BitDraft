@@ -463,3 +463,50 @@ paths remain readable. WSL actualfree+40,804,352bytes,C:-40,804,352bytes; receip
 retention1920-export-relocation.json. No VHDXcompaction/shared cleanup. New source
 worker prepares a separate audited actual-manifest union helper onCPU only,
 leaving currentdata/sourcepins immutable. No expandeddata collected or admitted.
+
+
+## Selected-O training finishes; mature-LR control and union identity pass
+
+Selected-sign comparison exits0 in579.31095sdriverwall: false287.04448s, true
+290.98034s. False matches old nativefit3840 rawoffsets/scaleAdam/RNG/cursor/exposure/
+allreadoutdecisions/nativeGGUF exactly; Olatentsoriginal and Omomentsabsent. New
+trainer seconds172.94550control/175.00124true, same4561CElabels/3840ordinarywindows/
+1920replaywindows/2071protected exposures. All80MB/27MBcheckpoint states saved.
+
+True model actualpacked bits570, independently verified from exportedO payload;
+source actor metrics0flips at480newupdates,71at960,298at1440,570at1920. Meanlatent
+displacement.07862,max.60296,85saturated. FITprefix1436→1469,DEV489→494; old native
+model-side losses2→4FIT/42→44DEV. Actual all549native replay loses49 (parent0),
+85.02097s. Actual14HTTPresponses exactly equal target,343accepted/1144proposed vs
+static341/1148. Single pass is not throughput proof. No new model is promoted or
+fresh-confirmed. Zero short-run flips are not a clear capacity failure; source
+advice recommends a paired mature-LR continuation before larger capacity changes.
+
+Root launches ORIGINAL strict-resume LR1e-3 control from global3840→4320, all state/
+Adam/RNG/masks/data unchanged, horizon19200. This finishes0; FITprefix1529,DEV499,
+oldloss2/44,727Obits. Incremental480training49.29988s, wholejob136.11254s. The3e-3
+paired treatment needs a NEW explicit migration validator/source and is not yet
+launched. Source/case/checkpoint/hashes retained in selected-lr-plan.json and
+local-w1a8-selected-lr-control-20261103-01. No GPU job remains live atcheckpoint.
+
+Data union47d87c11 integrates after9rootCPUtests/Ruff. Real idempotence admission
+uses originalmanifest and byte-identical COPY of the same capture, not two new
+independent captures. Newunion schema/reader preserves2138windows,36groups,2234raw
+files/10055rows/1440embeddingIDs,all356FIT+193DEV protections. Allwindow metadata/
+masks joined unchanged; actual materialization of36max-anchor windows and1440
+embeddinglookups exactly equals original. CLIaudit14.96205s, rootCPUparity1.92223s.
+No densearrays copied, no examplesadded, no expandeddata training/native admission.
+C:identityqualification sourcecopy/union/proofs retained; viewcontracts explicitly
+reject oldV1reader until a new trainer/reference migration is reviewed.
+
+Bridge source audit corrects interpretation:3smokes67/408accepted/proposed in both
+original/control and ownership-fix, no measured benefit. Source proves a
+conditional borrowed-buffer lifetime bug, but traces do NOT establish this branch
+fired. Expected positional bridge/cadence differences and the source lifetime bug
+are separate; do not attribute all conditional/serving mismatch to that bug or mix
+newcorrected-runtime data into old-lineage training. bridge-smoke-source-audit.json.
+
+Root also records an agent-coordination lesson: a Gitcommit label was called a
+sourcepin; worker checked the saved full fileSHA before proceeding. Exactmatching
+parent validator remains unchanged; sourcecommit andfiledigest are separatefields.
+No wrong source/GPU action occurred. No push and all original checkpoints retained.

@@ -46,15 +46,22 @@ zero-export identity,79,603,493-byte checkpoints,3.150GBpeak allocated CUDA memo
 Three physical/two unique updates move signs but flip0learned bits. A separate
 forced one-bit diagnostic is clearly labelled. Both exports pass16bounded native
 proposal comparisons and28exactHTTPresponses. This is NOT a capacity/generalization
-result. Root now owns `local-w1a8-selected-sign-training-20261103-01`: matched
-false/true sign continuations from the same balanced1920state to3840, horizon19200.
-Control reaches3840 with0sign movement/flips; final exact full-state/export/readout
-comparison is pending before treatment. identity.json records live supervisor/
-controller birth/boot and180sstop; C:checkpoints saved every480. No serving quiet
-window. New source83006337 is integrated with10newCPUtests/Ruff (83related tests
-total). No fresh/development training labels used.
+result. Matched selected-sign training finishes: control exactly reproduces prior
+state/readouts/nativeGGUF; true mode changes570Obits after1920newupdates. Zero flips
+at480 becomes71at960/298at1440. FITprefix1436→1469,DEV489→494, but old native model-
+side losses2→4FIT/42→44DEV. Actual native replay loses49/549;14HTTPresponses match
+but accepted drafts343vsstatic341 establishes no useful benefit or fresh transfer.
 
-Source is integrated with83passing related CPUtests and actual native evidence;
+Root now owns `local-w1a8-selected-lr-control-20261103-01` ordinary strict resume
+LR1e-3/global3840→4320 (horizon19200); this control has finished0,727Obits,FIT1529/
+DEV499,oldmodel-side losses2/44. HigherLR3e-3 paired treatment source is pending
+review and not launched. No activeGPUjob at this checkpoint. All paid states kept.
+Data-union helper47d87c11 is integrated with9CPUtests/Ruff; real same-capture
+identity check preserves2138windows/549protections,36actualmaterializations and
+all1440nativeembedding lookups. This adds0examples and is not expanded-data
+training admission. No new fresh/development training labels used.
+
+Source is integrated with92passing related CPUtests and actual native evidence;
 pinned worktree is retained for checkpoint/source contracts. Paid states remain;
 older exports have verified compact archives or readable relocated aliases.
 Storage remains constrained. No push. Quick-screen predictor,98-ID/34-family
