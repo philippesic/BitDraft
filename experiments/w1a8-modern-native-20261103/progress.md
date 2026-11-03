@@ -119,3 +119,52 @@ All paths below are relative to the repository and kept outside Git:
   source patches, smoke responses and aligned parity receipts.
 - `experiments/w1a8-generalization-20261102/report.md`: historical controls,
   failed attempt, recovery and storage evidence.
+
+## Longer checkpoint and head-skip comparison completed
+
+The eight-arm panel finishes exit0 in410.45s whole-job wall, with480 measured
+and80excluded warmup requests across40startups. Root audits every raw measured
+response, all40server releases and41loaded executable/library images. Tokens,
+text, stopping and repeats agree exactly. Source/input/model pins and raw timings
+are preserved in actual-training `requests1920-headskip01/` and root independent
+`native-analysis1920-headskip.json` (20,000 paired whole-prompt resamples).
+
+| Arm | Full-request tokens/s | Accepted/proposed per repetition |
+| --- | ---: | ---: |
+| Frozen DFlash Q4_K_M |203.060|542/756|
+| Target-only |158.838|—|
+| W1A8 initializer, original |112.484|193/1439|
+| W1A8 initializer, head skip |112.967|193/1439|
+| Retention0.1 at1920, original |127.337|309/1211|
+| Retention0.1 at1920, head skip |127.821|309/1211|
+| Retention10 at1920, head skip |127.948|309/1210|
+| Ordinary EAGLE Q4_0, head skip |164.452|508/819|
+
+Longer training improves original-runtime W1A8 throughput13.20%, paired95%
+interval8.44–18.98%, over matched initialization. It remains62.71% of DFlash
+and80.17% of target-only. Head-skip effects are inconclusive on these short
+prompts: initializer+0.43%[-0.22,+1.14%], trained+0.38%[-0.56,+1.24%]. Do not
+adopt it as a measured speed win. The stronger retention model's native speed and
+accepted count are indistinguishable here. No untouched confirmation is claimed.
+These controls were rerun in the same panel; older rates remain separate.
+
+All owned server groups are absent and compute is released. New panel artifacts
+consume12,083,659logical bytes. Current free bytes are2,274,824,192WSL and
+2,542,604,288C: (before subsequent small source/checkpoint writes).
+
+Next preservation hypothesis:59%of original two-window batches contain no
+protected window; protected slots cover351/2828fit-depth slots. A separate
+trainer will add deterministic group-balanced protected FIT replay every update,
+with an explicitly normalized margin loss. Matched zero/positive penalty arms and
+head-only optimizer scope will separate protection and representation effects.
+Original trainer/source/checkpoint contracts remain immutable. Development labels
+remain readout-only; all native protection failures remain visible.
+
+Fresh generator review fixes the manifest receipt identity, supports prior prompt
+wrappers and NULL-safe SQL with discriminating fixtures, and binds selected model
+and complete runtime source contract. Nine synthetic CPU tests and Ruff pass.
+No real cases are generated. The fresh serving adapter is being implemented
+separately, sharing frozen runtime validation and native lifecycle methods.
+A source refactor revalidates all560previous request/gold bodies without launching
+GPU (`hook-refactor-input-check.json`). Source is committed in the retained
+actual-training worktree; integration and further trainer/adapter work remain.

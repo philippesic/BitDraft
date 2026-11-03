@@ -4858,4 +4858,35 @@ worktree; some newer serving/confirmation code remains unintegrated. Capacity is
 about 2.15 GiB WSL /2.37 GiB C:, preserving paid states. The canceled audit's final
 report is unavailable; do not assume it will return. No push or goal completion.
 
+## Resumed matched longer-training/runtime comparison — November 3, 2026
+
+Root reverified local RTX5080 idle and pause=false, then launched
+`local-w1a8-modern-actual-requests1920-headskip-20261103-01` under the existing
+180s-grace supervisor/local tmux socket `binary-eagle-runtime`.
+Exact live boot/birth/cmdline identity and stop instructions are in its
+`runs/.../identity.json`. Sole GPU owner is root; quiet window prohibits tests,
+builds, compression and unrelated large hashes. Independent worker reads source
+only. Output is actual-training run `requests1920-headskip01`; prepared pinned
+models include target, DFlash, original/headskip initializer pair,
+original/headskip retention0.1 at1920, headskip retention10 at1920 and ordinary
+EAGLE Q4_0 headskip. Expected480measured/80warmup requests across40startups.
+Bridge ownership fix is not combined. First completed cells pass full-response
+parity; no completed-panel speed claim yet. Source worktree remains retained.
+
+## Longer-checkpoint native panel completed — November 3, 2026
+
+All480measured requests across eight arms/five repetitions pass full token/text/
+stop/repeat checks. Root rehashes41loaded images and verifies40server releases.
+Whole-job wall410.45s. Original-runtime retention1920 improves13.20% over its
+unchanged initializer,95%CI8.44–18.98%, but only62.71%of frozen matchedDFlash.
+Headskip+0.38–0.43% has intervals including no benefit; do not count it as a win.
+Stronger retention has same309native successes and indistinguishable speed.
+Detailed rates/limitations and evidence are in the latest progress report and
+`runs/w1a8-modern-actual-training-20261103-01/native-analysis1920-headskip.json`.
+All native processes/supervisor terminal0; GPU compute empty. Original trainer
+and continuable states preserved. Dedicated protected FIT replay and head-only
+optimizer experiments are next; no dev labels for training. Fresh native adapter
+is being implemented, generator review fixes pass9synthetic tests; no real fresh
+examples generated. Phase1 stays active; later ordered phases remain gated.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

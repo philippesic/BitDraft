@@ -24,11 +24,16 @@ the 98-ID/34-family backlog has not been screened. Combinations and frozen DFlas
 confirmation across all four modern targets remain later gates. The two historical
 full-state retention arms remain unrun pending storage; compact work can proceed.
 
-The user requested a wait and a full recap. No new experiment launched during the
-check-in; the RTX 5080 has no compute process and the owned runtime tmux socket
-has no server. Paid states and evidence remain preserved. Source work is retained
-in the isolated actual-training worktree, with newer additions not integrated yet.
-No push. Current free space is about 2.15 GiB WSL /2.37 GiB C:.
+The longer-checkpoint eight-arm panel now completes480measured/80warmup requests,
+all exactly correct over five repetitions. Original-runtime retention at1920
+improves13.20% over matched initialization (95%interval8.44–18.98%) but remains
+62.71% of DFlash. Head-skip speed effects are inconclusive; stronger retention
+has indistinguishable native speed. All owned native servers are reaped and GPU
+compute is released. Next: deterministic protected fit replay and head-only
+optimizer scope, with unchanged controls and development readout only. Fresh
+serving confirmation adapter is in progress; no untouched case is exposed.
+Paid states/source worktree remain retained, some additions await integration.
+No push; storage remains about2.1GiB WSL/2.4GiB C:.
 
 [Latest detailed checkpoint](../experiments/w1a8-modern-native-20261103/progress.md)
 contains results, limitations, failures, costs, evidence and next actions. Continue
