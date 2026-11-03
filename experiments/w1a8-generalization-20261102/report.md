@@ -210,3 +210,79 @@ loading, warmups, authentication and auditing; measured request wall is reported
 separately. The user requested a full recap; no next experiment was launched.
 An archival helper is drafted only in a new isolated worktree, not yet tested,
 integrated or used. No selected/original checkpoint has been removed.
+
+## Recap checkpoint — November 3, 2026, current execution
+
+The occupancy-only arm completed 1,920 updates / 422.32 trainer seconds, a verified full checkpoint and native export. Its common 48-state native panel accepted 161 prefix tokens versus parent162 and legacy control163; actor/native decisions agree exactly. This is reused historical Qwen3 F16 development evidence, with no demonstrated generalization improvement. The two retention arms remain unrun.
+
+The occupancy full-request comparison is live under root ownership in `local-w1a8-occupancy-requests-20261103-01`. Its boot/birth identities were rechecked during the recap. Output is `occupancy-requests01` under the canonical generalization run. No final summary exists yet. Keep its timing window quiet; do not start another GPU producer or CPU tests/builds/compression. Independent token/text/stop/repeat audit is required after completion.
+
+Modern preparation now includes tested partial RoPE support and a native teacher-capture helper using the frozen runtime. One Qwen3.5-4B Q4_K_M development prompt passed target-token and same-history repeat checks. Prefill chunk sizes changed captured feature values despite identical tested token decisions; coverage of serving histories remains a concrete data risk. A native F32 embedding adapter and eight CPU tests are written in the isolated source worktree but unrun/unintegrated. No modern W1A8 trained serving endpoint exists.
+
+Storage recovery preserved paid states: the legacy final checkpoint was losslessly archived and decode/hash-verified before removing its raw copy; two identical derived zero-beta fixture paths now share one inode. Recovery retention was operationally reduced from two to one verified checkpoint, with scientific settings unchanged. Current free space is approximately 4.9 GiB WSL / 3.5 GiB C:. A pending user storage question requests at least25GB freed on C: or another mounted destination before further full training arms. Do not remove unique paid checkpoints or reusable caches. Later screening phases remain gated. No push.
+
+## Broader-data serving and modern capture checkpoint — November 3, 2026
+
+The occupancy-only arm completed all 600 clean full requests (five matched arms,
+24 reused development prompts, five alternating repetitions). Root independently
+recomputed token/text/stopping/repetition parity from raw responses and all25
+server-release receipts. Occupancy202.8905 tok/s versus paired parent201.6736,
+previous best203.9634, historical same-family Q4_K_M220.2765 and target93.0511.
+The occupancy/parent ratio is1.0060, paired-prompt95% interval[.9890,1.0224];
+versus previous best.9947[.9781,1.0118]; versus Q4.9211[.8982,.9456]. There is
+no reliable throughput improvement at this exposure. This is inconclusive for
+longer training and says nothing about untouched quality or modern DFlash.
+`occupancy-requests01/analysis.json` and `root-independent-audit.json` preserve
+recomputed evidence. Both retention arms remain unrun; phase2/3 stay gated.
+
+Source4fa3493e integrates explicit frozen external-native-F32 embedding lookup.
+All23 native-step tests and7 native-attention tests pass on CPU with CUDA hidden.
+Real native layer0 captures also preserve exact F32 rows:45 and54 unique token
+rows in two development histories, with204,458 values changed by an F16 round
+trip. This qualifies the input contract only, not a complete modern drafter.
+
+Sources e82cbb47 and00a2a1d5 add fixed-continuation chunks, explicit output caps,
+pre-load argument checks and durable build-source snapshots. Build09 compiles
+with strict warnings and passes CPU/API/argument guards. Three development
+histories with27 selected logit rows have byte-identical features/logits across
+continuation chunk1/2/5 and repeated capture. Two rows disagree with the frozen
+server labels (native margins-.07785 and-.05893). A fresh server reproduces all
+nine tested request prefixes, confirming the saved references; feature capture
+and output reservations1/3/512 do not resolve those two helper/server differences.
+The first cadence supervisor intentionally failed its reference assertion after
+saving both cases; preserved results were inspected and the remaining case was
+completed separately. Exact root cause remains unresolved. This bounded numeric
+investigation is closed for now. Modern captures are NOT admitted to training:
+the next consumer must reject differing label/protection rows and authenticate
+serving labels; broader native-drafter and full-serving gates remain mandatory.
+`modern-native-diagnostic04.json` records the practical gate and that enforcement
+is still pending. No HF parity search or modern optimizer run occurred.
+
+The packed-port source report identifies an existing historical nine-linear
+EAGLE loader/graph and real packed-sign DP4A operations to port. Historical and
+modern GGML libraries are ABI-incompatible, so use a separate candidate build
+with the frozen correctness changes and qualify unchanged ordinary controls.
+Never replace the official frozen baseline. Export/audit must first support
+modern Q16/KV4 and partial rotary40of160 instead of historical full-head
+Q32/KV8 permutation. Report: `runs/w1a8-modern-cadence-20261103-02/packed-port-plan.md`.
+Full modern latent-plus-Adam state is approximately2.6GiB; clean CUDA build peak
+is unmeasured and needs a bounded allowance. No packed modern endpoint exists.
+
+All owned supervisors and the diagnostic server are terminal and authenticated
+processes absent; GPU compute query is empty. Exact release/cost receipts are
+`release-and-storage04.json` and `cost-ledger04.json`. Immutable duplicate capture
+arrays were hash-verified and hardlinked while preserving every original path;
+WSL free space increased313,102,336 bytes, C: delta0. `capture-dedup04.json` keeps
+before/after measurements and the bounded retained inventory. Paid model states
+and reusable caches are unchanged. Free space remains approximately4.3GiB WSL /
+3.5GiB C:; the pending request for25GB freed or another storage destination still
+applies before further full training. The merged source worktree/branch was
+removed after clean status, all patches integrated and all workers completed;
+build08/09 retain source snapshots. No push.
+
+Next: extend modern packed export/audit for the correct head/rotary dimensions,
+enforce modern capture admission and port the existing packed ops in isolation.
+Resume the two matched retention arms when storage supports full publication.
+Generalization, early/long prediction, backlog screening and the final four-target
+W1A8 comparison are still unproven. This turn made progress through completed
+serving evidence, tested source integration and bounded native diagnosis.

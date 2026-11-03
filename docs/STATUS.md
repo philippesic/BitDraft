@@ -1,53 +1,39 @@
 # Current project status
 
-## Active: ordered W1A8 generalization work — November 2, 2026
+## Active: ordered W1A8 generalization work — November 3, 2026
 
-The user authorized autonomous continuation in this strict order: establish
-generalization, validate a quick training/native-serving predictor against longer
-runs, then screen the full backlog and test survivor combinations. Final modern
-confirmation uses the frozen DFlash Q4_K_M correctness-mode controls across all
-four targets. The existing [goal](goals/nine-model-qat-overnight.md) continues;
-later phases have not started.
+Continue the existing [goal](goals/nine-model-qat-overnight.md): establish
+untouched generalization, validate an early/long training predictor, then screen
+the full backlog and test combinations. Final modern confirmation uses frozen
+DFlash Q4_K_M correctness controls on all four targets. Later phases have not
+started; no generalization win or modern W1A8 endpoint exists yet.
 
-The retained serving-data selector preferentially chose difficult starts: only
-50/960 fit and 8/192 development windows were full-five parent successes. A new
-CPU-validated ledger join reproduces those counts and samples serving occupancy
-from the same histories, recovering 346/960 and 86/192 successes. This is data
-preparation, not a trained improvement. An isolated 2x2 coverage/parent-prefix
-retention experiment reuses the authenticated historical DSpark full48 native-A8
-trainer, Adam/RNG and original guards. These inherited Qwen3 F16 groups are not
-untouched or modern Qwen3.5 data. Twenty focused tests pass. The first matched
-control recorded all 1,920 updates and 425.70 trainer seconds, but no checkpoint,
-export or completion receipt was published. After the host restart, its old
-process identities are absent and its saved running state is stale. Logs and
-readouts survive; no usable new trained model or serving improvement exists.
+Two historical Qwen3 F16 arms completed matched1,920-update exposure and native
+export. Each passed600 full-request token/text/stop/repetition checks against
+unchanged controls. Original-data control202.46tok/s versus paired parent201.55;
+occupancy-data202.89 versus its paired parent201.67. Both uncertainty intervals
+span no gain; both remain approximately8% below historical same-family Q4_K_M.
+This reused development evidence does not reject longer training and does not
+validate untouched quality or modern DFlash performance. Both continuation-
+protection arms remain unrun. Existing successful continuations are preserved.
 
-The control rerun completed all 1,920 updates, verified its full checkpoint,
-passed exact frozen-weight checks and published its native export. Recovery
-publication and finalization are now exercised successfully. Twenty-four
-generalization/recovery CPU tests pass. All saved readout decisions match the
-interrupted attempt; its exact original failure remains unresolved.
+Modern partial RoPE and explicit native F32 embedding contracts are integrated;
+23 native-step and7 attention CPU tests pass. Real captured embedding rows retain
+F32 precision. Bounded native capture tests found2/27 label disagreements with
+the serving reference, both close decisions; fresh server requests reproduce
+that reference. Tested continuation chunks1/2/5 give identical captured arrays.
+The discrepancy is recorded and numerical work timeboxed; modern captures are
+not admitted to training pending explicit differing-row rejection and native
+trajectory gates. A source report identifies the reusable historical packed
+EAGLE path and required modern export/backend changes. No modern student trained.
 
-The clean historical request comparison completed 600 requests over five
-alternating repetitions. Independent raw token/text/stopping and repeat audits
-pass. New control202.46tok/s, parent201.55, previous best202.94, paired same-family
-Q4_K_M220.00, target-only93.03. The control's difference from parent/prior best
-is unresolved; it remains about8% below paired Q4. These reused historical F16
-inputs do not establish untouched generalization or a modern DFlash result.
-The three coverage/retention treatments have not run yet.
-
-Supervisor `local-w1a8-legacy-requests-20261103-01` exited zero. All25 owned
-server release receipts were verified, supervisor/child identities are absent,
-and the GPU compute query is empty. No new experiment was started while answering
-the user's full-recap request. Results: `recap-analysis01.json` and
-`legacy-requests02/independent-audit.json` under the canonical generalization run.
-
-The known backlog is 98 historical training segments in 34 families; preparation
-and adapter availability are not scientific screening. The early/long predictor
-is unvalidated. Current experiment, exact source and live GPU custody are in the
-[generalization report](../experiments/w1a8-generalization-20261102/report.md)
-and the latest goal checkpoint. Root is the sole RTX 5080 operator; paid states
-and existing dirty work are preserved. No push.
+All current owned jobs are finished, process identities absent and GPU released.
+Storage is approximately4.3GiB WSL /3.5GiB C:. The pending request for25GB freed on
+C: or another storage path remains required for further full training while
+preserving checkpoints. Verified archives and content-equal hardlinks preserve
+paid states and evidence; reusable caches are retained. The latest goal checkpoint
+and [report](../experiments/w1a8-generalization-20261102/report.md) link exact
+analysis, cost, release and retained-storage receipts. No push.
 
 ## Selected baseline and W1A8 standing — November 2, 2026
 
