@@ -286,3 +286,91 @@ Resume the two matched retention arms when storage supports full publication.
 Generalization, early/long prediction, backlog screening and the final four-target
 W1A8 comparison are still unproven. This turn made progress through completed
 serving evidence, tested source integration and bounded native diagnosis.
+
+## Modern packed native path qualified on development — November 3, 2026
+
+Phase1 remains active. Source9b50c890 adds metadata-derived Q/K geometry and
+partial rotary40of160 packed serialization, including F16/BF16 logical shape
+checks;26 targeted export/provider tests pass. Real retained4B weights produce a
+40,802,176-byte zero-update GGUF with all nine projections /76,880 rows passing
+independent source sign/scale audit. Reproducible initialization NPZ scratch was
+retired after proof; BF16 source, recipe, manifests and native parent are kept.
+This is not a trained continuation or generalization improvement.
+
+Sources7d1522a8 and068dbe1e implement authenticated native capture/serving-label
+admission and explicit shifted actor transitions. Seventeen CPU tests pass.
+The two real packets admit16/18 teacher rows and13/16 actor transitions; both
+adjacent teacher rows must agree numerically. Feature[t]+token[t+1] predicts
+label[t+2] at cache position t. Excluded rows cannot be enabled by changing
+eligibility flags. Native parent-success protection, draft-vocabulary membership
+and full actor/native qualification are separate gates. Source snapshots and
+recovery links under the admission run preserve pre/post-shift exact code.
+
+A real zero-update CPU actor now constructs without loading a target model or
+private embedding. It uses native F32 captured rows, exact native scales/norms,
+correct partial-row inverses, and verified offset-to-absolute d2t/t2d membership.
+It predicts2/13 eligible teacher-forced labels correctly; unsupported0. Successful
+readout wall14.22s, peak RSS4.74GiB; independent saved-logit/shift audit passes.
+One failed cache.length recipe attempt is preserved with extra wall uninstrumented.
+Existing Torch A8 dequantized-dot arithmetic is unchanged and remains unqualified
+against native integer-dot order; evaluate decision impact before modifying it.
+
+The actual native port is preserved as a reviewable patch and report in
+`experiments/w1a8-modern-native-20261103/`. Root owns the source/build snapshot at
+`runs/w1a8-modern-packed-runtime-20261103-01/`, based on the frozen quant4group
+source. Two appended ops implement strict fixed row-A8 packing and packed-sign
+DP4A; nine-linear EAGLE loader/graph wrappers preserve ordinary paths. Public
+primitive constraints include K divisible32 and bounded integer sums. CPU and
+RTX5080 CUDA codes/scales/products agree byte-for-byte on K2560/5120/7680,
+N1/4/7/33, including50000 head rows, zeros, RNE ties and subnormals. Invalid
+metadata/layout support checks fail closed. Actual helper image maps pass.
+
+Build01 failed before source validation because the existing private CUDA/glibc
+include was omitted; retry reuses the exact frozen-baseline include after verifying
+its two noexcept declaration changes, with no system edits. Build02 compiled all
+sources but failed final link on a missing string-array template instantiation;
+Build03 incrementally fixes that and succeeds. The first op wrapper failed an
+unneeded-library expectation after all numerical cases passed; corrected wrapper
+exits0. Failed evidence is preserved. The frozen CUDA module, source checkout,
+selected DFlash baseline and parent gitlink are unchanged; no push.
+
+Native model smoke completed six arms /18 measured requests plus12 excluded
+warmups, one repetition on development prompts1/2/4: frozen and candidate targets,
+frozen and candidate DFlash Q4_K_M d2, candidate ordinary EAGLE Q4_0 d2, and the
+candidate W1A8 initialization d2. Root independently checked full token IDs,
+text, stop/truncation and old pilot references; all agree. All16 distinct mapped
+runtime images match their expected frozen/candidate pins. The packed initializer
+loads exactly nine projections, uses28.47MiB CUDA model buffer and accepts67/408
+proposed tokens on measured requests. This is genuine native drafting on one
+modern target, not full actor/native parity, independent answer quality,
+repeated throughput, untouched generalization or all-four-target qualification.
+CPU teacher-forced2/13 and native aggregate67/408 have different denominators;
+do not infer a protected-prefix set or their agreement from these aggregates.
+
+Evidence: packed-init `{freeze,export,independent-audit,result}.json`; admission
+`{qualification,actor-alignment-qualification,source-recovery}.json`; actor-readout
+`{report,independent-readout-audit}.json`; packed-runtime `{build03-result,
+op02-result,release-and-storage05}.json`; native-admission `{result,
+root-independent-audit,root-library-audit}.json`, all under their uniquely named
+November3 canonical runs. `cost-ledger05.json` under generalization separates
+CPU/build/native wall and zero optimizer time. The full build's failed-link wall
+is only a filesystem-observed interval; not invented GPU/training cost.
+
+All owned supervisors, servers and builders are terminal and authenticated
+processes absent; GPU compute query is empty. The merged source worktree and
+branch were removed after clean status, integrated-patch checks and worker
+completion; actor/admission source snapshots survive. Keep the185MiB native
+source and237MiB reusable build, native parent and raw evidence. WSL free space
+is approximately3.6GiB / C:3.5GiB. Existing paid checkpoints and caches survive;
+the pending25GB-or-another-destination storage question still gates remaining
+full-state historical retention arms and modern full-sign training.
+
+Next: add a bounded native EAGLE trajectory replay using the same native features,
+embeddings, norms, map, positions and cache protocol; compare it with the CPU
+actor and establish the native-success/actor-correct protection intersection.
+Then broaden authenticated modern training data and train/evaluate on untouched
+inputs. Preserve the two unrun historical retention arms for sufficient storage.
+Only after generalization passes may early/long screening validation, backlog
+classification/combinations and final frozen DFlash comparison across four targets
+advance. This turn is progress through implemented serialization/admission,
+real model readout, actual CUDA operations and real token-correct native serving.

@@ -17,23 +17,29 @@ This reused development evidence does not reject longer training and does not
 validate untouched quality or modern DFlash performance. Both continuation-
 protection arms remain unrun. Existing successful continuations are preserved.
 
-Modern partial RoPE and explicit native F32 embedding contracts are integrated;
-23 native-step and7 attention CPU tests pass. Real captured embedding rows retain
-F32 precision. Bounded native capture tests found2/27 label disagreements with
-the serving reference, both close decisions; fresh server requests reproduce
-that reference. Tested continuation chunks1/2/5 give identical captured arrays.
-The discrepancy is recorded and numerical work timeboxed; modern captures are
-not admitted to training pending explicit differing-row rejection and native
-trajectory gates. A source report identifies the reusable historical packed
-EAGLE path and required modern export/backend changes. No modern student trained.
+Modern packed EAGLE W1A8 now has an actual executable native path on4B Q4_K_M:
+zero-update initializer only. Correct partial-RoPE serialization passes independent
+audit of all76,880 rows; fixed-A8 CPU/CUDA operations pass exact integer-reference
+fixtures. Six-arm development smoke passes18 full token/text/stop audits against
+frozen target/DFlash controls; the initialization accepts67/408 draft tokens.
+Loaded runtime images and all nine packed projections are audited. There is no
+trained modern W1A8 improvement, untouched quality or repeated-throughput claim.
+See the [modern native report](../experiments/w1a8-modern-native-20261103/report.md).
 
-All current owned jobs are finished, process identities absent and GPU released.
-Storage is approximately4.3GiB WSL /3.5GiB C:. The pending request for25GB freed on
-C: or another storage path remains required for further full training while
-preserving checkpoints. Verified archives and content-equal hardlinks preserve
-paid states and evidence; reusable caches are retained. The latest goal checkpoint
-and [report](../experiments/w1a8-generalization-20261102/report.md) link exact
-analysis, cost, release and retained-storage receipts. No push.
+Capture admission and shifted actor-step guards are integrated;17 CPU tests pass.
+Two disagreement rows are excluded, leaving13/16 numeric actor transitions on
+the two recorded histories. A real CPU initializer readout is2/13 correct on
+eligible teacher-forced steps. Native actor trajectory agreement and successful-
+continuation protection sets remain unqualified; aggregate acceptance is not
+that proof. The next step is bounded native/actor replay, followed by broader
+training data and untouched evaluation. Screening/predictor work stays gated.
+
+All owned GPU/CPU jobs are finished, authenticated processes absent and GPU
+released. Storage is approximately3.6GiB WSL /3.5GiB C:. The pending25GB-or-another-
+destination question still gates full-state training while preserving checkpoints.
+Source snapshots, reusable builds, original paid states and useful caches are
+retained. The latest goal checkpoint and generalization report link exact cost,
+release and retained-storage evidence. No push.
 
 ## Selected baseline and W1A8 standing — November 2, 2026
 
