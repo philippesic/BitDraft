@@ -3,17 +3,17 @@
 from __future__ import annotations
 
 import json
-from collections import Counter
-from pathlib import Path
-from types import SimpleNamespace
 import sys
 import tempfile
 import unittest
+from collections import Counter
+from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts/w1a8_generalization"
 sys.path.insert(0, str(SCRIPTS))
-import modern_expand_capture as capture
+import modern_expand_capture as capture  # noqa: E402
 
 
 def digest(value):

@@ -14,17 +14,17 @@ import hashlib
 import importlib.util
 import json
 import os
-from pathlib import Path
 import re
 import shutil
 import signal
 import socket
 import subprocess
 import time
+import unicodedata
 import urllib.error
 import urllib.request
-import unicodedata
 from collections import Counter
+from pathlib import Path
 
 import modern_collect as lifecycle
 
@@ -46,7 +46,7 @@ BINDINGS = [
 ]
 PLANNED_BYTES = 512 * 1024**2
 FUTURE_STATE_BYTES = 80 * 1024**2
-METADATA_BYTES = 8 * 1024**2
+METADATA_BYTES = 2 * 1024**2
 TRACE_BUILD = P / "runs/w1a8-modern-trace-build-20261103-02/build.json"
 CACHE = P / "runs/local-w1a8-modern-serving-trace-20261103-01/cuda"
 MAP = P / "runs/w1a8-modern-native-replay-20261103-01/draft-map.ids"
@@ -342,7 +342,10 @@ def collect(args):
                 "input_pins": list(worker.authenticated.values()),
                 "roster": utils.pin(args.roster),
                 "conditional": str(KNOWN_EMBEDDING_CAPTURE),
-                "conditional_usage": "Existing exact native target layer0 embedding bank only; no conditional hidden features enter actual-serving views",
+                "conditional_usage": (
+                    "Existing exact native target layer0 embedding bank only; no conditional "
+                    "hidden features enter actual-serving views"
+                ),
                 "target_references": str((args.output / "target-only").resolve()),
                 "expansion_schema": EXPANSION_SCHEMA,
                 "selection": roster["selection"],
@@ -359,7 +362,10 @@ def collect(args):
                 "trace_per_process_cap_bytes": TRACE_CAP,
                 "storage_floor_bytes": utils.FLOOR,
                 "extra_reserve_bytes": utils.RESERVE,
-                "scope": "Actual native-parent emitted successes across all80returned tokens; no CPU actor equivalence or performance qualification",
+                "scope": (
+                    "Actual native-parent emitted successes across all80returned tokens; no "
+                    "CPU actor equivalence or performance qualification"
+                ),
             },
         )
         clean = {
@@ -606,7 +612,10 @@ def collect(args):
                 "free_bytes_after": shutil.disk_usage(args.output).free,
                 "training_updates": 0,
                 "cpu_native_actor_equivalence_proven": False,
-                "scope": "Actual emitted native-parent successes retained across entire response; no speed or generalization claim",
+                "scope": (
+                    "Actual emitted native-parent successes retained across entire response; "
+                    "no speed or generalization claim"
+                ),
             },
         )
         worker.progress()
@@ -930,7 +939,10 @@ class ExpansionCollector(lifecycle.Collector):
         used = directory_bytes(self.output)
         require(
             used + TRACE_CAP + METADATA_BYTES <= self.args.planned_bytes,
-            "remaining total capture budget cannot cover next64MiB native trace; stop without replacement",
+            (
+                "remaining total capture budget cannot cover next64MiB native trace; stop"
+                " without replacement"
+            ),
         )
         storage_guard(self.output, self.args.planned_bytes, self.args.future_state_bytes, used=used)
         return shutil.disk_usage(self.output).free
@@ -1096,12 +1108,23 @@ def prepare(args):
             "seed": SEED,
             "groups": 24,
             "per_domain": 8,
-            "rule": "SHA256(seed+NUL+group_id) ascending, historical split FIT TRAIN only; whole groups",
-            "excluded": "Original36 group IDs and exact/NFKC whitespace-normalized identities; consumed fresh input identities",
+            "rule": (
+                "SHA256(seed+NUL+group_id) ascending, historical split FIT TRAIN only; whole groups"
+            ),
+            "excluded": (
+                "Original36 group IDs and exact/NFKC whitespace-normalized identities; "
+                "consumed fresh input identities"
+            ),
             "outcome_based_selection_or_replacement": False,
-            "native_geometry": "Freeze selection first; native prompt+80<=384 enforced at collect; failure aborts without replacement",
+            "native_geometry": (
+                "Freeze selection first; native prompt+80<=384 enforced at collect; "
+                "failure aborts without replacement"
+            ),
             "fresh_inputs_used_only_for_exclusion": True,
-            "warning": "Historical TRAIN exposure remains; exact/normalized exclusion does not establish semantic disjointness",
+            "warning": (
+                "Historical TRAIN exposure remains; exact/normalized exclusion does not "
+                "establish semantic disjointness"
+            ),
         },
     }
     validate_roster(roster)
