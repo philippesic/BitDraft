@@ -66,7 +66,7 @@ def main():
     dependency = output / "modern_capture.d"
     argv = [compiler, "-std=c++17", "-O2", "-Wall", "-Wextra", "-Werror", "-MMD", "-MF", dependency,
             "-I", runtime / "include", "-I", runtime / "ggml/include", source,
-            "-L", libraries, "-Wl,-rpath," + str(libraries), "-lllama", "-lggml", "-lggml-base", "-o", executable]
+            "-L", libraries, "-Wl,-rpath," + str(libraries), "-lllama", "-lggml", "-lggml-base", "-ldl", "-o", executable]
     compiled = command(argv, env=env)
     checks = {
         "help": command([executable, "--help"], env=env).stdout,

@@ -6,6 +6,7 @@
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>
+#include <dlfcn.h>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -213,11 +214,27 @@ int main(int argc, char ** argv) {
         const fs::path output = args.at("--out");
         require(!fs::exists(output), "output directory already exists");
 
-        // Explicit loading avoids fallback to the historical CUDA library beside libllama.
-        require(ggml_backend_load(args.at("--cpu-library").c_str()), "CPU backend load failed");
-        require(ggml_backend_load(args.at("--cuda-library").c_str()), "CUDA backend load failed");
+        // These retained shared backends export *_reg, not the optional plugin
+        // entrypoint ggml_backend_init. Bind the exact modules and verify the
+        // registry actually selected them; do not treat them as DL plugins.
+        auto registration = [&](const char * option, const char * symbol) {
+            const auto expected = fs::canonical(args.at(option));
+            void * handle = dlopen(expected.c_str(), RTLD_NOW | RTLD_LOCAL);
+            require(handle != nullptr, "required backend module could not be opened");
+            void * address = dlsym(handle, symbol);
+            Dl_info info = {};
+            require(address && dladdr(address, &info) && info.dli_fname &&
+                    fs::canonical(info.dli_fname) == expected, "backend registration resolved to another module");
+            auto function = reinterpret_cast<ggml_backend_reg_t (*)()>(address);
+            return function();
+        };
+        auto * required_cpu = registration("--cpu-library", "ggml_backend_cpu_reg");
+        auto * required_cuda = registration("--cuda-library", "ggml_backend_cuda_reg");
+        require(ggml_backend_reg_by_name("CPU") == required_cpu &&
+                ggml_backend_reg_by_name("CUDA") == required_cuda, "active backend registry differs from required modules");
         auto * gpu = ggml_backend_dev_by_type(GGML_BACKEND_DEVICE_TYPE_GPU);
-        require(gpu != nullptr, "no GPU device; CPU fallback prohibited");
+        require(gpu != nullptr && ggml_backend_dev_backend_reg(gpu) == required_cuda,
+                "no matching GPU device; CPU fallback prohibited");
         llama_backend_init();
         ggml_backend_dev_t devices[] = {gpu, nullptr};
         auto mp = llama_model_default_params();
