@@ -337,3 +337,102 @@ Before treatment, static control must reproduce prior nativefit3840 scales,
 optimizer,RNG,cursor,exposure and native export exactly. All549masks remain evaluated;
 new CE mass/counts logged explicitly. Output on C: in reachability-{static,union}3840-01.
 No serving quiet window during this training. No result yet; preserve all states.
+
+
+## Matched reachability training and native admission complete — November3
+
+Static control exactly equals prior nativefit3840: scales,Adam,RNG,cursor,exposure
+and native GGUF. Both stages finish0; control166.90245/treatment166.64348 new trainer
+seconds,258.96274/257.52050 stage whole-job wall,517.53099 driver wall. Original
+warm-start cumulative costs remain separate. Union adds1272supported labels over
+4561static (+27.9%CE mass under fixed4), same3840ordinary windows/1920replay windows/
+2071protected exposures. This is a mask-plus-effective-weighting change, not a
+normalization-independent causal claim.
+
+Full model readouts: fit prefix1436→1466, oldnative loss2→3; development489→487,
+loss42→40. Immutable original actor/native intersection losses2→3FIT and40→38dev.
+Do not use after-readout protected fields to count old losses: they are current
+intersections; root analysis joins immutable reference02 instead. All549old native
+positions remain evaluated. Evidence: reachable-{result,control-exact-parity,
+training-analysis}.json and C: reachability-{static,union}3840-01 states.
+
+Actual packed-native replay across all549successes retains507/549union (42lost),
+parent549/549,0uncalibrated. Native run81.31783s. Two actualHTTPqualification cells
+pass28responses, accepting341static/345union per12dev prompts; no single-pass
+speed claim. HTTPqualification wall27.66450s, sourcebound nine-projection receipt
+and loaded-image/release evidence retained. Root independently audits all28raw
+signatures, stopped/count/cache fields and quiet-loader proof.
+
+Seven-arm repeated-serving first attempt stops BEFORE anyGPUcell/request after
+3.50swrapper wall: new proof metadata incorrectly retained log_verbosity instead
+of the validator's normalized runtime contract. Failure/packet preserved. New
+normalized proof files and modelsquiet02 correct only qualification metadata.
+Root now alone owns local-w1a8-modern-reachability-requests-20261103-02 under
+180sgrace/localtmuxsocket. identity.json authenticates live boot/birth/cmdline/stop.
+Expected420measured+70warmups/35startups. Quiet window forbids CPUtests/builds/
+compression/unrelated hashes. Conservative quarter model, initial, target,DFlash
+andQ4 controls unchanged; compare full nativefit3840 static versus union explicitly.
+No complete result yet. No goal/phase completion or backlog rejection.
+
+Separately, root recomputes all8fresh reasoning expected answers from public
+prompts using independent set/modular/path/permutation enumeration. Every frozen
+expected answer matches; low1/8target reasoning score reflects actual answer/
+instruction failures, not an expected-answer defect or output-limit stop.
+Evidence: fresh-quarter-confirmation01/independent-reasoning-oracle-audit.json.
+Selected-O sign-training feasibility advice is saved in selected-sign-source-advice.md;
+new helper/12tinyCPUfixture tests are prepared by a bounded worker, but actual
+real-model selected-sign training/export/native admission remains unproven.
+
+
+## Reachability serving inconclusive; selected-sign plumbing admitted — November3
+
+Repeated panel02 exits0:420measured/70warmups/35startups, all exact token/text/stop/
+repeat matches; root rehashes40images and verifies35releases. Whole runner380.33982s.
+Rates target153.395,DFlash193.186,init109.520,quarter114.673,static3840126.783,
+union3840125.318,Q4_0154.285tokens/s. Union/control0.988446; whole-prompt95%interval
+0.97360–1.00423. Full-prompt/repetition-block resampling widens it to0.93245–1.02817:
+late repetition's added HTTPoverhead matters. All measurements retained; no point
+removed. Native-reported timing components are diagnostic, not substitutes for full
+HTTPwall. More acceptance (345vs341) does not establish total-throughput benefit.
+Union is inconclusive at this3840checkpoint, not a permanent slow-learner rejection.
+Native preservation still loses42/549old tokens. Original19200horizon/checkpoints
+remain. Evidence native-analysis-reachability.json,reachability-timing-robustness.json.
+Fresh candidate's joint12family/5repetition resampling also remains positive:
+1.052950ratio,95%interval1.043254–1.062092. This supplements the narrower fixed-
+repetition family interval without altering pinned original raw results/receipts.
+
+Selected-O helper, qualifier and14CPUtests committed01d36810 and integrated after
+Ruff format/check and full14tests pass. Original helpers unchanged. Qualified actual
+GPU run selected-sign-qualification-20261103-01 completes52.98314s,3physical/2unique
+updates1.57891s total. Both exact resumable checkpoints79,603,493bytes; measured peak
+CUDA allocated3,149,585,920bytes. Zero-updateGGUF equals initializer. Finite nonzero
+STE gradients move6,553,575of6,553,600latents, meanabsolute displacement.00131586,
+max.00199848, ZEROlearned hard-sign flips. Forced diagnostic changes exactly one
+whole-file bit, with allscale/other bytes identical; never a trained candidate.
+Root independently rehashes all3exports and recomputes whole-file XORone-bit proof.
+
+Actual native admission completes48.93730s across four tiny native processes plus
+28fullHTTPresponses. All16reached proposals agree with GPUactor, zero calibrated
+old-success loss on these two reused FIT windows; both14response cells equal frozen
+target gold. Root audits28raw response/count/cache signatures,2server releases,
+31loaded images and nine packed receipts/model. This is bounded plumbing only:
+no actual learned sign-capacity, newquality, repeated speed or generalization claim.
+Evidence selected-sign-root-admission.json and tracked selected-sign-admission.json;
+C:qualified model/checkpoint/source snapshots retained. No job remains live.
+
+A source-only next trainer is being prepared: same originalbalanced1920 migration,
+9scaleAdam moments/RNG/order/all356FIT replay/staticCE/CE4/horizon19200. False mode
+must discardOgrad beforeclip/step and exactly reproduce prior nativefit3840 before
+true mode changes selected signs. SignLR1e-3 is separately declared; zero early
+flips must be slow/inconclusive, not a clear model failure. No actual capacity arm
+has trained yet. Source/paid checkpoints preserved and no push.
+
+Read-only data audit locates476remaining TRAIN groups (159code/159prose/158reasoning)
+after current36. Existing24FIT traces total396,021,761bytes/120.12s. Twelve newFIT
+is an estimated189MiB/one capture minute, excluding preparation/geometry overhead.
+Root corrects audit's initial C:versusWSL capacity conflation and initialization/
+capture-parent conflation; worker original retained. C:direct storage appears
+feasible for12or24 at current margins; WSL cannot stage dense arrays. New data
+needs versioned roster/collection/count gates and an audited source-index union;
+trained-parent captures cannot be silently relabeled as initializer captures.
+No new data collected. Audit:fit-expansion-source-audit.json.

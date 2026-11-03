@@ -4978,4 +4978,49 @@ No fresh/dev training labels. No serving quiet window. Source b361cdd5 integrate
 with59related CPUtests; worktree still retained for source pins. No push. Later
 ordered phases remain gated; ongoing training is informative phase1 work.
 
+## Reachability control exact; native losses remain; repeated panel live
+
+Both static/current-prefix-union3840 continuations terminal0. Exact control state/
+export parity verified. Extra1272labels (+27.9%CE mass), fitprefix1436→1466 but dev
+489→487; actor-native oldloss2→3FIT/42→40dev. Actual all549native replay union loses42,
+parent0;28HTTPresponses match target, static341/union345accepted on12dev prompts.
+No serving benefit established. Costs333.55new trainerseconds total,517.53driverwall;
+native81.32s,qualification27.66s. Paid states/source/19200horizon preserved.
+
+Root alone owns local-w1a8-modern-reachability-requests-20261103-02; identity.json
+has live boot/birth/cmdline/localtmuxsocket/180sstop. Expected420measured+70warmups
+with7arms,35startups. Quiet window active; no tests/builds/compression/large hashes.
+Attempt01terminal preflight metadata failure0requests/0GPUcells; corrected proof
+normalization in separate packet, no runtime/model setting changed. Scope reused
+dev, not consumed fresh cohort. Source-only selected-sign helper preparation is
+independent; no actual selected-sign model yet. Fresh independent reasoning
+oracle recheck8/8expected values valid. Continue informative phase1work; later
+ordered phases remain gated. Full progress checkpoint links evidence.
+
+## Fresh transfer robust; reachability inconclusive; sign plumbing actualPASS
+
+All GPU jobs terminal and released. Reachability panel02 completes420measured+
+70warmups/35cells with exact responses; root40images/35releases audit. Union/static
+ratio0.98845, joint12prompt/5rep95%interval0.93245–1.02817: inconclusive,42/549native
+oldlosses, preserve checkpoints/19200horizon. Fresh quarter/init1.05295 remains
+positive under joint12family/5rep resampling,95%1.04325–1.06209. All raw measurements
+retained; no outlier removal. Progress report retains timings and evidence links.
+
+Selected-O helper/qualifier01d36810 integrated;14CPUtests/Ruff pass (73related total).
+Actual GPUqualification2unique+repeatedsecond updates passes exact Adam/RNG/cursor
+resume,79,603,493-byte checkpoints,zeroexportidentity,finite nonzeroSTEgradient and
+3.150GBpeakCUDAallocated.0learned sign flips; separate FORCEDone-bit export is ONLY
+packing diagnostic. Both exports then16/16native reached proposals and28/28exact
+HTTPresponses; allgroupsabsent,root31image audit. Tracked selected-sign-admission.json
+links evidence; no capacity/generalization/throughput claim from this plumbing.
+
+Source-only matched selected-sign trainer is pending review/testing (no actual
+newtraining yet). Same balanced1920/scaleAdam/RNG/order/356FITreplay/staticCE/CE4/
+19200horizon; false mode must exactly replicate nativefit3840 before true mode.
+No DEV or consumedfresh labels. Read-only expansion audit finds476unusedTRAIN
+and estimates12moreFIT~189MiB/~1mincapture; no collection yet, versioned lineage-
+preserving union/gates required. C:direct capacity differs from constrainedWSL;
+root corrected worker report with original retained. Storage inventory links all
+new retained evidence/states. Goal stays active; no later-phase/backlog completion.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

@@ -408,6 +408,11 @@
       "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/fresh-quarter-confirmation01/consumed.json",
       "bytes": 1314,
       "sha256": "ba01118c0076f0112dacd04d664f2ffdbabfd96563fa0b6530bc4f3371c5ea9a"
+    },
+    "timing_robustness": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/fresh-quarter-confirmation01/timing-robustness.json",
+      "sha256": "29744e84273b6906d49603a7fc2dce52d1a0e6d4ffe2d8b718d427e2e0a0f860",
+      "bytes": 543
     }
   },
   "speculative_requests_equal_target": 576,
@@ -415,5 +420,25 @@
   "loaded_images_rehashed": 40,
   "phase1_complete": false,
   "predictor_validated": false,
-  "backlog_screened": false
+  "backlog_screened": false,
+  "prompt_family_and_repetition_robustness": {
+    "scope": "fresh",
+    "candidate": "w1a8_quarter",
+    "control": "w1a8_initial",
+    "groups": 12,
+    "matched_repetitions": 5,
+    "pooled_ratio": 1.0529502517882419,
+    "paired_group_and_repetition_bootstrap95_interval": [
+      1.043253588577995,
+      1.0620923960693882
+    ],
+    "ratio_per_repetition": [
+      1.0500979802365875,
+      1.0508309835409588,
+      1.0479636866684359,
+      1.0588634994248918,
+      1.0569779117692895
+    ],
+    "method": "paired resampling of complete group and complete repetition blocks,20000 draws; retain all measurements"
+  }
 }

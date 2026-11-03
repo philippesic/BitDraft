@@ -25,14 +25,32 @@ but damages more old successes. Conservative original-head/quarter-body choice
 preserves548/549native old successes, all356FIT and192/193development; one loss
 remains explicit. Checkpoints and isolated runtime/data contracts survive.
 
-Root now owns `local-w1a8-modern-reachability-20261103-01`: unchanged static CE
-reachability control must exactly reproduce prior nativefit3840 full state/export
-before current-prefix-union treatment starts. Same balanced1920checkpoint,
-optimizer/RNG/order/all356FIT replay/fixedCE4/horizon19200. No development or new
-confirmation labels enter training. Its identity.json records process identities
-and180s stop procedure. This is training, with no serving timing quiet window.
+The static/current-prefix-union comparison finishes both continuations. Static
+control exactly reproduces prior full state/export. Union adds1272supported CE
+labels (+27.9%mass): fit prefix1436→1466, development489→487; old native model-side
+losses2→3fit and42→40development. Native replay independently loses42/549old
+successes;28HTTPqualification responses match target, accepted drafts341→345 on
+the12reused development requests. No transfer or speed benefit established yet.
 
-Source is integrated with59passing related CPUtests and actual native evidence;
+The seven-arm panel completes420measured+70warmups, all exact,35server releases,
+40images independently rehashed. Union125.318tokens/s versus static126.783: ratio
+0.98845. Joint prompt/repetition resampling gives95%interval0.93245–1.02817, so no
+speed benefit is established. All measurements are retained, including late-round
+HTTPoverhead variation. Union remains inconclusive at this checkpoint; continuable
+states survive. Conservative fresh gain remains positive under joint family/
+repetition resampling: +5.30%,95%interval+4.33–6.21%.
+
+Separate attention-output sign-QAT support now passes14CPUfixtures and actual
+GPU plumbing: finite nonzero sign gradient, exact compact Adam/RNG/cursor resume,
+zero-export identity,79,603,493-byte checkpoints,3.150GBpeak allocated CUDA memory.
+Three physical/two unique updates move signs but flip0learned bits. A separate
+forced one-bit diagnostic is clearly labelled. Both exports pass16bounded native
+proposal comparisons and28exactHTTPresponses. This is NOT a capacity/generalization
+result. All owned GPU jobs are terminal; source-only matched selected-sign
+control/treatment implementation is pending review before training. No new fresh
+cases or development training labels are used.
+
+Source is integrated with73passing related CPUtests and actual native evidence;
 pinned worktree is retained for checkpoint/source contracts. Paid states remain;
 older exports have verified compact archives or readable relocated aliases.
 Storage remains constrained. No push. Quick-screen predictor,98-ID/34-family
