@@ -352,6 +352,17 @@ class NativeAdmissionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "pinned size|file pin changed"):
             gate.admit_packet(self.packet)
 
+    def test_tokenizer_may_explicitly_hide_cuda_but_no_other_environment_changes(self):
+        ref = self.packet["tokenizer"]["command"]
+        self.rewrite(ref, lambda value: value["environment"].update(CUDA_VISIBLE_DEVICES=""))
+        gate.admit_packet(self.packet)
+        self.rewrite(ref, lambda value: value["environment"].update(CUDA_VISIBLE_DEVICES="0"))
+        with self.assertRaisesRegex(ValueError, "tokenizer command differs"):
+            gate.admit_packet(self.packet)
+        self.rewrite(ref, lambda value: value["environment"].update(CUDA_VISIBLE_DEVICES="", LD_PRELOAD="other.so"))
+        with self.assertRaisesRegex(ValueError, "tokenizer command differs"):
+            gate.admit_packet(self.packet)
+
     def test_wrong_target_and_untrusted_baseline_are_rejected(self):
         packet = copy.deepcopy(self.packet)
         packet["target"] = self.file("wrong-target.gguf", "different target")

@@ -310,6 +310,9 @@ def admit_packet(packet):
     )
     token_command = auth.read(tokenizer["command"])
     token_argv = token_command["argv"]
+    tokenizer_environment = dict(tokenizer_build["environment"])
+    if token_command.get("environment", {}).get("CUDA_VISIBLE_DEVICES") == "":
+        tokenizer_environment["CUDA_VISIBLE_DEVICES"] = ""
     require(
         token_argv[0] == tokenizer_build["executable"]["path"]
         and arguments(token_argv, {"--model", "--text-file", "--out"}, {"--tokenize"})
@@ -319,7 +322,7 @@ def admit_packet(packet):
             "--text-file": str(text_path),
             "--out": str(Path(tokenizer["metadata"]["path"]).parent),
         }
-        and token_command["environment"] == tokenizer_build["environment"],
+        and token_command["environment"] == tokenizer_environment,
         "native tokenizer command differs",
     )
     fixed = token_ids(auth.checked(packet["continuation_tokens"]))
