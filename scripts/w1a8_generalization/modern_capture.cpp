@@ -298,6 +298,13 @@ int main(int argc, char ** argv) {
         }
         logits_file.close(); require(bool(logits_file), "logits close failed");
         for (auto & file : feature_files) { file.close(); require(bool(file), "features close failed"); }
+        {
+            std::ifstream mapped("/proc/self/maps");
+            std::ofstream receipt(output / "loaded-library-maps.txt");
+            require(bool(mapped) && bool(receipt), "cannot record loaded native libraries");
+            receipt << mapped.rdbuf();
+            receipt.close(); require(bool(receipt), "loaded-library receipt write failed");
+        }
         std::ofstream metadata(output / "capture.json");
         metadata << "{\n\"status\":\"native_capture_complete\",\n\"model\":" << quote(fs::absolute(args.at("--model")).string())
             << ",\n\"model_bytes\":" << fs::file_size(args.at("--model"))
