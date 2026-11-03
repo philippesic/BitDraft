@@ -2,53 +2,38 @@
 
 ## Active: ordered W1A8 generalization work — November 3, 2026
 
-Continue the existing [goal](goals/nine-model-qat-overnight.md): establish
-untouched generalization, validate an early/long training predictor, then screen
-the full backlog and test combinations. Final modern confirmation uses frozen
-DFlash Q4_K_M correctness controls on all four targets. Phase1 remains active;
-there is no demonstrated generalization or throughput improvement. Later phases
-have not started. Historical Qwen3 F16 results remain separate.
+Phase 1 remains active. Modern 4B Q4_K_M W1A8 now has a measured development-set
+full-request gain after 480 updates: CE +3.98% and retention +4.25% over the
+unchanged initializer, across 300 requests/five repetitions with exact token,
+text and stopping parity. The retention candidate is still only 58.7% of matched
+DFlash Q4_K_M throughput. Untouched generalization and independent quality remain
+unconfirmed. Historical F16 results stay separate.
 
-The two completed historical arms each passed600 full-request token/text/stop/
-repeat checks at1,920 updates but showed no reliable serving gain. Both historical
-continuation-protection arms remain unrun. Existing successful states survive.
+Actual-serving data now supplies 2,138 source-indexed windows from 24 fit and
+12 development groups. Matched CE/retention training and a stronger-retention
+arm reach 1,920 updates with verified compact checkpoints/native exports.
+Model-side prefix totals improve, but 35–40 previously successful native/actor
+prefix tokens regress; preservation is unresolved. The longer checkpoints have
+not had repeated native timing. Two isolated runtime fixes address overwritten
+bridge features and unnecessary zero-output head work; smoke checks pass, with
+no repeated timing claim. The original runtime/data lineage is preserved.
 
-Modern4B Q4_K_M packed W1A8 executes natively. The original zero-update six-arm
-smoke passed18 full-response audits; CPU/CUDA operation fixtures and all nine
-serialized projections pass. A new compact scale-only actor reproduces the
-initializer exactly. Actual GPU backward, a two-update continuation, exact
-optimizer/RNG/cursor resume and native export now pass;16 diagnostic native
-teacher decisions agree with the updated GPU actor. These are plumbing checks
-on reused histories, not an improved model or generalization experiment.
+Fresh confirmation tooling is implemented and synthetic-tested, but no real
+untouched cases have been generated. The quick-screen predictor is unvalidated;
+the 98-ID/34-family backlog has not been screened. Combinations and frozen DFlash
+confirmation across all four modern targets remain later gates. The two historical
+full-state retention arms remain unrun pending storage; compact work can proceed.
 
-A material data discrepancy is now measured: actual serving prefills one55-token
-prompt as51+4. The first51 feature rows match conditional capture exactly, while
-the final4 differ by8.58% relative RMS. Supplying actual serving states restores
-a previously mismatched proposal. On the full recorded request, CPU replay
-matches106/110 native proposals and all20 actually accepted tokens with recorded
-step inputs. A pass recomputing its own FC/pre-norm states matches107/110 and
-retains all20successes, including both depth1tokens. Remaining near-tie
-disagreements are rejected drafts. Native preservation masks
-come from actual emitted/verified serving traces, not conditional replay totals.
+The user requested a wait and a full recap. No new experiment launched during the
+check-in; the RTX 5080 has no compute process and the owned runtime tmux socket
+has no server. Paid states and evidence remain preserved. Source work is retained
+in the isolated actual-training worktree, with newer additions not integrated yet.
+No push. Current free space is about 2.15 GiB WSL /2.37 GiB C:.
 
-A frozen24fit/12development modern pilot now has actual native captures and raw
-frozen-target responses:611/612 teacher rows admitted and574/576 shifted steps
-eligible. Group separation and raw ancestry pass independent audit. Development
-has historical F16 TRAIN exposure; pristine final holdout and independent quality
-confirmation remain outstanding. A separate actual-parent collection now passes
-all36full-response/trace audits, retaining356fit and193development native successes
-with exact response-index masks. All19,651trace files rehash. CPU actor coverage
-on all36 remains unqualified; prepare actual-state training views and freeze
-same-actor retention margins before matched generalization training.
-
-Full-state training still needs the pending storage resolution. Compact scale
-training fits current capacity. Exact duplicate driver cache blobs were
-consolidated with all paths/content preserved, reclaiming982,757,376WSL bytes;
-unique caches and paid checkpoints remain. No push. Exact runs, current ownership,
-costs and next actions live in the latest goal checkpoint and the
-[modern native report](../experiments/w1a8-modern-native-20261103/report.md).
-All owned supervisors/servers are terminal and GPU compute is released. Free
-space is approximately2.19GiB WSL /3.43GiB C: after retaining the new data.
+[Latest detailed checkpoint](../experiments/w1a8-modern-native-20261103/progress.md)
+contains results, limitations, failures, costs, evidence and next actions. Continue
+the existing [goal](goals/nine-model-qat-overnight.md); no new goal or completion
+is declared. The canceled audit worker has no recovered final report.
 
 ## Selected baseline and W1A8 standing — November 2, 2026
 

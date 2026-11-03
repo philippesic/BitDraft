@@ -4839,4 +4839,23 @@ space is2.19GiB WSL /3.43GiB C:. All10supervisors/children and36actual-parent se
 groups are absent; GPU compute query empty. Receipt:
 `runs/w1a8-modern-replay-source-20261103-01/release-and-storage.json`.
 
+## Full user check-in — actual training and development gain, November 3, 2026
+
+The [new detailed checkpoint](../../experiments/w1a8-modern-native-20261103/progress.md)
+supersedes earlier current-state claims. Actual-state compact training now runs;
+480-update candidates pass 300 native requests/five repetitions and improve
+full-request speed by roughly 4% over unchanged W1A8 initialization, while remaining
+about 59% of matched DFlash. At 1,920 updates, model-side scores improve further
+but preservation regresses and repeated native timing remains pending. Separate
+bridge-ownership and zero-output head-skip variants pass bounded smoke checks;
+neither has repeated speed evidence. Fresh confirmation tooling is synthetic-tested
+only. No untouched quality/generalization, validated predictor, backlog screening
+or four-target candidate confirmation is claimed.
+
+User requested a wait and full recap. No new launch; actual GPU query empty and
+runtime tmux server absent. Source/continuations retained in actual-training
+worktree; some newer serving/confirmation code remains unintegrated. Capacity is
+about 2.15 GiB WSL /2.37 GiB C:, preserving paid states. The canceled audit's final
+report is unavailable; do not assume it will return. No push or goal completion.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->
