@@ -5023,4 +5023,21 @@ preserving union/gates required. C:direct capacity differs from constrainedWSL;
 root corrected worker report with original retained. Storage inventory links all
 new retained evidence/states. Goal stays active; no later-phase/backlog completion.
 
+## Matched selected-sign capacity run live, control checkpoint saved
+
+Root owns local-w1a8-selected-sign-training-20261103-01; immediate identity.json
+captures live boot/birth/cmdline,localtmuxsocket and180sstop. Source83006337 integrated
+with10newCPUtests/Ruff (83related total). Same originalbalanced1920/Adam-by-path/
+RNG/order/staticCE4/356FITreplay/λ10/19200horizon; compare dropOgrad beforeclip versus
+selectedOsignLR1e-3,scales1e-5. False control must exactly match prior nativefit3840
+model/scaleAdam/RNG/exposure/readout/nativeexport before true arm starts.
+
+Control reaches3840 with0Olatentmovement/flips and resumable checkpoints; final
+readouts/parity gate pending, no treatment yet atcheckpoint. Outputs directlyC:
+w1a8-selected-sign-{control,learn}3840-01, every480state preserved. No serving quiet
+window or DEV/fresh labels. Beforelaunch oldret1920GGUF relocated byte-exact toC
+with originalpath alias,WSL+40,804,352,C:-40,804,352bytes; paidPTsafe. Separate source-
+only actual-manifest union helper underway, no olddata/helper edits and no new
+capture. Continue informative phase1; all later ordered phases remain gated.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->

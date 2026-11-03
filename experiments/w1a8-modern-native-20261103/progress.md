@@ -436,3 +436,30 @@ feasible for12or24 at current margins; WSL cannot stage dense arrays. New data
 needs versioned roster/collection/count gates and an audited source-index union;
 trained-parent captures cannot be silently relabeled as initializer captures.
 No new data collected. Audit:fit-expansion-source-audit.json.
+
+
+## Actual selected-sign capacity comparison live — November3
+
+New isolated trainer/source83006337 integrated after root10focused CPUtests and
+Ruff pass; total83related CPUtests. No original actor/data/trainer source changed.
+Root launches local-w1a8-selected-sign-training-20261103-01 via180sgrace/localtmux;
+identity.json captured immediately atlaunch with verified live boot/birth/cmdline.
+Single rootGPUowner, no native serving quiet window. Source/plan/driver pins in
+selected-training-plan.json. Both modes start originalbalanced1920, scales/Adam
+moments joined BY PATH; cursor/RNG/exposure inherited. StaticCE/fixed4/all356FIT
+replay/λ10/order37/19200horizon unchanged. SelectedOsignLR1e-3 versus scales1e-5.
+False mode clearsOgrad BEFORE globalclip/step and never createsOmoments; it must
+exactly reproduce existing nativefit3840 weights/scaleAdam/RNG/cursor/exposure/
+readoutdecisions/nativeGGUF before true mode starts. No DEV/fresh labels.
+
+Control has reached3840 and saved checkpoint metrics with zero sign movement/
+flips. Final readouts/control proof pending; treatment has not started at this
+checkpoint. Outputs C:/.../w1a8-selected-sign-{control,learn}3840-01, periodic480
+compact checkpoints; estimate~0.51GB botharms. Actual costs/results pending.
+
+WSL headroom was near its guard, so root byte-verifies/copies oldretention1920
+GGUF toC and atomically aliases its original path. Paid PTfiles retained and all
+paths remain readable. WSL actualfree+40,804,352bytes,C:-40,804,352bytes; receipt
+retention1920-export-relocation.json. No VHDXcompaction/shared cleanup. New source
+worker prepares a separate audited actual-manifest union helper onCPU only,
+leaving currentdata/sourcepins immutable. No expandeddata collected or admitted.

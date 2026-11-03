@@ -46,11 +46,15 @@ zero-export identity,79,603,493-byte checkpoints,3.150GBpeak allocated CUDA memo
 Three physical/two unique updates move signs but flip0learned bits. A separate
 forced one-bit diagnostic is clearly labelled. Both exports pass16bounded native
 proposal comparisons and28exactHTTPresponses. This is NOT a capacity/generalization
-result. All owned GPU jobs are terminal; source-only matched selected-sign
-control/treatment implementation is pending review before training. No new fresh
-cases or development training labels are used.
+result. Root now owns `local-w1a8-selected-sign-training-20261103-01`: matched
+false/true sign continuations from the same balanced1920state to3840, horizon19200.
+Control reaches3840 with0sign movement/flips; final exact full-state/export/readout
+comparison is pending before treatment. identity.json records live supervisor/
+controller birth/boot and180sstop; C:checkpoints saved every480. No serving quiet
+window. New source83006337 is integrated with10newCPUtests/Ruff (83related tests
+total). No fresh/development training labels used.
 
-Source is integrated with73passing related CPUtests and actual native evidence;
+Source is integrated with83passing related CPUtests and actual native evidence;
 pinned worktree is retained for checkpoint/source contracts. Paid states remain;
 older exports have verified compact archives or readable relocated aliases.
 Storage remains constrained. No push. Quick-screen predictor,98-ID/34-family
