@@ -296,3 +296,44 @@ Before launch, one unused retention10-1920 GGUF is copied to C:, whole-file hash
 verified, then the original WSL path atomically replaced with a symlink. This
 recovers40,804,352WSL bytes without changing payload or paid checkpoint. Receipt:
 `retention10-export-relocation.json`. Timing protocol/source/candidate is unchanged.
+
+
+## First untouched-instance transfer confirmed — November 3, 16:22 UTC
+
+Fresh supervisor exits0; all30server groups reaped/absent and compute released.
+Root independently audits all780raw requests:600performance,120quality,60warmups,
+all expected five arms, tokens/text/stop/repeat/cache/count accounting and40loaded
+images. All576speculative measured responses equal target. No zero-output case.
+Candidate140.317tokens/s versus init133.261: +5.295%, paired12-family-cluster95%
+interval+4.547–6.019%; gains code5.70%,reasoning5.07%,prose5.07%. Matched DFlash
+262.857,target176.780,Q4_0EAGLE235.493. Candidate/DFlash53.38%, candidate/target79.37%.
+
+Independent answer scores13/24 for EVERY arm, same case outcomes:code5/8,
+reasoning1/8,prose7/8. Root reruns all120actual judgements and24positive/50negative
+controls. Exact agreement preserves target quality; absolute quality is weak.
+This is first positive post-selection-instance transfer, limited to these12related
+synthetic families (Python public algorithms change little), not broad novelty.
+The candidate still loses1/549old native draft tokens. Phase1 remains active.
+
+Runner wall907.79274s; supervisor interval16:06:55.942491–16:22:04.180032UTC.
+No training cost in this confirmation. Detailed pins/results:
+`fresh-quarter-confirmation01/{root-analysis,consumed}.json`; compact tracked
+`fresh-confirmation.json`. Frozen input files remain unchanged; consumed receipt
+requires excluding all48cases from later untouched tests. No fresh labels enter
+subsequent training. The paired interval is across12families, not24independent
+prompts. Five repetitions alone do not prove broad generalization.
+
+New isolated reachability trainer/tests pass28related trainer tests;31actual-data/
+fresh/confirmation tests also pass. pytest is unavailable; standard unittest runs
+all59successfully. Original native C++/builder source matches compiled snapshot.
+Source committedb361cdd5 and integrated; no old helper/source contracts changed.
+Worktree remains pinned for actual continuations; no push.
+
+Root launches `local-w1a8-modern-reachability-20261103-01` under existing180s-grace
+supervisor/local tmux. Its identity.json records live boot/birth/cmdline and stop.
+Static/current-prefix-union arms both start at original balanced1920 and continue
+to3840 with original19200horizon, sameAdam/RNG/order/all356FIT replay/lambda10/CE4.
+Before treatment, static control must reproduce prior nativefit3840 scales,
+optimizer,RNG,cursor,exposure and native export exactly. All549masks remain evaluated;
+new CE mass/counts logged explicitly. Output on C: in reachability-{static,union}3840-01.
+No serving quiet window during this training. No result yet; preserve all states.

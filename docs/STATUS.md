@@ -2,53 +2,45 @@
 
 ## Active: ordered W1A8 generalization work — November 3, 2026
 
-Phase 1 remains incomplete. Actual-serving-state W1A8 training produces repeatable
-speed gains on reused development examples, but no untouched correctness,
-independent answer-quality or fresh throughput result exists yet. Phase 2's
-short-to-long predictor and Phase 3's backlog screen remain gated.
+Phase 1 now has positive untouched-instance transfer on the modern 4B Q4_K_M
+track, but remains incomplete: preservation has one known old draft regression,
+absolute answer quality is weak, and W1A8 remains far behind DFlash. All other
+modern target configurations and the later ordered phases remain unconfirmed.
 
-The matched quiet-logging panel completes 480 measured requests across eight
-arms/five repetitions with exact token/text/stop/repeat parity. Balanced protected
-replay improves full-request throughput 13.44% over unchanged initialization
-(95% interval 10.01–17.80%), but reaches only 63.89% of matched DFlash Q4_K_M.
-Head-only training is weak; head-skip and logging changes show no reliable gain.
+The frozen conservative candidate completes600new performance requests across
+five arms/five repetitions plus120independently judged quality requests. Root
+audits every raw response,40loaded images and30server releases. All576speculative
+responses equal target tokens/text/stopping; repeated performance outputs agree.
+Fresh W1A8 throughput140.317tokens/s versus initializer133.261: +5.30%, 12-family
+cluster95% interval+4.55–6.02%. Gains are+5.70%code/+5.07%reasoning/+5.07%prose.
+DFlash262.857,target-only176.780,Q4_0EAGLE235.493: candidate reaches only53.38%
+of DFlash. All five arms score13/24 independent quality cases (5/8code,1/8reasoning,
+7/8prose), with24positive/50semantic-negative judge controls verified. This supports
+new synthetic instances within12related task families, not broad task novelty,
+pretraining novelty or unrestricted prose quality. Fresh cohort is consumed and
+excluded from future confirmation. Whole runner wall907.79s.
 
-Further 3,840-update continuations improve aggregate model scores but still damage
-previously successful drafts. Native fixed-history replay confirms this is a real
-model tradeoff. Restoring the original output head and retaining one quarter of
-the trained body-scale change preserves 548/549 original native successes: all
-356 fit successes and 192/193 development successes. This experimental candidate
-is 5.01% faster than its matched initializer (95% interval 3.43–7.22%), at
-116.606 versus 111.039 tokens/s; matched DFlash is 196.722 and target-only 154.748.
-These are reused development results, with exact full-response parity, not fresh
-confirmation or a baseline win. One old draft regression remains explicit.
+Earlier aggressive balanced1920 training gives+13.44%reused-development speed,
+but damages more old successes. Conservative original-head/quarter-body choice
+preserves548/549native old successes, all356FIT and192/193development; one loss
+remains explicit. Checkpoints and isolated runtime/data contracts survive.
 
-The latest wrapper stopped on its storage guard after all five primary-arm
-repetitions completed: 240 primary and 48 partial Q4 diagnostic measured requests
-survive. Primary comparisons were independently audited; the diagnostic's fifth
-cell is incomplete. No completed primary comparison was discarded or rerun.
+Root now owns `local-w1a8-modern-reachability-20261103-01`: unchanged static CE
+reachability control must exactly reproduce prior nativefit3840 full state/export
+before current-prefix-union treatment starts. Same balanced1920checkpoint,
+optimizer/RNG/order/all356FIT replay/fixedCE4/horizon19200. No development or new
+confirmation labels enter training. Its identity.json records process identities
+and180s stop procedure. This is training, with no serving timing quiet window.
 
-Candidate/model/runtime selection was frozen before new-input generation. The
-fresh generator and serving adapter pass synthetic/CPU admission and cleanup
-checks, but real fresh cases have not been generated. The intended next gate is
-24 new performance and 24 independent quality cases, with five timing repetitions
-and unchanged target/DFlash/initializer/Q4 controls. The 98-ID/34-family backlog
-is inventoried, not screened; combinations and final four-target confirmation
-remain later work. Historical Qwen3 F16 results stay separate.
-
-After the completed user check-in, the goal continuation resumes. Root is sole
-GPU owner for `local-w1a8-modern-fresh-quarter-20261103-01`, running the frozen
-five-arm confirmation. Its identity.json records live supervisor/child identities
-and stop procedure. A timing quiet window is active. All 48 newly generated cases
-pass exact/normalized overlap and oracle admission, and native context geometry;
-no completed fresh result is claimed. All paid checkpoints and source survive;
-three older exports have proven compact archives/restores. A fourth older export
-was byte-verified and moved to C: with its original path preserved as a symlink.
-No push or completion declared.
-
-[Detailed progress and evidence](../experiments/w1a8-modern-native-20261103/progress.md)
-records the completed panels, limitations, failures, preservation tests and next
-actions. Continue the existing [goal](goals/nine-model-qat-overnight.md).
+Source is integrated with59passing related CPUtests and actual native evidence;
+pinned worktree is retained for checkpoint/source contracts. Paid states remain;
+older exports have verified compact archives or readable relocated aliases.
+Storage remains constrained. No push. Quick-screen predictor,98-ID/34-family
+backlog screen, combinations and final four-target DFlash confirmation remain gated.
+Historical Qwen3 F16 is separate. [Fresh result](../experiments/w1a8-modern-native-20261103/fresh-confirmation.json)
+and [detailed progress](../experiments/w1a8-modern-native-20261103/progress.md)
+retain scope, costs, failures and next actions under the existing
+[goal](goals/nine-model-qat-overnight.md).
 
 ## Selected baseline and W1A8 standing — November 2, 2026
 

@@ -4958,4 +4958,24 @@ role. Preserve explicit inventory and 12-family-cluster uncertainty. Full detail
 and source-audit limitations in progress checkpoint. Source and paid states kept;
 retention10old export relocated losslessly to C: with original path alias.
 
+## Untouched-instance transfer passes; reachability comparison live — November3
+
+Fresh run terminal0, all30groups released. Root audit covers600performance,
+120quality,60warmups,40loaded images and all5frozen arms;576speculative responses
+match target and all performance repetitions repeat. Candidate/init+5.295%,95%
+12-family-cluster interval+4.547–6.019%; candidate/DFlash53.38%. Independent quality
+13/24 allarms (code5/8,reasoning1/8,prose7/8),24positive/50negative controls pass.
+Native old-success retention remains548/549. This proves narrow new-instance
+transfer, not phase1completion or a DFlash win. Fresh cohort consumed; never reuse
+as untouched or train on its labels. [Tracked metrics](../../experiments/w1a8-modern-native-20261103/fresh-confirmation.json)
+and progress checkpoint retain pins/907.79s runner wall/scope.
+
+Root alone owns local-w1a8-modern-reachability-20261103-01; identity.json has
+boot/birth/cmdline/stop180s/localtmuxsocket. Static3840control must exactly reproduce
+existing nativefit3840 full state/export before union treatment runs. Same original
+balanced1920warmstart,oldFITonly,Adam/RNG/order/all356protection/lambda10/CE4/19200horizon.
+No fresh/dev training labels. No serving quiet window. Source b361cdd5 integrated
+with59related CPUtests; worktree still retained for source pins. No push. Later
+ordered phases remain gated; ongoing training is informative phase1 work.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->
