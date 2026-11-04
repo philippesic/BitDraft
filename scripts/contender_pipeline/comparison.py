@@ -44,8 +44,8 @@ def summarize(panel):
         for ref in (row['response'],row['reference'],row['request']):
             require(pin(ref['path'])==ref,'request/response changed')
         request=read(row['request']['path']);require(request['temperature']==0 and request['cache_prompt'] is False,'unsupported request semantics')
-        refkey=(row['case'],rep)
-        binding=(row['request'],row['reference'])
+        refkey=row['case']
+        binding=(request,signature(read(row['reference']['path'])))
         require(refkey not in refs or refs[refkey]==binding,'unmatched request/reference');refs[refkey]=binding
         response=read(row['response']['path']);reference=read(row['reference']['path'])
         require(signature(response)==signature(reference),'target parity failed')

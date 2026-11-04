@@ -74,10 +74,13 @@ class RunnerTests(unittest.TestCase):
 
     def test_timeout_kills_grandchild(self):
         pidpath=self.root/'pid'
-        self.job(code=f'import subprocess,time; p=subprocess.Popen(["sleep","60"]);open({str(pidpath)!r},"w").write(str(p.pid));time.sleep(60)')['timeout_seconds']=.3
+        self.job(code=f'import subprocess,time; p=subprocess.Popen(["sleep","60"],start_new_session=True);open({str(pidpath)!r},"w").write(str(p.pid));time.sleep(60)')['timeout_seconds']=.3
         with self.assertRaisesRegex(ValueError,'TIMEOUT'):self.run_plan()
         row=read(self.root/'out/state.json')['jobs']['one'];self.assertTrue(row['group_released'])
         self.assertLess(row['charged_seconds'],2)
+        from runner import identity_alive
+        self.assertTrue(row.get('descendants'))
+        self.assertFalse(any(identity_alive(ref) for ref in row['descendants']))
 
     def test_mutated_plan_and_evidence_rejected(self):
         self.job();self.run_plan()
@@ -161,3 +164,20 @@ class AdditionalRunnerTests(unittest.TestCase):
             if saved and group_live(saved['pgid']):
                 import os
                 os.killpg(saved['pgid'],signal.SIGKILL)
+
+class OutputFailureTests(unittest.TestCase):
+    setUp = RunnerTests.setUp
+    job = RunnerTests.job
+    run_plan = RunnerTests.run_plan
+    def test_existing_artifact_rejected(self):
+        job=self.job();path=self.root/'model';path.write_text('protected');job['artifacts']=[str(path)]
+        with self.assertRaisesRegex(ValueError,'stale output'):self.run_plan()
+        self.assertEqual(path.read_text(),'protected')
+    def test_log_io_error_releases_job(self):
+        from unittest.mock import patch
+        from log_stream import LogStream
+        self.job(code='import time;print("message",flush=True);time.sleep(60)')
+        directory=self.root/'cannot-open-as-log';directory.mkdir()
+        with patch('runner.LogStream',side_effect=lambda pipe,path:LogStream(pipe,directory)):
+            with self.assertRaises((RuntimeError,ValueError)):self.run_plan()
+        row=read(self.root/'out/state.json')['jobs']['one'];self.assertEqual(row['status'],'FAILED');self.assertTrue(row['group_released'])

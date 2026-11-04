@@ -1,21 +1,32 @@
 # Current project status
 
-## Active goal: contender infrastructure qualification — November 4, 2026
+## Active goal: contender workflow qualified — November 4, 2026
 
-The user authorized implementation and extensive workflow tests in this thread.
-Architecture/precision decisions remain joint. Work is isolated in
-`/home/philip/.codex/worktrees/contender-infra-20261104`.
+The user-authorized infrastructure implementation and extensive tests are complete
+in the current thread. [Qualification report](../experiments/contender-infra-20261104/README.md)
+and [workflow guide](../scripts/contender_pipeline/README.md) are the entry points.
 
-A shared budgeted runner, paired comparison checks, explicit recovery, bounded
-logs, F32 data shards and snapshot-based union auditing are under qualification.
-CPU negative tests pass; supervised current-candidate GPU reference/interruption/
-resume/native rehearsal is active. No final-confirmation inputs are opened.
+119CPU tests pass. Real GPU stop/resume and optimized data/audit paths produce
+exact parameters/Adam/RNG/exposure and byte-identical exports. All476native
+responses match target tokens/text/stopping, including360measured requests.
+The final copied deployment bundle also runs natively. All34native groups and
+supervised jobs are released; no GPU compute process remains.
 
-Raw state and launch receipts: `runs/contender-infra-20261104-01/`.
-Current supervisor: `contender-infra-stages12-20261104-01` on local tmux socket
-`binary-eagle-runtime`; authenticate boot/birth from launch/execution receipts
-before stopping, TERM supervisor, allow240s graceful cleanup and verify groups.
-Read actual job evidence before continuing or changing this state.
+Common plans support staged execution, cumulative budgets and explicit recovery;
+comparisons reject incomplete/mismatched evidence; array/metadata streaming and
+protected confirmation/release checks are tested. The snapshot audit rebuilt the
+same manifest/check totals in39.97s versus103.77s in one CPU comparison.
+
+No architecture/precision/feature recipe or major QAT allocation was selected.
+Unknown model/export/kernel adapters, larger selected TRAIN recipe/horizon and
+broader deployment scope remain design-specific qualification. Final evaluation
+inputs remain untouched; no general early predictor or permanent pruning rule.
+
+Raw state: `runs/contender-infra-20261104-01/`.144physical reference updates;
+105.05s update wall inside1113.09s supervised command wall, with separate
+CPU preparation/audit work. Checkpoints, shards and evidence retained. No push.
+Next step is the joint architecture/precision discussion and bounded candidate
+plans using this workflow.
 
 ## Prior checkpoint: design discussion ready — November 4, 2026
 

@@ -5743,3 +5743,25 @@ New sources live in isolated `contender-infra-20261104` worktree. Original
 trainer/source freezes stay intact. CPU orchestration/comparison/data negative
 tests pass; real GPU interrupted/resumed and native tests are active.
 Runtime state/stop receipts: `runs/contender-infra-20261104-01/`. No push.
+
+
+## Contender workflow qualification complete — 2026-11-04
+
+Direct-thread implementation and extensive tests complete. See
+`experiments/contender-infra-20261104/README.md` and
+`scripts/contender_pipeline/README.md`.119CPU tests; actual stop at5762 and resume
+to5808 byte-exact; optimized audit/shard training state/export also exact.
+476native outputs match,360timed requests,34released groups. Final local bundle
+loads and decodes correctly. Immutable plans, carried budgets, cleanup/recovery,
+comparisons, data streaming and confirmation/release protection are exercised.
+
+All task jobs terminal. No GPU compute process remains. Raw receipts and source
+snapshots: `runs/contender-infra-20261104-01/`; paid new reference checkpoints:
+`/mnt/c/Users/philip/binary-eagle-decoding-artifacts/contender-infra-20261104-01/`.
+144physical reference updates;105.05s update wall within1113.09s supervised wall;
+overlapping CPU work separate. Useful artifacts retained, duplicate payloads
+hardlinked without changing paths/bytes. No push.
+
+Architecture/precision, chosen long-run data/horizon, new model/export/kernel
+adapters and broader workload qualification remain joint design work. No new
+research treatment, permanent pruning rule or unseen evaluation consumed.

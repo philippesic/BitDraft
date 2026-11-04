@@ -119,20 +119,55 @@ def group_live(pgid):
     return False
 
 
-def stop_group(process, grace):
+def descendants(pid):
+    found = []
+    pending = [pid]
+    while pending:
+        parent = pending.pop()
+        try:
+            children = (Path('/proc') / str(parent) / 'task' / str(parent) / 'children').read_text().split()
+        except OSError:
+            continue
+        for child in children:
+            try:
+                ref = identity(int(child))
+                found.append(ref)
+                pending.append(ref['pid'])
+            except OSError:
+                pass
+    return found
+
+
+def identity_alive(ref):
+    try:
+        if identity(ref['pid']) != ref:
+            return False
+        fields = (Path('/proc') / str(ref['pid']) / 'stat').read_text().rsplit(')', 1)[1].split()
+        return fields[0] != 'Z'
+    except OSError:
+        return False
+
+
+def stop_group(process, grace, known=()):
     for sig, limit in [(signal.SIGTERM, grace), (signal.SIGKILL, 5)]:
+        for ref in known:
+            if identity_alive(ref):
+                try:
+                    os.kill(ref['pid'], sig)
+                except ProcessLookupError:
+                    pass
         try:
             os.killpg(process.pid, sig)
         except ProcessLookupError:
             pass
         deadline = time.monotonic() + limit
-        while group_live(process.pid) and time.monotonic() < deadline:
+        while (group_live(process.pid) or any(identity_alive(ref) for ref in known)) and time.monotonic() < deadline:
             process.poll()
             time.sleep(.05)
-        if not group_live(process.pid):
+        if not group_live(process.pid) and not any(identity_alive(ref) for ref in known):
             break
     process.wait(timeout=5)
-    require(not group_live(process.pid), 'job group remains live')
+    require(not group_live(process.pid) and not any(identity_alive(ref) for ref in known), 'job processes remain live')
 
 
 def execute(plan_path, output, through, allow_gpu=False):
@@ -196,10 +231,11 @@ def execute(plan_path, output, through, allow_gpu=False):
                 # Reserve full timeout plus cleanup before launching. No optimistic oversubscription.
                 reservation = job['timeout_seconds'] + plan['grace_seconds'] + 5
                 require(remaining >= reservation, 'insufficient reserved budget for ' + job['id'])
-                for check in job['checks']:
-                    require(not Path(check['path']).exists(), 'stale output exists: ' + check['path'])
+                for path in [c['path'] for c in job['checks']] + job.get('artifacts', []):
+                    require(not Path(path).exists(), 'stale output exists: ' + path)
                 row = dict(status='RUNNING', candidate=job['candidate'], charged_seconds=reservation,
                            argv=job['argv'], evidence=[], started_unix=time.time())
+                state['status'] = 'RUNNING'
                 state['jobs'][job['id']] = row
                 state['charged_seconds'] += reservation
                 state['candidate_charged_seconds'][job['candidate']] = spent + reservation
@@ -207,6 +243,7 @@ def execute(plan_path, output, through, allow_gpu=False):
                 started = time.monotonic()
                 process = None
                 relay = None
+                known = {}
                 try:
                     with contextlib.nullcontext():
                         process = subprocess.Popen(job['argv'], cwd=job['cwd'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, start_new_session=True)
@@ -215,6 +252,15 @@ def execute(plan_path, output, through, allow_gpu=False):
                         atomic(state_path, state)
                         reason = None
                         while process.poll() is None:
+                            changed = False
+                            for ref in descendants(process.pid):
+                                key = (ref['pid'], ref['start_ticks'])
+                                if key not in known:
+                                    known[key] = ref
+                                    changed = True
+                            if changed:
+                                row['descendants'] = list(known.values())
+                                atomic(state_path, state)
                             if relay.errors:
                                 reason = 'LOG_FAILURE'
                                 break
@@ -230,7 +276,7 @@ def execute(plan_path, output, through, allow_gpu=False):
                                     reason = 'PAUSED'
                                     break
                             time.sleep(.1)
-                        stop_group(process, plan['grace_seconds'])
+                        stop_group(process, plan['grace_seconds'], list(known.values()))
                         relay.finish()
                         row['returncode'] = process.returncode
                         require(reason is None, reason or '')
@@ -240,12 +286,13 @@ def execute(plan_path, output, through, allow_gpu=False):
                         row['evidence'] = check_results(job)
                         row['status'] = 'PASS'
                 except BaseException as exc:
+                    state['status'] = 'FAILED'
                     row['status'] = 'FAILED'
                     row['error'] = str(exc)
                     raise
                 finally:
                     if process is not None:
-                        stop_group(process, plan['grace_seconds'])
+                        stop_group(process, plan['grace_seconds'], list(known.values()))
                         row['group_released'] = not group_live(process.pid)
                     if relay is not None:
                         try:

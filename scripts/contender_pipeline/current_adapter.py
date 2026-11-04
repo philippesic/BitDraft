@@ -74,8 +74,8 @@ def main():
     from audit_panel import audit
     models=read(args.models)
     template=copy.deepcopy(next(a for a in models['arms'] if a['kind']=='w1a8'))
-    models['arms']=[a for a in models['arms'] if a['id'] in ('target_only','dflash_Q4KM','paid5760')]
-    require(len(models['arms'])==3,'mandatory target/DFlash/paid controls absent')
+    models['arms']=[a for a in models['arms'] if a['id'] in ('target_only','dflash_Q4KM','w1a8_initial','paid5760')]
+    require(len(models['arms'])==4,'mandatory target/DFlash/initializer/paid controls absent')
     for index,path in enumerate(args.results):
         result=read(path);require(result['status']=='TRAINED_EXPORTED_NOT_NATIVE_ADMITTED','training result not qualified')
         require(pin(result['model']['path'])==result['model'],'export changed')
