@@ -5675,3 +5675,26 @@ recipe/arithmetic. Initial process may pay WSLdriver/CUDA startup IO. Native pan
 will add mandatory initializer reference as eighth arm, plus exact per-request
 verification counters outside HTTP timing; prospective amendment saved before
 first outcomes. No new architecture/precision/grouping, longQAT or fresh inputs.
+
+
+### First compatible-feature panel audited; longer checks active
+
+Four960-update arms finish with meaningful scale changes and admitted exports.
+Control6720 vs split6240→6720 is byte-exact in contract/scales/Adam/CPU+CUDA+Python
+RNG/exposure. Direct raw audit validates560responses,480measured requests,40
+released groups, all model/loaded-image/source pins and exact native round/pos
+counters. Depth/control+1.254% (−.321–+3.448%); smoothing−.839%
+(−3.989–+2.260%); combination−.070% (−2.348–+2.518%): all unresolved.
+Paid5760 needs2785rounds versus frozenDFlash1900 for same4685tokens; generation
+ms/round8.876vs8.646. Single verbose same-pass narrow generate spans1.498vs1.777ms
+exclude process/catch-up and are not clean repeated component-speed claims.
+
+Frozen extension rule selects apparentfastestdepth and apparentslowestsmooth
+pluscontrol, each6720→7680. Supervisor local-design-readiness-stage2-20261104-01,
+boot/birth/stop receipts inrunroot. No universal ranking or permanent rejection.
+Current head/teacher coverage source audits add concrete design inputs:404 unique
+eligible denseQ4FITrows join exact targettokenprefixes, knownexcludedrow stays
+excluded; conditional-head vsfulltarget probability objectives differ materially.
+These audits do not admit KD gradients or teacher/runtime interchangeability.
+Next finish three extensions/nativepanel, bounded gradientobserver/control proof
+and synthetic full-shaped checkpoint-I/O probe, then finalreadiness/cleanup.

@@ -1,0 +1,417 @@
+{
+  "status": "CURRENT_FIXED_HEAD_CONSUMED_LABEL_COVERAGE_AUDIT",
+  "model": {
+    "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-packed-init-20261103-01/model.gguf",
+    "bytes": 40802176,
+    "sha256": "6dacd68773153e7cb84dd415beb64a21b04ba7c77e2c6386673ad3cfc26dc048"
+  },
+  "absolute_mapping_sha256": "a414fbcf424ee98ffba325b88c1f1af4dd8eff4880f5caa090746a850c1739c8",
+  "vocab_size": 248320,
+  "head_classes": 50000,
+  "window_manifest": {
+    "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-modern-fit-expansion-20261103-01/union01/manifest.json",
+    "bytes": 33075834,
+    "sha256": "86eaad87ee644e663fdc4176a4c5bff0cc52bfbeff4c1ceb72425e65ffade5ae"
+  },
+  "window_label_occurrences": {
+    "fit": {
+      "labels": 5720,
+      "supported_labels": 5487,
+      "static_parent_reachable_labels": 3579,
+      "supported_and_reachable_labels": 3436,
+      "depth0_labels": 2879,
+      "depth0_unsupported": 119,
+      "depth1_labels": 2841,
+      "depth1_unsupported": 114
+    },
+    "development": {
+      "labels": 1438,
+      "supported_labels": 1341,
+      "static_parent_reachable_labels": 902,
+      "supported_and_reachable_labels": 846,
+      "depth0_labels": 724,
+      "depth0_unsupported": 47,
+      "depth1_labels": 714,
+      "depth1_unsupported": 50
+    }
+  },
+  "summary": {
+    "consumed_dev12": {
+      "prompts": 12,
+      "tokens": 937,
+      "unsupported_tokens": 56,
+      "token_membership_fraction": 0.9402347918890075
+    },
+    "consumed_natural24": {
+      "prompts": 24,
+      "tokens": 5163,
+      "unsupported_tokens": 136,
+      "token_membership_fraction": 0.9736587255471625
+    }
+  },
+  "groups": [
+    {
+      "id": "development-code-00",
+      "tokens": 80,
+      "unsupported": 13,
+      "source": {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-generalization-capture-20261103-02/serving/development-code-00/response.json",
+        "sha256": "609877b411a9edbf206de0852fb1a9e1452d4d702e9a06c2b868e1beb42df96c",
+        "bytes": 4173
+      }
+    },
+    {
+      "id": "development-code-01",
+      "tokens": 80,
+      "unsupported": 12,
+      "source": {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-generalization-capture-20261103-02/serving/development-code-01/response.json",
+        "sha256": "a5c5f879f98a32dfc85fc45973c08e16ba66cc4011a318e772b371d18405a2a8",
+        "bytes": 4527
+      }
+    },
+    {
+      "id": "development-code-02",
+      "tokens": 80,
+      "unsupported": 2,
+      "source": {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-generalization-capture-20261103-02/serving/development-code-02/response.json",
+        "sha256": "951eec5cb20b092a77718422dbb9895d2c30a651658923bd0770c35a896487c6",
+        "bytes": 4226
+      }
+    },
+    {
+      "id": "development-code-03",
+      "tokens": 57,
+      "unsupported": 8,
+      "source": {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-generalization-capture-20261103-02/serving/development-code-03/response.json",
+        "sha256": "00c833515424ce1e168e8bbde2b1ce19a292e4af4c1a1fc2455d172587c4e7ea",
+        "bytes": 3819
+      }
+    },
+    {
+      "id": "development-reasoning-00",
+      "tokens": 80,
+      "unsupported": 0,
+      "source": {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-generalization-capture-20261103-02/serving/development-reasoning-00/response.json",
+        "sha256": "6a6062d5f190919297013a3fd869fad12794e2941fc526d4851fbaa147b09f54",
+        "bytes": 3676
+      }
+    },
+    {
+      "id": "development-reasoning-01",
+      "tokens": 80,
+      "unsupported": 1,
+      "source": {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-generalization-capture-20261103-02/serving/development-reasoning-01/response.json",
+        "sha256": "547b4e696b9e58d4fcbc880a039fd0a22597a55cba532cf6035118d54627f857",
+        "bytes": 3660
+      }
+    },
+    {
+      "id": "development-reasoning-02",
+      "tokens": 80,
+      "unsupported": 0,
+      "source": {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-generalization-capture-20261103-02/serving/development-reasoning-02/response.json",
+        "sha256": "6b74a759957fbcecc4124467cf195f000650ac35db6943820e11f2d5a4f23d5a",
+        "bytes": 3585
+      }
+    },
+    {
+      "id": "development-reasoning-03",
+      "tokens": 80,
+      "unsupported": 0,
+      "source": {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-generalization-capture-20261103-02/serving/development-reasoning-03/response.json",
+        "sha256": "037ba1ffefa37fe911f0fb8dff29df27268a2bfa421cb5b45236dd6c4b99b8f0",
+        "bytes": 3534
+      }
+    },
+    {
+      "id": "development-prose-00",
+      "tokens": 80,
+      "unsupported": 4,
+      "source": {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-generalization-capture-20261103-02/serving/development-prose-00/response.json",
+        "sha256": "2d24785ba0f3a3ec6add7073f9ef3b2a521f1254d49e8d492b721f7cff23177c",
+        "bytes": 3676
+      }
+    },
+    {
+      "id": "development-prose-01",
+      "tokens": 80,
+      "unsupported": 5,
+      "source": {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-generalization-capture-20261103-02/serving/development-prose-01/response.json",
+        "sha256": "c575b3574713dc94c61e3982666564fed2ca260d64da9beaff4ed544084fdbee",
+        "bytes": 3584
+      }
+    },
+    {
+      "id": "development-prose-02",
+      "tokens": 80,
+      "unsupported": 3,
+      "source": {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-generalization-capture-20261103-02/serving/development-prose-02/response.json",
+        "sha256": "fe4e0e16ee0c54191bb43e311baa2f62ef18bd5149ee8638d68bf8d444cfd287",
+        "bytes": 3699
+      }
+    },
+    {
+      "id": "development-prose-03",
+      "tokens": 80,
+      "unsupported": 8,
+      "source": {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-generalization-capture-20261103-02/serving/development-prose-03/response.json",
+        "sha256": "b33baf3a877a377676d9bf3c8936c641099cf0b7190058f6cab5651ad2cde422",
+        "bytes": 3505
+      }
+    }
+  ],
+  "natural_groups": [
+    {
+      "id": "natural-performance-code-00",
+      "tokens": 256,
+      "unsupported": 7,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/02-natural-performance-code-00-response.json",
+        "sha256": "2daaec51116c2247a6a0eb384a12d0dadf5cb2c9c372c9c2efbe40aa2bfe2b09",
+        "bytes": 5911
+      }
+    },
+    {
+      "id": "natural-performance-code-01",
+      "tokens": 103,
+      "unsupported": 0,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/03-natural-performance-code-01-response.json",
+        "sha256": "0d00f275d84417956b2858fe0e61c581a8eab26e878f845fff579d978237a564",
+        "bytes": 4252
+      }
+    },
+    {
+      "id": "natural-performance-code-02",
+      "tokens": 256,
+      "unsupported": 1,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/04-natural-performance-code-02-response.json",
+        "sha256": "91ed6449c36f01cd9e964aa221941622a86b9a980a2daf3365f5525341188665",
+        "bytes": 5936
+      }
+    },
+    {
+      "id": "natural-performance-code-03",
+      "tokens": 256,
+      "unsupported": 6,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/05-natural-performance-code-03-response.json",
+        "sha256": "bcf6de045b2c8a00ee35744b26b8dac79774491faac994575445f1ce942d09ee",
+        "bytes": 5785
+      }
+    },
+    {
+      "id": "natural-performance-code-04",
+      "tokens": 116,
+      "unsupported": 0,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/06-natural-performance-code-04-response.json",
+        "sha256": "d5e4777f19f50385dba4190800ec30c04799ea4e5320208c2e775afbf6d5fb61",
+        "bytes": 4559
+      }
+    },
+    {
+      "id": "natural-performance-code-05",
+      "tokens": 235,
+      "unsupported": 4,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/07-natural-performance-code-05-response.json",
+        "sha256": "9b35a96ec0d41c84115b14fc11cbd896460df06d93ce577f86e7e32613f6914d",
+        "bytes": 5637
+      }
+    },
+    {
+      "id": "natural-performance-code-06",
+      "tokens": 94,
+      "unsupported": 1,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/08-natural-performance-code-06-response.json",
+        "sha256": "4f26d89eafc4c6339b29590845f13fb620ab5e51a5fb6511c9a70aaf752dc92f",
+        "bytes": 3991
+      }
+    },
+    {
+      "id": "natural-performance-code-07",
+      "tokens": 163,
+      "unsupported": 0,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/09-natural-performance-code-07-response.json",
+        "sha256": "ade1061c0047b2263e576dbd06f6877a42fdc3e374587441f5b649eda92099fe",
+        "bytes": 4622
+      }
+    },
+    {
+      "id": "natural-performance-reasoning-00",
+      "tokens": 252,
+      "unsupported": 3,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/10-natural-performance-reasoning-00-response.json",
+        "sha256": "27b881908a60370cd9f39c842b927600112d036292305c7b1a382c8e5f479b72",
+        "bytes": 5773
+      }
+    },
+    {
+      "id": "natural-performance-reasoning-01",
+      "tokens": 256,
+      "unsupported": 8,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/11-natural-performance-reasoning-01-response.json",
+        "sha256": "617c76e2c06fc46da92d63bca35e91eefdd349b00db34ba55c040f4270e0e439",
+        "bytes": 5892
+      }
+    },
+    {
+      "id": "natural-performance-reasoning-02",
+      "tokens": 251,
+      "unsupported": 10,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/12-natural-performance-reasoning-02-response.json",
+        "sha256": "e588b926a85805aeb841e08adda3756a3f3a9909a612a0a13a33b881a2f1b7d3",
+        "bytes": 5825
+      }
+    },
+    {
+      "id": "natural-performance-reasoning-03",
+      "tokens": 256,
+      "unsupported": 2,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/13-natural-performance-reasoning-03-response.json",
+        "sha256": "75385db0ea1dc06d7c55fcb645bf26cf102e4f3de64922d3f74ad39820e3d314",
+        "bytes": 5620
+      }
+    },
+    {
+      "id": "natural-performance-reasoning-04",
+      "tokens": 256,
+      "unsupported": 3,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/14-natural-performance-reasoning-04-response.json",
+        "sha256": "a3f35c185d18de624b65adbcf2a228f49e95a98adb0ed66857ca1294d9364ec6",
+        "bytes": 5913
+      }
+    },
+    {
+      "id": "natural-performance-reasoning-05",
+      "tokens": 256,
+      "unsupported": 1,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/15-natural-performance-reasoning-05-response.json",
+        "sha256": "e0270dc7468ddce8b3ab3b40f87060636989264f5a9a0d1da33479a9dd37e5f6",
+        "bytes": 5874
+      }
+    },
+    {
+      "id": "natural-performance-reasoning-06",
+      "tokens": 250,
+      "unsupported": 10,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/16-natural-performance-reasoning-06-response.json",
+        "sha256": "cad8bf0206787ab9bf6e2019556409100e8fae9abf7f65f22f5ead39fe539ddd",
+        "bytes": 5715
+      }
+    },
+    {
+      "id": "natural-performance-reasoning-07",
+      "tokens": 256,
+      "unsupported": 6,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/17-natural-performance-reasoning-07-response.json",
+        "sha256": "fae1147b37cbff9069e2c43074820cca39ca6bb79bb61b423509689a02924ce6",
+        "bytes": 6071
+      }
+    },
+    {
+      "id": "natural-performance-prose-00",
+      "tokens": 256,
+      "unsupported": 12,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/18-natural-performance-prose-00-response.json",
+        "sha256": "4a42df247da638d7ecf87c87f2dea5a35f8dac0bfb6f0dba08ffa7f20d20fd10",
+        "bytes": 6136
+      }
+    },
+    {
+      "id": "natural-performance-prose-01",
+      "tokens": 256,
+      "unsupported": 4,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/19-natural-performance-prose-01-response.json",
+        "sha256": "fe808ed4b3d7244d0123df7334949a980ee8eb156b98a945b5d42e9290721aa5",
+        "bytes": 5948
+      }
+    },
+    {
+      "id": "natural-performance-prose-02",
+      "tokens": 256,
+      "unsupported": 22,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/20-natural-performance-prose-02-response.json",
+        "sha256": "4259be2ffb5aba5ff78b853f01d8ffcad56a5e933edc59d2d6afcef9683d9171",
+        "bytes": 5856
+      }
+    },
+    {
+      "id": "natural-performance-prose-03",
+      "tokens": 88,
+      "unsupported": 4,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/21-natural-performance-prose-03-response.json",
+        "sha256": "9f0367ecdc5f7922bac26be1c65797702cfbc22484b12ccfcb7c163c224c0541",
+        "bytes": 3713
+      }
+    },
+    {
+      "id": "natural-performance-prose-04",
+      "tokens": 220,
+      "unsupported": 10,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/22-natural-performance-prose-04-response.json",
+        "sha256": "0d776bf118a3855955eef08f6e86530f5411997d7693cb5fef61d89d910e39b6",
+        "bytes": 5703
+      }
+    },
+    {
+      "id": "natural-performance-prose-05",
+      "tokens": 63,
+      "unsupported": 6,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/23-natural-performance-prose-05-response.json",
+        "sha256": "3ed773334bdf375c3b18d5b26ca6485b096b124f10fc46c80383806c781b6b59",
+        "bytes": 3963
+      }
+    },
+    {
+      "id": "natural-performance-prose-06",
+      "tokens": 256,
+      "unsupported": 2,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/24-natural-performance-prose-06-response.json",
+        "sha256": "895a46ce78cc0541260d72d944d205bca46b166f70473ada415bad7634c18983",
+        "bytes": 5817
+      }
+    },
+    {
+      "id": "natural-performance-prose-07",
+      "tokens": 256,
+      "unsupported": 14,
+      "source": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/rep-00-target_only/25-natural-performance-prose-07-response.json",
+        "sha256": "247b80521e0dbad1531178057a73895f50c06d8bb2f6efa415b0ca239692542a",
+        "bytes": 5706
+      }
+    }
+  ],
+  "scope": "Current head only; no alternative vocabulary, architecture or precision tested. Window occurrences overlap and are not unique tokens. Membership does not predict acceptance or throughput. All evaluation responses were already consumed; this opens no fresh prompts."
+}

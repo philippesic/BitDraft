@@ -67,6 +67,28 @@ For comparison of implementation burden only, rank8 F16 factors on every one of 
 
 No external speedup is used as a local comparator or predicted gain. The local frozen DFlash baseline remains the relevant reference. Four papers close these niche questions; this is not a literature survey.
 
+## Additional direct checks during readiness work
+
+The current fixed head covers97.37% of tokens in the consumed natural24 outputs
+and94.02% in the separate consumed DEV12 outputs. Those cohorts remain separate;
+these are token membership fractions, not attainable acceptance or speed bounds.
+The existing FIT window view has5,720 label occurrences,5,487 in the head and
+3,436 both in the head and admitted by the static original-parent reachability
+mask. Windows overlap, so occurrences are not independent examples. See
+[head-coverage.json](head-coverage.json).
+
+A direct retained-teacher audit joins404 unique eligible dense Q4 target rows
+from24 original FIT groups to exact actual-window token prefixes. All eligible
+labels match; two window occurrences of one already-excluded conditional row
+remain excluded. No labels were repaired or DEV data used for training. The
+teacher's mean probability mass inside the current head is0.95596 atT1 and0.81596
+atT2 on those rows. The distinction between a conditional-head objective and a
+full-target probability objective therefore matters. This is source/normalization
+preparation only: execution-history/feature differences and training gradients
+still require qualification. Added24 FIT groups lack these retained dense teacher
+rows. See [teacher-coverage.json](teacher-coverage.json); no KD feature win or
+current-runtime teacher interchangeability is claimed.
+
 ## Reviewable experiment matrix after the joint decision
 
 | Stage | Freeze / scope | Required evidence before advancing |

@@ -2768,5 +2768,10 @@
   },
   "no_commit": true,
   "no_push": true,
-  "historical_provenance_limits": "Latest inventory resolves86 direct feature links:8retained,78unresolved. Six historical exposure-supplement segments lack direct compact source provenance; retain their canonical identity and explicitly limited scope. Compact inventory custody does not recreate purged raw data."
+  "historical_provenance_limits": "Latest inventory resolves86 direct feature links:8retained,78unresolved. Six historical exposure-supplement segments lack direct compact source provenance; retain their canonical identity and explicitly limited scope. Compact inventory custody does not recreate purged raw data.",
+  "additional_direct_checks": {
+    "head_coverage": "experiments/design-readiness-20261104/head-coverage.json",
+    "teacher_coverage": "experiments/design-readiness-20261104/teacher-coverage.json",
+    "interpretation": "Current head membership and conditional teacher mass are concrete design inputs. No alternative head, precision or architecture tested; no KD training readiness or universal acceptance bound inferred."
+  }
 }

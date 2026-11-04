@@ -1,0 +1,267 @@
+{
+  "status": "FIRST_STAGE_AUDITED_LONGER_CHECKS_ACTIVE",
+  "at_utc": "2026-11-04T03:56:29.509727+00:00",
+  "configuration": "Fixed current row W1A8/fixed signs/Qwen3.5 4B Q4_K_M/RTX5080 mode32",
+  "training": [
+    {
+      "recipe": "control",
+      "cursor": 6720,
+      "new_updates": 960,
+      "trainer_seconds": 118.27233292622259,
+      "process_seconds": 353.38488174600934,
+      "changed_scale_values": 76863,
+      "dev_windows": 724,
+      "dev_prefix_tokens": 533,
+      "peak_cuda_allocated": 3118292480,
+      "result": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/design-readiness-20261104-01/control6720/result.json"
+    },
+    {
+      "recipe": "depth",
+      "cursor": 6720,
+      "new_updates": 960,
+      "trainer_seconds": 118.9792283509887,
+      "process_seconds": 351.57341742599965,
+      "changed_scale_values": 76865,
+      "dev_windows": 724,
+      "dev_prefix_tokens": 530,
+      "peak_cuda_allocated": 3118292480,
+      "result": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/design-readiness-20261104-01/depth6720/result.json"
+    },
+    {
+      "recipe": "smooth",
+      "cursor": 6720,
+      "new_updates": 960,
+      "trainer_seconds": 121.65286792113329,
+      "process_seconds": 352.6554252190108,
+      "changed_scale_values": 76863,
+      "dev_windows": 724,
+      "dev_prefix_tokens": 529,
+      "peak_cuda_allocated": 3118292480,
+      "result": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/design-readiness-20261104-01/smooth6720/result.json"
+    },
+    {
+      "recipe": "combined",
+      "cursor": 6720,
+      "new_updates": 960,
+      "trainer_seconds": 119.08280859002843,
+      "process_seconds": 351.7425884480035,
+      "changed_scale_values": 76862,
+      "dev_windows": 724,
+      "dev_prefix_tokens": 525,
+      "peak_cuda_allocated": 3118292480,
+      "result": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/design-readiness-20261104-01/combined6720/result.json"
+    }
+  ],
+  "native_summary": [
+    {
+      "arm": "target_only",
+      "tokens": 4685,
+      "wall_seconds": 31.162127053074073,
+      "TPS": 150.34275394682456,
+      "server_generation_seconds": 23.878458999999996,
+      "verification_rounds": 0,
+      "draft_accepted": 0,
+      "draft_proposed": 0,
+      "acceptance": null,
+      "emitted_tokens_per_spec_round": null,
+      "accepted_tokens_per_spec_round": null,
+      "server_generation_ms_per_spec_round": null,
+      "per_repetition_TPS": [
+        151.89986202368314,
+        148.1806665270651,
+        151.0742193139431,
+        147.26872419727755,
+        153.4692054570495
+      ]
+    },
+    {
+      "arm": "dflash_Q4KM",
+      "tokens": 4685,
+      "wall_seconds": 24.059685242085834,
+      "TPS": 194.72407693035296,
+      "server_generation_seconds": 16.426795000000006,
+      "verification_rounds": 1900,
+      "draft_accepted": 2710,
+      "draft_proposed": 3780,
+      "acceptance": 0.716931216931217,
+      "emitted_tokens_per_spec_round": 2.4657894736842105,
+      "accepted_tokens_per_spec_round": 1.4263157894736842,
+      "server_generation_ms_per_spec_round": 8.645681578947372,
+      "per_repetition_TPS": [
+        190.42573827017748,
+        192.2069196519775,
+        192.49860601195303,
+        198.3317556990431,
+        200.54782268122574
+      ]
+    },
+    {
+      "arm": "w1a8_initial",
+      "tokens": 4685,
+      "wall_seconds": 43.10005832306342,
+      "TPS": 108.70054896173988,
+      "server_generation_seconds": 31.533201999999992,
+      "verification_rounds": 3620,
+      "draft_accepted": 965,
+      "draft_proposed": 7195,
+      "acceptance": 0.1341209173036831,
+      "emitted_tokens_per_spec_round": 1.2941988950276244,
+      "accepted_tokens_per_spec_round": 0.26657458563535913,
+      "server_generation_ms_per_spec_round": 8.710829281767953,
+      "per_repetition_TPS": [
+        108.7238540596388,
+        109.96294317788177,
+        108.22665034483603,
+        107.11861843199614,
+        109.51669551427223
+      ]
+    },
+    {
+      "arm": "paid5760",
+      "tokens": 4685,
+      "wall_seconds": 35.89972155500436,
+      "TPS": 130.50240495101886,
+      "server_generation_seconds": 24.719901000000004,
+      "verification_rounds": 2785,
+      "draft_accepted": 1800,
+      "draft_proposed": 5540,
+      "acceptance": 0.3249097472924188,
+      "emitted_tokens_per_spec_round": 1.6822262118491922,
+      "accepted_tokens_per_spec_round": 0.6463195691202872,
+      "server_generation_ms_per_spec_round": 8.876086535008978,
+      "per_repetition_TPS": [
+        132.3544867281186,
+        131.76630991316676,
+        130.9824254230651,
+        129.52743989318077,
+        127.97828416600164
+      ]
+    },
+    {
+      "arm": "control6720",
+      "tokens": 4685,
+      "wall_seconds": 36.054387462019804,
+      "TPS": 129.9425764738132,
+      "server_generation_seconds": 24.331220000000005,
+      "verification_rounds": 2740,
+      "draft_accepted": 1845,
+      "draft_proposed": 5445,
+      "acceptance": 0.33884297520661155,
+      "emitted_tokens_per_spec_round": 1.7098540145985401,
+      "accepted_tokens_per_spec_round": 0.6733576642335767,
+      "server_generation_ms_per_spec_round": 8.880007299270074,
+      "per_repetition_TPS": [
+        131.998005148687,
+        127.45196800678232,
+        131.28170456935496,
+        129.91911044964516,
+        129.161162372319
+      ]
+    },
+    {
+      "arm": "depth6720",
+      "tokens": 4685,
+      "wall_seconds": 35.60795413298183,
+      "TPS": 131.5717264323401,
+      "server_generation_seconds": 24.402382999999997,
+      "verification_rounds": 2745,
+      "draft_accepted": 1840,
+      "draft_proposed": 5460,
+      "acceptance": 0.336996336996337,
+      "emitted_tokens_per_spec_round": 1.7067395264116576,
+      "accepted_tokens_per_spec_round": 0.6703096539162113,
+      "server_generation_ms_per_spec_round": 8.889757012750454,
+      "per_repetition_TPS": [
+        131.78202205416775,
+        130.41400001130842,
+        132.22328247951444,
+        132.8215758559179,
+        130.64984154731258
+      ]
+    },
+    {
+      "arm": "smooth6720",
+      "tokens": 4685,
+      "wall_seconds": 36.35937492197263,
+      "TPS": 128.85260019057066,
+      "server_generation_seconds": 24.394428000000005,
+      "verification_rounds": 2750,
+      "draft_accepted": 1835,
+      "draft_proposed": 5470,
+      "acceptance": 0.33546617915904936,
+      "emitted_tokens_per_spec_round": 1.7036363636363636,
+      "accepted_tokens_per_spec_round": 0.6672727272727272,
+      "server_generation_ms_per_spec_round": 8.870701090909092,
+      "per_repetition_TPS": [
+        127.66824010919217,
+        130.10634562367792,
+        129.714695028195,
+        127.07349648638751,
+        129.76027964376706
+      ]
+    },
+    {
+      "arm": "combined6720",
+      "tokens": 4685,
+      "wall_seconds": 36.07949652396201,
+      "TPS": 129.85214460763004,
+      "server_generation_seconds": 24.480654999999995,
+      "verification_rounds": 2765,
+      "draft_accepted": 1820,
+      "draft_proposed": 5500,
+      "acceptance": 0.33090909090909093,
+      "emitted_tokens_per_spec_round": 1.694394213381555,
+      "accepted_tokens_per_spec_round": 0.6582278481012658,
+      "server_generation_ms_per_spec_round": 8.853763110307412,
+      "per_repetition_TPS": [
+        128.61798140217127,
+        131.12239512295432,
+        132.06762947808923,
+        130.6627045467147,
+        126.92391106942925
+      ]
+    }
+  ],
+  "contrasts": [
+    {
+      "candidate": "depth6720",
+      "control": "control6720",
+      "ratio": 1.0125374607979643,
+      "bootstrap95": [
+        0.996794139672961,
+        1.034479680019322
+      ],
+      "ranking": "unresolved"
+    },
+    {
+      "candidate": "smooth6720",
+      "control": "control6720",
+      "ratio": 0.9916118618483587,
+      "bootstrap95": [
+        0.960114957967467,
+        1.0226005348835132
+      ],
+      "ranking": "unresolved"
+    },
+    {
+      "candidate": "combined6720",
+      "control": "control6720",
+      "ratio": 0.9993040628511674,
+      "bootstrap95": [
+        0.9765168159655297,
+        1.0251760663823426
+      ],
+      "ranking": "unresolved"
+    }
+  ],
+  "all_responses": 560,
+  "measured_requests": 480,
+  "native_round_metrics_reconciled": true,
+  "source_gates": {
+    "noop48": "runs/design-readiness-20261104-01/noop-byte-exact.json",
+    "split480": "runs/design-readiness-20261104-01/split-resume-byte-exact.json",
+    "recapture": "runs/design-readiness-20261104-01/capture-probe01/result.json"
+  },
+  "raw_audit": "runs/design-readiness-20261104-01/stage1-analysis.json",
+  "scope": "Consumed DEV, one deterministic training trajectory per treatment, unadjusted exploratory intervals. No feature win, architecture/precision choice, final candidate or universal early predictor established."
+}

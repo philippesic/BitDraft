@@ -19,13 +19,23 @@ candidate logits exactly match by token ID. The first checker incorrectly compar
 unordered diagnostic token lists by position; failure and corrected evidence are
 preserved. No floating-point tolerance was weakened.
 
-Four fixed-candidate compatible objective arms are running sequentially from
-paid5760,960updates each: control/depthweight/smoothing/combination. A split-resume
-check and five-repeat consumed-DEV native panel with exact verification-round
-counters follow. Current supervisor `local-design-readiness-stage1-20261104-02`,
-run/identity/stop receipts under `runs/design-readiness-20261104-01/`. No feature
-win, final design readiness, long training allocation or fresh confirmation is
-claimed yet. Preserve healthy supervised training and the current held-out pools.
+Four fixed-candidate objective arms completed960updates each. Exact480-update
+split-resume, including contract/parameters/Adam/RNG/exposure bytes, passes. The
+first8-arm×5-repeat native panel passes560rawresponse/model/runtime/counter/release
+checks. All three feature-vs-control throughput intervals span no change. Current
+paid candidate uses2785 verification rounds versus DFlash1900 for identical4685
+output tokens on this consumedDEV panel. Narrow drafting-method diagnostics are
+cheaper but omit catch-up; overall generation time/round is slightly higher.
+Longer control/depth/smoothing checks are running under
+`local-design-readiness-stage2-20261104-01`; exact identities/stop receipts under
+`runs/design-readiness-20261104-01/`. No general predictor or feature win claimed.
+
+Current-head membership and existing denseQ4teacher probability mass are audited
+without changing the head or teacher.404eligible FIT teacher rows join; the known
+excluded row remains excluded. See head-coverage.json,teacher-coverage.json and
+objective-stage1.json under experiments/design-readiness-20261104. Architecture/
+precision changes and major longQAT remain user decisions; final readiness audit
+and bounded gradient/checkpoint-I/O follow-ups remain pending.
 
 
 ## Active: design discussion readiness — November 4, 2026
