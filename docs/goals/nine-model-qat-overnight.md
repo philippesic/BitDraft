@@ -5732,3 +5732,14 @@ noGPUcomputeapps. Allcheckpoints andusefulraw/source retained. FiveGGUFaliases
 hardlinkedbyte-identically saves204,010,880logicalbytes; Cfree observed+203,431,936B.
 Shared/unrelatedwork untouched, synthetic2.8GBscratch andownedbytecoderemoved.
 Rretained~68MB/Cunique~394MB; exactinventory/stop/recovery/pins inrunroot. No push.
+
+
+## Contender infrastructure qualification in progress — 2026-11-04
+
+User explicitly authorized building/testing infrastructure through finalist and
+product evaluation, with current architecture held fixed. Work proceeds directly
+in the current thread. See `experiments/contender-infra-20261104/README.md`.
+New sources live in isolated `contender-infra-20261104` worktree. Original
+trainer/source freezes stay intact. CPU orchestration/comparison/data negative
+tests pass; real GPU interrupted/resumed and native tests are active.
+Runtime state/stop receipts: `runs/contender-infra-20261104-01/`. No push.

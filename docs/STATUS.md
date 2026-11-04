@@ -1,6 +1,23 @@
 # Current project status
 
-## Active goal: design discussion ready — November 4, 2026
+## Active goal: contender infrastructure qualification — November 4, 2026
+
+The user authorized implementation and extensive workflow tests in this thread.
+Architecture/precision decisions remain joint. Work is isolated in
+`/home/philip/.codex/worktrees/contender-infra-20261104`.
+
+A shared budgeted runner, paired comparison checks, explicit recovery, bounded
+logs, F32 data shards and snapshot-based union auditing are under qualification.
+CPU negative tests pass; supervised current-candidate GPU reference/interruption/
+resume/native rehearsal is active. No final-confirmation inputs are opened.
+
+Raw state and launch receipts: `runs/contender-infra-20261104-01/`.
+Current supervisor: `contender-infra-stages12-20261104-01` on local tmux socket
+`binary-eagle-runtime`; authenticate boot/birth from launch/execution receipts
+before stopping, TERM supervisor, allow240s graceful cleanup and verify groups.
+Read actual job evidence before continuing or changing this state.
+
+## Prior checkpoint: design discussion ready — November 4, 2026
 
 The authorized backlog/design-readiness work is complete directly in this thread.
 No architecture/precision or new feature recipe was selected, no major long-QAT
