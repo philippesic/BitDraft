@@ -1,5 +1,20 @@
 # Current project status
 
+## DSpark versus DFlash Q4 catch-up diagnostic — completed November4
+
+Matched modern Qwen3.5 4B Q4_K_M, both draftsQ4_K_M/depth2, same runtime,
+five alternating plain/traced repetitions. DSpark state update0.268ms/round
+versus DFlash0.355ms:24.58% cheaper, paired95%interval22.36–26.90% cheaper.
+No DSpark catch-up penalty appeared. DSpark emits fewer tokens/round2.064 vs
+2.466 and remains slower end-to-end. All420responses exact; instrumentation
+preserves draft/round counts. DSpark tracing adds1.73%request wall, so component
+spans remain diagnostics. No training.257.28ssupervised job wall; all processes
+stopped, GPU empty. Historical DSpark W1A8 and modern EAGLE W1A8 are distinct.
+Report: experiments/dspark-dflash-catchup-20261104/README.md. Raw run:
+runs/dspark-dflash-catchup-20261104-01. Pinned source worktree retained.
+Next: joint architecture/precision discussion; no ongoing GPU jobs.
+
+
 ## Completed: preliminary binary candidate screen — November 4, 2026
 
 The queued message authorized light architecture/precision exploration. The
