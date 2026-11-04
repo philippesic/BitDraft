@@ -1069,3 +1069,26 @@ filesystem free space. No user mistake is inferred.
   transfers from evidence that a short experiment reliably predicts longer-run
   serving gains. This clarification does not resolve the older ambiguity about
   preservation of individual draft successes.
+
+### 2026-11-03: Transfer success does not establish a repaired screening method
+
+- User explained the intended sequence: reestablish modern baselines, reconsider
+  quantization candidates, and use better training-to-evaluation transfer to
+  screen the backlog cheaply before larger QAT allocations.
+- Root's earlier phrasing that practice "now helps" and the original problem
+  was addressed overstated the diagnosis: fresh-prompt transfer was demonstrated
+  for one candidate, but the cause of improvement and a reliable early-ranking
+  predictor remain unestablished. The bounded old/expanded comparison was
+  inconclusive. No user error is established.
+- Distinguish candidate transfer, causal repair of poor transfer, and screening
+  reliability. Discuss the user's broader candidate-selection objective without
+  silently treating W1A8 or its existing recipe as already optimal.
+
+
+### 2026-11-04: Use the current thread for design-readiness work
+
+- Existing project rules required delegation and model-specific roles, so root
+  launched a delegated readiness task. User then explicitly requested normal
+  thread execution and removal of ownership/delegation references. No user error.
+- Root cancelled the task and aligned AGENTS and linked operations instructions.
+  Continue the authorized research directly; do not create replacement delegates.

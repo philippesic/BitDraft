@@ -5648,3 +5648,11 @@ against original strict trainer; controller local-design-readiness-noop-20261104
 currently running under remote_job in local tmux binary-eagle-runtime. Exact
 boot/birth/source/stop receipts under run root. Four independent CPU objective
 mask/gradient/reference checks pass. All preexisting dirty/shared files preserved.
+
+
+### Single-thread execution requested
+
+User requests removal of old AGENTS ownership/delegation requirements and normal
+execution in the current thread. Delegated readiness task cancellation requested;
+no replacement delegates. AGENTS and linked operations instructions simplified.
+The authorized backlog/design-readiness objective continues directly here.

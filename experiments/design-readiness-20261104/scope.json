@@ -39,5 +39,6 @@
   },
   "important_current_detail": "Latest modern success is per-output-row scale-only adaptation over nine tensors with fixed binary signs, not arbitrary within-row group scales or full-sign QAT validation.",
   "execution_checkpoint": "runs/design-readiness-20261104-01/freeze.json",
-  "updated_at": "2026-11-04T02:41:49.690409+00:00"
+  "updated_at": "2026-11-04T02:41:49.690409+00:00",
+  "execution": "Direct execution in current thread; delegated run cancelled at user request. No further delegation unless explicitly requested."
 }

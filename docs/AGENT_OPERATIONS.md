@@ -9,55 +9,24 @@ Existing pinned worktrees are historical or isolated source snapshots, not
 separate device installations. Keep local artifacts and the Python environment
 in place.
 
-## Starting and coordinating a goal
+## Continuing project work
 
-The user requests one goal at a time with a rough objective; `$start-goal-team` is
-an optional entry point, not a requirement for delegation. The GPT-6.1 Sol high
-orchestrator translates it into a native Codex Goal and a concise
-`docs/goals/<slug>.md` checkpoint, linked from `docs/STATUS.md`. The Goal sustains
-its task; the file sustains the project when tasks or agents change. A native Goal
-is scoped to its Codex chat; an explicitly authorized successor resumes the same
-objective from the written checkpoint.
+Work directly in the current thread. Delegate or create another chat only when
+explicitly requested by the user. No model-specific roles, task ownership
+acknowledgments, or worker rotation are required.
 
-The orchestrator is the user's interface: brief technical updates with enough
-background to follow decisions, progress, and results. The user owns major
-research forks. Record a pending decision with options and current evidence in
-`docs/DECISIONS.md`, then continue independent work instead of waiting idle.
+Keep one active goal with a concise checkpoint under `docs/goals/`, linked from
+`docs/STATUS.md`. The user makes major research decisions. Record pending options
+and evidence in `docs/DECISIONS.md`, and continue independent authorized work.
 
-Use native subagents for independent features, investigations, and checks. Create
-or message a separate user-owned Codex chat only with explicit human authorization
-required by the tool. Start only as many workers as can make independent progress.
-Assign files and one GPU owner explicitly. GPT-6.1 Sol high owns coordination and
-features; Luna high handles tests, logs, and long experiment supervision; Astra
-medium is an advisor on hard questions. Feature owners report independent checking
-needs to the parent, which schedules workers and remains responsible for
-integration and acceptance.
+## Checkpoints and context continuity
 
-## Checkpoints and context rotation
-
-At each milestone and before a handoff, update the active goal file with what
-actually happened: commit IDs, checks, results, decisions, active task IDs,
-worktrees, local tmux sessions/run directories, and the next action. The status
-file points to that checkpoint. Keep long logs elsewhere.
-
-Project config asks Codex to compact at 630,000 tokens, 60% of the locally
-configured 1,050,000-token context window. Revisit that absolute number if the
-model or context window changes. The `SessionStart(source=compact)` hook counts
-compactions per session in the shared Git common directory. After the first it
-prompts a status refresh; after the second it asks for a checkpoint and worker
-rotation at the next safe boundary. It runs **after** compaction because
-`PreCompact` cannot launch a replacement agent. Neither hook can transfer subagent
-ownership or a running command. The orchestrator must finish or checkpoint active
-work and rotate bounded workers. A successor user-owned chat requires explicit
-human authorization; when unavailable, continue the objective in the current chat
-with the durable checkpoint. For an authorized successor, verify all jobs and
-acknowledge ownership before retiring the predecessor. A GPU process supervised
-inside tmux may continue across the agent handoff if its ownership and stop
-procedure are recorded.
-
-If the hook is unavailable or Codex does not honor its trust state, rotate at a
-milestone instead; the written checkpoint is the reliable mechanism. Do not
-trust a compacted chat summary as the sole record of an experiment.
+At milestones, update the active goal file with actual changes, checks, results,
+source/checkpoint pins, active run paths, local tmux sessions, process birth/boot
+identities, stop procedures, and the next action. Keep detailed logs in run
+artifacts. Refresh durable state after compaction and continue in this thread.
+Preserve healthy training through unrelated edits or context rotation. Verify
+actual process and run evidence before stopping or resuming an experiment.
 
 ## Git and worktrees
 
@@ -122,7 +91,7 @@ GPU release. If graceful stop fails, terminate the authenticated owned group
 and verify again. A flag alone does not stop a job or prove release.
 
 After an explicit resume, use `python3 scripts/agent_env.py resume rtx5080`
-and perform fresh local ownership/resource checks before new work. Back up
+and perform fresh local process/resource checks before new work. Back up
 shared control files and verify they have not changed before updating them.
 Leave other devices' pause state unchanged. No new user confirmation is needed
 for work already authorized within the active investigation.

@@ -2,7 +2,7 @@
 
 This is a bounded research project. Use `docs/PROJECT_OVERVIEW.md` for research
 direction, `docs/EVALUATION.md` for measurements, and `docs/AGENT_OPERATIONS.md`
-for team, handoff, Git, and GPU procedures. Read the document relevant to the
+for Git, checkpoint, and GPU procedures. Read the document relevant to the
 task; do not load every document for a small edit.
 
 - For modern Qwen3.5 4B/9B × Q4_K_M/NVFP4 work, DFlash Q4_K_M is the
@@ -23,10 +23,10 @@ task; do not load every document for a small edit.
 - The user owns major research decisions. Continue independent work when a
   decision is pending; record options and evidence in `docs/DECISIONS.md`.
 - Keep one active goal at a time. Its durable state lives in `docs/STATUS.md` and
-  its own file under `docs/goals/`. Checkpoint before handing work to a new agent.
+  its own file under `docs/goals/`. Keep checkpoints current as work progresses.
   Start a new goal only when the user requests one. A thread's memory or Goal is
   not the project record. Work autonomously within the active goal.
-- The orchestrator speaks to the user briefly and technically, explaining terms
+- Speak to the user briefly and technically, explaining terms
   that require project-specific background. Give periodic milestone updates and
   answer check-ins directly. Save detailed state in the goal file.
 - Whenever you notice contention between the user and agents (disagreements,
@@ -37,13 +37,8 @@ task; do not load every document for a small edit.
   disagreements or uncertainty; update entries when corrected. Consult relevant
   lessons when needed, without treating them as overriding the user's current
   instructions.
-- Delegate independent, bounded work. GPT-6.1 Sol high owns coordination and
-  features; Luna high handles bounded tests, logs, and experiment supervision;
-  Astra medium gives focused advice on hard problems. Avoid parallel edits to the
-  same files or concurrent use of one GPU without explicit coordination.
-- Use native subagents for independent subtasks. Create or message a separate
-  user-owned Codex chat only when the human explicitly authorizes that action.
-  Finish or checkpoint a worker's output before retiring its worktree.
+- Work directly in the current thread. Delegate or create another chat only when
+  the user explicitly requests it.
 - Use temporary worktrees for isolated edits. Integrate reviewed, tested work into
   the integration branch; push when covered by user authorization, then remove the
   merged worktree and branch after checking unpublished work. Never drop unmerged
@@ -60,26 +55,20 @@ task; do not load every document for a small edit.
   and hashes in experiment reports. CPU/Metal checks do not validate SM75
   performance; identify actual hardware and precision in every result.
 
-## Acceptance, continuity, and experiment ownership
+## Acceptance and continuity
 
 - Continue the existing active goal and its latest checkpoint; do not restart the
   nine-model work, shorten an authorized training allocation, or infer completion
   from a prepared endpoint/metadata packet. Historical README scaffold claims
   and host defaults are not live state. Reconcile STATUS with actual job evidence.
-- Automatically delegate useful independent CPU/source work when permitted,
-  normally up to four active workers. Parent schedules topology; workers report
-  opportunities without recursively expanding the team. Only the verified
-  experiment operator controls the local GPU lane. Tests/builds must respect
-  any quiet window.
+- Avoid competing GPU jobs. Tests/builds must respect any quiet window.
 - Preserve healthy training and passive endpoint watchers through unrelated
-  configuration edits or context rotation. Handoffs require exact host/run,
-  process birth/boot identity, source/checkpoint pins, owner acknowledgment, and
-  stop procedure. A queued message or written checkpoint does not transfer control.
+  configuration edits or context rotation. Record exact run paths, process
+  birth/boot identity, source/checkpoint pins, and stop procedures so work can
+  continue safely from its checkpoint.
 - Require actual drafter/export/admission/native evaluation evidence. Acceptance
   rate or an isolated kernel speedup alone does not prove total-throughput benefit
   over the selected matched baseline. Keep held-out inputs, target/verifier semantics, precision,
   hardware, data ancestry and matched baseline immutable within a comparison.
-- Fresh worker contexts receive a bounded assignment and evidence links. Refresh
-  durable state after compaction; rotate workers at safe boundaries. A successor
-  user-owned chat still requires explicit human authorization. Continue useful
-  authorized work in the current chat when automatic replacement is unavailable.
+- Refresh durable state after compaction and continue useful authorized work in
+  the current thread.
