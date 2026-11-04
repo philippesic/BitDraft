@@ -5796,3 +5796,25 @@ Old48-update arm passed; broader48/split/resume/native proof pending. Profiler
 smoke first attempt rejected before GPU work by5-repeat admission; corrected
 `profile-smoke-plan3.json` awaits free lane. Full plan `profiling-plan2.json`.
 Detailed continuation and pinned-source constraints: campaign `checkpoint.json`.
+
+## Data and decoding-cost follow-up complete — November 4, 2026
+
+Direct single-thread campaign completed within the authorized twelve-hour window.
+192 new TRAIN groups/11,391 admitted windows; exact old-reference and broader
+split/resume proofs; two1,920-update trajectories; all early/final/consumed-natural
+comparisons remain unresolved. Natural24 broader versus control−0.32%,95% interval
+−1.61–+0.80%. No new generalization predictor or permanent pruning.
+
+Complete draft host cost reverses the narrow-generation advantage: current2.340ms
+versus DFlash2.120ms/round,10.36% more (7.86–12.61% interval), while current needs
+more rounds. Five traced/untraced repetitions preserve outputs/decisions; two
+bounded Nsight traces identify head GPU work with explicit phase uncertainty.
+All2,498 serving/qualification/diagnostic responses exact; five CPU tests pass.
+
+3,888 physical updates,639.33s update wall;7,334.20s nonoverlapping supervised job
+wall including failed attempts.451 owned identities released, no GPU compute app.
+Useful data/checkpoints/traces and pinned source worktree retained. No push.
+Report: `experiments/data-cost-transfer-20261104/README.md`; continuation and
+completion: `runs/data-cost-transfer-20261104-01/{checkpoint,completion}.json`.
+Architecture/precision selection remains the user's joint decision; changed models
+still need their own state/export/native adapter qualification.

@@ -1,0 +1,335 @@
+{
+  "costs": {
+    "dflash_Q4KM": {
+      "root_prefill_ms": {
+        "target_process": 876.630571,
+        "draft_catchup": 881.922519,
+        "target_sync": 291.3922079999999
+      },
+      "root_generation_ms": {
+        "generation_begin": 0.095771,
+        "target_sample": 19.221103999999997,
+        "draft_generate": 3355.6188119999997,
+        "target_process": 1494.912064,
+        "target_sync": 9589.116401999998,
+        "draft_catchup": 671.9218479999998,
+        "verifier_sample": 651.1172490000001,
+        "draft_accept": 0.5686680000000001
+      },
+      "full_request_ms": 23115.981381983147,
+      "unattributed_full_request_ms": 5283.464165983147,
+      "server_generation_ms": 16394.466,
+      "tokens": 4685,
+      "rounds": 1900,
+      "generation_draft_ms": 4028.1093279999996,
+      "generation_target_and_sampling_ms": 11754.366818999999,
+      "root_ms_per_round": {
+        "generation_begin": 5.040578947368421e-05,
+        "target_sample": 0.010116370526315787,
+        "draft_generate": 1.7661151642105262,
+        "target_process": 0.7867958231578948,
+        "target_sync": 5.046903369473683,
+        "draft_catchup": 0.35364307789473676,
+        "verifier_sample": 0.3426932889473685,
+        "draft_accept": 0.0002992989473684211
+      },
+      "full_draft_ms_per_round": 2.1200575410526312,
+      "tokens_per_round": 2.4657894736842105,
+      "overhead_percent": -0.5260330864612084,
+      "overhead_bootstrap95_percent": [
+        -2.5915857627960226,
+        1.474445556425552
+      ],
+      "scope": "Root host spans are disjoint. Nested spans omitted from totals. Async GPU work may be charged at a later synchronization; these are not isolated GPU critical paths."
+    },
+    "paid5760": {
+      "root_prefill_ms": {
+        "target_process": 851.0006730000001,
+        "draft_catchup": 4046.1792770000006,
+        "target_sync": 295.56476599999996
+      },
+      "root_generation_ms": {
+        "generation_begin": 0.074801,
+        "target_sample": 19.019310999999995,
+        "draft_generate": 4271.081679999999,
+        "target_process": 2559.050263000001,
+        "target_sync": 14152.944963999998,
+        "draft_catchup": 2243.3722380000004,
+        "verifier_sample": 631.7601359999999,
+        "draft_accept": 1.5020640000000003
+      },
+      "full_request_ms": 35014.64394191862,
+      "unattributed_full_request_ms": 5943.093768918621,
+      "server_generation_ms": 24771.860999999997,
+      "tokens": 4685,
+      "rounds": 2785,
+      "generation_draft_ms": 6515.9559819999995,
+      "generation_target_and_sampling_ms": 17362.774674,
+      "root_ms_per_round": {
+        "generation_begin": 2.6858527827648118e-05,
+        "target_sample": 0.006829196050269298,
+        "draft_generate": 1.5336020394973067,
+        "target_process": 0.9188690351885103,
+        "target_sync": 5.08184738384201,
+        "draft_catchup": 0.805519654578097,
+        "verifier_sample": 0.22684385493716333,
+        "draft_accept": 0.0005393407540394974
+      },
+      "full_draft_ms_per_round": 2.3396610348294433,
+      "tokens_per_round": 1.6822262118491922,
+      "overhead_percent": -0.588404414320931,
+      "overhead_bootstrap95_percent": [
+        -2.35739871649836,
+        0.9513234229935552
+      ],
+      "scope": "Root host spans are disjoint. Nested spans omitted from totals. Async GPU work may be charged at a later synchronization; these are not isolated GPU critical paths."
+    },
+    "target_only": {
+      "root_prefill_ms": {
+        "target_process": 838.5070260000002,
+        "target_sync": 286.59020599999997
+      },
+      "root_generation_ms": {
+        "target_sample": 679.6643609999999,
+        "target_process": 2349.848166999999,
+        "target_sync": 20426.080404
+      },
+      "full_request_ms": 29552.308004000224,
+      "unattributed_full_request_ms": 4971.6178400002245,
+      "server_generation_ms": 23880.118000000002,
+      "tokens": 4685,
+      "rounds": 0,
+      "generation_draft_ms": 0,
+      "generation_target_and_sampling_ms": 23455.592932,
+      "root_ms_per_round": null,
+      "full_draft_ms_per_round": null,
+      "tokens_per_round": null,
+      "overhead_percent": -0.9212482983513737,
+      "overhead_bootstrap95_percent": [
+        -2.571859145876143,
+        0.41795253152570044
+      ],
+      "scope": "Root host spans are disjoint. Nested spans omitted from totals. Async GPU work may be charged at a later synchronization; these are not isolated GPU critical paths."
+    },
+    "w1a8_initial": {
+      "root_prefill_ms": {
+        "target_process": 848.3111070000002,
+        "draft_catchup": 4176.075562000001,
+        "target_sync": 297.63857499999995
+      },
+      "root_generation_ms": {
+        "generation_begin": 0.07426400000000001,
+        "target_sample": 18.219746,
+        "draft_generate": 5585.506564,
+        "target_process": 3125.076077,
+        "target_sync": 18355.032682000005,
+        "draft_catchup": 2942.2373599999987,
+        "verifier_sample": 643.6922069999998,
+        "draft_accept": 2.1194610000000003
+      },
+      "full_request_ms": 42208.50004404201,
+      "unattributed_full_request_ms": 6214.516439042011,
+      "server_generation_ms": 31833.558999999997,
+      "tokens": 4685,
+      "rounds": 3620,
+      "generation_draft_ms": 8529.863384999999,
+      "generation_target_and_sampling_ms": 22142.020712000005,
+      "root_ms_per_round": {
+        "generation_begin": 2.0514917127071827e-05,
+        "target_sample": 0.005033079005524862,
+        "draft_generate": 1.5429576143646409,
+        "target_process": 0.8632806842541437,
+        "target_sync": 5.070451017127073,
+        "draft_catchup": 0.8127727513812151,
+        "verifier_sample": 0.17781552679558008,
+        "draft_accept": 0.0005854864640883979
+      },
+      "full_draft_ms_per_round": 2.3563158522099443,
+      "tokens_per_round": 1.2941988950276244,
+      "overhead_percent": 0.5069494040677469,
+      "overhead_bootstrap95_percent": [
+        -1.4158323569098297,
+        2.3068033710683
+      ],
+      "scope": "Root host spans are disjoint. Nested spans omitted from totals. Async GPU work may be charged at a later synchronization; these are not isolated GPU critical paths."
+    }
+  },
+  "contrasts": {
+    "narrow_generate": {
+      "ms_per_round": {
+        "paid5760": 1.5336020394973067,
+        "dflash_Q4KM": 1.7661151642105264
+      },
+      "current_cost_percent": -13.165230072476941,
+      "bootstrap95_percent": [
+        -15.749311067263994,
+        -10.814601509481314
+      ]
+    },
+    "complete_draft": {
+      "ms_per_round": {
+        "paid5760": 2.3396610348294433,
+        "dflash_Q4KM": 2.1200575410526317
+      },
+      "current_cost_percent": 10.358374219775946,
+      "bootstrap95_percent": [
+        7.860041184317601,
+        12.606022799434369
+      ]
+    }
+  },
+  "sensitivity": {
+    "current_emitted_tokens_per_round": 1.6822262118491922,
+    "dflash_emitted_tokens_per_round": 2.4657894736842105,
+    "needed_emitted_tokens_per_round_at_current_cost": 2.5418256313127086,
+    "zero_draft_generation_speed_ratio_to_dflash": 0.898036333111689,
+    "zero_draft_full_request_speed_ratio_to_dflash": 0.9453419148821687,
+    "assumption": "Counterfactual sensitivity within the SAME traced panel: remove all measured draft spans while holding verification rounds, target costs, sampling, and outputs fixed. Real changes can alter these costs. Not a hard speed ceiling or pruning rule."
+  },
+  "kernel_traces": {
+    "paid5760": {
+      "status": "BOUNDED_CUDA_ATTRIBUTION_AUDITED",
+      "source": {
+        "path": "/home/philip/binary-eagle-decoding/runs/data-cost-transfer-20261104-01/kernel-paid5760-v4/result.json",
+        "bytes": 4427,
+        "sha256": "d2404a634f07606b27296a7b1472d1d71d4e9b6d46086b052b0a9805e4c98071"
+      },
+      "host_spans": {
+        "path": "/home/philip/binary-eagle-decoding/runs/data-cost-transfer-20261104-01/kernel-paid5760-v4/host-spans.jsonl",
+        "bytes": 533839,
+        "sha256": "fda8559f552ed7ea5b8601095957ae8f2ab2f517a648d8870affb4565b78b13e"
+      },
+      "clock_offset_ns": 93251564357572,
+      "clock_margin_ns": 2469,
+      "request_boundary_kernels_excluded": 0,
+      "launch_phase_boundary_ambiguous": 0,
+      "measured_requests": 3,
+      "phases": {
+        "prefill/target_process": {
+          "kernels": 8520,
+          "gpu_ms": 49.68118899999963,
+          "head_kernels": 0,
+          "head_gpu_ms": 0.0,
+          "graph_kernels": 0
+        },
+        "prefill/draft_catchup": {
+          "kernels": 204,
+          "gpu_ms": 15.672832000000009,
+          "head_kernels": 6,
+          "head_gpu_ms": 8.263735999999998,
+          "graph_kernels": 0
+        },
+        "generation/draft_generate": {
+          "kernels": 13860,
+          "gpu_ms": 43.31002699999822,
+          "head_kernels": 308,
+          "head_gpu_ms": 10.000472000000006,
+          "graph_kernels": 13590
+        },
+        "generation/target_process": {
+          "kernels": 199368,
+          "gpu_ms": 969.968978000023,
+          "head_kernels": 0,
+          "head_gpu_ms": 0.0,
+          "graph_kernels": 191700
+        },
+        "generation/draft_catchup": {
+          "kernels": 5240,
+          "gpu_ms": 28.966234999999855,
+          "head_kernels": 154,
+          "head_gpu_ms": 9.583952000000012,
+          "graph_kernels": 5100
+        }
+      },
+      "total_kernel_ms": 1107.5992610000208,
+      "head_kernel_ms": 27.848160000000014,
+      "head_fraction_all_kernels": 0.02514281200843045,
+      "head_fraction_draft_kernels": 0.3166395324095166,
+      "scope": "Three preselected consumed DEV cases, one diagnostic trace after two warmups. GPU kernel durations can overlap and are not removable critical-path time. Host/NVTX clocks aligned using five generation markers; CUDA runtime correlation assigns enqueue phase. Boundary-ambiguous launches remain unattributed. Only the frozen W1A8 grid rule identifies a head; zero matching DFlash kernels does not mean no head cost."
+    },
+    "dflash_Q4KM": {
+      "status": "BOUNDED_CUDA_ATTRIBUTION_AUDITED",
+      "source": {
+        "path": "/home/philip/binary-eagle-decoding/runs/data-cost-transfer-20261104-01/kernel-dflash_Q4KM-v4/result.json",
+        "bytes": 4450,
+        "sha256": "938b074e22fd6c29ea8430c5c74d58df78c9f8a56590807adae3ef446d474efc"
+      },
+      "host_spans": {
+        "path": "/home/philip/binary-eagle-decoding/runs/data-cost-transfer-20261104-01/kernel-dflash_Q4KM-v4/host-spans.jsonl",
+        "bytes": 352943,
+        "sha256": "358defce4c0a09069ef0e208c2db2c2a627c2ed4eadcf3e82dbb248f4900568e"
+      },
+      "clock_offset_ns": 93269874025181,
+      "clock_margin_ns": 3247,
+      "request_boundary_kernels_excluded": 0,
+      "launch_phase_boundary_ambiguous": 4819,
+      "measured_requests": 3,
+      "phases": {
+        "prefill/target_process": {
+          "kernels": 8520,
+          "gpu_ms": 50.22028699999964,
+          "head_kernels": 0,
+          "head_gpu_ms": 0.0,
+          "graph_kernels": 0
+        },
+        "prefill/draft_catchup": {
+          "kernels": 385,
+          "gpu_ms": 1.356565,
+          "head_kernels": 0,
+          "head_gpu_ms": 0.0,
+          "graph_kernels": 0
+        },
+        "generation/draft_generate": {
+          "kernels": 23835,
+          "gpu_ms": 146.29253499999973,
+          "head_kernels": 0,
+          "head_gpu_ms": 0.0,
+          "graph_kernels": 23835
+        },
+        "generation/target_process": {
+          "kernels": 135468,
+          "gpu_ms": 660.4999280000116,
+          "head_kernels": 0,
+          "head_gpu_ms": 0.0,
+          "graph_kernels": 130356
+        },
+        "generation/draft_catchup": {
+          "kernels": 1331,
+          "gpu_ms": 3.4072760000000257,
+          "head_kernels": 0,
+          "head_gpu_ms": 0.0,
+          "graph_kernels": 1102
+        },
+        "unattributed": {
+          "kernels": 4819,
+          "gpu_ms": 11.402623999999886,
+          "head_kernels": 0,
+          "head_gpu_ms": 0.0,
+          "graph_kernels": 4814
+        }
+      },
+      "total_kernel_ms": 873.1792150000108,
+      "head_kernel_ms": 0.0,
+      "head_fraction_all_kernels": 0.0,
+      "head_fraction_draft_kernels": 0.0,
+      "scope": "Three preselected consumed DEV cases, one diagnostic trace after two warmups. GPU kernel durations can overlap and are not removable critical-path time. Host/NVTX clocks aligned using five generation markers; CUDA runtime correlation assigns enqueue phase. Boundary-ambiguous launches remain unattributed. Only the frozen W1A8 grid rule identifies a head; zero matching DFlash kernels does not mean no head cost."
+    }
+  },
+  "raw_sources": {
+    "cost-analysis": {
+      "path": "/home/philip/binary-eagle-decoding/runs/data-cost-transfer-20261104-01/cost-analysis.json",
+      "bytes": 90220,
+      "sha256": "a044e95418ca72ad75cbdc99e208df1e0841ec12cbeb999e24e7487500448414"
+    },
+    "cost-contrast": {
+      "path": "/home/philip/binary-eagle-decoding/runs/data-cost-transfer-20261104-01/cost-contrast.json",
+      "bytes": 6586,
+      "sha256": "5fb1705efb5ce7f1c71ec5e663e7f148e23303a5ce366567bb1e98afa948821b"
+    },
+    "kernel-analysis": {
+      "path": "/home/philip/binary-eagle-decoding/runs/data-cost-transfer-20261104-01/kernel-analysis.json",
+      "bytes": 189594,
+      "sha256": "5d3a88948014f4b07f78e5649c96c0451eef797893720166411d795cb36352cf"
+    }
+  }
+}

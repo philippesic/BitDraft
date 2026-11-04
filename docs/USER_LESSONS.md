@@ -1112,3 +1112,16 @@ filesystem free space. No user mistake is inferred.
 - A bounded profile identifies data-union validation and repeated filesystem
   operations as the main cost. Preserve integrity checks; disclose this known
   one-time cost and larger-data limits instead of claiming unmeasured speedups.
+
+### 2026-11-04: Distinguish narrow drafting time from complete draft cost
+
+The user recalled a slight draft-latency win and poorer acceptance when planning
+architecture/precision work. Earlier agent measurements reported a faster narrow
+drafting-method span, while the readiness report noted that catch-up was omitted.
+The repeated complete host profile now measures1.534ms generation +0.806ms
+catch-up per round for current W1A8, versus1.766+0.354ms for DFlash. Total draft
+host work is10.36% higher (paired95% interval7.86–12.61%) on consumed DEV12.
+This resolves a measurement-scope ambiguity, not a confirmed user error. Future
+updates should name timer scope, include catch-up/prefill and target rounds, and
+lead with complete request performance. Host spans are not isolated GPU critical
+paths. Evidence: `runs/data-cost-transfer-20261104-01/{cost-analysis,cost-contrast}.json`.
