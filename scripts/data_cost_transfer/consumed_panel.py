@@ -1,6 +1,8 @@
 """Reuse consumed natural performance inputs as DEV; never claim fresh confirmation."""
 from pathlib import Path
 import argparse,sys
+import native_log_text
+native_log_text.install()
 P=Path('/home/philip/binary-eagle-decoding')
 sys.path[:0]=[str(P/'scripts/design_readiness'),str(P/'scripts/w1a8_generalization'),str(P/'scripts/contender_pipeline')]
 from native_panel import Panel

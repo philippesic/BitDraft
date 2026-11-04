@@ -20,11 +20,24 @@ lossless surrogateescape preserves all bytes and strict HTTP JSON decoding.
 Recovered22 passing groups and recaptured only two; all24 pass. Failed attempts
 and pinned source versions retained; no previous capture outputs overwritten.
 
-Active preparation uses local supervisor `data-cost-prepare02-20261104`, tmux
-socket `binary-eagle-runtime`. Exact identity/stop evidence:
-`runs/data-cost-transfer-20261104-01/prepare0-final-launch.json`.
-Check its runner state before another GPU launch. Remaining bank, cost profiling
-and fixed-data training comparison are still outstanding; no new training yet.
+First chunk admission passes1,431 windows and841 exact native embeddings.
+The second chunk passes1,416 windows; WSL preparation took16.24s. The first
+chunk with retained NTFS source paths took518.11s; different groups, not a paired
+benchmark. Exact old/new embedding overlap passes346 tokens.
+
+All192 new TRAIN groups and11,391 windows now admitted. Current qualification:
+`runs/data-cost-transfer-20261104-01/registered-bank/qualification.json`.
+Both arms completed1,920 additional updates. The old48-update control exactly
+matches prior parameters/Adam/RNG/exposure/export; broader48 uninterrupted versus
+24+24 resumed also matches exactly. All28 smoke responses match target output.
+Training-loop wall is238.80s old versus365.35s broader (equal updates, not seconds).
+Active supervisor `data-cost-training-main-20261104`, tmux socket
+`binary-eagle-runtime`; identity/stop receipt `training-main-launch.json` in the
+campaign directory. Frozen15-job `training-plan.json` now executing through7:
+repeated native early/final/previously-consumed-natural comparisons. Quiet GPU
+benchmarking lane. Four-arm host-profiling smoke passed56 exact responses;
+full interleaved overhead/cost panel and bounded Nsight attribution remain next.
+Detailed continuation: campaign `checkpoint.json`.
 Source worktree: `/home/philip/.codex/worktrees/data-cost-transfer-20261104`.
 
 

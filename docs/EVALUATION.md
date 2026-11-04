@@ -125,3 +125,14 @@ capacity. Any later capacity claim needs fixed arrival/load assumptions, latency
 tails and resource accounting. Context and batch size jointly affect the cost
 tradeoff; no universal “more batching helps/hurts speculation” rule is assumed.
 The current study's workload and mandatory measurements remain unchanged.
+
+
+### Additional TRAIN exposure: November4 data/cost campaign
+
+Before selecting any new held-out inputs, apply the192-group opaque TRAIN
+exclusion index linked from `experiments/data-cost-transfer-20261104/train-exposure.json`,
+in addition to historical and consumed-cohort exclusions. The helper
+`scripts/data_cost_transfer/exposure.py::apply` adds raw/normalized identities,
+source IDs, groups and topics without opening held-out prompt payloads. These
+groups remain TRAIN even if capture or training fails. Existing frozen cohorts
+remain consumed; this index does not make them fresh again.

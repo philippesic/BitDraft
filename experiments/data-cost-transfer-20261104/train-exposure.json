@@ -1,0 +1,15 @@
+{
+  "required_for_future_evaluation_selection": true,
+  "index": {
+    "path": "/home/philip/binary-eagle-decoding/runs/data-cost-transfer-20261104-01/train-exposure.json",
+    "bytes": 128628,
+    "sha256": "b2ffba85372cfbf76feba4a16e1871fda8f208b8702a1f8ce7aed7b1d24c595e"
+  },
+  "helper": {
+    "path": "/home/philip/.codex/worktrees/data-cost-transfer-20261104/scripts/data_cost_transfer/exposure.py",
+    "bytes": 2342,
+    "sha256": "5fd0e34b0a245a5278b1c0306672e96480cf81c1dcefbcfde092b7128ffdd2b0"
+  },
+  "groups": 192,
+  "scope": "TRAIN exposure even for incomplete/failed captures; apply raw/normalized/source/group/topic exclusions before selection"
+}
