@@ -1125,3 +1125,16 @@ This resolves a measurement-scope ambiguity, not a confirmed user error. Future
 updates should name timer scope, include catch-up/prefill and target rounds, and
 lead with complete request performance. Host spans are not isolated GPU critical
 paths. Evidence: `runs/data-cost-transfer-20261104-01/{cost-analysis,cost-contrast}.json`.
+
+### 2026-11-04: Separate precision labels from their actual arithmetic path
+
+The user described W1A8 bit serialization as an example of the desired binary
+arithmetic direction. Historical SM75 W1Ax did use bit-serial paths; the current
+SM120 fixed-row W1A8 port instead expands packed signs in registers for DP4A.
+Earlier agent summaries using only "W1A8" left this distinction easy to miss.
+The new preliminary screen validates standalone POPC and DP4A kernels, but does
+not replace the deployed runtime. Name representation, arithmetic implementation,
+hardware and timing scope separately when discussing candidates. Evidence:
+`experiments/binary-screen-20261104/README.md`, frozen native `w1a1.cu`, and the
+new screen's SASS/integer checks. This is a current-path clarification, not a
+claim that the user's broader binary-arithmetic objective was mistaken.

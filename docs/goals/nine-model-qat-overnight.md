@@ -5818,3 +5818,19 @@ Report: `experiments/data-cost-transfer-20261104/README.md`; continuation and
 completion: `runs/data-cost-transfer-20261104-01/{checkpoint,completion}.json`.
 Architecture/precision selection remains the user's joint decision; changed models
 still need their own state/export/native adapter qualification.
+
+## Preliminary binary screen complete — November 4, 2026
+
+Queued user authorization allowed lightweight precision/architecture exploration.
+Zero training updates;126.66s supervised GPU-job wall. Standalone DP4A and
+A1/A4/A8 popcount/bit-serial primitives pass200 final correctness cases at current
+and released DFlash shapes. Nine unadapted policies on12TRAIN groups plus local
+group128/two-plane reconstruction supply provisional design evidence. Fusion
+precision follow-up did not rescue whole-model A4; proxy error cannot promote a
+model. No native-serving variant or final architecture choice is claimed.
+
+CPU raw audit reproduces top1/CE counts and policy coverage; A8 repeats exactly.
+All18owned identities gone; GPU idle. Paid source/model/data unchanged; current
+candidate remains selected. Useful evidence/caches/source snapshot retained.
+Report: `experiments/binary-screen-20261104/README.md`; raw checkpoint/audit/release
+under `runs/binary-screen-20261104-01/`. No push; next joint architecture discussion.

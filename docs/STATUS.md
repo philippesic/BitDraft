@@ -1,5 +1,35 @@
 # Current project status
 
+## Completed: preliminary binary candidate screen — November 4, 2026
+
+The queued message authorized light architecture/precision exploration. The
+zero-update screen is complete: [report](../experiments/binary-screen-20261104/README.md).
+No final design, permanent rejection, fresh generalization or serving win claimed.
+
+Actual RTX5080 DP4A/A1/A4/A8 standalone kernels pass200 final code/integer/scale
+cases across current and released DFlash projection shapes. Packing-inclusive
+warm-device timing favors bit-serial A8 on the head but not every small shape;
+A4/A1 offer larger potential reductions. Current deployed W1A8 is DP4A, whereas
+these new prototypes exercise real POPC instructions. They are not native ports.
+
+Nine unadapted activation policies use12already-TRAIN groups/24teacher-forced
+positions. A8 matches12target choices; all-A4/all-A1 match8/4; MLP-only A4/A1
+match10/9. The baseline favors A8; no equal-QAT ranking follows. Preserving fusion
+precision did not rescue full-model A4. Group128/two-plane local reconstruction
+and storage/capacity tradeoffs are recorded; no runtime or whole-model promotion.
+
+Parallel binary DFlash remains a structural option requiring8tap captures,
+new objective/cache/export contracts and actual resource/quality tests. The
+ordinary released DFlash scores must not be inherited by a binary conversion.
+
+Training updates0;126.66s supervised GPU-job wall including startup and data/model
+loading. Independent CPU audit reproduces all token/CE summaries and policy masks;
+A8 repeats exactly and parameters stay unchanged. All18owned identities released,
+no GPU compute app remains. Raw logits/activations, kernels and audits retained;
+duplicate A8 artifacts hardlinked and secondary CUDA cache consolidated. Source
+worktree `/home/philip/.codex/worktrees/binary-screen-20261104` is pinned and retained.
+Raw evidence: `runs/binary-screen-20261104-01/`. No push. Next: joint design choice.
+
 ## Completed: data breadth and decoding costs — November 4, 2026
 
 The authorized follow-up is complete, directly in this thread. No architecture,

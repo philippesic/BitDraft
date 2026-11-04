@@ -1443,3 +1443,20 @@ negative/inconclusive evidence. Group scales, sign scope, head support, correcti
 and proposal structure change implementation/training requirements and must be
 chosen together. Larger TRAIN captures and loader/retention bounds must be planned
 for the chosen design. No implicit architecture/precision migration or long run.
+
+## 2026-11-04: Preliminary binary candidates; final design still pending
+
+The queued user message explicitly permits lightweight architecture/precision
+screening before the joint session, superseding the earlier no-precision-tests
+boundary for this limited purpose. No major QAT or final model selection follows.
+
+Zero-update evidence now covers actual-shape DP4A/A1/A4/A8 binary kernels, nine
+unadapted activation policies on12TRAIN groups, and local row/group128/two-plane
+weight reconstruction. Provisional discussion options: shape-selected W1A8
+bit-serial execution; selective A4/A1 projections; selective group/extra-plane
+capacity; or a parallel binary drafter with new captures and adapters. No serving
+win or general early rejection rule is established. The follow-up preserving
+fusion precision failed to rescue full-model A4, despite local error motivation.
+
+The user still chooses architecture, precision, scale/sign scope and long-QAT
+allocation. [Screen and implementation gaps](../experiments/binary-screen-20261104/README.md).
