@@ -991,3 +991,30 @@ dedup frees33,079,296B, allpaths/bytes preserved/noactivewriters. Reports underR
 User asks fullupdate/whatneeded; preservationinterpretation andatleast25GBonC
 orothermount questions resurfaced in structuredpanel. Bothpending. No GPU job
 live, Phase1active, Phase2/backlog notstarted, no push.
+
+
+### User-directed storage purge complete
+
+User explicitly authorizes ancient artifact/checkpoint purge at discretion and
+redirects current work to storage only. Bounded inventories find ~1.01TBproject
+in WSL,866GBin runs,380GBWindows artifactroot. Read-only workers advise; root
+selects exact obsolete payloads and follows current/legacy metadata dependencies,
+excluding3,264 candidatepaths (including old capture/data still used by legacy
+continuations). No experiment jobs running; no source/worktree/Git removal.
+
+Purged7,450 obsolete payloads+1,615 aliases: old A8 intermediate checkpoints and
+evaluation arrays; preparation-only recurrent capture; old DSpark raw teacher
+tensors and two intermediates; Luna rawcapture rows; Oct31F16 obsolete checkpoints
+and evaluation score arrays. Preserve best/final historical PT/GGUF endpoints,
+allsmallconfig/metrics/requests/results and all current modernW1A8 assets.
+440retained fingerprints verify; initializer, selected model and finalPT hashes
+unchanged. Exact old tensor replay now requires regeneration; older intermediates
+are intentionally no longer retained under this explicit authorization.
+
+Measured WSLfree2,183,528,448→173,662,474,240B (+171,478,945,792). Cfree
+2,303,619,072→42,638,299,136B (+40,334,680,064). WSLinternalfree is distinct from
+Windowsvolume free; no VHDXcompaction performed. No research restart. Full exact
+manifest/actions/result/retained-inventory under runs/storage-purge-20261104-01;
+compact tracked experiments/storage-purge-20261104.json. Per-root purge notices
+prevent mistaken assumptions that historical raw captures remain available.
+Storage question resolved; preservation question unchanged/outsidecleanupscope.

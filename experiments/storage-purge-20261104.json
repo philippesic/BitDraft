@@ -1,0 +1,59 @@
+{
+  "schema": "project_obsolete_storage_purge_summary_v1",
+  "status": "PURGE_COMPLETE_RETAINED_FILES_VERIFIED",
+  "authorization": "User explicitly authorized ancient artifacts/checkpoints purge at agent discretion; storage-only request.",
+  "removed_files": 7450,
+  "removed_dangling_aliases": 1615,
+  "before_free_bytes": {
+    "/home/philip/binary-eagle-decoding": 2183528448,
+    "/mnt/c": 2303619072
+  },
+  "after_free_bytes": {
+    "/home/philip/binary-eagle-decoding": 173662474240,
+    "/mnt/c": 42638299136
+  },
+  "observed_free_byte_delta": {
+    "/home/philip/binary-eagle-decoding": 171478945792,
+    "/mnt/c": 40334680064
+  },
+  "category_allocated_reclaim_estimates": {
+    "old_A8_intermediate_checkpoints": 33308672000,
+    "old_A8_evaluation_tensors": 10102239232,
+    "preparation_only_recurrent_capture": 27292520448,
+    "old_DSpark_teacher_tensors": 53038600192,
+    "old_DSpark_intermediate_checkpoints": 9759981568,
+    "old_Luna_raw_teacher_rows": 37979131904,
+    "old_F16_broader_intermediate_checkpoints": 25629646848,
+    "old_F16_broader_evaluation_arrays": 14707851264
+  },
+  "verified_retained_files": 440,
+  "current_model_checkpoint_hashes_unchanged": true,
+  "excluded_current_dependency_candidates": 3264,
+  "retained": "Active modernW1A8 assets and fourtarget baselines; historical final/best states/GGUFs; compact configs/metrics/requests/results/source; legacy continuation dependencies discovered transitively.",
+  "cost": "Purged obsolete historical raw tensor replay data must be regenerated if needed; older intermediate optimizer states are no longer available.",
+  "no_experiment_restart": true,
+  "no_VHDX_compaction": true,
+  "measurement_note": "WSL gain is available space inside its Linux filesystem; C gain is measured separately on Windows volume. Do not interpret WSL deletion as equal Windows physical-space recovery.",
+  "evidence": {
+    "result": {
+      "path": "/home/philip/binary-eagle-decoding/runs/storage-purge-20261104-01/result.json",
+      "bytes": 2658,
+      "sha256": "4fa04dccc4f2d8d2fa29c09cd8f301ad1df03f9e1e25450fad087c8bd71490e7"
+    },
+    "manifest": {
+      "path": "/home/philip/binary-eagle-decoding/runs/storage-purge-20261104-01/manifest.json",
+      "bytes": 4285701,
+      "sha256": "fbea7d407e802b477623472a659366bf80c47c32d66696a2d98062f04b4aba19"
+    },
+    "actions": {
+      "path": "/home/philip/binary-eagle-decoding/runs/storage-purge-20261104-01/actions.jsonl",
+      "bytes": 2275560,
+      "sha256": "fd85ccf79d854aa9f491d0c3684525f24ab747fb959b40bdc4268fd7443604d6"
+    },
+    "retained_inventory": {
+      "path": "/home/philip/binary-eagle-decoding/runs/storage-purge-20261104-01/retained-inventory.json",
+      "bytes": 519014,
+      "sha256": "717d87e58ade05b088a4cfe90e5c2a695c7d33974e36454bac10e2db5088668a"
+    }
+  }
+}

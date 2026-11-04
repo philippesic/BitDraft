@@ -1042,3 +1042,30 @@ additional proof protocols or redoing completed audit work.
   separates explicit requirements from inferences. Do not silently strengthen a
   phase until it becomes an open-ended optimization problem, or silently weaken
   an ambiguous constraint. Record the distinction and resolve consequential scope.
+
+
+## 2026-11-03 — Review large historical consumers before storage escalation
+
+The agent had requested25GB of user-provided storage after narrowly archiving
+current-run outputs. The user explicitly delegated purging ancient artifacts and
+checkpoints. A project-bounded review then reclaimed171.48GB insideWSL and40.33GB
+onC while preserving current dependencies and useful historical final/best states.
+The review also caught legacy data dependencies missed by a modern-only scan.
+
+Agent lesson: inspect the largest historical consumers before escalating a storage
+request, distinguish active/useful states from obsolete intermediates, and use
+explicit user retention authority. Paid compute alone does not imply indefinite
+retention after the user authorizes historical pruning. Keep an exact deletion
+ledger and compact evidence; do not infer Windows physical recovery from WSL
+filesystem free space. No user mistake is inferred.
+
+### 2026-11-03: Answer transfer confidence separately from the ultimate baseline
+
+- In a generalization status discussion, root emphasized the DFlash gap; the user
+  clarified that the question concerns training gains translating to actual eval
+  gains, and explicitly accepts that DFlash is not yet matched.
+- Treat DFlash competitiveness as the later optimization objective, not a
+  prerequisite for resuming training. Distinguish evidence that one candidate
+  transfers from evidence that a short experiment reliably predicts longer-run
+  serving gains. This clarification does not resolve the older ambiguity about
+  preservation of individual draft successes.

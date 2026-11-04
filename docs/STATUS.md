@@ -2,6 +2,16 @@
 
 ## Active: ordered W1A8 generalization work — November 3–4, 2026
 
+User-directed storage cleanup is complete. Available space increased by171.48GB
+in WSL and40.33GB on C:, leaving approximately173.66GB/42.64GB free respectively.
+7,450 obsolete payloads and1,615 aliases removed;440 retained files verified and
+current initializer/candidate/checkpoint hashes unchanged. Active modern assets,
+selected historical endpoints, source and compact evidence remain. Current/legacy
+dependencies discovered during review were excluded. Historical raw replay data
+removed by this authorized purge requires regeneration. No VHDX compaction or
+experiment restart; the latest instruction is storage-only.
+[Cleanup record](../experiments/storage-purge-20261104.json).
+
 Phase1 now has confirmed throughput transfer to24 unused corpus prompts, beyond
 its earlier synthetic-family confirmation. Candidate/runtime froze before input
 selection. On Qwen3.5 4B Q4_K_M/RTX5080 correctness mode, selected replay5760
@@ -52,18 +62,13 @@ source files. It remains prepared work, not a validated quick-screen predictor.
 Plan/failure under `runs/w1a8-modern-protected-20261103-01/
 old-data-duration-counterfactual01/` and local supervisor receipts.
 
-The user's preservation-meaning clarification remains unanswered. No zero-loss,
-absolute quality-floor or DFlash-win Phase1 exit requirement is inferred from it.
-Phase2 short-run predictor,98-ID backlog screen, combinations and final four-target
-confirmation remain pending. All paid checkpoints/horizon19200/source pins stay
-preserved. Three aliases of a completed4320 derived export now share a verified
-lossless archive and exact restore commands; paid states remain raw. This frees
-39.80MB on C. Both disks remain constrained. Since then, another completed2400 derived export
-was losslessly archived (raw paidPT retained), and the immutable33.08MBunion
-snapshot was deduplicated with all paths/bytes preserved. WSL nevertheless fell
-below the safe experiment floor. User asked for all developments/needed inputs;
-the pending preservation meaning and25GB-or-mounted-destination questions were
-resurfaced explicitly. No push.
+The user's preservation-meaning clarification remains unanswered; it is unrelated
+to this completed cleanup. No zero-loss, absolute quality-floor or DFlash-win
+Phase1 exit requirement is inferred. Phase2 predictor/backlog/combinations/final
+four-target confirmation remain pending. Active paid modern continuations and
+horizon19200 remain preserved. The storage-space request is resolved by the
+user-authorized historical purge; obsolete historical intermediates were deleted
+while useful final/best models and compact evidence were retained. No push.
 
 [Fresh natural confirmation](../experiments/w1a8-modern-native-20261103/natural-confirmation.json),
 [fresh natural raw audit](../runs/w1a8-modern-protected-20261103-01/natural-replay-confirmation01/root-analysis.json),
