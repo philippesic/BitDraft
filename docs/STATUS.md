@@ -37,13 +37,20 @@ answers, not formatting or budget exhaustion. No broad prose-quality or
 absolute quality-floor claim. Prior narrow synthetic confirmation remains+5.30%
 with exact outputs; its earlier cohort is separately consumed.
 
-CURRENT GPU JOB: root owns `local-w1a8-full-native956-20261104-01` in localtmux,
-180sstopgrace, supervisor/child birth+boot identities recorded. It compares
-unchanged5760 and selected replay5760 on all883 fixed-source windows/956 prior
-native successes, each with new packet-matched parent calibration. Split output
-storage preserves both filesystem floors. This measures full recorded forgetting,
-not a new serving timing or a zero-loss gate. Plan/launch/source/results under
-`runs/w1a8-modern-protected-20261103-01/natural-replay-confirmation01/`.
+Full native preservation is complete and root-audited on all883fixed histories/
+956prior successes: unchanged5760 loses114 (oldFIT2/DEV41/addedFIT71); replay
+loses72 (2/42/28). Replay recovers45 positions and introduces3 losses, so its
+benefit is concentrated in addedFIT. All40native processes and owned groups are
+released;27loaded images rehashed. This does not establish zero-loss preservation.
+
+No GPU experiment is currently running. An old-only data continuation to5760
+was launched to separate data-recipe effects from training duration. It stopped
+at the WSL storage guard during source-data validation, before any training
+updates or checkpoints; parent state and failed-attempt evidence are preserved.
+Its separate reused-corpus evaluator assignment was interrupted before producing
+source files. It remains prepared work, not a validated quick-screen predictor.
+Plan/failure under `runs/w1a8-modern-protected-20261103-01/
+old-data-duration-counterfactual01/` and local supervisor receipts.
 
 The user's preservation-meaning clarification remains unanswered. No zero-loss,
 absolute quality-floor or DFlash-win Phase1 exit requirement is inferred from it.
@@ -51,7 +58,12 @@ Phase2 short-run predictor,98-ID backlog screen, combinations and final four-tar
 confirmation remain pending. All paid checkpoints/horizon19200/source pins stay
 preserved. Three aliases of a completed4320 derived export now share a verified
 lossless archive and exact restore commands; paid states remain raw. This frees
-39.80MB on C. Both disks remain constrained. No push.
+39.80MB on C. Both disks remain constrained. Since then, another completed2400 derived export
+was losslessly archived (raw paidPT retained), and the immutable33.08MBunion
+snapshot was deduplicated with all paths/bytes preserved. WSL nevertheless fell
+below the safe experiment floor. User asked for all developments/needed inputs;
+the pending preservation meaning and25GB-or-mounted-destination questions were
+resurfaced explicitly. No push.
 
 [Fresh natural confirmation](../experiments/w1a8-modern-native-20261103/natural-confirmation.json),
 [fresh natural raw audit](../runs/w1a8-modern-protected-20261103-01/natural-replay-confirmation01/root-analysis.json),

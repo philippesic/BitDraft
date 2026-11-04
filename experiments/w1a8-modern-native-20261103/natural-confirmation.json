@@ -1,6 +1,6 @@
 {
   "schema": "w1a8_modern_natural_generalization_confirmation_v1",
-  "status": "FRESH_CORPUS_CONFIRMATION_AUDITED_FULL_NATIVE_RETENTION_RUNNING",
+  "status": "FRESH_CORPUS_AND_FULL_NATIVE_RETENTION_AUDITED",
   "target": "Qwen3.5-4B-Q4_K_M",
   "hardware": "local RTX5080/SM120",
   "runtime": "frozen correctness mode32,ctx4096,b512/ub512,threads4,FAon,F16KV,temperature0,seed1234,cache_promptfalse,d2",
@@ -431,22 +431,94 @@
     "No pretraining-novelty/semantic-near-duplicate-independence claim.",
     "Natural prompts measure serving performance; answer quality uses separate synthetic oracle cases.",
     "Target output quality is12/24 including0/8reasoning, equal across arms.",
-    "Full956 native-retention comparison running;113-token diagnostic is not full coverage.",
-    "Short-run predictor/backlog/combinations not started; preservation-meaning clarification pending."
+    "Short-run predictor/backlog/combinations not started; preservation-meaning clarification pending.",
+    "Full956 selected-model preservation retains884 and loses72 prior draft successes; unchangedcontrol retains842 and loses114. Development losses41\u219242; zero-loss preservation is not established."
   ],
   "full_native_retention": {
-    "status": "RUNNING",
-    "launch": {
-      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/natural-replay-confirmation01/full-native956-launch.json",
-      "bytes": 849,
-      "sha256": "d6f34aa5060c2ef6ee88023c36dc24b2a4a515c17be09a4f4c90d0eff736c044"
+    "status": "ROOT_MATCHED5760_FULL956_NATIVE_AUDIT_PASS",
+    "root_analysis": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/natural-replay-confirmation01/full-native956-root-analysis.json",
+      "bytes": 12683,
+      "sha256": "2beac1596c4a5c91d334c3aede8d1fdcb70fd012fb2f5bd42c8cc5bc344f5a49"
     },
-    "plan": {
-      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/natural-replay-confirmation01/full-native956-plan.json",
-      "bytes": 1802,
-      "sha256": "5c0e5e3803d7a64dc9c5ca34ae41fdff016b463c5224a5fef9e51a29b758cbf2"
+    "panels": [
+      {
+        "arm": "control5760",
+        "model": {
+          "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-head-pair-20261103-01/control5760/model.gguf",
+          "sha256": "6002f1b61bb2a0183dc626a91c6475a9c9a959cdfbec6be994782ca0eb6ec98c",
+          "bytes": 40802176
+        },
+        "splits": {
+          "original_fit": {
+            "windows": 330,
+            "native_successes": 356,
+            "lost": 2
+          },
+          "development": {
+            "windows": 181,
+            "native_successes": 193,
+            "lost": 41
+          },
+          "added_fit": {
+            "windows": 372,
+            "native_successes": 407,
+            "lost": 71
+          }
+        },
+        "lost": 114,
+        "retained": 842,
+        "total": 956,
+        "result": {
+          "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/natural-replay-confirmation01/full-native956-control5760/result.json",
+          "bytes": 12739,
+          "sha256": "fcb61c4573d8c6be5e6cffeda07337d6526507dbb9b2a7382c61d3348841fe3f"
+        },
+        "wall_seconds": 280.82567669900163
+      },
+      {
+        "arm": "added_replay5760",
+        "model": {
+          "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/true5760/model.gguf",
+          "sha256": "c3743f72c94a87140d3144b5d23523d8e2d587526862fc2752bf365e1f51e93d",
+          "bytes": 40802176
+        },
+        "splits": {
+          "original_fit": {
+            "windows": 330,
+            "native_successes": 356,
+            "lost": 2
+          },
+          "development": {
+            "windows": 181,
+            "native_successes": 193,
+            "lost": 42
+          },
+          "added_fit": {
+            "windows": 372,
+            "native_successes": 407,
+            "lost": 28
+          }
+        },
+        "lost": 72,
+        "retained": 884,
+        "total": 956,
+        "result": {
+          "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/full-native956/replay/result.json",
+          "bytes": 12411,
+          "sha256": "7bea6836a61eaea205259ce6b68edec41f1925356d02150aab2de27cc76676be"
+        },
+        "wall_seconds": 242.22320374599803
+      }
+    ],
+    "comparison": {
+      "recovered_positions": 45,
+      "introduced_losses": 3,
+      "shared_losses": 69
     },
-    "scope": "Both5760arms/all956fixed recorded successes, fresh packet-matched parent calibrations; not a new timing result."
+    "wall_seconds": 523.0829713990024,
+    "all_owned_groups_absent": true,
+    "scope": "All956 original+added emitted parent successes on identical fixed histories. Measures forgetting, not fresh transfer/full serving throughput, and does not impose a zero-loss exit gate."
   },
   "historical_F16_separate": true
 }

@@ -5489,4 +5489,37 @@ Full956native supervisor remains live; exactbirth/boot/stop/run evidence preserv
 in full-native956-launch.json and run root-owned-identities.json. Continue its
 result/audit next; keep Phase1 active and all later ordered work pending.
 
+
+
+### Full retention complete; duration diagnostic stopped before training
+
+Root all956 native audit passes,523.083s. Control loses114 (oldFIT2/DEV41/
+addedFIT71), replay72 (2/42/28):45recoveries/3introduced/69shared losses. All40
+native children and allownedgroups gone,27loadedimages fully rehashed. Unsupported
+nonprotected tail labels legitimately emitJSONnull scores; root's initial overly
+broad finite-allsteps assertion corrected, with supportedlabels stillfinite and
+allprotectedpositions bounded. No cases/labels/runtime/outcomes changed.
+Tracked natural-confirmation.json now binds full956audit and limitations.
+
+Focused advice recommends one old-only CE5760 counterfactual, notanotherheadLR
+sweep, to separate data recipe from duration. It changespopulation/order/label
+exposure, so cannot isolate diversityalone. Commonbalanced1920ancestor,9scales,
+old356replay/horizon19200fixed. Resume qualifiedresident2400; require exactsaved
+3840scales/Adam/RNG/exposure againstold3840before nativeadmission. No newPhase1
+exitgate; any naturalcohort reuse is consumedDEVdiagnostic, neverfreshconfirmation.
+
+local-w1a8-old-data5760-20261104-01 finishes1 at00:22:08UTC,45.267s at source-data
+validation storagefloor beforetraining/updates; outputdirectoryempty, noPT lost.
+Supervisor/controller/trainer birth handlesgone. WSLfree2,212,093,952B at00:23:13
+UTC versus required2,214,592,512B; Cfree2,297,675,776B. Do not lowerguards/restart
+untilheadroomrecovers. CPU evaluatorworker interrupted, twoassignednewfilesabsent;
+no code/resultclaim. Parent must resume/restart boundedCPUtask when appropriate.
+
+Storage: completedresident2400GGUF exactchunkarchive/RAMrestore proof frees
+39,616,512B, raw2400PT unchanged. Immutableunion/source snapshot exacthardlink
+dedup frees33,079,296B, allpaths/bytes preserved/noactivewriters. Reports underR.
+User asks fullupdate/whatneeded; preservationinterpretation andatleast25GBonC
+orothermount questions resurfaced in structuredpanel. Bothpending. No GPU job
+live, Phase1active, Phase2/backlog notstarted, no push.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->
