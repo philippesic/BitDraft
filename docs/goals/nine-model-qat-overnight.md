@@ -5778,3 +5778,21 @@ TERM then wait cleanup and verify process groups/GPU release. No new QAT updates
 Next: validate first preparation, launch `remaining-bank-plan2.json` through8,
 profile full path, fixed old/broader1920-update comparison and heldoutDEV panels.
 Deadline18:46:54UTC. Final pool untouched. No push.
+
+Checkpoint07:40UTC: first chunk admitted,1,431 windows/841 embeddings; chunk1
+admitted,1,416 windows. Remaining bank supervisor `data-cost-bank-rest-20261104`
+active; receipt `runs/data-cost-transfer-20261104-01/remaining-bank-launch.json`.
+Plan `remaining-bank-plan3.json` through8. Do not launch competing GPU work.
+First provisional stream and346 duplicate native embeddings exact. Opaque TRAIN
+exposure index `runs/data-cost-transfer-20261104-01/train-exposure.json` is required
+for all future heldout selection. Profiling host ABI/nesting CPU test passes;
+actual GPU profiling and all data-transfer training still pending.
+
+Checkpoint: full192-group TRAIN bank admitted,11,391 windows. Qualification
+`runs/data-cost-transfer-20261104-01/registered-bank/qualification.json`.
+Active supervisor `data-cost-training-qual-20261104` through2 of frozen15-job
+training-plan; receipt `training-qual-launch.json`, state `training-runner/state.json`.
+Old48-update arm passed; broader48/split/resume/native proof pending. Profiler
+smoke first attempt rejected before GPU work by5-repeat admission; corrected
+`profile-smoke-plan3.json` awaits free lane. Full plan `profiling-plan2.json`.
+Detailed continuation and pinned-source constraints: campaign `checkpoint.json`.

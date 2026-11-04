@@ -21,7 +21,7 @@ class TrainingBank:
     if w['id'] not in selected:continue
     require(w['role']=='fit' and w['id'] not in self.keys,'duplicate or heldout window')
     self.keys[w['id']]=f"{i}:{w['id']}"
-    self.meta[w['id']]={k:w[k] for k in ('id','labels','native_supervision_reachable_mask')}
+    self.meta[w['id']]={k:w[k] for k in ('id','labels','native_supervision_reachable_mask','domain','group_id','anchor')}
    for token in data.manifest['required_embedding_ids']:
     row=data.manifest['embedding_rows'][str(token)];spec=data.manifest['embedding_files'][row['file']]
     if token in self.embeddings:require(self.embeddings[token][1]['sha256']==row['sha256'],'embedding disagreement')
