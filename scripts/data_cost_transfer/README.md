@@ -81,7 +81,15 @@ Asynchronous GPU work can be charged at a later synchronization.
 `host_profile.py` qualifies the instrumentation. `paired_profile.py` interleaves
 five traced and untraced repetitions, requiring identical outputs and draft/
 round counters. Uninstrumented results remain the speed measurement.
-`kernel_profile.py` uses bounded Nsight CUDA/NVTX traces for additional GPU
+`kernel_profile_v4.py` uses bounded Nsight CUDA/NVTX traces for additional GPU
 attribution. `analyze_costs.py` checks raw span totals and reports instrumentation
 overhead. Its zero-draft sensitivity holds other measured costs and rounds fixed;
 it is not a hard performance ceiling or an architecture predictor.
+
+The successful kernel adapter authenticates a server independently of a main-thread
+PPID chain, while requiring its frozen arguments, unique port, task-specific trace
+environment, birth identity and loaded image pins. Earlier versions remain because
+failed plans pin them. `analyze_kernels.py` maps measured CUDA work to request and
+enqueue phase with a bounded host/NVTX clock margin; uncertain phases remain
+unattributed. `cost_contrast.py` supplies paired uncertainty for complete draft
+host cost, and `cost_ledger.py` separates physical updates from supervised wall.

@@ -1,45 +1,39 @@
 # Current project status
 
-## Active campaign: data and decoding costs — November 4, 2026
+## Completed: data breadth and decoding costs — November 4, 2026
 
-User authorized useful follow-up within roughly twelve hours before joint design.
-Frozen scope and recipe: `runs/data-cost-transfer-20261104-01/scope.json` and
-`training-recipe.json`. Deadline18:46:54UTC. No architecture/precision changes,
-major QAT allocation or untouched final inputs. Direct single-thread execution.
+The authorized follow-up is complete, directly in this thread. No architecture,
+precision or long-QAT recipe was selected. [Report](../experiments/data-cost-transfer-20261104/README.md)
+and [design handoff](../experiments/data-cost-transfer-20261104/design-use.md).
 
-192 new TRAIN singleton public-catalog groups frozen,64/domain, excluding all512
-historical TRAIN, current60, prior consumed48+latest natural48, and25 opaque
-partition indices. UTF8 user bytes<=280; native prompt+80<=384. This bank is
-short-input only; no long-context or general predictor claim. Five CPU checks pass.
+192 additional TRAIN groups (64/domain),11,391 windows and exact native embeddings
+are admitted with bounded metadata/array streaming. Whole prompts are short;
+features remain tied to the current target/taps/history contract. Apply the new
+[TRAIN exposure index](../experiments/data-cost-transfer-20261104/train-exposure.json)
+before future held-out selection. Untouched final inputs remain unopened.
 
-First24-group native chunk now passes exact target token/text/stopping checks.
-Initial C: capture hit1200s timeout;18 paid groups reused. Linux capture output
-reduces observed group wall from~30s to~5s on different groups (not a paired
-benchmark). Two partial-UTF8 debug-log audit failures exposed a parser limitation;
-lossless surrogateescape preserves all bytes and strict HTTP JSON decoding.
-Recovered22 passing groups and recaptured only two; all24 pass. Failed attempts
-and pinned source versions retained; no previous capture outputs overwritten.
+Two fixed-candidate arms completed1,920 extra updates each. Old-reference and
+broader continuous/split-resume states/exports match exactly. Broader data has no
+established speed gain: consumed natural24 −0.32%,95% interval[-1.61%,+0.80%];
+all three short-output DEV checkpoints also unresolved. No pruning rule follows.
 
-First chunk admission passes1,431 windows and841 exact native embeddings.
-The second chunk passes1,416 windows; WSL preparation took16.24s. The first
-chunk with retained NTFS source paths took518.11s; different groups, not a paired
-benchmark. Exact old/new embedding overlap passes346 tokens.
+Five paired native profile repetitions preserve outputs and draft/round counters.
+Current narrow draft generation is1.534ms/round versus DFlash1.766, but catch-up
+reverses the advantage: complete draft work2.340 versus2.120ms/round,10.36% more
+(95% interval7.86–12.61%). Current needs2,785 rounds versus1,900 for4,685 tokens.
+Bounded Nsight traces identify the head at31.7% of draft GPU kernel duration but
+2.51% of all kernel duration; these sums are not removable request time.
 
-All192 new TRAIN groups and11,391 windows now admitted. Current qualification:
-`runs/data-cost-transfer-20261104-01/registered-bank/qualification.json`.
-Both arms completed1,920 additional updates. The old48-update control exactly
-matches prior parameters/Adam/RNG/exposure/export; broader48 uninterrupted versus
-24+24 resumed also matches exactly. All28 smoke responses match target output.
-Training-loop wall is238.80s old versus365.35s broader (equal updates, not seconds).
-Active supervisor `data-cost-training-main-20261104`, tmux socket
-`binary-eagle-runtime`; identity/stop receipt `training-main-launch.json` in the
-campaign directory. Frozen15-job `training-plan.json` now executing through7:
-repeated native early/final/previously-consumed-natural comparisons. Quiet GPU
-benchmarking lane. Four-arm host-profiling smoke passed56 exact responses;
-full interleaved overhead/cost panel and bounded Nsight attribution remain next.
-Detailed continuation: campaign `checkpoint.json`.
-Source worktree: `/home/philip/.codex/worktrees/data-cost-transfer-20261104`.
-
+All2,498 qualification/serving/diagnostic responses match target tokens/text/stop;
+five CPU tests pass.192 TRAIN captures are counted separately.3,888 physical
+updates used639.33s update wall within7,334.20s supervised job wall, including
+failed attempts and preparation/evaluation. Not pure GPU time or additive clocks.
+451 recorded owned process identities are gone; no GPU compute process remains.
+Paid bank/checkpoints and useful traces retained (~5.30GB WSL,0.73GB C:). Pinned
+source worktree `/home/philip/.codex/worktrees/data-cost-transfer-20261104` retained.
+Raw completion/cost/release/inventory: `runs/data-cost-transfer-20261104-01/`.
+No push. Next: joint architecture/precision design, then selected-design adapter
+qualification and bounded native comparisons before any major QAT allocation.
 
 ## Active goal: contender workflow qualified — November 4, 2026
 
