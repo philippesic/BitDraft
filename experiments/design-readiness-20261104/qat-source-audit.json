@@ -1,0 +1,425 @@
+{
+  "schema": "fixed_candidate_qat_source_readiness_audit_v1",
+  "audited_at_utc": "2026-11-04T02:39:56.790661+00:00",
+  "scope": "CPU/source and retained evidence only. No new GPU experiment, architecture/precision change, dataset selection or source modification.",
+  "current_candidate": {
+    "target": "Qwen3.5-4B Q4_K_M",
+    "hardware_of_retained_measurements": "RTX5080/SM120",
+    "actor": "one-layer modern EAGLE, packed W1 signs plus F32 per-output-row scales, fixed per-token A8",
+    "trainable_tensors": 9,
+    "trainable_scale_elements": 76880,
+    "fixed_sign_elements": 232857600,
+    "projection_shapes": {
+      "fc": [
+        2560,
+        7680
+      ],
+      "blk.0.attn_q": [
+        2560,
+        5120
+      ],
+      "blk.0.attn_k": [
+        640,
+        5120
+      ],
+      "blk.0.attn_v": [
+        640,
+        5120
+      ],
+      "blk.0.attn_output": [
+        2560,
+        2560
+      ],
+      "blk.0.ffn_gate": [
+        7680,
+        2560
+      ],
+      "blk.0.ffn_up": [
+        7680,
+        2560
+      ],
+      "blk.0.ffn_down": [
+        2560,
+        7680
+      ],
+      "output": [
+        50000,
+        2560
+      ]
+    },
+    "checkpoint": {
+      "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/true5760/checkpoint-00005760.pt",
+      "exists": true,
+      "bytes": 1509425,
+      "sha256": "31d222619e2b8ed053676d63a77833aec061c483b5b76448a17171b477fc3cb4"
+    },
+    "model": {
+      "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/true5760/model.gguf",
+      "exists": true,
+      "bytes": 40802176,
+      "sha256": "c3743f72c94a87140d3144b5d23523d8e2d587526862fc2752bf365e1f51e93d"
+    },
+    "source_pins": {
+      "modern_actor.py": {
+        "path": "/home/philip/binary-eagle-decoding/scripts/w1a8_generalization/modern_actor.py",
+        "exists": true,
+        "bytes": 21578,
+        "sha256": "c595442b964300bfaaab947f27cdb38c578ba64c22cd406e872fabb076c2c7bb"
+      },
+      "modern_actual_data.py": {
+        "path": "/home/philip/binary-eagle-decoding/scripts/w1a8_generalization/modern_actual_data.py",
+        "exists": true,
+        "bytes": 30779,
+        "sha256": "a69fff00de8773daa2b466a270fbc3b4b1ca915db1bef575788aa1df765ec563"
+      },
+      "modern_resident_rows.py": {
+        "path": "/home/philip/binary-eagle-decoding/scripts/w1a8_generalization/modern_resident_rows.py",
+        "exists": true,
+        "bytes": 9873,
+        "sha256": "18ae284e46bc04a29e917217d39a77d6b1540003728c9895589ccbf781ee0130"
+      },
+      "modern_train_expanded_ce_resident.py": {
+        "path": "/home/philip/binary-eagle-decoding/scripts/w1a8_generalization/modern_train_expanded_ce_resident.py",
+        "exists": true,
+        "bytes": 55080,
+        "sha256": "ab410b5fd5196eef40257c87255ecdff0f8b2fdf83e8a9cd8facf5000e6e9263"
+      },
+      "modern_train_added_replay.py": {
+        "path": "/home/philip/binary-eagle-decoding/scripts/w1a8_generalization/modern_train_added_replay.py",
+        "exists": true,
+        "bytes": 83367,
+        "sha256": "8eab3c21429df19d3c3f95befd6d7a0e01664dac27a2b6bdb114c35fd12aa4c5"
+      },
+      "modern_selected_sign.py": {
+        "path": "/home/philip/binary-eagle-decoding/scripts/w1a8_generalization/modern_selected_sign.py",
+        "exists": true,
+        "bytes": 21674,
+        "sha256": "aeba5aa1ac79e17eefb454d7e7c8ddb6cc7a786a6736b1140d26a9aa44538c2a"
+      },
+      "modern_train_selected_sign.py": {
+        "path": "/home/philip/binary-eagle-decoding/scripts/w1a8_generalization/modern_train_selected_sign.py",
+        "exists": true,
+        "bytes": 41321,
+        "sha256": "0336f7437a37ea7eedad9f6229927c8beeacbbe3d0a45515cf5c382435151ff1"
+      },
+      "modern_train_selected_sign_lr.py": {
+        "path": "/home/philip/binary-eagle-decoding/scripts/w1a8_generalization/modern_train_selected_sign_lr.py",
+        "exists": true,
+        "bytes": 42590,
+        "sha256": "26758e945bb2d6b48715d71201708825ca3f1e03b79738fa692c5ec82ef8233a"
+      },
+      "modern_selected_head.py": {
+        "path": "/home/philip/binary-eagle-decoding/scripts/w1a8_generalization/modern_selected_head.py",
+        "exists": true,
+        "bytes": 27980,
+        "sha256": "34b24bd17cf45834b48fb7fa1044644d65a1f6632e843ed8bc7c22d24a9e5739"
+      }
+    },
+    "source_contract_matches": {
+      "modern_actor.py": true,
+      "modern_train_added_replay.py": true
+    },
+    "checkpoint_direct_inspection": {
+      "cursor": 5760,
+      "status": "RECOVERY",
+      "status_explanation": "Periodic480-step final checkpoint is marked RECOVERY; terminal training/export result is separate and complete.",
+      "schema": "w1a8_added_fit_replay_checkpoint_v1",
+      "scale_vector_shapes": {
+        "fc": [
+          2560
+        ],
+        "blk.0.attn_q": [
+          2560
+        ],
+        "blk.0.attn_k": [
+          640
+        ],
+        "blk.0.attn_v": [
+          640
+        ],
+        "blk.0.attn_output": [
+          2560
+        ],
+        "blk.0.ffn_gate": [
+          7680
+        ],
+        "blk.0.ffn_up": [
+          7680
+        ],
+        "blk.0.ffn_down": [
+          2560
+        ],
+        "output": [
+          50000
+        ]
+      },
+      "all_scale_values_finite": true,
+      "Adam_entries": 9,
+      "Adam_steps": [
+        5760.0,
+        5760.0,
+        5760.0,
+        5760.0,
+        5760.0,
+        5760.0,
+        5760.0,
+        5760.0,
+        5760.0
+      ],
+      "RNG_fields_present": true,
+      "stage_fields_present": true
+    }
+  },
+  "teacher_and_forward": {
+    "current_actual_serving_trace_source": "scripts/w1a8_generalization/modern_actual_data.py:410",
+    "conditional_capture_older_alternate": "scripts/w1a8_generalization/modern_admission.py:616",
+    "source_feature_positions": "Native observed lineage may differ from cache index; exact stored prefix_raw_rows and seed_raw_row must be preserved.",
+    "cache": "Detached current-actor prefix K/V, chunk64, current K/V cast F16->F32 before attention/append; own prenorm and attached recurrence within bounded two-step window.",
+    "CE": "2ordinaryFIT windows; supported fixed50k-vocab labels and static original-parent native_supervision_reachable_mask; CE sum/fixed4, not current-actor first-divergence masking.",
+    "replay": "Original356 nativeFIT success tokens plus independent added407 newFIT bank in selected candidate; squared frozen-parent margin deficit, token-mean per replay window, lambda10 each, target margin max(.1,min(reference,2)). DEV never training.",
+    "probability_teacher": "Current trainer hard CE plus native margins. Full/native top-k probability distillation is not established by current trace data. Generic compact_probability_loss uses uniform tail approximation and conditional mapped-vocabulary CE, not full KL.",
+    "numeric_limit": "Torch A8 dequantizes values before dot/scale; native uses integer dot then scales. RoPE accelerator arithmetic also differs. Native trajectory checks bound decisions; no bit-exact global parity claim."
+  },
+  "branches": [
+    {
+      "name": "current_nine_row_scales_fixed_signs",
+      "support": "Actual meaningful training, exact state restoration, export and five-repetition native serving confirmed; current successful5760 directly inspected.",
+      "gaps": [
+        "New objective config/migration requires strict disabled/noop parity and split-resume test.",
+        "Current selected5760 resumed continuation must preserve added-replay schema/counters if exercised."
+      ]
+    },
+    {
+      "name": "selected_attention_output_signs_plus_nine_row_scales",
+      "support": "Actual selected-O signs have570 flips after1920 new updates, not just latent movement. Strict mature resume adds480 updates,727 flips at1e-3 and4981 at3e-3; actual native549 and HTTP qualification.",
+      "gaps": [
+        "No five-repetition speed/fresh generalization result for sign branch.",
+        "Only6,553,600 O latents trainable; not all nine sign matrices."
+      ],
+      "evidence": [
+        "selected-training-result.json",
+        "selected-training-control-parity.json",
+        "selected-lr-control-parity.json",
+        "selected-lr1e3-all-native01/result.json",
+        "selected-lr3e3-all-native01/result.json",
+        "selected-lr-http-qualification01/result.json"
+      ]
+    },
+    {
+      "name": "selected512_output_head_rows",
+      "support": "Real1,310,720-element finite nonzero gradient, exact split-resume/zero export proof and bounded matched continuation; no new architecture or precision needed for validation.",
+      "gaps": [
+        "Global clipping changes treatment; head gradient fraction0.002166 in initial qualification.",
+        "Short gradient movement without sign flips is not capacity or throughput gain."
+      ],
+      "evidence": [
+        "head-real-qualification-root-audit.json"
+      ]
+    },
+    {
+      "name": "all_nine_signs_plus_scales",
+      "support": "RowBinaryLinear hard-sign STE and generic joint optimizer exist; current modern compact state/export APIs intentionally reject this scope.",
+      "gaps": [
+        "Need explicit full-sign contract/mask, checkpoint containing latent+scale masters, Adam by path, RNG/cursor/exposures.",
+        "Need modern partial-QK-aware all-sign packed exporter and independent changed-bit audit.",
+        "Need actual full-shape GPU backward/resource/resume/native admission; current selected-O result does not cover full signs.",
+        "Generic save_joint_checkpoint is export NPZ only, lacks optimizer/RNG/cursor. No long QAT time projection from scale-only rate."
+      ]
+    },
+    {
+      "name": "within_row_group_scales",
+      "support": "Historical GroupedBinaryLinear/group128 code/export path exists but W1AxContract rejects group128 exceptA16 and generic installer CPU-only. Current modern metadata requires scale_group_size0 and vector scales.",
+      "gaps": [
+        "User design decision before experimenting.",
+        "New A8 grouped reduction/scales kernels, metadata/shapes and loader admission; modern initializer and exporter/trainer ancestry.",
+        "Optimizer states sized for groups and native partial sums cost measurement; row-state cannot be relabeled grouped-state."
+      ],
+      "cost_projection": {
+        "for_same_current_shapes_group_size128_only_not_proposal": true,
+        "row_scales": 76880,
+        "group128_scales": 1819200,
+        "scale_element_multiplier": 23.662851196670136,
+        "F32_row_scale_bytes": 307520,
+        "F32_group128_scale_bytes": 7276800,
+        "extra_native_scale_payload_bytes": 6969280
+      }
+    },
+    {
+      "name": "learned_activation_midpoint_FC_corrections",
+      "support": "Generic/historical modules and exporter schema support exist; current modern exact metadata/parameter/actor state contracts do not admit them.",
+      "gaps": [
+        "Decision-dependent initializer/forward/native graph/state/export integration and per-component cost/admission test.",
+        "Research/historical evidence does not establish present-candidate effect; do not enable under fixed representation scope."
+      ]
+    }
+  ],
+  "resources": {
+    "measured_current_stage": {
+      "updates": 1920,
+      "incremental_trainer_seconds": 210.83883213998342,
+      "whole_child_wall_seconds": 495.08304162199784,
+      "costs": {
+        "ce_forward_seconds": 94.23962839404703,
+        "replay_forward_seconds": 32.82254270626436,
+        "shared_backward_optimizer_seconds": 38.61293718390516
+      },
+      "added_replay_forward_seconds": 45.16482459402323,
+      "checkpoint_bytes": 1509425,
+      "GGUF_bytes": 40802176,
+      "host_resident_cache_bytes": 594790400,
+      "host_cache_limit_bytes": 1073741824,
+      "host_available_reserve_bytes": 2147483648,
+      "accounting": "trainer_seconds545.226 is cumulative paid trajectory, not495.083 current-process wall; incremental stage210.839 is the comparable new1920-update training cost."
+    },
+    "selected_O_qualification": {
+      "peak_cuda_allocated_bytes": 3149585920,
+      "peak_cuda_reserved_bytes": 3875536896,
+      "peak_process_RSS_bytes": 3789348864,
+      "actual_checkpoint_bytes": 79603493,
+      "scope": "Measured selected-O branch, not current all-sign/full long-QAT estimate."
+    },
+    "algebraic_full_sign_projection": {
+      "sign_elements": 232857600,
+      "F32_latent_bytes": 931430400,
+      "F32_gradient_bytes": 931430400,
+      "F32_Adam_moments_bytes": 1862860800,
+      "latent_gradient_moments_subtotal_bytes": 3725721600,
+      "extra_materialized_hard_signs_bytes_up_to": 931430400,
+      "checkpoint_latents_plus_moments_only_bytes": 2794291200,
+      "excludes": "scales, frozen norms/maps, activations, KV, allocator/scratch, compiler cache, serialization staging and full native capture data. No measured fit/speed guarantee."
+    }
+  },
+  "recommended_material_checks": [
+    {
+      "priority": 1,
+      "test": "New objective wrapper disabled/noop exact parity + split-resume from current selected5760",
+      "why": "Covers actual current added-replay schema, not older resident-only lineage.",
+      "budget": "2-3physical updates for split-resume plus48-480updates disabled numerical-control continuation; setup/readouts dominate, prospectively allow~5min per process based on prior stage.",
+      "preserve": [
+        "nine scale vectors/Adam by path",
+        "CPU/CUDA/Python RNG",
+        "CE reachable mask/fixed4 denominator",
+        "old+added replay samplers",
+        "exposure/cost stage ancestry"
+      ],
+      "not_needed": "Repeat selected-O 2step plumbing; already has meaningful trained flips and native qualification."
+    },
+    {
+      "priority": 2,
+      "test": "Fixed-candidate depth-weighted CE and/or label-smoothing plus unchanged replay in bounded paired branches",
+      "why": "Exercises compatible loss/data mechanisms and objective composition without altering geometry/precision/sign mask.",
+      "budget": "480update pilot, then promising combination and one apparent loser to1920 if nativeDEV diagnostics remain informative;~211s incremental training per1920 plus setup/readouts.",
+      "gate": "Use consumed DEV only, five repetitions for timing claims, predeclare checkpoints; no universal early-pruning claim."
+    },
+    {
+      "priority": 3,
+      "test": "If current preparation path is re-exercised, rebuild view/materialize/hash a small existing FIT capture and export/native-admit new trained endpoint",
+      "why": "Tests actual teacher semantics and data preparation without opening fresh partitions or regenerating all captures.",
+      "budget": "Existing real all3807matrix600,442,880B parity proof took56.693s CPU; small fixture regeneration materially cheaper.",
+      "gate": "Do not mix bridgefix overlay capture into frozen original-runtime lineage; descriptor hashes and native cache positions remain mandatory."
+    }
+  ],
+  "CPU_verification": {
+    "command": "CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:scripts/w1a8_generalization:tests .venv/bin/python -m unittest -q test_w1a8_modern_actor test_w1a8_modern_actual_data test_w1a8_modern_train_added_replay test_w1a8_modern_selected_sign_training test_w1a8_modern_train_expanded_ce_resident",
+    "result": "46 tests PASS",
+    "test_seconds": 2.056,
+    "scope": "Synthetic CPU contracts, not real GPU/native performance.",
+    "first_attempt": ".venv pytest unavailable (No module named pytest); used existing unittest harness without environment mutation."
+  },
+  "evidence": {
+    "resident-row-real-qualification.json": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/resident-row-real-qualification.json",
+      "exists": true,
+      "bytes": 5654,
+      "sha256": "409379d8af1ea647fa774b36a096a198c327328a6311485a8766a61b915b04e6"
+    },
+    "resident-ce-GPU-control-parity.json": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/resident-ce-GPU-control-parity.json",
+      "exists": true,
+      "bytes": 1394,
+      "sha256": "ca6732099a41558c674ce482b90a0234b66f37c9970aefea7febceab690fa089"
+    },
+    "selected-training-result.json": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/selected-training-result.json",
+      "exists": true,
+      "bytes": 610,
+      "sha256": "be83d92fc60b37a25f986a09b14035b67fab6b21905cb737bc4081070ce4ef36"
+    },
+    "selected-training-control-parity.json": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/selected-training-control-parity.json",
+      "exists": true,
+      "bytes": 916,
+      "sha256": "efd7a2848b492ad5114361b15d6723c24f149c97d2dd50eef93c5072e91bfe70"
+    },
+    "selected-lr-control-parity.json": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/selected-lr-control-parity.json",
+      "exists": true,
+      "bytes": 803,
+      "sha256": "3de5600d148efac7a17e155672c797ef0c08236f236617f7930729a98792a7fe"
+    },
+    "selected-lr-root-analysis.json": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/selected-lr-root-analysis.json",
+      "exists": true,
+      "bytes": 1493,
+      "sha256": "e16174ea37688263d7c3e4adcc144fdf66ecb2ad3a70a4aa89226f1c2545e3ee"
+    },
+    "selected-lr1e3-all-native01/result.json": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/selected-lr1e3-all-native01/result.json",
+      "exists": true,
+      "bytes": 4798,
+      "sha256": "d60c02fe7a0c6b5209d5b1dd38bde9b72afeef56b8782e3c5f855bd7c4f8d7b7"
+    },
+    "selected-lr3e3-all-native01/result.json": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/selected-lr3e3-all-native01/result.json",
+      "exists": true,
+      "bytes": 4373,
+      "sha256": "1dc16a5266b06cc702c910987d4a1e0ebddc583116faed8e37c1b82a3546582d"
+    },
+    "selected-lr-http-qualification01/result.json": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/selected-lr-http-qualification01/result.json",
+      "exists": true,
+      "bytes": 40147,
+      "sha256": "9c7737fa3d4f6f7fee2f035c8348149579c8a4a3cb09872c3f11ae78d77b0b86"
+    },
+    "head-real-qualification-root-audit.json": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/head-real-qualification-root-audit.json",
+      "exists": true,
+      "bytes": 1135,
+      "sha256": "8cd42cb86cf2e2f2895905eef427d8fe00edfc3963b6ba65fbd1e40339b80bf1"
+    },
+    "natural-replay-confirmation01/full-native956-root-analysis.json": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/natural-replay-confirmation01/full-native956-root-analysis.json",
+      "exists": true,
+      "bytes": 12683,
+      "sha256": "2beac1596c4a5c91d334c3aede8d1fdcb70fd012fb2f5bd42c8cc5bc344f5a49"
+    },
+    "natural-replay-confirmation01/root-analysis.json": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/natural-replay-confirmation01/root-analysis.json",
+      "exists": true,
+      "bytes": 19840,
+      "sha256": "0304a8e9236f752a29ad9d0693f72cc34a0b57633222febd7e9858693b4b8c52"
+    },
+    "old3840_reproduction": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-bounded-duration-predictor-20261104-01/old3840-parity.json",
+      "exists": true,
+      "bytes": 952,
+      "sha256": "85301b2582f7702e00a7fdd8704be43622959d9f83f559f723503eb38a335495"
+    },
+    "selected_sign_initial_admission": {
+      "path": "/home/philip/binary-eagle-decoding/experiments/w1a8-modern-native-20261103/selected-sign-admission.json",
+      "exists": true,
+      "bytes": 2522,
+      "sha256": "e5a391e98f1d52ceb51e109833ae4e93c6f0316f23127ae30fcb59e78fb17df8"
+    },
+    "storage_purge": {
+      "path": "/home/philip/binary-eagle-decoding/experiments/storage-purge-20261104.json",
+      "exists": true,
+      "bytes": 2822,
+      "sha256": "a098dbbff594004c41ad55215fa3cf8608757fd8437464e94d364f1b12d94914"
+    }
+  },
+  "storage_limits": "Authorized historical purge removed raw captures/intermediates; retained endpoints and compact evidence remain. This audit verifies modern selected state bytes, not ability to exactly replay purged historical raw data.",
+  "no_new_GPU_work": true,
+  "no_source_changes": true,
+  "no_architecture_or_precision_selection": true
+}

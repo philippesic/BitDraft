@@ -1,5 +1,25 @@
 # Current project status
 
+## Active: design discussion readiness — November 4, 2026
+
+The existing nine-model goal continues under
+[authorized scope](../experiments/design-readiness-20261104/scope.json).
+Architecture, precision, group-scale representation and long-QAT allocation are
+reserved for the user. Work reconciles all98 canonical training segments and
+the separate32-feature ledger, audits native bottlenecks, and exercises compatible
+loss ablations on the retained modern4B fixed-row W1A8 actor. Nine trainable scale
+tensors contain76,880 per-output-row values; successful fresh24 lineage has fixed
+signs. Selected-projection sign evidence does not qualify full-sign QAT.
+
+Root is sole local RTX5080 operator. Noop migration qualification is supervised
+in `local-design-readiness-noop-20261104-01` on tmux socket
+`binary-eagle-runtime`; identities, prospective budgets and stop procedure are in
+`runs/design-readiness-20261104-01/`. Control/depth weighting/label-smoothing/
+combination tests follow exact noop parity. DEV reuse is explicit; no fresh inputs
+opened. Fresh24 +23.74% remains evidence; causal repair and general early
+prediction remain unproven. See [active goal](goals/nine-model-qat-overnight.md)
+and [readiness evidence](../experiments/design-readiness-20261104/).
+
 ## Active: ordered W1A8 generalization work — November 3–4, 2026
 
 The two user-authorized bounded diagnostics are complete and raw-audited. On

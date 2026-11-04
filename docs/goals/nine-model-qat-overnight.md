@@ -5611,3 +5611,40 @@ change or push. General predictor validation/backlog/four-target work remains
 pending; paid horizon19200 continuations preserved. Sole GPU lane released.
 
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->
+
+
+### Design readiness and backlog work authorized — November 4
+
+User authorizes sustained backlog/evidence reconciliation, fixed-candidate feature
+experiments, and tested comparison/QAT preparation until ready for a joint
+architecture/precision design discussion. Architecture/precision choices and
+comparison sweeps remain reserved for the user. Do not infer authorization for
+a major long-QAT allocation. Earlier16-hour discussion was not a hard budget.
+Canonical scope and completion criteria: experiments/design-readiness-20261104/scope.json.
+Primary readiness may be followed by bounded directly related developments;
+no unrelated improvements or push. No fresh experiment launched at this checkpoint.
+
+### Readiness evidence reconstruction and fixed-candidate tests launched
+
+Existing goal; no architecture/precision choice or major QAT allocation. Sole
+local RTX5080 lane authenticated idle, pause control clear, WSL173.64GB/C42.29GB
+free at kickoff. Three bounded CPU/source workers own disjoint readiness reports;
+root owns docs and GPU. Canonical98 training segments/34recipe families found in
+catalog-source08.json, plus32-feature closeout requires separate accounting.
+Paid current5760 trains76,880 row-scale values over9tensors with fixed signs.
+Selected-O paid branch has570learned bitflips at3840 and mature resume evidence;
+full-sign QAT remains unqualified.
+
+Native fresh24 independently reauthenticated840records/1680payload pins. Same
+cohort selected-versus-DFlash gap93.91% inside server generation; component
+attribution still needs bounded diagnostic. No cohort rates mixed.
+
+Prospective experiments freeze: runs/design-readiness-20261104-01/freeze.json.
+New specific objective trainer keeps current data/masks/arithmetic/signs/Adam
+and both independent356+407FIT replay banks. Control/depth[1.5,.5]/smoothing.05/
+combination:960updates each frompaid5760; extend control and best/worst DEV
+noncontrols by960 only, no general predictor claim. First require48-update noop
+against original strict trainer; controller local-design-readiness-noop-20261104-01
+currently running under remote_job in local tmux binary-eagle-runtime. Exact
+boot/birth/source/stop receipts under run root. Four independent CPU objective
+mask/gradient/reference checks pass. All preexisting dirty/shared files preserved.

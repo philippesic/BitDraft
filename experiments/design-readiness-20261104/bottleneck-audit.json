@@ -1,0 +1,297 @@
+{
+  "schema": "fixed_candidate_bottleneck_independent_audit_v1",
+  "status": "EVIDENCE_RECOMPUTED_COMPONENT_TIMING_GAP_OPEN",
+  "audited_at_utc": "2026-11-04T02:40:09.052687+00:00",
+  "scope": "CPU source and retained raw evidence only; no GPU/model execution, runtime edit, architecture or precision switch.",
+  "hardware": "RTX5080/SM120 as pinned by native study; this audit ran on CPU",
+  "target": "Qwen3.5-4B Q4_K_M",
+  "candidate": "RowBinaryLinear fixed signs, per-output-row learned scales, fixed W1A8 nine-linear representation",
+  "settings": "Original mode32 correctness runtime; ctx4096,b512/ub512,threads4,FAon,F16 target/draft KV,temp0,seed1234,cache_promptfalse,concurrency1,depth2;256 output maximum;24 natural prompts previously consumed;5 repetitions.",
+  "evidence": {
+    "compact": {
+      "path": "/home/philip/binary-eagle-decoding/experiments/w1a8-modern-native-20261103/natural-confirmation.json",
+      "bytes": 15163,
+      "sha256": "578e5f3d57abcab44c4b11eef1c3218e09aa3396e5140bd09b9c5dc623d5e9d3"
+    },
+    "root_analysis": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/natural-replay-confirmation01/root-analysis.json",
+      "bytes": 19840,
+      "sha256": "0304a8e9236f752a29ad9d0693f72cc34a0b57633222febd7e9858693b4b8c52"
+    },
+    "raw_result": {
+      "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/natural-confirmation01/result.json",
+      "bytes": 1808190,
+      "sha256": "e2f235d20bd2dba9ec083e144668038b9e976f48952c653c6e097628312ccd1c"
+    },
+    "selection": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/natural-replay-confirmation01/selected.json",
+      "bytes": 4874,
+      "sha256": "2f9809a46b665a9646989f8467d12dfac85da7d2e5e3b92f2ea79a34ccd51d18"
+    },
+    "source_pins": [
+      {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-packed-runtime-20261103-01/source/common/speculative.cpp",
+        "bytes": 126737,
+        "sha256": "667f3e71026a4701d4c3e6338ca25ba38b7f83d6a41ae9f9c33763beb12a64ad"
+      },
+      {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-packed-runtime-20261103-01/source/tools/server/server-context.cpp",
+        "bytes": 304310,
+        "sha256": "5fae51fa9164f0e5c3e185a4d8834bc805d58ae6de1a4269929cdcbe840c9551"
+      },
+      {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-packed-runtime-20261103-01/source/tools/server/server-common.cpp",
+        "bytes": 79532,
+        "sha256": "b686729ed7d098e2f0c3da1ba28325d0e6d30721dab09f71cb9b53f342710ddb"
+      },
+      {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-packed-runtime-20261103-01/source/tools/server/server-common.h",
+        "bytes": 30768,
+        "sha256": "335a09e65306cb14d18760b2be6710d586b08a23316c79d7ebfab3148e82ba1b"
+      },
+      {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-packed-runtime-20261103-01/source/tools/server/server-task.cpp",
+        "bytes": 68949,
+        "sha256": "9e52cb9eee85c26994695436c3bbc4a6d68afa430f6d38ae8886f4f189720a58"
+      },
+      {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-packed-runtime-20261103-01/source/src/models/eagle3.cpp",
+        "bytes": 21831,
+        "sha256": "f459736f08ba5207864616ad47cdd5c811516c90fbef064b9997e69417288993"
+      },
+      {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-packed-runtime-20261103-01/source/common/log.h",
+        "bytes": 6400,
+        "sha256": "e99f07f5b64288aaece28955ed9f97c2ed8dc9c0375af3e253fc5c682637a014"
+      }
+    ]
+  },
+  "independent_raw_audit": {
+    "measured_records": 840,
+    "authenticated_request_and_response_files": 1680,
+    "method": "SHA256 and byte size of every measured request and response; compare raw timing/counts to records; validate frozen max256/cachefalse/temp0/seed1234; compare exact token IDs/content/stop_type/stopping_word/truncated for all arms within each repetition/prompt.",
+    "passed": true,
+    "timing": "Audit wall not prospectively recorded; no aggregate preparation-clock claim."
+  },
+  "same_cohort_aggregate": [
+    {
+      "arm": "target_only",
+      "requests": 120,
+      "repetitions": 5,
+      "output_tokens": 25815,
+      "full_request_seconds": 146.2188965580135,
+      "request_tokens_per_second": 176.550368028237,
+      "server_prompt_seconds": 4.7841000000000005,
+      "server_generation_seconds": 132.25451,
+      "residual_request_minus_server_seconds": 9.180286558013506,
+      "accepted": 0,
+      "proposed": 0,
+      "acceptance": null,
+      "exact_verification_rounds": null,
+      "exact_emitted_draft_tokens": null
+    },
+    {
+      "arm": "dflash_Q4KM",
+      "requests": 120,
+      "repetitions": 5,
+      "output_tokens": 25815,
+      "full_request_seconds": 102.16264531799243,
+      "request_tokens_per_second": 252.68531291107413,
+      "server_prompt_seconds": 7.209789,
+      "server_generation_seconds": 85.759382,
+      "residual_request_minus_server_seconds": 9.193474317992425,
+      "accepted": 15520,
+      "proposed": 20265,
+      "acceptance": 0.7658524549716259,
+      "exact_verification_rounds": null,
+      "exact_emitted_draft_tokens": null
+    },
+    {
+      "arm": "w1a8_initial",
+      "requests": 120,
+      "repetitions": 5,
+      "output_tokens": 25815,
+      "full_request_seconds": 192.563553229018,
+      "request_tokens_per_second": 134.05963676468895,
+      "server_prompt_seconds": 10.521595999999999,
+      "server_generation_seconds": 172.797215,
+      "residual_request_minus_server_seconds": 9.244742229018016,
+      "accepted": 5590,
+      "proposed": 40020,
+      "acceptance": 0.13968015992004,
+      "exact_verification_rounds": null,
+      "exact_emitted_draft_tokens": null
+    },
+    {
+      "arm": "w1a8_quarter",
+      "requests": 120,
+      "repetitions": 5,
+      "output_tokens": 25815,
+      "full_request_seconds": 184.3395302110148,
+      "request_tokens_per_second": 140.04050010569836,
+      "server_prompt_seconds": 10.541495000000001,
+      "server_generation_seconds": 164.53524299999998,
+      "residual_request_minus_server_seconds": 9.262792211014812,
+      "accepted": 6595,
+      "proposed": 38050,
+      "acceptance": 0.1733245729303548,
+      "exact_verification_rounds": null,
+      "exact_emitted_draft_tokens": null
+    },
+    {
+      "arm": "w1a8_control5760",
+      "requests": 120,
+      "repetitions": 5,
+      "output_tokens": 25815,
+      "full_request_seconds": 156.13324328201998,
+      "request_tokens_per_second": 165.3395488196639,
+      "server_prompt_seconds": 10.525791,
+      "server_generation_seconds": 136.356714,
+      "residual_request_minus_server_seconds": 9.250738282019967,
+      "accepted": 9995,
+      "proposed": 31305,
+      "acceptance": 0.3192780705957515,
+      "exact_verification_rounds": null,
+      "exact_emitted_draft_tokens": null
+    },
+    {
+      "arm": "w1a8_added_replay5760",
+      "requests": 120,
+      "repetitions": 5,
+      "output_tokens": 25815,
+      "full_request_seconds": 155.61876887600374,
+      "request_tokens_per_second": 165.88616004647398,
+      "server_prompt_seconds": 10.50149,
+      "server_generation_seconds": 135.958003,
+      "residual_request_minus_server_seconds": 9.159275876003761,
+      "accepted": 10015,
+      "proposed": 31280,
+      "acceptance": 0.32017263427109977,
+      "exact_verification_rounds": null,
+      "exact_emitted_draft_tokens": null
+    },
+    {
+      "arm": "eagle_Q4_0",
+      "requests": 120,
+      "repetitions": 5,
+      "output_tokens": 25815,
+      "full_request_seconds": 116.2191556480102,
+      "request_tokens_per_second": 222.12345164669057,
+      "server_prompt_seconds": 10.088775,
+      "server_generation_seconds": 97.02235300000001,
+      "residual_request_minus_server_seconds": 9.108027648010193,
+      "accepted": 14905,
+      "proposed": 21485,
+      "acceptance": 0.6937398184780079,
+      "exact_verification_rounds": null,
+      "exact_emitted_draft_tokens": null
+    }
+  ],
+  "derived": {
+    "selected_over_initializer_request_ratio": 1.2374057102485607,
+    "selected_over_dflash_request_ratio": 0.6564930827810052,
+    "selected_over_target_request_ratio": 0.9395967955158416,
+    "selected_minus_dflash_request_seconds": 53.45612355801131,
+    "selected_minus_dflash_server_generation_seconds": 50.19862099999999,
+    "generation_fraction_of_observed_gap": 0.93906212532459,
+    "selected_minus_dflash_prompt_seconds": 3.2917010000000007,
+    "selected_minus_dflash_residual_seconds": -0.034198441988664285
+  },
+  "findings": [
+    {
+      "finding": "The measured remaining gap is predominantly inside the server generation interval, which includes drafter, target verification, feature catch-up/cache and scheduling; not pure verifier GPU time.",
+      "evidence": "93.91% of selected-minus-DFlash request wall difference falls in server_generation_seconds on this one natural cohort.",
+      "implication": "Prioritize acceptance and current decode component measurement; HTTP/prompt-only optimization cannot explain the main gap."
+    },
+    {
+      "finding": "Acceptance improved with training but remains substantially below paired DFlash.",
+      "evidence": "Selected10015/31280=32.02%; initializer5590/40020=13.97%; DFlash15520/20265=76.59%.",
+      "implication": "Both fewer verifier rounds from better drafts and lower per-round overhead are plausible. Acceptance alone is not throughput; these are aggregate proposed/accepted counters, not exact emitted-draft counts."
+    },
+    {
+      "finding": "Current native EAGLE process() runs encoder and decoder on full verify batch, including rejected proposal rows, before rollback.",
+      "evidence": "common/speculative.cpp:505\u2013510,654\u2013799; target server-context.cpp:4752; catch-up decoder uses all output=false.",
+      "implication": "A concrete current implementation waste hypothesis. Feature-capture/cache/deferred-boundary semantics must be retained; no skip implementation or speed promise is authorized by this source audit."
+    }
+  ],
+  "existing_timer_capabilities": [
+    {
+      "name": "Cumulative speculative begin/generate/accept host timers",
+      "access": "Run unchanged server at -lv4; parse per-request statistics draft-eagle3: #calls(b,g,a) and dur(b,g,a) deltas.",
+      "source": "common/speculative.cpp:2955,3000,3074,3126; common/log.h:25; server-context.cpp:805",
+      "limits": "process(batch) is untimed; no explicit pre/post synchronization contract for all work; host timings may charge prior async work to later waits; generation timer omits target feature/catch-up costs outside draft(). Cannot subtract from a separately measured clean run."
+    },
+    {
+      "name": "Exact target verification rounds",
+      "access": "GET /metrics before and after each completed measured request, outside the request timer; subtract llamacpp:spec_decode_num_drafts_total. Also subtract accepted/proposed counters and crosscheck response. Per-position accepted counters are also available as llamacpp:spec_decode_num_accepted_tokens_per_pos_total{position=\"0\"}, etc (server-task.cpp:1651\u20131657).",
+      "source": "tools/server/server-task.cpp:1583\u20131609; server-context.cpp:5016\u20135017,5176\u20135178",
+      "limits": "Round count includes native verification behavior/replays as defined by stats. Do not infer emitted accepted drafts from accepted count; end-of-budget truncation can differ."
+    },
+    {
+      "name": "Current trace interposer",
+      "access": "modern_trace.cpp / libw1a8-modern-trace.so from existing trace-build receipt",
+      "source": "scripts/w1a8_generalization/modern_trace.cpp:94",
+      "limits": "Synchronizes and writes/fsyncs tensors. Its manifest explicitly invalidates performance timings; useful for semantics/counts, not clean component or throughput claims."
+    }
+  ],
+  "missing_measurements": [
+    {
+      "gap": "Current selected-model draft versus verifier/catch-up component timing with same-pass boundaries",
+      "cheapest_test": "Separate diagnostic over3\u20136 consumed DEV prompts, fixed current model/runtime/depth; two excluded warmups; -lv4 cumulative generation timers plus exact /metrics counters; add bounded process/decode synchronized stage wrappers only if these leave a material ambiguity.",
+      "budget": "Prospective cap10minutes including setup/release; one diagnostic pass sufficient for attribution, no performance claim. Five alternating clean repetitions required only for an ensuing throughput claim.",
+      "success": "Raw tokens/text/stop equal target; no unknown loaded library; raw actual rounds/proposed/accepted reconciled; each timing span labels clock/sync/scope; unsummed overlaps; preserved boot/birth identities and release."
+    },
+    {
+      "gap": "Native packed-projection/head versus packing GPU cost on current actual shapes",
+      "cheapest_test": "If component diagnostic shows large drafter share, use native CUDA events/profiler on current nine projections and relevant N=1/2/3 process shapes; include A8 packing. Do not use shortlist PyTorch reference as native kernel latency.",
+      "budget": "Only after above resolves material relevance; bounded10minute profile, separate from clean performance."
+    }
+  ],
+  "reusable_command": {
+    "launcher": "Use existing scripts/remote_job.py under unique local tmux, same source/model/library pins and control checks. Root GPU owner must launch.",
+    "server_argv_template": "Copy argv from natural-confirmation01/rep-00-w1a8_added_replay5760/command.json; replace only unique --port and -lv3 with -lv4; preserve -m/-md, mode32 env and remaining settings.",
+    "metrics_get": "curl --fail --silent http://127.0.0.1:<owned-port>/metrics",
+    "metrics_names": [
+      "llamacpp:spec_decode_num_drafts_total",
+      "llamacpp:spec_decode_num_draft_tokens_total",
+      "llamacpp:spec_decode_num_accepted_tokens_total",
+      "llamacpp:spec_decode_num_accepted_tokens_per_pos_total{position=\"<zero-based-depth>\"}"
+    ],
+    "harness_note": "modern_requests.py already supports runtime.log_verbosity=3|4 per arm and exact five repetitions; inputs480.json is the12 consumed DEV panel. A single diagnostic should use explicit separate wrapper rather than weaken that five-repetition harness."
+  },
+  "historical_headskip": {
+    "evidence": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-actual-training-20261103-01/native-analysis1920-headskip.json",
+      "bytes": 14518,
+      "sha256": "e30229eef5fdb67a9eb1628a62eee76845976a36c540da658c59ae2ccec1bd7e"
+    },
+    "scope": "Separate earlier12 consumed DEV/80-token panel, five repetitions;1920 checkpoint, NOT current5760 selected model/natural cohort.",
+    "trained_effect": {
+      "pooled_full_request_speedup": 1.0038033889462055,
+      "paired_prompt_95_interval": [
+        0.9943994132571078,
+        1.012351647461745
+      ]
+    },
+    "initializer_effect": {
+      "pooled_full_request_speedup": 1.0042950645581763,
+      "paired_prompt_95_interval": [
+        0.9978287886008518,
+        1.0113911767586248
+      ]
+    },
+    "conclusion": "Intervals span1; no established full-request head-skip gain on that tested panel. Do not transplant rates or declare all future head/catch-up optimizations useless."
+  },
+  "reused_tools": {
+    "cost_bound_py": "Historical corrected-D5/DSpark CPU-wall trace accounting; explicitly rejects causal full-request bound. Strict D5/mask3 schema cannot be applied to current EAGLE d2.",
+    "component_cost_py": "Seven-row PyTorch CUDA F32 reference; includes scale/packing/materialization but excludes native packed reads/unpacking/layout/kernel dispatch/full drafter/verifier/request. Cannot validate current native bottleneck."
+  },
+  "limits": [
+    "No causal attribution between packed head, non-head drafter, verifier, cache/catch-up and scheduling is yet measured for selected5760.",
+    "No zero-draft critical-path upper bound justified from current data.",
+    "No rates compared across natural24, synthetic12 or older cohorts.",
+    "No general early-rejection predictor or expanded-data causal repair established.",
+    "Other three modern targets and unseen architectures/precisions remain outside these findings.",
+    "DFlash win and zero draft-success loss are not preparation acceptance gates."
+  ]
+}
