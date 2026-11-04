@@ -1431,3 +1431,15 @@ own selection. Preserve12trainer-hours per remaining model and measured4/8/12h
 checkpoints; no paper establishes optimal duration here. No silent changes to
 initialization/precision/trainable scope/verification/numeric gate or held-out
 inputs. Current native quality failure and negative Q4-throughput result remain.
+
+
+## Joint architecture/precision design readiness — November 4, 2026
+
+Status: evidence/preparation complete; design and major allocation remain user
+choices. See `experiments/design-readiness-20261104/readiness.md` and its feature
+map. Current model is a working reference, not a selected final design. No new
+loss feature established a speed win; preserve hypotheses with their scoped
+negative/inconclusive evidence. Group scales, sign scope, head support, corrections
+and proposal structure change implementation/training requirements and must be
+chosen together. Larger TRAIN captures and loader/retention bounds must be planned
+for the chosen design. No implicit architecture/precision migration or long run.

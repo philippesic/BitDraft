@@ -1092,3 +1092,23 @@ filesystem free space. No user mistake is inferred.
   thread execution and removal of ownership/delegation references. No user error.
 - Root cancelled the task and aligned AGENTS and linked operations instructions.
   Continue the authorized research directly; do not create replacement delegates.
+
+
+### 2026-11-04: Compare captured logits by their explicit token identities
+
+- Root's recapture checker initially treated diagnostic logit arrays as ordered
+  identically. Two FITs produced200 arrays with reordered candidate IDs and
+  correspondingly reordered values. Training arrays and token-aligned logits
+  were exact; no model/teacher error or user mistake occurred.
+- The corrected checker joins by unique token ID, verifies same IDs/argmax and
+  exact values, and still rejects changed IDs/values/features in fixtures.
+  Evidence: `runs/design-readiness-20261104-01/capture-probe01/result.json`.
+
+### 2026-11-04: Measure preparation overhead before attributing it to CUDA startup
+
+- Short current trials spend much more wall time in preparation than updates.
+  Root tested process reuse as a possible improvement; state/export exactness
+  passed but255.85→251.19s gave no material benefit. No user error.
+- A bounded profile identifies data-union validation and repeated filesystem
+  operations as the main cost. Preserve integrity checks; disclose this known
+  one-time cost and larger-data limits instead of claiming unmeasured speedups.

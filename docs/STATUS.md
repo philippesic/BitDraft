@@ -1,64 +1,50 @@
 # Current project status
 
-## Active: backlog and design readiness — November 4, 2026
+## Active goal: design discussion ready — November 4, 2026
 
-Continue directly in this thread; no delegated work. Architecture/precision
-selection and major long-QAT allocation remain reserved for the user. Scope and
-completion criteria: `experiments/design-readiness-20261104/scope.json`.
+The authorized backlog/design-readiness work is complete directly in this thread.
+No architecture/precision or new feature recipe was selected, no major long-QAT
+allocation started, and no push occurred. No owned job or GPU compute app remains.
 
-Direct audit authenticates all98 original segment records,51 compact source
-receipts and32 feature IDs. This establishes inventory coverage, not universal
-scientific rejection or feature transfer. Current representation is76,880
-per-output-row scales in9tensors, with fixed signs in the successful lineage.
-Selected-O sign-training receipts exist separately; all-sign/grouped designs
-remain unqualified and are explicit discussion dependencies.
+[Start with the readiness brief](../experiments/design-readiness-20261104/readiness.md).
+All98 canonical segments/34families and32feature IDs reconcile to original
+records;51 retained source receipts rehash. Detailed evidence/dependencies/costs
+and scoped missing raw assets are linked there. The current working reference
+trains76,880 row scales in9tensors, with fixed signs. Separate selected-O sign
+qualification exists; all-sign/grouped/new-architecture work remains explicit.
 
-Exact48-update disabled-objective equivalence passes. A two-FIT recapture and
-114-window CPU preparation pass: training arrays are byte-identical and all
-candidate logits exactly match by token ID. The first checker incorrectly compared
-unordered diagnostic token lists by position; failure and corrected evidence are
-preserved. No floating-point tolerance was weakened.
+Four compatible objective arms and three extensions, two8-arm×5repeat native
+panels, exact48-update equivalence, exact480-update split-resume, native recapture/
+materialization/export/admission all pass. All1,246 panel/qualification responses
+match target tokens/text/stopping; no new feature-vs-control throughput interval
+excludes no change. No universal early predictor or permanent rejection inferred.
+Paid replay5760 remains the recorded candidate; priorfresh24 transfer is unchanged.
 
-Four fixed-candidate objective arms completed960updates each. Exact480-update
-split-resume, including contract/parameters/Adam/RNG/exposure bytes, passes. The
-first8-arm×5-repeat native panel passes560rawresponse/model/runtime/counter/release
-checks. All three feature-vs-control throughput intervals span no change. Current
-paid candidate uses2785 verification rounds versus DFlash1900 for identical4685
-output tokens on this consumedDEV panel. Narrow drafting-method diagnostics are
-cheaper but omit catch-up; overall generation time/round is slightly higher.
-Longer control/depth/smoothing checks are running under
-`local-design-readiness-stage2-20261104-01`; exact identities/stop receipts under
-`runs/design-readiness-20261104-01/`. No general predictor or feature win claimed.
+Current paid candidate uses2785 counted speculative rounds vsDFlash1900 for
+identical4685tokens on consumedDEV. Narrow drafting spans are cheaper but omit
+catch-up; aggregate generation cost/round gives no corresponding advantage.
+Current head/teacher probability coverage and all25 opaque partition indices
+are audited; no new TRAIN/evaluation prompts selected or sealed payload opened.
 
-Current-head membership and existing denseQ4teacher probability mass are audited
-without changing the head or teacher.404eligible FIT teacher rows join; the known
-excluded row remains excluded. See head-coverage.json,teacher-coverage.json and
-objective-stage1.json under experiments/design-readiness-20261104. Architecture/
-precision changes and major longQAT remain user decisions; final readiness audit
-and bounded gradient/checkpoint-I/O follow-ups remain pending.
+Bounded follow-ups finish: gradient observation leaves exact control state;
+synthetic2.8GB full-shaped CPUstate saves/restores in11.12/9.75s (not GPU/QAT
+qualification); process reuse preserves state/export but gives no material
+startup gain. Profiling identifies one-time data authentication as the main
+small-trial preparation cost. Current1GiB cache/audit/depth limits and larger
+training-data requirements are explicit rather than claimed already scalable.
 
+Direct execution uses7,824 physical updates,6,720 unique treatment-trajectory
+updates;17.57min measured update wall is contained in82.15min nonoverlapping
+supervised wall, not additive/pureGPU accounting. All91 native groups released.
+Paid checkpoints,~394MB unique deployed/checkpoint payload and~68MB raw evidence
+remain. Five duplicate exports are losslessly hardlinked, preserving every path/
+byte; synthetic scratch/task-local bytecode removed. No VHDX compaction.
+[Machine readiness/costs](../experiments/design-readiness-20261104/readiness.json)
+and raw `runs/design-readiness-20261104-01/cleanup-final.json` retain details.
+Next is the joint architecture/precision/trainable-scope/head/data design choice;
+known selected-design qualification/capture/sharding work is in the brief.
 
-## Active: design discussion readiness — November 4, 2026
-
-The existing nine-model goal continues under
-[authorized scope](../experiments/design-readiness-20261104/scope.json).
-Architecture, precision, group-scale representation and long-QAT allocation are
-reserved for the user. Work reconciles all98 canonical training segments and
-the separate32-feature ledger, audits native bottlenecks, and exercises compatible
-loss ablations on the retained modern4B fixed-row W1A8 actor. Nine trainable scale
-tensors contain76,880 per-output-row values; successful fresh24 lineage has fixed
-signs. Selected-projection sign evidence does not qualify full-sign QAT.
-
-Root is sole local RTX5080 operator. Noop migration qualification is supervised
-in `local-design-readiness-noop-20261104-01` on tmux socket
-`binary-eagle-runtime`; identities, prospective budgets and stop procedure are in
-`runs/design-readiness-20261104-01/`. Control/depth weighting/label-smoothing/
-combination tests follow exact noop parity. DEV reuse is explicit; no fresh inputs
-opened. Fresh24 +23.74% remains evidence; causal repair and general early
-prediction remain unproven. See [active goal](goals/nine-model-qat-overnight.md)
-and [readiness evidence](../experiments/design-readiness-20261104/).
-
-## Active: ordered W1A8 generalization work — November 3–4, 2026
+## Prior checkpoint: ordered W1A8 generalization work — November 3–4, 2026
 
 The two user-authorized bounded diagnostics are complete and raw-audited. On
 12 reused DEV prompts with five repetitions, old-only CE5760 reaches130.512

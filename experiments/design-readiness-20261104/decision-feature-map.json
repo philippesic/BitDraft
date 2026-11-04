@@ -2772,6 +2772,10 @@
   "additional_direct_checks": {
     "head_coverage": "experiments/design-readiness-20261104/head-coverage.json",
     "teacher_coverage": "experiments/design-readiness-20261104/teacher-coverage.json",
-    "interpretation": "Current head membership and conditional teacher mass are concrete design inputs. No alternative head, precision or architecture tested; no KD training readiness or universal acceptance bound inferred."
+    "interpretation": "Current head membership and conditional teacher mass are concrete design inputs. No alternative head, precision or architecture tested; no KD training readiness or universal acceptance bound inferred.",
+    "data_readiness": "experiments/design-readiness-20261104/data-readiness.json",
+    "source_profile": "experiments/design-readiness-20261104/preparation-profile.json",
+    "gradient": "experiments/design-readiness-20261104/gradient-diagnostic.json",
+    "checkpoint_io": "experiments/design-readiness-20261104/checkpoint-io.json"
   }
 }

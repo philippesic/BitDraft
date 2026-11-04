@@ -1,0 +1,280 @@
+{
+  "status": "SECOND_STAGE_NATIVE_AUDIT_PASS_NO_SEPARATED_FEATURE_GAIN",
+  "raw": "runs/design-readiness-20261104-01/stage2-analysis.json",
+  "summary": [
+    {
+      "arm": "target_only",
+      "tokens": 4685,
+      "wall_seconds": 29.79414909503248,
+      "TPS": 157.24563856670505,
+      "server_generation_seconds": 23.877273,
+      "verification_rounds": 0,
+      "draft_accepted": 0,
+      "draft_proposed": 0,
+      "acceptance": null,
+      "emitted_tokens_per_spec_round": null,
+      "accepted_tokens_per_spec_round": null,
+      "server_generation_ms_per_spec_round": null,
+      "per_repetition_TPS": [
+        153.48478496337705,
+        157.07181559656445,
+        158.22360905316054,
+        159.16242328241654,
+        158.41567512863838
+      ]
+    },
+    {
+      "arm": "dflash_Q4KM",
+      "tokens": 4685,
+      "wall_seconds": 23.34241060799104,
+      "TPS": 200.70763378638097,
+      "server_generation_seconds": 16.388427000000004,
+      "verification_rounds": 1900,
+      "draft_accepted": 2710,
+      "draft_proposed": 3780,
+      "acceptance": 0.716931216931217,
+      "emitted_tokens_per_spec_round": 2.4657894736842105,
+      "accepted_tokens_per_spec_round": 1.4263157894736842,
+      "server_generation_ms_per_spec_round": 8.625487894736844,
+      "per_repetition_TPS": [
+        200.83954707437175,
+        197.64985725970408,
+        198.08823572396528,
+        203.6263407777232,
+        203.4962679904421
+      ]
+    },
+    {
+      "arm": "w1a8_initial",
+      "tokens": 4685,
+      "wall_seconds": 41.95569107901247,
+      "TPS": 111.66542320032434,
+      "server_generation_seconds": 31.543385999999995,
+      "verification_rounds": 3620,
+      "draft_accepted": 965,
+      "draft_proposed": 7195,
+      "acceptance": 0.1341209173036831,
+      "emitted_tokens_per_spec_round": 1.2941988950276244,
+      "accepted_tokens_per_spec_round": 0.26657458563535913,
+      "server_generation_ms_per_spec_round": 8.713642541436462,
+      "per_repetition_TPS": [
+        110.90497395723644,
+        109.63551396188704,
+        112.92059839596578,
+        111.33438533629784,
+        113.62310897990903
+      ]
+    },
+    {
+      "arm": "paid5760",
+      "tokens": 4685,
+      "wall_seconds": 35.44024991002516,
+      "TPS": 132.19432740723227,
+      "server_generation_seconds": 24.547117000000004,
+      "verification_rounds": 2785,
+      "draft_accepted": 1800,
+      "draft_proposed": 5540,
+      "acceptance": 0.3249097472924188,
+      "emitted_tokens_per_spec_round": 1.6822262118491922,
+      "accepted_tokens_per_spec_round": 0.6463195691202872,
+      "server_generation_ms_per_spec_round": 8.814045601436266,
+      "per_repetition_TPS": [
+        126.90984176127698,
+        134.44318600578302,
+        133.9857072347254,
+        130.872532312802,
+        135.11862048940534
+      ]
+    },
+    {
+      "arm": "control6720",
+      "tokens": 4685,
+      "wall_seconds": 34.84214040801453,
+      "TPS": 134.46361059156794,
+      "server_generation_seconds": 24.338752999999997,
+      "verification_rounds": 2740,
+      "draft_accepted": 1845,
+      "draft_proposed": 5445,
+      "acceptance": 0.33884297520661155,
+      "emitted_tokens_per_spec_round": 1.7098540145985401,
+      "accepted_tokens_per_spec_round": 0.6733576642335767,
+      "server_generation_ms_per_spec_round": 8.882756569343064,
+      "per_repetition_TPS": [
+        135.99717781630955,
+        134.4249460521755,
+        130.70938760219468,
+        135.47720681756186,
+        135.8563281532933
+      ]
+    },
+    {
+      "arm": "control7680",
+      "tokens": 4685,
+      "wall_seconds": 34.701454646055936,
+      "TPS": 135.0087495693061,
+      "server_generation_seconds": 24.364884999999997,
+      "verification_rounds": 2755,
+      "draft_accepted": 1830,
+      "draft_proposed": 5480,
+      "acceptance": 0.33394160583941607,
+      "emitted_tokens_per_spec_round": 1.7005444646098005,
+      "accepted_tokens_per_spec_round": 0.6642468239564429,
+      "server_generation_ms_per_spec_round": 8.84387840290381,
+      "per_repetition_TPS": [
+        135.46152943383234,
+        133.66585803947478,
+        133.94794852470054,
+        135.6313331680385,
+        136.3770713509362
+      ]
+    },
+    {
+      "arm": "depth7680",
+      "tokens": 4685,
+      "wall_seconds": 34.93660557898693,
+      "TPS": 134.10003411487273,
+      "server_generation_seconds": 24.566649999999992,
+      "verification_rounds": 2775,
+      "draft_accepted": 1810,
+      "draft_proposed": 5515,
+      "acceptance": 0.32819582955575705,
+      "emitted_tokens_per_spec_round": 1.6882882882882884,
+      "accepted_tokens_per_spec_round": 0.6522522522522523,
+      "server_generation_ms_per_spec_round": 8.852846846846843,
+      "per_repetition_TPS": [
+        136.41676652519524,
+        133.96796096337604,
+        131.58735634234023,
+        133.41680657656127,
+        135.21136789990015
+      ]
+    },
+    {
+      "arm": "smooth7680",
+      "tokens": 4685,
+      "wall_seconds": 35.221600831951946,
+      "TPS": 133.0149649458838,
+      "server_generation_seconds": 24.586031000000002,
+      "verification_rounds": 2755,
+      "draft_accepted": 1830,
+      "draft_proposed": 5480,
+      "acceptance": 0.33394160583941607,
+      "emitted_tokens_per_spec_round": 1.7005444646098005,
+      "accepted_tokens_per_spec_round": 0.6642468239564429,
+      "server_generation_ms_per_spec_round": 8.924149183303086,
+      "per_repetition_TPS": [
+        133.03185492521504,
+        135.12853147782945,
+        133.01351225659232,
+        134.28060661067548,
+        129.74759017796904
+      ]
+    }
+  ],
+  "contrasts": [
+    {
+      "candidate": "w1a8_initial",
+      "control": "control7680",
+      "ratio": 0.8270976774212802,
+      "bootstrap95": [
+        0.7611779157222361,
+        0.8866102731836258
+      ],
+      "ranking": "slower"
+    },
+    {
+      "candidate": "w1a8_initial",
+      "control": "paid5760",
+      "ratio": 0.8447066178288615,
+      "bootstrap95": [
+        0.7829311877241582,
+        0.8992754459462651
+      ],
+      "ranking": "slower"
+    },
+    {
+      "candidate": "paid5760",
+      "control": "control7680",
+      "ratio": 0.9791537795064973,
+      "bootstrap95": [
+        0.9447208162264827,
+        1.0081760487934865
+      ],
+      "ranking": "unresolved"
+    },
+    {
+      "candidate": "control6720",
+      "control": "control7680",
+      "ratio": 0.9959621951949246,
+      "bootstrap95": [
+        0.97344479176309,
+        1.0128598478078437
+      ],
+      "ranking": "unresolved"
+    },
+    {
+      "candidate": "control6720",
+      "control": "paid5760",
+      "ratio": 1.01716626748548,
+      "bootstrap95": [
+        0.9866273213516842,
+        1.0583838074559462
+      ],
+      "ranking": "unresolved"
+    },
+    {
+      "candidate": "control7680",
+      "control": "paid5760",
+      "ratio": 1.0212900373054878,
+      "bootstrap95": [
+        0.9918902568648361,
+        1.0585137776496458
+      ],
+      "ranking": "unresolved"
+    },
+    {
+      "candidate": "depth7680",
+      "control": "control7680",
+      "ratio": 0.9932692106449967,
+      "bootstrap95": [
+        0.973686851086946,
+        1.0107203829119118
+      ],
+      "ranking": "unresolved"
+    },
+    {
+      "candidate": "depth7680",
+      "control": "paid5760",
+      "ratio": 1.0144159491940212,
+      "bootstrap95": [
+        0.9835555722246032,
+        1.0556866852609854
+      ],
+      "ranking": "unresolved"
+    },
+    {
+      "candidate": "smooth7680",
+      "control": "control7680",
+      "ratio": 0.9852321821379524,
+      "bootstrap95": [
+        0.9589019394597152,
+        1.0068972100615106
+      ],
+      "ranking": "unresolved"
+    },
+    {
+      "candidate": "smooth7680",
+      "control": "paid5760",
+      "ratio": 1.0062078120502365,
+      "bootstrap95": [
+        0.9745671155256128,
+        1.0402089424025376
+      ],
+      "ranking": "unresolved"
+    }
+  ],
+  "measured_requests": 480,
+  "all_responses": 560,
+  "released_groups": 40,
+  "scope": "Consumed DEV exploratory comparisons; unadjusted paired prompt/repetition intervals. No new generalization, causal component decomposition, universal early predictor or architectural choice."
+}

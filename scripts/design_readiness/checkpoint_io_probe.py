@@ -32,9 +32,20 @@ def main():
     assert available()>payload+3*1024**3,'insufficient actual host memory reserve'
     assert shutil.disk_usage(a.scratch.parent).free>payload+3*1024**3,'insufficient scratch reserve'
     torch.set_num_threads(2);a.output.parent.mkdir(exist_ok=True,parents=True);before=free();started=time.perf_counter()
-    state={name:{key:torch.zeros(shape,dtype=torch.float32) for key in ('master','adam_m','adam_v')} for name,shape in shapes.items()}
-    state['scales']={name:{key:torch.zeros((shape[0],),dtype=torch.float32) for key in ('master','adam_m','adam_v')} for name,shape in shapes.items()}
+    generator=torch.Generator().manual_seed(7721)
+    state={name:{key:torch.rand(shape,dtype=torch.float32,generator=generator) for key in ('master','adam_m','adam_v')} for name,shape in shapes.items()}
+    state['scales']={name:{key:torch.rand((shape[0],),dtype=torch.float32,generator=generator) for key in ('master','adam_m','adam_v')} for name,shape in shapes.items()}
     allocation_seconds=time.perf_counter()-started
+    def digest(tensor):
+        h=hashlib.sha256()
+        for chunk in tensor.reshape(-1).split(262144):h.update(chunk.numpy().tobytes())
+        return h.hexdigest()
+    hashes={}
+    for name in shapes:
+        for family in ('signs','scales'):
+            values=state[name] if family=='signs' else state['scales'][name]
+            for key,tensor in values.items():hashes[(family,name,key)]=digest(tensor)
+    del values,tensor
     try:
         begin=time.perf_counter()
         with a.scratch.open('xb') as stream:
@@ -45,13 +56,16 @@ def main():
         assert restored['synthetic_resource_probe'] is True
         actual=0
         for name,shape in shapes.items():
-            for tensor in list(restored['state'][name].values())+list(restored['state']['scales'][name].values()):
-                assert tensor.dtype==torch.float32 and torch.count_nonzero(tensor)==0
-                actual+=tensor.numel()*tensor.element_size()
+            for family in ('signs','scales'):
+                values=restored['state'][name] if family=='signs' else restored['state']['scales'][name]
+                for key,tensor in values.items():
+                    assert tensor.dtype==torch.float32 and digest(tensor)==hashes[(family,name,key)]
+                    actual+=tensor.numel()*tensor.element_size()
+        del values,tensor
         assert actual==payload
         del restored;gc.collect()
     finally:
         a.scratch.unlink(missing_ok=True)
-    result=dict(status='SYNTHETIC_CURRENT_GEOMETRY_FULL_SIGN_STATE_IO_PASS',destination=str(a.scratch),synthetic_file_removed=not a.scratch.exists(),projection_shapes=shapes,synthetic_payload_bytes=payload,serialized_bytes=size,serialized_sha256=sha,allocation_seconds=allocation_seconds,save_and_fsync_seconds=save_seconds,load_seconds=load_seconds,peak_process_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*1024,free_before=before,free_after_write=after_write,free_after_cleanup=free(),scope='F32 masters and two Adam moments for current sign and row-scale shapes. No GPU, backward/activation fit, real optimizer resume/export, actual model checkpoint or future architecture qualification.',wall_seconds=time.perf_counter()-started)
+    result=dict(status='SYNTHETIC_CURRENT_GEOMETRY_FULL_SIGN_STATE_IO_PASS',destination=str(a.scratch),synthetic_file_removed=not a.scratch.exists(),projection_shapes=shapes,synthetic_data='Deterministic pseudorandom F32, avoiding an all-zero/compression-friendly IO fixture',synthetic_payload_bytes=payload,serialized_bytes=size,serialized_sha256=sha,allocation_seconds=allocation_seconds,save_and_fsync_seconds=save_seconds,load_seconds=load_seconds,peak_process_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*1024,free_before=before,free_after_write=after_write,free_after_cleanup=free(),scope='F32 masters and two Adam moments for current sign and row-scale shapes. No GPU, backward/activation fit, real optimizer resume/export, actual model checkpoint or future architecture qualification.',wall_seconds=time.perf_counter()-started)
     a.output.write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result))
 if __name__=='__main__':main()

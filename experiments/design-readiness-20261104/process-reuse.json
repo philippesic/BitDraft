@@ -1,0 +1,74 @@
+{
+  "status": "SHARED_PROCESS_PARENT_RESET_STATE_AND_EXPORT_BYTE_EXACT",
+  "checks": [
+    {
+      "index": 0,
+      "byte_exact_fields": {
+        "contract": true,
+        "cursor": true,
+        "scales": true,
+        "optimizer": true,
+        "rng": true,
+        "cuda_rng": true,
+        "python_rng": true,
+        "local_exposure": true
+      },
+      "native_export_identical": true
+    },
+    {
+      "index": 1,
+      "byte_exact_fields": {
+        "contract": true,
+        "cursor": true,
+        "scales": true,
+        "optimizer": true,
+        "rng": true,
+        "cuda_rng": true,
+        "python_rng": true,
+        "local_exposure": true
+      },
+      "native_export_identical": true
+    }
+  ],
+  "arms": [
+    {
+      "index": 0,
+      "recipe": "control",
+      "output": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/design-readiness-20261104-01/batch-check01/arm-00-control",
+      "wall_seconds": 255.84635627699026,
+      "trainer_seconds": 25.967886190032004,
+      "post_gc_cuda_allocated_bytes": 67108864,
+      "checkpoint": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/design-readiness-20261104-01/batch-check01/arm-00-control/checkpoint-00005808.pt",
+        "sha256": "07af350292f1ed968d35516bd28e9862cb18bd6bf2b6546e523c91fc89915e23",
+        "bytes": 947633
+      },
+      "model": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/design-readiness-20261104-01/batch-check01/arm-00-control/model.gguf",
+        "sha256": "21b4469c50da702742b76657c7729eab1538d44004b9dd977c9a851781b1777f",
+        "bytes": 40802176
+      }
+    },
+    {
+      "index": 1,
+      "recipe": "control",
+      "output": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/design-readiness-20261104-01/batch-check01/arm-01-control",
+      "wall_seconds": 251.19123677400057,
+      "trainer_seconds": 22.48033596595633,
+      "post_gc_cuda_allocated_bytes": 67108864,
+      "checkpoint": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/design-readiness-20261104-01/batch-check01/arm-01-control/checkpoint-00005808.pt",
+        "sha256": "d9b6fcc8c02eceeb883d5291e697314b8baf63c93714542488cc130c0a56a2f2",
+        "bytes": 947633
+      },
+      "model": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/design-readiness-20261104-01/batch-check01/arm-01-control/model.gguf",
+        "sha256": "21b4469c50da702742b76657c7729eab1538d44004b9dd977c9a851781b1777f",
+        "bytes": 40802176
+      }
+    }
+  ],
+  "scope": "Two identical48-update control arms reset to paid parent independently, compared to previously separate-process control. Wall-time observation is workflow preparation cost, not model throughput or a general architecture benchmark.",
+  "interpretation": "State/exports qualify, but255.85s then251.19s is no material observed preparation improvement. Do not adopt as a speed optimization; independent data/model preparation still dominates.",
+  "raw": "runs/design-readiness-20261104-01/batch-check-analysis.json"
+}

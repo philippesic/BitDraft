@@ -5698,3 +5698,37 @@ excluded; conditional-head vsfulltarget probability objectives differ materially
 These audits do not admit KD gradients or teacher/runtime interchangeability.
 Next finish three extensions/nativepanel, bounded gradientobserver/control proof
 and synthetic full-shaped checkpoint-I/O probe, then finalreadiness/cleanup.
+
+
+### Direct design-readiness work complete and released
+
+All98original segments/34families and32FIDs reconciled with51authenticatedsource
+receipts, source-specific missing/exposure limits explicit. Readiness brief and
+machine acceptance: experiments/design-readiness-20261104/readiness.{md,json}.
+No architecture/precision, newrecipe or majorlongQATallocation adopted. Paid5760
+remains selected. Broader research goal remains open for joint user design.
+
+Two8-arm×5repeat consumedDEV panels audit1,120responses, plus126admission responses;
+all exact target tokens/text/stopping, models/runtime/loadedimages/source snapshots
+and native round/position counters. Depth/smooth/combination first960updates and
+control+depth+smooth extended1920 show no separated speedgain. No earlypredictor
+or universal rejection. Native recapture2FIT/114windows, disabled48-update and
+split480resume bytes pass. Teacher404eligible row join/mass and currentheadcoverage
+are source-qualified preparation, not KD gradient/runtime equivalence.
+
+Bounded followups: gradientobserver16FITsamples exactcontrol; replay inactive most
+samples/occasionallarge corrections. Synthetic2.795GB CPUstate hash-restores,
+save11.115/load9.748s, filedeleted; not all-signGPUfit. Processreuse2×48 controls
+restore fullstate/export exactly, but255.85→251.19s gives no materialgain. One
+profiled48-update control also exact:270.33s, build_union164.42sinclusive; repeated
+filesystemstat/open/resolve dominates preparation. No audit weakened. Larger-data
+cache/hash/row/file/depth limits and chosen-design implementation work explicit.
+
+Directphysicalupdates7,824; unique treatment updates6,720; updatewall1,054.292s
+included in4,929.230s supervised nonoverlappingwall. Prior savednoop preparation
+and overlappingCPU work not invented/double-counted. Cost ledger/rawsources linked.
+Cleanup verifies127identities and91native releases, allsupervisors terminal and
+noGPUcomputeapps. Allcheckpoints andusefulraw/source retained. FiveGGUFaliases
+hardlinkedbyte-identically saves204,010,880logicalbytes; Cfree observed+203,431,936B.
+Shared/unrelatedwork untouched, synthetic2.8GBscratch andownedbytecoderemoved.
+Rretained~68MB/Cunique~394MB; exactinventory/stop/recovery/pins inrunroot. No push.
