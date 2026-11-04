@@ -1,5 +1,33 @@
 # Current project status
 
+## Active campaign: data and decoding costs — November 4, 2026
+
+User authorized useful follow-up within roughly twelve hours before joint design.
+Frozen scope and recipe: `runs/data-cost-transfer-20261104-01/scope.json` and
+`training-recipe.json`. Deadline18:46:54UTC. No architecture/precision changes,
+major QAT allocation or untouched final inputs. Direct single-thread execution.
+
+192 new TRAIN singleton public-catalog groups frozen,64/domain, excluding all512
+historical TRAIN, current60, prior consumed48+latest natural48, and25 opaque
+partition indices. UTF8 user bytes<=280; native prompt+80<=384. This bank is
+short-input only; no long-context or general predictor claim. Five CPU checks pass.
+
+First24-group native chunk now passes exact target token/text/stopping checks.
+Initial C: capture hit1200s timeout;18 paid groups reused. Linux capture output
+reduces observed group wall from~30s to~5s on different groups (not a paired
+benchmark). Two partial-UTF8 debug-log audit failures exposed a parser limitation;
+lossless surrogateescape preserves all bytes and strict HTTP JSON decoding.
+Recovered22 passing groups and recaptured only two; all24 pass. Failed attempts
+and pinned source versions retained; no previous capture outputs overwritten.
+
+Active preparation uses local supervisor `data-cost-prepare02-20261104`, tmux
+socket `binary-eagle-runtime`. Exact identity/stop evidence:
+`runs/data-cost-transfer-20261104-01/prepare0-final-launch.json`.
+Check its runner state before another GPU launch. Remaining bank, cost profiling
+and fixed-data training comparison are still outstanding; no new training yet.
+Source worktree: `/home/philip/.codex/worktrees/data-cost-transfer-20261104`.
+
+
 ## Active goal: contender workflow qualified — November 4, 2026
 
 The user-authorized infrastructure implementation and extensive tests are complete

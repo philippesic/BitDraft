@@ -5765,3 +5765,16 @@ hardlinked without changing paths/bytes. No push.
 Architecture/precision, chosen long-run data/horizon, new model/export/kernel
 adapters and broader workload qualification remain joint design work. No new
 research treatment, permanent pruning rule or unseen evaluation consumed.
+
+
+### November 4 data/cost campaign checkpoint
+
+See STATUS active campaign and `runs/data-cost-transfer-20261104-01/`.
+192 TRAIN groups selected, initial24 native captures pass after paid-group
+recovery and lossless debug-log decoding. Active preparation launch receipt:
+`prepare0-final-launch.json`; supervisor `data-cost-prepare02-20261104`, tmux
+`binary-eagle-runtime`. Authenticate birth/boot identity before signaling supervisor;
+TERM then wait cleanup and verify process groups/GPU release. No new QAT updates.
+Next: validate first preparation, launch `remaining-bank-plan2.json` through8,
+profile full path, fixed old/broader1920-update comparison and heldoutDEV panels.
+Deadline18:46:54UTC. Final pool untouched. No push.
