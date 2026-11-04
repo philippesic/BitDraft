@@ -1,108 +1,62 @@
 # Current project status
 
-## Active: ordered W1A8 generalization work — November 3, 2026
+## Active: ordered W1A8 generalization work — November 3–4, 2026
 
-We remain in Phase 1. One conservative W1A8 candidate improves throughput on
-untouched synthetic instances, but preservation and generalization are not solved.
-The quick-screen predictor, backlog screen, combinations, and final four-target
-confirmation remain pending. A user clarification is outstanding: does preserving
-successful continuations mean retaining training runs/checkpoints, or also zero
-losses of prior draft-token successes? A source audit finds no explicit zero-loss,
-absolute quality-score, or DFlash-win requirement before Phase 2. Final target-output
-correctness remains mandatory. Independent Phase 1 experiments continue. Historical Qwen3 F16 results stay separate.
+Phase1 now has confirmed throughput transfer to24 unused corpus prompts, beyond
+its earlier synthetic-family confirmation. Candidate/runtime froze before input
+selection. On Qwen3.5 4B Q4_K_M/RTX5080 correctness mode, selected replay5760
+reaches165.886 tokens/s versus initializer134.060: +23.74% (paired stratified
+prompt/repetition95% interval+20.85–26.89%). It exceeds the earlier conservative
+candidate140.041 by18.46% (15.77–21.36%). Gains appear in each domain and all five
+repetitions. This is unused against recorded project exposure, not proven
+pretraining novelty, semantic independence, or transfer across all four targets.
 
-The best confirmed fresh candidate achieves 140.317 tokens/s versus 133.261 for
-the initializer: +5.30%, with a joint family/repetition 95% interval of +4.33–6.21%.
-DFlash reaches 262.857 tokens/s on the same inputs, so W1A8 reaches only 53.38% of
-DFlash. All 576 speculative responses match target tokens/text/stopping, and all
-five arms score 13/24 on independently checked answer quality. These are new
-instances within 12 related synthetic families, not broad task or pretraining
-novelty. The cohort is consumed. This candidate preserves 548/549 original native
-draft successes; its known loss remains explicit.
+The matched unchanged5760control reaches165.340; replay's extra0.33% has an
+interval spanning−0.63–1.27%, so no incremental replay speed win is established.
+Replay was selected before inputs for similar DEV speed with better preservation
+on a fixed native diagnostic (9/113 losses versus17/113). Frozen DFlashQ4_K_M
+reaches252.685 on the same fresh panel; selected W1A8 is65.65% of DFlash and also
+below target-only176.550. Historical Qwen3 F16 stays separate.
 
-The latest controlled data expansion adds 24 whole FIT groups (48 total), while
-keeping the original 12 development groups unchanged. All 407 added parent
-successes reproduce natively. Training fit improves, but development prefix
-correctness moves only 489→491. Across all 956 original and added native successes,
-control loses 151 versus 119 for expanded data: original FIT 2→2, development
-42→38, added FIT 107→79. All 28 serving responses match the target, but development
-draft acceptance is flat (341/1148→340/1149); no speed benefit is established.
-Three conservative backoffs also fail a prespecified preservation diagnostic.
-Earlier reachability and attention-output sign treatments likewise establish no
-useful serving gain; their paid continuations remain available to horizon 19200.
+The complete panel has840 performance requests,168 quality requests,84 warmups,
+42 startups and936 speculative responses exactly matching target tokens/text/
+stopping. Root independently audits all raw responses, model/runtime/image pins,
+source snapshots, native context admission and released groups. All48 tasks fit
+4096context with256output reserve; no replacement/truncation. Independent source
+review passes684 checks and reconstructs all24 selections against512historical
+TRAIN/current60/consumed48/priorDEV/pilot/matrix and25 opaque partition indexes.
+No dedicated DEV/SEALED prompt shards opened. The new48 cases are consumed and
+must be excluded from future untouched confirmations.
 
-The current experiment adds trainable signs in 512 output rows selected only
-from reachable FIT labels. These cover 83.35% of supported FIT labels across all
-48 groups. Real qualification passes: finite nonzero gradients for all 1,310,720
-selected values, unchanged initial export, and exact two-step Adam/RNG/counter
-resume. No signs flip after two updates; that is plumbing evidence, not a capacity
-result. Disabling the treatment exactly reproduces the original 480-update
-continuation, all readouts and native export. An erroneous root audit assumed
-unit-magnitude starting values; direct comparison confirms the actual ±0.5 values
-remain unchanged. The failed audit and corrected proof are both preserved.
+All seven arms score12/24 on the frozen synthetic quality slice (code5/8,
+reasoning0/8, prose7/8); outputs are identical across arms. This shows no added
+quality loss, while exposing real target-model weakness on these reasoning
+cases. Independent judge/oracle review passes168rejudgments,24positive/50negative
+controls and8independently recomputed reasoning oracles; failures are wrong
+answers, not formatting or budget exhaustion. No broad prose-quality or
+absolute quality-floor claim. Prior narrow synthetic confirmation remains+5.30%
+with exact outputs; its earlier cohort is separately consumed.
 
-Both matched 5760 endpoints are now complete. The head treatment changes only
-17 of 1,310,720 signs after 1920 updates (zero flips at 480/960/1440), so this is
-inconclusive for capacity rather than a general rejection. Its actual saved final
-checkpoint reproduces the existing GGUF byte for byte using the frozen GPU
-exporter. Two storage failures affected metadata publication; all paid updates
-and readouts survived. Root finished publication without repeating training.
+CURRENT GPU JOB: root owns `local-w1a8-full-native956-20261104-01` in localtmux,
+180sstopgrace, supervisor/child birth+boot identities recorded. It compares
+unchanged5760 and selected replay5760 on all883 fixed-source windows/956 prior
+native successes, each with new packet-matched parent calibration. Split output
+storage preserves both filesystem floors. This measures full recorded forgetting,
+not a new serving timing or a zero-loss gate. Plan/launch/source/results under
+`runs/w1a8-modern-protected-20261103-01/natural-replay-confirmation01/`.
 
-On the frozen 96-window native diagnostic, both control and head lose the same
-17/113 original successes. All 28 serving responses match target tokens/text/
-stopping; measured development draft counts are 360/1109 for each. Some individual
-requests gain while others lose. This is a single-pass acceptance diagnostic,
-not a repeated throughput or fresh-generalization result. All 32 unique loaded
-images are independently rehashed, and both serving process groups are released.
-The earlier +5.3% fresh candidate remains the best confirmed fresh result.
+The user's preservation-meaning clarification remains unanswered. No zero-loss,
+absolute quality-floor or DFlash-win Phase1 exit requirement is inferred from it.
+Phase2 short-run predictor,98-ID backlog screen, combinations and final four-target
+confirmation remain pending. All paid checkpoints/horizon19200/source pins stay
+preserved. Three aliases of a completed4320 derived export now share a verified
+lossless archive and exact restore commands; paid states remain raw. This frees
+39.80MB on C. Both disks remain constrained. No push.
 
-The added-FIT replay contrast completes all1920 updates. Its false control is
-bit-exact with the unchanged trainer. An independent CPU audit confirms identical
-ordinary-label and original356-token replay exposure, optimizer settings, target,
-runtime and row masks; only the extra407-token FIT replay stream changes.
-Offline added-FIT losses fall70→27 while development losses42→43. Native96 loses
-9/113 versus control17/113. All28serving responses match target output, but DEV
-acceptance remains360/1108 versus360/1109. These are diagnostics, not throughput
-or fresh-gain evidence. Its checkpoint remains continuable to horizon19200.
-
-The eight-arm repeated serving panel is complete and independently audited:
-480 measured requests plus 80 warmups, five repetitions, all speculative outputs
-exactly matching target tokens/text/stopping. On these 12 reused development
-prompts, the longer-trained unchanged control reaches 132.547 tokens/s versus
-118.928 for the earlier conservative candidate: +11.45% (95% interval
-+6.40–17.81%). Added replay reaches 133.811 and the head treatment 133.904;
-neither establishes an incremental speed gain over the matched control. DFlash
-Q4_K_M reaches 198.701 on this same panel. These are development results, not
-untouched confirmation or validation of a short-run predictor. All serving groups
-are released and the quiet window is closed.
-
-The added-replay endpoint is selected for the next broader fresh-example test
-because it combines comparable measured speed with fewer losses on the frozen
-native diagnostic (9/113 versus control 17/113). This is a confirmation selection,
-not deployment promotion. Candidate/runtime freeze and new input preparation
-remain pending; no new natural confirmation prompts have been selected.
-
-Preservation clarification remains unanswered; Phase2/backlog stay pending.
-Broader natural-confirmation tooling is ready but no new fresh inputs selected.
-All512historicalTRAIN exposures and DEV/sealed indices remain excluded.
-
-Related source has 202 distinct passing CPU tests plus real GPU/native evidence.
-Pinned worktree and all paid checkpoints remain. Eight derived exports now
-have verified lossless archives with restore commands; two exact duplicates use
-hardlinks. New training outputs use an owned NTFS-compressed directory. Root also merges
-one exact duplicate pair wholly inside a dated runs archive, retaining all paths/
-bytes and leaving the independent untracked rescue tree unchanged. This recovers
-191.37MB in WSL; all 361 build objects are then restored to their original WSL
-paths, with readable C aliases, recovering 130.63MB on C. Runtime binaries, models,
-source and checkpoints are unaffected. No system or VHDX setting changed. Storage remains
-tight. No push.
-
-[Fresh confirmation](../experiments/w1a8-modern-native-20261103/fresh-confirmation.json),
-[latest progress](../experiments/w1a8-modern-native-20261103/progress.md), and the
-[active goal](goals/nine-model-qat-overnight.md) retain measured costs, failures,
-source pins and next actions. Current evidence includes
-`head-real-qualification-root-audit.json`, `head-false4320-parity02.json`, and
-`added-replay-pair-plan.json` under `runs/w1a8-modern-protected-20261103-01/`.
+[Fresh natural confirmation](../experiments/w1a8-modern-native-20261103/natural-confirmation.json),
+[fresh natural raw audit](../runs/w1a8-modern-protected-20261103-01/natural-replay-confirmation01/root-analysis.json),
+[progress](../experiments/w1a8-modern-native-20261103/progress.md), and
+[active goal](goals/nine-model-qat-overnight.md) retain evidence and costs.
 
 ## Selected baseline and W1A8 standing — November 2, 2026
 

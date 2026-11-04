@@ -5418,4 +5418,75 @@ No new natural prompts selected or evaluated yet; freeze candidate/runtime
 before preparation. Still Phase1; preservation clarification pending, Phase2
 predictor/backlog not started. All paid checkpoints remain preserved.
 
+
+
+### Broader natural confirmation frozen and live
+
+Candidate added-replay5760/runtime and seven comparison arms froze at
+23:35:21UTC before selecting new inputs. Preparation23:35:23 admits24 unused
+whole corpus prompts (8/domain,24 independent source components) plus24new
+synthetic oracle quality cases. All512 historicalTRAIN/current60/consumed48/
+priorDEV/pilot/matrix and opaque DEV/SEALED partitions excluded; zero recorded
+overlap. Eligible singleton counts code179/reasoning2010/prose5834. All24positive
+and24negative judge controls pass. This is unused within recorded project
+exposure, not proven pretraining novelty or broad natural answer-quality scoring.
+
+Root owns local-w1a8-natural-replay-confirmation-20261103-01 in localtmux,
+180sgrace, supervisor/child boot+birth identities immediately recorded. Seven
+arms×24natural×5repetitions plus24quality/arm and2warmups/cell plans1092responses.
+Native4096context admission with256outputreserve before completion; no outcome
+replacement. Natural confirmation launch-plan/selected/runner-inputs/quiet-window
+under runs/w1a8-modern-protected-20261103-01/natural-replay-confirmation01.
+QUIET: no competing GPU/tests/builds/largehashing/compression until terminal.
+Previous goal turn was a status recap, no experimental progress; this turn
+executes the frozen broader confirmation. Phase1 active; clarification pending.
+
+
+
+### Broader confirmation audited; full recorded retention live
+
+Natural confirmation finishes0/all42cells,1333.231s. Root1092rawresponse audit
+passes:840performance/168quality/84warmups,936speculativeexacttarget,48geometry
+admissions,all42groupsgone,fullmodel/library/source snapshot pins rehashed.
+Selected replay165.886TPS vsinitial134.060 (+23.74%,stratified24source/5rep95%
++20.85–26.89%),priorquarter140.041 (+18.46%,15.77–21.36%),unchanged5760control
+165.340 (+.33%,−.63–1.27%,noextra replay win). DFlash252.685,target176.550,
+Q4_0EAGLE222.123. Gains in each domain/all5reps; no cross-cohort rate comparisons.
+
+Independent source audit684checks passes:all24draws/whole singleton components
+reproduced againstall512/current60/consumed48/priorDEV/pilot/matrix/25opaqueindexes.
+Full alias graph including blockedrows yields identical pools, no actual cohort
+hole; semantic near duplicates/pretraining novelty remain unproven. Helper's
+skipped blockedrow edges should be revisited before another cohort. All48new
+inputs marked consumed regardless of review outcome. All7arms12/24quality,
+reasoning0/8; independentquality/oracle review finishing, no absoluteflooradded.
+
+Completed4320 native reference export (3hardlink aliases) compactly archived
+againstprotected6dacbase, exactRAMroundtrip and all3paidPT hashes verified, no
+livehandles. Threealias receipts/restorecommands,paidPTsraw; C+39,800,832B.
+Report completed4320-export-archives.json; active5760/f4/fresh modelpaths unchanged.
+
+Root launches local-w1a8-full-native956-20261104-01 afterfreshGPUrelease, localtmux
+180sgrace/immediatebirth+bootIDs. Two5760arms each freshparent+candidate calibration
+onidentical883windows/956successes, onlymodelpinchanges. WSLcontrol/Cselectedoutput
+splitpreservesfloors. Launch/source/plan under natural-replay-confirmation01.
+This extends113tokenriskdiagnostic, doesnotaddzero-lossPhase1gate. Clarification
+pending; Phase2/backlog notstarted. No push.
+
+
+
+### Independent quality review closed; confirmation record published
+
+All168 frozen quality responses independently rejudged, zero disagreement;
+24positive/50semanticnegative controls pass. All8reasoning oracles independently
+recomputed correctly. All7arms share12/24 score and byte-identical percase text;
+all8reasoning outputs are wrong JSON values/types, not parse/format/outputbudget
+failures (EOS30–82tokens). No absolute quality exitgate imposed. Source review
+684checks also complete. Root raw/runtime audit and reviews are bound in
+natural-replay-confirmation01/root-analysis.json; all48inputs consumed. Compact
+tracked record experiments/w1a8-modern-native-20261103/natural-confirmation.json.
+Full956native supervisor remains live; exactbirth/boot/stop/run evidence preserved
+in full-native956-launch.json and run root-owned-identities.json. Continue its
+result/audit next; keep Phase1 active and all later ordered work pending.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->
