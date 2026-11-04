@@ -1,0 +1,450 @@
+{
+  "schema": "w1a8_bounded_duration_and_native_predictor_report_v1",
+  "status": "TWO_BOUNDED_TASKS_COMPLETE_AUDITED_RELEASED",
+  "started_at_utc": "2026-11-04T01:17:00+00:00",
+  "reported_at_utc": "2026-11-04T01:36:08.214518+00:00",
+  "elapsed_seconds": 1148.214518,
+  "hard_cap_seconds": 1800,
+  "hardware": "RTX5080 / SM120, localWSL DESKTOP-E78LJSI",
+  "target": "Qwen3.5 4B Q4_K_M, frozen mode32 target/verifier; W1A8 packed nine-linear draft, depth2, F16KV",
+  "scope": "Only old2400\u21925760 training and one frozen early3840/later5760 native serving panel. No fresh cohort, new training arms, broad sweep, source modification or push.",
+  "equal_duration": {
+    "answer": "No separated serving-throughput benefit from expanded CE over old-only CE at matched5760 updates on this DEV panel.",
+    "comparison": {
+      "candidate": "expanded5760",
+      "control": "old5760",
+      "pooled_ratio": 1.0136222941391708,
+      "paired_prompt_and_repetition_bootstrap95": [
+        0.9951154590455831,
+        1.0325766131158378
+      ],
+      "per_repetition_ratios": [
+        1.0201394031822077,
+        1.013511370235542,
+        1.0175736430623208,
+        1.0088879259401458,
+        1.0080820326549156
+      ],
+      "ranking": "unresolved"
+    },
+    "duration_definition": "Equal5760 cumulative optimizer updates, common balanced1920 ancestor; 3840 recipe-stage updates. Not a wall-clock matched GPU budget.",
+    "training": {
+      "old_cumulative_trainer_seconds": 461.62148328608237,
+      "old_new_increment_trainer_seconds": 256.7562572232273,
+      "old_current_process_seconds": 524.5272319960059,
+      "expanded_cumulative_trainer_seconds": 530.135969162995,
+      "old_exposure": {
+        "ce_windows": 11520,
+        "ce_supported_labels": 13698,
+        "replay_windows": 5760,
+        "replay_protected_tokens": 6195
+      },
+      "expanded_exposure": {
+        "ce_windows": 11520,
+        "ce_supported_labels": 13722,
+        "replay_windows": 5760,
+        "replay_protected_tokens": 6195
+      }
+    },
+    "exact_intermediate3840": {
+      "status": "OLD_RESIDENT3840_REPRODUCTION_EXACT",
+      "all_exact": true,
+      "checks": {
+        "cursor": true,
+        "scales": true,
+        "optimizer": true,
+        "rng": true,
+        "cuda_rng": true,
+        "python_rng": true,
+        "exposure": true,
+        "ce_stage_exposure": true
+      },
+      "reference": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-expanded-ce-control3840-01/checkpoint-00003840.pt",
+        "bytes": 1111153,
+        "sha256": "9ed75c830614abd7c624e6324433daeda57ed97f50a91376e774ed806f8b5252"
+      },
+      "checkpoint": {
+        "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-bounded-old5760-20261104-02/checkpoint-00003840.pt",
+        "bytes": 1148977,
+        "sha256": "62d32e5ac940357a72283cb77187920682007a42ab03cf68ace3c95861870875"
+      },
+      "scope": "Original uncached old3840 vs resident old2400\u21925760 intermediate3840. Training/model states exact; source-specific checkpoint contracts/schemas intentionally differ."
+    },
+    "interpretation": "Data recipe changes CE window population/order, repetition of old examples and supported-label exposure together; cannot isolate diversity alone. Old356 replay, nine scales, LR1e-5/horizon19200 and verifier held fixed."
+  },
+  "predictor": {
+    "outcome": "unresolved",
+    "early": {
+      "candidate": "expanded3840",
+      "control": "old3840",
+      "pooled_ratio": 1.0058312488492265,
+      "paired_prompt_and_repetition_bootstrap95": [
+        0.9916322918237542,
+        1.0206273367196672
+      ],
+      "per_repetition_ratios": [
+        0.9942747414084417,
+        1.0045469236477185,
+        1.0031136132810659,
+        1.008492115989133,
+        1.0190888128607596
+      ],
+      "ranking": "unresolved"
+    },
+    "later": {
+      "candidate": "expanded5760",
+      "control": "old5760",
+      "pooled_ratio": 1.0136222941391708,
+      "paired_prompt_and_repetition_bootstrap95": [
+        0.9951154590455831,
+        1.0325766131158378
+      ],
+      "per_repetition_ratios": [
+        1.0201394031822077,
+        1.013511370235542,
+        1.0175736430623208,
+        1.0088879259401458,
+        1.0080820326549156
+      ],
+      "ranking": "unresolved"
+    },
+    "validated_general_predictor": false,
+    "interpretation": "Native full-request throughput ranks two existing recipes at3840 versus5760. Retrospective two-recipe check on one consumed DEV cohort/target/80token budget; any rank agreement is weak evidence and cannot justify a universal early-stop/pruning rule. An interval spanning1 is unresolved by the frozen criterion."
+  },
+  "native": {
+    "summary": [
+      {
+        "arm": "target_only",
+        "kind": "target",
+        "tokens": 4685,
+        "wall_seconds": 30.134499265979684,
+        "TPS": 155.4696482144346,
+        "per_repetition_TPS": [
+          151.52575211882277,
+          156.21744319404166,
+          155.49485890373637,
+          156.4228081550029,
+          157.83486547524083
+        ],
+        "draft_accepted": 0,
+        "draft_proposed": 0
+      },
+      {
+        "arm": "dflash_Q4KM",
+        "kind": "dflash",
+        "tokens": 4685,
+        "wall_seconds": 23.714723803037487,
+        "TPS": 197.5565913780503,
+        "per_repetition_TPS": [
+          194.8715449616998,
+          195.98000714249818,
+          196.40114615240861,
+          200.31680999239725,
+          200.34681851652357
+        ],
+        "draft_accepted": 2710,
+        "draft_proposed": 3780
+      },
+      {
+        "arm": "w1a8_initial",
+        "kind": "w1a8",
+        "tokens": 4685,
+        "wall_seconds": 41.95281072205398,
+        "TPS": 111.6730898208249,
+        "per_repetition_TPS": [
+          112.75515868756985,
+          110.83834525106745,
+          111.98092606828693,
+          110.39216152152498,
+          112.436420060347
+        ],
+        "draft_accepted": 965,
+        "draft_proposed": 7195
+      },
+      {
+        "arm": "old3840",
+        "kind": "w1a8",
+        "tokens": 4685,
+        "wall_seconds": 36.1885554370092,
+        "TPS": 129.46081830082554,
+        "per_repetition_TPS": [
+          129.95889486255865,
+          128.7668991294981,
+          129.25070502492758,
+          129.10246600068191,
+          130.23673384776103
+        ],
+        "draft_accepted": 1705,
+        "draft_proposed": 5740
+      },
+      {
+        "arm": "expanded3840",
+        "kind": "w1a8",
+        "tokens": 4685,
+        "wall_seconds": 35.97875436700997,
+        "TPS": 130.21573654856215,
+        "per_repetition_TPS": [
+          129.21484658319739,
+          129.35239238819344,
+          129.6531417366803,
+          130.1988191164428,
+          132.72279848777748
+        ],
+        "draft_accepted": 1700,
+        "draft_proposed": 5745
+      },
+      {
+        "arm": "expanded5760",
+        "kind": "w1a8",
+        "tokens": 4685,
+        "wall_seconds": 35.41455690895964,
+        "TPS": 132.2902334213513,
+        "per_repetition_TPS": [
+          134.03440122735736,
+          131.6672317525663,
+          131.66824407199462,
+          131.7232231792671,
+          132.38916414539122
+        ],
+        "draft_accepted": 1800,
+        "draft_proposed": 5545
+      },
+      {
+        "arm": "old5760",
+        "kind": "w1a8",
+        "tokens": 4685,
+        "wall_seconds": 35.89698441998189,
+        "TPS": 130.5123557228979,
+        "per_repetition_TPS": [
+          131.3883188996057,
+          129.9119433874398,
+          129.39431457338824,
+          130.56279076441425,
+          131.3277688292163
+        ],
+        "draft_accepted": 1745,
+        "draft_proposed": 5650
+      }
+    ],
+    "contrasts": [
+      {
+        "candidate": "expanded5760",
+        "control": "old5760",
+        "pooled_ratio": 1.0136222941391708,
+        "paired_prompt_and_repetition_bootstrap95": [
+          0.9951154590455831,
+          1.0325766131158378
+        ],
+        "per_repetition_ratios": [
+          1.0201394031822077,
+          1.013511370235542,
+          1.0175736430623208,
+          1.0088879259401458,
+          1.0080820326549156
+        ],
+        "ranking": "unresolved"
+      },
+      {
+        "candidate": "expanded3840",
+        "control": "old3840",
+        "pooled_ratio": 1.0058312488492265,
+        "paired_prompt_and_repetition_bootstrap95": [
+          0.9916322918237542,
+          1.0206273367196672
+        ],
+        "per_repetition_ratios": [
+          0.9942747414084417,
+          1.0045469236477185,
+          1.0031136132810659,
+          1.008492115989133,
+          1.0190888128607596
+        ],
+        "ranking": "unresolved"
+      },
+      {
+        "candidate": "old5760",
+        "control": "old3840",
+        "pooled_ratio": 1.00812243762919,
+        "paired_prompt_and_repetition_bootstrap95": [
+          0.9949140961088384,
+          1.0214116334115166
+        ],
+        "per_repetition_ratios": [
+          1.0109990473415367,
+          1.0088923804617687,
+          1.001111092960251,
+          1.0113113622765706,
+          1.0083773214301477
+        ],
+        "ranking": "unresolved"
+      },
+      {
+        "candidate": "expanded5760",
+        "control": "expanded3840",
+        "pooled_ratio": 1.0159312301859575,
+        "paired_prompt_and_repetition_bootstrap95": [
+          0.9950616352626973,
+          1.0397174528335429
+        ],
+        "per_repetition_ratios": [
+          1.037298768458908,
+          1.0178956053431614,
+          1.0155422561175331,
+          1.011708278716883,
+          0.9974862318592764
+        ],
+        "ranking": "unresolved"
+      },
+      {
+        "candidate": "old3840",
+        "control": "w1a8_initial",
+        "pooled_ratio": 1.1592839287292969,
+        "paired_prompt_and_repetition_bootstrap95": [
+          1.1054682449836815,
+          1.2268358227299303
+        ],
+        "per_repetition_ratios": [
+          1.152576045080635,
+          1.1617540738073948,
+          1.1542207192152474,
+          1.1694894295145102,
+          1.1583144836687278
+        ],
+        "ranking": "candidate_faster"
+      },
+      {
+        "candidate": "expanded3840",
+        "control": "w1a8_initial",
+        "pooled_ratio": 1.1660440018046263,
+        "paired_prompt_and_repetition_bootstrap95": [
+          1.1120051355025355,
+          1.232115927755068
+        ],
+        "per_repetition_ratios": [
+          1.1459772491761129,
+          1.167036480878423,
+          1.1578145161758773,
+          1.1794208693980122,
+          1.1804253320813873
+        ],
+        "ranking": "candidate_faster"
+      },
+      {
+        "candidate": "old5760",
+        "control": "w1a8_initial",
+        "pooled_ratio": 1.1687001401349228,
+        "paired_prompt_and_repetition_bootstrap95": [
+          1.110490995088546,
+          1.2427324755181328
+        ],
+        "per_repetition_ratios": [
+          1.1652532835651979,
+          1.1720848330346998,
+          1.1555031657309431,
+          1.1827179481303685,
+          1.1680180564156162
+        ],
+        "ranking": "candidate_faster"
+      },
+      {
+        "candidate": "expanded5760",
+        "control": "w1a8_initial",
+        "pooled_ratio": 1.184620517204331,
+        "paired_prompt_and_repetition_bootstrap95": [
+          1.1158877981121222,
+          1.269742435741061
+        ],
+        "per_repetition_ratios": [
+          1.1887207892523088,
+          1.1879213051612951,
+          1.1758095659228804,
+          1.1932298576614324,
+          1.1774580164890982
+        ],
+        "ranking": "candidate_faster"
+      }
+    ],
+    "measured_requests": 420,
+    "warmups": 70,
+    "qualification_responses": 14,
+    "repetitions": 5,
+    "dev_prompts": 12,
+    "main_panel_speculative_exact_target": 420,
+    "new_endpoint_qualification_exact_target": 14,
+    "released_native_groups": 36,
+    "loaded_images_rehashed": 40,
+    "parity": "Exact token IDs, decoded text, stop_type, stopping_word, truncation; unchanged requests/seed/temperature/cache; response tokens_predicted and token lengths audited.",
+    "metric": "Completion tokens divided by total full HTTP wall time; startups/warmups excluded; concurrency1, not online capacity."
+  },
+  "existing_fresh24_transfer": "Previously confirmed +23.74% transfer for selected replay5760 on4B Q4_K_M remains valid. No rates or confidence intervals are mixed across that natural cohort and this reused synthetic DEV cohort.",
+  "limitations": [
+    "Consumed DEV only; no new held-out or natural generalization claim.",
+    "Equal updates do not equal GPU seconds.",
+    "Two recipes, only two checkpoint budgets, one target and output length; no general predictor validation.",
+    "No new full956 preservation test or broad answer-quality evaluation; exact serving output parity is verified, perfect draft preservation and DFlash competitiveness are not gates."
+  ],
+  "recommendation": "Proceed toward a bounded broader training allocation with fixed budgets and predeclared native-serving checkpoint checks, supported by the existing fresh24 transfer. Do not use this two-recipe retrospective ranking as a validated pruning rule, and do not add an open-ended sweep or require a DFlash win/zero draft losses before proceeding.",
+  "raw": {
+    "root": "/home/philip/binary-eagle-decoding/runs/w1a8-bounded-duration-predictor-20261104-01",
+    "frozen_study": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-bounded-duration-predictor-20261104-01/frozen-study.json",
+      "bytes": 2946,
+      "sha256": "7846e2a58ac65eda4c1754d83c61caa496be4d579731b94d6d3c79b233c70824"
+    },
+    "training_plan": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-bounded-duration-predictor-20261104-01/plan.json",
+      "bytes": 3491,
+      "sha256": "a9d725b2862407b58775113ee76aa4c971d44de8972ffaf92c2cac42daa3fd1d"
+    },
+    "training_receipt": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-bounded-duration-predictor-20261104-01/result.json",
+      "bytes": 1865,
+      "sha256": "cea21f0c691836dd8695fda150d512909a503aaaee2a8631a6ac1f7034b21b51"
+    },
+    "training_artifacts": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-bounded-old5760-20261104-02",
+    "native_result": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-bounded-duration-predictor-20261104-01/repeated-serving01/result.json",
+      "bytes": 686006,
+      "sha256": "fc5bd2beea096420c4228365ce6707714903928d7a55ed4fe45dfffb35e164d1"
+    },
+    "root_audit": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-bounded-duration-predictor-20261104-01/root-analysis.json",
+      "bytes": 16449,
+      "sha256": "76d1159d3fc8804374de2647ea2f4598109964007afe2f52dbbd3a685b72f352"
+    },
+    "qualification": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-bounded-duration-predictor-20261104-01/old5760-http-qualification01/result.json",
+      "bytes": 19879,
+      "sha256": "23f06b82c662a0ef4b9fa3ecd21c87df68f55cb99f6285d822a535a5c796179b"
+    },
+    "environment": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-bounded-duration-predictor-20261104-01/environment.json",
+      "bytes": 4366,
+      "sha256": "9f2fc58c15036a487a8215943a1b8d1f4c7348a772140089fe261112dff9d0f2"
+    },
+    "training_ownership": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-bounded-duration-predictor-20261104-01/ownership.json",
+      "bytes": 2497,
+      "sha256": "d856f459dae58c58242b0a3540510f6179a167d979636c824c7b3e6fc2bbae9b"
+    },
+    "serving_ownership": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-bounded-duration-predictor-20261104-01/serving-ownership.json",
+      "bytes": 1713,
+      "sha256": "580c6c3d15b5f08fc79f5ad1ebda8db2802a97680f60489bcd812a08b282e2e9"
+    },
+    "cleanup": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-bounded-duration-predictor-20261104-01/cleanup.json",
+      "bytes": 10820,
+      "sha256": "9ea5f138cb2333e197df3c6c0f991077260dceb39d6e64172d0db215ebc3bee4"
+    },
+    "retained_inventory": {
+      "path": "/home/philip/binary-eagle-decoding/runs/w1a8-bounded-duration-predictor-20261104-01/retained-inventory.json",
+      "bytes": 3196,
+      "sha256": "557c6d197e7a42d04baa9b1f5137b5ffdf3d5749c7df549b63e3755242ba37e3"
+    }
+  },
+  "no_live_owned_jobs": true,
+  "no_push": true,
+  "experiment_and_audit_complete_seconds": 1054.230944
+}

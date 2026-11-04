@@ -2,6 +2,26 @@
 
 ## Active: ordered W1A8 generalization work — November 3–4, 2026
 
+The two user-authorized bounded diagnostics are complete and raw-audited. On
+12 reused DEV prompts with five repetitions, old-only CE5760 reaches130.512
+request tokens/s and expanded CE5760 reaches132.290: expanded+1.36%, paired
+prompt/repetition95% interval−0.49–+3.26%. No serving advantage from the expanded
+recipe is established at equal5760 updates. At3840, old129.461 versus expanded
+130.216 gives+0.58% (−0.84–+2.06%). Both rankings are unresolved; this two-recipe
+retrospective check is inconclusive for early native-serving prediction, with no
+validated general pruning rule. These are consumed DEV data, separate from the
+fresh24 transfer below. Equal updates are not equal measured GPU seconds.
+
+The old2400→5760 continuation reproduces the original3840 scales/Adam/cursor/
+RNG/exposure exactly. All490 panel responses and14 new-endpoint qualification
+responses match target tokens/text/stopping. All36 native groups and owned
+supervisors are released. The work finished experiments/audit in17.6minutes,
+inside the30-minute total cap; no extra training arms, new held-out campaign,
+source edits or push. Recommend a bounded broader training allocation with
+predeclared native checkpoint checks, supported by priorfresh24 transfer; this
+small rank check cannot justify pruning longer runs.
+[Compact result and full raw evidence](../experiments/w1a8-modern-native-20261103/duration-predictor.json).
+
 User-directed storage cleanup is complete. Available space increased by171.48GB
 in WSL and40.33GB on C:, leaving approximately173.66GB/42.64GB free respectively.
 7,450 obsolete payloads and1,615 aliases removed;440 retained files verified and
@@ -9,7 +29,7 @@ current initializer/candidate/checkpoint hashes unchanged. Active modern assets,
 selected historical endpoints, source and compact evidence remain. Current/legacy
 dependencies discovered during review were excluded. Historical raw replay data
 removed by this authorized purge requires regeneration. No VHDX compaction or
-experiment restart; the latest instruction is storage-only.
+experiment restart during cleanup; the new bounded diagnostic authorization is above.
 [Cleanup record](../experiments/storage-purge-20261104.json).
 
 Phase1 now has confirmed throughput transfer to24 unused corpus prompts, beyond
@@ -53,22 +73,18 @@ loses72 (2/42/28). Replay recovers45 positions and introduces3 losses, so its
 benefit is concentrated in addedFIT. All40native processes and owned groups are
 released;27loaded images rehashed. This does not establish zero-loss preservation.
 
-No GPU experiment is currently running. An old-only data continuation to5760
-was launched to separate data-recipe effects from training duration. It stopped
-at the WSL storage guard during source-data validation, before any training
-updates or checkpoints; parent state and failed-attempt evidence are preserved.
-Its separate reused-corpus evaluator assignment was interrupted before producing
-source files. It remains prepared work, not a validated quick-screen predictor.
-Plan/failure under `runs/w1a8-modern-protected-20261103-01/
-old-data-duration-counterfactual01/` and local supervisor receipts.
+No GPU experiment is currently running. The original old-data continuation
+stopped before updates at its storage guard; after the authorized cleanup, the
+bounded retry above completed with exact3840 reproduction and native serving.
+The original failed preparation and all paid modern checkpoints remain preserved.
 
-The user's preservation-meaning clarification remains unanswered; it is unrelated
-to this completed cleanup. No zero-loss, absolute quality-floor or DFlash-win
-Phase1 exit requirement is inferred. Phase2 predictor/backlog/combinations/final
-four-target confirmation remain pending. Active paid modern continuations and
-horizon19200 remain preserved. The storage-space request is resolved by the
-user-authorized historical purge; obsolete historical intermediates were deleted
-while useful final/best models and compact evidence were retained. No push.
+The user explicitly confirms that perfect draft preservation and DFlash
+competitiveness are not gates. No zero-loss or absolute quality-floor exit
+requirement is inferred. This small native predictor check is complete, while
+general predictor validation, backlog/combinations and final four-target
+confirmation remain pending. Paid continuation checkpoints and horizon19200
+remain preserved. Historical raw data removed by the authorized purge requires
+regeneration; useful final/best endpoints and compact evidence remain. No push.
 
 [Fresh natural confirmation](../experiments/w1a8-modern-native-20261103/natural-confirmation.json),
 [fresh natural raw audit](../runs/w1a8-modern-protected-20261103-01/natural-replay-confirmation01/root-analysis.json),

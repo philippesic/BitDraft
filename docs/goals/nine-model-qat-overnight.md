@@ -5550,4 +5550,64 @@ compact tracked experiments/storage-purge-20261104.json. Per-root purge notices
 prevent mistaken assumptions that historical raw captures remain available.
 Storage question resolved; preservation question unchanged/outsidecleanupscope.
 
+### Bounded duration and predictor diagnostic authorized; live
+
+User authorizes ONLY old-data equal-update control and a small native-serving
+checkpoint ranking check,30minutes total01:17→01:47UTC including preparation.
+No recursive delegation/new arms/freshcohort. Sole localGPU owner. Resourcecheck
+RTX5080idle, WSL173.66GB/C42.63GBfree; exactfive original preparationpins pass.
+First launch selectedWSLoutput and exitsbeforeupdates atC-onlyoutputguard;
+failedreceipt retained. CorrecteduniqueCoutput usesunchangedpinnedtrainer and
+old2400→5760 configuration; no guard/sourcechange. Exact3840scale/Adam/RNG/
+exposure parity required before endpointnativeadmission.
+
+Frozen01:18:50UTC: two CErecipes old/expanded at3840 and5760, same12consumedDEV
+80token prompts, five repetitions plus target/DFlash/initializer references,
+quietmode3 qualifiedruntime. Jointprompt/repetitionbootstrap ranks early/later;
+if either intervalspans1, rankunresolved. Two recipes/onecohort is retrospective
+weak evidence, notgeneralpredictorvalidation. Equalupdates do notequalGPUtime.
+All rawplans/ownership/scripts under runs/w1a8-bounded-duration-predictor-20261104-01.
+Supervisor local-w1a8-bounded-old5760-20261104-02; boot/birth andstopprocedure in
+ownership.json, trainertimeout01:43UTC leavesfourminutes forcleanup/report.
+Noresult yet; fullrecordedhorizon19200 andpreviouspaidassets preserved. No push.
+
+### Bounded old-data control and native predictor check complete
+
+Both authorized tasks completed inside the30-minute total cap from01:17UTC.
+Training supervisor ended01:26:56UTC; serving ended01:33:51UTC; raw audit and
+cleanup completed by01:34:34UTC (17.6minutes). Only old-only CE2400→5760 was
+trained, using the unchanged pinned resident source. All eight state checks at
+3840 pass exactly against original old3840: cursor, nine scales, Adam, CPU/CUDA/
+Python RNG and cumulative/stage exposures. New checkpoint and40.8MB export are
+retained under C:/Users/philip/binary-eagle-decoding-artifacts/
+w1a8-bounded-old5760-20261104-02. Parent and all prior evidence remain intact.
+
+Frozen seven-arm native panel:12 existing DEV prompts,80-token max, five measured
+repetitions, two excluded warmups per startup, original mode32 target/verifier,
+RTX5080/Qwen3.5 4B Q4_K_M/W1A8 depth2. Old3840=129.461, expanded3840=130.216,
+old5760=130.512, expanded5760=132.290 request tokens/s. Expanded versus old at
+5760 gives+1.36% (paired prompt/repetition95% −0.49–+3.26%); at3840 gives+0.58%
+(−0.84–+2.06%). Both rankings unresolved under the frozen rule. Equal-update
+control does not establish an expanded-data serving benefit; the native early/
+later predictor check is inconclusive. No general early-stop rule validated.
+Equal updates do not mean equal measured GPU seconds, and recipe changes more
+than diversity alone. All comparisons are within this consumed DEV cohort.
+
+All490 panel responses plus14 new-endpoint qualification responses exactly
+match target tokens/text/stopping. Raw audit verifies35 timing groups, request
+pins/settings, model/source snapshots and40 loaded images; cleanup authenticates
+43 identities and verifies all36 native groups plus owned supervisors absent.
+53MB of new paid checkpoints/export and10MB of raw evidence retained; only owned
+py_compile caches removed. Full source/ownership/cleanup/inventory evidence:
+runs/w1a8-bounded-duration-predictor-20261104-01; compact report:
+experiments/w1a8-modern-native-20261103/duration-predictor.json.
+
+Existing fresh24 +23.74% transfer remains unchanged, with no cross-cohort rate
+mixing. User says perfect draft preservation/DFlash competitiveness are not
+gates. Recommend bounded broader training with fixed budgets and predeclared
+native-serving checkpoints; this small retrospective result cannot support
+pruning long runs. No broader training started, fresh panel, extra arms, source
+change or push. General predictor validation/backlog/four-target work remains
+pending; paid horizon19200 continuations preserved. Sole GPU lane released.
+
 <!-- APPEND_GOAL_CHECKPOINTS_HERE -->
