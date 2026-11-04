@@ -1,5 +1,33 @@
 # Current project status
 
+## Active: backlog and design readiness — November 4, 2026
+
+Continue directly in this thread; no delegated work. Architecture/precision
+selection and major long-QAT allocation remain reserved for the user. Scope and
+completion criteria: `experiments/design-readiness-20261104/scope.json`.
+
+Direct audit authenticates all98 original segment records,51 compact source
+receipts and32 feature IDs. This establishes inventory coverage, not universal
+scientific rejection or feature transfer. Current representation is76,880
+per-output-row scales in9tensors, with fixed signs in the successful lineage.
+Selected-O sign-training receipts exist separately; all-sign/grouped designs
+remain unqualified and are explicit discussion dependencies.
+
+Exact48-update disabled-objective equivalence passes. A two-FIT recapture and
+114-window CPU preparation pass: training arrays are byte-identical and all
+candidate logits exactly match by token ID. The first checker incorrectly compared
+unordered diagnostic token lists by position; failure and corrected evidence are
+preserved. No floating-point tolerance was weakened.
+
+Four fixed-candidate compatible objective arms are running sequentially from
+paid5760,960updates each: control/depthweight/smoothing/combination. A split-resume
+check and five-repeat consumed-DEV native panel with exact verification-round
+counters follow. Current supervisor `local-design-readiness-stage1-20261104-02`,
+run/identity/stop receipts under `runs/design-readiness-20261104-01/`. No feature
+win, final design readiness, long training allocation or fresh confirmation is
+claimed yet. Preserve healthy supervised training and the current held-out pools.
+
+
 ## Active: design discussion readiness — November 4, 2026
 
 The existing nine-model goal continues under

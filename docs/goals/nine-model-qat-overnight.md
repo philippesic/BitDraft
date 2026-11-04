@@ -5656,3 +5656,22 @@ User requests removal of old AGENTS ownership/delegation requirements and normal
 execution in the current thread. Delegated readiness task cancellation requested;
 no replacement delegates. AGENTS and linked operations instructions simplified.
 The authorized backlog/design-readiness objective continues directly here.
+
+
+### Direct execution resumed: coverage and recapture authenticated
+
+User explicitly resumes full authorized design-readiness work directly here.
+All98 original catalog records and51 source receipts independently rehashed;
+32feature IDs accounted for, no scientific elimination implied. Disabled-objective
+48-update parameter/Adam/RNG equivalence reused. Two-FIT recapture initially
+failed an overbroad byte-order assertion:200 diagnostic candidate-logit arrays
+have reordered token-ID lists. All training arrays match exactly and token-keyed
+logits match exactly;114FITwindows prepare with zero missing embeddings. Failure
+and correction preserved; two fixture tests also reject changed values/IDs/features.
+
+Current live supervisor local-design-readiness-stage1-20261104-02 owns sequential
+control/depth/smooth/combined5760→6720 and480-update split-resume, unchanged frozen
+recipe/arithmetic. Initial process may pay WSLdriver/CUDA startup IO. Native panel
+will add mandatory initializer reference as eighth arm, plus exact per-request
+verification counters outside HTTP timing; prospective amendment saved before
+first outcomes. No new architecture/precision/grouping, longQAT or fresh inputs.
