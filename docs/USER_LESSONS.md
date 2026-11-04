@@ -1138,3 +1138,23 @@ hardware and timing scope separately when discussing candidates. Evidence:
 `experiments/binary-screen-20261104/README.md`, frozen native `w1a1.cu`, and the
 new screen's SASS/integer checks. This is a current-path clarification, not a
 claim that the user's broader binary-arithmetic objective was mistaken.
+
+### 2026-11-04: Do not conflate historical DSpark with modern EAGLE
+
+The user clarified that "our W1A8 candidate, 5–10% behind baseline" referred to
+historical DSpark. Recent assistant replies instead explained modern EAGLE versus
+DFlash catch-up timings without identifying the lineage switch, creating the
+impression that those measurements diagnosed DSpark. The historical standing
+report identifies DSpark versus same-family Q4_K_M on Qwen3 F16; the November4
+cost report measures modern EAGLE versus DFlash on Qwen3.5 4B Q4_K_M. This is
+agent-caused ambiguity, not a confirmed user error. State candidate architecture,
+target and comparator before interpreting gaps; never transfer catch-up findings
+between these lineages without measurements. Evidence:
+`experiments/w1a8-standing-20261102/report.md` and
+`experiments/data-cost-transfer-20261104/README.md`.
+
+Follow-up: the user proposed DSpark Q4_K_M versus DFlash Q4_K_M directly.
+The matched modern-target test found DSpark catch-up cheaper, not the EAGLE
+pattern. Both DSpark and DFlash use the shared parallel draft process hook in
+this runtime; do not describe DSpark as the sequential EAGLE architecture.
+See `experiments/dspark-dflash-catchup-20261104/README.md`.
