@@ -1158,3 +1158,14 @@ The matched modern-target test found DSpark catch-up cheaper, not the EAGLE
 pattern. Both DSpark and DFlash use the shared parallel draft process hook in
 this runtime; do not describe DSpark as the sequential EAGLE architecture.
 See `experiments/dspark-dflash-catchup-20261104/README.md`.
+
+### 2026-11-04: Keep the named DSpark candidate as the comparison anchor
+
+After repeated user clarification, the requested direct comparison explicitly
+uses historical DSpark W1A8 parent3504 and a compatible original-Qwen3 DFlash
+Q4_K_M, with the unchanged Qwen3 F16 target. Earlier replies and work had shifted
+to modern EAGLE without making that candidate change clear. The agent caused
+this scope confusion. Freeze the actual requested checkpoint and compatible
+target before choosing baselines; never silently replace it with a modern
+architecture. The original-Qwen3 DFlash model was available as a small released
+GGUF, allowing a direct bounded comparison without retraining.

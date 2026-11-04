@@ -5848,3 +5848,17 @@ stopped, GPU empty. Historical DSpark W1A8 and modern EAGLE W1A8 are distinct.
 Report: experiments/dspark-dflash-catchup-20261104/README.md. Raw run:
 runs/dspark-dflash-catchup-20261104-01. Pinned source worktree retained.
 Next: joint architecture/precision discussion; no ongoing GPU jobs.
+
+## Original DSpark W1A8 versus DFlash — completed November4
+
+The user-requested retained DSpark W1A8 parent3504 comparison is complete.
+Original Qwen3-4B F16 target, same runtime, D5, six consumed DEV prompts×five
+plain/traced repetitions. W1A8 207.42tok/s versus DFlash Q4_K_M178.49 (+16.21%,
+paired interval+9.87–+24.20%); same-family DSpark Q4_K_M223.45 (W1A8−7.17%).
+State update0.358/0.346/0.354ms per round respectively; differences unresolved.
+All320responses exact, trace counters unchanged. No EAGLE, Qwen3.5 substitution,
+training or policy search. 338.05s supervised wall; all43identities gone,
+GPU empty. This small reused-prompt result does not establish a modern baseline
+win or optimal DFlash setting. Report: experiments/dspark-w1a8-dflash-20261104/README.md.
+Raw run: runs/dspark-w1a8-dflash-20261104-01. Candidate remains DSpark parent3504;
+no automatic training continuation or architecture selection.
