@@ -28,14 +28,12 @@ class Model(nn.Module):
   self.tensors={}
   for t in reader.tensors:
    self.tensors[t.name]=torch.from_numpy(dequantize(t.data,t.tensor_type).reshape(tuple(t.shape[::-1])).astype(np.float32))
-  self.fc=NativeBF16Linear(self.tensors.pop('fc.weight'))
+  self.fc=_FrozenLinear(self.tensors.pop('fc.weight'))
   self.output_norm_enc=nn.Parameter(self.tensors.pop('enc.output_norm.weight'))
   self.output_norm=nn.Parameter(self.tensors.pop('output_norm.weight'))
   self.layers=nn.ModuleList()
   for i in range(6):
    layer=BlockLayer(self.tensors,i,self.config,None)
-   for name in ('attn_q','attn_k','attn_v','attn_output'):
-    old=getattr(layer,name);old.__class__=NativeBF16Linear
    for name in ('attn_norm','attn_q_norm','attn_k_norm','ffn_norm'):
     v=getattr(layer,name);delattr(layer,name);setattr(layer,name,nn.Parameter(v))
    self.layers.append(layer)

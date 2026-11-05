@@ -60,3 +60,27 @@ CPU library builds and frozen zero.gguf loads successfully. Native CUDA executio
 and correctness are not qualified. No captures or training updates performed;
 all1800 update seconds remain. No GPU jobs launched. Next: qualify shared-target
 CUDA decoder and semantic rejection cases, then implement captures/QAT/resume.
+
+## Root continuation: matched modern runtime and numerical scope
+
+The historical CPU admission patch was insufficient for the matched modern
+runtime. `runtime/matched-modern.patch` and `scripts/dflash_baseline/build_modern.py`
+relink only the DFlash-containing object against the existing modern packed
+runtime, preserving target/verifier code. Its packed CUDA integer-dot path is
+reused; no historical seven-slot Tensor Core dispatch is claimed.
+
+CUDA smoke: runs/dflash-modern-native-20261104-03/smoke-result.json. One existing
+TRAIN prompt,32 output tokens: target-only, Q4 and W1A8 returned identical IDs.
+All24 existing TRAIN and3 consumed DEV sequences were recaptured with eight taps.
+Data: runs/dflash-modern-capture-20261104-04/data/. Overlapping native labels match.
+
+Training/native logits are not bit-exact. Three-context F32 comparison had38/45
+argmax choices agree; BF16-input rounding diagnostic had42/45. The provisional
+14/15 per-context gate did not pass. A layerwise diagnostic isolated the cause:
+FFN0 given identical native inputs agrees at1.24e-7 relative error, while roughly
+3e-4 relative differences before the first FFN amplify through quantization and
+six untrained binary layers. See runs/dflash-modern-native-20261104-03/stage-diagnostic.json.
+Keep the F32 reference graph; do not silently change a precision recipe to match
+a few argmaxes. Proceed provisionally to real updates, with actual native output
+correctness and checkpoint evaluation required. This does not claim numerical
+parity or acceptance equivalence. Full1800 training seconds remain unspent.

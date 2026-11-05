@@ -1,6 +1,6 @@
 {
   "schema": "dflash_w1a8_screening_reference_v1",
-  "status": "PREPARATION_INCOMPLETE_NATIVE_AND_TRAINING_ADAPTERS_REQUIRED",
+  "status": "CUDA_ZERO_SMOKE_PASSED_UPDATE_RESUME_QUALIFICATION_IN_PROGRESS",
   "date": "2026-11-04",
   "protocol": "docs/CANDIDATE_BENCHMARKING.md",
   "authority": "User requested durable protocol plus a subagent to prepare the vanilla baseline and run its initial checkpoint.",
@@ -33,9 +33,20 @@
     ],
     "objective": "original compatible DFlash token objective with original position weighting"
   },
-  "resolved_recipe": null,
+  "resolved_recipe": {
+    "binary_coverage": "all18 FFN gate/up/down",
+    "trainable": "latent signs, nonnegative row scales,26 existing norm gains",
+    "activations": "fixed row absmax A8 with RNE",
+    "sign_lr": 0.001,
+    "scale_norm_lr": 1e-05,
+    "weight_decay": 0,
+    "schedule": "constant continuation-compatible",
+    "loss": "native target argmax CE, exp(-(mask_slot-1)/7), anchor excluded",
+    "training_floating_exceptions": "F32 computation on dequantized original BF16 draft matrices and actual quantized target embedding/head",
+    "native_floating_exceptions": "original BF16 draft matrices; target shared Q4_K_M embedding/head; F16 KV"
+  },
   "zero_update": {
-    "status": "PACKED_SERIALIZATION_VERIFIED_NATIVE_UNQUALIFIED",
+    "status": "CUDA_SMOKE_PASSED",
     "source_sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521",
     "output_sha256": "8e6ee641dede3ee9265f73ebb5b4d49b37ce54a3e2ee8d6830edec7a03871bd4",
     "output": "/home/philip/binary-eagle-decoding/runs/dflash-modern-20261104-02/zero.gguf",
@@ -186,20 +197,20 @@
       }
     },
     "updates": 0,
-    "native_admission": false,
+    "native_admission": true,
     "preserved_precision": "original BF16 matrices/F32 norms; shared target head and embedding",
     "latent_initialization": "original BF16 values decoded to F32; sign >=0 positive; row mean absolute scales",
     "cpu_tensor_admission": true
   },
   "initial_checkpoints": [],
   "working_incumbent": null,
-  "native_results": null,
+  "native_results": {
+    "smoke": "/home/philip/binary-eagle-decoding/runs/dflash-modern-native-20261104-03/smoke-result.json",
+    "scope": "one TRAIN prompt, 32 output tokens, not benchmark"
+  },
   "run_directory": "/home/philip/binary-eagle-decoding/runs/dflash-modern-20261104-02",
-  "owner": "assigned implementation worker",
-  "blockers": [
-    "Existing BlockQATConfig and load_block_gguf enforce five layers, seven slots and five historical taps; actual modern source has six layers, sixteen slots, eight taps and sliding-window attention. Modern training/capture/export adapters are not implemented or qualified.",
-    "Native W1Ax admission requires legacy ffn15 profiles and anchor-first metadata; modern packed native admission remains unqualified."
-  ],
+  "owner": "root current thread",
+  "blockers": [],
   "notes": [
     "No trained modern W1A8 DFlash performance is implied by this planned registry.",
     "Never overwrite the frozen external Q4 baseline or prior W1A8 reference after promotion."
@@ -212,5 +223,13 @@
     "native_evaluation_started": false,
     "owned_live_processes": []
   },
-  "runtime_patch": "experiments/dflash-w1a8-baseline-20261104/runtime/modern-admission.patch"
+  "runtime_patch": "experiments/dflash-w1a8-baseline-20261104/runtime/modern-admission.patch",
+  "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+  "runtime_matched_patch": "experiments/dflash-w1a8-baseline-20261104/runtime/matched-modern.patch",
+  "numeric_limitation": {
+    "diagnostic": "/home/philip/binary-eagle-decoding/runs/dflash-modern-native-20261104-03/stage-diagnostic.json",
+    "isolated_ffn_relative_error": 1.2382506042740715e-07,
+    "untrained_draft_token_agreement": "38/45 F32;42/45 BF16-input diagnostic",
+    "decision": "Provisional token agreement gate did not pass. Layerwise probe shows quantization amplifying small floating differences, not integer arithmetic mismatch. Preserve F32 training reference; native correctness and actual native checkpoint evaluations are required. No bit-exact claim."
+  }
 }
