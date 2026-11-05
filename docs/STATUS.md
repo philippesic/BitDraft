@@ -3,7 +3,26 @@
 Near-term design lead: revisit W1A1 parallel proposals, retries and target-verified
 trees. User recalls old untrained EAGLE W1A1 at roughly half W1A8 acceptance and
 draft latency; exact historical comparison remains to be reverified. Recorded in
-`docs/DECISIONS.md`; discussion only, no new experiment or architecture selection.
+`docs/DECISIONS.md`; no architecture selection; the bounded execution screen below is now complete.
+
+## Binary execution comparison — completed November 4
+
+Nine native paths plus published FP16 LUT-GEMM screened on RTX5080. Historical
+Qwen3-4B F16 + retained DSpark, two repetitions × three reused DEV prompts; no
+training. A8 Tensor Core default 231.70 decode tok/s; DP4A 230.93, bit-serial 223.96,
+global LUT4 223.44, exact shared LUT 227.68. Binary pipeline 132/217/708/731/430µs
+per round respectively. A1 override on the same A8-trained weights has 28.6%
+acceptance versus 52.4%; its Tensor adapter 156.63 tok/s and 173µs/round beats tested
+A1 XOR/BMMA/shared-LUT binary pipelines, but this is not trained A1 quality.
+SM120/SM120a binary-MMA PTX lowers to INT8 IMMA in the tested code, not native BMMA.
+All 90 final native responses match target-only tokens; 54 kernel checks pass.
+No modern DFlash baseline evaluation or architecture selection. Detailed charts:
+`experiments/binary-methods-20261104/README.md`. Raw/frozen evidence and cleanup:
+`runs/binary-methods-20261104-01/`; 48 owned server identities checked absent, GPU
+empty. Retained ~238MB of evidence/runtime; 191,508,480 more WSL free bytes observed
+after removing preliminary build/trace scratch. No Windows-space claim. Next:
+discuss architecture/activation precision with Tensor Core expansion as default
+and W1A1 XOR/popcount retained as a shape-specific option.
 
 ## Quick binary pipeline profile — completed November 4
 

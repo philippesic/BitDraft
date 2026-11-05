@@ -1,0 +1,1919 @@
+{
+  "throughput": [
+    {
+      "arm": "A8_tensor",
+      "decode_tps": 231.70103835072868,
+      "request_tps": 197.45213653329094,
+      "acceptance": 0.524390243902439,
+      "speculative": {
+        "accepted": 516,
+        "proposed": 984,
+        "rounds": 198
+      },
+      "decode_tps_per_repetition": [
+        231.992850991251,
+        231.40995890210843
+      ],
+      "requests": 6,
+      "tokens": 716
+    },
+    {
+      "arm": "A8_dp4a",
+      "decode_tps": 230.9266965774793,
+      "request_tps": 194.49788306816913,
+      "acceptance": 0.524390243902439,
+      "speculative": {
+        "accepted": 516,
+        "proposed": 984,
+        "rounds": 198
+      },
+      "decode_tps_per_repetition": [
+        231.97556351270615,
+        229.8872717582202
+      ],
+      "requests": 6,
+      "tokens": 716
+    },
+    {
+      "arm": "A8_planes7",
+      "decode_tps": 223.96290473631495,
+      "request_tps": 190.27811955783991,
+      "acceptance": 0.524390243902439,
+      "speculative": {
+        "accepted": 516,
+        "proposed": 984,
+        "rounds": 198
+      },
+      "decode_tps_per_repetition": [
+        224.0817810871221,
+        223.84415444746443
+      ],
+      "requests": 6,
+      "tokens": 716
+    },
+    {
+      "arm": "A8_lut4",
+      "decode_tps": 223.44039540212097,
+      "request_tps": 189.71497661868912,
+      "acceptance": 0.524390243902439,
+      "speculative": {
+        "accepted": 516,
+        "proposed": 984,
+        "rounds": 198
+      },
+      "decode_tps_per_repetition": [
+        223.44234781734897,
+        223.4384430210126
+      ],
+      "requests": 6,
+      "tokens": 716
+    },
+    {
+      "arm": "A8_sharedlut",
+      "decode_tps": 227.68496541478095,
+      "request_tps": 193.20374358097712,
+      "acceptance": 0.524390243902439,
+      "speculative": {
+        "accepted": 516,
+        "proposed": 984,
+        "rounds": 198
+      },
+      "decode_tps_per_repetition": [
+        227.3554308417168,
+        228.01545664553598
+      ],
+      "requests": 6,
+      "tokens": 716
+    },
+    {
+      "arm": "A1_xor",
+      "decode_tps": 154.7162415535412,
+      "request_tps": 137.95480653366323,
+      "acceptance": 0.2859097127222982,
+      "speculative": {
+        "accepted": 418,
+        "proposed": 1462,
+        "rounds": 296
+      },
+      "decode_tps_per_repetition": [
+        154.77292909065284,
+        154.6595955262768
+      ],
+      "requests": 6,
+      "tokens": 716
+    },
+    {
+      "arm": "A1_bmma",
+      "decode_tps": 154.6582592478511,
+      "request_tps": 137.6641839568341,
+      "acceptance": 0.2859097127222982,
+      "speculative": {
+        "accepted": 418,
+        "proposed": 1462,
+        "rounds": 296
+      },
+      "decode_tps_per_repetition": [
+        155.5549858631803,
+        153.7718120805369
+      ],
+      "requests": 6,
+      "tokens": 716
+    },
+    {
+      "arm": "A1_tensor",
+      "decode_tps": 156.63310576322326,
+      "request_tps": 139.35109537782625,
+      "acceptance": 0.2859097127222982,
+      "speculative": {
+        "accepted": 418,
+        "proposed": 1462,
+        "rounds": 296
+      },
+      "decode_tps_per_repetition": [
+        156.4705830933098,
+        156.7959664018654
+      ],
+      "requests": 6,
+      "tokens": 716
+    },
+    {
+      "arm": "A1_sharedlut",
+      "decode_tps": 153.0618679918347,
+      "request_tps": 136.7824833010175,
+      "acceptance": 0.2859097127222982,
+      "speculative": {
+        "accepted": 418,
+        "proposed": 1462,
+        "rounds": 296
+      },
+      "decode_tps_per_repetition": [
+        153.03409326017334,
+        153.08965280720668
+      ],
+      "requests": 6,
+      "tokens": 716
+    }
+  ],
+  "kernels": [
+    {
+      "mode": "A8_dp4a",
+      "m": 9728,
+      "k": 2560,
+      "n": 1,
+      "full_us": 8.309000171720982,
+      "prep_us": 3.000000026077032,
+      "dot_us": 5.497000180184841
+    },
+    {
+      "mode": "A8_planes1",
+      "m": 9728,
+      "k": 2560,
+      "n": 1,
+      "full_us": 12.748000212013721,
+      "prep_us": 3.992999903857708,
+      "dot_us": 8.438000455498695
+    },
+    {
+      "mode": "A8_planes7",
+      "m": 9728,
+      "k": 2560,
+      "n": 1,
+      "full_us": 15.14699961990118,
+      "prep_us": 4.55200020223856,
+      "dot_us": 11.60299964249134
+    },
+    {
+      "mode": "A8_lut4",
+      "m": 9728,
+      "k": 2560,
+      "n": 1,
+      "full_us": 24.921000003814697,
+      "prep_us": 3.7589999847114086,
+      "dot_us": 21.851999685168266
+    },
+    {
+      "mode": "A1_xor",
+      "m": 9728,
+      "k": 2560,
+      "n": 1,
+      "full_us": 6.151000037789345,
+      "prep_us": 3.6539998836815357,
+      "dot_us": 2.6700000744313
+    },
+    {
+      "mode": "A1_bmma",
+      "m": 9728,
+      "k": 2560,
+      "n": 1,
+      "full_us": 13.624000363051891,
+      "prep_us": 3.7400000728666782,
+      "dot_us": 9.956000372767448
+    },
+    {
+      "mode": "A8_sharedlut",
+      "m": 9728,
+      "k": 2560,
+      "n": 1,
+      "full_us": 22.588999941945076,
+      "prep_us": 16.01400040090084,
+      "dot_us": 6.912999786436558
+    },
+    {
+      "mode": "A1_sharedlut",
+      "m": 9728,
+      "k": 2560,
+      "n": 1,
+      "full_us": 23.962000384926796,
+      "prep_us": 17.268000170588493,
+      "dot_us": 6.887999828904867
+    },
+    {
+      "mode": "A8_tensor",
+      "m": 9728,
+      "k": 2560,
+      "n": 7,
+      "full_us": 8.50600004196167,
+      "prep_us": 3.837999887764454,
+      "dot_us": 5.621000193059444
+    },
+    {
+      "mode": "A8_dp4a",
+      "m": 9728,
+      "k": 2560,
+      "n": 7,
+      "full_us": 16.078000888228416,
+      "prep_us": 3.1139999628067017,
+      "dot_us": 13.186000287532806
+    },
+    {
+      "mode": "A8_planes1",
+      "m": 9728,
+      "k": 2560,
+      "n": 7,
+      "full_us": 53.22299897670746,
+      "prep_us": 3.886000020429492,
+      "dot_us": 49.77799952030182
+    },
+    {
+      "mode": "A8_planes7",
+      "m": 9728,
+      "k": 2560,
+      "n": 7,
+      "full_us": 53.57100069522858,
+      "prep_us": 4.449999891221523,
+      "dot_us": 50.02899840474129
+    },
+    {
+      "mode": "A8_lut4",
+      "m": 9728,
+      "k": 2560,
+      "n": 7,
+      "full_us": 49.320999532938,
+      "prep_us": 3.7980000488460064,
+      "dot_us": 45.848000794649124
+    },
+    {
+      "mode": "A1_xor",
+      "m": 9728,
+      "k": 2560,
+      "n": 7,
+      "full_us": 15.432000160217285,
+      "prep_us": 3.6750000435858965,
+      "dot_us": 12.395000085234642
+    },
+    {
+      "mode": "A1_bmma",
+      "m": 9728,
+      "k": 2560,
+      "n": 7,
+      "full_us": 13.148000463843346,
+      "prep_us": 3.662999952211976,
+      "dot_us": 9.708999656140804
+    },
+    {
+      "mode": "A1_tensor",
+      "m": 9728,
+      "k": 2560,
+      "n": 7,
+      "full_us": 9.858000092208385,
+      "prep_us": 4.3219998478889465,
+      "dot_us": 5.584999918937683
+    },
+    {
+      "mode": "A8_sharedlut",
+      "m": 9728,
+      "k": 2560,
+      "n": 7,
+      "full_us": 32.83099830150604,
+      "prep_us": 14.795999974012375,
+      "dot_us": 18.125999718904495
+    },
+    {
+      "mode": "A1_sharedlut",
+      "m": 9728,
+      "k": 2560,
+      "n": 7,
+      "full_us": 33.99199992418289,
+      "prep_us": 16.138000413775444,
+      "dot_us": 18.223000690340996
+    },
+    {
+      "mode": "A8_dp4a",
+      "m": 2560,
+      "k": 9728,
+      "n": 1,
+      "full_us": 13.706999830901623,
+      "prep_us": 8.011000230908394,
+      "dot_us": 5.617000162601471
+    },
+    {
+      "mode": "A8_planes1",
+      "m": 2560,
+      "k": 9728,
+      "n": 1,
+      "full_us": 17.369000241160393,
+      "prep_us": 8.875000290572643,
+      "dot_us": 8.71300045400858
+    },
+    {
+      "mode": "A8_planes7",
+      "m": 2560,
+      "k": 9728,
+      "n": 1,
+      "full_us": 18.5139998793602,
+      "prep_us": 8.871999569237232,
+      "dot_us": 9.863000363111496
+    },
+    {
+      "mode": "A8_lut4",
+      "m": 2560,
+      "k": 9728,
+      "n": 1,
+      "full_us": 32.64499828219414,
+      "prep_us": 9.289000183343887,
+      "dot_us": 23.99500086903572
+    },
+    {
+      "mode": "A1_xor",
+      "m": 2560,
+      "k": 9728,
+      "n": 1,
+      "full_us": 10.51000040024519,
+      "prep_us": 8.867999538779259,
+      "dot_us": 2.0580000709742308
+    },
+    {
+      "mode": "A1_bmma",
+      "m": 2560,
+      "k": 9728,
+      "n": 1,
+      "full_us": 36.166999489068985,
+      "prep_us": 8.652999997138977,
+      "dot_us": 27.775000780820847
+    },
+    {
+      "mode": "A8_sharedlut",
+      "m": 2560,
+      "k": 9728,
+      "n": 1,
+      "full_us": 25.340000167489052,
+      "prep_us": 19.79600079357624,
+      "dot_us": 5.756999831646681
+    },
+    {
+      "mode": "A1_sharedlut",
+      "m": 2560,
+      "k": 9728,
+      "n": 1,
+      "full_us": 26.70300006866455,
+      "prep_us": 21.251000463962555,
+      "dot_us": 5.890999920666218
+    },
+    {
+      "mode": "A8_tensor",
+      "m": 2560,
+      "k": 9728,
+      "n": 7,
+      "full_us": 20.230000838637352,
+      "prep_us": 9.809000417590141,
+      "dot_us": 10.661999695003033
+    },
+    {
+      "mode": "A8_dp4a",
+      "m": 2560,
+      "k": 9728,
+      "n": 7,
+      "full_us": 21.335000172257423,
+      "prep_us": 8.12000036239624,
+      "dot_us": 13.838999904692173
+    },
+    {
+      "mode": "A8_planes1",
+      "m": 2560,
+      "k": 9728,
+      "n": 7,
+      "full_us": 57.17099830508232,
+      "prep_us": 9.320000186562538,
+      "dot_us": 48.14700037240982
+    },
+    {
+      "mode": "A8_planes7",
+      "m": 2560,
+      "k": 9728,
+      "n": 7,
+      "full_us": 61.351001262664795,
+      "prep_us": 9.034999646246433,
+      "dot_us": 52.57600173354149
+    },
+    {
+      "mode": "A8_lut4",
+      "m": 2560,
+      "k": 9728,
+      "n": 7,
+      "full_us": 52.37999930977821,
+      "prep_us": 9.417000226676464,
+      "dot_us": 43.164998292922974
+    },
+    {
+      "mode": "A1_xor",
+      "m": 2560,
+      "k": 9728,
+      "n": 7,
+      "full_us": 15.819000080227852,
+      "prep_us": 8.686999790370464,
+      "dot_us": 7.3090000078082085
+    },
+    {
+      "mode": "A1_bmma",
+      "m": 2560,
+      "k": 9728,
+      "n": 7,
+      "full_us": 36.41499951481819,
+      "prep_us": 8.76499991863966,
+      "dot_us": 27.8680007904768
+    },
+    {
+      "mode": "A1_tensor",
+      "m": 2560,
+      "k": 9728,
+      "n": 7,
+      "full_us": 19.461000338196754,
+      "prep_us": 9.487999603152275,
+      "dot_us": 10.249000042676926
+    },
+    {
+      "mode": "A8_sharedlut",
+      "m": 2560,
+      "k": 9728,
+      "n": 7,
+      "full_us": 42.91199892759323,
+      "prep_us": 20.375000312924385,
+      "dot_us": 22.52200059592724
+    },
+    {
+      "mode": "A1_sharedlut",
+      "m": 2560,
+      "k": 9728,
+      "n": 7,
+      "full_us": 44.24300044775009,
+      "prep_us": 21.78799919784069,
+      "dot_us": 22.631999105215073
+    }
+  ],
+  "native": [
+    {
+      "arm": "A8_tensor",
+      "request_us": 708335.287,
+      "all_kernel_sum_us": 621433.0760000005,
+      "binary_stages_us": {
+        "quantize_pack": 812.9400000000018,
+        "representation_prep": 174.785,
+        "dot_scale": 3362.9739999999956
+      },
+      "binary_us_per_round": 131.83936363636354,
+      "speculative": {
+        "rounds": 33,
+        "accepted": 94,
+        "proposed": 164
+      },
+      "round_cpu_us": {
+        "draft_us": 84643,
+        "process_us": 13017,
+        "target_decode_sync_us": 427425,
+        "check_us": 11190,
+        "kv_repair_us": 101,
+        "round_us": 538824
+      },
+      "binary_kernels": {
+        "w1ax_quantize": {
+          "count": 264,
+          "sum_us": 812.9400000000018
+        },
+        "void imma_expanded<": {
+          "count": 429,
+          "sum_us": 3362.9739999999956
+        },
+        "w1a8_sum_codes": {
+          "count": 99,
+          "sum_us": 174.785
+        }
+      },
+      "top_kernels": [
+        [
+          "void mul_mat_vec_f<__half, __half, ",
+          {
+            "count": 5975,
+            "sum_us": 221206.80500000025
+          }
+        ],
+        [
+          "void mul_mat_vec_f<__half, float, ",
+          {
+            "count": 1189,
+            "sum_us": 165784.25699999998
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_64x1_tn_align8>",
+          {
+            "count": 770,
+            "sum_us": 47521.34800000004
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_tensorop_h16816gemm_64x64_64x6_tn_align8>",
+          {
+            "count": 385,
+            "sum_us": 21830.514999999992
+          }
+        ],
+        [
+          "void mul_mat_vec_q<",
+          {
+            "count": 405,
+            "sum_us": 18405.903000000002
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x1_tn_align8>",
+          {
+            "count": 1188,
+            "sum_us": 16761.253000000033
+          }
+        ],
+        [
+          "void flash_attn_ext_vec<",
+          {
+            "count": 1188,
+            "sum_us": 16680.91500000001
+          }
+        ],
+        [
+          "void mul_mat_q<",
+          {
+            "count": 1080,
+            "sum_us": 15336.000000000027
+          }
+        ],
+        [
+          "void rms_norm_f32<",
+          {
+            "count": 3671,
+            "sum_us": 13416.764999999961
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>",
+          {
+            "count": 396,
+            "sum_us": 9960.201000000006
+          }
+        ],
+        [
+          "void rms_norm_mul_rope_f32<",
+          {
+            "count": 3795,
+            "sum_us": 9428.97299999999
+          }
+        ],
+        [
+          "void mul_mat_f<__half2, ",
+          {
+            "count": 249,
+            "sum_us": 8858.800000000001
+          }
+        ]
+      ]
+    },
+    {
+      "arm": "A8_dp4a",
+      "request_us": 715113.907,
+      "all_kernel_sum_us": 626443.8419999997,
+      "binary_stages_us": {
+        "quantize_pack": 813.937000000001,
+        "representation_prep": 0,
+        "dot_scale": 6340.8299999999945
+      },
+      "binary_us_per_round": 216.81112121212107,
+      "speculative": {
+        "rounds": 33,
+        "accepted": 94,
+        "proposed": 164
+      },
+      "round_cpu_us": {
+        "draft_us": 88159,
+        "process_us": 14131,
+        "target_decode_sync_us": 429365,
+        "check_us": 11606,
+        "kv_repair_us": 108,
+        "round_us": 545207
+      },
+      "binary_kernels": {
+        "w1ax_quantize": {
+          "count": 264,
+          "sum_us": 813.937000000001
+        },
+        "w1a8_dot_token7": {
+          "count": 429,
+          "sum_us": 6340.8299999999945
+        }
+      },
+      "top_kernels": [
+        [
+          "void mul_mat_vec_f<__half, __half, ",
+          {
+            "count": 5975,
+            "sum_us": 221882.59799999965
+          }
+        ],
+        [
+          "void mul_mat_vec_f<__half, float, ",
+          {
+            "count": 1189,
+            "sum_us": 166240.973
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_64x1_tn_align8>",
+          {
+            "count": 770,
+            "sum_us": 47705.95600000003
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_tensorop_h16816gemm_64x64_64x6_tn_align8>",
+          {
+            "count": 385,
+            "sum_us": 21832.59099999997
+          }
+        ],
+        [
+          "void mul_mat_vec_q<",
+          {
+            "count": 405,
+            "sum_us": 18609.467000000015
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x1_tn_align8>",
+          {
+            "count": 1188,
+            "sum_us": 16941.758000000023
+          }
+        ],
+        [
+          "void flash_attn_ext_vec<",
+          {
+            "count": 1188,
+            "sum_us": 16876.543999999987
+          }
+        ],
+        [
+          "void mul_mat_q<",
+          {
+            "count": 1080,
+            "sum_us": 15307.423000000059
+          }
+        ],
+        [
+          "void rms_norm_f32<",
+          {
+            "count": 3671,
+            "sum_us": 13628.601
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>",
+          {
+            "count": 396,
+            "sum_us": 9964.777999999988
+          }
+        ],
+        [
+          "void rms_norm_mul_rope_f32<",
+          {
+            "count": 3795,
+            "sum_us": 9651.237000000005
+          }
+        ],
+        [
+          "void mul_mat_f<__half2, ",
+          {
+            "count": 249,
+            "sum_us": 8852.505
+          }
+        ]
+      ]
+    },
+    {
+      "arm": "A8_planes7",
+      "request_us": 726702.608,
+      "all_kernel_sum_us": 642391.3679999999,
+      "binary_stages_us": {
+        "quantize_pack": 812.8760000000012,
+        "representation_prep": 363.91399999999953,
+        "dot_scale": 22194.58200000003
+      },
+      "binary_us_per_round": 708.2233939393949,
+      "speculative": {
+        "rounds": 33,
+        "accepted": 94,
+        "proposed": 164
+      },
+      "round_cpu_us": {
+        "draft_us": 104906,
+        "process_us": 12387,
+        "target_decode_sync_us": 427468,
+        "check_us": 11520,
+        "kv_repair_us": 110,
+        "round_us": 558647
+      },
+      "binary_kernels": {
+        "w1ax_quantize": {
+          "count": 264,
+          "sum_us": 812.8760000000012
+        },
+        "w1a8_make_planes": {
+          "count": 429,
+          "sum_us": 363.91399999999953
+        },
+        "void w1a8_dot_planes<": {
+          "count": 429,
+          "sum_us": 22194.58200000003
+        }
+      },
+      "top_kernels": [
+        [
+          "void mul_mat_vec_f<__half, __half, ",
+          {
+            "count": 5975,
+            "sum_us": 221114.284
+          }
+        ],
+        [
+          "void mul_mat_vec_f<__half, float, ",
+          {
+            "count": 1189,
+            "sum_us": 166436.40200000003
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_64x1_tn_align8>",
+          {
+            "count": 770,
+            "sum_us": 47670.40400000004
+          }
+        ],
+        [
+          "void w1a8_dot_planes<",
+          {
+            "count": 429,
+            "sum_us": 22194.58200000003
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_tensorop_h16816gemm_64x64_64x6_tn_align8>",
+          {
+            "count": 385,
+            "sum_us": 22184.609
+          }
+        ],
+        [
+          "void mul_mat_vec_q<",
+          {
+            "count": 405,
+            "sum_us": 18973.63199999999
+          }
+        ],
+        [
+          "void flash_attn_ext_vec<",
+          {
+            "count": 1188,
+            "sum_us": 17075.007
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x1_tn_align8>",
+          {
+            "count": 1188,
+            "sum_us": 16768.925000000017
+          }
+        ],
+        [
+          "void mul_mat_q<",
+          {
+            "count": 1080,
+            "sum_us": 15318.051000000029
+          }
+        ],
+        [
+          "void rms_norm_f32<",
+          {
+            "count": 3671,
+            "sum_us": 13426.575999999992
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>",
+          {
+            "count": 396,
+            "sum_us": 9968.902999999988
+          }
+        ],
+        [
+          "void rms_norm_mul_rope_f32<",
+          {
+            "count": 3795,
+            "sum_us": 9455.097999999976
+          }
+        ]
+      ]
+    },
+    {
+      "arm": "A8_lut4",
+      "request_us": 727674.335,
+      "all_kernel_sum_us": 643207.0420000005,
+      "binary_stages_us": {
+        "quantize_pack": 815.0510000000011,
+        "representation_prep": 429.4119999999989,
+        "dot_scale": 22877.98600000002
+      },
+      "binary_us_per_round": 730.9833030303035,
+      "speculative": {
+        "rounds": 33,
+        "accepted": 94,
+        "proposed": 164
+      },
+      "round_cpu_us": {
+        "draft_us": 104508,
+        "process_us": 12435,
+        "target_decode_sync_us": 427321,
+        "check_us": 11617,
+        "kv_repair_us": 104,
+        "round_us": 559320
+      },
+      "binary_kernels": {
+        "w1ax_quantize": {
+          "count": 264,
+          "sum_us": 815.0510000000011
+        },
+        "w1a8_make_lut4": {
+          "count": 429,
+          "sum_us": 429.4119999999989
+        },
+        "void w1a8_dot_lut4<": {
+          "count": 429,
+          "sum_us": 22877.98600000002
+        }
+      },
+      "top_kernels": [
+        [
+          "void mul_mat_vec_f<__half, __half, ",
+          {
+            "count": 5975,
+            "sum_us": 221498.13500000033
+          }
+        ],
+        [
+          "void mul_mat_vec_f<__half, float, ",
+          {
+            "count": 1189,
+            "sum_us": 166172.78599999993
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_64x1_tn_align8>",
+          {
+            "count": 770,
+            "sum_us": 47881.61400000006
+          }
+        ],
+        [
+          "void w1a8_dot_lut4<",
+          {
+            "count": 429,
+            "sum_us": 22877.98600000002
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_tensorop_h16816gemm_64x64_64x6_tn_align8>",
+          {
+            "count": 385,
+            "sum_us": 21839.95499999998
+          }
+        ],
+        [
+          "void mul_mat_vec_q<",
+          {
+            "count": 405,
+            "sum_us": 18594.620000000017
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x1_tn_align8>",
+          {
+            "count": 1188,
+            "sum_us": 17107.02600000002
+          }
+        ],
+        [
+          "void flash_attn_ext_vec<",
+          {
+            "count": 1188,
+            "sum_us": 16683.035
+          }
+        ],
+        [
+          "void mul_mat_q<",
+          {
+            "count": 1080,
+            "sum_us": 15332.363000000054
+          }
+        ],
+        [
+          "void rms_norm_f32<",
+          {
+            "count": 3671,
+            "sum_us": 13623.000000000013
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>",
+          {
+            "count": 396,
+            "sum_us": 10127.993999999995
+          }
+        ],
+        [
+          "void rms_norm_mul_rope_f32<",
+          {
+            "count": 3795,
+            "sum_us": 9447.419999999967
+          }
+        ]
+      ]
+    },
+    {
+      "arm": "A8_sharedlut",
+      "request_us": 720966.526,
+      "all_kernel_sum_us": 632654.3280000003,
+      "binary_stages_us": {
+        "quantize_pack": 810.4030000000023,
+        "representation_prep": 5366.112999999998,
+        "dot_scale": 8005.447000000011
+      },
+      "binary_us_per_round": 429.75645454545486,
+      "speculative": {
+        "rounds": 33,
+        "accepted": 94,
+        "proposed": 164
+      },
+      "round_cpu_us": {
+        "draft_us": 96580,
+        "process_us": 12809,
+        "target_decode_sync_us": 428112,
+        "check_us": 11763,
+        "kv_repair_us": 111,
+        "round_us": 551545
+      },
+      "binary_kernels": {
+        "w1ax_quantize": {
+          "count": 264,
+          "sum_us": 810.4030000000023
+        },
+        "lut_transpose": {
+          "count": 429,
+          "sum_us": 5366.112999999998
+        },
+        "void kernel::_nqmv<": {
+          "count": 429,
+          "sum_us": 7492.034999999995
+        },
+        "lut_scale": {
+          "count": 429,
+          "sum_us": 513.4120000000021
+        }
+      },
+      "top_kernels": [
+        [
+          "void mul_mat_vec_f<__half, __half, ",
+          {
+            "count": 5975,
+            "sum_us": 221915.3680000004
+          }
+        ],
+        [
+          "void mul_mat_vec_f<__half, float, ",
+          {
+            "count": 1189,
+            "sum_us": 165962.45399999988
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_64x1_tn_align8>",
+          {
+            "count": 770,
+            "sum_us": 47515.498999999996
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_tensorop_h16816gemm_64x64_64x6_tn_align8>",
+          {
+            "count": 385,
+            "sum_us": 21839.32000000002
+          }
+        ],
+        [
+          "void mul_mat_vec_q<",
+          {
+            "count": 405,
+            "sum_us": 18421.635000000002
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x1_tn_align8>",
+          {
+            "count": 1188,
+            "sum_us": 16756.540000000015
+          }
+        ],
+        [
+          "void flash_attn_ext_vec<",
+          {
+            "count": 1188,
+            "sum_us": 16684.450999999994
+          }
+        ],
+        [
+          "void mul_mat_q<",
+          {
+            "count": 1080,
+            "sum_us": 15376.81500000004
+          }
+        ],
+        [
+          "void rms_norm_f32<",
+          {
+            "count": 3671,
+            "sum_us": 13407.358000000038
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>",
+          {
+            "count": 396,
+            "sum_us": 10120.523999999992
+          }
+        ],
+        [
+          "void rms_norm_mul_rope_f32<",
+          {
+            "count": 3795,
+            "sum_us": 9449.166999999974
+          }
+        ],
+        [
+          "void mul_mat_f<__half2, ",
+          {
+            "count": 249,
+            "sum_us": 8852.827999999998
+          }
+        ]
+      ]
+    },
+    {
+      "arm": "A1_xor",
+      "request_us": 985659.639,
+      "all_kernel_sum_us": 886711.4849999992,
+      "binary_stages_us": {
+        "quantize_pack": 3044.9750000000045,
+        "representation_prep": 0,
+        "dot_scale": 14203.309000000005
+      },
+      "binary_us_per_round": 344.9656800000002,
+      "speculative": {
+        "rounds": 50,
+        "accepted": 77,
+        "proposed": 243
+      },
+      "round_cpu_us": {
+        "draft_us": 138797,
+        "process_us": 18992,
+        "target_decode_sync_us": 645195,
+        "check_us": 11841,
+        "kv_repair_us": 197,
+        "round_us": 817537
+      },
+      "binary_kernels": {
+        "w1a1_pack_activations": {
+          "count": 400,
+          "sum_us": 3044.9750000000045
+        },
+        "w1a1_xor_popc": {
+          "count": 650,
+          "sum_us": 14203.309000000005
+        }
+      },
+      "top_kernels": [
+        [
+          "void mul_mat_vec_f<__half, __half, ",
+          {
+            "count": 9052,
+            "sum_us": 332538.18799999956
+          }
+        ],
+        [
+          "void mul_mat_vec_f<__half, float, ",
+          {
+            "count": 1801,
+            "sum_us": 253174.54699999973
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_64x1_tn_align8>",
+          {
+            "count": 770,
+            "sum_us": 47869.932000000015
+          }
+        ],
+        [
+          "void mul_mat_vec_q<",
+          {
+            "count": 618,
+            "sum_us": 28087.676000000014
+          }
+        ],
+        [
+          "void flash_attn_ext_vec<",
+          {
+            "count": 1800,
+            "sum_us": 25097.27699999998
+          }
+        ],
+        [
+          "void mul_mat_q<",
+          {
+            "count": 1564,
+            "sum_us": 22663.864000000016
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_tensorop_h16816gemm_64x64_64x6_tn_align8>",
+          {
+            "count": 385,
+            "sum_us": 21829.974000000013
+          }
+        ],
+        [
+          "void rms_norm_f32<",
+          {
+            "count": 5116,
+            "sum_us": 19454.69000000004
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x1_tn_align8>",
+          {
+            "count": 1188,
+            "sum_us": 17106.941000000024
+          }
+        ],
+        [
+          "w1a1_xor_popc",
+          {
+            "count": 650,
+            "sum_us": 14203.309000000005
+          }
+        ],
+        [
+          "void rms_norm_mul_rope_f32<",
+          {
+            "count": 5274,
+            "sum_us": 12990.202000000021
+          }
+        ],
+        [
+          "void cub::CUB_300104_SM_1200::detail::radix_sort::DeviceRadixSortOnesweepKernel<cub::CUB_300104_SM_1200::detail::radix::policy_hub<float, int, unsigned int>::Policy1000, ",
+          {
+            "count": 1400,
+            "sum_us": 11210.684999999941
+          }
+        ]
+      ]
+    },
+    {
+      "arm": "A1_bmma",
+      "request_us": 983086.705,
+      "all_kernel_sum_us": 882697.9499999988,
+      "binary_stages_us": {
+        "quantize_pack": 3040.3410000000017,
+        "representation_prep": 0,
+        "dot_scale": 11324.315000000022
+      },
+      "binary_us_per_round": 287.2931200000005,
+      "speculative": {
+        "rounds": 50,
+        "accepted": 77,
+        "proposed": 243
+      },
+      "round_cpu_us": {
+        "draft_us": 135791,
+        "process_us": 18873,
+        "target_decode_sync_us": 644011,
+        "check_us": 11945,
+        "kv_repair_us": 198,
+        "round_us": 813513
+      },
+      "binary_kernels": {
+        "w1a1_pack_activations": {
+          "count": 400,
+          "sum_us": 3040.3410000000017
+        },
+        "w1a1_binary_mma": {
+          "count": 650,
+          "sum_us": 11324.315000000022
+        }
+      },
+      "top_kernels": [
+        [
+          "void mul_mat_vec_f<__half, __half, ",
+          {
+            "count": 9052,
+            "sum_us": 333183.900999999
+          }
+        ],
+        [
+          "void mul_mat_vec_f<__half, float, ",
+          {
+            "count": 1801,
+            "sum_us": 250418.51599999983
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_64x1_tn_align8>",
+          {
+            "count": 770,
+            "sum_us": 47517.57799999995
+          }
+        ],
+        [
+          "void mul_mat_vec_q<",
+          {
+            "count": 618,
+            "sum_us": 27893.338000000014
+          }
+        ],
+        [
+          "void flash_attn_ext_vec<",
+          {
+            "count": 1800,
+            "sum_us": 25690.855000000105
+          }
+        ],
+        [
+          "void mul_mat_q<",
+          {
+            "count": 1564,
+            "sum_us": 22889.484000000026
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_tensorop_h16816gemm_64x64_64x6_tn_align8>",
+          {
+            "count": 385,
+            "sum_us": 21992.635000000017
+          }
+        ],
+        [
+          "void rms_norm_f32<",
+          {
+            "count": 5116,
+            "sum_us": 19295.01899999998
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x1_tn_align8>",
+          {
+            "count": 1188,
+            "sum_us": 17104.292000000023
+          }
+        ],
+        [
+          "void rms_norm_mul_rope_f32<",
+          {
+            "count": 5274,
+            "sum_us": 13150.326999999976
+          }
+        ],
+        [
+          "void cub::CUB_300104_SM_1200::detail::radix_sort::DeviceRadixSortOnesweepKernel<cub::CUB_300104_SM_1200::detail::radix::policy_hub<float, int, unsigned int>::Policy1000, ",
+          {
+            "count": 1400,
+            "sum_us": 11374.238999999958
+          }
+        ],
+        [
+          "w1a1_binary_mma",
+          {
+            "count": 650,
+            "sum_us": 11324.315000000022
+          }
+        ]
+      ]
+    },
+    {
+      "arm": "A1_tensor",
+      "request_us": 981382.826,
+      "all_kernel_sum_us": 877193.0439999986,
+      "binary_stages_us": {
+        "quantize_pack": 3043.830000000006,
+        "representation_prep": 467.8160000000003,
+        "dot_scale": 5119.220999999997
+      },
+      "binary_us_per_round": 172.61734000000004,
+      "speculative": {
+        "rounds": 50,
+        "accepted": 77,
+        "proposed": 243
+      },
+      "round_cpu_us": {
+        "draft_us": 131318,
+        "process_us": 20606,
+        "target_decode_sync_us": 644911,
+        "check_us": 11600,
+        "kv_repair_us": 198,
+        "round_us": 812378
+      },
+      "binary_kernels": {
+        "w1a1_pack_activations": {
+          "count": 400,
+          "sum_us": 3043.830000000006
+        },
+        "screen_unpack_a1": {
+          "count": 650,
+          "sum_us": 467.8160000000003
+        },
+        "void imma_expanded<": {
+          "count": 650,
+          "sum_us": 5119.220999999997
+        }
+      },
+      "top_kernels": [
+        [
+          "void mul_mat_vec_f<__half, __half, ",
+          {
+            "count": 9052,
+            "sum_us": 333436.5109999987
+          }
+        ],
+        [
+          "void mul_mat_vec_f<__half, float, ",
+          {
+            "count": 1801,
+            "sum_us": 251207.60799999992
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_64x1_tn_align8>",
+          {
+            "count": 770,
+            "sum_us": 47872.65600000002
+          }
+        ],
+        [
+          "void mul_mat_vec_q<",
+          {
+            "count": 618,
+            "sum_us": 28074.937999999976
+          }
+        ],
+        [
+          "void flash_attn_ext_vec<",
+          {
+            "count": 1800,
+            "sum_us": 25080.064
+          }
+        ],
+        [
+          "void mul_mat_q<",
+          {
+            "count": 1564,
+            "sum_us": 22672.90900000007
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_tensorop_h16816gemm_64x64_64x6_tn_align8>",
+          {
+            "count": 385,
+            "sum_us": 22008.598000000005
+          }
+        ],
+        [
+          "void rms_norm_f32<",
+          {
+            "count": 5116,
+            "sum_us": 19621.460000000014
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x1_tn_align8>",
+          {
+            "count": 1188,
+            "sum_us": 16931.995000000017
+          }
+        ],
+        [
+          "void rms_norm_mul_rope_f32<",
+          {
+            "count": 5274,
+            "sum_us": 13011.87400000001
+          }
+        ],
+        [
+          "void cub::CUB_300104_SM_1200::detail::radix_sort::DeviceRadixSortOnesweepKernel<cub::CUB_300104_SM_1200::detail::radix::policy_hub<float, int, unsigned int>::Policy1000, ",
+          {
+            "count": 1400,
+            "sum_us": 11378.305999999944
+          }
+        ],
+        [
+          "void k_bin_bcast<&op_add, float, float, float, const float *>",
+          {
+            "count": 4941,
+            "sum_us": 10098.505999999985
+          }
+        ]
+      ]
+    },
+    {
+      "arm": "A1_sharedlut",
+      "request_us": 1000474.052,
+      "all_kernel_sum_us": 893075.6060000019,
+      "binary_stages_us": {
+        "quantize_pack": 3042.4500000000053,
+        "representation_prep": 8640.873999999925,
+        "dot_scale": 11916.877000000015
+      },
+      "binary_us_per_round": 472.00401999999895,
+      "speculative": {
+        "rounds": 50,
+        "accepted": 77,
+        "proposed": 243
+      },
+      "round_cpu_us": {
+        "draft_us": 147480,
+        "process_us": 19889,
+        "target_decode_sync_us": 644871,
+        "check_us": 11811,
+        "kv_repair_us": 255,
+        "round_us": 828036
+      },
+      "binary_kernels": {
+        "w1a1_pack_activations": {
+          "count": 400,
+          "sum_us": 3042.4500000000053
+        },
+        "lut_transpose": {
+          "count": 650,
+          "sum_us": 8181.505999999994
+        },
+        "screen_unpack_a1": {
+          "count": 650,
+          "sum_us": 459.3680000000019
+        },
+        "void kernel::_nqmv<": {
+          "count": 650,
+          "sum_us": 11139.587000000001
+        },
+        "lut_scale": {
+          "count": 650,
+          "sum_us": 777.2900000000019
+        }
+      },
+      "top_kernels": [
+        [
+          "void mul_mat_vec_f<__half, __half, ",
+          {
+            "count": 9052,
+            "sum_us": 333148.4290000018
+          }
+        ],
+        [
+          "void mul_mat_vec_f<__half, float, ",
+          {
+            "count": 1801,
+            "sum_us": 251725.58099999983
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_64x1_tn_align8>",
+          {
+            "count": 770,
+            "sum_us": 47515.24199999999
+          }
+        ],
+        [
+          "void mul_mat_vec_q<",
+          {
+            "count": 618,
+            "sum_us": 28286.423000000046
+          }
+        ],
+        [
+          "void flash_attn_ext_vec<",
+          {
+            "count": 1800,
+            "sum_us": 25111.353000000014
+          }
+        ],
+        [
+          "void mul_mat_q<",
+          {
+            "count": 1564,
+            "sum_us": 23017.37900000001
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_tensorop_h16816gemm_64x64_64x6_tn_align8>",
+          {
+            "count": 385,
+            "sum_us": 22196.12399999999
+          }
+        ],
+        [
+          "void rms_norm_f32<",
+          {
+            "count": 5116,
+            "sum_us": 19060.597000000074
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x1_tn_align8>",
+          {
+            "count": 1188,
+            "sum_us": 16939.77300000002
+          }
+        ],
+        [
+          "void rms_norm_mul_rope_f32<",
+          {
+            "count": 5274,
+            "sum_us": 13023.806999999964
+          }
+        ],
+        [
+          "void cub::CUB_300104_SM_1200::detail::radix_sort::DeviceRadixSortOnesweepKernel<cub::CUB_300104_SM_1200::detail::radix::policy_hub<float, int, unsigned int>::Policy1000, ",
+          {
+            "count": 1400,
+            "sum_us": 11198.012999999937
+          }
+        ],
+        [
+          "void kernel::_nqmv<",
+          {
+            "count": 650,
+            "sum_us": 11139.587000000001
+          }
+        ]
+      ]
+    }
+  ],
+  "lutgemm": {
+    "rows": [
+      {
+        "m": 9728,
+        "k": 2560,
+        "n": 1,
+        "k_tile": 64,
+        "m_tile": 2048,
+        "us": [
+          4.666000138968229,
+          4.790999926626682,
+          4.685999825596809
+        ],
+        "relative_rms_error": 0.00135749951004982
+      },
+      {
+        "m": 9728,
+        "k": 2560,
+        "n": 1,
+        "k_tile": 128,
+        "m_tile": 2048,
+        "us": [
+          5.3980001248419285,
+          5.239999853074551,
+          5.386000033468008
+        ],
+        "relative_rms_error": 0.0012109644012525678
+      },
+      {
+        "m": 9728,
+        "k": 2560,
+        "n": 1,
+        "k_tile": 256,
+        "m_tile": 2048,
+        "us": [
+          5.7760002091526985,
+          5.7669999077916145,
+          5.681000184267759
+        ],
+        "relative_rms_error": 0.0010045039234682918
+      },
+      {
+        "m": 9728,
+        "k": 2560,
+        "n": 1,
+        "k_tile": 64,
+        "m_tile": 512,
+        "us": [
+          5.96500001847744,
+          6.0709998942911625,
+          5.915000103414059
+        ],
+        "relative_rms_error": 0.001094768987968564
+      },
+      {
+        "m": 9728,
+        "k": 2560,
+        "n": 1,
+        "k_tile": 128,
+        "m_tile": 512,
+        "us": [
+          4.894000012427568,
+          5.040999967604876,
+          4.947000183165073
+        ],
+        "relative_rms_error": 0.0013827766524627805
+      },
+      {
+        "m": 9728,
+        "k": 2560,
+        "n": 1,
+        "k_tile": 256,
+        "m_tile": 512,
+        "us": [
+          5.816000048071146,
+          5.940000060945749,
+          5.9710000641644
+        ],
+        "relative_rms_error": 0.0013890259433537722
+      },
+      {
+        "m": 9728,
+        "k": 2560,
+        "n": 7,
+        "k_tile": 64,
+        "m_tile": 2048,
+        "us": [
+          27.157999575138092,
+          27.154000476002693,
+          27.26699970662594
+        ],
+        "relative_rms_error": 0.0009925609920173883
+      },
+      {
+        "m": 9728,
+        "k": 2560,
+        "n": 7,
+        "k_tile": 128,
+        "m_tile": 2048,
+        "us": [
+          31.334001570940018,
+          31.481999903917313,
+          31.307999044656754
+        ],
+        "relative_rms_error": 0.0008077868260443211
+      },
+      {
+        "m": 9728,
+        "k": 2560,
+        "n": 7,
+        "k_tile": 256,
+        "m_tile": 2048,
+        "us": [
+          34.584999084472656,
+          34.584999084472656,
+          35.26199981570244
+        ],
+        "relative_rms_error": 0.0009070657542906702
+      },
+      {
+        "m": 9728,
+        "k": 2560,
+        "n": 7,
+        "k_tile": 64,
+        "m_tile": 512,
+        "us": [
+          31.47299960255623,
+          31.578999012708664,
+          31.41399845480919
+        ],
+        "relative_rms_error": 0.0011627651983872056
+      },
+      {
+        "m": 9728,
+        "k": 2560,
+        "n": 7,
+        "k_tile": 128,
+        "m_tile": 512,
+        "us": [
+          29.77900020778179,
+          29.25099991261959,
+          34.554000943899155
+        ],
+        "relative_rms_error": 0.0010682313004508615
+      },
+      {
+        "m": 9728,
+        "k": 2560,
+        "n": 7,
+        "k_tile": 256,
+        "m_tile": 512,
+        "us": [
+          35.151999443769455,
+          35.21300107240677,
+          35.22099927067757
+        ],
+        "relative_rms_error": 0.0010216872906312346
+      },
+      {
+        "m": 2560,
+        "k": 9728,
+        "n": 1,
+        "k_tile": 64,
+        "m_tile": 2048,
+        "us": [
+          6.610000040382147,
+          6.186999846249819,
+          6.473000161349773
+        ],
+        "relative_rms_error": 0.0017592394724488258
+      },
+      {
+        "m": 2560,
+        "k": 9728,
+        "n": 1,
+        "k_tile": 128,
+        "m_tile": 2048,
+        "us": [
+          5.133000202476978,
+          5.890999920666218,
+          5.872000008821487
+        ],
+        "relative_rms_error": 0.0014463681727647781
+      },
+      {
+        "m": 2560,
+        "k": 9728,
+        "n": 1,
+        "k_tile": 256,
+        "m_tile": 2048,
+        "us": [
+          6.4559997990727425,
+          5.652000196278095,
+          6.3229999504983425
+        ],
+        "relative_rms_error": 0.0015755422646179795
+      },
+      {
+        "m": 2560,
+        "k": 9728,
+        "n": 1,
+        "k_tile": 64,
+        "m_tile": 512,
+        "us": [
+          6.364000029861927,
+          5.967000033706427,
+          5.171999800950289
+        ],
+        "relative_rms_error": 0.0016606507124379277
+      },
+      {
+        "m": 2560,
+        "k": 9728,
+        "n": 1,
+        "k_tile": 128,
+        "m_tile": 512,
+        "us": [
+          4.825000185519457,
+          4.790999926626682,
+          4.9760001711547375
+        ],
+        "relative_rms_error": 0.001188035006634891
+      },
+      {
+        "m": 2560,
+        "k": 9728,
+        "n": 1,
+        "k_tile": 256,
+        "m_tile": 512,
+        "us": [
+          6.821999792009592,
+          7.3990002274513245,
+          6.438999902456999
+        ],
+        "relative_rms_error": 0.0010075402678921819
+      },
+      {
+        "m": 2560,
+        "k": 9728,
+        "n": 7,
+        "k_tile": 64,
+        "m_tile": 2048,
+        "us": [
+          34.929998219013214,
+          35.09199991822243,
+          34.9930003285408
+        ],
+        "relative_rms_error": 0.0020058804657310247
+      },
+      {
+        "m": 2560,
+        "k": 9728,
+        "n": 7,
+        "k_tile": 128,
+        "m_tile": 2048,
+        "us": [
+          32.12499991059303,
+          32.26200118660927,
+          31.69799968600273
+        ],
+        "relative_rms_error": 0.0012475854018703103
+      },
+      {
+        "m": 2560,
+        "k": 9728,
+        "n": 7,
+        "k_tile": 256,
+        "m_tile": 2048,
+        "us": [
+          39.92599993944168,
+          34.915998578071594,
+          34.82300043106079
+        ],
+        "relative_rms_error": 0.0014025872806087136
+      },
+      {
+        "m": 2560,
+        "k": 9728,
+        "n": 7,
+        "k_tile": 64,
+        "m_tile": 512,
+        "us": [
+          33.26300159096718,
+          32.345000654459,
+          32.44699910283089
+        ],
+        "relative_rms_error": 0.0021616166923195124
+      },
+      {
+        "m": 2560,
+        "k": 9728,
+        "n": 7,
+        "k_tile": 128,
+        "m_tile": 512,
+        "us": [
+          28.860000893473625,
+          28.999000787734985,
+          30.24199977517128
+        ],
+        "relative_rms_error": 0.001623063813894987
+      },
+      {
+        "m": 2560,
+        "k": 9728,
+        "n": 7,
+        "k_tile": 256,
+        "m_tile": 512,
+        "us": [
+          35.211000591516495,
+          36.01200133562088,
+          35.27199849486351
+        ],
+        "relative_rms_error": 0.001297306502237916
+      }
+    ],
+    "scope": "Official FP16 kernel,1 binary basis, FP16 input/scales/output, shared LUT construction and output clear included; weight transpose once outside timing; NO A8/A1 quantization; native integration not claimed;16 sampled rows checked"
+  },
+  "scope": "RTX5080, original Qwen3-4B F16 target, retained13-projection DSpark weights, D5;2 repetitions x3 reused DEV prompts,128 max tokens; A1 is runtime precision override with no training; timings are screen, not modern DFlash baseline evaluation."
+}

@@ -1,0 +1,70 @@
+--- w1a1.cu
++++ w1a1.cu
+@@ -1,4 +1,7 @@
+ #include "w1a1.cuh"
++#include "bmma.cuh"
++#include "lutgemm_exact.cuh"
++__global__ void screen_unpack_a1(const uint32_t*p,int8_t*q,int k,int n){int i=blockIdx.x*blockDim.x+threadIdx.x;if(i<k*n)q[i]=((p[i/32]>>(i%32))&1)?1:-1;}
+ #if !defined(GGML_USE_HIP) && !defined(GGML_USE_MUSA)
+ #include "w1a8_algorithms.cuh"
+ #endif
+@@ -427,7 +430,7 @@
+ void ggml_cuda_w1ax_pack(ggml_backend_cuda_context & ctx, ggml_tensor * dst) {
+     ggml_cuda_eagle_scope eagle_pack_scope(ctx, "activation_pack_scales", dst);
+     const ggml_tensor * acts = dst->src[0];
+-    const int bits = ggml_get_op_params_i32(dst, 0);
++    const int bits = getenv("GGML_SCREEN_A1") ? 1 : ggml_get_op_params_i32(dst, 0);
+     const float delta = ggml_get_op_params_f32(dst, 1), clip = ggml_get_op_params_f32(dst, 2);
+     const bool learned = ggml_get_op_params_i32(dst, 3);
+     const int64_t k = acts->ne[0], n = acts->ne[1], words = (k + 31)/32;
+@@ -496,7 +499,7 @@
+     const ggml_tensor * acts    = dst->src[2];
+     int64_t k;
+     memcpy(&k, dst->op_params, sizeof(k));
+-    const int bits = ggml_get_op_params_i32(dst, 2);
++    const int bits = getenv("GGML_SCREEN_A1") ? 1 : ggml_get_op_params_i32(dst, 2);
+     const float delta = ggml_get_op_params_f32(dst, 3), clip = ggml_get_op_params_f32(dst, 4);
+     const bool learned = ggml_get_op_params_i32(dst, 5);
+     const int64_t words = (k - 1)/32 + 1;
+@@ -607,6 +610,15 @@
+             const bool use_planes = algorithm && (strcmp(algorithm,"planes1") == 0 || strcmp(algorithm,"planes7") == 0);
+             const bool use_lut = algorithm && strcmp(algorithm,"lut4") == 0;
+             const bool use_mma = algorithm && strcmp(algorithm,"imma_mix") == 0;
++            if (algorithm && strcmp(algorithm,"sharedlut")==0 && bits==8 && k%128==0 && m%2==0 && !midpoints) {
++                ggml_cuda_pool_alloc<uint32_t> wt(ctx.pool(),(size_t)m*words);
++                lut_transpose<<<(unsigned)((m*words+255)/256),256,0,stream>>>((const uint32_t*)weights->data,wt.ptr,m,words);
++                CUDA_CHECK(cudaMemsetAsync(dst->data,0,m*n*sizeof(float),stream));
++                const int kt=k<=4096?64:128, mt=k<=4096?2048:512;
++                if(kt==64)kernel::_nqmv<64><<<dim3((m+mt-1)/mt,k/64,n),256,0,stream>>>(wt.ptr,nullptr,code_ptr,(float*)dst->data,m,k,1,mt,k);
++                else kernel::_nqmv<128><<<dim3((m+mt-1)/mt,k/128,n),256,0,stream>>>(wt.ptr,nullptr,code_ptr,(float*)dst->data,m,k,1,mt,k);
++                lut_scale<<<(unsigned)((m*n+255)/256),256,0,stream>>>((float*)dst->data,(const float*)scales->data,scale_ptr,m,n);
++            } else
+             if ((use_planes || use_lut || use_mma) && bits == 8 && n == 7 && !midpoints && k % 32 == 0 &&
+                     (!use_mma || (k % 128 == 0 && ggml_cuda_info().devices[ctx.device].cc >= 800))) {
+                 static std::atomic<bool> reported_algorithm{false};
+@@ -672,6 +684,25 @@
+         CUDA_CHECK(cudaGetLastError());
+     }
+     ggml_cuda_eagle_scope eagle_dot_scope(ctx, "dot_output", dst);
++    const char * screen = getenv("GGML_SCREEN_A1_METHOD");
++    if(screen && strcmp(screen,"sharedlut")==0 && k%128==0 && m%2==0 && !midpoints){
++        ggml_cuda_pool_alloc<uint32_t> wt(ctx.pool(),(size_t)m*words);
++        ggml_cuda_pool_alloc<int8_t> q(ctx.pool(),(size_t)n*k);
++        lut_transpose<<<(unsigned)((m*words+255)/256),256,0,stream>>>((const uint32_t*)weights->data,wt.ptr,m,words);
++        screen_unpack_a1<<<(unsigned)((n*k+255)/256),256,0,stream>>>(packed_ptr,q.ptr,k,n);
++        CUDA_CHECK(cudaMemsetAsync(dst->data,0,m*n*sizeof(float),stream));
++        const int kt=k<=4096?64:128,mt=k<=4096?2048:512;
++        if(kt==64)kernel::_nqmv<64><<<dim3((m+mt-1)/mt,k/64,n),256,0,stream>>>(wt.ptr,nullptr,q.ptr,(float*)dst->data,m,k,1,mt,k);
++        else kernel::_nqmv<128><<<dim3((m+mt-1)/mt,k/128,n),256,0,stream>>>(wt.ptr,nullptr,q.ptr,(float*)dst->data,m,k,1,mt,k);
++        lut_scale<<<(unsigned)((m*n+255)/256),256,0,stream>>>((float*)dst->data,(const float*)scales->data,scale_ptr,m,n);
++    } else
++    if (screen && strcmp(screen,"bmma")==0 && !midpoints) {
++        w1a1_binary_mma<<<dim3((unsigned)((m+7)/8),(unsigned)((n+7)/8)),32,0,stream>>>((const uint32_t*)weights->data,(const float*)scales->data,packed_ptr,scale_ptr,m,n,k,words,(float*)dst->data);
++    } else if (screen && strcmp(screen,"tensor")==0 && n==7 && k%128==0 && !midpoints) {
++        ggml_cuda_pool_alloc<int8_t> q(ctx.pool(),n*k);
++        screen_unpack_a1<<<(unsigned)((n*k+255)/256),256,0,stream>>>(packed_ptr,q.ptr,k,n);
++        imma_expanded<4,false><<<dim3((unsigned)((m+15)/16)),128,0,stream>>>((const uint32_t*)weights->data,(const float*)scales->data,q.ptr,nullptr,scale_ptr,m,k,words,(float*)dst->data,nullptr);
++    } else
+     w1a1_xor_popc<<<dim3((unsigned) ((m - 1)/4 + 1), token_blocks), dim3(32, 4), 0, stream>>>(
+             (const uint32_t *) weights->data, (const float *) scales->data,
+             packed_ptr, scale_ptr, m, n, k, words, (float *) dst->data, warp_reduce, midpoints, code_sums);

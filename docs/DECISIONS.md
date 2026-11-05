@@ -1497,3 +1497,19 @@ references. No verified ready-made5080 speed win found. Current CUTLASS binary
 wrappers excludeSM120; old5080 functional BMMA test needs machine-code audit
 before asserting native binary Tensor Core execution. No new experiment selected.
 Sources/limits: experiments/blackwell-binary-search-20261104/README.md.
+
+## 2026-11-04: Binary mechanism screen informs architecture discussion
+
+User authorized bounded GPU-stage and native-throughput comparisons, not an
+architecture choice or training. See experiments/binary-methods-20261104/README.md.
+The tested5080 binary-MMA PTX compiles to INT8 IMMA; no new native-binary shortcut
+was demonstrated. Retained A8 Tensor Core execution has the lowest native binary
+pipeline cost and highest measured total throughput among nine screened paths.
+Small throughput gaps remain uncertain in the two-repetition screen.
+
+Keep Tensor Core expansion as engineering comparator; keep W1A1 XOR/popcount as a
+shape-specific possibility and shared LUTs as a possible single-position/layout
+optimization. A1 here is an activation override on A8-trained DSpark weights,
+not a quality verdict on trained A1 or a re-test of the older untrained EAGLE
+half-latency lead. The user still owns W1Ax versus W1A1 and drafting architecture.
+Modern DFlash Q4_K_M primary-baseline settings remain unchanged.
