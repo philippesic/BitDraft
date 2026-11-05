@@ -96,12 +96,17 @@ def main():
    if a.profile and model:
     argv=['nsys','profile','--sample=none','--cpuctxsw=none','--trace=cuda,nvtx','--cuda-graph-trace=node','--force-overwrite=false','-o',str(cell/'profile')]+argv
    created_native=hydrate(model) if model else False
-   done=threading.Event();memory=[]
+   done=threading.Event();memory=[];server_pid=None
    def sample():
     while not done.is_set():
      try:
       values=[v.strip() for v in subprocess.check_output(['/usr/lib/wsl/lib/nvidia-smi','--query-gpu=memory.used,utilization.gpu,clocks.current.sm,power.draw,temperature.gpu,pstate','--format=csv,noheader,nounits'],text=True).strip().split(',')]
       entry=dict(monotonic=time.monotonic(),MiB=int(values[0]),pstate=values[5])
+      if server_pid is not None:
+       try:
+        host=Path(f'/proc/{server_pid}/status').read_text()
+        entry.update({key:int(re.search(r'^'+key+r':\s+(\d+) kB',host,re.M)[1])*1024 for key in ('VmRSS','VmHWM')})
+       except (OSError,TypeError):pass
       for key,value in zip(('utilization_percent','sm_clock_MHz','power_W','temperature_C'),values[1:5]):
        try:entry[key]=float(value)
        except ValueError:entry[key]=None
@@ -110,7 +115,8 @@ def main():
      done.wait(.2)
    watcher=threading.Thread(target=sample,daemon=True);watcher.start()
    with (cell/'server.log').open('w') as log:
-    try:process=subprocess.Popen(argv,env=env,stdout=log,stderr=subprocess.STDOUT)
+    try:
+     process=subprocess.Popen(argv,env=env,stdout=log,stderr=subprocess.STDOUT);server_pid=process.pid
     except BaseException:
      done.set();watcher.join(timeout=5)
      if model:release(model,created_native)

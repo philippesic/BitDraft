@@ -5,6 +5,7 @@ from .archive import available
 
 def completed():
  rows={}
+ variants=json.load(open(R/'deployment-variants.json')) if (R/'deployment-variants.json').exists() else {}
  for out in sorted((R/'arms').iterdir()):
   if out.name=='H0-pilot' or not (out/'result.json').exists():continue
   result=json.load(open(out/'result.json'))
@@ -12,6 +13,10 @@ def completed():
   model=out/f"model-{result['progress']['updates']}.gguf"
   if not available(model):raise ValueError('completed native model not recoverable '+str(model))
   rows[out.name]=dict(model=str(model),spec=result['spec'],result=pin(out/'result.json'))
+  if out.name in variants:
+   variant=variants[out.name]
+   if variant['parent']['sha256']!=__import__('scripts.component_campaign.archive',fromlist=['reference']).reference(model)['sha256']:raise ValueError('physical storage variant parent changed')
+   rows[out.name].update(trained_model=str(model),model=variant['model']['path'],spec=variant['spec'],deployment_variant=variant)
  return rows
 
 def main():

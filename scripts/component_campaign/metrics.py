@@ -34,4 +34,5 @@ def allocations(cell):
  for match in re.finditer(r'llama_kv_cache: size =\s+([\d.]+) MiB.*?K \(([^)]+)\):\s+([\d.]+) MiB, V \(([^)]+)\):\s+([\d.]+) MiB',text):
   caches.append(dict(total_reported_bytes=float(match[1])*2**20,k_type=match[2],k_bytes=float(match[3])*2**20,v_type=match[4],v_bytes=float(match[5])*2**20))
  for device,size in re.findall(r'init_rotation:\s+(\S+) rotation buffer size =\s+([\d.]+) MiB',text):rot.append(dict(device=device,reported_bytes=float(size)*2**20))
- return dict(model_buffers=model,cache_buffers=caches,rotation_buffers=rot,precision='Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate.')
+ compute=[dict(device=m[0],reported_bytes=float(m[1])*2**20) for m in re.findall(r'sched_reserve:\s+(\S+) compute buffer size =\s+([\d.]+) MiB',text)]
+ return dict(model_buffers=model,cache_buffers=caches,rotation_buffers=rot,compute_buffer_history=compute,precision='Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate.')

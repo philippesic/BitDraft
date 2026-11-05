@@ -11,7 +11,7 @@ def native_panel(directory):
   measurements=[]
   for cell in cells:
    memory=json.load(open(cell/'memory.json'))
-   measurements.append(dict(cell=str(cell),allocation=allocations(cell),sampled_device_peak_bytes=max([x['MiB']*2**20 for x in memory],default=None)))
+   measurements.append(dict(cell=str(cell),allocation=allocations(cell),sampled_device_peak_bytes=max([x['MiB']*2**20 for x in memory],default=None),sampled_server_host_peak_rss_bytes=max([x.get('VmHWM',0) for x in memory],default=None)))
   entry['allocations']=measurements
   entry['sampled_device_peak_bytes']=max([x['sampled_device_peak_bytes'] for x in measurements if x['sampled_device_peak_bytes'] is not None],default=None)
   if not entry['instrumented']:

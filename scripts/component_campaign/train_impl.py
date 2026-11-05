@@ -61,7 +61,7 @@ def main():
  windows=[(i,x) for i,cap in enumerate(train) for x in cap.anchors]
  if sorted(progress['order'])!=list(range(len(windows))):raise ValueError('parent TRAIN order changed')
  unique_labels={(str(cap.path),a+j-1) for cap in train for a in cap.anchors for j in range(1,16)}
- save(out/'resolved.json',dict(config=c,spec=spec,lineage=lineage,data_windows=len(windows),unique_label_positions=len(unique_labels),unique_sequences=len(train),coverage_note='Overlapping windows/repeated epochs are exposure, not fresh labels.',source_pins={str(p.relative_to(ROOT)):pin(p) for directory in (ROOT/'scripts/component_campaign',ROOT/'scripts/dflash_baseline') for p in directory.glob('*.py')}))
+ save(out/'resolved.json',dict(config=c,spec=spec,lineage=lineage,data_windows=len(windows),unique_label_positions=len(unique_labels),unique_sequences=len(train),coverage_note='Overlapping windows/repeated epochs are exposure, not fresh labels.',parameter_map={n:dict(shape=list(p.shape),numel=p.numel(),master_dtype=str(p.dtype),trainable=p.requires_grad) for n,p in m.named_parameters()},source_pins={str(p.relative_to(ROOT)):pin(p) for directory in (ROOT/'scripts/component_campaign',ROOT/'scripts/dflash_baseline') for p in directory.glob('*.py')}))
  stopped=False
  def stop(*_):
   nonlocal stopped;stopped=True

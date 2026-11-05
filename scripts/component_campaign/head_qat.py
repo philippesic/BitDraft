@@ -18,7 +18,7 @@ def scale_offset(format):
 def encoded_scales(data,format,log_d,deployment_d=None):
  result=np.array(data,copy=True);blocks=result.reshape(*log_d.shape,-1)
  offset=scale_offset(format)
- signs=np.sign(np.ascontiguousarray(blocks[...,offset:offset+2]).view('<f2').reshape(log_d.shape).astype(np.float32))
+ signs=np.copysign(1.,np.ascontiguousarray(blocks[...,offset:offset+2]).view('<f2').reshape(log_d.shape).astype(np.float32))
  rounded=deployment_d.cpu().numpy() if deployment_d is not None else log_d.detach().cpu().float().exp().half().numpy()
  rounded=(rounded*signs).astype('<f2')
  if not np.isfinite(rounded).all():raise ValueError('head block-scale overflow')
@@ -79,7 +79,7 @@ def install(model,spec):
   # Q6_K/Q3_K block scales can be signed. Keep that sign in the frozen
   # integer grid; the learned master is log(abs(d)), with native sign restored
   # at export. A positive-only initializer would silently destroy source codes.
-  coefficients[start:start+256]=(value*np.sign(d[start:start+256,:,None]).repeat(256,axis=2).reshape(value.shape)).astype(np.int16)
+  coefficients[start:start+256]=(value*np.copysign(1.,d[start:start+256,:,None]).repeat(256,axis=2).reshape(value.shape)).astype(np.int16)
   if offsets is not None:
    original=np.array(data[start:start+256],copy=True).reshape(-1,width//256,bytes_per_block)
    original[...,0:2]=0
@@ -107,4 +107,27 @@ def cpu_gradient_fixture():
  if not torch.equal(dx,x.grad) or not torch.allclose(dd,d.grad,rtol=2e-6,atol=2e-6):raise ValueError('bounded head gradient fixture failed')
  return dict(status='CPU_ANALYTIC_GRADIENT_PASS',max_scale_gradient_error=float((dd-d.grad).abs().max()),native_full_head_cuda_and_export_resume='pending evidence-led R2 use')
 
-if __name__=='__main__':print(cpu_gradient_fixture())
+def native_grid_fixture():
+ records=[]
+ for format in ('Q6_K','Q4_K','Q3_K'):
+  original=np.array(matrix_data(format)[:32],copy=True);block,bytes_per_block=GGML_QUANT_SIZES[Type[format]]
+  coded=original.reshape(32,-1,bytes_per_block);offset=scale_offset(format)
+  d=np.ascontiguousarray(coded[...,offset:offset+2]).view('<f2').reshape(32,-1).astype(np.float32)
+  latent=torch.from_numpy(np.log(np.maximum(np.abs(d),1e-12)))
+  rebuilt=encoded_scales(original,format,latent)
+  if not np.array_equal(original,rebuilt):raise ValueError('native signed scale initial packed bytes differ '+format)
+  unit=original.copy().reshape(coded.shape);unit[...,offset:offset+2]=np.array([1.],dtype='<f2').view(np.uint8)
+  if format=='Q4_K':unit[...,2:4]=0
+  coefficient=dequantize(unit.reshape(32,-1),Type[format]).reshape(32,-1)
+  coefficient*=np.copysign(1.,d).repeat(256,axis=1)
+  weight=coefficient*d.__abs__().repeat(256,axis=1)
+  if format=='Q4_K':
+   bias=original.copy().reshape(coded.shape);bias[...,0:2]=0
+   weight+=dequantize(bias.reshape(32,-1),Type[format]).reshape(32,-1)
+  expected=dequantize(original,Type[format]).reshape(32,-1)
+  error=float(np.abs(weight-expected).max())
+  if error!=0:raise ValueError('signed integer native grid mismatch '+format)
+  records.append(dict(format=format,negative_blocks=int((d<0).sum()),zero_blocks=int((d==0).sum()),packed_initial_roundtrip=True,dequant_max_absolute_error=error))
+ return dict(status='CPU_NATIVE_SIGNED_GRID_PASS',records=records)
+
+if __name__=='__main__':print(cpu_gradient_fixture());print(native_grid_fixture())
