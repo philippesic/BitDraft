@@ -6108,3 +6108,15 @@ implementation/build/qualification/benchmark work is authorized. Preserve the
 compact G4/D8 learned2048 primary model and original runtime; no new training or
 precision changes. One delegated GPU owner; continue the active goal. See the
 [campaign checkpoint](../EXECUTION_CAMPAIGN.md) for scope, required item ledger and deliverables.
+
+### November5 11:10 Pacific — execution implementation starts
+
+User explicitly authorizes exhausting the execution inventory and comparing
+candidate/Q4 latencies. Continue this goal, no new training. Sole implementation
+worker uses isolated `t3/dflash-execution-optimization-campaign` worktree;
+parent owns integration/review. See `docs/EXECUTION_CAMPAIGN.md`. New canonical
+run `runs/execution-campaign-20261105-01` pins learned-small2048 export and
+matched baseline. Observational original traces completed, actual N3 confirmed;
+first exact CUDA alternatives building/qualifying under local supervisor.
+Live ownership/recovery is in `live-ownership.json`. No claim of speed win or
+inventory completion yet. Paid archives/shared basis preserved; no pushes.

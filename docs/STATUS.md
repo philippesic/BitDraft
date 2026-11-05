@@ -574,3 +574,10 @@ CPU library builds and frozen zero.gguf loads successfully. Native CUDA executio
 and correctness are not qualified. No captures or training updates performed;
 all1800 update seconds remain. No GPU jobs launched. Next: qualify shared-target
 CUDA decoder and semantic rejection cases, then implement captures/QAT/resume.
+
+November5 execution campaign: implementation active in the isolated
+`t3/dflash-execution-optimization-campaign` worktree. Exact compact learned-small
+2048 export remains primary; original W1/Q4 trace completed, execution candidates
+under qualification. See `docs/EXECUTION_CAMPAIGN.md` and canonical
+`runs/execution-campaign-20261105-01/live-ownership.json` for current owner/jobs.
+This does not reopen training or complete the broader goal.
