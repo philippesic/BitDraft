@@ -1191,3 +1191,25 @@ weights, activations and decisions. This is an agent framing gap, not a user
 error. Check the exact deployed dispatch before proposing basic DP4A as the
 engineering comparator or presenting token reuse as absent from the endpoint.
 Evidence: experiments/binary-pipeline-profile-20261104/README.md.
+
+## 2026-11-04: Ground architecture advice in the matched modern matrix
+
+Context: during W1Ax architecture discussion, the user recalled DFlash beating
+DSpark in the earlier drafter/quantization comparison. The assistant had framed
+DFlash mainly as the simpler baseline and DSpark as an open alternative without
+first retrieving that stronger deployment-specific evidence.
+
+Evidence: the November1 58-row Qwen3.5 matrix measured DFlash Q4_K_M at235.9/258.3
+request tok/s on4B Q4_K_M/NVFP4 targets, versus DSpark Q4_K_M209.3/217.0.
+DFlash Q4_K_M led the9B rows too, but no target-matched9B DSpark was available.
+DFlash Q8_0's nominal237.8 on4B Q4_K_M was an unresolved small lead over Q4_K_M;
+the user selected Q4_K_M consistently across targets on November2.
+
+Lesson: retrieve the existing matched architecture/format matrix before giving
+fresh generic architecture advice. This evidence strengthens DFlash as the
+initial modern W1Ax architecture; it does not prove the ordering survives binary
+training. Distinguish the user's broadly correct recollection from the small
+Q8 exception and missing9B DSpark comparison. Historical F16-target DSpark gains
+must not outweigh modern matched evidence without explaining the scope change.
+Source: experiments/qwen35-correctness-matrix-20261101/matrix.csv and
+experiments/w1a8-standing-20261102/report.md.
