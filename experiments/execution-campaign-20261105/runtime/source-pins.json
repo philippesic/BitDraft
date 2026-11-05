@@ -1,0 +1,50 @@
+{
+  "base_runtime": "/home/philip/binary-eagle-decoding/runs/precision-native-20261104-04",
+  "files": [
+    {
+      "relative": "ggml/src/ggml-cuda/w1a1.cu",
+      "base": {
+        "path": "/home/philip/binary-eagle-decoding/runs/precision-native-20261104-04/ggml/src/ggml-cuda/w1a1.cu",
+        "sha256": "1e62ae5eb05602057c928922319d5b72c9d68a20e977de53055ca5a8d09d08e9"
+      },
+      "optimized": {
+        "path": "/home/philip/binary-eagle-decoding/runs/execution-campaign-20261105-01/runtime-combined-last02/w1a1.cu",
+        "sha256": "ec46906f8077a21cf31c89cf56d76c97ed7decec56fc4c7badb7c93f930b2f1a"
+      }
+    },
+    {
+      "relative": "ggml/src/ggml-cuda/ggml-cuda.cu",
+      "base": {
+        "path": "/home/philip/binary-eagle-decoding/runs/precision-native-20261104-04/ggml/src/ggml-cuda/ggml-cuda.cu",
+        "sha256": "673d11deaa2c8c0c8bff65102552b4de59eaa6dc25cb7b4aa89c9fa60af6af03"
+      },
+      "optimized": {
+        "path": "/home/philip/binary-eagle-decoding/runs/execution-campaign-20261105-01/runtime-combined-last02/ggml/src/ggml-cuda/ggml-cuda.cu",
+        "sha256": "70f3fc801ea90fd6dea33f89d08879bc9b531a6ecaf97fd5169a52a6bc308a99"
+      }
+    },
+    {
+      "relative": "src/models/dflash.cpp",
+      "base": {
+        "path": "/home/philip/binary-eagle-decoding/runs/precision-native-20261104-04/src/models/dflash.cpp",
+        "sha256": "cbff16ffb856aba144bb67dd5bfae9a32f96d55181e061ad41480c5d74d68c15"
+      },
+      "optimized": {
+        "path": "/home/philip/binary-eagle-decoding/runs/execution-campaign-20261105-01/runtime-combined-last02/src/models/dflash.cpp",
+        "sha256": "17fb92faed86061bd0044b12ef159d97d4da67e5ffd84b8d0c13007522bca66f"
+      }
+    },
+    {
+      "relative": "common/speculative.cpp",
+      "base": {
+        "path": "/home/philip/binary-eagle-decoding/runs/w1a8-modern-packed-runtime-20261103-01/source/common/speculative.cpp",
+        "sha256": "667f3e71026a4701d4c3e6338ca25ba38b7f83d6a41ae9f9c33763beb12a64ad"
+      },
+      "optimized": {
+        "path": "/home/philip/binary-eagle-decoding/runs/execution-campaign-20261105-01/runtime-head02/speculative.cpp",
+        "sha256": "9cef9db8444e87dfd6595c4f305002a7ee77fc43f83831e79c547d1865bd9393"
+      }
+    }
+  ],
+  "submodule_gitlink_changed": false
+}

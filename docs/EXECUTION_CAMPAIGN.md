@@ -169,3 +169,28 @@ release are still outstanding; do not infer completion from the prepared runtime
 Current task storage~2.8GiB, WSL~6.7GB/Windows~11.5GB free. Bounded budget revised
 to3.5GiB including final evidence; no expanded full models on disk. Paid models,
 archives and shared dictionary basis remain protected.
+
+### Final confirmation live — November5 approximately noon Pacific
+
+Independent retained joint kernel passes every bit/mode at N1/3/8/9 with actual
+joint dispatch. Maximum finite clipping-bound outputs also match original GPU
+bytes, including overflow NaN payloads. The CPU-only max-bound payload mismatch
+is resolved by that direct native comparison; no arithmetic change was needed.
+
+All60final fixed-work replay cells finished:540forwards including warmups,
+180measured graph regions,30paired per-domain/repetition original/optimized
+comparisons, all required logits and model-specific cache bytes exact. Replay
+assembly initially failed only because the pin helper receivedstr rather than
+Path; complete preserved progress was independently re-audited and assembled,
+without replacing or rerunning GPU observations. `replay-final/result.json`
+records that recovery. One28.61ms host outlier remains in the data (its graph
+event1.171ms); no outlier trimming.
+
+Live supervised session `execution-native-final-20261105-01`, socket
+`binary-eagle-runtime`, is in its last actual-request repetition. Source and
+current authenticated identities are in `live-ownership.json`; raw results in
+`native-final/`. Candidate/source/baseline pins remain fixed. Proposal-token
+tracing is confined to diagnostic companions; all throughput uses plain requests.
+After this panel: short final Nsight traces, standalone patch reconstruction,
+all-output/embedding fallback checks, artifact publication and owned release.
+No completion claim or deployment promotion yet.

@@ -1,0 +1,190 @@
+--- a/ggml/src/ggml-cuda/w1a1.cu
++++ b/ggml/src/ggml-cuda/w1a1.cu
+@@ -55,6 +55,88 @@
+     totals[threadIdx.x]=total; __syncthreads();
+     for(int stride=128;stride>0;stride/=2) { if(threadIdx.x<stride) totals[threadIdx.x]+=totals[threadIdx.x+stride]; __syncthreads(); }
+     if(threadIdx.x==0) sums[token]=__fmul_rn((float)totals[0],scales[token]);
++}
++
++// Execution-only alternatives; preserve explicit F32 multiply/add ordering.
++template<int T> static __global__ void exec_known_bound(
++ const float* x,int64_t k,int8_t* q,float* scales,float* sums,int bits,float clip,const float* gains) {
++ const int token=blockIdx.x;
++ if(!isfinite(clip)||clip<=0) __trap();
++ const int qm=bits<=2?1:(1<<(bits-1))-1;
++ const float beta=__fdiv_rn(clip,float(qm)),inv=__fdiv_rn(float(qm),clip);
++ int total=0;
++ for(int64_t j=threadIdx.x;j<k;j+=T){
++  float v=gained_value(x+token*k,gains,j);
++  if((__float_as_uint(v)&0x7fffffffu)>=0x7f800000u)__trap();
++  int c;
++  if(bits==1)c=v>=0?1:-1;
++  else {
++   float z=isfinite(inv)?__fmul_rn(v,inv):__double2float_rn(double(v)/double(clip)*double(qm));
++   c=max(-qm,min(qm,__float2int_rn(fminf(float(qm),fmaxf(-float(qm),z)))));
++  }
++  q[token*k+j]=int8_t(c);total+=c;
++ }
++ for(int d=16;d;d/=2)total+=__shfl_down_sync(0xffffffff,total,d);
++ __shared__ int warp_totals[T/32];
++ if((threadIdx.x&31)==0)warp_totals[threadIdx.x/32]=total;
++ if(T>32)__syncthreads();
++ if(threadIdx.x==0){int sum=0;for(int i=0;i<T/32;++i)sum+=warp_totals[i];scales[token]=beta;sums[token]=__fmul_rn(float(sum),beta);}
++}
++static __device__ __forceinline__ float exec_affine(int v,float a,float b,float mid,float s){
++ if((__float_as_uint(a)&0x80000000u)||!isfinite(a)||(__float_as_uint(b)&0x80000000u)||!isfinite(b))__trap();
++ return __fadd_rn(__fmul_rn(__fmul_rn(float(v),a),b),__fmul_rn(mid,s));
++}
++static __device__ __forceinline__ uint32_t exec_sign4(uint32_t signs){
++ const uint32_t spread=((signs&15u)*0x00204081u)&0x01010101u;
++ return ((spread^0x01010101u)*0xfeu)|0x01010101u;
++}
++template<int C> static __global__ void exec_cross_dot(
++ const uint32_t*w,const float*a,const int8_t*q,const float*b,int64_t m,int64_t k,int64_t words,float*y,const float*mid,const float*s,int64_t n){
++ int64_t row=blockIdx.x*4+threadIdx.y;int lane=threadIdx.x;int acc[C]={};
++ if(row<m)for(int64_t i=lane*4;i<k;i+=128){
++  int sign=exec_sign4(w[row*words+i/32]>>(i%32));
++  #pragma unroll
++  for(int t=0;t<C;++t)if(t<n)acc[t]=__dp4a(*(const int*)(q+t*k+i),sign,acc[t]);
++ }
++ #pragma unroll
++ for(int t=0;t<C;++t){
++  for(int d=16;d;d/=2)acc[t]+=__shfl_down_sync(0xffffffff,acc[t],d);
++  if(row<m && t<n && lane==0)y[t*m+row]=exec_affine(acc[t],a[row],b[t],mid?mid[row]:0,s[t]);
++ }
++}
++static __global__ void exec_mma_dot(
++ const uint32_t*w,const float*a,const int8_t*q,const float*b,int64_t m,int64_t k,int64_t words,float*y,const float*mid,const float*s,int64_t n){
++ const int lane=threadIdx.x,g=lane/4,t=lane%4;
++ const int rowbase=(blockIdx.x*4+threadIdx.y)*16;
++ int c[4]={};
++ for(int j=0;j<k;j+=32){
++  uint32_t ar[4];
++  #pragma unroll
++  for(int z=0;z<4;++z){int row=rowbase+g+(z%2)*8;int shift=t*4+(z/2)*16;ar[z]=row<m?exec_sign4(w[row*words+j/32]>>shift):0;}
++  uint32_t br0=g<n?*(const uint32_t*)(q+g*k+j+t*4):0;
++  uint32_t br1=g<n?*(const uint32_t*)(q+g*k+j+t*4+16):0;
++  asm volatile("mma.sync.aligned.m16n8k32.row.col.s32.s8.s8.s32 {%0,%1,%2,%3}, {%4,%5,%6,%7}, {%8,%9}, {%0,%1,%2,%3};" : "+r"(c[0]),"+r"(c[1]),"+r"(c[2]),"+r"(c[3]) : "r"(ar[0]),"r"(ar[1]),"r"(ar[2]),"r"(ar[3]),"r"(br0),"r"(br1));
++ }
++ #pragma unroll
++ for(int z=0;z<4;++z){int row=rowbase+g+(z/2)*8,col=t*2+(z%2);if(row<m && col<n)y[col*m+row]=exec_affine(c[z],a[row],b[col],mid?mid[row]:0,s[col]);}
++}
++
++// Multi-block fixed-bound preparation; workspace and completion are charged.
++template<int B> static __global__ void exec_tiled_codes(const float*x,const float*g,int64_t k,int bits,float clip,int8_t*q,int*partial,int tiles){
++ int token=blockIdx.y,j=blockIdx.x*256+threadIdx.x,qm=B?((B<=2)?1:(1<<(B-1))-1):((bits<=2)?1:(1<<(bits-1))-1),c=0;
++ if(!isfinite(clip)||clip<=0)__trap();
++ if(j<k){float v=gained_value(x+token*k,g,j);if(!isfinite(v))__trap();
++  if((B?B:bits)==1)c=v>=0?1:-1;else{float inv=__fdiv_rn(float(qm),clip);float z=isfinite(inv)?__fmul_rn(v,inv):__double2float_rn(double(v)/double(clip)*qm);c=max(-qm,min(qm,__float2int_rn(fminf(float(qm),fmaxf(-float(qm),z)))));}q[token*k+j]=int8_t(c);
++ }
++ for(int d=16;d;d/=2)c+=__shfl_down_sync(0xffffffff,c,d);__shared__ int ws[8];if((threadIdx.x&31)==0)ws[threadIdx.x/32]=c;__syncthreads();if(threadIdx.x==0){int total=0;for(int i=0;i<8;++i)total+=ws[i];partial[token*tiles+blockIdx.x]=total;}
++}
++static __global__ void exec_tiled_finish(const int*p,int tiles,int bits,float clip,float*b,float*s){int token=blockIdx.x,sum=0;for(int i=threadIdx.x;i<tiles;i+=32)sum+=p[token*tiles+i];for(int d=16;d;d/=2)sum+=__shfl_down_sync(0xffffffff,sum,d);if(threadIdx.x==0){int qm=bits<=2?1:(1<<(bits-1))-1;float beta=__fdiv_rn(clip,float(qm));b[token]=beta;s[token]=__fmul_rn(float(sum),beta);}}
++
++static __global__ void exec_joint_dot(const uint32_t*w0,const float*a0,const float*m0,float*y0,const uint32_t*w1,const float*a1,const float*m1,float*y1,const int8_t*q,const float*b,const float*s,int m,int k){
++ int row=blockIdx.x*4+threadIdx.y,t=blockIdx.y,lane=threadIdx.x,acc0=0,acc1=0;
++ if(row<m)for(int j=lane*4;j<k;j+=128){int x=*(const int*)(q+t*k+j);acc0=__dp4a(x,int(exec_sign4(w0[row*(k/32)+j/32]>>(j%32))),acc0);acc1=__dp4a(x,int(exec_sign4(w1[row*(k/32)+j/32]>>(j%32))),acc1);}
++ for(int d=16;d;d/=2){acc0+=__shfl_down_sync(0xffffffff,acc0,d);acc1+=__shfl_down_sync(0xffffffff,acc1,d);}
++ if(lane==0&&row<m){y0[t*m+row]=exec_affine(acc0,a0[row],b[t],m0?m0[row]:0,s[t]);y1[t*m+row]=exec_affine(acc1,a1[row],b[t],m1?m1[row]:0,s[t]);}
+ }
+ 
+ // Four output rows per block, one complete warp per row. Weight signs remain
+@@ -111,7 +193,14 @@
+     if (layout.codes_words*4 != k*n) {
+         CUDA_CHECK(cudaMemsetAsync(codes + k*n, 0, (size_t) (layout.codes_words*4 - k*n), ctx.stream()));
+     }
+-    w1ax_quantize<<<dim3((unsigned) n), 256, 0, ctx.stream()>>>(
++    if (ggml_get_op_params_i32(dst,1)) {
++        const int tiles=(k+255)/256;ggml_cuda_pool_alloc<int> partial(ctx.pool(),tiles*n);
++        const int bits=ggml_get_op_params_i32(dst,0);const float clip=ggml_get_op_params_f32(dst,2);const float*g=dst->src[1]?(const float*)dst->src[1]->data:nullptr;
++        #define TILED(B) exec_tiled_codes<B><<<dim3(tiles,n),256,0,ctx.stream()>>>((const float*)acts->data,g,k,bits,clip,codes,partial.get(),tiles)
++        switch(bits){case 1:TILED(1);break;case 2:TILED(2);break;case 4:TILED(4);break;case 8:TILED(8);break;default:GGML_ABORT("unsupported width");}
++        #undef TILED
++        exec_tiled_finish<<<n,32,0,ctx.stream()>>>(partial.get(),tiles,bits,clip,scales,scales+n);
++    } else w1ax_quantize<<<dim3((unsigned) n), 256, 0, ctx.stream()>>>(
+         (const float *) acts->data, k, codes, scales, scales+n, ggml_get_op_params_i32(dst,0), ggml_get_op_params_i32(dst,1), ggml_get_op_params_f32(dst,2), dst->src[1] ? (const float *)dst->src[1]->data : nullptr);
+     CUDA_CHECK(cudaGetLastError());
+ }
+@@ -140,3 +229,8 @@
+     GGML_ABORT("fixed row W1A8 DP4A requires NVIDIA CUDA");
+ }
+ #endif
++
++void ggml_cuda_exec_joint(ggml_backend_cuda_context&ctx,ggml_tensor*a,ggml_tensor*b){
++ int k=a->src[2]->ne[0],n=a->src[2]->ne[1],m=a->ne[0];auto layout=ggml_w1ax_pack_layout(k,n,8);auto*p=(uint32_t*)a->src[3]->data;
++ exec_joint_dot<<<dim3((m+3)/4,n),dim3(32,4),0,ctx.stream()>>>((const uint32_t*)a->src[0]->data,(const float*)a->src[1]->data,a->src[4]?(const float*)a->src[4]->data:nullptr,(float*)a->data,(const uint32_t*)b->src[0]->data,(const float*)b->src[1]->data,b->src[4]?(const float*)b->src[4]->data:nullptr,(float*)b->data,(const int8_t*)p,(const float*)(p+layout.scale_offset),(const float*)(p+layout.scale_offset+n),m,k);CUDA_CHECK(cudaGetLastError());
++}
+--- a/ggml/src/ggml-cuda/ggml-cuda.cu
++++ b/ggml/src/ggml-cuda/ggml-cuda.cu
+@@ -4001,7 +4001,14 @@
+ }
+ 
+ // try and fuse nodes and return the number of nodes to skip
++void ggml_cuda_exec_joint(ggml_backend_cuda_context&,ggml_tensor*,ggml_tensor*);
+ static int ggml_cuda_try_fuse(ggml_backend_cuda_context * cuda_ctx, ggml_cgraph * cgraph, int i) {
++    if (ggml_can_fuse_subgraph(cgraph,i,{GGML_OP_W1A1_MUL_MAT,GGML_OP_W1A1_MUL_MAT},{i,i+1})) {
++        auto*a=cgraph->nodes[i];auto*b=cgraph->nodes[i+1];int outputs[]={i,i+1};
++        if(a->src[3]==b->src[3] && ggml_are_same_shape(a,b) && ggml_cuda_check_fusion_memory_ranges(cgraph,i,2,outputs,2)){
++            GGML_LOG_INFO("EXEC_JOINT_FUSION\n");ggml_cuda_exec_joint(*cuda_ctx,a,b);return 1;
++        }
++    }
+ 
+     if (ggml_cuda_fusion_disabled()) {
+         return 0;
+--- a/src/models/dflash.cpp
++++ b/src/models/dflash.cpp
+@@ -1111,6 +1111,7 @@
+     }
+     cb(inpL, "inp_noise_embd", -1);
+ 
++    bool exec_cropped=false;
+     for (int il = 0; il < n_layer; ++il) {
+         const auto & layer = model.layers[il];
+ 
+@@ -1165,6 +1166,9 @@
+             cb(cur, "attn_post_norm", il);
+         }
+ 
++        if (il==n_layer-1 && n_outputs<n_tokens && !cparams.embeddings && !cparams.embeddings_nextn && !model.dspark_markov_w1 && !model.dflash_selector_hidden && !model.lilicorr_pass_hidden_proj) {
++            auto* ids=build_inp_out_ids();cur=ggml_get_rows(ctx0,cur,ids);inpL=ggml_get_rows(ctx0,inpL,ids);exec_cropped=true;
++        }
+         ggml_tensor * ffn_inp = ggml_add(ctx0, cur, inpL);
+         cb(ffn_inp, "ffn_inp", il);
+ 
+@@ -1183,7 +1187,7 @@
+             auto pack=[&](ggml_tensor * input, const llama_w1a8_linear &p, const std::string &base) {
+                 auto gain=tensor(base+".w1ax_gain");
+                 int bits=p.scales->op_params[0]; if(!bits) bits=8;
+-                auto result=ggml_w1ax_pack(ctx0,ggml_cont(ctx0,input),bits); result->src[1]=gain;
++                auto result=ggml_w1ax_pack(ctx0,input,bits); result->src[1]=gain;
+                 if(p.scales->op_params[0]) memcpy((char*)result->op_params+4,(char*)p.scales->op_params+4,8);
+                 return result;
+             };
+@@ -1197,7 +1201,7 @@
+             auto packed=pack(cur,layer.ffn_gate_w1a8,base+"gate");
+             auto up=project(layer.ffn_up_w1a8,packed,base+"up");
+             auto gate=project(layer.ffn_gate_w1a8,packed,base+"gate");
+-            cur=ggml_mul(ctx0,ggml_silu(ctx0,gate),up);
++            cur=ggml_mul(ctx0,up,ggml_silu(ctx0,gate));
+             auto down=pack(cur,layer.ffn_down_w1a8,base+"down");
+             cur=project(layer.ffn_down_w1a8,down,base+"down");
+         } else {
+@@ -1245,6 +1249,7 @@
+         output_s = model_other->output_s;
+     }
+ 
++    if (!exec_cropped && n_outputs<n_tokens && !model.dspark_markov_w1 && !model.dflash_selector_hidden && !model.lilicorr_pass_hidden_proj) cur=ggml_get_rows(ctx0,cur,build_inp_out_ids());
+     cur = build_lora_mm(output, cur, output_s);
+ 
+     // DFlash2 feeds these logits to the selector, so they need the target's output
+--- a/common/speculative.cpp
++++ b/common/speculative.cpp
+@@ -1309,7 +1309,7 @@
+             i_block_beg[seq_id] = batch.size();
+             n_block    [seq_id] = n_block_tokens;
+             for (int32_t i = 0; i < n_block_tokens; ++i) {
+-                const int32_t idx = batch.add(i == 0 ? dp.id_last : mask_token_id, n + i, seq_id, !is_dflash2 && !is_lilicorr);
++                const int32_t idx = batch.add(i == 0 ? dp.id_last : mask_token_id, n + i, seq_id, !is_dflash2 && !is_lilicorr && (i!=0 || is_dspark));
+                 if (is_lilicorr) {
+                     // For LiliCorr drafting batch, set state embeddings for use in the associated transformer head.
+                     const llama_pos pos = dp.pos0 - 1;
