@@ -188,7 +188,8 @@
     "updates": 0,
     "native_admission": false,
     "preserved_precision": "original BF16 matrices/F32 norms; shared target head and embedding",
-    "latent_initialization": "original BF16 values decoded to F32; sign >=0 positive; row mean absolute scales"
+    "latent_initialization": "original BF16 values decoded to F32; sign >=0 positive; row mean absolute scales",
+    "cpu_tensor_admission": true
   },
   "initial_checkpoints": [],
   "working_incumbent": null,
@@ -210,5 +211,6 @@
     "training_update_seconds": 0,
     "native_evaluation_started": false,
     "owned_live_processes": []
-  }
+  },
+  "runtime_patch": "experiments/dflash-w1a8-baseline-20261104/runtime/modern-admission.patch"
 }

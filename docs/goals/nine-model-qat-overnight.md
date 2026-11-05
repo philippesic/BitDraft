@@ -5960,3 +5960,12 @@ into the run source directory; this moving-source download is not yet a qualifie
 training-source pin. No training/capture/evaluation performed;1800seconds unspent.
 No GPU process launched. Training/resume, modern capture, native adapters and
 matched evaluation still require implementation. This is partial work, not completion.
+
+## Modern native tensor admission checkpoint
+
+Separate ffn18/A8 loader guards and shared-head admission implemented as a
+reproducible runtime patch under experiments/dflash-w1a8-baseline-20261104/runtime/.
+CPU library builds and frozen zero.gguf loads successfully. Native CUDA execution
+and correctness are not qualified. No captures or training updates performed;
+all1800 update seconds remain. No GPU jobs launched. Next: qualify shared-target
+CUDA decoder and semantic rejection cases, then implement captures/QAT/resume.
