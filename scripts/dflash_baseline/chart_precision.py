@@ -46,6 +46,9 @@ def summarize(panel,root):
   point['shared_target_head']=shared_tensor(target_ref['path']) if target_ref else None
   point['private_head_format']=config.get('components',{}).get('head')
   point['size_accounting']='Actual target and drafter GGUF bytes include metadata; target tied embedding/head charged once in combined bytes. Any drafter private head is additional inside its GGUF. Allocator/peak measurements separately include execution buffers.'
+  progress=info.get('progress',{});point['supervised_positions']=progress.get('supervised_tokens');point['data_cursor']=progress.get('cursor');point['immediate_parent']=config.get('parent')
+  training_result=Path(model).parent/'result.json' if model else None
+  point['training_peak_allocated_bytes']=read(training_result).get('peak_bytes') if training_result and training_result.exists() and (point['training_updates'] or 0)>0 else None
   baseline=[x for x in rows if x['arm']=='q4' and not x['warmup'] and not x.get('instrumented')]
   if baseline:
    point['request_vs_q4']=point['request_tps']/(sum(x['tokens'] for x in baseline)/sum(x['wall_seconds'] for x in baseline));point['decode_vs_q4']=point['decode_tps']/(sum(x['tokens'] for x in baseline)/(sum(x['timings']['predicted_ms'] for x in baseline)/1000))

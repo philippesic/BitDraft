@@ -1,11 +1,12 @@
 """Retain paid pilot states on the existing artifact volume before reserved trials."""
-import json,os,shutil,sys
+import json,os,shutil,sys,subprocess
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2];sys.path[:0]=[str(ROOT),str(ROOT/'src')]
 from scripts.dflash_baseline.precision_benchmark import pin,save
 P=Path('/home/philip/binary-eagle-decoding');R=P/'runs/precision-campaign-20261104-01'
 def main():
  if json.load(open(P/'runs/precision-mutations-20261105-02/state.json')).get('exit_code')!=0:raise ValueError('wait for serial mutation job to finish')
+ subprocess.run([sys.executable,str(ROOT/'scripts/dflash_baseline/cache_zero.py'),'--after-all-adaptation'],cwd=ROOT,check=True)
  destination=Path('/mnt/c/Users/philip/binary-eagle-decoding-artifacts/precision-campaign-20261104-01-pilot-archives')
  destination.mkdir(exist_ok=True);before={n:shutil.disk_usage(p).free for n,p in [('wsl',P),('windows','/mnt/c')]};records=[]
  candidates=[R/'foundation-pilot'/name for name in ('checkpoint-32.pt.bsz','checkpoint-64.pt.bsz','checkpoint.pt.bsz')]
