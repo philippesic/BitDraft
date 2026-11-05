@@ -1,14 +1,24 @@
 # Current project status
 
-## Execution optimization campaign authorized
+## Execution optimization complete; integrated locally
 
-User now requests implementing/exhausting the agreed execution inventory and
-comparing original/optimized W1 with Q4_K_M. See
-[execution campaign checkpoint](EXECUTION_CAMPAIGN.md) for scope and ownership.
-The exact compact learned G4/D8 2,048-update recipe is the primary fixed subject;
-precision/training/target/verifier remain frozen. One delegated worker will own
-GPU operations after fresh checks. Earlier planning-only statements below are
-historical; no new QAT or precision sweep is implied.
+The 38-item execution inventory is covered and the retained runtime is integrated.
+[Report](../experiments/execution-campaign-20261105/report.md) ·
+[Item ledger](../experiments/execution-campaign-20261105/ledger.md) ·
+[Campaign evidence](EXECUTION_CAMPAIGN.md).
+
+Fixed learned-small2048 W1 GPU forward falls 1.428→1.183ms (17.2% reduction;
+paired95% 15.5–18.8%). Q4 is1.178ms; W1/Q4 ratio1.004 [0.989,1.022], an unresolved
+near-tie rather than a W1 latency win. Full draft host cost falls2.441→2.174ms;
+Q4 is2.161ms. Actual request throughput rises2.51% with original/optimized W1
+proposals, counts, required logits and cache state preserved. Q4 remains the
+full-request throughput incumbent. No training or precision change.
+
+Parent independently verified34publication hashes, recomputed rates/counts from
+700responses/600measured rows, checked180warm GPU graph regions and30cache/logit
+comparisons, checked proposal/fallback audits, and reproduced optimized source
+hashes from the frozen-base patch. GPU idle/released; no pushes. The broader
+research goal remains open. Original precision-chart artifacts stay immutable.
 
 ## Completed precision comparison
 

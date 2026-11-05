@@ -248,3 +248,30 @@ shared dictionary basis and useful qualified runtimes remain. WSL free measured
 Current next: parent review and integration of this committed isolated branch.
 No live operational GPU job or automatic follow-up remains. Keep the unmerged
 worktree/branch until parent integration; the broader nine-model goal stays open.
+
+
+## Parent review and integration — November 5, 2026
+
+Integrated the committed execution branch after code/report/ledger review.
+Independent checks: all34publication sizes/hashes match;700responses all correct;
+600formal rows reproduce reported rates/counts; original/optimized native pairs
+retain token counts and accepted/proposed/round/prefix counters;180measured GPU
+regions each have one warm graph;30required-logit/cache comparisons pass.
+Proposal-selection and all-output/embedding fallback audits pass. Python scripts
+parse, and applying the standalone patch to authenticated frozen base files
+reproduces every optimized source hash. No repeat GPU test was needed.
+
+The inline chart previews at728px with no console errors. Parent will display it
+in the conversation. The final readout must distinguish17.2% lower GPU forward
+cost and11.0% lower full-draft host cost from a win over Q4: optimized W1/Q4 GPU
+ratio1.004 has95% interval0.989–1.022, so they are unresolved. No full-request
+throughput promotion. Exact model/config, no QAT and all earlier frozen artifacts
+remain unchanged.
+
+Fresh parent observation confirms5080 at1352MiB/0% and no project operational
+server/trainer/supervisor. Retained inventory/release receipts account for worker
+cleanup; paid archives/raw basis/checkpoints and qualified runtimes are protected.
+Safe merged-worktree cleanup and canonical integrated evidence mapping are
+recorded separately in runs/execution-campaign-20261105-01/parent-review.json.
+Nothing pushed. The bounded execution request is complete; broader research
+continues only within the current goal and subsequent user direction.

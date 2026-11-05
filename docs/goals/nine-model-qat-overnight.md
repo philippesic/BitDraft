@@ -6150,3 +6150,14 @@ WSL free+1,161,924,608bytes, native Windows free unchanged. Paid recovery/model
 archives and raw shared dictionary basis remain protected. Current isolated
 branch/worktree stays for parent review/integration; no live GPU task remains.
 This execution subtask is complete; the broader research goal is still open.
+
+
+## Execution campaign parent integration — November 5, 2026
+
+Reviewed/integrated the38-item execution campaign. Independent publication,
+raw-rate/counter, replay-cache/logit and patch reconstruction checks pass.
+Optimized W1 GPU latency is17.2% lower than original and statistically tied with
+Q4, not demonstrated faster. Full native latency/throughput and scope are in
+[the report](../../experiments/execution-campaign-20261105/report.md). No training
+or precision change; GPU released and recovery/evidence retained. The parent
+will display the comparison. The broader goal remains open; no push.
