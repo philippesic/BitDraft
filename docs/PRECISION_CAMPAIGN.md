@@ -466,9 +466,25 @@ free10,958,622,720→10,954,080,256 (concurrent activity). No host reclaim claim
 Receipts: native-export-archives.json, component-code-audit.json and
 archive-native-qualification.
 
-Next sole GPU owner will be precision-finalists-20261105-01; use its actual
-state/ownership when launched, not this preparation statement. Then lock the
+Active sole GPU owner is precision-finalists-20261105-01, executing its immutable
+source snapshot. Its actual state/ownership records boot, birth, source pins and
+TERM/grace120s recovery procedure. Learned A8 has completed2048 exposure; compact
+learned A4 and dynamic A2 are the remaining serial confirmation windows. Then lock the
 complete repeated DEV roster (including256 points and recovery states), two
 excluded requests inside each server and five alternating measured repetitions;
 lock four final model pins before selecting fresh24 heldout inputs; audit and
 produce complete charts. No feature-tier2+ work before that artifact exists.
+
+Training exposure audit: the captured TRAIN corpus has1426 eligible anchor
+windows across24 sequences. A standard1024-update window covers1750 unique
+native label positions;15360 supervised positions count repeated overlapping
+window exposure, not unique source tokens. The audit now itemizes updates,
+windows, unique positions and captures. This limits generalization claims and
+helps distinguish useful future data/range-policy work from more unchanged
+training. Fresh heldout still unopened; no followup training allocated early.
+
+Checkpoint charts now build181 measured panel/arm points from native receipts
+and retain explicit incomplete status. This verifies plotting/table generation,
+not campaign completion. Old panels without request-boundary timestamps retain
+memory peaks but have no invented request-time clock/power summaries. Formal
+confirmation samples actual clock/power/temperature alongside memory.
