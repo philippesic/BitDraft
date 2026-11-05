@@ -37,6 +37,7 @@ def archive_exports():
   records.append(archive(model,BASIS,prepared,basis_pin));print('Historical zero recovered/audited/archived exactly',name,flush=True)
  del state,prepared;gc.collect()
  after={n:shutil.disk_usage(p).free for n,p in [('wsl',P),('windows','/mnt/c')]}
+ records=[json.load(open(p)) for p in sorted(R.rglob('*.gguf.native.json'))]
  save(R/'native-export-archives.json',dict(status='ALL_PAID_NATIVE_BYTES_RETAINED',basis=basis_pin,before_free_bytes=before,after_free_bytes=after,records=records,scope='Lossless storage-only archival; full SHA256 roundtrip per export; optimizer/parameter/RNG checkpoint archives untouched. No Windows reclaim or VHDX compaction claim.'))
  save(R/'component-code-audit.json',dict(status='DEPLOYED_COMPONENT_CODES_EXACT',models=audits))
 def main():

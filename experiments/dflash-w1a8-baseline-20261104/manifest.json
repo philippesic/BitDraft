@@ -43,7 +43,7 @@
     "schedule": "constant continuation-compatible",
     "loss": "native target argmax CE, exp(-(mask_slot-1)/7), anchor excluded",
     "training_floating_exceptions": "F32 computation on dequantized original BF16 draft matrices and actual quantized target embedding/head",
-    "native_floating_exceptions": "original BF16 draft matrices; target shared Q4_K_M embedding/head; F16 KV"
+    "native_floating_exceptions": "Original BF16 draft matrices; target-shared tied Q6_K embedding/head inside the unchanged Q4_K_M target; F16 KV"
   },
   "zero_update": {
     "status": "CUDA_SMOKE_PASSED",
@@ -1550,13 +1550,14 @@
     "scope": "one TRAIN prompt, 32 output tokens, not benchmark",
     "matched_panel": "/home/philip/binary-eagle-decoding/runs/precision-vanilla-eval-20261104-01/panel/result.json",
     "summary": "experiments/precision-campaign-20261104/vanilla-panel.json",
-    "finding": "All outputs correct; trained vanilla remains slower than Q4 on this consumed3 panel. Common-runtime broader evaluation follows."
+    "finding": "All outputs correct; trained vanilla remains slower than Q4 on this consumed3 panel. Common-runtime broader evaluation follows.",
+    "measurement_limit": "Recovered initial panel used excluded repetitions with fresh servers; process-local warmup was not preserved. Retain as diagnostic; final runtime04 confirmation uses two excluded requests in each measured server process."
   },
   "run_directory": "/home/philip/binary-eagle-decoding/runs/dflash-modern-train-20261104-14",
   "owner": "sole precision campaign worker",
   "blockers": [],
   "notes": [
-    "No trained modern W1A8 DFlash performance is implied by this planned registry.",
+    "Vanilla training and initial native measurements are actual evidence; extensive precision campaign confirmation/heldout/charts remain unfinished.",
     "Never overwrite the frozen external Q4 baseline or prior W1A8 reference after promotion."
   ],
   "source_inventory": "experiments/dflash-w1a8-baseline-20261104/source-inventory.json",
@@ -1580,5 +1581,13 @@
     "exact_resume": "/home/philip/binary-eagle-decoding/runs/dflash-modern-resume-20261104-12/artifacts/result.json",
     "movement": "/home/philip/binary-eagle-decoding/runs/dflash-modern-resume-20261104-12/movement.json",
     "native_updated_smoke": "/home/philip/binary-eagle-decoding/runs/dflash-modern-native-20261104-03/smoke-updated-two-result.json"
+  },
+  "precision_campaign": {
+    "checkpoint": "docs/PRECISION_CAMPAIGN.md",
+    "artifacts": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01",
+    "status": "INITIAL_SEARCH_AND_RESERVED_TRIALS_IN_PROGRESS",
+    "runtime": "/home/philip/binary-eagle-decoding/runs/precision-native-20261104-04",
+    "frozen_vanilla_reference_unchanged": true,
+    "final_confirmation_pending": true
   }
 }

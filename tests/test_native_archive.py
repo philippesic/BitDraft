@@ -8,6 +8,7 @@ def test_native_archive_recovery():
   record=archive(model,basis);assert record['verified_full_byte_roundtrip'] and not model.exists() and reference(model)['sha256']==expected
   assert hydrate(model) and sha(model)==expected
   assert not hydrate(model);release(model,True);assert not model.exists()
+  assert hydrate(model);assert archive(model,basis)==record and not model.exists()
 def test_native_archive_corrupt_dependency():
  with tempfile.TemporaryDirectory() as directory:
   d=Path(directory);basis=d/'basis.gguf';model=d/'model.gguf';basis.write_bytes(b'unchanged'*4096);model.write_bytes(basis.read_bytes()+b'mutated');archive(model,basis);basis.write_bytes(b'corrupted')

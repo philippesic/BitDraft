@@ -6,9 +6,14 @@ ROOT=Path(__file__).resolve().parents[2];sys.path[:0]=[str(ROOT),str(ROOT/'src')
 from scripts.dflash_baseline.model import GGUFReader,dequantize
 from scripts.dflash_baseline.components import tensor_component,encoded,FORMATS
 from scripts.dflash_baseline.pipeline import sha
+from scripts.dflash_baseline.native_archive import hydrate,release
 
 def digest(a):return hashlib.sha256(np.ascontiguousarray(a).tobytes()).hexdigest()
 def audit(path):
+ created=hydrate(path)
+ try:return audit_raw(path)
+ finally:release(path,created)
+def audit_raw(path):
  path=Path(path);meta=json.load(open(path.with_suffix('.json')));config=meta['config'];source=config['source'];target=config['evaluation']['target']
  if sha(source['path'])!=source['sha256'] or sha(target['path'])!=target['sha256']:raise ValueError('source model changed')
  source_reader=GGUFReader(source['path']);actual={t.name:t for t in GGUFReader(path).tensors};rows=[]

@@ -48,7 +48,12 @@ def archive(path,basis,prepared=None,basis_pin=None):
  p=Path(path);basis=Path(basis)
  if p.resolve()==basis.resolve():raise ValueError('cannot archive the recovery basis')
  dest,receipt=paths(p)
- if dest.exists() or receipt.exists():raise FileExistsError('existing native archive')
+ if dest.exists() and receipt.exists():
+  record=json.load(open(receipt));authenticate(record)
+  if record['basis']!=pin(basis) or (p.exists() and pin(p)!=record['original']):raise ValueError('existing native archival copy changed')
+  if p.exists():p.unlink()
+  return record
+ if dest.exists() or receipt.exists():raise FileExistsError('incomplete native archive publication')
  original=pin(p);basis_pin=basis_pin or pin(basis);d=prepared or dictionary(basis)
  params=z.ZstdCompressionParameters.from_level(3,window_log=30,hash_log=27,chain_log=27,strategy=z.STRATEGY_GREEDY)
  compressor=z.ZstdCompressor(dict_data=d,compression_params=params);partial=dest.with_suffix('.partial')
