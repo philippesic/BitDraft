@@ -161,3 +161,29 @@ in `qualification-storage.json`; concurrent pilot output affects observed delta.
 Research/vanilla checkpoints untouched. New archive helper verifies SHA256
 through lossless compression/decompression before removing an uncompressed
 owned checkpoint; archived checkpoints restore through mmap-backed scratch.
+
+### Direct matched precision attribution
+
+The first precision tranche will instantiate all locked arms directly from the
+same frozen2048-update essential foundation, with the same1024-update window,
+TRAIN order/cursor, optimizer reset, objective and parameter eligibility. Thus
+G8/D8 is the immediate unchanged continuation for that common parent; each
+family anchor also supplies the matched down/component comparator. This avoids
+precision-curriculum differences and the need to retrain selected exploratory
+recipes merely to repair attribution. Zero/intermediate/final native points
+remain explicit. Administrative bounds remain four anchors/up to two component
+mutations per family/two interactions/two recovery extensions. No Cartesian
+training sweep. Native repeated finalist confirmation and held-out evaluation
+remain reserved; the earlier2048 confirmation allowance is a ceiling, not a
+requirement to change an already matched training history.
+
+Full draft costs will use the retained host interposer in disjoint generation,
+feature-catchup and acceptance spans. Narrow common-spec generation time is
+retained separately. Ordinary throughput is uninstrumented; paired traces must
+preserve outputs AND accepted/proposed/round/prefix counts, and report overhead.
+No asynchronous host component span is claimed to be an isolated GPU latency.
+
+Checkpoint byte-shuffling plus Zstandard improved a real5.10GB qualification
+checkpoint to4.00GB, with exact raw SHA256 reconstruction and successful load.
+This retains full optimizer/RNG recovery while limiting the large tranche.
+Both old standard.zst and new.bsz archive formats remain supported.

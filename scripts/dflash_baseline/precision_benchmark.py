@@ -32,7 +32,7 @@ def stats(text):
  return dict(zip(('begin_calls','rounds','accept_calls','drafts','accepted_rounds','proposed','accepted','begin_ms','draft_ms','accept_ms'),values))
 def delta(now,previous):return {k:v-(previous or {}).get(k,0) for k,v in now.items()}
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('--arms',type=Path,required=True);ap.add_argument('--runtime',type=Path,required=True);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--cohort',choices=['capture3','natural12','natural24'],default='capture3');ap.add_argument('--reps',type=int,default=1);ap.add_argument('--warmups',type=int,default=0);a=ap.parse_args()
+ ap=argparse.ArgumentParser();ap.add_argument('--arms',type=Path,required=True);ap.add_argument('--runtime',type=Path,required=True);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--cohort',choices=['capture3','natural12','natural24'],default='capture3');ap.add_argument('--reps',type=int,default=1);ap.add_argument('--warmups',type=int,default=0);ap.add_argument('--trace',action='store_true');ap.add_argument('--paired-trace',action='store_true');a=ap.parse_args()
  arms=json.load(open(a.arms));prompts=cohort(a.cohort);a.out.mkdir(exist_ok=False);save(a.out/'prompts.json',prompts)
  if next(iter(arms))!='target':raise ValueError('target must be first for correctness')
  save(a.out/'freeze.json',dict(arms={k:pin(v) if v else None for k,v in arms.items()},source=pin(__file__),runtime={n:pin(a.runtime/'bin'/n) for n in ('libllama.so.0.8.0','libggml-base.so.0.28.0','libggml-cuda.so.0.28.0')},cohort=a.cohort,precision='Qwen3.5-4B Q4_K_M target;F16 KV;depth2;greedy;5080',sampling='target sample and match;temperature0',memory='nvidia-smi sampled device used MiB;includes display/unrelated baseline;not exact allocator peak'))
@@ -43,14 +43,16 @@ def main():
  reference={};rows=[]
  for rep in range(a.reps+a.warmups):
   order=list(arms) if rep%2==0 else list(reversed(arms))
-  for label in order:
+  queue=[(label,traced) for label in order for traced in ([False,True] if rep%2==0 else [True,False])] if a.paired_trace else [(label,a.trace) for label in order]
+  for label,traced in queue:
    pause()
    if stop:raise RuntimeError('supervisor stop')
-   model=arms[label];cell=a.out/f'{rep:02d}-{label}';cell.mkdir()
+   model=arms[label];cell=a.out/(f'{rep:02d}-{label}'+('-traced' if traced else ''));cell.mkdir()
    with socket.socket() as sock:sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
    env={k:v for k,v in os.environ.items() if not k.startswith(('GGML_','W1A8_','LLAMA_','CUDA_','LD_','OMP_'))};env.update(LD_LIBRARY_PATH=str(a.runtime/'bin'),GGML_CUDA_DECODE_CONSISTENT='32',CUDA_VISIBLE_DEVICES='0',OMP_NUM_THREADS='4')
    argv=[str(a.runtime/'bin/llama-server'),'-m',str(P/'runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf'),'-ngl','99','-c','4096','-np','1','-b','512','-ub','512','-t','4','-fa','on','--cache-type-k','f16','--cache-type-v','f16','--host','127.0.0.1','--port',str(port),'--metrics','--no-webui','--no-warmup','--spec-type','draft-dflash' if model else 'none','-lv','4']
    if model:argv+=['-md',str(model),'-ngld','99','--cache-type-k-draft','f16','--cache-type-v-draft','f16','--spec-draft-n-max','2','--spec-draft-n-min','0','--spec-draft-p-min','0','--spec-draft-sampling','greedy']
+   if traced:env.update(LD_PRELOAD=str(P/'runs/data-cost-transfer-20261104-01/libdecode-cost-trace.so'),DECODE_COST_TRACE=str(cell/'cost-trace.jsonl'))
    save(cell/'command.json',dict(argv=argv,environment=env))
    done=threading.Event();memory=[]
    def sample():
@@ -73,7 +75,7 @@ def main():
       pause()
       if stop:raise RuntimeError('supervisor stop')
       payload=dict(item['payload']);payload['cache_prompt']=False;payload['return_tokens']=True
-      save(cell/(item['id']+'-request.json'),payload);start=time.perf_counter();response=request(port,'completion',payload);elapsed=time.perf_counter()-start;save(cell/(item['id']+'-response.json'),response)
+      save(cell/(item['id']+'-request.json'),payload);start_ns=time.monotonic_ns();start=time.perf_counter();response=request(port,'completion',payload);elapsed=time.perf_counter()-start;end_ns=time.monotonic_ns();save(cell/(item['id']+'-response.json'),response)
       tokens=response['tokens']
       if label=='target':reference.setdefault(item['id'],tokens)
       correct=tokens==reference[item['id']]
@@ -84,7 +86,7 @@ def main():
       if model and prefix:
        rates=[float(x) for x in prefix[-1].split(',')];n=metrics['rounds']
        metrics['prefix_survival_counts']=[round(x*n) for x in rates];metrics['prefix_count_method']='per-request rounded rate * exact rounds;rounding error<0.5 at<=256 rounds'
-      row=dict(rep=rep,warmup=rep<a.warmups,arm=label,prompt=item['id'],correct=correct,wall_seconds=elapsed,tokens=len(tokens),timings=response.get('timings'),native=metrics)
+      row=dict(instrumented=traced,bounds_ns=[start_ns,end_ns],rep=rep,warmup=rep<a.warmups,arm=label,prompt=item['id'],correct=correct,wall_seconds=elapsed,tokens=len(tokens),timings=response.get('timings'),native=metrics)
       rows.append(row);save(a.out/'progress.json',rows)
       if not correct:raise RuntimeError('target mismatch '+label+' '+item['id'])
     finally:
@@ -92,6 +94,24 @@ def main():
      try:process.wait(timeout=15)
      except subprocess.TimeoutExpired:process.kill();process.wait()
      done.set();watcher.join(timeout=5);save(cell/'memory.json',memory);save(cell/'release.json',dict(reaped=True,returncode=process.returncode))
-   print('Completed',rep,label,flush=True)
- save(a.out/'result.json',dict(status='COMPLETE',rows=rows))
+   if traced:
+    spans=[json.loads(line) for line in (cell/'cost-trace.jsonl').read_text().splitlines()]
+    for row in [x for x in rows if x['rep']==rep and x['arm']==label and x['instrumented']]:
+     begin,end=row['bounds_ns'];roots=sorted([x for x in spans if x['depth']==0 and begin<=x['start_ns']<=x['end_ns']<=end],key=lambda x:x['start_ns'])
+     if not roots or any(x['end_ns']>y['start_ns'] for x,y in zip(roots,roots[1:])):raise RuntimeError('trace roots missing/overlap')
+     markers=[x['start_ns'] for x in roots if x['name']=='generation_begin']
+     boundary=markers[0] if model else next(x['end_ns'] for x in roots if x['name']=='target_sync')
+     if model and (len(markers)!=1 or not any(x['name']=='draft_catchup' for x in roots)):raise RuntimeError('trace catchup/generation hook missing')
+     costs={'prefill':{},'generation':{}}
+     for x in roots:
+      phase='prefill' if x['start_ns']<boundary else 'generation';v=costs[phase];v[x['name']]=v.get(x['name'],0)+(x['end_ns']-x['start_ns'])/1e6
+     row['host_spans_ms']=costs;row['draft_full_ms']=sum(costs['generation'].get(n,0) for n in ('draft_generate','draft_catchup','draft_accept'));row['target_verify_and_sample_ms']=sum(costs['generation'].get(n,0) for n in ('target_process','target_sync','verifier_sample','target_sample'))
+     row['trace_scope']='Disjoint host root spans; async GPU cost may be charged at later synchronization. Instrumented diagnostics, paired plain speed when present.'
+   save(a.out/'progress.json',rows)
+   print('Completed',rep,label,'traced' if traced else 'plain',flush=True)
+ if a.paired_trace:
+  for plain in [x for x in rows if not x['instrumented']]:
+   traced=next(x for x in rows if x['instrumented'] and all(x[k]==plain[k] for k in ('rep','arm','prompt')))
+   if any(plain['native'].get(k)!=traced['native'].get(k) for k in ('accepted','proposed','rounds','prefix_survival_counts')):raise RuntimeError('instrumentation changed native counters')
+ save(a.out/'result.json',dict(status='COMPLETE',rows=rows,paired_trace_counters_equal=a.paired_trace))
 if __name__=='__main__':main()

@@ -57,3 +57,50 @@ See [runner report](../experiments/dflash-runner-packed-20261104/report.md) for
 commands, manifest schema, tested behavior and remaining acceptance gaps.
 This supersedes the earlier statement that no runner or packed import exists;
 it does not establish full-model or native qualification.
+
+## Native campaign qualification — November4,2026
+
+The earlier CPU-only and fail-closed statuses describe the retained prototype
+checkpoint, not the current campaign implementation. `build_precision.py`
+relinks isolated matched runtime objects without editing the frozen runtime or
+submodule. `export_precision.py` writes actual native GGUF `dflash.w1ax.version=2`
+with per-projection A1/A2/A4/A8, gains, midpoints and dynamic/fixed/learned bound
+metadata. The PyTorch `packed.pt` container remains reference interchange only.
+`native-screen` now checks v2 eligibility; this static check cannot replace
+artifact-specific load, CUDA and native evaluation evidence.
+
+36 actual CUDA operation checks,12 CUDA gradient cases, actual full-model
+update/exact parameter-and-optimizer resume/adaptation, and native A8/A1 decoded
+output equality passed. Pins and exact scopes live in
+`runs/precision-campaign-20261104-01/{qualification.json,native-qualification/}`.
+Campaign runtime is `runs/precision-native-20261104-03`; CPU fallback for its
+custom affine operations is explicitly rejected. A1/A2 still execute INT8 codes
+with DP4A, not a packed binary activation kernel. Both affine terms use the
+same gained quantized stream; native packing computes its sum once.
+
+A1 dynamic levels are ±row-absmax with threshold0, nonnegative positive, no zero
+code; all-zero input rows get scale0 and dequantize to0. Fixed/learned A1 uses
+±positive bound (zero input maps positive). A2 is the separate symmetric ternary
+grid. A4/A8 symmetric signed grids use RNE, saturation and zero point0. Dynamic
+input STE is identity through gained input, including zero/subnormal rows;
+fixed/learned STE differentiates the clipped normalized stream and scale.
+Weight sign STE and nonnegative row-scale projection remain unchanged.
+
+`pipeline.py --device cuda` authenticates source/parent/target/capture files,
+filters TRAIN, supports baseline conversion (`--baseline-parent`), v2 adaptation
+(`--adapt`, optimizer reset) and exact resume (`--resume`). Adaptation inherits
+the parent's data order/cursor; segment updates and supervised positions remain
+separate. Signal/pause saves occur at complete update boundaries. Final compact
+checkpoints exclude frozen buffers and retain optimizer/RNG/cursor/config/lineage.
+`--native-points` preserves native intermediate exports without duplicating the
+whole optimizer at each diagnostic point. Lossless `.pt.zst` and versioned
+byte-shuffled `.pt.bsz` archives restore exact raw checkpoint bytes; hash checks
+precede deletion of an owned uncompressed copy.
+
+Protected component formats are a finite queue (Q8_0/Q4_0 for fusion, attention
+Q/K and V/output; private Q4_0 head). Training really quantizes these frozen
+weights. Target weights never change; private head bytes are charged. Embedding
+reduction and protected BF16 FFN exceptions remain outside native v2 admission.
+Component-specific full-model native qualification is required before treating
+an arm as measured. See [PRECISION_CAMPAIGN.md](PRECISION_CAMPAIGN.md) for live
+owner state, measured progress, exposure policy and remaining full-chart work.

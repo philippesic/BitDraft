@@ -96,7 +96,14 @@ class Projection(nn.Module):
 
 
 def native_admit(config):
-    raise ValueError('prototype v1 has no native loader: affine/per-projection metadata unsupported; legacy baseline export only')
+    coverage=config['coverage']
+    if len(coverage)!=18 or any(v['weight']!='W1' or v['bits'] not in (1,2,4,8) for v in coverage.values()):
+        raise ValueError('native v2 requires all18 FFN W1 projections')
+    for i in range(6):
+        if coverage[f'blk.{i}.ffn_gate']['bits']!=coverage[f'blk.{i}.ffn_up']['bits']:
+            raise ValueError('native v2 requires shared gate/up quantization')
+    return dict(contract_version=2,execution='CUDA packed signs / INT8 codes / DP4A',
+                qualification='contract eligible; artifact-specific export/load/evaluation still required')
 
 def main():
     parser=argparse.ArgumentParser()
@@ -104,6 +111,6 @@ def main():
     parser.add_argument('config',type=Path)
     args=parser.parse_args()
     config=resolve(json.loads(args.config.read_text()))
-    if args.mode=='native-screen': native_admit(config)
-    print(json.dumps({'config':config,'sha256':digest(config),'qualification':'CPU arithmetic only'},indent=2))
+    qualification=native_admit(config) if args.mode=='native-screen' else 'resolved; not an execution test'
+    print(json.dumps({'config':config,'sha256':digest(config),'qualification':qualification},indent=2))
 if __name__=='__main__': main()

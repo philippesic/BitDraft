@@ -1,5 +1,6 @@
 """Lossless archives with authenticated recovery; no frozen-buffer duplication."""
-import hashlib,json,tempfile
+import hashlib,json,tempfile,struct
+import numpy as np
 from pathlib import Path
 import torch
 import zstandard as zstd
@@ -7,18 +8,40 @@ import zstandard as zstd
 def sha(p):return hashlib.file_digest(open(p,'rb'),'sha256').hexdigest()
 def load(path):
  path=Path(path)
- if path.suffix!='.zst':return torch.load(path,map_location='cpu',weights_only=False,mmap=True)
+ if path.suffix not in ('.zst','.bsz'):return torch.load(path,map_location='cpu',weights_only=False,mmap=True)
  with tempfile.NamedTemporaryFile(suffix='.pt') as tmp:
-  with path.open('rb') as src:zstd.ZstdDecompressor().copy_stream(src,tmp)
+  with path.open('rb') as src:
+   if path.suffix=='.bsz':
+    for block in unshuffle_stream(src):tmp.write(block)
+   else:zstd.ZstdDecompressor().copy_stream(src,tmp)
   tmp.flush();return torch.load(tmp.name,map_location='cpu',weights_only=False,mmap=True)
+MAGIC=b'DFLASHBSZ1\n'
+def shuffle(block):
+ n=len(block)//4*4
+ return np.frombuffer(block[:n],dtype=np.uint8).reshape(-1,4).T.copy().tobytes()+block[n:]
+def unshuffle(block):
+ n=len(block)//4*4
+ return np.frombuffer(block[:n],dtype=np.uint8).reshape(4,-1).T.copy().tobytes()+block[n:]
+def unshuffle_stream(src):
+ if src.read(len(MAGIC))!=MAGIC:raise ValueError('bad byte-shuffled archive version')
+ while header:=src.read(16):
+  if len(header)!=16:raise ValueError('truncated archive header')
+  raw_size,encoded_size=struct.unpack('<QQ',header);data=src.read(encoded_size)
+  if len(data)!=encoded_size or raw_size>8<<20:raise ValueError('invalid archive chunk')
+  block=zstd.ZstdDecompressor().decompress(data,max_output_size=raw_size)
+  if len(block)!=raw_size:raise ValueError('bad archive raw size')
+  yield unshuffle(block)
 def archive(path):
- path=Path(path);dest=path.with_suffix(path.suffix+'.zst');tmp=dest.with_suffix('.partial')
+ path=Path(path);dest=path.with_suffix(path.suffix+'.bsz');tmp=dest.with_suffix('.partial')
  if dest.exists():raise FileExistsError(dest)
- original=sha(path)
- with path.open('rb') as src,tmp.open('wb') as out:zstd.ZstdCompressor(level=1,threads=2).copy_stream(src,out)
+ original=sha(path);compressor=zstd.ZstdCompressor(level=1)
+ with path.open('rb') as src,tmp.open('wb') as out:
+  out.write(MAGIC)
+  for block in iter(lambda:src.read(8<<20),b''):
+   coded=compressor.compress(shuffle(block));out.write(struct.pack('<QQ',len(block),len(coded)));out.write(coded)
  h=hashlib.sha256()
- with tmp.open('rb') as src,zstd.ZstdDecompressor().stream_reader(src) as stream:
-  for b in iter(lambda:stream.read(8<<20),b''):h.update(b)
+ with tmp.open('rb') as src:
+  for block in unshuffle_stream(src):h.update(block)
  if h.hexdigest()!=original:raise ValueError('archive roundtrip changed checkpoint')
- tmp.rename(dest);receipt=dict(source=str(path),raw_sha256=original,raw_bytes=path.stat().st_size,archive=str(dest),archive_sha256=sha(dest),archive_bytes=dest.stat().st_size,lossless_verified=True)
+ tmp.rename(dest);receipt=dict(format='dflash.byte_shuffle_zstd.v1',source=str(path),raw_sha256=original,raw_bytes=path.stat().st_size,archive=str(dest),archive_sha256=sha(dest),archive_bytes=dest.stat().st_size,lossless_verified=True)
  dest.with_suffix('.json').write_text(json.dumps(receipt,indent=2)+'\n');path.unlink();return receipt
