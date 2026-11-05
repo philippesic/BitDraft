@@ -488,3 +488,39 @@ and retain explicit incomplete status. This verifies plotting/table generation,
 not campaign completion. Old panels without request-boundary timestamps retain
 memory peaks but have no invented request-time clock/power summaries. Formal
 confirmation samples actual clock/power/temperature alongside memory.
+
+## Repeated confirmation active
+
+All four predeclared recipes completed matched2048-update exposure. Final
+pre-confirmation audit passes four finalist histories and all completed raw
+native panels:27,658 campaign updates /3,634.355100807792 measured update
+seconds /414,870 supervised positions, including qualification; frozen vanilla
+14,231/1800.021702/213,465 is separate. Receipt pre-confirmation-audit.json.
+
+Active sole GPU owner: runs/precision-confirmation-20261105-01. It executes
+from its immutable source snapshot under binary-eagle-runtime tmux; actual
+state/ownership.json records boot/birth/source/group and TERM/grace120s stop
+procedure. Preserve it across context rotation. No tests/builds or other GPU
+work during this timing block. Its53-arm roster is frozen in confirmation-arms.json;
+result output is confirmation-dev12. Two excluded requests inside every server
+cell, five alternating repetitions, paired plain/traced execution. Early rolling
+monitor:534 target-identical responses,266 available trace pairs with equal
+accepted/proposed/round/prefix counters. This is progress, not final results.
+
+Fresh heldout remains unopened. Pending source edits prepare native vocabulary-only
+context admission: validate on all12 already-consumed DEV geometries after the
+formal timing block, then freeze native4096-context/256-output eligibility before
+ranked24-case selection. Whole singleton groups remain intact, no prompt
+truncation or post-selection replacement. These helper edits are not built or
+qualified yet and must not run during the quiet window; prepare_holdout fails
+closed without their qualification. Pending files: native_tokenize.py, tokenize.cpp,
+prepare_holdout.py, optional eligibility in modern_natural_confirmation.py and
+its synthetic-only fixture. Test/build only after the formal job exits0.
+
+Next: finish all53×5 paired cells; build/qualify native tokenizer and synthetic
+selection fixture; freeze four final model pins before any fresh source payload
+selection; run24 heldout prompts with the same2warmup/5alternating protocol;
+final raw/source/exposure audit; complete JSON/CSV/readable tables, static plots
+and standalone interactive HTML. Do not write the completion marker before
+those measured endpoints exist. Only then allocate optional followup if user
+is absent. Existing checkpoint charts remain explicitly incomplete.

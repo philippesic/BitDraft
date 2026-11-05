@@ -6053,3 +6053,5 @@ from this checkpoint or a job launch. No push.
 November5 continuation: runtime04 zero/anchor/control requalification passed; sole live serial GPU owner precision-mutations-20261105-02. See PRECISION_CAMPAIGN for actual mutation results and frozen two-interaction/two-continuation allocation. Full measured confirmation/heldout/charts remain unfinished; continue existing goal.
 
 November5,02:43Pacific: complete initial finite search and reserved windows; exact native archival/admission passes40 responses. Four finalist configurations locked for matched2048 updates; three additional confirmation windows remain, then repeatedDEV and locked freshheldout. See PRECISION_CAMPAIGN and canonical receipts. Full chart not yet complete; continue.
+
+Active measured continuation: precision-confirmation-20261105-01 owns the soleGPUlane for53 arms ×5 alternating paired repetitions,2excluded requests in each server. All finalist2048 training/exposure audits pass. Freshheldout unopened; fullchart incomplete. Preserve the healthy job and consult latest PRECISION_CAMPAIGN checkpoint after rotation.

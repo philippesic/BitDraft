@@ -1585,9 +1585,12 @@
   "precision_campaign": {
     "checkpoint": "docs/PRECISION_CAMPAIGN.md",
     "artifacts": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01",
-    "status": "INITIAL_SEARCH_AND_RESERVED_TRIALS_IN_PROGRESS",
+    "status": "FINAL_NATIVE_DEV_CONFIRMATION_ACTIVE",
     "runtime": "/home/philip/binary-eagle-decoding/runs/precision-native-20261104-04",
     "frozen_vanilla_reference_unchanged": true,
-    "final_confirmation_pending": true
+    "final_confirmation_pending": true,
+    "owner_run": "precision-confirmation-20261105-01",
+    "finalist_training": "FOUR_MATCHED_2048_RECIPES_COMPLETE",
+    "dev_confirmation_arms": 53
   }
 }
