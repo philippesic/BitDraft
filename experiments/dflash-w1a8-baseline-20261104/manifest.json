@@ -1,6 +1,6 @@
 {
   "schema": "dflash_w1a8_screening_reference_v1",
-  "status": "PREPARATION_AUTHORIZED_NOT_YET_STARTED",
+  "status": "PREPARATION_INCOMPLETE_NATIVE_AND_TRAINING_ADAPTERS_REQUIRED",
   "date": "2026-11-04",
   "protocol": "docs/CANDIDATE_BENCHMARKING.md",
   "authority": "User requested durable protocol plus a subagent to prepare the vanilla baseline and run its initial checkpoint.",
@@ -39,10 +39,21 @@
   "working_incumbent": null,
   "native_results": null,
   "run_directory": null,
-  "owner": null,
-  "blockers": [],
+  "owner": "assigned implementation worker",
+  "blockers": [
+    "Existing BlockQATConfig and load_block_gguf enforce five layers, seven slots and five historical taps; actual modern source has six layers, sixteen slots, eight taps and sliding-window attention. Modern training/capture/export adapters are not implemented or qualified.",
+    "Native W1Ax admission requires legacy ffn15 profiles and anchor-first metadata; modern packed native admission remains unqualified."
+  ],
   "notes": [
     "No trained modern W1A8 DFlash performance is implied by this planned registry.",
     "Never overwrite the frozen external Q4 baseline or prior W1A8 reference after promotion."
-  ]
+  ],
+  "source_inventory": "experiments/dflash-w1a8-baseline-20261104/source-inventory.json",
+  "execution": {
+    "training_started": false,
+    "completed_updates": 0,
+    "training_update_seconds": 0,
+    "native_evaluation_started": false,
+    "owned_live_processes": []
+  }
 }

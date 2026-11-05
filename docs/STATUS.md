@@ -477,3 +477,11 @@ blocker was incorrect; declining the unnecessary link card did not pause work.
 [Archived status](STATUS_HISTORY.md) preserves earlier evidence as history,
 not current jobs or launch instructions. Q4_0 EAGLE remains the primary EAGLE
 comparison baseline. New runtime changes require revalidation.
+
+## DFlash baseline implementation inspection — November4
+
+Source inspection completed; requested training remains unstarted. Modern source
+has6layers/8taps/18FFN and16slots with sliding-window attention; historical
+training/export/native guards cannot admit it. See
+[implementation checkpoint](../experiments/dflash-w1a8-baseline-20261104/README.md). No owned job is live;
+GPU released. Full1800second update allocation remains unspent.

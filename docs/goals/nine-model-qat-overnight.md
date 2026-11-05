@@ -5938,3 +5938,11 @@ Coordinator-selected initial budget:1800seconds actual update wall with
 zero/300/900/1800second snapshots, modern4B Q4_K_M target,5080. No initial
 checkpoint yet; delegation begins after protocol integration. Worker will own GPU
 qualification/capture/training/evaluation and record live handles and stop steps.
+
+## DFlash baseline implementation inspection — November4
+
+Source inspection completed; requested training remains unstarted. Modern source
+has6layers/8taps/18FFN and16slots with sliding-window attention; historical
+training/export/native guards cannot admit it. See
+[implementation checkpoint](../../experiments/dflash-w1a8-baseline-20261104/README.md). No owned job is live;
+GPU released. Full1800second update allocation remains unspent.
