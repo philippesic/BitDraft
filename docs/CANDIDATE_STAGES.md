@@ -145,6 +145,13 @@ precision-attribution comparisons from the same frozen foundation and matched
 training policy/exposure. Revisit interactions when later features earn inclusion.
 Nominal activation width alone establishes neither smaller storage nor faster execution.
 
+The November 5 follow-on [component plan](REMAINING_PRECISION.md) applies the
+precision stage to optimized G4/D8's output head, embeddings, drafter KV and
+scalar/norm-gain storage, with matched recovery. This is the user's selected next
+precision scope, not a feature/topology change. Existing floating reductions and
+target caches stay protected; the older blanket drafter-KV deferral is superseded
+for this plan only.
+
 ## Stage 2: incremental parameterization and conditioning experiments
 
 These are not required for the first common package:
@@ -213,7 +220,8 @@ Do not include these in the first precision/feature campaign:
 - Post-training factorization/capacity allocation (I08), structural pruning,
   slicing or frozen-head factorization (I19).
 - Heuristic vocabulary shortlists (I16), tree/beam proposals, retries and suffix
-  reuse (I17), and drafter KV quantization (I18).
+  reuse (I17). Drafter KV quantization (I18) is now in the November 5 follow-on
+  precision plan; target KV and attention-arithmetic changes remain outside it.
 - Parallel drafting, trees, retries and other proposal-system/architecture changes
   remain deferred. W1A1 precision itself is now in Stage 1, including G1/D1.
   Historical W1A1 acceptance/latency recollections do not validate modern DFlash.

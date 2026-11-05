@@ -2,6 +2,12 @@
 
 ## Execution optimization complete; integrated locally
 
+Next planned precision work: [REMAINING_PRECISION.md](REMAINING_PRECISION.md).
+Start with shared Q6_K/private exact Q6_K/private Q4_K head isolation, then
+private/tied embeddings, K/V cache ladders and scalar storage. Give damaged
+variants matched recovery opportunities, including reserved slow starters and
+explicit training eligibility. This plan launches no GPU or QAT run.
+
 The 38-item execution inventory is covered and the retained runtime is integrated.
 [Report](../experiments/execution-campaign-20261105/report.md) ·
 [Item ledger](../experiments/execution-campaign-20261105/ledger.md) ·

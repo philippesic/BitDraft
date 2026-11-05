@@ -6161,3 +6161,15 @@ Q4, not demonstrated faster. Full native latency/throughput and scope are in
 [the report](../../experiments/execution-campaign-20261105/report.md). No training
 or precision change; GPU released and recovery/evidence retained. The parent
 will display the comparison. The broader goal remains open; no push.
+
+
+## Remaining precision plan — November 5, 2026
+
+The user requested an incremental head/embed/KV/scalar plan with recovery-aware
+screening. See [REMAINING_PRECISION.md](../REMAINING_PRECISION.md) and linked
+benchmark protocol for exact arms, parameter eligibility, matched continuation
+controls, slow-starter retention, tying/memory accounting and combined finalists.
+Head Q4_K is first; optimized learned G4/D8 stays the frozen reference. Native
+private embedding, cache-training simulation and lower scalar load paths still
+need qualification. No implementation, GPU experiment or training launch from
+this planning update; the broader goal remains active.

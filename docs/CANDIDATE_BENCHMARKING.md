@@ -8,6 +8,11 @@ signs, row scales, row midpoints, input-channel gains and existing norm gains.
 The agreed [adaptive precision search](PRECISION_SEARCH.md) defines four activation
 families, bounded component trials, matched adaptation and frontier reporting.
 
+The [remaining-component recovery plan](REMAINING_PRECISION.md) specifies the
+head/embedding/KV/scalar follow-on, private-copy controls, recovery checkpoints,
+training eligibility and slow-starter retention. Its execution budget remains
+pilot-defined; the historical vanilla allocation is not reused for new arms.
+
 The already-authorized vanilla W1A8 run below remains a minimal control. Its
 midpoint/gain exclusions apply to THAT frozen reference, not to the separate
 essential-feature candidate. Preserve the live delegated run and its budget;

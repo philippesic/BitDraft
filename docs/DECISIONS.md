@@ -1624,3 +1624,19 @@ implementation/build/qualification/benchmark work is authorized. Preserve the
 compact G4/D8 learned2048 primary model and original runtime; no new training or
 precision changes. One delegated GPU owner; continue the active goal. See the
 [campaign checkpoint](EXECUTION_CAMPAIGN.md) for scope, required item ledger and deliverables.
+
+
+## 2026-11-05: Remaining component quantization and recovery plan
+
+User requests incremental output-head, embedding, drafter-KV and scalar/norm
+precision tests, with care not to eliminate QAT-recoverable initial damage.
+[REMAINING_PRECISION.md](REMAINING_PRECISION.md) records the proposed queue.
+Start from optimized G4/D8; head is first, with exact private Q6_K copying to
+isolate sharing overhead from Q4_K precision. Qualify private/tied embeddings;
+isolate K/V at Q8 then Q4 (Q5 bridge if supported); reduce scalar storage while
+keeping F32 math. Use matched unchanged continuations,0/256/1024/4096 proposed
+readouts, reserved slow-starter extensions and separately labeled upstream
+compensation versus targeted head/embedding QAT. Test combinations and confirm
+locked finalists from a common parent. Missing native/QAT support is blocked,
+not poor quality. This narrows the earlier KV deferral and preserves target KV,
+verifier and model topology. Planning only; no GPU/training allocation launched.

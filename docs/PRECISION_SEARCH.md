@@ -15,6 +15,14 @@ gains, healthy updates, export and native execution. Preserve the vanilla contro
 and its existing 1,800-second allocation. Prototype arithmetic or a reference
 packed container alone does not qualify a native candidate.
 
+The initial family/component campaign and its execution optimization are now
+complete. The user-selected follow-on plan is
+[REMAINING_PRECISION.md](REMAINING_PRECISION.md): head, embeddings, drafter KV
+and scalar storage on optimized G4/D8, with matched recovery and combination
+confirmation. Its KV/scalar scope extends the initial protected set below;
+target KV/precision and attention arithmetic stay fixed. This is a follow-on
+plan, not a retroactive change to frozen measurements or a new GPU allocation.
+
 ## Four starting families
 
 G is gate/up input activation width; D is down input activation width. All listed
