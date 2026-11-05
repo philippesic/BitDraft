@@ -1,0 +1,27 @@
+"""Prove native physical vocabulary sharing and count unique permanent buffers."""
+import json
+from .common import *
+
+def main():
+ source=R/'qualification/physical-tie/result.json';data=json.load(open(source));arms={}
+ for rec in data['records']:
+  name=rec['arm'];entry=arms.setdefault(name,dict(cells=[],physical_tied_all_cells=True,head_types=set(),embedding_types=set()))
+  for row in rec['result']['rows']:
+   vocabulary=[x for x in row['audit'] if x.get('kind')=='vocabulary_allocation']
+   head=[x for x in vocabulary if x['op']=='MUL_MAT'];embedding=[x for x in vocabulary if x['op']=='GET_ROWS']
+   if not head or not embedding:raise ValueError('missing actual vocabulary callbacks '+name)
+   for h in head:
+    for e in embedding:
+     tied=h['weight_data_address']==e['weight_data_address'] and h['weight_tensor_address']==e['weight_tensor_address']
+     entry['physical_tied_all_cells'] &= tied
+     entry['head_types'].add(h['weight_type']);entry['embedding_types'].add(e['weight_type'])
+   buffers={x['buffer_address']:x for x in row['audit'] if x.get('kind')=='permanent_weight_buffer'}
+   entry['cells'].append(dict(domain=rec['domain'],anchor=row['anchor'],warmup=row['warmup'],head=head,embedding=embedding,unique_observed_buffers=list(buffers.values()),unique_observed_buffer_bytes=sum(x['buffer_bytes'] for x in buffers.values())))
+ for name,entry in arms.items():
+  entry['head_types']=sorted(entry['head_types']);entry['embedding_types']=sorted(entry['embedding_types'])
+  if name=='HE4' and not entry['physical_tied_all_cells']:raise ValueError('tied Q4 does not physically share tensor and device data')
+  if name in ('H4','E4','H6','E6') and entry['physical_tied_all_cells']:raise ValueError('private component unexpectedly aliases target counterpart')
+ save(R/'qualification/physical-tie/verified.json',dict(status='NATIVE_PHYSICAL_ALLOCATION_PASS',source=pin(source),arms=arms,scope='Actual graph vocabulary tensor/data addresses and buffer types, not GGUF tying flags. Unique observed buffers are a lower bound when a frozen weight is outside callback scope; model load buffer totals and device peak are independently reported. Target head remains immutable.'))
+ print('PHYSICAL_TIE_VERIFIED',flush=True)
+
+if __name__=='__main__':main()
