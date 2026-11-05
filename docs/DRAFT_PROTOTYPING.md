@@ -49,3 +49,11 @@ PY
 Integration: continue in this worktree, keep baseline owner's source/run/state
 untouched, and complete the pending components before describing this as the
 requested end-to-end pipeline. No new goal or baseline allocation is created.
+
+## Config runner and packed reference IO
+
+The subsequent implementation adds `python -m scripts.dflash_baseline.pipeline`.
+See [runner report](../experiments/dflash-runner-packed-20261104/report.md) for
+commands, manifest schema, tested behavior and remaining acceptance gaps.
+This supersedes the earlier statement that no runner or packed import exists;
+it does not establish full-model or native qualification.
