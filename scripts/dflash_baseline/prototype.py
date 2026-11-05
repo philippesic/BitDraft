@@ -40,7 +40,7 @@ def resolve(request):
         if not ((value['weight']=='W1' and type(value['bits']) is int and value['bits'] in (2,4,8)) or (value['weight']=='BF16' and value['bits'] is None)): raise ValueError('unsupported weight/activation combination')
         coverage[name]=copy.deepcopy(value)
     result=copy.deepcopy(request)
-    result.update(coverage=coverage,features=features,quantizer=quantizer,arithmetic='signed-symmetric-round-away-v1',schedule='constant',operand_storage='int8-reference')
+    result.update(coverage=coverage,features=features,quantizer=quantizer,arithmetic='fixed_w1ax_finite_reciprocal_v2',schedule='constant',operand_storage='int8-reference')
     return result
 
 class Projection(nn.Module):
@@ -49,7 +49,7 @@ class Projection(nn.Module):
         if bits not in (2,4,8): raise ValueError('unsupported activation width')
         self.bits=bits
         self.quantizer=quantizer or {'mode':'dynamic','clip':1.0}
-        self.latent_sign=nn.Parameter(torch.where(weight<0,-torch.ones_like(weight),torch.ones_like(weight)))
+        self.latent_sign=nn.Parameter(weight.detach().float().clone())
         self.scale=nn.Parameter(weight.abs().mean(-1))
         self.midpoint=nn.Parameter(torch.zeros(weight.shape[0]),requires_grad=midpoint)
         self.log_gain=gain if gain is not None else nn.Parameter(torch.zeros(weight.shape[1]),requires_grad=False)
@@ -57,12 +57,29 @@ class Projection(nn.Module):
     def stream(self,x):
         x=x.float()*self.log_gain.exp()
         qmax=2**(self.bits-1)-1
-        bound=x.detach().abs().amax(-1,keepdim=True).clamp_min(1e-12) if self.quantizer['mode']=='dynamic' else self.log_clip.exp()
+        if self.quantizer['mode']=='dynamic':
+            magnitude=x.detach().contiguous().view(torch.int32)&2147483647
+            bound=magnitude.amax(-1,keepdim=True).view(torch.float32)
+            inv=torch.where(bound>0,qmax/bound,0)
+            normalized=x*inv
+            overflow=(bound>0)&~torch.isfinite(inv)
+            if bool(overflow.any()):
+                fallback=(x.double()/bound.double().clamp_min(torch.finfo(torch.float64).tiny)*qmax).float()
+                normalized=torch.where(overflow,fallback,normalized)
+            hard=normalized.round().clamp(-qmax,qmax)
+            # Gradient follows dequantized identity, including zero rows.
+            step=bound/qmax
+            safe=torch.where(step>0,step,torch.ones_like(step))
+            codes=hard.detach()+(x-x.detach())/safe
+            return codes,step
+        bound=self.log_clip.exp() if self.quantizer['mode']=='learned' else x.new_tensor(self.quantizer['clip'])
         clipped=torch.maximum(torch.minimum(x,bound),-bound)
-        z=clipped/(bound/qmax)
-        hard=torch.sign(z)*torch.floor(z.abs()+0.5)
-        codes=z+(hard-z).detach()
-        return codes, bound/qmax
+        z=clipped*(qmax/bound)
+        hard=z.round().clamp(-qmax,qmax)
+        return z+(hard-z).detach(),bound/qmax
+    @torch.no_grad()
+    def project_scales_(self):
+        self.scale.clamp_(min=0)
     def forward(self,x):
         codes,step=self.stream(x)
         signs=self.latent_sign+(torch.where(self.latent_sign<0,-1.,1.)-self.latent_sign).detach()
