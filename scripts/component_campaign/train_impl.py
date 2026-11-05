@@ -77,6 +77,10 @@ def main():
   export(None,base,state=state,checkpoint_pin=lineage['parent'])
   rewrite(base,out/f'model-{label}.gguf',spec,head_log_d=state['parameters'].get('head_log_d'),deployment_exps=stored_exps);base.unlink();base.with_suffix('.json').unlink()
   model_path=out/f'model-{label}.gguf';model_pin=pin(model_path)
+  qat_diagnostics=None
+  if spec.get('r2_vocab_scale'):
+   from .r2_diagnostics import inspect
+   qat_diagnostics=inspect(m,opt,spec,model_path)
   export_seconds=time.perf_counter()-export_start;archive_start=time.perf_counter()
   # One frozen native basis per vocabulary format; later points keep only lossless deltas.
   from .archive import archive
@@ -86,7 +90,7 @@ def main():
    # Hard link prevents duplicate physical storage for the first basis point.
    basis.hardlink_to(model_path)
   elif not model_path.samefile(basis):archive(model_path,basis)
-  record=dict(update=progress['updates'],progress={k:v for k,v in progress.items() if k!='order'},dev=metrics,seconds=time.perf_counter()-start,dev_seconds=dev_seconds,native_export_seconds=export_seconds,archive_seconds=time.perf_counter()-archive_start,peak_training_bytes=torch.cuda.max_memory_allocated(),model=model_pin,cpu_gpu_half_exp_rounding_differences=rounding_differences)
+  record=dict(head_qat_diagnostics=qat_diagnostics,update=progress['updates'],progress={k:v for k,v in progress.items() if k!='order'},dev=metrics,seconds=time.perf_counter()-start,dev_seconds=dev_seconds,native_export_seconds=export_seconds,archive_seconds=time.perf_counter()-archive_start,peak_training_bytes=torch.cuda.max_memory_allocated(),model=model_pin,cpu_gpu_half_exp_rounding_differences=rounding_differences)
   readouts.append(record);save(out/'readouts.json',readouts);print('READOUT',spec['name'],record['update'],metrics['ce'],metrics['agreement'],flush=True)
  def recoverable():
   io_start=time.perf_counter()
