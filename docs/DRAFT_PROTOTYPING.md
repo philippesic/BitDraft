@@ -1,7 +1,10 @@
 # DFlash prototype implementation checkpoint
 
-This is an incomplete CPU foundation, not a runnable training/export pipeline.
-Legacy baseline source and runtime are unchanged. No GPU work was launched.
+This document preserves the original CPU checkpoint history and the current
+qualified native-v2 contract below. See PRECISION_CAMPAIGN.md for measured work
+and live ownership; the original CPU-only capability table is historical.
+
+## Original CPU checkpoint
 
 `python -m scripts.dflash_baseline.prototype resolve CONFIG.json` resolves a
 version 1 request. Required fields: `version`, `preset`, `source`, `parent`,
@@ -73,8 +76,11 @@ artifact-specific load, CUDA and native evaluation evidence.
 update/exact parameter-and-optimizer resume/adaptation, and native A8/A1 decoded
 output equality passed. Pins and exact scopes live in
 `runs/precision-campaign-20261104-01/{qualification.json,native-qualification/}`.
-Campaign runtime is `runs/precision-native-20261104-03`; CPU fallback for its
-custom affine operations is explicitly rejected. A1/A2 still execute INT8 codes
+Current campaign runtime is `runs/precision-native-20261104-04`. Its fused
+gain/pack avoids the tiny-value flushing found in the earlier generic gain op;
+all36 gained-stream CUDA cases pass byte-exactly. Runtime03 evidence remains
+a separate diagnostic series. CPU fallback for custom affine operations is
+explicitly rejected. A1/A2 still execute INT8 codes
 with DP4A, not a packed binary activation kernel. Both affine terms use the
 same gained quantized stream; native packing computes its sum once.
 
@@ -104,3 +110,12 @@ reduction and protected BF16 FFN exceptions remain outside native v2 admission.
 Component-specific full-model native qualification is required before treating
 an arm as measured. See [PRECISION_CAMPAIGN.md](PRECISION_CAMPAIGN.md) for live
 owner state, measured progress, exposure policy and remaining full-chart work.
+
+Lossless native export archival is a storage container, separate from both
+GGUF tensor quantization and the PyTorch packed reference container. It uses a
+pinned frozen native GGUF dictionary and restores the entire original GGUF byte
+stream with SHA256 verification before native loading. Raw GGUF bytes, including
+metadata/private copies, remain the model-size metric; compressed archive bytes
+are never used as an inference-size or speed claim. Actual full-model archived admission now passes40 responses with same-process
+warmups, exact target output signatures and unchanged plain/traced counters in
+`runs/precision-campaign-20261104-01/archive-native-qualification`. Every trained parameter/optimizer checkpoint is retained.

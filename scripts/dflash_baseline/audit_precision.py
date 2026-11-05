@@ -37,7 +37,9 @@ def campaign(root):
   if value.get('status')=='COMPLETE' and isinstance(value.get('rows'),list) and value['rows'] and 'arm' in value['rows'][0]:panels.append(audit_panel(p.parent))
  training=[];physical_updates=0;update_seconds=0
  for p in sorted(root.rglob('updates.jsonl')):
-  records=[json.loads(x) for x in p.read_text().splitlines()];physical_updates+=len(records);update_seconds+=sum(x['seconds'] for x in records);training.append(dict(path=str(p),updates=len(records),update_seconds=sum(x['seconds'] for x in records),supervised_positions=15*len(records)))
+  records=[json.loads(x) for x in p.read_text().splitlines()];physical_updates+=len(records);update_seconds+=sum(x['seconds'] for x in records)
+  windows={(x['sequence'],x['anchor']) for x in records};labels={(x['sequence'],x['anchor']+j) for x in records for j in range(15)}
+  training.append(dict(path=str(p),updates=len(records),update_seconds=sum(x['seconds'] for x in records),supervised_positions=15*len(records),unique_anchor_windows=len(windows),unique_native_label_positions=len(labels),unique_captures=len({x['sequence'] for x in records}),position_semantics='Native label row p predicts token p+1; overlapping15-slot windows reuse labels. Supervised position count is exposure, not unique source tokens.'))
  matched=[]
  if (root/'adapted').exists():
   registry=read(root/'tranche.json');parent_end=read(root/'foundation/result.json')['progress']['cursor']

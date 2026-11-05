@@ -83,7 +83,13 @@ def main():
    done=threading.Event();memory=[]
    def sample():
     while not done.is_set():
-     try:memory.append(dict(monotonic=time.monotonic(),MiB=int(subprocess.check_output(['/usr/lib/wsl/lib/nvidia-smi','--query-gpu=memory.used','--format=csv,noheader,nounits'],text=True).strip())))
+     try:
+      values=[v.strip() for v in subprocess.check_output(['/usr/lib/wsl/lib/nvidia-smi','--query-gpu=memory.used,utilization.gpu,clocks.current.sm,power.draw,temperature.gpu,pstate','--format=csv,noheader,nounits'],text=True).strip().split(',')]
+      entry=dict(monotonic=time.monotonic(),MiB=int(values[0]),pstate=values[5])
+      for key,value in zip(('utilization_percent','sm_clock_MHz','power_W','temperature_C'),values[1:5]):
+       try:entry[key]=float(value)
+       except ValueError:entry[key]=None
+      memory.append(entry)
      except Exception:pass
      done.wait(.2)
    watcher=threading.Thread(target=sample,daemon=True);watcher.start()

@@ -434,3 +434,41 @@ uncompressed copy and again on hydration. Training checkpoint archives untouched
 Native execution always receives the exact original GGUF, with hydration outside
 request timing. Actual full-model archival/admission qualification remains pending
 after the reserved GPU job. Sixteen CPU correctness tests pass; receipt saved.
+
+## Search complete; finalist confirmation — November5,02:43Pacific
+
+All12 standard arms, both reserved interactions and both matched recovery
+continuations completed native zero/intermediate/final panels. G1's extension
+plateaus597/4244→611/4221; unchanged G8 similarly760/3923→770/3899. Learned
+A8/A4 recipes are near-tied at1024, while the compact learned G4 interaction
+uses174.94MiB and reaches1052/3338 acceptance/~173.6request tokens/s in the
+same diagnostic panel where Q4 reaches~256. No throughput winner or W1
+deployment promotion. These are short-run single-seed recipe findings.
+
+Four finalist configurations are frozen in finalist-training-plan.json:
+G8D8-learned-clip, G4D8-learned-small, G2D8 and G1D8. Each gets common-parent
+2048-update exposure with the same TRAIN order/cursor and initial reset policy.
+Reuse exact completed G1 continuation; charge three additional1024-update
+confirmation windows. Different clipping/protected formats are recipes, not
+sole-precision attribution; the four dynamic1024 anchors provide that matched
+comparison. Holdout payloads remain unopened.
+
+Lossless native archival completed under precision-archive-20261105-01, exit0:
+77 exact GGUF byte streams (34.90GiB raw) retained in4.17GiB containers plus
+the fixed dictionary. Twenty protected-component exports/169 tensor code checks
+match authenticated frozen sources, including private heads. Historical deleted
+zero caches re-created to their exact old hashes before archival. Actual archived
+GGUF hydration/admission passed40 native responses with same-process warmups,
+exact target signatures and unchanged trace counters. Model-size charts use RAW
+GGUF bytes, never these compressed sizes. Paid optimizer checkpoints unchanged.
+WSL free increased10,000,355,328→30,655,393,792 bytes during this pass; Windows
+free10,958,622,720→10,954,080,256 (concurrent activity). No host reclaim claim.
+Receipts: native-export-archives.json, component-code-audit.json and
+archive-native-qualification.
+
+Next sole GPU owner will be precision-finalists-20261105-01; use its actual
+state/ownership when launched, not this preparation statement. Then lock the
+complete repeated DEV roster (including256 points and recovery states), two
+excluded requests inside each server and five alternating measured repetitions;
+lock four final model pins before selecting fresh24 heldout inputs; audit and
+produce complete charts. No feature-tier2+ work before that artifact exists.
