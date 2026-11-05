@@ -1585,12 +1585,21 @@
   "precision_campaign": {
     "checkpoint": "docs/PRECISION_CAMPAIGN.md",
     "artifacts": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01",
-    "status": "FINAL_NATIVE_DEV_CONFIRMATION_ACTIVE",
+    "status": "FULL_INITIAL_COMPARISON_COMPLETE",
     "runtime": "/home/philip/binary-eagle-decoding/runs/precision-native-20261104-04",
     "frozen_vanilla_reference_unchanged": true,
-    "final_confirmation_pending": true,
-    "owner_run": "precision-confirmation-20261105-01",
+    "final_confirmation_pending": false,
+    "owner_run": null,
     "finalist_training": "FOUR_MATCHED_2048_RECIPES_COMPLETE",
-    "dev_confirmation_arms": 53
+    "dev_confirmation_arms": 53,
+    "publication": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/campaign-completion.json",
+    "charts": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/charts-initial",
+    "report": "experiments/precision-campaign-20261104/report.md",
+    "heldout_confirmation_arms": 6,
+    "measured_panel_arm_points": 240,
+    "formal_responses": 8980,
+    "all_formal_target_signatures_exact": true,
+    "working_incumbent_policy": "No W1 deployment promotion over matched modern DFlash Q4_K_M; retained frontier remains separate from fixed vanilla references.",
+    "followup_plan": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/clip-control-followup/plan.json"
   }
 }

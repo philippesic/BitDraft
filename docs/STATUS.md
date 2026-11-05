@@ -1,15 +1,28 @@
 # Current project status
 
-## Active execution: extensive precision comparison
+## Modern precision comparison complete; focused control follows
 
-The user now authorizes running the agreed search through full measured charts,
-then evidence-led additional work if it finishes before the user returns. See
-[execution checkpoint](PRECISION_CAMPAIGN.md) for scope and actual baseline state.
-The original vanilla training completed 14,231 updates / 1,800 measured seconds;
-native evaluation on the original three consumed DEV prompts completed with exact target outputs; trained vanilla remains slower than Q4. Common-runtime broader evaluation is underway. Earlier no-sweep/launch-only statements below
-are historical and superseded by this authorization/evidence. One campaign worker owns the freshly checked GPU lane. Qualified affine/A1–A8 native pipeline and actual128-update pilot are complete; essential foundation and matched removal controls completed;28 zero-update native configurations passed paired plain/traced evaluation. All four precision anchors completed matched1024-update windows. Runtime04 fixes gained-stream tiny-value behavior; anchor/control remeasurement passed. All twelve standard arms and four reserved interaction/continuation windows are measured. Exact native archival/admission qualified; all four matched2048-update finalist states are complete and audited. The53-arm repeated DEV panel completed all530 cells /7420 responses under precision-confirmation-20261105-01; exact final-log reconciliation corrected2 delayed sampling rows without altering raw measurements. Native16-slot/context admission and locked freshheldout remain before full charts. See the execution checkpoint for ownership and receipts. Reconciliation and17 CPU fixtures pass;36 additional16-slot CUDA cases and12 native tokenizer geometries qualify. Four final model pins locked before fresh24-case selection. Sole live owner precision-heldout-20261105-03 is running the6-arm,5-alternating paired heldout panel. Full chart publication remains pending.
+The full initial Qwen3.5-4B Q4_K_M / RTX5080 comparison is published:
+[report](../experiments/precision-campaign-20261104/report.md),
+[summary](../experiments/precision-campaign-20261104/summary.json), and
+[execution checkpoint](PRECISION_CAMPAIGN.md). The frozen artifact directory is
+`runs/precision-campaign-20261104-01/charts-initial`:240 measured panel/arm points,
+including53 DEV and6 fresh-heldout formal arms. All8,980 formal responses match
+target-only and paired native counters pass. Q4 retains the throughput lead;
+compact learned G4/D8 reaches163.1 request tok/s versus Q4's242.0 on heldout,
+with174.94 versus363.78 MiB drafter bytes. No W1 deployment promotion.
 
-## Current direction: essential-feature foundation before precision selection
+The original vanilla14,231-update/1800.021702-second reference and all fixed
+checkpoints are unchanged. Additional work is authorized because the full initial
+chart finished before the user's return. One fixed-versus-learned clipping
+control is locked for1,024 matched updates from the common foundation, then
+repeated DEV and a new disjoint24-case heldout. No new architecture/loss/target.
+See PRECISION_CAMPAIGN for exact current ownership and resource qualification.
+The broader nine-model goal remains active; this is not a nine-model restart.
+Historical preparation-only and no-sweep limits below are superseded for this
+campaign by the latest explicit authorization.
+
+## Stage protocol and historical authorization
 
 Agreed precision plan: [PRECISION_SEARCH.md](PRECISION_SEARCH.md). After the
 foundation, explore gate/up A8/A4/A2/A1 families, down through A1, and bounded

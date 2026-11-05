@@ -149,6 +149,7 @@ def build(root,out):
  payload['frontier_policy']='Point estimates maximize acceptance and minimize full draft latency and actual bytes within cohort/runtime/scope. Confidence-overlapping near ties remain in the table; this is not a deployment promotion or matched-history precision attribution.'
  payload['untested_variants']=['Full-model fixed/learned-bound A1/A2 recovery, including calibrated bound initializers, remains untested in this initial tranche. CUDA operation/gradient support alone is not a full-model quality result.','Fixed-vs-learned clipping recovery was not isolated; the initial learned recipe changes both range policy and training. No general A1/A2 inferiority or benefit specifically from learning bounds is established.']
  payload['failures_and_recoveries']=[dict(item='runtime03 generic CUDA gain op',reason='Tiny signed inputs flushed by inherited fast-math',resolution='Fused gained-stream runtime04 passes36 actual CUDA cases; controls remeasured, old series retained separately.'),dict(item='first mutation source snapshot',reason='Top-level exporter dependency omitted; import failed before any training',resolution='Complete dependency snapshot import-qualified; replacement serial job retained source/ownership receipts.')]
+ payload['failures_and_recoveries'] += [dict(item='First post-DEV wrapper',reason='Snapshot root missing from import path; stopped before native work or fresh source access.',resolution='Wrapper imports qualified with empty inherited PYTHONPATH; new immutable snapshot used.'),dict(item='Second post-DEV header receipt',reason='Checker compiled, but receipt referenced a nonexistent overlay public header; stopped before GPU work or fresh source access.',resolution='Pinned the actual compiler public header; replacement passed all36 CUDA16-slot cases and12 native tokenizer comparisons before heldout lock/selection.')]
  payload['failures_and_recoveries'].append(dict(item='Full-model untrained numeric parity gate',reason='Known amplified float drift after six binary layers:38/45 F32 token agreement and42/45 BF16-input probe; provisional per-context gate failed despite isolated FFN relative error about1.24e-7.',resolution='Parity remains unresolved and is not claimed. Native feature/label ancestry is preserved, gained integer operations independently qualified, and actual native acceptance/throughput measured rather than inferred from target-output correctness.'))
  recovery=root/'confirmation-dev12/counter-recovery.json'
  if recovery.exists():payload['failures_and_recoveries'].append(dict(item='DEV live log sampling race',reason='A response returned before its cumulative statistics line was visible to the live sampler.',resolution='Every final reaped-server boundary reconciled one-for-one to HTTP response accepted/proposed counts; original progress and raw data preserved.',receipt=reference(recovery),corrected_rows=len(read(recovery)['corrections'])))
@@ -186,11 +187,17 @@ def build(root,out):
    if p['cohort']!=group or p['full_draft_ms'] is None or p['acceptance'] is None:continue
    size=25+max(0,(p['model_bytes'] or 0)/1e7);ax.scatter(p['full_draft_ms'],100*p['acceptance'],s=size,color=color(p),alpha=.7,marker='*' if p.get('point_estimate_pareto') else 'o')
    if p.get('point_estimate_pareto') or p['arm']=='q4' or p['arm'] in ('G8D8-1024','G4D8-1024','G2D8-1024','G1D8-1024'):ax.annotate(p['arm'],(p['full_draft_ms'],100*p['acceptance']),fontsize=7)
-  ax.set(xlabel='Complete native draft host ms/round (traced)',ylabel='Accepted / proposed (%)',title=group);ax.grid(alpha=.2)
+  ax.set(xlabel='Complete native draft host ms/round (traced)',ylabel='Accepted / proposed (%)',title=group,ylim=(0,100));ax.grid(alpha=.2)
+ from matplotlib.lines import Line2D
+ handles=[Line2D([],[],marker='o',linestyle='',color=colors[k],label='Gate/up A'+k[1:] if k.startswith('G') else 'External target/Q4') for k in colors]
+ handles.append(Line2D([],[],marker='o',linestyle='',color='#7564ab',label='Vanilla packed W1/A8'))
+ handles += [axes[0,0].scatter([],[],s=25+mib*2**20/1e7,color='#888888',alpha=.65,label=str(mib)+' MiB raw GGUF') for mib in (200,500,800)]
+ fig.legend(handles=handles,loc='lower center',bbox_to_anchor=(.5,-.1),ncol=3,fontsize=7)
+ fig.suptitle('Logical A1/A2/A4/A8: native INT8-code DP4A · packed W1 FFN · stars: point-estimate frontier',fontsize=10)
  fig.tight_layout();fig.savefig(out/'acceptance-latency.png',dpi=160,bbox_inches='tight');fig.savefig(out/'acceptance-latency.svg',bbox_inches='tight');plt.close(fig)
- selected=[p for p in display if p.get('request_vs_q4') is not None];height=max(5,max((sum(p['cohort']==g for p in selected) for g in groups),default=1)*.34)
- fig,axes=plt.subplots(1,len(groups),figsize=(10*len(groups),height),squeeze=False)
- for ax,group in zip(axes[0],groups):
+ selected=[p for p in display if p.get('request_vs_q4') is not None];heights=[max(5,sum(p['cohort']==g for p in selected)) for g in groups];height=max(5,2+.34*sum(heights))
+ fig,axes=plt.subplots(len(groups),1,figsize=(11,height),squeeze=False,gridspec_kw={'height_ratios':heights})
+ for ax,group in zip(axes[:,0],groups):
   bars=[p for p in selected if p['cohort']==group];y=np.arange(len(bars))
   for offset,key,label,hatch in [(-.18,'request_vs_q4','Full request',None),(.18,'decode_vs_q4','Decode','///')]:
    values=[p[key] for p in bars];ax.barh(y+offset,values,height=.32,color=[color(p) for p in bars],alpha=.8 if hatch is None else .4,hatch=hatch,label=label)
@@ -207,7 +214,7 @@ def build(root,out):
    if p['total_peak_device_MiB']:
     row[1].scatter(p['total_peak_device_MiB'],p['request_tps'],color=color(p),alpha=.6)
     if p['arm'] in ('target','q4') and p['scope']=='confirmation':row[1].annotate(p['arm'],(p['total_peak_device_MiB'],p['request_tps']),fontsize=8)
-  row[0].set(xlabel='Actual drafter GGUF MiB (private tensors included)',ylabel='Acceptance (%)',title=group);row[1].set(xlabel='Sampled total device peak MiB',ylabel='Full request tokens/s',title=group)
+  row[0].set(xlabel='Actual drafter GGUF MiB (private tensors included)',ylabel='Acceptance (%)',title=group,ylim=(0,100));row[1].set(xlabel='Sampled total device peak MiB',ylabel='Full request tokens/s',title=group)
  fig.tight_layout();fig.savefig(out/'size-memory.png',dpi=160,bbox_inches='tight');fig.savefig(out/'size-memory.svg',bbox_inches='tight');plt.close(fig)
  fig,ax=plt.subplots(figsize=(12,6));curves={}
  for p in points:

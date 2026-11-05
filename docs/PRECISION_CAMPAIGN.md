@@ -582,3 +582,43 @@ Additional actual native qualification passed36 gained-stream cases atN16 with b
 Two earlier post wrappers failed before GPU work/fresh payload:01 lacked snapshot-root import setup;02 compiled the checker but its receipt pointed to a nonexistent overlay public header. Fixed import resolution and pinned actual shared public header; failed snapshots/metadata retained.03 successfully passed both native qualifications and opened heldout only after lock. No runtime/model/measurement policy changed; no DEV repeat required.
 
 Next: finish all60 heldout cells; independent component-code audit of compact G4 1536/2048 exports; final raw/exposure/source audit; publish_precision.py data; chart_precision.py to new charts-initial output; inspect PNGs and controller; publish_precision.py publish only after all artifacts exist. Initial full comparison still incomplete. Only after publication consider bounded further work if user remains absent.
+
+## Initial comparison published; conditional control allocated
+
+Full initial publication completed November5 at16:24:27UTC (08:24Pacific).
+Receipt campaign-completion.json pins16 actual artifacts under charts-initial,
+including240-point JSON/CSV/full table, domain CSV, standalone interactiveHTML,
+five PNG/SVG figures and the exact generator source. All5 final figures inspected;
+controller compiled in V8; parent owns browser display. Final audit authenticates26
+raw native panels, all training ancestry/exposure and22 component-code exports.
+Formal DEV53 + heldout6 arms yield8,980 target-identical responses; no paired
+counter changes. Original reference and fixed artifact hashes preserved.
+
+Fresh heldout: Q4=241.98 request/281.97 decode tok/s; compact learned G4=163.13/
+180.54, acceptance10765/35935 (29.96%), request/Q4=.6742 [95% .6567–.6915].
+Target-only174.69. Compact drafter174.94 versusQ4's363.78MiB; combined deployment
+bytes6.16% lower, sampled device6031 versus6209MiB. This is a size frontier,
+not a speed promotion. Full G8 learned=156.24 request tok/s; dynamic G1=127.68,
+G2=115.42. Small TRAIN exposure and unresolved full-model float parity remain
+explicit limitations; logical A1/A2 still execute INT8-code DP4A.
+
+User remains absent, so the conditional followup is now used: exactly one
+fixed-bound compact G4/D8 control, bound1 throughout, versus the existing learned
+compact G4/D8 initialized at1. Common frozen foundation/data/order, reset Adam,
+1024 updates/15360 supervised positions; protected formats, loss, target and
+runtime unchanged. This isolates learning the bounds from their initialization
+for this recipe only. No training extension or new feature tier. Plan is frozen
+at clip-control-followup/plan.json only AFTER initial publication. Zero native
+admission must match learned-unit initialization, then actual training, full
+streamed-state recovery/native-export equality, intermediate DEV smoke, final
+4-arm2warmup/5alternating paired DEV and a NEW24-case heldout. Initial heldout
+identities/groups/topics are frozen exclusions; cohorts stay separate.
+
+A streamed Zstd checkpoint option avoids raw-plus-archive disk duplication;
+2 exact optimizer/RNG resume fixtures and2 existing pipeline fixtures pass.
+No existing paid checkpoint moved/deleted or Windows space consumed. Full trained
+checkpoint decoding/export qualification uses an owned RAM temporary, admitted
+against actual RAM/tmpfs headroom; it must release before native timing. Preserve
+an8GiB WSL reserve. Current code/plan preparation is complete; launch one supervised
+precision-clip-control-20261105-01 lane after fresh hardware/pause/process check,
+then keep ownership/checkpoints current through native results and followup charts.

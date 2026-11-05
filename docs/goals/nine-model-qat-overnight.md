@@ -1,5 +1,13 @@
 # Nine-model RTX5080 overnight QAT
 
+**Latest checkpoint — November5:** full initial modern4B/Q4 precision comparison
+is published (240 measured points;8,980 exact formal responses). Q4 retains the
+throughput lead. One conditionally authorized fixed/learned clipping control is
+locked for1024 matched updates and fresh disjoint native confirmation. Consult
+[PRECISION_CAMPAIGN](../PRECISION_CAMPAIGN.md) for live ownership and artifacts.
+The broader goal remains active; no new goal or nine-model restart.
+
+
 **Current state — November 1:** continue the user-authorized local RTX 5080
 CUDA-correctness and training-to-serving investigation. The session is already
 on the GPU machine, at `/home/philip/binary-eagle-decoding`; follow
