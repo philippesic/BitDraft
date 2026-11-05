@@ -338,3 +338,27 @@ CUDA-qualified; actual native recovery/context/request trajectories remain the
 practical deployment gate. Existing common F32 query/softmax surrogate likewise
 does not claim native MMA bit-exactness. Any changed decisions/conclusions require
 further bounded investigation rather than declaring quantization unsupported.
+
+
+## First cache window complete —15:52Pacific
+
+K8F (Q8_0K/F16V) completed4096updates and all four native readouts. Native
+accepted/proposed is56/261,58/255,53/267,54/265 at0/256/1024/4096, compared with
+H055/263,49/273,51/269,55/263. Dense DEV final CE7.18649 versus H07.05519.
+These are three64-token consumed diagnostics; formal warm repeated natural
+request/latency and long-context comparison remain pending. Value-only KF8 is
+now training; the remaining queue and passive successor are healthy.
+
+The successor already loaded its launch-time post_primary module before later
+publication-helper edits. It will produce qualification/selection/allocation
+summaries as launched, but does not automatically include the later publication
+index/write call; the active root must write that index after selection. Runtime
+helper scripts invoked later use their individually recorded current source pins.
+No source changes affect already frozen active training closures.
+
+Prepared final helpers now include explicit common-parent component composition,
+actual exercised Nsight format profiles, locked-before-open heldout24 confirmation,
+three separate warm/five-repetition cache context panels and authenticated two-state
+frontier retention. They are preparation, not completed evaluations. Two-frontier
+retention protects selected NEW full states and skips intermediate checkpoints in
+the second same-history regeneration to avoid a third full state in flight.
