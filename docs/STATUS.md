@@ -1,5 +1,10 @@
 # Current project status
 
+Near-term design lead: revisit W1A1 parallel proposals, retries and target-verified
+trees. User recalls old untrained EAGLE W1A1 at roughly half W1A8 acceptance and
+draft latency; exact historical comparison remains to be reverified. Recorded in
+`docs/DECISIONS.md`; discussion only, no new experiment or architecture selection.
+
 ## Quick binary pipeline profile — completed November 4
 
 RTX5080, historical DSpark parent3504/Qwen3-4B F16. Three-repetition isolated

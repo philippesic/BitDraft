@@ -1460,3 +1460,30 @@ fusion precision failed to rescue full-model A4, despite local error motivation.
 
 The user still chooses architecture, precision, scale/sign scope and long-QAT
 allocation. [Screen and implementation gaps](../experiments/binary-screen-20261104/README.md).
+
+## 2026-11-04: Revisit W1A1 and spend lower draft cost on proposal coverage
+
+User-requested near-term research lead, not an architecture selection or training
+authorization. Retained historical DSpark W1A8's main seven-position path expands
+binary weights for integer Tensor Cores; its near-Q4 throughput is not proof of
+a binary-arithmetic speedup. Room to investigate true packed-bit arithmetic
+remains, though the existing native bit-serial implementation loses to that path.
+See experiments/binary-pipeline-profile-20261104/README.md.
+
+The user recalls old EAGLE W1A1 tests yielding roughly half the draft acceptance
+and half the draft latency of equivalent untrained EAGLE W1A8. This ratio is a
+user-reported historical lead, not reverified in this discussion. Before using it
+quantitatively, recover the exact checkpoints, hardware, precision, acceptance
+definition and latency scope; do not substitute DSpark or modern EAGLE evidence.
+
+Keep W1A1 parallel drafting, draft retries/alternative proposals, and tree-shaped
+W1A1 proposals verified by the target model as explicit discussion options. Clarify
+what triggers retries and how proposals differ. A tree must retain correct branch
+conditioning, attention/cache isolation and target verification semantics. Judge
+useful accepted continuation per total draft-plus-verification time, including
+extra nodes, packing, scheduling and cache work. Half acceptance plus half draft
+latency does not by itself establish unchanged or improved total throughput.
+
+RTX5080 remains the primary hardware focus; NVFP4 is a target precision option,
+and DFlash Q4_K_M remains the selected modern drafter comparator. No new run,
+precision policy, tree implementation or final architecture selected here.
