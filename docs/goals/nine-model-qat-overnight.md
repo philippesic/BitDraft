@@ -6120,3 +6120,33 @@ matched baseline. Observational original traces completed, actual N3 confirmed;
 first exact CUDA alternatives building/qualifying under local supervisor.
 Live ownership/recovery is in `live-ownership.json`. No claim of speed win or
 inventory completion yet. Paid archives/shared basis preserved; no pushes.
+
+### November5 approximately12:20 Pacific — execution campaign complete
+
+Completed the user's explicit exhaustive execution inventory and matched actual
+latency comparison, with38dispositions and all numerical/native evidence in
+`experiments/execution-campaign-20261105/` and canonical
+`runs/execution-campaign-20261105-01/`. The exact learned-small2048 export stays
+fixed. Retained runtime `runtime-combined-last02` combines tiled fixed-bound
+preparation, joint packed DP4A, conditional copies and safe dead-output crops.
+GPU forward1.428→1.183ms (-17.2%,95%15.5–18.8%); request171.90→176.21tok/s
+(+2.51%,1.37–3.50%). Q4 forward1.178ms is statistically unresolved versus W1;
+Q4 full request244.39tok/s stays incumbent. No claim that execution repaired
+model quality. All original/optimized acceptance/counters unchanged.
+
+Actual native cache/required-logit checks, independent integer/affine/edge gates,
+correctly consumed proposal-token tracing, all-output/embedding fallbacks and a
+standalone rebuild pass. Earlier sampler-return diagnostic error and replay
+metadata-assembly recovery are documented, with original evidence preserved.
+A4-specific four-plane reserve gets actual native/paired tests; its marginal
+possible gain remains unresolved, so joint DP4A stays retained. No new training,
+loss/grid/precision/topology change, sealed-data access, goal or push.
+
+All27owned supervisor groups absent and native servers reaped. GPU fresh idle
+1352MiB/0%. `release.json`, `live-ownership.json` and `retained-storage.json`
+provide exact identities, stop/recovery evidence and scoped retained paths.
+Cleanup removes only recoverable owned superseded binaries/duplicate scratch;
+WSL free+1,161,924,608bytes, native Windows free unchanged. Paid recovery/model
+archives and raw shared dictionary basis remain protected. Current isolated
+branch/worktree stays for parent review/integration; no live GPU task remains.
+This execution subtask is complete; the broader research goal is still open.

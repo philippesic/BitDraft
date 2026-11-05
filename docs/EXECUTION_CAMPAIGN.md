@@ -194,3 +194,57 @@ tracing is confined to diagnostic companions; all throughput uses plain requests
 After this panel: short final Nsight traces, standalone patch reconstruction,
 all-output/embedding fallback checks, artifact publication and owned release.
 No completion claim or deployment promotion yet.
+
+## Completed — November5, approximately12:20 Pacific
+
+The38-item execution inventory is dispositioned in
+[ledger](../experiments/execution-campaign-20261105/ledger.md) and
+[report](../experiments/execution-campaign-20261105/report.md). The retained exact
+runtime is `runs/execution-campaign-20261105-01/runtime-combined-last02`.
+The primary learned-small2048 model/export remains byte-pinned and unchanged.
+
+Final paired results: GPU forward1.428→1.183ms, reduction17.2% [95%15.5–18.8%].
+Actual full-request throughput171.90→176.21tok/s, +2.51% [1.37–3.50%].
+Q4 GPU forward1.178ms: candidate/Q41.004× [0.989–1.022], unresolved difference.
+Q4 request244.39tok/s remains incumbent; W1176.21is0.721× [0.701–0.738].
+Fair eligible-change Q4 was separately measured, with no resolved improvement.
+Acceptance/counters remain unchanged between each original/optimized model.
+
+All60final replay cells completed:540forwards,180measured warm graph regions,
+required mask logits/cache bytes exact across3changing contexts/3captureDEV
+sources/5alternating reps. Main request panel has700responses (600measured
+plain+diagnostic), all target-identical. Corrected actual selected-proposal
+tracing uses the token passed to common_sampler_accept, as consumed by DFlash;
+its deterministic natural12 panel matches each original/optimized stream and
+all five timing-repetition counters. Earlier ignored sampler-return traces are
+preserved as superseded diagnostics, not used as proposal proof. No target/
+verifier change or unbounded HF/native parity investigation.
+
+The last A4 four-plane reserve was actually implemented and independently
+qualified. Five alternating paired replay repetitions give planes/joint0.9938×
+[0.9772–1.0116], leaving its small possible extra gain unresolved. The simpler
+qualified joint DP4A runtime remains retained. Other reserve, fusion, storage,
+allocator/graph/cache/attention and scope dispositions are in the ledger.
+
+Standalone patch reconstruction actually passes all-output, anchor, embedding
+fallback and cache checks. Rebuild using `scripts/execution_campaign/reproduce.py
+NEW_UNIQUE_RUN_DIR`; the patch and exact base/source pins are tracked under
+`experiments/execution-campaign-20261105/runtime/`. No submodule gitlink or push.
+Final JSON/CSV, five PNG/SVG pairs, offline interactive HTML and theme-compatible
+inline HTML are in `runs/execution-campaign-20261105-01/charts-final/`.
+The inline chart previews without console errors. Earlier chart series remain
+preserved, including the original precision/held-out campaign.
+
+All27owned supervisor groups are absent; all server processes reaped. Fresh
+RTX5080 observation:1352MiB desktop baseline/0% utilization, no GPU processes.
+Pause flags unchanged. `release.json` records terminal identities/statuses.
+Owned failed/superseded binary caches and duplicate scratch were safely removed;
+all sources, raw numerical/native evidence, paid checkpoints/exports/archives,
+shared dictionary basis and useful qualified runtimes remain. WSL free measured
+6,150,549,504→7,312,474,112bytes (+1,161,924,608); native Windows C free
+11,549,904,896→11,549,904,896 (unchanged). No VHDX compaction/reclaim claim.
+`retained-storage.json` records exact paths/retention and before/after accounting.
+
+Current next: parent review and integration of this committed isolated branch.
+No live operational GPU job or automatic follow-up remains. Keep the unmerged
+worktree/branch until parent integration; the broader nine-model goal stays open.

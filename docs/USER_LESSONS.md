@@ -1302,3 +1302,23 @@ completion or protocol claims from a prior worker's script.
   execution; never infer a bottleneck merely from the DP4A instruction label.
 - Resolution: The agreed plan promotes redundant copies/known-bound preparation
   and compares DP4A reuse against MMA while preserving target dispatch.
+
+### 2026-11-05: Trace the value actually consumed by the proposal loop
+
+- Context: Execution optimization preserved native cache/logit checks and request
+  counters, but an auxiliary proposal trace reported different token sequences.
+- Confirmed agent contribution: The first hook recorded the return of
+  `common_sampler_sample`. Ordinary DFlash ignores that return, reads the sorted
+  candidate list and passes its chosen token to `common_sampler_accept` before
+  appending it to the proposal. Backend sampled returns differed after output
+  cropping even while consumed proposals remained identical. No user error is
+  established.
+- Repair/evidence: Corrected tracing records that consumed token argument. A
+  fresh deterministic natural12 diagnostic panel matches original/optimized
+  streams, and its counters match all five timing repetitions. Plain timings
+  were unaffected; superseded traces and source are retained under
+  `runs/execution-campaign-20261105-01/`.
+- Practical lesson: Follow the caller's actual data flow before selecting a trace
+  boundary; distinguish sampled/backend return values, submitted proposals and
+  request-budget-trimmed counters. Do not relax an exactness gate to explain away
+  a diagnostic mismatch.

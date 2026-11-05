@@ -581,3 +581,15 @@ November5 execution campaign: implementation active in the isolated
 under qualification. See `docs/EXECUTION_CAMPAIGN.md` and canonical
 `runs/execution-campaign-20261105-01/live-ownership.json` for current owner/jobs.
 This does not reopen training or complete the broader goal.
+
+November5 execution optimization campaign completed. See
+[final report](../experiments/execution-campaign-20261105/report.md) and
+[38-item ledger](../experiments/execution-campaign-20261105/ledger.md).
+Frozen learned-small2048 W1 GPU forward improves17.2% [15.5–18.8%]; request
+throughput improves2.51% [1.37–3.50%]. W1/Q4 draft-latency difference is unresolved;
+Q4 remains request-throughput incumbent244.39vs176.21tok/s. Exact native
+required-output/cache/proposal/counter gates pass. No training/precision/target
+change. Runtime, standalone reconstruction patch, five PNG/SVG pairs and
+interactive HTML are published; all owned GPU groups released, safe cache
+cleanup measured separately for WSL/Windows. Parent owns review/integration;
+no push. The existing nine-model research goal remains open.
