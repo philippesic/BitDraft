@@ -10,7 +10,7 @@ P=Path('/home/philip/binary-eagle-decoding');r=P/'runs/precision-campaign-202611
 def main():
  assert not json.load(open(Path.home()/'.config/binary-eagle-decoding/gpu-control.json'))['rtx5080']['pause_requested']
  env=dict(os.environ,PYTHONPATH=str(ROOT)+':'+str(ROOT/'src'),LD_LIBRARY_PATH=str(runtime/'bin'))
- with (r/'ops.jsonl').open('x') as out:subprocess.run([str(runtime/'op-check'),str(r/'ops-library-maps.txt')],env=env,stdout=out,check=True)
+ with (r/'ops.jsonl').open('w') as out:subprocess.run([str(runtime/'op-check'),str(r/'ops-library-maps.txt')],env=env,stdout=out,check=True)
  grad=[]
  for bits in (1,2,4,8):
   for mode in ('dynamic','fixed','learned'):
@@ -24,6 +24,9 @@ def main():
  del m,x,y;torch.cuda.empty_cache();(r/'gradients.json').write_text(json.dumps(grad,indent=2)+'\n')
  cfg=r/'qualification-config.json'
  def run(out,updates,extra):
+  if (r/out/'result.json').exists():
+   assert json.load(open(r/out/'result.json'))['progress']['updates']==updates
+   return
   subprocess.run([sys.executable,'-m','scripts.dflash_baseline.pipeline',str(cfg),'--out',str(r/out),'--updates',str(updates),'--max-windows','8','--device','cuda',*extra],env=env,check=True)
  run('qual-two',2,['--baseline-parent'])
  run('qual-resume',4,['--resume',str(r/'qual-two/checkpoint.pt')])
@@ -32,7 +35,7 @@ def main():
  assert a['progress']['cursor']==b['progress']['cursor']
  assert all(torch.equal(v,b['parameters'][k]) for k,v in a['parameters'].items()),'CUDA exact resume failed'
  del a,b
- export(r/'qual-four/checkpoint.pt',r/'qual-four/model.gguf')
+ if not (r/'qual-four/model.gguf').exists():export(r/'qual-four/checkpoint.pt',r/'qual-four/model.gguf')
  c=json.loads(cfg.read_text());c['parent']={'path':str(r/'qual-four/checkpoint.pt'),'sha256':sha(r/'qual-four/checkpoint.pt')};c['preset']='gate-up-a1';cfg=r/'qual-adapt-config.json';cfg.write_text(json.dumps(c,indent=2)+'\n')
  run('qual-adapt',2,['--adapt'])
  a=torch.load(r/'qual-adapt/checkpoint.pt',mmap=True,map_location='cpu',weights_only=False)

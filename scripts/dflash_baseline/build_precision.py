@@ -40,9 +40,14 @@ def prepare(r):
  cu=replace(cu,'(const float *) acts->data, k, codes, scales);','(const float *) acts->data, k, codes, scales, scales+n, ggml_get_op_params_i32(dst,0), ggml_get_op_params_i32(dst,1), ggml_get_op_params_f32(dst,2));')
  cu=replace(cu,'m, k, (k+31)/32, (float *) dst->data);','m, k, (k+31)/32, (float *) dst->data, dst->src[4] ? (const float *)dst->src[4]->data : nullptr, (const float *)(packed+layout.scale_offset+n));')
  add(Path('ggml/src/ggml-cuda/w1a1.cu'),cu)
+ # CPU implementation remains the original contract; fail closed in this runtime.
+ cpu=(S/'ggml/src/ggml-cpu/ggml-cpu.cpp').read_text()
+ cpu=replace(cpu,'case GGML_OP_W1AX_PACK:\n        case GGML_OP_W1A1_MUL_MAT:\n            return ggml_w1ax_is_supported(op);','case GGML_OP_W1AX_PACK:\n        case GGML_OP_W1A1_MUL_MAT:\n            return false; // affine precision campaign requires CUDA')
+ add(Path('ggml/src/ggml-cpu/ggml-cpu.cpp'),cpu)
  # Recompile backend admission against the changed header too.
  add(Path('ggml/src/ggml-cuda/ggml-cuda.cu'),(S/'ggml/src/ggml-cuda/ggml-cuda.cu').read_text())
  f=P/'runs/dflash-modern-native-20261104-03/dflash.cpp';cpp=f.read_text()
+ cpp=replace(cpp,'for(auto name : {\"markov_w1.weight\",\"selector_hidden.weight\",\"d2t\",\"token_embd.weight\",\"output.weight\"}) ok=ok && !ml->get_tensor_meta(name);','for(auto name : {\"markov_w1.weight\",\"selector_hidden.weight\",\"d2t\",\"token_embd.weight\"}) ok=ok && !ml->get_tensor_meta(name); if(version==1) ok=ok && !ml->get_tensor_meta(\"output.weight\");')
  cpp=replace(cpp,'bool ok=version==1 && bits==8','bool ok=(version==1 || version==2) && bits==8')
  cpp=replace(cpp,'(!binary || end==".w1ax_midpoint" || !declared.count','(!binary || (end==".w1ax_midpoint" && version!=2) || !declared.count')
  needle='''        packed.logical_k=k;
@@ -100,12 +105,13 @@ def build(r):
     target='src/CMakeFiles/llama.dir/Unity/unity_1_cxx.cxx.o';unity=B/'src/CMakeFiles/llama.dir/Unity/unity_1_cxx.cxx'
     content=unity.read_text().replace(str(S/name),str(r/name));src=r/'unity.cxx';src.write_text(content)
    else:
-    target=str(name.parent/'CMakeFiles'/('ggml-cuda.dir' if name.suffix=='.cu' else 'ggml-base.dir')/(name.name+'.o'));src=r/name
+    target=str(name.parent/'CMakeFiles'/('ggml-cuda.dir' if name.suffix=='.cu' else 'ggml-cpu.dir' if 'ggml-cpu' in str(name) else 'ggml-base.dir')/(name.name+'.o'));src=r/name
+   if 'ggml-cpu' in str(name):target='ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/ggml-cpu.cpp.o'
    obj=r/(name.name+'.o');cmd=command(target);cmd[cmd.index('-c')+1]=str(src);cmd[cmd.index('-o')+1]=str(obj)
    if '-MF' in cmd:cmd[cmd.index('-MF')+1]=str(obj)+'.d'
    cmd[1:1]=['-I'+str(r),'-I'+str((S/name).parent)]
    commands.append(cmd);subprocess.run(cmd,cwd=B,stdout=log,stderr=subprocess.STDOUT,check=True);objects[target]=str(obj)
-  for lib in ('libggml-base.so.0.28.0','libggml-cuda.so.0.28.0','libllama.so.0.8.0'):
+  for lib in ('libggml-base.so.0.28.0','libggml-cpu.so.0.28.0','libggml-cuda.so.0.28.0','libllama.so.0.8.0'):
    cmd=command('bin/'+lib)[2:-2];cmd=[objects.get(x,x) for x in cmd if not x.startswith('-Wl,--dependency-file=')];cmd[cmd.index('-o')+1]=str(r/'bin'/lib)
    commands.append(cmd);subprocess.run(cmd,cwd=B,stdout=log,stderr=subprocess.STDOUT,check=True)
  for src in (B/'bin').iterdir():

@@ -18,7 +18,7 @@ def digest(config):
     return hashlib.sha256(json.dumps(config,sort_keys=True,separators=(',',':')).encode()).hexdigest()
 
 def resolve(request):
-    allowed={'version','preset','source','parent','data','budget_seconds','evaluation','overrides','features','quantizer'}
+    allowed={'version','preset','source','parent','data','budget_seconds','evaluation','overrides','features','quantizer','components'}
     if set(request)-allowed: raise ValueError('unknown config fields')
     if request.get('version') != 1: raise ValueError('unsupported config version')
     for name in ('source','parent','data'):
@@ -27,6 +27,8 @@ def resolve(request):
             raise ValueError(f'{name} requires path and SHA256 pin')
     budget=request.get('budget_seconds')
     if type(budget) not in (int,float) or not math.isfinite(budget) or budget<=0: raise ValueError('explicit positive update-time budget required')
+    components=request.get('components',{})
+    if not isinstance(components,dict) or any(k not in ('fusion','attention_qk','attention_vo','head') or v not in ('Q8_0','Q4_0') for k,v in components.items()):raise ValueError('unsupported component format')
     gate,down,affine=PRESETS[request['preset']]
     features={'midpoint':affine,'gain':affine,'scale':True,'sign':True,'norm':True}
     for k,v in request.get('features',{}).items():

@@ -6,9 +6,8 @@ The user now authorizes running the agreed search through full measured charts,
 then evidence-led additional work if it finishes before the user returns. See
 [execution checkpoint](PRECISION_CAMPAIGN.md) for scope and actual baseline state.
 The original vanilla training completed 14,231 updates / 1,800 measured seconds;
-native evaluation remains pending. Earlier no-sweep/launch-only statements below
-are historical and superseded by this authorization/evidence. One delegated
-campaign worker will own the GPU lane after fresh pause/process checks.
+native evaluation on the original three consumed DEV prompts completed with exact target outputs; trained vanilla remains slower than Q4. Common-runtime broader evaluation is underway. Earlier no-sweep/launch-only statements below
+are historical and superseded by this authorization/evidence. One campaign worker owns the freshly checked GPU lane. Qualified affine/A1–A8 native pipeline and actual128-update pilot are complete; essential foundation and matched removal controls are training serially. See the execution checkpoint for ownership and receipts.
 
 ## Current direction: essential-feature foundation before precision selection
 

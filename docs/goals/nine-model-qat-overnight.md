@@ -6019,3 +6019,19 @@ first comparison finishes before their return (roughly 11am Pacific). See the
 [execution checkpoint](../PRECISION_CAMPAIGN.md) for scope, baseline reconciliation, deliverables
 and continuation. Necessary native pipeline work is included. Preserve existing
 references and use one GPU owner. This continues the current goal.
+
+
+## Precision campaign implementation checkpoint — November4,22:33Pacific
+
+Existing active goal continues; no nine-model restart. See
+[PRECISION_CAMPAIGN.md](../PRECISION_CAMPAIGN.md) for reconciled execution.
+Preserved vanilla training and narrow matched evaluation are complete. Real
+CUDA affine A1/A2/A4/A8 operations, full-model CLI update/resume/adaptation,
+GGUF export and native decoded-token correctness now qualify.128-update
+essential pilot is measured; foundation2048 and matched removal controls are
+active under local `precision-foundation-20261104-01` supervisor. Exact pins,
+birth identities and stop procedure are in its canonical runs ownership.json.
+Standard matched1024-update precision exposure and finite format/resource
+queue fixed before candidate selection. Extensive chart remains unfinished;
+continue foundation, anchors, native component screens, matched adaptation,
+finalist lock/confirmation and charts. No push.
