@@ -684,3 +684,41 @@ label is clip-heldout24, distinct from initial heldout24. Prior initial identiti
 groups and topics were excluded before whole-component selection; no replacement
 or truncation. Continue all40 new heldout cells, then raw audit/new charts. Initial
 publication remains byte-frozen; no more training is allocated.
+
+## Campaign handback complete — 2026-11-05T17:53:26.151138+00:00
+
+Initial plus bounded control publication is complete. clip-control-followup/
+completion.json pins16 final artifacts under charts-clip-control:258 panel/arm
+records, with67 formal confirmed rows and10,580 exact formal responses (9240
+measured after warmups). All30 raw panel audits pass. Initial16 artifact hashes
+are unchanged. Five combined PNGs inspected, repeated-panel table/bar labels
+clarified, controller compiles in V8; parent owns actual browser preview/display.
+No browser interaction claim. Reports: experiments/precision-campaign-20261104/
+report.md and clip-control-report.md; compact JSON summaries accompany them.
+
+Matched control: DEV fixed/learned request ratio .99993 [95% .98166–1.01978];
+new clip-heldout24 ratio1.03268 [1.01798–1.04842], acceptance difference+.02623
+[+.01449–+.04009]. Fixed167.514 versus learned162.213 request tok/s; Q4245.606,
+target172.792. Both W1 formats174.94MiB, sampled peak6027MiB/increment1394.
+Fixed bounds all1; learned native bounds.995856–1.009629. This is one matched
+1024-update history, not independent-training variance or a general bound-policy
+claim. No candidate beats Q4; retain the tradeoff frontier without deployment
+promotion. Different initial/new heldout cohorts remain separate.
+
+All owned recorded process identities and groups are absent; GPU observation
+RTX5080/driver617.42/1352MiB/0%. final-storage-process-inventory.json accounts for
+18 source-snapshot jobs,13 additional terminal helper jobs,1074 recorded process
+identities, retained checkpoints/native archives/basis/source and cleanup.
+29 checkpoint archive paths retain118,317,833,959 logical bytes (including
+Windows-backed aliases), with the frozen vanilla states separately protected.
+28 redundant completed reference containers removed; qual-four example retained.
+Final scratch removal42,529bytes; paid checkpoint/native/capture/source data are
+unchanged. Exact WSL/Windows before/after values are linked in the inventory and
+packed-reference-cache-cleanup.json; no host reclaim/VHDX compaction claim.
+
+No live GPU/trainer/endpoint owner remains. No additional allocation or push.
+Parent should review/integrate the coherent tested branch and display the
+standalone HTML. Keep the current worktree/branch until integration; broader
+active goal remains open for future user direction. Do not restart experiments
+from historical launch metadata. This handback contains actual charts/results,
+not a scaffold, CPU-only endpoint or job launch.

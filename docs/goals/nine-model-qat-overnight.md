@@ -1,12 +1,15 @@
 # Nine-model RTX5080 overnight QAT
 
-**Latest checkpoint — November5:** full initial modern4B/Q4 precision comparison
-is published (240 measured points;8,980 exact formal responses). Q4 retains the
-throughput lead. One conditionally authorized fixed/learned clipping control is
-locked for1024 matched updates and fresh disjoint native confirmation. Consult
-[PRECISION_CAMPAIGN](../PRECISION_CAMPAIGN.md) for live ownership and artifacts.
-The broader goal remains active; no new goal or nine-model restart.
-
+**Latest checkpoint — November 5:** the modern 4B/Q4 precision campaign and
+bounded clipping control are complete: 258 measured records, 10,580 exact formal
+responses, full native comparison charts and reports. Q4 retains the throughput
+lead. Fixed versus learned clipping is measured under matched 1,024-update
+history on a fresh disjoint cohort. All owned jobs/groups are released, GPU idle,
+paid checkpoints and initial artifact hashes preserved. Parent review/integration
+and chart display are next; no further training is allocated. See
+[PRECISION_CAMPAIGN](../PRECISION_CAMPAIGN.md) for evidence and cleanup. The
+broader goal stays active; no new goal, cross-target qualification or nine-model
+restart was performed.
 
 **Current state — November 1:** continue the user-authorized local RTX 5080
 CUDA-correctness and training-to-serving investigation. The session is already
@@ -6071,3 +6074,5 @@ Repeated DEV now complete:530cells/7420responses;2 live-log rows reconciled from
 Native16-slot36case and12DEV native-tokenizer qualification pass. Four2048 model pins/context locked before fresh24singleton inputs (8/domain). Sole GPUowner precision-heldout-20261105-03 runs6arms×5alternating paired cells with2same-process warmups. Preserve healthyjob; no concurrent tests/builds. See latest PRECISION_CAMPAIGN for exact source/receipts/recovery and remaining audit/chart steps. Initialchart not yet complete.
 
 Focused followup: fixed compact G4 bound control completed1024 matched updates and full92-state Adam/CUDA-RNG/native-export recovery. Repeated4-arm DEV complete; new source-disjoint24-case heldout active under precision-clip-control-20261105-02. Initial240-point publication stays frozen. Finish raw followup audit/new charts and process/storage handback; no more training window allocated.
+
+Final campaign handback: initial and bounded-followup charts published, raw/matching/state/export audits pass, owned GPU processes released, storage inventory complete. See latest PRECISION_CAMPAIGN/report links; no additional training or push. Broader goal remains active for user direction.

@@ -1,0 +1,283 @@
+{
+  "status": "FULL_INITIAL_AND_CLIP_CONTROL_COMPARISON_COMPLETE",
+  "publication": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/clip-control-followup/completion.json",
+  "combined_artifacts": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/charts-clip-control",
+  "initial_publication": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/campaign-completion.json",
+  "records": 258,
+  "formal_responses": 10580,
+  "incumbent": "DFlash Q4_K_M",
+  "paired_effects": {
+    "dev12": {
+      "request_fixed_over_learned": 0.999932432873717,
+      "request_ratio95": [
+        0.9816602978859983,
+        1.0197806981005686
+      ],
+      "decode_fixed_over_learned": 1.0016343992585848,
+      "decode_ratio95": [
+        0.98094522547969,
+        1.0241766992368586
+      ],
+      "acceptance_fixed_minus_learned": -0.0016501106460519166,
+      "acceptance_difference95": [
+        -0.01897258678760854,
+        0.017254917922000877
+      ],
+      "seed": 811,
+      "resamples": 2000,
+      "method": "Paired two-way resampling of whole prompt components and repetitions; prompts sampled once across selected repetitions. No independent-training variance."
+    },
+    "heldout-panel": {
+      "request_fixed_over_learned": 1.032675970393519,
+      "request_ratio95": [
+        1.017981028735977,
+        1.0484196123712803
+      ],
+      "decode_fixed_over_learned": 1.0356603650373113,
+      "decode_ratio95": [
+        1.019456212348797,
+        1.0539066934955474
+      ],
+      "acceptance_fixed_minus_learned": 0.026230049076338635,
+      "acceptance_difference95": [
+        0.014486883110040979,
+        0.04009079688443511
+      ],
+      "seed": 811,
+      "resamples": 2000,
+      "method": "Paired two-way resampling of whole prompt components and repetitions; prompts sampled once across selected repetitions. No independent-training variance."
+    }
+  },
+  "range_bounds": {
+    "fixed": {
+      "min_bound": 1.0,
+      "max_bound": 1.0
+    },
+    "learned": {
+      "min_bound": 0.9958560466766357,
+      "max_bound": 1.0096293687820435
+    }
+  },
+  "matched_history": {
+    "updates": 1024,
+    "supervised_positions": 15360,
+    "cursor": 17303,
+    "actual_examples_identical": true,
+    "additional_update_seconds": 146.60561363204033,
+    "additional_physical_updates": 1024
+  },
+  "heldout": [
+    {
+      "id": "clip-control-followup/heldout-panel::target",
+      "arm": "target",
+      "cohort": "clip-heldout24",
+      "family": "external",
+      "quantizer_mode": "native baseline",
+      "accepted": 0,
+      "proposed": 0,
+      "acceptance": null,
+      "prefix_survival": [],
+      "emitted_per_round": null,
+      "request_tps": 172.7923599983766,
+      "decode_tps": 188.3621792422703,
+      "request_vs_q4": 0.7035359142852254,
+      "request_vs_q4_bootstrap95": [
+        0.6655648958781752,
+        0.7476456033184138
+      ],
+      "full_draft_ms": null,
+      "model_bytes": 0,
+      "combined_deployment_bytes": 2834975040,
+      "total_peak_device_MiB": 4633,
+      "incremental_peak_device_MiB_vs_target": 0
+    },
+    {
+      "id": "clip-control-followup/heldout-panel::q4",
+      "arm": "q4",
+      "cohort": "clip-heldout24",
+      "family": "external",
+      "quantizer_mode": "native baseline",
+      "accepted": 16245,
+      "proposed": 21205,
+      "acceptance": 0.7660929026173072,
+      "prefix_survival": [
+        0.8412623645784267,
+        0.689119170984456
+      ],
+      "emitted_per_round": 2.544983513895431,
+      "request_tps": 245.60559950081475,
+      "decode_tps": 288.6807492790862,
+      "request_vs_q4": 1.0,
+      "request_vs_q4_bootstrap95": [
+        1.0,
+        1.0
+      ],
+      "full_draft_ms": 2.152216441262364,
+      "model_bytes": 381456064,
+      "combined_deployment_bytes": 3216431104,
+      "total_peak_device_MiB": 6205,
+      "incremental_peak_device_MiB_vs_target": 1572
+    },
+    {
+      "id": "clip-control-followup/heldout-panel::G4D8-learned-small-1024",
+      "arm": "G4D8-learned-small-1024",
+      "cohort": "clip-heldout24",
+      "family": "G4/D8",
+      "quantizer_mode": "learned",
+      "accepted": 10090,
+      "proposed": 33500,
+      "acceptance": 0.3011940298507463,
+      "prefix_survival": [
+        0.426654740608229,
+        0.1750149075730471
+      ],
+      "emitted_per_round": 1.610912343470483,
+      "request_tps": 162.21334893556514,
+      "decode_tps": 180.0440327122846,
+      "request_vs_q4": 0.6604627470434649,
+      "request_vs_q4_bootstrap95": [
+        0.6420106094579667,
+        0.6792260410617481
+      ],
+      "full_draft_ms": 2.4175964463327375,
+      "model_bytes": 183441120,
+      "combined_deployment_bytes": 3018416160,
+      "total_peak_device_MiB": 6027,
+      "incremental_peak_device_MiB_vs_target": 1394
+    },
+    {
+      "id": "clip-control-followup/heldout-panel::G4D8-fixed-small-1024",
+      "arm": "G4D8-fixed-small-1024",
+      "cohort": "clip-heldout24",
+      "family": "G4/D8",
+      "quantizer_mode": "fixed",
+      "accepted": 10620,
+      "proposed": 32435,
+      "acceptance": 0.3274240789270849,
+      "prefix_survival": [
+        0.4468740375731444,
+        0.2072682476131814
+      ],
+      "emitted_per_round": 1.6639975361872497,
+      "request_tps": 167.51382752281725,
+      "decode_tps": 186.4644686415943,
+      "request_vs_q4": 0.6820440082118794,
+      "request_vs_q4_bootstrap95": [
+        0.6613166851141135,
+        0.7044566155276806
+      ],
+      "full_draft_ms": 2.401489374376347,
+      "model_bytes": 183441120,
+      "combined_deployment_bytes": 3018416160,
+      "total_peak_device_MiB": 6027,
+      "incremental_peak_device_MiB_vs_target": 1394
+    }
+  ],
+  "dev": [
+    {
+      "id": "clip-control-followup/dev12::target",
+      "arm": "target",
+      "cohort": "natural12",
+      "family": "external",
+      "quantizer_mode": "native baseline",
+      "accepted": 0,
+      "proposed": 0,
+      "acceptance": null,
+      "prefix_survival": [],
+      "emitted_per_round": null,
+      "request_tps": 174.51903678219918,
+      "decode_tps": 188.98588602124752,
+      "request_vs_q4": 0.7080389192998083,
+      "request_vs_q4_bootstrap95": [
+        0.6638138908834799,
+        0.7530457489785097
+      ],
+      "full_draft_ms": null,
+      "model_bytes": 0,
+      "combined_deployment_bytes": 2834975040,
+      "total_peak_device_MiB": 4631,
+      "incremental_peak_device_MiB_vs_target": 0
+    },
+    {
+      "id": "clip-control-followup/dev12::q4",
+      "arm": "q4",
+      "cohort": "natural12",
+      "family": "external",
+      "quantizer_mode": "native baseline",
+      "accepted": 8155,
+      "proposed": 10915,
+      "acceptance": 0.7471369674759505,
+      "prefix_survival": [
+        0.8270814272644099,
+        0.6651418115279049
+      ],
+      "emitted_per_round": 2.5086916742909424,
+      "request_tps": 246.48226534606883,
+      "decode_tps": 283.8092064353023,
+      "request_vs_q4": 1.0,
+      "request_vs_q4_bootstrap95": [
+        1.0,
+        1.0
+      ],
+      "full_draft_ms": 2.1516475052150046,
+      "model_bytes": 381456064,
+      "combined_deployment_bytes": 3216431104,
+      "total_peak_device_MiB": 6199,
+      "incremental_peak_device_MiB_vs_target": 1568
+    },
+    {
+      "id": "clip-control-followup/dev12::G4D8-learned-small-1024",
+      "arm": "G4D8-learned-small-1024",
+      "cohort": "natural12",
+      "family": "G4/D8",
+      "quantizer_mode": "learned",
+      "accepted": 5260,
+      "proposed": 16690,
+      "acceptance": 0.3151587777112043,
+      "prefix_survival": [
+        0.4530221424296828,
+        0.1765409934171155
+      ],
+      "emitted_per_round": 1.6409335727109515,
+      "request_tps": 166.7987756989722,
+      "decode_tps": 183.2761269409757,
+      "request_vs_q4": 0.6767171482491103,
+      "request_vs_q4_bootstrap95": [
+        0.6490417125259615,
+        0.7018285104401863
+      ],
+      "full_draft_ms": 2.4251038597247163,
+      "model_bytes": 183441120,
+      "combined_deployment_bytes": 3018416160,
+      "total_peak_device_MiB": 6023,
+      "incremental_peak_device_MiB_vs_target": 1392
+    },
+    {
+      "id": "clip-control-followup/dev12::G4D8-fixed-small-1024",
+      "arm": "G4D8-fixed-small-1024",
+      "cohort": "natural12",
+      "family": "G4/D8",
+      "quantizer_mode": "fixed",
+      "accepted": 5245,
+      "proposed": 16730,
+      "acceptance": 0.3135086670651524,
+      "prefix_survival": [
+        0.4483582089552239,
+        0.17791044776119402
+      ],
+      "emitted_per_round": 1.6370149253731343,
+      "request_tps": 166.78750558503071,
+      "decode_tps": 183.57567330696432,
+      "request_vs_q4": 0.6766714244160967,
+      "request_vs_q4_bootstrap95": [
+        0.653809420842674,
+        0.6997805429486479
+      ],
+      "full_draft_ms": 2.422632305791044,
+      "model_bytes": 183441120,
+      "combined_deployment_bytes": 3018416160,
+      "total_peak_device_MiB": 6023,
+      "incremental_peak_device_MiB_vs_target": 1392
+    }
+  ]
+}

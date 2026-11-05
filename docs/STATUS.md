@@ -1,27 +1,32 @@
 # Current project status
 
-## Modern precision comparison complete; focused control follows
+## Precision comparison complete; GPU released
 
-The full initial Qwen3.5-4B Q4_K_M / RTX5080 comparison is published:
-[report](../experiments/precision-campaign-20261104/report.md),
-[summary](../experiments/precision-campaign-20261104/summary.json), and
-[execution checkpoint](PRECISION_CAMPAIGN.md). The frozen artifact directory is
-`runs/precision-campaign-20261104-01/charts-initial`:240 measured panel/arm points,
-including53 DEV and6 fresh-heldout formal arms. All8,980 formal responses match
-target-only and paired native counters pass. Q4 retains the throughput lead;
-compact learned G4/D8 reaches163.1 request tok/s versus Q4's242.0 on heldout,
-with174.94 versus363.78 MiB drafter bytes. No W1 deployment promotion.
+The modern Qwen3.5-4B Q4_K_M / RTX5080 campaign and one bounded clipping control
+are complete: 258 measured panel/arm records, 67 formal confirmed rows, and
+10,580 formal target-identical responses. Reports and artifacts:
+[main report](../experiments/precision-campaign-20261104/report.md),
+[matched clipping control](../experiments/precision-campaign-20261104/clip-control-report.md),
+[execution checkpoint](PRECISION_CAMPAIGN.md). Combined charts are under
+`runs/precision-campaign-20261104-01/charts-clip-control`; the original 240-point
+`charts-initial` package retains every original hash.
 
-The original vanilla14,231-update/1800.021702-second reference and all fixed
-checkpoints are unchanged. Additional work is authorized because the full initial
-chart finished before the user's return. One fixed-versus-learned clipping
-control completed1,024 matched updates from the common foundation and passed
-full streamed optimizer/RNG/native-export recovery. Repeated DEV is complete;
-a new disjoint24-case heldout is active under precision-clip-control-20261105-02. No new architecture/loss/target.
-See PRECISION_CAMPAIGN for exact current ownership and resource qualification.
-The broader nine-model goal remains active; this is not a nine-model restart.
-Historical preparation-only and no-sweep limits below are superseded for this
-campaign by the latest explicit authorization.
+DFlash Q4_K_M remains the throughput incumbent. Initial heldout: Q4 242.0 request
+tok/s versus compact learned G4/D8 163.1, with 363.78 versus 174.94 MiB drafter
+bytes. The later matched 1,024-update control on a separate fresh cohort gives
+fixed clipping 167.51 versus learned 162.21 tok/s (paired ratio 1.0327,
+95% 1.0180–1.0484); Q4 still reaches 245.61. DEV is tied within uncertainty.
+No W1 deployment promotion, no inference-only or cross-cohort attribution.
+
+Original vanilla 14,231 updates / 1,800.021702 seconds and all fixed references
+remain unchanged. All paid recovery states and native exports are retained;
+owned jobs/process groups are released and the GPU is idle. Storage/process
+proof: `runs/precision-campaign-20261104-01/final-storage-process-inventory.json`.
+No pushes or parent integration performed. No further training is allocated.
+Parent review/integration/display is next. The broader nine-model goal remains
+active; no 9B/NVFP4 qualification or nine-model restart was performed. Historical
+preparation-only/no-sweep limits below were superseded for this campaign by the
+latest explicit authorization.
 
 ## Stage protocol and historical authorization
 

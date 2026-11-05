@@ -1,5 +1,12 @@
 # DFlash precision frontier on RTX 5080
 
+The initial campaign and one bounded clipping-control follow-up are complete:
+**258 measured panel/arm records**, with separate held-out cohorts. Open the
+[combined interactive chart](/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/charts-clip-control/comparison.html),
+[combined table](/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/charts-clip-control/full-table.md), or
+[matched clipping-control report](clip-control-report.md). The original initial
+240-point artifact package remains frozen; its results are summarized below.
+
 The initial comparison is complete. DFlash Q4_K_M retains the throughput
 incumbent: **242.0 full-request tok/s** on fresh held-out inputs. The fastest
 W1 recipe, compact G4/D8 with learned ranges and Q4_0 fusion/attention weights,

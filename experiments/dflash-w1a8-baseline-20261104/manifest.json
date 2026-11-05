@@ -1585,7 +1585,7 @@
   "precision_campaign": {
     "checkpoint": "docs/PRECISION_CAMPAIGN.md",
     "artifacts": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01",
-    "status": "FULL_INITIAL_COMPARISON_COMPLETE",
+    "status": "FULL_INITIAL_AND_CLIP_CONTROL_COMPARISON_COMPLETE",
     "runtime": "/home/philip/binary-eagle-decoding/runs/precision-native-20261104-04",
     "frozen_vanilla_reference_unchanged": true,
     "final_confirmation_pending": false,
@@ -1597,18 +1597,25 @@
     "report": "experiments/precision-campaign-20261104/report.md",
     "heldout_confirmation_arms": 6,
     "measured_panel_arm_points": 240,
-    "formal_responses": 8980,
+    "formal_responses": 10580,
     "all_formal_target_signatures_exact": true,
     "working_incumbent_policy": "No W1 deployment promotion over matched modern DFlash Q4_K_M; retained frontier remains separate from fixed vanilla references.",
     "followup_plan": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/clip-control-followup/plan.json",
     "followup": {
-      "status": "NEW_HELDOUT_ACTIVE",
-      "owner_run": "precision-clip-control-20261105-02",
+      "status": "COMPLETE",
+      "owner_run": null,
       "plan": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/clip-control-followup/plan.json",
       "physical_updates": 1024,
       "training_complete": true,
       "full_checkpoint_native_roundtrip_pass": true,
-      "initial_results_frozen": true
-    }
+      "initial_results_frozen": true,
+      "publication": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/clip-control-followup/completion.json",
+      "report": "experiments/precision-campaign-20261104/clip-control-report.md"
+    },
+    "combined_publication": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/clip-control-followup/completion.json",
+    "combined_charts": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/charts-clip-control",
+    "combined_points": 258,
+    "gpu_released": true,
+    "storage_process_inventory": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/final-storage-process-inventory.json"
   }
 }
