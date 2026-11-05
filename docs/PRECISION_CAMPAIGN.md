@@ -187,3 +187,48 @@ Checkpoint byte-shuffling plus Zstandard improved a real5.10GB qualification
 checkpoint to4.00GB, with exact raw SHA256 reconstruction and successful load.
 This retains full optimizer/RNG recovery while limiting the large tranche.
 Both old standard.zst and new.bsz archive formats remain supported.
+
+## Frozen tranche and heldout preparation code — November4,22:55Pacific
+
+Source checkpoint a8f8a655 freezes `prepare_precision.py` and `run_tranche.py`.
+`runs/precision-campaign-20261104-01/tranche.json` locks28 zero-shot native
+configurations before screening:16 G/D ladder points,4 non-down candidate
+mutations,8 fixed protected-format probes. Twelve receive matched adaptation:
+four anchors; G8/D4 and G8/D8+attention V/output Q4_0; G4/D4 and G4/D8+learned
+bound; G2/D2 and G2/D8+fusion Q4_0; G1/D1 and G1/D8+private Q4_0 head. All
+start directly from the same frozen essential foundation for1024 updates.
+This uses at most two component/quantizer mutations per family and reserves
+interactions/recovery for evidence-led allocation. Unsupported embedding/binary
+activation-kernel claims remain blocked, not measured as zero.
+
+Actual source inventory reveals the target head is tied to its Q6_K embedding
+(no separate output.weight), despite the aggregate target Q4_K_M label. Private
+head exports therefore derive from that actual tied Q6_K tensor; target/head
+sharing remains unchanged for all ordinary arms. A private head adds its full
+Q4_0/Q8_0 bytes and changes only the drafter's output projection. First CPU zero
+export attempt stopped at the previously assumed output tensor; fallback to
+actual tied embedding fixed, and supervised CPU export resumed existing useful
+outputs. No GPU training was interrupted.
+
+Foundation, vanilla-matched and no-midpoint2048-update allocations completed;
+no-gain is finishing, followed by natural12 DEV evaluation. Active GPU owner
+remains `precision-foundation-20261104-01`. Parallel CPU-only export is owned
+by local supervisor `precision-zero-export-20261104-01` with birth/source/stop
+receipt. No second GPU job. Zero GPU panel starts only after release and final
+operation requalification under the common runtime.
+
+Fresh heldout preparation code is implemented but NOT executed. It requires a
+validated locked finalist shortlist, keeps historical512 TRAIN/current60/old
+DEV/pilot/matrix/sealed opaque exclusions, adds192-group TRAIN exposure and all
+previous natural consumption, then selects24 new singleton natural source
+clusters (8/domain). It consumes those inputs before requests and never opens
+old sealed prompt payloads. No heldout inputs have been generated or inspected
+for this campaign. Candidate selection still uses consumed DEV only.
+
+Storage projected for12 full recoverable adapted states plus final/intermediate
+exports. After zero screening, unselected zero-update GGUFs are eligible as
+reproducible cache (common parent/config/export ancestry and native evidence
+retained); retain four anchor zero files and every trained recovery state.
+Preserve raw metadata compatibility information and verify a byte-identical
+re-export before dropping any such cache. Do not remove training states to make
+room. Windows/WSL free-space readings remain separate.

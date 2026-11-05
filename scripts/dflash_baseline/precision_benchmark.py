@@ -32,10 +32,10 @@ def stats(text):
  return dict(zip(('begin_calls','rounds','accept_calls','drafts','accepted_rounds','proposed','accepted','begin_ms','draft_ms','accept_ms'),values))
 def delta(now,previous):return {k:v-(previous or {}).get(k,0) for k,v in now.items()}
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('--arms',type=Path,required=True);ap.add_argument('--runtime',type=Path,required=True);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--cohort',choices=['capture3','natural12','natural24'],default='capture3');ap.add_argument('--reps',type=int,default=1);ap.add_argument('--warmups',type=int,default=0);ap.add_argument('--trace',action='store_true');ap.add_argument('--paired-trace',action='store_true');a=ap.parse_args()
- arms=json.load(open(a.arms));prompts=cohort(a.cohort);a.out.mkdir(exist_ok=False);save(a.out/'prompts.json',prompts)
+ ap=argparse.ArgumentParser();ap.add_argument('--arms',type=Path,required=True);ap.add_argument('--runtime',type=Path,required=True);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--cohort',choices=['capture3','natural12','natural24'],default='capture3');ap.add_argument('--reps',type=int,default=1);ap.add_argument('--warmups',type=int,default=0);ap.add_argument('--prompts',type=Path);ap.add_argument('--trace',action='store_true');ap.add_argument('--paired-trace',action='store_true');a=ap.parse_args()
+ arms=json.load(open(a.arms));prompts=json.load(open(a.prompts)) if a.prompts else cohort(a.cohort);a.out.mkdir(exist_ok=False);save(a.out/'prompts.json',prompts)
  if next(iter(arms))!='target':raise ValueError('target must be first for correctness')
- save(a.out/'freeze.json',dict(arms={k:pin(v) if v else None for k,v in arms.items()},source=pin(__file__),runtime={n:pin(a.runtime/'bin'/n) for n in ('libllama.so.0.8.0','libggml-base.so.0.28.0','libggml-cuda.so.0.28.0')},cohort=a.cohort,precision='Qwen3.5-4B Q4_K_M target;F16 KV;depth2;greedy;5080',sampling='target sample and match;temperature0',memory='nvidia-smi sampled device used MiB;includes display/unrelated baseline;not exact allocator peak'))
+ save(a.out/'freeze.json',dict(arms={k:pin(v) if v else None for k,v in arms.items()},source=pin(__file__),runtime={n:pin(a.runtime/'bin'/n) for n in ('libllama.so.0.8.0','libggml-base.so.0.28.0','libggml-cuda.so.0.28.0')},cohort='heldout24' if a.prompts else a.cohort,prompt_source=pin(a.prompts) if a.prompts else None,precision='Qwen3.5-4B Q4_K_M target;F16 KV;depth2;greedy;5080',sampling='target sample and match;temperature0',memory='nvidia-smi sampled device used MiB;includes display/unrelated baseline;not exact allocator peak'))
  stop=False
  def stopping(*_):
   nonlocal stop;stop=True

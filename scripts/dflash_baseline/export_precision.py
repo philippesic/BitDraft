@@ -13,7 +13,7 @@ from gguf import GGUFReader,GGUFWriter,GGMLQuantizationType as Type
 from export_recurrent_binary import pack,raw_hash,same_tensor
 from gguf.quants import dequantize
 
-def export(checkpoint,destination,config=None,state=None,checkpoint_pin=None):
+def export(checkpoint,destination,config=None,state=None,checkpoint_pin=None,include_private_head_metadata=True):
  destination=Path(destination)
  if destination.exists():raise FileExistsError(destination)
  saved=state if state is not None else load_checkpoint(checkpoint)
@@ -38,7 +38,8 @@ def export(checkpoint,destination,config=None,state=None,checkpoint_pin=None):
   if not key.startswith('GGUF.') and key!='general.architecture':writer.add_key_value(key,f.contents(),f.types[0],f.types[-1] if len(f.types)>1 else None)
  writer.add_uint32('dflash.w1ax.version',2);writer.add_uint32('dflash.w1ax.activation_bits',8)
  for key,value in {'profile':'ffn18','bit_order':'little','sign_rule':'nonnegative_is_one','scale_rule':'f32_learned_nonnegative','arithmetic':'affine_same_quantized_stream_v1','a1':'signed_pm_bound_threshold0_nonnegative_positive_zero_row_scale0','execution':'packed_signs_int8_codes_dp4a','config_hash':saved['config_hash']}.items():writer.add_string('dflash.w1ax.'+key,value)
- writer.add_bool('dflash.w1ax.private_head','head' in c.get('components',{}));writer.add_array('dflash.w1ax.tensors',sorted(selected));audit={}
+ if include_private_head_metadata:writer.add_bool('dflash.w1ax.private_head','head' in c.get('components',{}))
+ writer.add_array('dflash.w1ax.tensors',sorted(selected));audit={}
  def tensor(name,v,type=Type.F32):
   v=np.asarray(v)
   if not np.isfinite(v).all():raise ValueError('nonfinite export '+name)
@@ -69,7 +70,7 @@ def export(checkpoint,destination,config=None,state=None,checkpoint_pin=None):
   if t.name not in selected and t.name not in norms and tensor_component(t.name) not in c.get('components',{}):assert same_tensor(t,observed[t.name]),t.name
  for name,h in audit.items():assert raw_hash(observed[name].data)==h,name
  tmp.rename(destination)
- result=dict(path=str(destination),sha256=sha(destination),bytes=destination.stat().st_size,checkpoint=checkpoint_pin or dict(path=str(checkpoint),sha256=sha(checkpoint)),reconfiguration_parent_progress=parent_progress,config=c,progress=saved['progress'],lineage=saved['lineage'],protected_unchanged=not bool(c.get('components')),protected_exceptions=c.get('components',{}),private_head='head' in c.get('components',{}),tensor_hashes=audit)
+ result=dict(path=str(destination),sha256=sha(destination),bytes=destination.stat().st_size,checkpoint=checkpoint_pin or dict(path=str(checkpoint),sha256=sha(checkpoint)),reconfiguration_parent_progress=parent_progress,writer_private_head_metadata=include_private_head_metadata,config=c,progress=saved['progress'],lineage=saved['lineage'],protected_unchanged=not bool(c.get('components')),protected_exceptions=c.get('components',{}),private_head='head' in c.get('components',{}),tensor_hashes=audit)
  destination.with_suffix('.json').write_text(json.dumps(result,indent=2)+'\n');return result
 if __name__=='__main__':
  ap=argparse.ArgumentParser();ap.add_argument('checkpoint',type=Path);ap.add_argument('destination',type=Path);a=ap.parse_args();r=export(a.checkpoint,a.destination);print(json.dumps({k:r[k] for k in ('path','sha256','bytes','progress')}))
