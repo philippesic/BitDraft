@@ -1322,3 +1322,22 @@ completion or protocol claims from a prior worker's script.
   boundary; distinguish sampled/backend return values, submitted proposals and
   request-budget-trimmed counters. Do not relax an exactness gate to explain away
   a diagnostic mismatch.
+
+
+### 2026-11-05: Historical binary latency gain included head precision
+
+- Context: User asked why historical DSpark W1A8 beat same-family Q4 draft latency
+  while modern DFlash W1A4 only ties its Q4 comparator, explicitly asking about
+  output-head quantization. Root had compared those headline gaps without naming
+  the head-format difference.
+- Evidence: Actual retained GGUF metadata shows historical W1 output Q4_K versus
+  DSpark-Q4 output Q6_K,218787840 versus319065600bytes. Current DFlash arms share
+  the same target Q6_K head. See experiments/execution-campaign-20261105/
+  historical-latency-context.md for exact matrix shapes and interpretation.
+- Status: Confirmed agent omission; user's hypothesis identifies a real confound.
+  Head's contribution to the old10.5% total draft-time reduction is not separately
+  measured. No claim that head quantization explains all of it.
+- Lesson: Report complete per-component precision maps when attributing binary
+  speedups. Whole-artifact wins do not isolate FFN arithmetic. Distinguish the
+  earlier Q4_0 modern head screen from historical Q4_K and a prospective optimized
+  G4 head-only comparison; extra private storage is distinct from compute cost.
