@@ -1,5 +1,15 @@
 # Current project status
 
+## Active: remaining component precision and recovery
+
+User now authorizes executing the remaining head/embedding/drafter-KV/scalar
+plan with matched recovery, combinations and charts. See
+[COMPONENT_CAMPAIGN.md](COMPONENT_CAMPAIGN.md) for scope, resource observations
+and operational ownership. Head Q6_K/private Q6_K/private Q4_K is first;
+qualified initial primary arms get cumulative0/256/1024/4096update readouts.
+One delegated worker will verify and own the GPU lane. Earlier planning-only
+statements are superseded; preserve the frozen optimized G4/D8 and references.
+
 ## Execution optimization complete; integrated locally
 
 Next planned precision work: [REMAINING_PRECISION.md](REMAINING_PRECISION.md).

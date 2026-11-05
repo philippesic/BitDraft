@@ -6173,3 +6173,13 @@ Head Q4_K is first; optimized learned G4/D8 stays the frozen reference. Native
 private embedding, cache-training simulation and lower scalar load paths still
 need qualification. No implementation, GPU experiment or training launch from
 this planning update; the broader goal remains active.
+
+
+## Remaining component campaign authorized — November 5, 2026
+
+User says “ok go do it” after reviewing the remaining component plan and the
+approximate4,000-update wall-time estimate. Execute head/private-copy controls,
+embedding/tying, drafterKV and scalar storage with matched recovery, retained
+slow starters and combined confirmation. Start0/256/1024/4096readouts for initial
+primary arms, with pilot/resource budgeting. See [campaign checkpoint](../COMPONENT_CAMPAIGN.md).
+One delegated GPU owner, frozen target/verifier and current goal; no pushes.

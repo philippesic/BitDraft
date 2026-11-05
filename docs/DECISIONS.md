@@ -1640,3 +1640,13 @@ compensation versus targeted head/embedding QAT. Test combinations and confirm
 locked finalists from a common parent. Missing native/QAT support is blocked,
 not poor quality. This narrows the earlier KV deferral and preserves target KV,
 verifier and model topology. Planning only; no GPU/training allocation launched.
+
+
+## Remaining component campaign authorized — November 5, 2026
+
+User says “ok go do it” after reviewing the remaining component plan and the
+approximate4,000-update wall-time estimate. Execute head/private-copy controls,
+embedding/tying, drafterKV and scalar storage with matched recovery, retained
+slow starters and combined confirmation. Start0/256/1024/4096readouts for initial
+primary arms, with pilot/resource budgeting. See [campaign checkpoint](COMPONENT_CAMPAIGN.md).
+One delegated GPU owner, frozen target/verifier and current goal; no pushes.
