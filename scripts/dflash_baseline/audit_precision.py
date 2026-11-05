@@ -13,6 +13,7 @@ def audit_panel(path):
  for row in sorted(rows,key=lambda x:(x['rep'],x['arm']!='target',x['arm'],x.get('instrumented',False),x['prompt'])):
   traced=row.get('instrumented',False);cell=path/(f"{row['rep']:02d}-{row['arm']}"+('-traced' if traced else ''));response_path=cell/(row['prompt']+'-response.json');request_path=cell/(row['prompt']+'-request.json');response=read(response_path);request=read(request_path);release=read(cell/'release.json')
   require(release['reaped'],'unreleased server');require(0<len(response['tokens'])<=request['n_predict'],'output limit/token count');require(request['cache_prompt'] is False and request['temperature']==0 and request['seed']==1234,'sampling changed')
+  require(response['timings'].get('cache_n')==0,'native prompt cache reused despite frozen no-cache request policy')
   if row['arm']=='target':refs.setdefault(row['prompt'],signature(response))
   require(row['prompt'] in refs and signature(response)==refs[row['prompt']],'native signature mismatch '+str(response_path));require(row['tokens']==len(response['tokens']) and row['correct'],'row token count/correctness differs')
   metrics=row.get('native',{})

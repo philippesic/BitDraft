@@ -5,6 +5,7 @@ from pathlib import Path
 P=Path('/home/philip/binary-eagle-decoding');ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT))
 from scripts.dflash_baseline.native_archive import reference as archived_reference,hydrate,release
+from scripts.dflash_baseline.native_counters import STAT,delta,reconcile
 def pin(path):
  p=Path(path)
  if p.suffix=='.gguf' and not p.exists():return archived_reference(p)
@@ -24,6 +25,7 @@ def heldout(path,arms,runtime):
  if audit['role']!='HELDOUT_AFTER_SHORTLIST_LOCK' or consumed['selection']!=audit['selection']:raise ValueError('heldout selection/consumption missing')
  selected=auth(audit['selection'])
  if selected['status']!='SHORTLIST_LOCKED_BEFORE_HELDOUT' or selected['heldout_opened'] is not False:raise ValueError('shortlist did not precede heldout')
+ if selected['target']!=pin(P/'runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf'):raise ValueError('heldout target differs from measured lane')
  expected={'target':None,'q4':selected['baseline'],**selected['candidates']}
  if set(expected)!=set(arms):raise ValueError('heldout arms differ from frozen shortlist')
  for name,ref in expected.items():
@@ -48,24 +50,22 @@ def cohort(name):
   items=[x for domain in ('code','reasoning','prose') for x in [x for x in items if x['domain']==domain][:4]]
   if len(items)!=12:raise ValueError('natural12 domain mapping')
  return [dict(id=x['id'],payload=auth(x['request']),source=x['request'],domain=x['domain']) for x in items]
-STAT=re.compile(r'#calls\(b,g,a\) =\s*(\d+)\s+(\d+)\s+(\d+), #gen drafts =\s*(\d+), #acc drafts =\s*(\d+), #gen tokens =\s*(\d+), #acc tokens =\s*(\d+).*?dur\(b,g,a\) = ([\d.]+), ([\d.]+), ([\d.]+) ms')
 def stats(text):
  matches=list(STAT.finditer(text))
  if not matches:return None
  m=matches[-1];values=[int(m[i]) for i in range(1,8)]+[float(m[i]) for i in range(8,11)]
  return dict(zip(('begin_calls','rounds','accept_calls','drafts','accepted_rounds','proposed','accepted','begin_ms','draft_ms','accept_ms'),values))
-def delta(now,previous):return {k:v-(previous or {}).get(k,0) for k,v in now.items()}
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--arms',type=Path,required=True);ap.add_argument('--runtime',type=Path,required=True);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--cohort',choices=['capture3','natural12','natural24'],default='capture3');ap.add_argument('--reps',type=int,default=1);ap.add_argument('--warmups',type=int,default=0);ap.add_argument('--prompts',type=Path);ap.add_argument('--trace',action='store_true');ap.add_argument('--paired-trace',action='store_true');a=ap.parse_args()
  arms=json.load(open(a.arms));prompts=heldout(a.prompts,arms,a.runtime) if a.prompts else cohort(a.cohort);a.out.mkdir(exist_ok=False);save(a.out/'prompts.json',prompts)
  (a.out/'hardware.txt').write_text(subprocess.check_output(['/usr/lib/wsl/lib/nvidia-smi','-q'],text=True))
  if next(iter(arms))!='target':raise ValueError('target must be first for correctness')
- save(a.out/'freeze.json',dict(arms={k:pin(v) if v else None for k,v in arms.items()},source=pin(__file__),runtime={n:pin(a.runtime/'bin'/n) for n in ('libllama.so.0.8.0','libggml-base.so.0.28.0','libggml-cuda.so.0.28.0','libggml-cpu.so.0.28.0','libllama-common.so.0.8.0','libllama-server-impl.so','libggml.so.0.28.0','llama-server')},target=pin(P/'runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf'),baseline_registry=pin(ROOT/'experiments/w1a8-standing-20261102/baseline.json'),build=pin(a.runtime/'build.json'),trace_library=pin(P/'runs/data-cost-transfer-20261104-01/libdecode-cost-trace.so') if (a.trace or a.paired_trace) else None,cohort='heldout24' if a.prompts else a.cohort,cohort_source=pin(P/'runs/dflash-modern-capture-20261104-04/data/result.json') if a.cohort=='capture3' else pin(P/'runs/data-cost-transfer-20261104-01/consumed-natural-inputs.json'),prompt_source=pin(a.prompts) if a.prompts else None,precision='Qwen3.5-4B Q4_K_M target;F16 KV;depth2;greedy;5080',warmup_policy=dict(per_server_cell=a.warmups,measured_repetitions=a.reps,same_process=True,source='first consumed cohort prompts, repeated only for excluded warmup'),sampling='target sample and match;temperature0',memory='nvidia-smi sampled device used MiB;includes display/unrelated baseline;not exact allocator peak'))
+ save(a.out/'freeze.json',dict(arms={k:pin(v) if v else None for k,v in arms.items()},source=pin(__file__),counter_parser=pin(ROOT/'scripts/dflash_baseline/native_counters.py'),runtime={n:pin(a.runtime/'bin'/n) for n in ('libllama.so.0.8.0','libggml-base.so.0.28.0','libggml-cuda.so.0.28.0','libggml-cpu.so.0.28.0','libllama-common.so.0.8.0','libllama-server-impl.so','libggml.so.0.28.0','llama-server')},target=pin(P/'runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf'),baseline_registry=pin(ROOT/'experiments/w1a8-standing-20261102/baseline.json'),build=pin(a.runtime/'build.json'),trace_library=pin(P/'runs/data-cost-transfer-20261104-01/libdecode-cost-trace.so') if (a.trace or a.paired_trace) else None,cohort='heldout24' if a.prompts else a.cohort,cohort_source=pin(a.prompts.parent/'audit.json') if a.prompts else pin(P/'runs/dflash-modern-capture-20261104-04/data/result.json') if a.cohort=='capture3' else pin(P/'runs/data-cost-transfer-20261104-01/consumed-natural-inputs.json'),prompt_source=pin(a.prompts) if a.prompts else None,precision='Qwen3.5-4B Q4_K_M target;F16 KV;depth2;greedy;5080',warmup_policy=dict(per_server_cell=a.warmups,measured_repetitions=a.reps,same_process=True,source='first consumed cohort prompts, repeated only for excluded warmup'),sampling='target sample and match;temperature0',memory='nvidia-smi sampled device used MiB;includes display/unrelated baseline;not exact allocator peak'))
  stop=False
  def stopping(*_):
   nonlocal stop;stop=True
  signal.signal(signal.SIGTERM,stopping);signal.signal(signal.SIGINT,stopping)
- reference={};rows=[]
+ reference={};rows=[];counter_reconciliations=[]
  for rep in range(a.reps):
   order=list(arms) if rep%2==0 else list(reversed(arms))
   queue=[(label,traced) for label in order for traced in ([False,True] if rep%2==0 else [True,False])] if a.paired_trace else [(label,a.trace) for label in order]
@@ -125,11 +125,11 @@ def main():
       signature={k:response[k] for k in ('tokens','content','stop_type','stopping_word','truncated')}
       if label=='target':reference.setdefault(item['id'],signature)
       correct=signature==reference[item['id']]
-      # Completion logs precede response; one short flush grace if required.
+      # Provisional live log read; final reaped log is reconciled before cell acceptance.
       text=(cell/'server.log').read_text(errors='replace');now=stats(text)
       metrics=delta(now,previous) if now else {};previous=now
       prefix=re.findall(r'acc per pos = \(([^)]+)\)',text)
-      if model and prefix:
+      if model and prefix and metrics:
        rates=[float(x) for x in prefix[-1].split(',')];n=metrics['rounds']
        metrics['prefix_survival_counts']=[round(x*n) for x in rates];metrics['prefix_count_method']='per-request rounded rate * exact rounds;rounding error<0.5 at<=256 rounds'
       row=dict(instrumented=traced,bounds_ns=[start_ns,end_ns],rep=rep,warmup=item.get('_warmup',False),arm=label,prompt=item['id'],correct=correct,wall_seconds=elapsed,tokens=len(tokens),timings=response.get('timings'),native=metrics)
@@ -141,6 +141,10 @@ def main():
      except subprocess.TimeoutExpired:process.kill();process.wait()
      done.set();watcher.join(timeout=5);save(cell/'memory.json',memory);save(cell/'release.json',dict(reaped=True,returncode=process.returncode))
      if model:release(model,created_native)
+   if model:
+    corrections=reconcile(cell,[x for x in rows if x['rep']==rep and x['arm']==label and x['instrumented']==traced])
+    if corrections:
+     counter_reconciliations.extend(corrections);print('Reconciled delayed native log rows:',len(corrections),rep,label,traced,flush=True)
    if traced:
     spans=[json.loads(line) for line in (cell/'cost-trace.jsonl').read_text().splitlines()]
     for row in [x for x in rows if x['rep']==rep and x['arm']==label and x['instrumented']]:
@@ -160,5 +164,5 @@ def main():
   for plain in [x for x in rows if not x['instrumented']]:
    traced=next(x for x in rows if x['instrumented'] and all(x[k]==plain[k] for k in ('rep','arm','prompt')))
    if any(plain['native'].get(k)!=traced['native'].get(k) for k in ('accepted','proposed','rounds','prefix_survival_counts')):raise RuntimeError('instrumentation changed native counters')
- save(a.out/'result.json',dict(status='COMPLETE',rows=rows,paired_trace_counters_equal=a.paired_trace))
+ save(a.out/'result.json',dict(status='COMPLETE',rows=rows,paired_trace_counters_equal=a.paired_trace,counter_reconciliations=counter_reconciliations))
 if __name__=='__main__':main()

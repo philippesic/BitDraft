@@ -1,4 +1,4 @@
-// Independent fixed-A8 pack/integer-dot checks; CPU reference and actual CUDA.
+// Independent gained A1/A2/A4/A8 pack/dot checks; CPU reference and actual CUDA.
 #include "ggml.h"
 #include "ggml-alloc.h"
 #include "ggml-backend.h"
@@ -14,6 +14,7 @@
 #include <iostream>
 #include <limits>
 #include <stdexcept>
+#include <string>
 #include <vector>
 #include <xmmintrin.h>
 
@@ -136,14 +137,18 @@ static void run_case(ggml_backend_t backend, const Case shape, const char * name
 
 int main(int argc, char ** argv) {
     try {
-        require(argc == 3, "usage: op_check OUTPUT_LIBRARY_MAPS generic|fused");
+        require(argc == 3 || argc == 4, "usage: op_check OUTPUT_LIBRARY_MAPS generic|fused [TOKENS]");
+        require(std::string(argv[2])=="generic" || std::string(argv[2])=="fused", "unknown gain execution mode");
         const bool fused_gain=std::string(argv[2])=="fused";
+        size_t consumed=0;
+        const int tokens=argc==4?std::stoi(argv[3],&consumed):4;
+        require(tokens>0 && tokens<=64 && (argc==3 || consumed==std::string(argv[3]).size()), "invalid token width");
         std::fesetround(FE_TONEAREST);
         _mm_setcsr(_mm_getcsr() & ~(unsigned(1 << 15) | unsigned(1 << 6)));
         ggml_backend_t cuda = ggml_backend_cuda_init(0);
         require(cuda,"real CUDA required");
         for(int bits:{1,2,4,8}) for(int mode:{0,1,2})
-        for(const Case shape:{Case{32,7,4},Case{2560,9216,4},Case{9216,2560,4}}) run_case(cuda,shape,"CUDA",bits,mode,fused_gain);
+        for(const Case shape:{Case{32,7,tokens},Case{2560,9216,tokens},Case{9216,2560,tokens}}) run_case(cuda,shape,"CUDA",bits,mode,fused_gain);
         std::ifstream maps("/proc/self/maps");
         std::ofstream receipt(argv[1]); receipt << maps.rdbuf();
         require(bool(receipt), "library maps write failed");

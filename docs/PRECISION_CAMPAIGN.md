@@ -524,3 +524,51 @@ final raw/source/exposure audit; complete JSON/CSV/readable tables, static plots
 and standalone interactive HTML. Do not write the completion marker before
 those measured endpoints exist. Only then allocate optional followup if user
 is absent. Existing checkpoint charts remain explicitly incomplete.
+
+Pending post-confirmation code is prepared but unexecuted: qualify_slots.py
+will repeat gained-stream cases at the actual16-slot width, linked against
+unchanged runtime04 (five-minute diagnostic bound). Current N4 cases and full
+native model panels already pass; this adds direct shape coverage. Then
+native_tokenize.py prepare builds vocabulary-only admission and checks all12
+consumed DEV counts against measured HTTP; run the synthetic natural-selection
+fixture, including default-callback equivalence and whole-component exclusion.
+lock_heldout.py freezes the four predeclared2048 model pins and native context
+policy before source-pool access. post_confirmation.py serializes these checks,
+selection and the24-case2warmup/5paired heldout panel. These sources remain
+unqualified working edits until the quiet block ends; do not execute early.
+
+If optional followup is later allocated, add this campaign's own newly consumed
+heldout identities/groups/topics to the next selection's opaque exclusions.
+The current helper covers all historical/global192TRAIN/consumed cohorts; the
+first new campaign heldout does not exist yet. Never reuse it as fresh data.
+
+Rolling formal audit found a live-log sampling race in repetition2, learned A8
+2048 traced: reasoning03 sampled the preceding cumulative line; prose00 then
+included both requests. All output signatures remain exact. The final raw log
+contains14 sequential cumulative boundaries and14 separate per-request prefix
+lines; corresponding HTTP responses independently report accepted/proposed
+counts. Do not interrupt or restart the healthy full timing job. Its unchanged
+source will fail its final pair check after gathering all530 cells. Pending
+native_counters.py / repair_native_counters.py will reconcile only from complete,
+reaped logs, require one-to-one begin counters, validate every response count and
+integer prefix reconstruction, preserve original progress/raw files, and save a
+correction receipt plus complete result. Unit fixtures cover delayed sampling,
+missing boundaries, nonsequential boundaries and response disagreement; run after
+the quiet block. Future heldout runner reconciles every final cell before
+acceptance. No request timings, output tokens, models or runtime change.
+
+November5,06:32Pacific: fifth/final DEV repetition has started (428/530 cells).
+All independently checked HTTP accepted/proposed pairs and output signatures
+remain equal; actual response cache_n is0 throughout. Pending after quiet:
+syntax + natural-selection unittest + new native-counter adversarial fixtures;
+run repair_native_counters.py confirmation-dev12 --expected-cells530 only after
+all530 cells/reaped servers and expected original final pair-check exit1. It
+preserves original progress and writes recovery receipt/result; post_confirmation
+requires that exact failure/recovery path. Future benchmark reconciles every
+reaped log before accepting a cell. Native checker/tokenizer/new selection still
+unexecuted. Full pipeline completion remains pending; do not end from this state.
+Chart output now carries model/panel/source provenance and corrected memory
+accounting. Host-span-subtraction calculations are explicitly neither a
+zero-cost-drafter prediction nor a throughput upper bound due asynchronous work.
+
+November5,07:30Pacific: all530 DEV cells completed (7420 responses,6360 measured), expected final live-log pair-check exit1. Qualified final-log reconciliation changed exactly2 rows; all final pairs/counters agree and original progress/raw/timings remain untouched. Four parser fixtures +13 natural-selection fixtures pass; changed Python syntax/diff clean. Charts-preheld-20261105 builds234 native points,53 formal DEV arms; all5 static plots inspected and standalone controller compiles in V8. Status remains explicitly incomplete. post-dev-validation.json records this checkpoint. Native16-slot/tokenizer qualifications and freshheldout remain; next supervised post_confirmation.py performs those and the lock before any fresh payload. No new training allocation.

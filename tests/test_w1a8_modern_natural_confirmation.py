@@ -353,6 +353,7 @@ class NaturalConfirmationTests(unittest.TestCase):
         self.assertEqual(
             receipt["manifest_sha256"], natural.reference(output / "manifest.json")["sha256"]
         )
+
         second, _ = self.prep("same-frozen-selection")
         for name in (
             "manifest.json",
@@ -363,6 +364,31 @@ class NaturalConfirmationTests(unittest.TestCase):
             self.assertEqual((output / name).read_bytes(), (second / name).read_bytes())
         with self.assertRaisesRegex(ValueError, "replace"):
             self.prep()
+
+    def test_geometry_eligibility_precedes_ranking_after_whole_components(self):
+        audit = natural.Metadata()
+        evidence = natural.exclusion_evidence(self.freeze, audit)
+        original, _ = natural.select_natural(self.freeze, self.freeze_ref, audit, evidence)
+        unchanged, _ = natural.select_natural(
+            self.freeze, self.freeze_ref, audit, evidence, eligibility=lambda row: True
+        )
+        self.assertEqual(original, unchanged)
+        seen = []
+
+        def eligible(row):
+            index = int(row["source_ancestry"]["source_row_id"].split("-")[1])
+            seen.append(index)
+            return index >= 16
+
+        selected, _ = natural.select_natural(
+            self.freeze, self.freeze_ref, audit, evidence, eligibility=eligible
+        )
+        self.assertEqual(Counter(row["domain"] for row in selected), natural.DOMAIN_COUNTS)
+        self.assertTrue(
+            all(int(row["source_ancestry"]["source_row_id"].split("-")[1]) >= 16 for row in selected)
+        )
+        self.assertFalse(set(seen) & {0, 1, 2, 3, 4, 5, 6, 7, 10, 11, 28, 29})
+        audit.recheck()
 
     def test_sources_pins_complete_runtime_and_no_payload_access(self):
         original = Path.open

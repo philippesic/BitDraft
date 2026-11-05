@@ -431,8 +431,8 @@ def user_text(messages):
     return messages[0]["content"]
 
 
-def select_natural(freeze, freeze_pin, audit, evidence):
-    """Only called after selection freeze. No outcomes, answers or native tokenization."""
+def select_natural(freeze, freeze_pin, audit, evidence, eligibility=None):
+    """After selection freeze only; optional geometry eligibility, no answers/outcomes."""
     catalog_pin = freeze["natural_sources"]["catalog"]
     catalog = audit.read(catalog_pin)
     require(
@@ -574,6 +574,10 @@ def select_natural(freeze, freeze_pin, audit, evidence):
         for members in components.values()
         if len(members) == 1 and not members[0]["blocked"]
     ]
+    # Optional frozen geometry rule applies after whole-component exclusion and
+    # before ranked cohort selection. Never replace/truncate a selected group.
+    if eligibility is not None:
+        candidates = [row for row in candidates if eligibility(row)]
     selected = []
     eligible_counts = Counter(r["domain"] for r in candidates)
     for domain, count in DOMAIN_COUNTS.items():
