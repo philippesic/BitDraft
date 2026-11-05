@@ -58,3 +58,31 @@ recoverable checkpoints, clean owned disposable work and processes. No pushes.
 Do not report completion from scaffolding, CPU tests, a detached job launch or
 acceptance alone. Persist through routine failures. The parent remains available
 for discussion; delegated completion wakes it for integration and chart display.
+
+## Owner checkpoint — November 4, 22:24 Pacific
+
+Sole implementation/training/native owner: prepared branch
+`t3/precision-frontier-campaign`. All four prototype commits recovered without
+duplicating equivalent earlier picks; retained baseline benchmark also recovered.
+Fresh local pause control clear; RTX5080 idle before adopted lane. Vanilla
+checkpoint evaluation is running, supervised in local tmux
+`binary-eagle-runtime` / `precision-vanilla-eval-20261104-01`. Canonical run path
+`runs/precision-vanilla-eval-20261104-01`; ownership.json contains boot/process
+birth/source pins. Authenticate those before TERM of supervisor; allow120seconds
+and verify terminal state/group absence. No other campaign GPU job active.
+
+Completed isolated CPU/CUDA compilation of candidate runtime under
+`runs/precision-native-20261104-01`; source/base objects remain untouched.
+New loader/graph supports affine FFN gains and midpoints, per-projection
+A1/A2/A4/A8 and fixed/learned clipping metadata. Still UNQUALIFIED pending
+actual GPU operation and native model checks. A1 uses signed +/-absmax per token
+for dynamic mode, threshold0 (nonnegative positive), no zero code; all-zero
+rows scale0. Fixed/learned mode uses +/-bound, with zero input positive.
+Dynamic input STE is identity; fixed/learned uses clipped input STE plus step
+gradient. A2 retains its separate three-level {-scale,0,+scale} grid.
+
+Nine inherited CPU tests pass after A1 contract addition. Runner CUDA support,
+baseline-parent conversion, matched cursor continuation and signal checkpoints
+implemented but full CLI/GPU verification remains next. Do not mistake this
+checkpoint for campaign completion. Vanilla registry now reflects actual
+14,231 updates / 1,800.021702 update seconds and pending native evaluation.

@@ -1,5 +1,5 @@
 """CPU-capable config runner and versioned packed reference interchange (not native GGUF)."""
-import argparse, hashlib, json, random, time
+import argparse, hashlib, json, random, time, signal
 from pathlib import Path
 import numpy as np
 import torch
@@ -25,12 +25,14 @@ def load_parameters(m,state):
    if other in state and not torch.equal(v,state[other]):raise ValueError('shared gain conflict')
  with torch.no_grad():
   for n,p in expected.items():p.copy_(state[n])
-def rng():return (torch.get_rng_state(),random.getstate(),np.random.get_state())
-def restore_rng(r):torch.set_rng_state(r[0]);random.setstate(r[1]);np.random.set_state(r[2])
+def rng():return (torch.get_rng_state(),random.getstate(),np.random.get_state(),torch.cuda.get_rng_state_all() if torch.cuda.is_initialized() else None)
+def restore_rng(r):
+ torch.set_rng_state(r[0]);random.setstate(r[1]);np.random.set_state(r[2])
+ if len(r)>3 and r[3] is not None:torch.cuda.set_rng_state_all(r[3])
 def checkpoint(path,m,opt,progress,lineage):
  atomic(path,dict(version=2,config=m.prototype_config,config_hash=digest(m.prototype_config),parameters=parameters(m),optimizer=opt.state_dict(),progress=progress,rng=rng(),lineage=lineage))
 def restore(path,m,opt):
- s=torch.load(path,weights_only=False,map_location='cpu')
+ s=torch.load(path,weights_only=False,map_location='cpu',mmap=True)
  if s['version']!=2 or s['config_hash']!=digest(m.prototype_config) or digest(s['config'])!=s['config_hash']:raise ValueError('resume config mismatch')
  load_parameters(m,s['parameters']);opt.load_state_dict(s['optimizer']);restore_rng(s['rng'])
  return s['progress'],s['lineage']
@@ -50,7 +52,7 @@ def packed_export(path,m):
  protected={n:p.weight.detach().cpu().clone() for n,p in m.named_modules() if n.endswith(('ffn_gate','ffn_up','ffn_down')) and not isinstance(p,Projection)}
  atomic(path,dict(format='dflash.packed.reference',version=1,config=m.prototype_config,config_hash=digest(m.prototype_config),parameters=state,projections=projections,protected=protected,native_supported=False,bit_order='little',sign_positive=1))
 def packed_import(path,m):
- s=torch.load(path,weights_only=False,map_location='cpu')
+ s=torch.load(path,weights_only=False,map_location='cpu',mmap=True)
  if s['format']!='dflash.packed.reference' or s['version']!=1 or s['config_hash']!=digest(m.prototype_config):raise ValueError('packed contract mismatch')
  state=dict(s['parameters']);modules=dict(m.named_modules())
  for n,v in s['projections'].items():
@@ -64,10 +66,10 @@ def packed_import(path,m):
  return s
 
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('config',type=Path);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--updates',type=int,required=True);ap.add_argument('--max-windows',type=int,required=True);ap.add_argument('--resume',type=Path);ap.add_argument('--adapt',action='store_true');ap.add_argument('--dry-run',action='store_true');a=ap.parse_args()
+ ap=argparse.ArgumentParser();ap.add_argument('config',type=Path);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--updates',type=int,required=True);ap.add_argument('--max-windows',type=int,required=True);ap.add_argument('--resume',type=Path);ap.add_argument('--adapt',action='store_true');ap.add_argument('--dry-run',action='store_true');ap.add_argument('--device',choices=['cpu','cuda'],default='cpu');ap.add_argument('--baseline-parent',action='store_true');ap.add_argument('--snapshots',type=int,nargs='*',default=[]);a=ap.parse_args()
  if a.updates<0 or a.max_windows<0 or (a.resume and a.adapt):raise ValueError('invalid budget/mode')
  c=resolve(json.loads(a.config.read_text()));authenticate(c)
- if not a.adapt and not a.resume and c['parent']!=c['source']:raise ValueError('from-source parent must equal source; use --adapt for checkpoint parent')
+ if not a.adapt and not a.resume and not a.baseline_parent and c['parent']!=c['source']:raise ValueError('from-source parent must equal source; use --adapt for checkpoint parent')
  manifest=json.loads(Path(c['data']['path']).read_text())
  if 'records' in manifest:
   records=[r for r in manifest['records'] if r['split']=='TRAIN']
@@ -80,10 +82,16 @@ def main():
  reader=GGUFReader(c['source']['path'])
  for t in reader.tensors:
   key=t.name.removesuffix('.weight')
-  if key in c['coverage']:weights[key]=torch.from_numpy(dequantize(t.data,t.tensor_type).reshape(tuple(t.shape[::-1])).astype(np.float32)).bfloat16()
+  if key in c['coverage'] and c['coverage'][key]['weight']=='BF16':weights[key]=torch.from_numpy(dequantize(t.data,t.tensor_type).reshape(tuple(t.shape[::-1])).astype(np.float32)).bfloat16()
  lineage={'source':c['source'],'data':c['data'],'parent':c['parent'],'optimizer_policy':'new'}
+ parent=None
+ if a.baseline_parent:
+  parent=torch.load(c['parent']['path'],map_location='cpu',weights_only=False,mmap=True)
+  with torch.no_grad():
+   for n,p in m.named_parameters():p.copy_(parent['parameters'][n])
+  lineage.update(parent_progress={k:parent[k] for k in ('updates','cursor','order','update_seconds')},optimizer_policy='reset-baseline-conversion')
  if a.adapt:
-  parent=torch.load(c['parent']['path'],map_location='cpu',weights_only=False)
+  parent=torch.load(c['parent']['path'],map_location='cpu',weights_only=False,mmap=True)
   if parent.get('version')!=2:raise ValueError('adaptation requires pipeline v2 checkpoint')
   if parent['config']['source']!=c['source']:raise ValueError('adapt source mismatch')
   install(m,parent['config'],weights);load_parameters(m,parent['parameters'])
@@ -91,7 +99,8 @@ def main():
    gate,up=layer.ffn_gate,layer.ffn_up
    if isinstance(gate,Projection) and isinstance(up,Projection) and not torch.equal(gate.log_gain,up.log_gain):raise ValueError('shared gain conflict')
   lineage.update(parent_config_hash=parent['config_hash'],parent_progress=parent['progress'],optimizer_policy='reset')
- install(m,c,weights);opt=optimizer(m)
+ install(m,c,weights);del weights,reader
+ m.to(a.device);opt=optimizer(m);torch.backends.cuda.matmul.allow_tf32=False
  train=[Capture(p) for p in manifest['train_captures']]
  # Every consumed capture file must be authenticated by the data manifest.
  authenticated={str(Path(p['path']).resolve()) for p in manifest['files']}
@@ -101,16 +110,35 @@ def main():
  windows=[(i,x) for i,cap in enumerate(train) for x in cap.anchors]
  if not windows:raise ValueError('no training windows')
  progress=dict(updates=0,cursor=0,order=np.random.permutation(len(windows)).tolist(),update_seconds=0.,supervised_tokens=0)
+ if parent is not None:
+  prev=parent.get('progress',parent);progress.update(cursor=prev['cursor'],order=prev['order'])
+  del parent
  if a.resume:progress,lineage=restore(a.resume,m,opt)
+ initial_cursor=progress['cursor']
  if sorted(progress['order'])!=list(range(len(windows))):raise ValueError('data order mismatch')
  a.out.mkdir(exist_ok=False)
  (a.out/'resolved.json').write_text(json.dumps(c,indent=2))
+ stop=False
+ def stopping(*_):
+  nonlocal stop;stop=True
+ signal.signal(signal.SIGTERM,stopping);signal.signal(signal.SIGINT,stopping)
+ def synchronize():
+  if a.device=='cuda':torch.cuda.synchronize()
+ def save(label):
+  checkpoint(a.out/(label+'.pt'),m,opt,progress,lineage)
+  (a.out/(label+'.json')).write_text(json.dumps(dict(progress=progress,lineage=lineage,peak_bytes=torch.cuda.max_memory_allocated() if a.device=='cuda' else None),indent=2)+'\n')
  if not a.dry_run:
-  while progress['updates']<a.updates and progress['cursor']<a.max_windows and progress['update_seconds']<c['budget_seconds']:
-   i,anchor=windows[progress['order'][progress['cursor']%len(windows)]];start=time.perf_counter()
-   update(m,opt,lambda:train[i].loss(m,anchor)[0]);progress['update_seconds']+=time.perf_counter()-start
-   progress['updates']+=1;progress['cursor']+=1;progress['supervised_tokens']+=15
-   checkpoint(a.out/'checkpoint.pt',m,opt,progress,lineage)
-  packed_export(a.out/'packed.pt',m)
- print(json.dumps(dict(progress=progress,layers=len(m.layers),native_supported=False,dry_run=a.dry_run)))
+  if 0 in a.snapshots:save('checkpoint-0')
+  while progress['updates']<a.updates and progress['cursor']-initial_cursor<a.max_windows and progress['update_seconds']<c['budget_seconds']:
+   pause=Path.home()/'.config/binary-eagle-decoding/gpu-control.json'
+   if stop or (a.device=='cuda' and json.loads(pause.read_text())['rtx5080']['pause_requested']):break
+   i,anchor=windows[progress['order'][progress['cursor']%len(windows)]];synchronize();start=time.perf_counter()
+   loss=update(m,opt,lambda:train[i].loss(m,anchor)[0]);synchronize();elapsed=time.perf_counter()-start
+   progress['update_seconds']+=elapsed;progress['updates']+=1;progress['cursor']+=1;progress['supervised_tokens']+=15
+   with (a.out/'updates.jsonl').open('a') as f:f.write(json.dumps(dict(update=progress['updates'],cursor=progress['cursor'],update_seconds=progress['update_seconds'],loss=loss,seconds=elapsed,sequence=str(train[i].path),anchor=anchor),default=str)+'\n')
+   if progress['updates'] in a.snapshots:save('checkpoint-'+str(progress['updates']))
+   if progress['updates']%32==0:print(json.dumps(dict(update=progress['updates'],loss=loss,seconds=progress['update_seconds'])),flush=True)
+  save('checkpoint');packed_export(a.out/'packed.pt',m)
+ result=dict(progress=progress,layers=len(m.layers),native_supported=False,dry_run=a.dry_run,status='INTERRUPTED' if stop else 'COMPLETE',peak_bytes=torch.cuda.max_memory_allocated() if a.device=='cuda' else None)
+ (a.out/'result.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result),flush=True)
 if __name__=='__main__':main()

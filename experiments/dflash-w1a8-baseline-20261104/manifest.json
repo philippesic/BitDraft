@@ -1,6 +1,6 @@
 {
   "schema": "dflash_w1a8_screening_reference_v1",
-  "status": "INITIAL_1800_SECOND_RUN_LAUNCHED",
+  "status": "TRAINING_COMPLETE_NATIVE_EVALUATION_RUNNING",
   "date": "2026-11-04",
   "protocol": "docs/CANDIDATE_BENCHMARKING.md",
   "authority": "User requested durable protocol plus a subagent to prepare the vanilla baseline and run its initial checkpoint.",
@@ -202,14 +202,1355 @@
     "latent_initialization": "original BF16 values decoded to F32; sign >=0 positive; row mean absolute scales",
     "cpu_tensor_admission": true
   },
-  "initial_checkpoints": [],
+  "initial_checkpoints": [
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-train-20261104-14/artifacts/checkpoint-zero.pt",
+      "updates": 0,
+      "update_seconds": 0.0,
+      "windows_seen": 0,
+      "supervised_tokens": 0,
+      "effective_epochs": 0.0,
+      "movement": {
+        "output_norm_enc": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "output_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.0.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.0.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.0.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.0.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.0.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.0.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.0.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.0.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.0.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.0.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.1.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.1.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.1.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.1.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.1.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.1.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.1.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.1.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.1.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.1.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.2.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.2.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.2.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.2.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.2.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.2.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.2.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.2.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.2.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.2.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.3.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.3.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.3.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.3.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.3.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.3.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.3.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.3.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.3.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.3.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.4.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.4.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.4.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.4.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.4.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.4.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.4.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.4.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.4.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.4.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.5.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.5.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.5.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.5.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.5.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.5.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.5.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.5.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.5.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        },
+        "layers.5.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.0,
+          "sample_sign_changes": 0
+        }
+      },
+      "validation": [
+        {
+          "name": "development-code-00",
+          "loss": 11.655911445617676
+        },
+        {
+          "name": "development-prose-00",
+          "loss": 8.254302024841309
+        },
+        {
+          "name": "development-reasoning-00",
+          "loss": 8.919940948486328
+        }
+      ],
+      "peak_bytes": 5444740096
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-train-20261104-14/artifacts/checkpoint-300.pt",
+      "updates": 2362,
+      "update_seconds": 300.01643061617506,
+      "windows_seen": 2362,
+      "supervised_tokens": 35430,
+      "effective_epochs": 1.656381486676017,
+      "movement": {
+        "output_norm_enc": {
+          "sample_count": 3,
+          "max_abs_change": 0.002985239028930664,
+          "sample_sign_changes": 0
+        },
+        "output_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.003904581069946289,
+          "sample_sign_changes": 0
+        },
+        "layers.0.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.002256929874420166,
+          "sample_sign_changes": 0
+        },
+        "layers.0.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.00550687313079834,
+          "sample_sign_changes": 0
+        },
+        "layers.0.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.0034590959548950195,
+          "sample_sign_changes": 0
+        },
+        "layers.0.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.011174798011779785,
+          "sample_sign_changes": 0
+        },
+        "layers.0.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.21333904564380646,
+          "sample_sign_changes": 3030
+        },
+        "layers.0.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0005443952977657318,
+          "sample_sign_changes": 7
+        },
+        "layers.0.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.1840173900127411,
+          "sample_sign_changes": 3227
+        },
+        "layers.0.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0008005757117643952,
+          "sample_sign_changes": 8
+        },
+        "layers.0.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.21255260705947876,
+          "sample_sign_changes": 2595
+        },
+        "layers.0.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.005633295513689518,
+          "sample_sign_changes": 2
+        },
+        "layers.1.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0039365291595458984,
+          "sample_sign_changes": 0
+        },
+        "layers.1.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.008218884468078613,
+          "sample_sign_changes": 0
+        },
+        "layers.1.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.0065386295318603516,
+          "sample_sign_changes": 0
+        },
+        "layers.1.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.010890781879425049,
+          "sample_sign_changes": 0
+        },
+        "layers.1.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.18288496136665344,
+          "sample_sign_changes": 2691
+        },
+        "layers.1.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0010358045110478997,
+          "sample_sign_changes": 7
+        },
+        "layers.1.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.18622148036956787,
+          "sample_sign_changes": 2770
+        },
+        "layers.1.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0006893031531944871,
+          "sample_sign_changes": 6
+        },
+        "layers.1.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.17917652428150177,
+          "sample_sign_changes": 2330
+        },
+        "layers.1.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.0013646429870277643,
+          "sample_sign_changes": 1
+        },
+        "layers.2.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0005772113800048828,
+          "sample_sign_changes": 0
+        },
+        "layers.2.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.004649758338928223,
+          "sample_sign_changes": 0
+        },
+        "layers.2.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.005861878395080566,
+          "sample_sign_changes": 0
+        },
+        "layers.2.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.011181116104125977,
+          "sample_sign_changes": 0
+        },
+        "layers.2.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.1769898235797882,
+          "sample_sign_changes": 2722
+        },
+        "layers.2.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0006539641181007028,
+          "sample_sign_changes": 5
+        },
+        "layers.2.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.15574903786182404,
+          "sample_sign_changes": 2897
+        },
+        "layers.2.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0009850574424490333,
+          "sample_sign_changes": 7
+        },
+        "layers.2.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.17862999439239502,
+          "sample_sign_changes": 2639
+        },
+        "layers.2.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.000920278369449079,
+          "sample_sign_changes": 2
+        },
+        "layers.3.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.003717780113220215,
+          "sample_sign_changes": 0
+        },
+        "layers.3.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.0035701990127563477,
+          "sample_sign_changes": 0
+        },
+        "layers.3.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.004255056381225586,
+          "sample_sign_changes": 0
+        },
+        "layers.3.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.012019157409667969,
+          "sample_sign_changes": 0
+        },
+        "layers.3.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.2034132182598114,
+          "sample_sign_changes": 2858
+        },
+        "layers.3.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0006801965646445751,
+          "sample_sign_changes": 5
+        },
+        "layers.3.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.1888149380683899,
+          "sample_sign_changes": 2920
+        },
+        "layers.3.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0003865140024572611,
+          "sample_sign_changes": 8
+        },
+        "layers.3.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.16161467134952545,
+          "sample_sign_changes": 2270
+        },
+        "layers.3.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.00192850804887712,
+          "sample_sign_changes": 2
+        },
+        "layers.4.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.001981973648071289,
+          "sample_sign_changes": 0
+        },
+        "layers.4.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.00426030158996582,
+          "sample_sign_changes": 0
+        },
+        "layers.4.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.00392460823059082,
+          "sample_sign_changes": 0
+        },
+        "layers.4.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.010052621364593506,
+          "sample_sign_changes": 0
+        },
+        "layers.4.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.23987030982971191,
+          "sample_sign_changes": 3146
+        },
+        "layers.4.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0005844322149641812,
+          "sample_sign_changes": 7
+        },
+        "layers.4.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.21001659333705902,
+          "sample_sign_changes": 2895
+        },
+        "layers.4.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0007472921279259026,
+          "sample_sign_changes": 8
+        },
+        "layers.4.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.2672838568687439,
+          "sample_sign_changes": 2087
+        },
+        "layers.4.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.0047176736406981945,
+          "sample_sign_changes": 2
+        },
+        "layers.5.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0021326541900634766,
+          "sample_sign_changes": 0
+        },
+        "layers.5.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.00323331356048584,
+          "sample_sign_changes": 0
+        },
+        "layers.5.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.005068421363830566,
+          "sample_sign_changes": 0
+        },
+        "layers.5.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.010968804359436035,
+          "sample_sign_changes": 0
+        },
+        "layers.5.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.17002761363983154,
+          "sample_sign_changes": 4183
+        },
+        "layers.5.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0007727258489467204,
+          "sample_sign_changes": 7
+        },
+        "layers.5.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.17517635226249695,
+          "sample_sign_changes": 2961
+        },
+        "layers.5.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0007566760177724063,
+          "sample_sign_changes": 7
+        },
+        "layers.5.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.16411815583705902,
+          "sample_sign_changes": 3460
+        },
+        "layers.5.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.000515502062626183,
+          "sample_sign_changes": 1
+        }
+      },
+      "validation": [
+        {
+          "name": "development-code-00",
+          "loss": 8.836390495300293
+        },
+        {
+          "name": "development-prose-00",
+          "loss": 8.305025100708008
+        },
+        {
+          "name": "development-reasoning-00",
+          "loss": 4.684736728668213
+        }
+      ],
+      "peak_bytes": 10557950464
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-train-20261104-14/artifacts/checkpoint-900.pt",
+      "updates": 7117,
+      "update_seconds": 900.0384044858802,
+      "windows_seen": 7117,
+      "supervised_tokens": 106755,
+      "effective_epochs": 4.9908835904628335,
+      "movement": {
+        "output_norm_enc": {
+          "sample_count": 3,
+          "max_abs_change": 0.0034815073013305664,
+          "sample_sign_changes": 0
+        },
+        "output_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.008068323135375977,
+          "sample_sign_changes": 0
+        },
+        "layers.0.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0026270151138305664,
+          "sample_sign_changes": 0
+        },
+        "layers.0.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.009250879287719727,
+          "sample_sign_changes": 0
+        },
+        "layers.0.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.006443500518798828,
+          "sample_sign_changes": 0
+        },
+        "layers.0.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.028454720973968506,
+          "sample_sign_changes": 0
+        },
+        "layers.0.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.3328292667865753,
+          "sample_sign_changes": 4508
+        },
+        "layers.0.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0014501959085464478,
+          "sample_sign_changes": 5
+        },
+        "layers.0.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.4263278543949127,
+          "sample_sign_changes": 4679
+        },
+        "layers.0.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0009903194149956107,
+          "sample_sign_changes": 7
+        },
+        "layers.0.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.3556270897388458,
+          "sample_sign_changes": 3917
+        },
+        "layers.0.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.00819654855877161,
+          "sample_sign_changes": 2
+        },
+        "layers.1.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.011278629302978516,
+          "sample_sign_changes": 0
+        },
+        "layers.1.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.021390438079833984,
+          "sample_sign_changes": 0
+        },
+        "layers.1.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.009495258331298828,
+          "sample_sign_changes": 0
+        },
+        "layers.1.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.02561819553375244,
+          "sample_sign_changes": 0
+        },
+        "layers.1.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.2531888484954834,
+          "sample_sign_changes": 3986
+        },
+        "layers.1.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.002179240807890892,
+          "sample_sign_changes": 3
+        },
+        "layers.1.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.2700510323047638,
+          "sample_sign_changes": 3706
+        },
+        "layers.1.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0012268811697140336,
+          "sample_sign_changes": 8
+        },
+        "layers.1.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.31870463490486145,
+          "sample_sign_changes": 3587
+        },
+        "layers.1.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.002567233517765999,
+          "sample_sign_changes": 2
+        },
+        "layers.2.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0023856163024902344,
+          "sample_sign_changes": 0
+        },
+        "layers.2.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.009814739227294922,
+          "sample_sign_changes": 0
+        },
+        "layers.2.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.013735771179199219,
+          "sample_sign_changes": 0
+        },
+        "layers.2.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0250244140625,
+          "sample_sign_changes": 0
+        },
+        "layers.2.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.3734864294528961,
+          "sample_sign_changes": 4094
+        },
+        "layers.2.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.001020967261865735,
+          "sample_sign_changes": 4
+        },
+        "layers.2.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.25943297147750854,
+          "sample_sign_changes": 3911
+        },
+        "layers.2.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.001783648505806923,
+          "sample_sign_changes": 7
+        },
+        "layers.2.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.36640581488609314,
+          "sample_sign_changes": 4376
+        },
+        "layers.2.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.0015208496479317546,
+          "sample_sign_changes": 2
+        },
+        "layers.3.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.004511356353759766,
+          "sample_sign_changes": 0
+        },
+        "layers.3.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.007057905197143555,
+          "sample_sign_changes": 0
+        },
+        "layers.3.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.009926080703735352,
+          "sample_sign_changes": 0
+        },
+        "layers.3.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.02865999937057495,
+          "sample_sign_changes": 0
+        },
+        "layers.3.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.291795551776886,
+          "sample_sign_changes": 4210
+        },
+        "layers.3.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0017319926992058754,
+          "sample_sign_changes": 6
+        },
+        "layers.3.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.27964895963668823,
+          "sample_sign_changes": 4150
+        },
+        "layers.3.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0013391032116487622,
+          "sample_sign_changes": 8
+        },
+        "layers.3.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.28860989212989807,
+          "sample_sign_changes": 3523
+        },
+        "layers.3.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.008060222491621971,
+          "sample_sign_changes": 2
+        },
+        "layers.4.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0017058849334716797,
+          "sample_sign_changes": 0
+        },
+        "layers.4.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.009421586990356445,
+          "sample_sign_changes": 0
+        },
+        "layers.4.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.009594917297363281,
+          "sample_sign_changes": 0
+        },
+        "layers.4.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.027607619762420654,
+          "sample_sign_changes": 0
+        },
+        "layers.4.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.3236418068408966,
+          "sample_sign_changes": 4647
+        },
+        "layers.4.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.001977314008399844,
+          "sample_sign_changes": 7
+        },
+        "layers.4.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.27634570002555847,
+          "sample_sign_changes": 4401
+        },
+        "layers.4.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0016576622147113085,
+          "sample_sign_changes": 8
+        },
+        "layers.4.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.8760299682617188,
+          "sample_sign_changes": 4047
+        },
+        "layers.4.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.02046249806880951,
+          "sample_sign_changes": 2
+        },
+        "layers.5.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.007253050804138184,
+          "sample_sign_changes": 0
+        },
+        "layers.5.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.009464859962463379,
+          "sample_sign_changes": 0
+        },
+        "layers.5.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.015592217445373535,
+          "sample_sign_changes": 0
+        },
+        "layers.5.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.027775883674621582,
+          "sample_sign_changes": 0
+        },
+        "layers.5.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.31895262002944946,
+          "sample_sign_changes": 5818
+        },
+        "layers.5.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0012344621354714036,
+          "sample_sign_changes": 7
+        },
+        "layers.5.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.3136368691921234,
+          "sample_sign_changes": 4521
+        },
+        "layers.5.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.00127760274335742,
+          "sample_sign_changes": 7
+        },
+        "layers.5.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.33312612771987915,
+          "sample_sign_changes": 5122
+        },
+        "layers.5.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.001997675048187375,
+          "sample_sign_changes": 1
+        }
+      },
+      "validation": [
+        {
+          "name": "development-code-00",
+          "loss": 6.9296698570251465
+        },
+        {
+          "name": "development-prose-00",
+          "loss": 8.784794807434082
+        },
+        {
+          "name": "development-reasoning-00",
+          "loss": 5.170652389526367
+        }
+      ],
+      "peak_bytes": 10557950464
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-train-20261104-14/artifacts/checkpoint-1800.pt",
+      "updates": 14231,
+      "update_seconds": 1800.0217024797457,
+      "windows_seen": 14231,
+      "supervised_tokens": 213465,
+      "effective_epochs": 9.979663394109396,
+      "movement": {
+        "output_norm_enc": {
+          "sample_count": 3,
+          "max_abs_change": 0.004172682762145996,
+          "sample_sign_changes": 0
+        },
+        "output_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.012461185455322266,
+          "sample_sign_changes": 0
+        },
+        "layers.0.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.0013920068740844727,
+          "sample_sign_changes": 0
+        },
+        "layers.0.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.012881159782409668,
+          "sample_sign_changes": 0
+        },
+        "layers.0.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.01098477840423584,
+          "sample_sign_changes": 0
+        },
+        "layers.0.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.04574006795883179,
+          "sample_sign_changes": 0
+        },
+        "layers.0.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.5296984314918518,
+          "sample_sign_changes": 5608
+        },
+        "layers.0.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.001610998879186809,
+          "sample_sign_changes": 3
+        },
+        "layers.0.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.7098355889320374,
+          "sample_sign_changes": 5967
+        },
+        "layers.0.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.002249225042760372,
+          "sample_sign_changes": 8
+        },
+        "layers.0.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.4353930652141571,
+          "sample_sign_changes": 5398
+        },
+        "layers.0.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.008615299127995968,
+          "sample_sign_changes": 2
+        },
+        "layers.1.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.018852949142456055,
+          "sample_sign_changes": 0
+        },
+        "layers.1.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.03442549705505371,
+          "sample_sign_changes": 0
+        },
+        "layers.1.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.008301854133605957,
+          "sample_sign_changes": 0
+        },
+        "layers.1.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.038875043392181396,
+          "sample_sign_changes": 0
+        },
+        "layers.1.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.3463091254234314,
+          "sample_sign_changes": 5092
+        },
+        "layers.1.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0029817167669534683,
+          "sample_sign_changes": 3
+        },
+        "layers.1.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.34394609928131104,
+          "sample_sign_changes": 4445
+        },
+        "layers.1.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0018894081003963947,
+          "sample_sign_changes": 9
+        },
+        "layers.1.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.43078336119651794,
+          "sample_sign_changes": 4907
+        },
+        "layers.1.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.005384224001318216,
+          "sample_sign_changes": 2
+        },
+        "layers.2.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.004812300205230713,
+          "sample_sign_changes": 0
+        },
+        "layers.2.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.012848138809204102,
+          "sample_sign_changes": 0
+        },
+        "layers.2.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.020550251007080078,
+          "sample_sign_changes": 0
+        },
+        "layers.2.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.03485041856765747,
+          "sample_sign_changes": 0
+        },
+        "layers.2.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.4222644567489624,
+          "sample_sign_changes": 5170
+        },
+        "layers.2.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.002531403210014105,
+          "sample_sign_changes": 6
+        },
+        "layers.2.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.40135475993156433,
+          "sample_sign_changes": 4961
+        },
+        "layers.2.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.002536703599616885,
+          "sample_sign_changes": 7
+        },
+        "layers.2.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.4219614267349243,
+          "sample_sign_changes": 5385
+        },
+        "layers.2.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.0030963439494371414,
+          "sample_sign_changes": 2
+        },
+        "layers.3.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.005212306976318359,
+          "sample_sign_changes": 0
+        },
+        "layers.3.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.009283185005187988,
+          "sample_sign_changes": 0
+        },
+        "layers.3.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.013684868812561035,
+          "sample_sign_changes": 0
+        },
+        "layers.3.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.044302284717559814,
+          "sample_sign_changes": 0
+        },
+        "layers.3.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.40135273337364197,
+          "sample_sign_changes": 5309
+        },
+        "layers.3.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0027773973997682333,
+          "sample_sign_changes": 4
+        },
+        "layers.3.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.40023893117904663,
+          "sample_sign_changes": 5301
+        },
+        "layers.3.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0028676483780145645,
+          "sample_sign_changes": 9
+        },
+        "layers.3.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.4013689160346985,
+          "sample_sign_changes": 4833
+        },
+        "layers.3.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.01528333779424429,
+          "sample_sign_changes": 2
+        },
+        "layers.4.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.003695368766784668,
+          "sample_sign_changes": 0
+        },
+        "layers.4.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.011997818946838379,
+          "sample_sign_changes": 0
+        },
+        "layers.4.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.012756705284118652,
+          "sample_sign_changes": 0
+        },
+        "layers.4.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.04527062177658081,
+          "sample_sign_changes": 0
+        },
+        "layers.4.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.4146196246147156,
+          "sample_sign_changes": 5721
+        },
+        "layers.4.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0035795175936073065,
+          "sample_sign_changes": 5
+        },
+        "layers.4.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.3935328423976898,
+          "sample_sign_changes": 5515
+        },
+        "layers.4.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.00277141435071826,
+          "sample_sign_changes": 8
+        },
+        "layers.4.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.8760299682617188,
+          "sample_sign_changes": 5236
+        },
+        "layers.4.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.041047558188438416,
+          "sample_sign_changes": 2
+        },
+        "layers.5.attn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.010895967483520508,
+          "sample_sign_changes": 0
+        },
+        "layers.5.attn_q_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.014080524444580078,
+          "sample_sign_changes": 0
+        },
+        "layers.5.attn_k_norm": {
+          "sample_count": 1,
+          "max_abs_change": 0.02416515350341797,
+          "sample_sign_changes": 0
+        },
+        "layers.5.ffn_norm": {
+          "sample_count": 3,
+          "max_abs_change": 0.04659801721572876,
+          "sample_sign_changes": 0
+        },
+        "layers.5.ffn_gate.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.4677073359489441,
+          "sample_sign_changes": 6913
+        },
+        "layers.5.ffn_gate.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0016333790263161063,
+          "sample_sign_changes": 7
+        },
+        "layers.5.ffn_up.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.42348891496658325,
+          "sample_sign_changes": 5686
+        },
+        "layers.5.ffn_up.scale_offset": {
+          "sample_count": 9,
+          "max_abs_change": 0.0016506017418578267,
+          "sample_sign_changes": 7
+        },
+        "layers.5.ffn_down.latent_sign": {
+          "sample_count": 23040,
+          "max_abs_change": 0.6111772656440735,
+          "sample_sign_changes": 6021
+        },
+        "layers.5.ffn_down.scale_offset": {
+          "sample_count": 3,
+          "max_abs_change": 0.004333516117185354,
+          "sample_sign_changes": 1
+        }
+      },
+      "validation": [
+        {
+          "name": "development-code-00",
+          "loss": 6.255253314971924
+        },
+        {
+          "name": "development-prose-00",
+          "loss": 8.921399116516113
+        },
+        {
+          "name": "development-reasoning-00",
+          "loss": 5.108712673187256
+        }
+      ],
+      "peak_bytes": 10557950464
+    }
+  ],
   "working_incumbent": null,
   "native_results": {
     "smoke": "/home/philip/binary-eagle-decoding/runs/dflash-modern-native-20261104-03/smoke-result.json",
     "scope": "one TRAIN prompt, 32 output tokens, not benchmark"
   },
   "run_directory": "/home/philip/binary-eagle-decoding/runs/dflash-modern-train-20261104-14",
-  "owner": "handoff to requested background subagent; preserve existing supervised run",
+  "owner": "sole precision campaign worker",
   "blockers": [],
   "notes": [
     "No trained modern W1A8 DFlash performance is implied by this planned registry.",
@@ -218,11 +1559,11 @@
   "source_inventory": "experiments/dflash-w1a8-baseline-20261104/source-inventory.json",
   "execution": {
     "training_started": true,
-    "completed_updates": 0,
-    "training_update_seconds": 0,
-    "native_evaluation_started": false,
+    "completed_updates": 14231,
+    "training_update_seconds": 1800.0217024797457,
+    "native_evaluation_started": true,
     "owned_live_processes": [
-      "/home/philip/binary-eagle-decoding/runs/dflash-modern-train-20261104-14/ownership.json"
+      "/home/philip/binary-eagle-decoding/runs/precision-vanilla-eval-20261104-01/ownership.json"
     ]
   },
   "runtime_patch": "experiments/dflash-w1a8-baseline-20261104/runtime/modern-admission.patch",

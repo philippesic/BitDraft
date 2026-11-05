@@ -11,7 +11,7 @@ def test_config():
     r=resolve(c);assert r['coverage']['blk.0.ffn_gate']['bits']==4
     assert r['coverage']['blk.1.ffn_gate']['bits']==8
     assert digest(r)==digest(copy.deepcopy(r))
-    c['overrides']['blk.0.ffn_gate']['bits']=1
+    c['overrides']['blk.0.ffn_gate']['bits']=3
     with unittest.TestCase().assertRaises(ValueError):resolve(c)
     with unittest.TestCase().assertRaises(ValueError):native_admit(r)
 

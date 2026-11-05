@@ -11,7 +11,8 @@ from torch.nn import functional as F
 
 PRESETS = {'vanilla': (8,8,False), 'essential-a8': (8,8,True),
            'gate-up-a4': (4,8,True), 'all-a4': (4,4,True),
-           'a2-stress': (2,2,True), 'protected-example': (4,8,True)}
+           'a2-stress': (2,2,True), 'gate-up-a2': (2,8,True),
+           'gate-up-a1': (1,8,True), 'all-a1': (1,1,True), 'protected-example': (4,8,True)}
 
 def digest(config):
     return hashlib.sha256(json.dumps(config,sort_keys=True,separators=(',',':')).encode()).hexdigest()
@@ -37,7 +38,7 @@ def resolve(request):
     if request['preset']=='protected-example': coverage['blk.0.ffn_down']={'weight':'BF16','bits':None}
     for name,value in request.get('overrides',{}).items():
         if name not in coverage or set(value)!={'weight','bits'}: raise ValueError('invalid projection override')
-        if not ((value['weight']=='W1' and type(value['bits']) is int and value['bits'] in (2,4,8)) or (value['weight']=='BF16' and value['bits'] is None)): raise ValueError('unsupported weight/activation combination')
+        if not ((value['weight']=='W1' and type(value['bits']) is int and value['bits'] in (1,2,4,8)) or (value['weight']=='BF16' and value['bits'] is None)): raise ValueError('unsupported weight/activation combination')
         coverage[name]=copy.deepcopy(value)
     result=copy.deepcopy(request)
     result.update(coverage=coverage,features=features,quantizer=quantizer,arithmetic='fixed_w1ax_finite_reciprocal_v2',schedule='constant',operand_storage='int8-reference')
@@ -46,7 +47,7 @@ def resolve(request):
 class Projection(nn.Module):
     def __init__(self,weight,bits=8,midpoint=True,gain=None,quantizer=None):
         super().__init__()
-        if bits not in (2,4,8): raise ValueError('unsupported activation width')
+        if bits not in (1,2,4,8): raise ValueError('unsupported activation width')
         self.bits=bits
         self.quantizer=quantizer or {'mode':'dynamic','clip':1.0}
         self.latent_sign=nn.Parameter(weight.detach().float().clone())
@@ -56,7 +57,8 @@ class Projection(nn.Module):
         self.log_clip=nn.Parameter(torch.tensor(math.log(self.quantizer['clip'])),requires_grad=self.quantizer['mode']=='learned')
     def stream(self,x):
         x=x.float()*self.log_gain.exp()
-        qmax=2**(self.bits-1)-1
+        if not torch.isfinite(x).all(): raise ValueError('nonfinite quantizer input')
+        qmax=max(1,2**(self.bits-1)-1)
         if self.quantizer['mode']=='dynamic':
             magnitude=x.detach().contiguous().view(torch.int32)&2147483647
             bound=magnitude.amax(-1,keepdim=True).view(torch.float32)
@@ -66,12 +68,12 @@ class Projection(nn.Module):
             if bool(overflow.any()):
                 fallback=(x.double()/bound.double().clamp_min(torch.finfo(torch.float64).tiny)*qmax).float()
                 normalized=torch.where(overflow,fallback,normalized)
-            hard=normalized.round().clamp(-qmax,qmax)
+            hard=torch.where(x>=0,1.,-1.) if self.bits==1 else normalized.round().clamp(-qmax,qmax)
             return hard.detach(),bound/qmax
         bound=self.log_clip.exp() if self.quantizer['mode']=='learned' else x.new_tensor(self.quantizer['clip'])
         clipped=torch.maximum(torch.minimum(x,bound),-bound)
         z=clipped*(qmax/bound)
-        hard=z.round().clamp(-qmax,qmax)
+        hard=torch.where(x>=0,1.,-1.) if self.bits==1 else z.round().clamp(-qmax,qmax)
         return z+(hard-z).detach(),bound/qmax
     @torch.no_grad()
     def project_scales_(self):
