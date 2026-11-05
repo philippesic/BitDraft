@@ -68,5 +68,6 @@
       "proposed": 4685,
       "acceptance": 0.14087513340448238
     }
-  ]
+  ],
+  "warmup_limitation": "Recovered benchmark excluded two full repetitions but restarted the server for every cell. This does not warm process-local graphs for each measured cell. Retain as historical diagnostic; formal promotion remeasures controls with two excluded same-process warmup requests per cell and five alternating measured repetitions."
 }

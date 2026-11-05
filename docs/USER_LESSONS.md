@@ -1255,3 +1255,15 @@ the planned essential-feature package. Include the selected major binary
 compensation mechanisms before precision selection; distinguish design inclusion
 from measured benefit. Astra debate resolved scope and quantizer scheduling;
 see docs/CANDIDATE_STAGES.md. This was the agent's interpretation error.
+
+
+## 2026-11-04: Audit adopted benchmark lifecycle before claiming warmups
+
+The precision worker recovered a legacy vanilla benchmark that excluded two
+whole repetitions but restarted each server for every repetition. Describing
+this as protocol-equivalent warmups was an agent reporting assumption: the
+excluded runs did not warm process-local CUDA graphs for measured cells. No
+user error occurred. Preserve the measured diagnostic series with this scope
+limitation, and use two excluded requests within each live server cell for
+formal confirmation. Check lifecycle and actual evidence before inheriting
+completion or protocol claims from a prior worker's script.

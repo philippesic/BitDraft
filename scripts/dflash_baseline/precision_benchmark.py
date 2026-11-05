@@ -36,13 +36,13 @@ def main():
  arms=json.load(open(a.arms));prompts=json.load(open(a.prompts)) if a.prompts else cohort(a.cohort);a.out.mkdir(exist_ok=False);save(a.out/'prompts.json',prompts)
  (a.out/'hardware.txt').write_text(subprocess.check_output(['/usr/lib/wsl/lib/nvidia-smi','-q'],text=True))
  if next(iter(arms))!='target':raise ValueError('target must be first for correctness')
- save(a.out/'freeze.json',dict(arms={k:pin(v) if v else None for k,v in arms.items()},source=pin(__file__),runtime={n:pin(a.runtime/'bin'/n) for n in ('libllama.so.0.8.0','libggml-base.so.0.28.0','libggml-cuda.so.0.28.0','libggml-cpu.so.0.28.0','libllama-common.so.0.8.0','libllama-server-impl.so','libggml.so.0.28.0','llama-server')},target=pin(P/'runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf'),baseline_registry=pin(ROOT/'experiments/w1a8-standing-20261102/baseline.json'),build=pin(a.runtime/'build.json'),trace_library=pin(P/'runs/data-cost-transfer-20261104-01/libdecode-cost-trace.so') if (a.trace or a.paired_trace) else None,cohort='heldout24' if a.prompts else a.cohort,prompt_source=pin(a.prompts) if a.prompts else None,precision='Qwen3.5-4B Q4_K_M target;F16 KV;depth2;greedy;5080',sampling='target sample and match;temperature0',memory='nvidia-smi sampled device used MiB;includes display/unrelated baseline;not exact allocator peak'))
+ save(a.out/'freeze.json',dict(arms={k:pin(v) if v else None for k,v in arms.items()},source=pin(__file__),runtime={n:pin(a.runtime/'bin'/n) for n in ('libllama.so.0.8.0','libggml-base.so.0.28.0','libggml-cuda.so.0.28.0','libggml-cpu.so.0.28.0','libllama-common.so.0.8.0','libllama-server-impl.so','libggml.so.0.28.0','llama-server')},target=pin(P/'runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf'),baseline_registry=pin(ROOT/'experiments/w1a8-standing-20261102/baseline.json'),build=pin(a.runtime/'build.json'),trace_library=pin(P/'runs/data-cost-transfer-20261104-01/libdecode-cost-trace.so') if (a.trace or a.paired_trace) else None,cohort='heldout24' if a.prompts else a.cohort,prompt_source=pin(a.prompts) if a.prompts else None,precision='Qwen3.5-4B Q4_K_M target;F16 KV;depth2;greedy;5080',warmup_policy=dict(per_server_cell=a.warmups,measured_repetitions=a.reps,same_process=True,source='first consumed cohort prompts, repeated only for excluded warmup'),sampling='target sample and match;temperature0',memory='nvidia-smi sampled device used MiB;includes display/unrelated baseline;not exact allocator peak'))
  stop=False
  def stopping(*_):
   nonlocal stop;stop=True
  signal.signal(signal.SIGTERM,stopping);signal.signal(signal.SIGINT,stopping)
  reference={};rows=[]
- for rep in range(a.reps+a.warmups):
+ for rep in range(a.reps):
   order=list(arms) if rep%2==0 else list(reversed(arms))
   queue=[(label,traced) for label in order for traced in ([False,True] if rep%2==0 else [True,False])] if a.paired_trace else [(label,a.trace) for label in order]
   for label,traced in queue:
@@ -73,7 +73,8 @@ def main():
      else:raise RuntimeError('startup timeout')
      (cell/'library-maps.txt').write_text(Path(f'/proc/{process.pid}/maps').read_text())
      previous=None
-     for item in prompts:
+     items=[dict(prompts[i%len(prompts)],id='warmup-'+str(i)+'-'+prompts[i%len(prompts)]['id'],_warmup=True) for i in range(a.warmups)]+prompts
+     for item in items:
       pause()
       if stop:raise RuntimeError('supervisor stop')
       payload=dict(item['payload']);payload['cache_prompt']=False;payload['return_tokens']=True
@@ -89,7 +90,7 @@ def main():
       if model and prefix:
        rates=[float(x) for x in prefix[-1].split(',')];n=metrics['rounds']
        metrics['prefix_survival_counts']=[round(x*n) for x in rates];metrics['prefix_count_method']='per-request rounded rate * exact rounds;rounding error<0.5 at<=256 rounds'
-      row=dict(instrumented=traced,bounds_ns=[start_ns,end_ns],rep=rep,warmup=rep<a.warmups,arm=label,prompt=item['id'],correct=correct,wall_seconds=elapsed,tokens=len(tokens),timings=response.get('timings'),native=metrics)
+      row=dict(instrumented=traced,bounds_ns=[start_ns,end_ns],rep=rep,warmup=item.get('_warmup',False),arm=label,prompt=item['id'],correct=correct,wall_seconds=elapsed,tokens=len(tokens),timings=response.get('timings'),native=metrics)
       rows.append(row);save(a.out/'progress.json',rows)
       if not correct:raise RuntimeError('target mismatch '+label+' '+item['id'])
     finally:

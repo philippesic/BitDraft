@@ -18,6 +18,10 @@ def main():
   with (r/'final-runtime-ops.jsonl').open('w') as output:subprocess.run([str(P/'runs/precision-native-20261104-01/op-check'),str(r/'final-runtime-ops-maps.txt')],env={**env,'LD_LIBRARY_PATH':str(runtime/'bin')},stdout=output,check=True)
   benchmark(r/'zero-arms.json',r/'zero-panel',paired=True);return
  registry=json.load(open(r/'tranche.json'));chosen=[(name,c) for name,c in registry['models'].items() if c['adapt'] and ((c['adapt']['kind']=='anchor')==(a.stage=='anchors'))]
+ if a.stage=='mutations':
+  # Early independent head/component adaptation precedes the down-ladder queue.
+  priority=['G8D8-attention-vo','G1D8-private-head','G4D8-learned-clip','G2D8-fusion','G8D4','G4D4','G2D2','G1D1']
+  chosen.sort(key=lambda item:priority.index(item[0]))
  for name,spec in chosen:
   cfg=r/'locked-configs'/(name+'.json');out=r/'adapted'/name;out.parent.mkdir(exist_ok=True)
   if not (out/'result.json').exists():

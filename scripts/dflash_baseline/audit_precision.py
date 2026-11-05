@@ -20,7 +20,9 @@ def audit_panel(path):
    require(metrics['accepted']==response['timings']['draft_n_accepted'] and metrics['proposed']==response['timings']['draft_n'],'native/server counters disagree')
    require(metrics['accepted']<=metrics['proposed'] and metrics['rounds']>0,'invalid speculative counts')
    prefix=metrics['prefix_survival_counts'];require(sum(prefix)==metrics['accepted'] and all(a>=b for a,b in zip(prefix,prefix[1:])) and all(0<=x<=metrics['rounds'] for x in prefix),'prefix survival counts invalid')
-  key=(row['arm'],row['rep'],traced);counts.setdefault(key,[]).append(row['prompt']);requests.append(dict(request=pin(request_path),response=pin(response_path),arm=row['arm'],rep=row['rep'],prompt=row['prompt'],instrumented=traced))
+  key=(row['arm'],row['rep'],traced)
+  if not row['warmup']:counts.setdefault(key,[]).append(row['prompt'])
+  requests.append(dict(request=pin(request_path),response=pin(response_path),arm=row['arm'],rep=row['rep'],prompt=row['prompt'],instrumented=traced))
  for key,ids in counts.items():require(set(ids)=={x['id'] for x in prompts} and len(ids)==len(prompts),'incomplete/duplicate native cell '+str(key))
  if result.get('paired_trace_counters_equal'):
   for plain in [r for r in rows if not r['instrumented']]:

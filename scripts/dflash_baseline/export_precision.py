@@ -48,7 +48,9 @@ def export(checkpoint,destination,config=None,state=None,checkpoint_pin=None,inc
   if t.name in selected:
    base=t.name.removesuffix('.weight');key=base.replace('blk.','layers.');spec=c['coverage'][base]
    bits=spec['bits'];mode={'dynamic':0,'fixed':1,'learned':2}[c['quantizer']['mode']]
-   clip=0. if mode==0 else float(params[key+'.log_clip'].exp()) if mode==2 else c['quantizer']['clip']
+   clip_key=key+'.log_clip'
+   if clip_key not in params and '_up.' in clip_key:clip_key=clip_key.replace('_up.','_gate.')
+   clip=0. if mode==0 else float(params[clip_key].exp()) if mode==2 else c['quantizer']['clip']
    writer.add_uint32(base+'.w1ax.bits',bits);writer.add_uint32(base+'.w1ax.mode',mode);writer.add_float32(base+'.w1ax.clip',clip)
    tensor(base+'.w1a1_packed',pack(params[key+'.latent_sign'].numpy()),Type.I32)
    scale=params[key+'.scale'].clamp_min(0).numpy();tensor(base+'.w1a1_scale',scale)

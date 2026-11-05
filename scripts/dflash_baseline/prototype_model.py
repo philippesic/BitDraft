@@ -28,6 +28,7 @@ def install(model, config, source_weights):
     for p in model.parameters(): p.requires_grad_(False)
     for i,layer in enumerate(model.layers):
         shared=None
+        shared_clip=None
         gate,up=layer.ffn_gate,layer.ffn_up
         if isinstance(gate,Projection) and isinstance(up,Projection) and not torch.equal(gate.log_gain,up.log_gain):
             raise ValueError('shared gate/up gain conflict')
@@ -56,6 +57,11 @@ def install(model, config, source_weights):
                     if features['gain']: new.log_gain.copy_(old.log_gain)
                     if config['quantizer']==old.quantizer: new.log_clip.copy_(old.log_clip)
             new.latent_sign.requires_grad_(features['sign']);new.scale.requires_grad_(features['scale'])
+            if config['quantizer']['mode']=='learned' and name!='ffn_down':
+                if shared_clip is None:shared_clip=new.log_clip
+                else:
+                    if not torch.equal(new.log_clip,shared_clip):raise ValueError('shared gate/up clipping conflict')
+                    new.log_clip=shared_clip
             setattr(layer,name,new)
         for name in ('attn_norm','attn_q_norm','attn_k_norm','ffn_norm'):
             getattr(layer,name).requires_grad_(features['norm'])

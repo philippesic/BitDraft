@@ -269,3 +269,48 @@ artifacts remain checkpoint-only until repeated DEV confirmation, frozen
 shortlist/heldout and full audit finish. Do not hand back the current partial
 chart as campaign completion. Preserved vanilla original-runtime summary is
 committed separately under experiments/precision-campaign-20261104.
+
+## Recovery and measurement corrections — November4,23:35Pacific
+
+G8/D8 natural12 recovery:756/3931 accepted/proposed at0;796/3849 at256;
+760/3923 at1024. G4/D8:352/4734→452/4533→412/4617. G2/D8:
+387/4666→331/4775→341/4756. Small one-repeat consumed DEV observations,
+not long-run precision rankings; unchanged A8 also shows no sustained gain.
+G1/D8 is now training its full1024 updates, preserving extreme-family exposure.
+No extension, interaction, finalist selection or heldout has occurred yet.
+
+Zero protected-format probes: Q4_0 fusion/attention reduce actual GGUF bytes
+with little additional zero-shot acceptance damage on capture3. A private head
+adds340+MiB or more and slows full draft execution on this implementation.
+Mutation adaptation order therefore starts attention V/output, an independent
+head probe, learned clipping and fusion before the down-input queue. All remain
+common-parent/matched-history; scheduling does not change exposure.
+
+Auditing recovered vanilla benchmark revealed two excluded repetitions used
+fresh servers, so process-local graphs were not warm for measured cells.
+Preserve those historical measured values as diagnostic, with that limitation.
+Formal campaign confirmation now uses two excluded warmup REQUESTS inside
+each same-process server cell and five alternating measured repetitions.
+Zero/recovery smokes used no warmups and remain labeled diagnostics.
+
+Review also found learned gate/up clipping must share a Parameter just like
+their input gains; otherwise adaptation could produce incompatible bounds for
+the native shared pack. This is corrected before any learned-bound full-model
+adaptation. A fixture verifies shared gradient/update/checkpoint identity;
+export resolves the shared clip parameter. Dynamic/fixed reference histories
+and existing native zero artifacts are unchanged. Native learned adaptation
+remains a required measured mutation, not inferred from the fixture.
+
+All four pilot states were retained via lossless byte-shuffled archives, not
+dropped. A byte-identical re-export of a zero GGUF passed before16 unselected
+zero models were removed as reproducible cache; configs, exact writer metadata
+compatibility, parent, hashes and native results remain. Twelve adapted-arm
+zero models remain available for same-cohort recovery. Storage supervisor
+`precision-storage-20261104-01` exited0; receipts under campaign root. CPU
+maintenance overlapped early cells of the G4 recovery smoke; that panel has an
+explicit resource note, and formal timing must run without maintenance.
+
+The retained decoded-token correctness audit now reopens raw responses and
+checks full output/stop signatures, accepted/proposed/prefix counts, complete
+cell coverage, matched exposure and unchanged trace counters. Checkpoint audit
+passed all completed panels. Heldout preparation remains unexecuted.

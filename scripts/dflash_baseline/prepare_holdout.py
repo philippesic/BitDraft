@@ -36,9 +36,9 @@ def prepare(selection_path,out):
  out.mkdir();save(out/'selection-freeze.json',dict(selection=selection_pin,natural_sources=base['natural_sources'],train192=exposure_ref,consumed_natural=consumed_ref,consumption_marker=consumed_inputs['marker'],sources={n:pin(p) for n,p in {'adapter':__file__,'natural':natural.__file__,'identity':fresh.__file__}.items()},settings=dict(output_limit=256,domains={'code':8,'reasoning':8,'prose':8}),scope='24 unused natural singleton source clusters; all historical TRAIN/DEV/pilot/matrix/sealed opaque indices and192TRAIN exposure remain excluded; no tuning after this freeze.'))
  groups,report=natural.select_natural(base,selection_pin,audit,evidence);audit.recheck()
  if len(groups)!=24:raise ValueError('heldout cluster coverage')
- rows=[dict(id=x['id'],domain=x['domain'],group_id=x['group_id'],payload=natural.payload(natural.user_text(x['messages'])),identities=x['identities'],source_ancestry=x['source_ancestry']) for x in groups]
+ rows=[dict(id=x['id'],domain=x['domain'],group_id=x['group_id'],original_prompt_id=x['original_prompt_id'],original_group=x['original_group'],original_topics=x['original_topics'],payload=natural.payload(natural.user_text(x['messages'])),identities=x['identities'],source_ancestry=x['source_ancestry']) for x in groups]
  # Consumed before first request, including failed future serving attempts.
- save(out/'consumption.json',dict(status='CONSUMED_FOR_LOCKED_COMPARISON',selection=selection_pin,group_ids=[x['group_id'] for x in rows],identities=[x['identities'] for x in rows],failed_attempts_also_consume=True))
+ save(out/'consumption.json',dict(status='CONSUMED_FOR_LOCKED_COMPARISON',selection=selection_pin,records=[{k:x[k] for k in ('group_id','original_prompt_id','original_group','original_topics','identities')} for x in rows],failed_attempts_also_consume=True))
  save(out/'prompts.json',rows);save(out/'audit.json',dict(selection=selection_pin,selection_report=report,exclusion_sources=list(audit.pins.values()),groups=24,role='HELDOUT_AFTER_SHORTLIST_LOCK',no_training_or_tuning=True));return out/'prompts.json'
 if __name__=='__main__':
  import argparse
