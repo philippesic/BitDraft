@@ -622,3 +622,24 @@ against actual RAM/tmpfs headroom; it must release before native timing. Preserv
 an8GiB WSL reserve. Current code/plan preparation is complete; launch one supervised
 precision-clip-control-20261105-01 lane after fresh hardware/pause/process check,
 then keep ownership/checkpoints current through native results and followup charts.
+
+## Followup GPU owner — November5,08:57Pacific
+
+Sole owner precision-clip-control-20261105-01 is live from immutable source6221205b
+under local binary-eagle-runtime tmux. Canonical run ownership.json records
+boot/birth/source/group and TERM/grace120s stop procedure; preserve healthy job.
+Output clip-control-followup. Zero native admission completed40 responses and
+fixed/learned unit initialization has exactly equal accepted/proposed/round/prefix
+counters. Actual matched fixed training is active (64/1024 at this checkpoint).
+No other GPU job. Driver waits for child recovery on signal and stops before a
+new stage. Streamed Zstd removes raw/archive duplication; small exact Adam/RNG
+resume2tests, existing pipeline2tests and natural-selection13tests pass.
+
+Next within the same serial job: finish1024; full CPU checkpoint optimizer/RNG
+coverage/finite checks plus byte-identical export against resident1024 native
+point, using owned RAM temp; archive exports; frozen-component audit; intermediate
+DEV smoke; proper2warmup/5alternating4-arm DEV; two model pins locked before new
+source access, initial24 consumed group/topic/hash exclusions; new24 heldout with
+cohort label clip-heldout24. Native completion is not followup chart completion.
+After that audit new panels/exposure, build a NEW chart directory and retain all
+initial publication hashes. No additional training extension is allocated.
