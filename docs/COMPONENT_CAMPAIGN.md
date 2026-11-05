@@ -103,3 +103,50 @@ component bases. Windows campaign checkpoint destination is
 separately from archival compression. Training exposure repeats the24original
 TRAIN sequences unless compatible broader captures are explicitly admitted;
 overlapping windows never count as fresh labels. Budget remains pilot-defined.
+
+## Native qualification and resource pilot —13:34Pacific
+
+Full pilot:32actual updates in4.882seconds, median0.143224seconds/update;
+4096updates project to586.65seconds of update time, excluding setup/export/DEV/
+checkpoint I/O. Dense consumed-DEV CE6.89435→6.62556; no acceptance claim from CE.
+Actual full-head training fits the5080; exact allocator peak is in
+`arms/H0-pilot/result.json`. Full F32 parameter/Adam/CUDA-RNG recovery and identical
+native re-export passed. CUDA cache Q8_0/Q4_0/Q5_0 fixtures reproduce native
+write/read rounding exactly on2432values each and have finite STE gradients;
+K128/V64 Hadamard involution and scalar-gradient checks pass.
+
+Native short64-token captureDEV smoke completed for H0/H6/H4/E6/E4/HE4, all six
+K/V pairs, four projection-scalar groups, norms and combined scalars. All final
+target responses are correct. H0/H6/E6 acceptance counts agree55/263. Q4_K
+private head55/263, E458/257, corrected tied HE457/259. These are unwarmed
+smokes, not formal latency/quality conclusions. Real cache logs confirm requested
+formats, K128/V64 rotations and buffer allocations. Tied allocation initially
+followed the CPU input path; corrected runtime03 stores one output-placedCUDA
+Q4_K tensor and aliases the embedding to it. Runtime01's unsupported bool-template
+link and runtime02's slow tied placement remain superseded diagnostics; qualified
+old runtime sources/binaries are unchanged.
+
+NEW native states now use authenticated tensor-slice archives, referencing exact
+frozen tensor bytes and storing only new bytes. Full reconstructed file hashes
+are verified before retiring raw files. File compression is not model memory.
+CPU archive conversion was initially concurrent with a native reader and hit a
+file-lifecycle race; final native panel completed correctly, conversion was
+rerun serially and passed. All future archive conversions/native consumers serialize.
+The storage report is `consolidation.json`; no pre-campaign artifact was touched.
+
+Windows checkpoint conversion reached its512MiB free-space floor and preserved
+the original full state. The incomplete NEW partial was authenticated as disposable
+and removed, restoring measured Windows free space to6,299,725,824bytes.
+A bounded streamed byte-shuffled retry now precedes the H0/H4 recovery stage.
+Live supervisor: current worktree `runs/component-head-recovery-20261105-01`,
+local tmux socket `binary-eagle-runtime`, matching session. Birth/group identity
+is in its state.json. Stop authenticated supervisor SIGTERM with90s grace,
+then verify group/GPU release. The stage includes full4096updates,256/1024
+readouts, recoverable rolling checkpoints and actual native readouts, not only
+the pilot. The budget is `budget.json`: maximum114688provisional updates
+(including controls/reserves/combinations/confirmation), approximately4.56hours
+pure update time at pilot speed; actual cost is tracked separately.
+
+Remaining: full head recovery, finite Q3 probe/conditional bridge/R2, embeddings,
+KV long-context/history qualification and recovery, scalar recovery, interactions,
+locked frontier confirmations and charts. Entire component campaign remains OPEN.

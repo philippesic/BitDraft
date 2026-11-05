@@ -42,11 +42,14 @@ def save_state(path,state):
 def convert_zst(source):
  source=Path(source);receipt=json.load(open(source.with_suffix('.json')))
  dest=source.with_suffix('.bsz');partial=dest.with_suffix('.partial')
- with source.open('rb') as src,partial.open('xb') as out,z.ZstdDecompressor().stream_reader(src) as decoded:
-  out.write(MAGIC);writer=Writer(out,partial)
-  for block in iter(lambda:decoded.read(8<<20),b''):writer.write(block)
-  writer.finish();os.fsync(out.fileno())
- validate(partial,receipt['raw_sha256'],receipt['raw_bytes']);partial.rename(dest)
+ try:
+  with source.open('rb') as src,partial.open('xb') as out,z.ZstdDecompressor().stream_reader(src) as decoded:
+   out.write(MAGIC);writer=Writer(out,partial)
+   for block in iter(lambda:decoded.read(8<<20),b''):writer.write(block)
+   writer.finish();os.fsync(out.fileno())
+  validate(partial,receipt['raw_sha256'],receipt['raw_bytes']);partial.rename(dest)
+ except BaseException:
+  partial.unlink(missing_ok=True);raise
  new=dict(receipt,format='dflash.byte_shuffle_zstd.stream.v1',archive=str(dest),archive_sha256=pin(dest)['sha256'],archive_bytes=dest.stat().st_size)
  save(dest.with_suffix('.json'),new)
  if pin(source)['sha256']!=receipt['archive_sha256']:raise ValueError('original checkpoint changed')
