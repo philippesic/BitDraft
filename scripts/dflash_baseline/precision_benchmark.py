@@ -72,6 +72,13 @@ def main():
       except Exception:time.sleep(1)
      else:raise RuntimeError('startup timeout')
      (cell/'library-maps.txt').write_text(Path(f'/proc/{process.pid}/maps').read_text())
+     geometry=[]
+     for item in prompts:
+      payload=item['payload'];prompt=payload['prompt']
+      ids=prompt if isinstance(prompt,list) else request(port,'tokenize',dict(content=prompt,add_special=True,parse_special=True))['tokens']
+      if not (0<len(ids) and len(ids)+payload['n_predict']<=4096):raise RuntimeError('frozen prompt exceeds native context; no truncation/replacement')
+      geometry.append(dict(id=item['id'],prompt_tokens=len(ids),output_reserve=payload['n_predict']))
+     save(cell/'geometry.json',geometry)
      previous=None
      items=[dict(prompts[i%len(prompts)],id='warmup-'+str(i)+'-'+prompts[i%len(prompts)]['id'],_warmup=True) for i in range(a.warmups)]+prompts
      for item in items:

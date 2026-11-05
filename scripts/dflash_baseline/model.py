@@ -8,7 +8,9 @@ from torch import nn
 from torch.nn import functional as F
 ROOT=Path(__file__).resolve().parents[2]
 P=Path('/home/philip/binary-eagle-decoding')
-sys.path[:0]=[str(ROOT/'src'),str(P/'third_party/llama.cpp/gguf-py')]
+GGUF_ROOT=ROOT/'third_party/llama.cpp/gguf-py'
+if not (GGUF_ROOT/'gguf').exists():GGUF_ROOT=P/'third_party/llama.cpp/gguf-py'
+sys.path[:0]=[str(ROOT/'src'),str(GGUF_ROOT)]
 from gguf import GGUFReader
 from gguf.quants import dequantize
 from w1a1_eagle.block_qat import BlockLayer,_FrozenLinear,_rms
