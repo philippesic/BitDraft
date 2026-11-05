@@ -18,10 +18,10 @@ def digest(config):
     return hashlib.sha256(json.dumps(config,sort_keys=True,separators=(',',':')).encode()).hexdigest()
 
 def resolve(request):
-    allowed={'version','preset','source','parent','data','budget_seconds','evaluation','overrides','features','quantizer','components'}
+    allowed={'version','preset','source','parent','data','budget_seconds','evaluation','overrides','features','quantizer','components','calibration'}
     if set(request)-allowed: raise ValueError('unknown config fields')
     if request.get('version') != 1: raise ValueError('unsupported config version')
-    for name in ('source','parent','data'):
+    for name in ('source','parent','data', *(['calibration'] if 'calibration' in request else [])):
         pin=request.get(name)
         if not isinstance(pin,dict) or set(pin)!={'path','sha256'} or len(pin['sha256'])!=64:
             raise ValueError(f'{name} requires path and SHA256 pin')
@@ -35,13 +35,17 @@ def resolve(request):
         if k not in features or type(v) is not bool: raise ValueError('invalid feature switch')
         features[k]=v
     quantizer=request.get('quantizer',{'mode':'dynamic','clip':1.0})
-    if set(quantizer)!={'mode','clip'} or quantizer['mode'] not in ('dynamic','fixed','learned') or not math.isfinite(quantizer['clip']) or quantizer['clip']<=0: raise ValueError('invalid quantizer')
+    if not {'mode','clip'}<=set(quantizer) or set(quantizer)-{'mode','clip','initial_bounds'} or quantizer['mode'] not in ('dynamic','fixed','learned') or not math.isfinite(quantizer['clip']) or quantizer['clip']<=0: raise ValueError('invalid quantizer')
     coverage={f'blk.{i}.ffn_{p}':{'weight':'W1','bits':down if p=='down' else gate} for i in range(6) for p in ('gate','up','down')}
     if request['preset']=='protected-example': coverage['blk.0.ffn_down']={'weight':'BF16','bits':None}
     for name,value in request.get('overrides',{}).items():
         if name not in coverage or set(value)!={'weight','bits'}: raise ValueError('invalid projection override')
         if not ((value['weight']=='W1' and type(value['bits']) is int and value['bits'] in (1,2,4,8)) or (value['weight']=='BF16' and value['bits'] is None)): raise ValueError('unsupported weight/activation combination')
         coverage[name]=copy.deepcopy(value)
+    bounds=quantizer.get('initial_bounds',{})
+    if not isinstance(bounds,dict) or (bounds and quantizer['mode']=='dynamic') or any(k not in coverage or coverage[k]['weight']!='W1' or not isinstance(v,(int,float)) or not math.isfinite(v) or v<=0 for k,v in bounds.items()):raise ValueError('invalid calibrated bounds')
+    for i in range(6):
+        if bounds.get(f'blk.{i}.ffn_gate',quantizer['clip'])!=bounds.get(f'blk.{i}.ffn_up',quantizer['clip']):raise ValueError('gate/up calibrated bounds must match')
     result=copy.deepcopy(request)
     result.update(coverage=coverage,features=features,quantizer=quantizer,arithmetic='fixed_w1ax_finite_reciprocal_v2',schedule='constant',operand_storage='int8-reference')
     return result

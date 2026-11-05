@@ -314,3 +314,52 @@ The retained decoded-token correctness audit now reopens raw responses and
 checks full output/stop signatures, accepted/proposed/prefix counts, complete
 cell coverage, matched exposure and unchanged trace counters. Checkpoint audit
 passed all completed panels. Heldout preparation remains unexecuted.
+
+## Runtime gained-stream correction — November4,23:50Pacific
+
+All four anchors finished1024 updates and their natural12 zero/256/1024 panels.
+G1/D8 recovered96/5244→482/4474→597/4244 accepted/proposed, warranting continued
+attention; A2 did not recover in its current absmax/ternary recipe. No candidate
+has been promoted. All full final optimizer/RNG states are archived losslessly.
+
+A stronger actual gain+pack test found the generic CUDA gain op flushes tiny
+signed inputs under inherited fast-math. The prior bare-pack36 cases passed
+but this gained-stream test failed; preserve that failed receipt under
+`generic-gain-failure.json`. Runtime03 is now superseded for campaign claims.
+This is a concrete arithmetic risk, not a reason to chase unrelated HF parity.
+
+Runtime04 fuses positive gains into the custom pack kernel using explicit
+RNE F32 multiplication with FTZ disabled, before both quantization and input
+sum. Target/verifier objects and arithmetic remain unchanged. All36 gained
+CUDA cases now pass byte-exactly, including zero/subnormal inputs, A1/A2/A4/A8,
+dynamic/fixed/learned bounds, row midpoints and actual gate/up/down shapes.
+Build receipts and source patch live under runs/precision-native-20261104-04
+and experiments/precision-campaign-20261104/runtime. Do not pool runtime03
+and04 latency effects as precision effects.
+
+Active GPU owner: `precision-runtime-requal-20261104-01`. It recreated deleted
+zero caches with their exact writer compatibility and verified all restored
+hashes; re-served28 zero configurations under04; now remeasures all zero/256/
+1024 anchors plus removal controls and external Q4 on natural12. Metadata,
+ownership/birth/source/stop receipts remain in the canonical run. Final promotion
+will remeasure every relevant control under04 with proper per-process warmups.
+
+To preserve space, two terminal control archives were copied to the existing
+project Windows artifact store, hash-verified, and canonical paths atomically
+replaced by verified symlinks. No checkpoint bytes lost; source/parent paths
+still resolve. Separate WSL/Windows free-byte measurements are recorded in
+control-archive-relocation.json. No VHDX compaction or Windows reclaim claim.
+
+Future jobs now execute from small immutable owned SOURCE snapshots (not new
+Git/device checkouts) in the campaign artifact root, preserving exact source
+through unrelated edits. Weights/data/runtime stay canonical. The launcher
+records original commit/diff, snapshot hashes, actual supervisor source, boot
+identity and process birth, and children run from their frozen source root.
+
+TRAIN-only input-range calibration support and per-projection learned/fixed
+initial bounds are prepared for a possible reserved interaction, not executed
+or selected yet. Gate/up bounds remain tied. Bounds pin their TRAIN calibration
+ancestry; frozen observation verifies no parameter mutation. No new Stage2+
+features or heldout generation have begun. After runtime requalification,
+continue the8 locked component/down mutations before choosing interactions,
+extensions, repeated confirmation and heldout. Full chart remains unfinished.

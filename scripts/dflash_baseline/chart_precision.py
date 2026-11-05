@@ -31,7 +31,9 @@ def summarize(panel):
     if i==len(prefix):prefix.append(0)
     prefix[i]+=v
   resource_note=read(panel/'resource-note.json') if (panel/'resource-note.json').exists() else None
-  point=dict(resource_note=resource_note,id=panel.name+'::'+arm,panel=str(panel),arm=arm,cohort=cohort,scope='confirmation' if len({x['rep'] for x in plain})>=5 else 'diagnostic smoke',family=family,config=config,model=model,model_bytes=meta.get('bytes') if meta else (Path(model).stat().st_size if model else 0),correct=all(x['correct'] for x in plain+traced),requests=len(plain),prompts=len({x['prompt'] for x in plain}),repetitions=len({x['rep'] for x in plain}),accepted=accepted,proposed=proposed,rounds=rounds,acceptance=accepted/proposed if proposed else None,prefix_counts=prefix,prefix_survival=[x/rounds for x in prefix] if rounds else [],emitted_per_round=tokens/rounds if rounds else None,request_tps=tokens/wall,decode_tps=tokens/decode,full_draft_ms=full,narrow_generate_ms=sum(x.get('draft_ms',0) for x in counts)/rounds if rounds else None,total_peak_device_MiB=max(memories) if memories else None,allocator_shutdown_MiB=allocator[-1] if allocator else None,training_updates=info.get('progress',{}).get('updates',info.get('updates')),training_seconds=info.get('progress',{}).get('update_seconds'),lineage=info.get('lineage'),runtime=freeze.get('runtime'),instrumented_requests=len(traced),verified_paired_counters=result.get('paired_trace_counters_equal',False),target_verify_and_sample_ms_per_round=sum(x.get('target_verify_and_sample_ms',0) for x in traced)/trace_rounds if trace_rounds else None)
+  runtime_pin=freeze.get('runtime',{}).get('libllama.so.0.8.0',{})
+  runtime_series=Path(runtime_pin['path']).parent.parent.name if runtime_pin else 'historical-unpinned-runtime'
+  point=dict(runtime_series=runtime_series,execution='Native INT8-code DP4A / packed W1 FFN' if coverage else 'Native external model',resource_note=resource_note,id=panel.name+'::'+arm,panel=str(panel),arm=arm,cohort=cohort,scope='confirmation' if len({x['rep'] for x in plain})>=5 else 'diagnostic smoke',family=family,config=config,model=model,model_bytes=meta.get('bytes') if meta else (Path(model).stat().st_size if model else 0),correct=all(x['correct'] for x in plain+traced),requests=len(plain),prompts=len({x['prompt'] for x in plain}),repetitions=len({x['rep'] for x in plain}),accepted=accepted,proposed=proposed,rounds=rounds,acceptance=accepted/proposed if proposed else None,prefix_counts=prefix,prefix_survival=[x/rounds for x in prefix] if rounds else [],emitted_per_round=tokens/rounds if rounds else None,request_tps=tokens/wall,decode_tps=tokens/decode,full_draft_ms=full,narrow_generate_ms=sum(x.get('draft_ms',0) for x in counts)/rounds if rounds else None,total_peak_device_MiB=max(memories) if memories else None,allocator_shutdown_MiB=allocator[-1] if allocator else None,training_updates=info.get('progress',{}).get('updates',info.get('updates')),training_seconds=info.get('progress',{}).get('update_seconds'),lineage=info.get('lineage'),runtime=freeze.get('runtime'),instrumented_requests=len(traced),verified_paired_counters=result.get('paired_trace_counters_equal',False),target_verify_and_sample_ms_per_round=sum(x.get('target_verify_and_sample_ms',0) for x in traced)/trace_rounds if trace_rounds else None)
   baseline=[x for x in rows if x['arm']=='q4' and not x['warmup'] and not x.get('instrumented')]
   if baseline:
    point['request_vs_q4']=point['request_tps']/(sum(x['tokens'] for x in baseline)/sum(x['wall_seconds'] for x in baseline));point['decode_vs_q4']=point['decode_tps']/(sum(x['tokens'] for x in baseline)/(sum(x['timings']['predicted_ms'] for x in baseline)/1000))
@@ -67,7 +69,7 @@ def build(root,out):
   except (KeyError,TypeError):continue
  completion=read(root/'campaign-completion.json') if (root/'campaign-completion.json').exists() else None
  payload=dict(status='FULL_INITIAL_COMPARISON_COMPLETE' if completion else 'MEASURED_CHECKPOINT_NOT_CAMPAIGN_COMPLETION',completion=completion,blocked=read(root/'tranche.json').get('blocked',[]) if (root/'tranche.json').exists() else [],points=points,limitations=['RTX5080 / modern Qwen3.5-4B Q4_K_M only.','Smokes and repeated confirmations are separated by panel/cohort.','A1/A2 execute INT8-code DP4A fallback, not hypothetical binary kernels.','Full draft cost uses disjoint instrumented host spans including catchup, generation and accept; asynchronous work may be charged at a later synchronization.','Sampled device-memory peak includes display/unrelated baseline and is not exact allocator peak.','Confidence intervals resample reused prompts/repetitions; no independent-training variance estimate.'])
- (out/'comparison.json').write_text(json.dumps(payload,indent=2)+'\n');fields=['id','cohort','scope','family','training_updates','accepted','proposed','rounds','acceptance','emitted_per_round','full_draft_ms','request_tps','decode_tps','request_vs_q4','optimistic_zero_draft_request_tps','model_bytes','total_peak_device_MiB','incremental_peak_device_MiB_vs_target','incremental_model_allocator_MiB_vs_target','correct']
+ (out/'comparison.json').write_text(json.dumps(payload,indent=2)+'\n');fields=['id','cohort','scope','runtime_series','family','execution','training_updates','accepted','proposed','rounds','acceptance','emitted_per_round','full_draft_ms','request_tps','decode_tps','request_vs_q4','optimistic_zero_draft_request_tps','model_bytes','total_peak_device_MiB','incremental_peak_device_MiB_vs_target','incremental_model_allocator_MiB_vs_target','correct']
  with (out/'comparison.csv').open('w') as f:
   writer=csv.DictWriter(f,fields,extrasaction='ignore');writer.writeheader();writer.writerows(points)
  def fmt(v):return '—' if v is None else f'{v:.3f}' if isinstance(v,float) else str(v)
@@ -89,14 +91,17 @@ def build(root,out):
   axes[0].scatter((p['model_bytes'] or 0)/2**20,100*p['acceptance'],color=color(p),alpha=.6)
   if p['total_peak_device_MiB']:axes[1].scatter(p['total_peak_device_MiB'],p['request_tps'],color=color(p),alpha=.6)
  axes[0].set(xlabel='Actual drafter GGUF MiB (private tensors included)',ylabel='Acceptance (%)');axes[1].set(xlabel='Sampled total device peak MiB',ylabel='Full request tokens/s');fig.tight_layout();fig.savefig(out/'size-memory.png',dpi=160);fig.savefig(out/'size-memory.svg');plt.close(fig)
- fig,ax=plt.subplots(figsize=(11,6));curves={}
+ fig,ax=plt.subplots(figsize=(12,6));curves={}
  for p in points:
-  if p['cohort']=='natural12' and p['training_updates'] is not None and p['acceptance'] is not None and '/adapted/' in p['panel']:
-   curves.setdefault(p['panel'],[]).append(p)
- for panel,curve in curves.items():
-  curve=sorted(curve,key=lambda p:p['training_updates']);ax.plot([p['training_updates'] for p in curve],[100*p['acceptance'] for p in curve],marker='o',label=Path(panel).parent.name,color=color(curve[0]),alpha=.75)
- ax.set(xlabel='Matched additional updates from common frozen foundation',ylabel='Native acceptance (%)',title='Recovery on the same consumed natural12 cohort');ax.grid(alpha=.2)
- if curves:ax.legend(fontsize=7,ncol=2)
+  match=re.fullmatch(r'(G[1248]D[1248](?:-[a-z-]+)?)-(zero|256|1024)',p['arm'])
+  if p['cohort']=='natural12' and p['training_updates'] in (0,256,1024) and p['acceptance'] is not None and match:
+   key=(p['runtime_series'],match[1]);prior=curves.setdefault(key,{}).get(p['training_updates'])
+   if prior is None or p['repetitions']>prior['repetitions']:curves[key][p['training_updates']]=p
+ for (series,name),values in curves.items():
+  curve=sorted(values.values(),key=lambda p:p['training_updates']);style='--' if series.endswith('-03') else '-'
+  ax.plot([p['training_updates'] for p in curve],[100*p['acceptance'] for p in curve],marker='o',linestyle=style,label=name+' / '+series.rsplit('-',1)[-1],color=color(curve[0]),alpha=.75)
+ ax.set(xlabel='Matched additional updates from common frozen foundation',ylabel='Native acceptance (%)',title='Recovery on consumed natural12; runtime series remain distinct');ax.grid(alpha=.2)
+ if curves:ax.legend(fontsize=6,ncol=3)
  fig.tight_layout();fig.savefig(out/'recovery.png',dpi=160);fig.savefig(out/'recovery.svg');plt.close(fig)
  # Standalone interactive SVG and sortable evidence table: no network/CDN/server.
  data=json.dumps(points).replace('</','<\\/');columns=json.dumps(fields)

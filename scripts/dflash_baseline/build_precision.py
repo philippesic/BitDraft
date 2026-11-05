@@ -19,6 +19,7 @@ def prepare(r):
  impl=replace(impl,'for (int i = 4; i < GGML_MAX_SRC; ++i)', 'if (op->src[4] && (op->src[4]->type != GGML_TYPE_F32 || op->src[4]->ne[0] != w->ne[1] || ggml_nelements(op->src[4]) != w->ne[1])) return false;\n    for (int i = 5; i < GGML_MAX_SRC; ++i)')
  impl=replace(impl,'ggml_w1ax_pack_layout(k, a->ne[1], 8)','ggml_w1ax_pack_layout(k, a->ne[1], ggml_get_op_params_i32(op, 2))')
  impl=replace(impl,'const struct ggml_w1ax_pack_layout layout = ggml_w1ax_pack_layout(a->ne[0]', 'if (ggml_get_op_params_i32(op, 1) < 0 || ggml_get_op_params_i32(op, 1) > 2) return false;\n        const struct ggml_w1ax_pack_layout layout = ggml_w1ax_pack_layout(a->ne[0]')
+ impl=replace(impl,'for (int i = 1; i < GGML_MAX_SRC; ++i) {\n            if (op->src[i] != NULL) return false;','if (op->src[1] && (op->src[1]->type != GGML_TYPE_F32 || op->src[1]->ne[0] != a->ne[0] || ggml_nelements(op->src[1]) != a->ne[0] || !ggml_is_contiguous(op->src[1]))) return false;\n        for (int i = 2; i < GGML_MAX_SRC; ++i) {\n            if (op->src[i] != NULL) return false;')
  add(Path('ggml/src/ggml-impl.h'),impl)
  c=(S/'ggml/src/ggml.c').read_text().replace('GGML_ASSERT(bits == 8 &&','GGML_ASSERT((bits == 1 || bits == 2 || bits == 4 || bits == 8) &&')
  add(Path('ggml/src/ggml.c'),c)
@@ -39,6 +40,18 @@ def prepare(r):
  cu=replace(cu,'output[token*m + row] = __fmul_rn(weighted, beta);','const float dot = __fmul_rn(weighted, beta);\n        output[token*m + row] = midpoints ? __fadd_rn(dot,__fmul_rn(midpoints[row],sums[token])) : dot;')
  cu=replace(cu,'(const float *) acts->data, k, codes, scales);','(const float *) acts->data, k, codes, scales, scales+n, ggml_get_op_params_i32(dst,0), ggml_get_op_params_i32(dst,1), ggml_get_op_params_f32(dst,2));')
  cu=replace(cu,'m, k, (k+31)/32, (float *) dst->data);','m, k, (k+31)/32, (float *) dst->data, dst->src[4] ? (const float *)dst->src[4]->data : nullptr, (const float *)(packed+layout.scale_offset+n));')
+ cu=replace(cu,'float clip) {','float clip, const float * gains) {')
+ cu=replace(cu,'static __global__ void w1ax_quantize(','''static __device__ float gained_value(const float * row,const float * gains,int64_t j) {
+    if(!gains) return row[j];
+    const float gain=gains[j];
+    if(!isfinite(gain) || gain<=0) __trap();
+    return __fmul_rn(row[j],gain);
+}
+static __global__ void w1ax_quantize(''')
+ cu=replace(cu,'const uint32_t magnitude = __float_as_uint(row[i])','const float value=gained_value(row,gains,i);\n        const uint32_t magnitude = __float_as_uint(value)')
+ cu=replace(cu,'const float normalized = zero ?','const float value=gained_value(row,gains,i);\n        const float normalized = zero ?')
+ cu=cu.replace('__fmul_rn(row[i], inv)','__fmul_rn(value, inv)').replace('(double) row[i]/','(double) value/').replace('(row[i] >= 0 ? 1 : -1)','(value >= 0 ? 1 : -1)')
+ cu=replace(cu,'ggml_get_op_params_f32(dst,2));','ggml_get_op_params_f32(dst,2), dst->src[1] ? (const float *)dst->src[1]->data : nullptr);')
  add(Path('ggml/src/ggml-cuda/w1a1.cu'),cu)
  # CPU implementation remains the original contract; fail closed in this runtime.
  cpu=(S/'ggml/src/ggml-cpu/ggml-cpu.cpp').read_text()
@@ -66,9 +79,9 @@ def prepare(r):
  end=cpp.index('\n        } else {',start)
  cpp=cpp[:start]+'''            auto tensor=[&](const std::string &n) { return const_cast<ggml_tensor *>(model.get_tensor(n.c_str())); };
             auto pack=[&](ggml_tensor * input, const llama_w1a8_linear &p, const std::string &base) {
-                auto gain=tensor(base+".w1ax_gain"); if(gain) input=ggml_mul(ctx0,input,gain);
+                auto gain=tensor(base+".w1ax_gain");
                 int bits=p.scales->op_params[0]; if(!bits) bits=8;
-                auto result=ggml_w1ax_pack(ctx0,ggml_cont(ctx0,input),bits);
+                auto result=ggml_w1ax_pack(ctx0,ggml_cont(ctx0,input),bits); result->src[1]=gain;
                 if(p.scales->op_params[0]) memcpy((char*)result->op_params+4,(char*)p.scales->op_params+4,8);
                 return result;
             };

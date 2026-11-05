@@ -6035,3 +6035,17 @@ Standard matched1024-update precision exposure and finite format/resource
 queue fixed before candidate selection. Extensive chart remains unfinished;
 continue foundation, anchors, native component screens, matched adaptation,
 finalist lock/confirmation and charts. No push.
+
+
+## Precision campaign continuation — November4,23:50Pacific
+
+Four foundations/controls,28 zero precision arms and all4 matched1024-update
+anchors are measured. A1/D8 recovers materially; no deployment candidate selected.
+A strengthened gain-path CUDA check caught generic-op tiny-value flushing;
+custom fused-gain runtime04 passes36 gained-stream cases. Current supervisor
+`precision-runtime-requal-20261104-01` owns GPU and is remeasuring affected
+references/Q4 under04. See PRECISION_CAMPAIGN for exact checkpoints, source
+snapshots, archives/relocation receipts and next steps. Eight locked mutations,
+bounded interaction/recovery decisions, proper-warmup repeated confirmation,
+shortlist lock/heldout and full charts still outstanding. Continue, do not end
+from this checkpoint or a job launch. No push.

@@ -23,6 +23,7 @@ def export(checkpoint,destination,config=None,state=None,checkpoint_pin=None,inc
   checkpoint_pin=checkpoint_pin or dict(path=str(checkpoint),sha256=sha(checkpoint))
   if config['parent']['sha256']!=checkpoint_pin['sha256'] or str(config['parent']['path'])!=str(checkpoint):raise ValueError('reconfiguration parent mismatch')
   parent_progress=saved['progress'];params=dict(saved['parameters'])
+  for base,bound in config['quantizer'].get('initial_bounds',{}).items():params[base.replace('blk.','layers.')+'.log_clip']=torch.tensor(math.log(bound),dtype=torch.float32)
   for name,value in params.items():
    if (name.endswith('.midpoint') and not config['features']['midpoint']) or (name.endswith('.log_gain') and not config['features']['gain']):params[name]=torch.zeros_like(value)
   saved=dict(version=2,config=config,config_hash=digest(config),parameters=params,progress=dict(updates=0,cursor=parent_progress['cursor'],order=parent_progress['order'],update_seconds=0.,supervised_tokens=0),lineage=dict(parent=config['parent'],parent_progress=parent_progress,optimizer_policy='reset-on-adaptation',reconfiguration_only=True))
@@ -50,7 +51,7 @@ def export(checkpoint,destination,config=None,state=None,checkpoint_pin=None,inc
    bits=spec['bits'];mode={'dynamic':0,'fixed':1,'learned':2}[c['quantizer']['mode']]
    clip_key=key+'.log_clip'
    if clip_key not in params and '_up.' in clip_key:clip_key=clip_key.replace('_up.','_gate.')
-   clip=0. if mode==0 else float(params[clip_key].exp()) if mode==2 else c['quantizer']['clip']
+   clip=0. if mode==0 else float(params[clip_key].exp()) if mode==2 else c['quantizer'].get('initial_bounds',{}).get(base,c['quantizer']['clip'])
    writer.add_uint32(base+'.w1ax.bits',bits);writer.add_uint32(base+'.w1ax.mode',mode);writer.add_float32(base+'.w1ax.clip',clip)
    tensor(base+'.w1a1_packed',pack(params[key+'.latent_sign'].numpy()),Type.I32)
    scale=params[key+'.scale'].clamp_min(0).numpy();tensor(base+'.w1a1_scale',scale)

@@ -67,9 +67,13 @@ def packed_import(path,m):
  return s
 
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('config',type=Path);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--updates',type=int,required=True);ap.add_argument('--max-windows',type=int,required=True);ap.add_argument('--resume',type=Path);ap.add_argument('--adapt',action='store_true');ap.add_argument('--dry-run',action='store_true');ap.add_argument('--device',choices=['cpu','cuda'],default='cpu');ap.add_argument('--baseline-parent',action='store_true');ap.add_argument('--snapshots',type=int,nargs='*',default=[]);ap.add_argument('--native-points',type=int,nargs='*',default=[]);a=ap.parse_args()
+ ap=argparse.ArgumentParser();ap.add_argument('config',type=Path);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--updates',type=int,required=True);ap.add_argument('--max-windows',type=int,required=True);ap.add_argument('--resume',type=Path);ap.add_argument('--adapt',action='store_true');ap.add_argument('--dry-run',action='store_true');ap.add_argument('--device',choices=['cpu','cuda'],default='cpu');ap.add_argument('--baseline-parent',action='store_true');ap.add_argument('--snapshots',type=int,nargs='*',default=[]);ap.add_argument('--native-points',type=int,nargs='*',default=[]);ap.add_argument('--calibrate-inputs',type=int,default=0);a=ap.parse_args()
  if a.updates<0 or a.max_windows<0 or (a.resume and a.adapt):raise ValueError('invalid budget/mode')
  c=resolve(json.loads(a.config.read_text()));authenticate(c)
+ if a.calibrate_inputs<0:raise ValueError('negative calibration window count')
+ if 'calibration' in c:
+  calibration=json.loads(Path(c['calibration']['path']).read_text())
+  if any(calibration[k]!=c[k] for k in ('parent','source','data')) or calibration['updates']!=0 or calibration['supervised_positions']!=0 or calibration['windows']<=0:raise ValueError('calibration ancestry/exposure mismatch')
  if not a.adapt and not a.resume and not a.baseline_parent and c['parent']!=c['source']:raise ValueError('from-source parent must equal source; use --adapt for checkpoint parent')
  manifest=json.loads(Path(c['data']['path']).read_text())
  if 'records' in manifest:
@@ -142,6 +146,26 @@ def main():
   atomic(temp,dict(version=2,config=c,config_hash=digest(c),parameters=parameters(m),optimizer=None,progress=progress,lineage=lineage,rng=rng(),resume_capable=False))
   result=export(temp,a.out/('model-'+str(label)+'.gguf'));result['checkpoint_transient']=True;result['resume_capable']=False
   (a.out/('model-'+str(label)+'.json')).write_text(json.dumps(result,indent=2)+'\n');temp.unlink()
+ if a.calibrate_inputs:
+  def parameter_digest():
+   h=hashlib.sha256()
+   for n,p in m.named_parameters():h.update(n.encode());h.update(p.detach().cpu().numpy().tobytes())
+   return h.hexdigest()
+  calibration_before=parameter_digest();observations={};hooks=[]
+  def observer(name):
+   def observe(module,args):
+    x=args[0].detach().float()*module.log_gain.detach().exp();absx=x.abs();v=observations.setdefault(name,dict(values=0,abs_sum=0.,square_sum=0.,max_abs=0.,calls=0,zero_values=0))
+    v['values']+=x.numel();v['abs_sum']+=float(absx.double().sum());v['square_sum']+=float(x.double().square().sum());v['max_abs']=max(v['max_abs'],float(absx.max()));v['calls']+=1;v['zero_values']+=int((x==0).sum())
+   return observe
+  for name,module in m.binary_linears().items():hooks.append(module.register_forward_pre_hook(observer(name)))
+  with torch.no_grad():
+   for j in range(a.calibrate_inputs):
+    i,anchor=windows[progress['order'][(progress['cursor']+j)%len(windows)]];m(train[i].features,train[i].tokens,anchor)
+  for hook in hooks:hook.remove()
+  calibration_after=parameter_digest()
+  if calibration_before!=calibration_after:raise ValueError('calibration mutated parameters')
+  for value in observations.values():value.update(mean_abs=value['abs_sum']/value['values'],rms=(value['square_sum']/value['values'])**.5)
+  (a.out/'input-calibration.json').write_text(json.dumps(dict(parent=c['parent'],source=c['source'],data=c['data'],windows=a.calibrate_inputs,starting_cursor=progress['cursor'],data_order=progress['order'],forward_positions=16*a.calibrate_inputs,supervised_positions=0,updates=0,observations=observations,parameter_hash_before=calibration_before,parameter_hash_after=calibration_after,policy='Frozen-parent TRAIN inputs only; gained pre-quantizer values; no gradients/labels/updates; data cursor unchanged'),indent=2)+'\n')
  if not a.dry_run:
   if 0 in a.native_points:native_point(0)
   if 0 in a.snapshots:save('checkpoint-0')
@@ -156,7 +180,7 @@ def main():
    if progress['updates'] in a.native_points:native_point(progress['updates'])
    if progress['updates'] in a.snapshots:save('checkpoint-'+str(progress['updates']))
    if progress['updates']%32==0:print(json.dumps(dict(update=progress['updates'],loss=loss,seconds=progress['update_seconds'])),flush=True)
-  save('checkpoint');packed_export(a.out/'packed.pt',m)
+  if not (a.calibrate_inputs and a.updates==0):save('checkpoint');packed_export(a.out/'packed.pt',m)
  result=dict(progress=progress,layers=len(m.layers),native_supported=False,dry_run=a.dry_run,status='INTERRUPTED' if stop else 'COMPLETE',peak_bytes=torch.cuda.max_memory_allocated() if a.device=='cuda' else None)
  (a.out/'result.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({**result,'progress':{k:v for k,v in progress.items() if k!='order'}}),flush=True)
 if __name__=='__main__':main()

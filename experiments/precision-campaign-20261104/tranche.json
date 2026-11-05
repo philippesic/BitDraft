@@ -1,0 +1,1737 @@
+{
+  "status": "LOCKED_BEFORE_PRECISION_SCREEN",
+  "parent": {
+    "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+    "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+  },
+  "matched_updates": 1024,
+  "supervised_positions": 15360,
+  "trainable": "sign/scale/midpoint/shared-gain/down-gain/original-norm; no protected masters",
+  "data": {
+    "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+    "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+  },
+  "models": {
+    "G8D8": {
+      "request": {
+        "version": 1,
+        "preset": "essential-a8",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          }
+        }
+      },
+      "resolved_hash": "6cb26673fcca0b10773156a99a202e91c0fa164e1cfeb5eb67ac5d27635702c7",
+      "adapt": {
+        "family": "G8",
+        "kind": "anchor",
+        "control": "G8D8"
+      },
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G8D4": {
+      "request": {
+        "version": 1,
+        "preset": "essential-a8",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          }
+        }
+      },
+      "resolved_hash": "551f4ccaf4a404b615db8deaa5c7905aebbe02a47110e1851a237a3884cf5e00",
+      "adapt": {
+        "family": "G8",
+        "kind": "down",
+        "control": "G8D8"
+      },
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G8D2": {
+      "request": {
+        "version": 1,
+        "preset": "essential-a8",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          }
+        }
+      },
+      "resolved_hash": "64f8e8f9480d751e6b16b44f9704ad3157ce5d8887805fe33c0d10801146cf11",
+      "adapt": null,
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G8D1": {
+      "request": {
+        "version": 1,
+        "preset": "essential-a8",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          }
+        }
+      },
+      "resolved_hash": "bd7129774655fc077a398a88c25bd73c0b21b550d1e371045c2c7365b748e918",
+      "adapt": null,
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G4D8": {
+      "request": {
+        "version": 1,
+        "preset": "gate-up-a4",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          }
+        }
+      },
+      "resolved_hash": "1925115b7a2804e84ea5753a6f8e6e1d94865cec8aedc822038fd7cad5a54a8f",
+      "adapt": {
+        "family": "G4",
+        "kind": "anchor",
+        "control": "G8D8"
+      },
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G4D4": {
+      "request": {
+        "version": 1,
+        "preset": "gate-up-a4",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          }
+        }
+      },
+      "resolved_hash": "9823e1c0e4648926c181f34f3b4195d2e4b683fb52ae20f953d4041a4aa40d68",
+      "adapt": {
+        "family": "G4",
+        "kind": "down",
+        "control": "G4D8"
+      },
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G4D2": {
+      "request": {
+        "version": 1,
+        "preset": "gate-up-a4",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          }
+        }
+      },
+      "resolved_hash": "698f5374b2a77c84731bf5b5d4237913a0d205b680a708b17f175b4826604e2f",
+      "adapt": null,
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G4D1": {
+      "request": {
+        "version": 1,
+        "preset": "gate-up-a4",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          }
+        }
+      },
+      "resolved_hash": "b77158f26c98a0e5ac3f933a5b70f361649b0e87ab58328de59a6fdccfd3eccd",
+      "adapt": null,
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G2D8": {
+      "request": {
+        "version": 1,
+        "preset": "gate-up-a2",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          }
+        }
+      },
+      "resolved_hash": "68d84f48d1e020dfd03598df02dd11da7456fa7e6b318a974ea7a9644331160d",
+      "adapt": {
+        "family": "G2",
+        "kind": "anchor",
+        "control": "G8D8"
+      },
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G2D4": {
+      "request": {
+        "version": 1,
+        "preset": "gate-up-a2",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          }
+        }
+      },
+      "resolved_hash": "a1efbd4c69fb0aa2b181d3d504e4be809ff1e32dccb00f565620140737f7daee",
+      "adapt": null,
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G2D2": {
+      "request": {
+        "version": 1,
+        "preset": "gate-up-a2",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          }
+        }
+      },
+      "resolved_hash": "28419d83787ea05b864114612f2f64f57754521ac59b35d3be9c7aa2a6854559",
+      "adapt": {
+        "family": "G2",
+        "kind": "down",
+        "control": "G2D8"
+      },
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G2D1": {
+      "request": {
+        "version": 1,
+        "preset": "gate-up-a2",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          }
+        }
+      },
+      "resolved_hash": "dc12e62bc2d4337e81d1fe9881ae609f7dabc9818bbe938eca65e8df1b1c7540",
+      "adapt": null,
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G1D8": {
+      "request": {
+        "version": 1,
+        "preset": "gate-up-a1",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          }
+        }
+      },
+      "resolved_hash": "f8f0c55d20c8dcdb70fe7926349d6651e2b33281203e0a47c60f257f2e00ea38",
+      "adapt": {
+        "family": "G1",
+        "kind": "anchor",
+        "control": "G8D8"
+      },
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G1D4": {
+      "request": {
+        "version": 1,
+        "preset": "gate-up-a1",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 4
+          }
+        }
+      },
+      "resolved_hash": "9ed9fdb4400b6b6f2111f601981196d058008b938652420c2b7b4f1594e9ad75",
+      "adapt": null,
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G1D2": {
+      "request": {
+        "version": 1,
+        "preset": "gate-up-a1",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 2
+          }
+        }
+      },
+      "resolved_hash": "2100bf5c06db34b393399469f37c4dd52ec07525a3f7dd3d8c01d9dfee306f69",
+      "adapt": null,
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G1D1": {
+      "request": {
+        "version": 1,
+        "preset": "gate-up-a1",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 1
+          }
+        }
+      },
+      "resolved_hash": "86f31bf2cea7e40a0b85ed6304133c788867fe09685941549202bd663db03c08",
+      "adapt": {
+        "family": "G1",
+        "kind": "down",
+        "control": "G1D8"
+      },
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G8D8-attention-vo": {
+      "request": {
+        "version": 1,
+        "preset": "essential-a8",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          }
+        },
+        "components": {
+          "attention_vo": "Q4_0"
+        }
+      },
+      "resolved_hash": "48356e8950563acc764898d848173a1451583db735f39242b667681458611cb8",
+      "adapt": {
+        "family": "G8",
+        "kind": "attention-vo",
+        "control": "G8D8"
+      },
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G4D8-learned-clip": {
+      "request": {
+        "version": 1,
+        "preset": "gate-up-a4",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          }
+        },
+        "components": {},
+        "quantizer": {
+          "mode": "learned",
+          "clip": 1.0
+        }
+      },
+      "resolved_hash": "d0bc45ba1aabe4acb1a26d533d9e7bf4de8c38422b461dcea8fce679fea23c93",
+      "adapt": {
+        "family": "G4",
+        "kind": "learned-clip",
+        "control": "G4D8"
+      },
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G2D8-fusion": {
+      "request": {
+        "version": 1,
+        "preset": "gate-up-a2",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          }
+        },
+        "components": {
+          "fusion": "Q4_0"
+        }
+      },
+      "resolved_hash": "71a846afc61a9778eda6575747004b2ebcb973b59482c9602768a4c48a9d8735",
+      "adapt": {
+        "family": "G2",
+        "kind": "fusion",
+        "control": "G2D8"
+      },
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G1D8-private-head": {
+      "request": {
+        "version": 1,
+        "preset": "gate-up-a1",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          }
+        },
+        "components": {
+          "head": "Q4_0"
+        }
+      },
+      "resolved_hash": "a1a7fae42eda53134bbc1ce3a8f155d488d9f416e01e7f7d8c8edd959dd0c5a6",
+      "adapt": {
+        "family": "G1",
+        "kind": "private-head",
+        "control": "G1D8"
+      },
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G8D8-probe-fusion-Q8_0": {
+      "request": {
+        "version": 1,
+        "preset": "essential-a8",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          }
+        },
+        "components": {
+          "fusion": "Q8_0"
+        }
+      },
+      "resolved_hash": "a3b58342f3f796d009a752488e2c1f6e30eee25466a89b6e05923d3301ca9526",
+      "adapt": null,
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G8D8-probe-fusion-Q4_0": {
+      "request": {
+        "version": 1,
+        "preset": "essential-a8",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          }
+        },
+        "components": {
+          "fusion": "Q4_0"
+        }
+      },
+      "resolved_hash": "cffb29d46f8cabf80a7b153fb44c8de09a9e43e28f00b5e541d8e632482ec648",
+      "adapt": null,
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G8D8-probe-attention_qk-Q8_0": {
+      "request": {
+        "version": 1,
+        "preset": "essential-a8",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          }
+        },
+        "components": {
+          "attention_qk": "Q8_0"
+        }
+      },
+      "resolved_hash": "4add6504bf0e0e0e3f22a34f806b045702186ba5e0bfee2abc82766ff9b625b5",
+      "adapt": null,
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G8D8-probe-attention_qk-Q4_0": {
+      "request": {
+        "version": 1,
+        "preset": "essential-a8",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          }
+        },
+        "components": {
+          "attention_qk": "Q4_0"
+        }
+      },
+      "resolved_hash": "b5171adc7f19d2f3c7b23d5d4d73628bd4d23476c24b72262cd800b484282c59",
+      "adapt": null,
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G8D8-probe-attention_vo-Q8_0": {
+      "request": {
+        "version": 1,
+        "preset": "essential-a8",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          }
+        },
+        "components": {
+          "attention_vo": "Q8_0"
+        }
+      },
+      "resolved_hash": "d0d4851d2aa441c30e63e4c8fb4812ebeff8dea8b01f91d431b6fe0d6ba0c552",
+      "adapt": null,
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G8D8-probe-attention_vo-Q4_0": {
+      "request": {
+        "version": 1,
+        "preset": "essential-a8",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          }
+        },
+        "components": {
+          "attention_vo": "Q4_0"
+        }
+      },
+      "resolved_hash": "48356e8950563acc764898d848173a1451583db735f39242b667681458611cb8",
+      "adapt": null,
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G8D8-probe-head-Q8_0": {
+      "request": {
+        "version": 1,
+        "preset": "essential-a8",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          }
+        },
+        "components": {
+          "head": "Q8_0"
+        }
+      },
+      "resolved_hash": "f674c6e82e1c440a1875414f9a1841fdfbb02946e56f10f7cebb35812733b763",
+      "adapt": null,
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    },
+    "G8D8-probe-head-Q4_0": {
+      "request": {
+        "version": 1,
+        "preset": "essential-a8",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+          "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+        },
+        "parent": {
+          "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+          "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+        },
+        "data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "evaluation": {
+          "target": {
+            "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+            "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+          }
+        },
+        "budget_seconds": 3600,
+        "overrides": {
+          "blk.0.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.1.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.2.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.3.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.4.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          },
+          "blk.5.ffn_down": {
+            "weight": "W1",
+            "bits": 8
+          }
+        },
+        "components": {
+          "head": "Q4_0"
+        }
+      },
+      "resolved_hash": "77864f62f297b200d9d6beb115140ba20bb06f34a42901289b74f9b5e160649c",
+      "adapt": null,
+      "native_contract": {
+        "contract_version": 2,
+        "execution": "CUDA packed signs / INT8 codes / DP4A",
+        "qualification": "contract eligible; artifact-specific export/load/evaluation still required"
+      }
+    }
+  },
+  "blocked": [
+    {
+      "arm": "private-embedding-reduction",
+      "reason": "Target shared embedding is immutable; private native embedding support unqualified. No target change."
+    },
+    {
+      "arm": "packed-activation-binary-speed",
+      "reason": "No new A1/A2 packed activation kernel qualified; actual execution remains INT8-code DP4A."
+    }
+  ],
+  "execution_checkpoint": "28 zero native arms passed; matched anchors1024 underway; native timing confirmations/heldout remain pending"
+}

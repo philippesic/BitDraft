@@ -7,7 +7,7 @@ from .prototype import Projection, digest
 
 
 def authenticate(config):
-    for name in ('source', 'parent', 'data'):
+    for name in ('source', 'parent', 'data', *(['calibration'] if 'calibration' in config else [])):
         pin=config[name]
         h=hashlib.sha256()
         with Path(pin['path']).open('rb') as f:
@@ -49,13 +49,15 @@ def install(model, config, source_weights):
             if name!='ffn_down' and shared is None:
                 shared=nn.Parameter(torch.zeros(old.latent_sign.shape[1],device=old.latent_sign.device),requires_grad=features['gain'])
             gain=shared if name!='ffn_down' else nn.Parameter(torch.zeros(old.latent_sign.shape[1],device=old.latent_sign.device),requires_grad=features['gain'])
-            new=Projection(old.latent_sign.detach(),spec['bits'],features['midpoint'],gain,config['quantizer']).to(old.latent_sign.device)
+            q={k:v for k,v in config['quantizer'].items() if k!='initial_bounds'}
+            q['clip']=config['quantizer'].get('initial_bounds',{}).get(key,q['clip'])
+            new=Projection(old.latent_sign.detach(),spec['bits'],features['midpoint'],gain,q).to(old.latent_sign.device)
             with torch.no_grad():
                 new.scale.copy_(old.scale if isinstance(old,Projection) else old.effective_scales())
                 if isinstance(old,Projection):
                     if features['midpoint']: new.midpoint.copy_(old.midpoint)
                     if features['gain']: new.log_gain.copy_(old.log_gain)
-                    if config['quantizer']==old.quantizer: new.log_clip.copy_(old.log_clip)
+                    if q==old.quantizer: new.log_clip.copy_(old.log_clip)
             new.latent_sign.requires_grad_(features['sign']);new.scale.requires_grad_(features['scale'])
             if config['quantizer']['mode']=='learned' and name!='ffn_down':
                 if shared_clip is None:shared_clip=new.log_clip

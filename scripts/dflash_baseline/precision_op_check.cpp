@@ -23,10 +23,11 @@ static void require(bool condition, const char * message) {
 
 struct Case { int k, m, n; };
 
-static void run_case(ggml_backend_t backend, const Case shape, const char * name, int bits, int mode) {
+static void run_case(ggml_backend_t backend, const Case shape, const char * name, int bits, int mode, bool fused_gain) {
     const int qmax=bits<=2?1:(1<<(bits-1))-1; const float clip=1.25f;
     const int k = shape.k, m = shape.m, n = shape.n;
-    std::vector<float> acts(size_t(k)*n), scales(m),midpoints(m);
+    std::vector<float> acts(size_t(k)*n), scales(m),midpoints(m),gains(k);
+    for(int j=0;j<k;++j)gains[j]=float(1+j%5)/2.f;
     std::vector<uint32_t> signs(size_t(k/32)*m);
     for (int row = 0; row < m; ++row) {
         scales[row] = float(1 + row%13)/16.0f; midpoints[row]=float(row%7-3)/32.f;
@@ -50,6 +51,8 @@ static void run_case(ggml_backend_t backend, const Case shape, const char * name
             acts[size_t(token)*k + j] = value;
         }
     }
+    const auto raw=acts;
+    for(int token=0;token<n;++token)for(int j=0;j<k;++j)acts[size_t(token)*k+j]*=gains[j];
     std::vector<int8_t> expected_codes(size_t(k)*n);
     std::vector<float> beta(n);
     for (int token = 0; token < n; ++token) {
@@ -86,7 +89,9 @@ static void run_case(ggml_backend_t backend, const Case shape, const char * name
     ggml_tensor * alpha = ggml_new_tensor_1d(ctx, GGML_TYPE_F32, m);
     ggml_tensor * a = ggml_new_tensor_2d(ctx, GGML_TYPE_F32, k, n);
     ggml_tensor * mid = ggml_new_tensor_1d(ctx,GGML_TYPE_F32,m);
-    ggml_tensor * pack = ggml_w1ax_pack(ctx, a, bits);
+    ggml_tensor * gain=ggml_new_tensor_1d(ctx,GGML_TYPE_F32,k);
+    ggml_tensor * pack = ggml_w1ax_pack(ctx, fused_gain?a:ggml_mul(ctx,a,gain), bits);
+    if(fused_gain)pack->src[1]=gain;
     memcpy((char*)pack->op_params+4,&mode,4);memcpy((char*)pack->op_params+8,&clip,4);
     ggml_tensor * out = ggml_w1ax_mul_mat_shared(ctx, w, alpha, pack, k, bits);
     out->src[4]=mid;
@@ -112,7 +117,8 @@ static void run_case(ggml_backend_t backend, const Case shape, const char * name
     ggml_backend_tensor_set(w, signs.data(), 0, signs.size()*sizeof(uint32_t));
     ggml_backend_tensor_set(alpha, scales.data(), 0, scales.size()*sizeof(float));
     ggml_backend_tensor_set(mid,midpoints.data(),0,midpoints.size()*4);
-    ggml_backend_tensor_set(a, acts.data(), 0, acts.size()*sizeof(float));
+    ggml_backend_tensor_set(gain,gains.data(),0,gains.size()*4);
+    ggml_backend_tensor_set(a, raw.data(), 0, raw.size()*sizeof(float));
     require(ggml_backend_graph_compute(backend, graph) == GGML_STATUS_SUCCESS, "backend graph failed");
     ggml_backend_synchronize(backend);
     std::vector<uint32_t> packed_words(size_t(k)*n/4 + n);
@@ -123,20 +129,21 @@ static void run_case(ggml_backend_t backend, const Case shape, const char * name
     require(std::memcmp(packed_words.data() + size_t(k)*n/4, beta.data(), n*sizeof(float)) == 0, "native A8 scales differ from independent reference");
     require(std::memcmp(observed.data(), expected.data(), expected.size()*sizeof(float)) == 0, "native integer-dot products differ from independent reference");
     std::cout << "{\"backend\":\"" << name << "\",\"K\":" << k << ",\"M\":" << m
-              << ",\"bits\":" << bits << ",\"mode\":" << mode << ",\"N\":" << n << ",\"codes_scales_products_byteexact\":true,\"admission_negatives_pass\":true}" << std::endl;
+              << ",\"bits\":" << bits << ",\"mode\":" << mode << ",\"N\":" << n << ",\"gained_codes_scales_products_byteexact\":true,\"admission_negatives_pass\":true}" << std::endl;
     ggml_backend_buffer_free(buffer);
     ggml_free(ctx);
 }
 
 int main(int argc, char ** argv) {
     try {
-        require(argc == 2, "usage: op_check OUTPUT_LIBRARY_MAPS");
+        require(argc == 3, "usage: op_check OUTPUT_LIBRARY_MAPS generic|fused");
+        const bool fused_gain=std::string(argv[2])=="fused";
         std::fesetround(FE_TONEAREST);
         _mm_setcsr(_mm_getcsr() & ~(unsigned(1 << 15) | unsigned(1 << 6)));
         ggml_backend_t cuda = ggml_backend_cuda_init(0);
         require(cuda,"real CUDA required");
         for(int bits:{1,2,4,8}) for(int mode:{0,1,2})
-        for(const Case shape:{Case{32,7,4},Case{2560,9216,4},Case{9216,2560,4}}) run_case(cuda,shape,"CUDA",bits,mode);
+        for(const Case shape:{Case{32,7,4},Case{2560,9216,4},Case{9216,2560,4}}) run_case(cuda,shape,"CUDA",bits,mode,fused_gain);
         std::ifstream maps("/proc/self/maps");
         std::ofstream receipt(argv[1]); receipt << maps.rdbuf();
         require(bool(receipt), "library maps write failed");

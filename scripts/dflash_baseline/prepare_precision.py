@@ -29,9 +29,14 @@ def main():
  existing=r/'tranche.json'
  if existing.exists() and json.load(open(existing))!=registry:raise ValueError('locked tranche changed')
  existing.write_text(json.dumps(registry,indent=2)+'\n')
+ cache={}
+ for release in r.glob('zero-cache-release-*.json'):
+  for item in json.load(open(release)).get('removed',[]):cache[item['name']]=item
  for name,c in resolved.items():
   (configs/(name+'.json')).write_text(json.dumps(plans[name],indent=2)+'\n');dest=zero/(name+'.gguf')
-  if not dest.exists():export(parent,dest,config=c,state=state,checkpoint_pin=base['parent'])
+  if not dest.exists():
+   result=export(parent,dest,config=c,state=state,checkpoint_pin=base['parent'],include_private_head_metadata=cache.get(name,{}).get('writer_private_head_metadata',True))
+   if name in cache and result['sha256']!=cache[name]['sha256']:raise ValueError('cached model did not reproduce exactly: '+name)
   arms[name+'-zero']=str(dest);print('Zero export',name,flush=True)
  (r/'zero-arms.json').write_text(json.dumps(arms,indent=2)+'\n')
 if __name__=='__main__':main()

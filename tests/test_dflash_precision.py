@@ -60,3 +60,14 @@ def test_shared_gate_up_learned_bound():
  opt.step();state=parameters(m);other=install(Model(),c,{});load_parameters(other,state)
  for l in other.layers:assert l.ffn_gate.log_clip is l.ffn_up.log_clip
  assert not any('ffn_up.log_clip' in n for n in state)
+
+def test_calibrated_quantizer_contract():
+ import runpy,copy
+ request=runpy.run_path('tests/test_dflash_prototype.py')['config']()
+ request['quantizer']=dict(mode='learned',clip=1.,initial_bounds={'blk.0.ffn_gate':.3,'blk.0.ffn_up':.3,'blk.0.ffn_down':.12})
+ c=resolve(request);assert native_admit(c)['contract_version']==2
+ for wrong in (dict(mode='dynamic',clip=1.,initial_bounds={'blk.0.ffn_down':.1}),dict(mode='learned',clip=1.,initial_bounds={'blk.0.ffn_gate':.3}),dict(mode='learned',clip=1.,initial_bounds={'blk.0.ffn_down':0.})):
+  bad=copy.deepcopy(request);bad['quantizer']=wrong
+  try:resolve(bad)
+  except ValueError:pass
+  else:raise AssertionError('invalid calibrated quantizer accepted')

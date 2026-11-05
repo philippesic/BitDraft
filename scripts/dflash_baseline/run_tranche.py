@@ -4,8 +4,8 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2];sys.path[:0]=[str(ROOT),str(ROOT/'src')]
 from scripts.dflash_baseline.export_precision import export
 from scripts.dflash_baseline.checkpoint_io import archive
-P=Path('/home/philip/binary-eagle-decoding');r=P/'runs/precision-campaign-20261104-01';runtime=P/'runs/precision-native-20261104-03';env=dict(os.environ,PYTHONPATH=str(ROOT)+':'+str(ROOT/'src'))
-def run(argv):subprocess.run(list(map(str,argv)),env=env,check=True)
+P=Path('/home/philip/binary-eagle-decoding');r=P/'runs/precision-campaign-20261104-01';runtime=P/'runs/precision-native-20261104-04';env=dict(os.environ,PYTHONPATH=str(ROOT)+':'+str(ROOT/'src'))
+def run(argv):subprocess.run(list(map(str,argv)),env=env,cwd=ROOT,check=True)
 def benchmark(arms,out,cohort='capture3',paired=True):
  args=[sys.executable,ROOT/'scripts/dflash_baseline/precision_benchmark.py','--arms',arms,'--runtime',runtime,'--out',out,'--cohort',cohort]
  if paired:args+=['--paired-trace']
@@ -15,7 +15,7 @@ def main():
  assert json.load(open(r/'foundation-panel/result.json'))['status']=='COMPLETE'
  if a.stage=='zero':
   # Requalify every width/mode against the final common libraries, not the older build.
-  with (r/'final-runtime-ops.jsonl').open('w') as output:subprocess.run([str(P/'runs/precision-native-20261104-01/op-check'),str(r/'final-runtime-ops-maps.txt')],env={**env,'LD_LIBRARY_PATH':str(runtime/'bin')},stdout=output,check=True)
+  with (r/'final-runtime-ops.jsonl').open('w') as output:subprocess.run([str(runtime/'op-gain-check'),str(r/'final-runtime-ops-maps.txt'),'fused'],env={**env,'LD_LIBRARY_PATH':str(runtime/'bin')},stdout=output,check=True)
   benchmark(r/'zero-arms.json',r/'zero-panel',paired=True);return
  registry=json.load(open(r/'tranche.json'));chosen=[(name,c) for name,c in registry['models'].items() if c['adapt'] and ((c['adapt']['kind']=='anchor')==(a.stage=='anchors'))]
  if a.stage=='mutations':
