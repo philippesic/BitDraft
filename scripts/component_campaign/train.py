@@ -9,7 +9,8 @@ from scripts.dflash_baseline.model import Model,Capture
 from scripts.dflash_baseline.prototype_model import install,optimizer
 from scripts.dflash_baseline.prototype import digest
 from scripts.dflash_baseline.pipeline import load_parameters,parameters,rng,update,restore_rng
-from scripts.dflash_baseline.checkpoint_io import load,save_streamed
+from scripts.dflash_baseline.checkpoint_io import load
+from .checkpoint import save_state
 from scripts.dflash_baseline.components import install_components
 from scripts.dflash_baseline.export_precision import export
 from .export import rewrite
@@ -26,8 +27,8 @@ def evaluation(m,captures):
  return dict(records=records,positions=sum(x['positions'] for x in records),ce=float(np.mean([x['ce'] for x in records])),agreement=sum(x['agree'] for x in records)/sum(x['positions'] for x in records),mean_rank=sum(x['rank_sum'] for x in records)/sum(x['positions'] for x in records),mean_margin=sum(x['margin_sum'] for x in records)/sum(x['positions'] for x in records))
 
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('spec',type=Path);ap.add_argument('--updates',type=int,default=4096);ap.add_argument('--resume',type=Path);ap.add_argument('--pilot',action='store_true');a=ap.parse_args()
- spec=json.load(open(a.spec));out=R/'arms'/spec['name'];out.mkdir(parents=True,exist_ok=False)
+ ap=argparse.ArgumentParser();ap.add_argument('spec',type=Path);ap.add_argument('--updates',type=int,default=4096);ap.add_argument('--resume',type=Path);ap.add_argument('--out-name');ap.add_argument('--pilot',action='store_true');a=ap.parse_args()
+ spec=json.load(open(a.spec));out=R/'arms'/(a.out_name or spec['name']);out.mkdir(parents=True,exist_ok=False)
  save(out/'spec.json',spec);save(out/'ownership.json',identity())
  torch.set_num_threads(2);torch.manual_seed(8101);random.seed(8101);np.random.seed(8101);torch.backends.cuda.matmul.allow_tf32=False
  # Recover exact parent into RAM-backed scratch, avoiding a 5.1GB disk transient.
@@ -49,7 +50,7 @@ def main():
  install_components(m,c);install_component(m,spec);m.to('cuda');opt=optimizer(m)
  if a.resume:
   state=load(a.resume)
-  if state['component_spec']!=spec:raise ValueError('resume spec mismatch')
+  if state['component_spec']!=spec or state['config_hash']!=digest(c):raise ValueError('resume spec/config mismatch')
   load_parameters(m,state['parameters']);opt.load_state_dict(state['optimizer']);progress=state['progress'];restore_rng(state['rng']);del state;gc.collect()
  train=[Capture(Path(r['metadata']['path']).parent) for r in trainrows];dev=[Capture(Path(r['metadata']['path']).parent) for r in devrows]
  windows=[(i,x) for i,cap in enumerate(train) for x in cap.anchors]
@@ -67,15 +68,34 @@ def main():
   base=out/f'base-{label}.gguf'
   export(None,base,state=state,checkpoint_pin=lineage['parent'])
   rewrite(base,out/f'model-{label}.gguf',spec);base.unlink();base.with_suffix('.json').unlink()
-  record=dict(update=progress['updates'],progress={k:v for k,v in progress.items() if k!='order'},dev=metrics,seconds=time.perf_counter()-start,peak_training_bytes=torch.cuda.max_memory_allocated(),model=pin(out/f'model-{label}.gguf'))
+  model_path=out/f'model-{label}.gguf';model_pin=pin(model_path)
+  # One frozen native basis per vocabulary format; later points keep only lossless deltas.
+  from .archive import archive
+  family=spec.get('head') or spec.get('embedding') or 'shared'
+  bases=R/'bases';bases.mkdir(exist_ok=True);basis=bases/(family+'.gguf')
+  if not basis.exists():
+   # Hard link prevents duplicate physical storage for the first basis point.
+   basis.hardlink_to(model_path)
+  elif not model_path.samefile(basis):archive(model_path,basis)
+  record=dict(update=progress['updates'],progress={k:v for k,v in progress.items() if k!='order'},dev=metrics,seconds=time.perf_counter()-start,peak_training_bytes=torch.cuda.max_memory_allocated(),model=model_pin)
   readouts.append(record);save(out/'readouts.json',readouts);print('READOUT',spec['name'],record['update'],metrics['ce'],metrics['agreement'],flush=True)
  def recoverable():
   directory=Path('/mnt/c/binary-eagle-component-20261105-01');directory.mkdir(exist_ok=True)
   destination=directory/(spec['name']+f"-{progress['updates']}.pt")
   state=dict(version=2,config=c,config_hash=digest(c),parameters=parameters(m),optimizer=opt.state_dict(),progress=copy.deepcopy(progress),rng=rng(),lineage=lineage,component_spec=spec,resume_capable=True)
   free=__import__('shutil').disk_usage(directory).free
-  if free<5_500_000_000:raise RuntimeError(f'insufficient rolling checkpoint space: need5.5GB free; observed{free}')
-  receipt=save_streamed(destination,state);save(out/'recovery.json',receipt)
+  if free<4_800_000_000:raise RuntimeError(f'insufficient rolling checkpoint space: need4.8GB free; observed{free}')
+  receipt=save_state(destination,state);save(out/'recovery.json',receipt)
+  # Only NEW campaign states participate in this declared rolling policy.
+  # Atomically publish the replacement before retiring its predecessor.
+  rolling=directory/'rolling.json';previous=json.load(open(rolling)) if rolling.exists() else None
+  save(rolling,dict(arm=spec['name'],update=progress['updates'],receipt=receipt))
+  if previous:
+   old=Path(previous['receipt']['archive'])
+   if old!=Path(receipt['archive']):
+    if old.parent!=directory or old.is_symlink() or pin(old)['sha256']!=previous['receipt']['archive_sha256']:raise ValueError('rolling predecessor changed')
+    with (R/'rolling-retention.jsonl').open('a') as f:f.write(json.dumps(dict(retired=previous,replaced_by=receipt,policy='NEW campaign rolling state; immutable B0 and all native readouts preserved; final shortlist recovery states regenerated under same history and retained'))+'\n')
+    old.unlink()
   return receipt
  start_update=progress['updates']
  if not a.resume:point(0)
@@ -89,7 +109,9 @@ def main():
   torch.cuda.synchronize();start=time.perf_counter();loss=update(m,opt,lambda:train[i].loss(m,anchor)[0]);torch.cuda.synchronize();elapsed=time.perf_counter()-start
   progress['update_seconds']+=elapsed;progress['updates']+=1;progress['cursor']+=1;progress['supervised_tokens']+=15;times.append(elapsed)
   with (out/'updates.jsonl').open('a') as f:f.write(json.dumps(dict(update=progress['updates'],loss=loss,gradient_norm=m.last_gradient_norm,seconds=elapsed,sequence=str(train[i].path),anchor=anchor))+'\n')
-  if progress['updates'] in (256,1024,a.updates):point(progress['updates'])
+  if progress['updates'] in (256,1024,a.updates):
+   point(progress['updates'])
+   if progress['updates']!=a.updates:recoverable()
   if progress['updates']%32==0:
    save(out/'live.json',dict(progress={k:v for k,v in progress.items() if k!='order'},last_loss=loss,seconds_per_update=float(np.median(times[-32:])),identity=identity()));print(spec['name'],progress['updates'],loss,flush=True)
  recovery=recoverable()

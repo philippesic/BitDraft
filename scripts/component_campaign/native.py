@@ -4,7 +4,7 @@ from collections import Counter
 from pathlib import Path
 P=Path('/home/philip/binary-eagle-decoding');TRACE=Path(os.environ.get('EXEC_TRACE_LIBRARY',str(P/'runs/data-cost-transfer-20261104-01/libdecode-cost-trace.so')));ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT))
-from scripts.dflash_baseline.native_archive import reference as archived_reference,hydrate,release
+from scripts.component_campaign.archive import reference as archived_reference,hydrate,release
 from scripts.dflash_baseline.native_counters import STAT,delta,reconcile
 def pin(path):
  p=Path(path)

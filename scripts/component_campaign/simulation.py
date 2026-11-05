@@ -121,8 +121,8 @@ def install(model,spec):
  for key in ('head','embedding'):
   format=spec.get(key)
   if not format or format=='Q6_K':continue
-  path=R/'matrices'/f'{format}.bin';meta=json.load(open(path.with_suffix('.json')))
-  data=np.memmap(path,mode='r',dtype=np.uint8,shape=tuple(meta['packed_shape']))
+  from .quant import matrix_data
+  data=matrix_data(format)
   weight=model.head if key=='head' else model.embedding_cpu
   for start in range(0,len(data),256):
    value=dequantize(data[start:start+256],Type[format]).reshape(-1,2560).copy()

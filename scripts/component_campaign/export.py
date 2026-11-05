@@ -12,7 +12,7 @@ def rewrite(source,dest,spec):
  writer=GGUFWriter(tmp,'dflash')
  scalar=spec.get('scalar',{});audit={};total=0
  for key,f in reader.fields.items():
-  if key.startswith('GGUF.') or key in ('general.architecture','dflash.w1ax.private_head'):continue
+  if key.startswith(('GGUF.','dflash.component.')) or key in ('general.architecture','dflash.w1ax.private_head'):continue
   value=f.contents()
   if key.endswith('.w1ax.clip') and scalar.get('clip'):value=float(np.float16(value))
   writer.add_key_value(key,value,f.types[0],f.types[-1] if len(f.types)>1 else None)
@@ -29,12 +29,12 @@ def rewrite(source,dest,spec):
  target=None
  for name,key in [('token_embd.weight','embedding'),('output.weight','head')]:
   format=spec.get(key)
-  if not format or (key=='head' and spec.get('tied')):continue
+  if not format or (key=='embedding' and spec.get('tied')):continue
   if format=='Q6_K':
    target=target or target_tensor(TARGET);value=target.data
   else:
-   path=R/'matrices'/f'{format}.bin';meta=json.load(open(path.with_suffix('.json')))
-   value=np.memmap(path,mode='r',dtype=np.uint8,shape=tuple(meta['packed_shape']))
+   from .quant import matrix_data
+   value=matrix_data(format)
   writer.add_tensor(name,value,raw_dtype=Type[format]);total+=value.nbytes
   audit[name]=dict(type=format,bytes=value.nbytes,exact_original_codes=format=='Q6_K')
  writer.write_header_to_file();writer.write_kv_data_to_file();writer.write_tensors_to_file();writer.close();tmp.rename(dest)

@@ -3,8 +3,8 @@ import json,subprocess,difflib,shutil
 from pathlib import Path
 from .common import P,R,OPT,ROOT,pin,save
 
-def build():
- r=R/'runtime';r.mkdir(exist_ok=False,parents=True);(r/'bin').mkdir()
+def build(r=None):
+ r=Path(r) if r is not None else R/'runtime';r.mkdir(exist_ok=False,parents=True);(r/'bin').mkdir()
  frozen=P/'runs/precision-native-20261104-04';base=P/'runs/w1a8-modern-packed-runtime-20261103-01/build02'
  manifest=json.load(open(frozen/'build.json'))
  original=(OPT/'src/models/dflash.cpp').read_text();cpp=original
@@ -12,11 +12,11 @@ def build():
  cpp=cpp.replace('"d2t","token_embd.weight"','"d2t"')
  needle='    if (hparams.n_lora_kv > 0) {'
  position=cpp.index(needle,cpp.index('void llama_model_dflash::load_arch_tensors'))
- cpp=cpp[:position]+'''    bool component_tied = false;
-    ml->get_key("dflash.component.tied", component_tied, false);
+ cpp=cpp[:position]+'''    const auto component_tied_it = gguf_kv.find("dflash.component.tied");
+    const bool component_tied = component_tied_it != gguf_kv.end() && component_tied_it->second == "true";
     if (component_tied) {
-        if (!tok_embd || output) throw std::runtime_error("invalid component tied allocation");
-        output = tok_embd;
+        if (!output || tok_embd) throw std::runtime_error("invalid component tied allocation");
+        tok_embd = output;
         LLAMA_LOG_INFO("COMPONENT tied head/embedding: same tensor=%p data=%p bytes=%zu type=%s\\n", (void*)output, output->data, ggml_nbytes(output), ggml_type_name(output->type));
     }
 ''' + cpp[position:]

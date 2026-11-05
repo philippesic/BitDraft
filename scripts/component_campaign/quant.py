@@ -28,6 +28,18 @@ def target_tensor(target):
    raise ValueError('target head/embedding not tied: explicit separate-source study required')
  return lookup.get('output.weight',lookup['token_embd.weight'])
 
+def matrix_data(format):
+ import json
+ from .common import R
+ path=R/'matrices'/f'{format}.bin'
+ if path.exists():
+  meta=json.load(open(path.with_suffix('.json')))
+  return np.memmap(path,mode='r',dtype=np.uint8,shape=tuple(meta['packed_shape']))
+ basis=R/'bases'/(format+'.gguf');reader=GGUFReader(basis)
+ for tensor in reader.tensors:
+  if tensor.name in ('output.weight','token_embd.weight') and tensor.tensor_type==Type[format]:return tensor.data
+ raise ValueError('missing encoded component basis '+format)
+
 def make_matrix(target,format,path):
  from .common import pin,save
  path.parent.mkdir(parents=True,exist_ok=True)
