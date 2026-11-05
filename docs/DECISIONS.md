@@ -1614,3 +1614,13 @@ verifier settings. Trace first, qualify model-specific replay state, test copy
 and bound changes separately, then one DP4A and one signed MMA candidate. Choose
 subsequent fusion/head work by measured removable cost. Low-bit alternatives are
 bounded reserves; no implementation/speed claim or GPU launch from this debate.
+
+
+## Execution inventory implementation authorized — November 5, 2026
+
+User requests working through the execution-optimization list, exhausting its
+concrete opportunities and then comparing candidate/Q4_K_M latencies. Necessary
+implementation/build/qualification/benchmark work is authorized. Preserve the
+compact G4/D8 learned2048 primary model and original runtime; no new training or
+precision changes. One delegated GPU owner; continue the active goal. See the
+[campaign checkpoint](EXECUTION_CAMPAIGN.md) for scope, required item ledger and deliverables.

@@ -6098,3 +6098,13 @@ unused-anchor-head test. Ordinary generation is expected to use three positions;
 confirm with trace. Preserve current model/precision and target/verifier. Q4's
 vector path also uses DP4A, so relative reuse/dispatch/preparation need measurement.
 This is source-reviewed planning progress only; no new GPU job or measured win.
+
+
+## Execution inventory implementation authorized — November 5, 2026
+
+User requests working through the execution-optimization list, exhausting its
+concrete opportunities and then comparing candidate/Q4_K_M latencies. Necessary
+implementation/build/qualification/benchmark work is authorized. Preserve the
+compact G4/D8 learned2048 primary model and original runtime; no new training or
+precision changes. One delegated GPU owner; continue the active goal. See the
+[campaign checkpoint](../EXECUTION_CAMPAIGN.md) for scope, required item ledger and deliverables.

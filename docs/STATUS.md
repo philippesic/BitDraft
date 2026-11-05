@@ -1,6 +1,16 @@
 # Current project status
 
-## Precision comparison complete; GPU released
+## Execution optimization campaign authorized
+
+User now requests implementing/exhausting the agreed execution inventory and
+comparing original/optimized W1 with Q4_K_M. See
+[execution campaign checkpoint](EXECUTION_CAMPAIGN.md) for scope and ownership.
+The exact compact learned G4/D8 2,048-update recipe is the primary fixed subject;
+precision/training/target/verifier remain frozen. One delegated worker will own
+GPU operations after fresh checks. Earlier planning-only statements below are
+historical; no new QAT or precision sweep is implied.
+
+## Completed precision comparison
 
 Next execution investigation is agreed in
 [EXECUTION_OPTIMIZATION.md](EXECUTION_OPTIMIZATION.md): trace/replay qualification,
