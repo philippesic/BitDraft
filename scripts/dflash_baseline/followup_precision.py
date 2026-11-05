@@ -26,6 +26,10 @@ def execute():
  registry=json.load(open(R/'tranche.json'))
  for name,spec in registry['models'].items():
   if spec['adapt'] and not (R/'adapted'/name/'panel/result.json').exists():raise ValueError('initial standard arm unfinished: '+name)
+ # Exercise actual same-process warmups before the expensive final protocol.
+ smoke=R/'warmup-protocol-smoke';af=R/'warmup-smoke-arms.json'
+ save(af,{'target':None,'q4':str(P/'runs/spec-shortlist-20261030/models/qwen35-4b-dflash-Q4_K_M.gguf'),'foundation-zero':str(R/'zero-arms/G8D8.gguf')})
+ if not (smoke/'result.json').exists():run([sys.executable,ROOT/'scripts/dflash_baseline/precision_benchmark.py','--arms',af,'--runtime',runtime,'--out',smoke,'--cohort','capture3','--warmups','2','--paired-trace'])
  for arm in plan['arms']:
   cfg=Path(arm['config']['path']);out=Path(arm['out']);out.parent.mkdir(exist_ok=True)
   if pin(cfg)['sha256']!=arm['config']['sha256']:raise ValueError('locked config changed')

@@ -9,12 +9,14 @@ def main():
  original=P/'runs/precision-vanilla-eval-20261104-01/panel'
  for label in ('300','900','1800'):arms['vanilla-'+label]=str(original/('trained-'+label+'.gguf'))
  arms['foundation-zero']=str(r/'zero-arms/G8D8.gguf')
+ for name in ('G4D8','G2D8','G1D8'):arms[name+'-zero']=str(r/'zero-arms'/(name+'.gguf'))
  for name in ('vanilla-matched','no-midpoint','no-gain'):arms['foundation-'+name]=str(r/name/'model-final.gguf')
  for name,spec in registry['models'].items():
   if not spec['adapt']:continue
   out=r/'adapted'/name;result=json.load(open(out/'result.json'))
   if result['status']!='COMPLETE' or result['progress']['updates']!=1024:raise ValueError('standard matched arm incomplete: '+name)
   arms[name+'-1024']=str(out/'model-final.gguf')
+  arms[name+'-256']=str(out/'model-256.gguf')
  for name,model in lock.get('additional_confirmations',{}).items():
   if not Path(model).is_file():raise ValueError('additional locked model missing')
   arms[name]=model

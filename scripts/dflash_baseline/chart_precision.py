@@ -1,5 +1,6 @@
 """Recompute campaign tables and standalone charts solely from native receipts."""
 import argparse,base64,csv,html,json,re,sys
+from functools import lru_cache
 from pathlib import Path
 import numpy as np
 import matplotlib
@@ -7,6 +8,12 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 P=Path('/home/philip/binary-eagle-decoding')
 def read(p):return json.loads(Path(p).read_text())
+@lru_cache(None)
+def shared_tensor(path):
+ sys.path.insert(0,str(P/'third_party/llama.cpp/gguf-py'))
+ from gguf import GGUFReader
+ tensors={t.name:t for t in GGUFReader(path).tensors};t=tensors.get('output.weight',tensors['token_embd.weight'])
+ return dict(name=t.name,format=t.tensor_type.name,bytes=t.data.nbytes,shape=t.shape.tolist())
 def summarize(panel,root):
  result=read(panel/'result.json');rows=result['rows'];freeze=read(panel/'freeze.json') if (panel/'freeze.json').exists() else {};cohort=freeze.get('cohort','capture3');points=[]
  for arm in dict.fromkeys(x['arm'] for x in rows):
@@ -34,16 +41,22 @@ def summarize(panel,root):
   runtime_pin=freeze.get('runtime',{}).get('libllama.so.0.8.0',{})
   runtime_series=Path(runtime_pin['path']).parent.parent.name if runtime_pin else 'historical-unpinned-runtime'
   point=dict(runtime_series=runtime_series,execution='Native INT8-code DP4A / packed W1 FFN' if coverage else 'Native external model',resource_note=resource_note,id=str(panel.relative_to(root))+'::'+arm,panel=str(panel),arm=arm,cohort=cohort,scope='confirmation' if len({x['rep'] for x in plain})>=5 else 'diagnostic smoke',family=family,config=config,model=model,model_bytes=meta.get('bytes') if meta else (Path(model).stat().st_size if model else 0),correct=all(x['correct'] for x in plain+traced),requests=len(plain),prompts=len({x['prompt'] for x in plain}),repetitions=len({x['rep'] for x in plain}),accepted=accepted,proposed=proposed,rounds=rounds,acceptance=accepted/proposed if proposed else None,prefix_counts=prefix,prefix_survival=[x/rounds for x in prefix] if rounds else [],emitted_per_round=tokens/rounds if rounds else None,request_tps=tokens/wall,decode_tps=tokens/decode,full_draft_ms=full,narrow_generate_ms=sum(x.get('draft_ms',0) for x in counts)/rounds if rounds else None,total_peak_device_MiB=max(memories) if memories else None,allocator_shutdown_MiB=allocator[-1] if allocator else None,training_updates=info.get('progress',{}).get('updates',info.get('updates')),training_seconds=info.get('progress',{}).get('update_seconds'),lineage=info.get('lineage'),runtime=freeze.get('runtime'),instrumented_requests=len(traced),verified_paired_counters=result.get('paired_trace_counters_equal',False),target_verify_and_sample_ms_per_round=sum(x.get('target_verify_and_sample_ms',0) for x in traced)/trace_rounds if trace_rounds else None)
+  target_ref=freeze.get('target',{});target_bytes=target_ref.get('bytes')
+  point['target_model_bytes']=target_bytes;point['combined_deployment_bytes']=target_bytes+point['model_bytes'] if target_bytes is not None else None
+  point['shared_target_head']=shared_tensor(target_ref['path']) if target_ref else None
+  point['private_head_format']=config.get('components',{}).get('head')
+  point['size_accounting']='Actual target and drafter GGUF bytes include metadata; target tied embedding/head charged once in combined bytes. Any drafter private head is additional inside its GGUF. Allocator/peak measurements separately include execution buffers.'
   baseline=[x for x in rows if x['arm']=='q4' and not x['warmup'] and not x.get('instrumented')]
   if baseline:
    point['request_vs_q4']=point['request_tps']/(sum(x['tokens'] for x in baseline)/sum(x['wall_seconds'] for x in baseline));point['decode_vs_q4']=point['decode_tps']/(sum(x['tokens'] for x in baseline)/(sum(x['timings']['predicted_ms'] for x in baseline)/1000))
   if baseline and point['repetitions']>=5:
    lookup={(x['rep'],x['prompt']):x for x in baseline};pairs=[(x,lookup[(x['rep'],x['prompt'])]) for x in plain];rng=np.random.default_rng(811);ratios=[]
-   acceptance_samples=[];latency_samples=[];overhead_samples=[];trace_by={(x['rep'],x['prompt']):x for x in traced}
+   acceptance_samples=[];latency_samples=[];overhead_samples=[];decode_ratios=[];trace_by={(x['rep'],x['prompt']):x for x in traced}
    reps=sorted({x['rep'] for x in plain});prompts=sorted({x['prompt'] for x in plain});by={(x['rep'],x['prompt']):(x,y) for x,y in pairs}
    for _ in range(2000):
     sample_reps=rng.choice(reps,len(reps));sample_prompts=rng.choice(prompts,len(prompts));chosen=[by[(r,p)] for r in sample_reps for p in sample_prompts];ca=[x for x,y in chosen];ba=[y for x,y in chosen];ratios.append((sum(x['tokens'] for x in ca)/sum(x['wall_seconds'] for x in ca))/(sum(x['tokens'] for x in ba)/sum(x['wall_seconds'] for x in ba)))
-      # Cases are resampled once across all sampled repetitions (two-way clusters).
+    # Cases are resampled once across all sampled repetitions (two-way clusters).
+    decode_ratios.append((sum(x['tokens'] for x in ca)/sum(x['timings']['predicted_ms'] for x in ca))/(sum(x['tokens'] for x in ba)/sum(x['timings']['predicted_ms'] for x in ba)))
     accepted_sum=sum(x.get('native',{}).get('accepted',x['timings'].get('draft_n_accepted',0)) for x in ca);proposed_sum=sum(x.get('native',{}).get('proposed',x['timings'].get('draft_n',0)) for x in ca)
     if proposed_sum:acceptance_samples.append(accepted_sum/proposed_sum)
     if traced:
@@ -51,10 +64,13 @@ def summarize(panel,root):
      if trace_round_sum:latency_samples.append(sum(x.get('draft_full_ms',0) for x in ta)/trace_round_sum)
      overhead_samples.append(100*(sum(x['wall_seconds'] for x in ta)/sum(x['wall_seconds'] for x in ca)-1))
    point['request_vs_q4_bootstrap95']=np.quantile(ratios,[.025,.975]).tolist()
+   point['decode_vs_q4_bootstrap95']=np.quantile(decode_ratios,[.025,.975]).tolist()
    if acceptance_samples:point['acceptance_bootstrap95']=np.quantile(acceptance_samples,[.025,.975]).tolist()
    if latency_samples:point['full_draft_ms_bootstrap95']=np.quantile(latency_samples,[.025,.975]).tolist()
    if overhead_samples:point['trace_overhead_bootstrap95_percent']=np.quantile(overhead_samples,[.025,.975]).tolist()
   if traced:
+   names=sorted({n for x in traced for n in x.get('host_spans_ms',{}).get('generation',{})})
+   point['generation_host_ms_per_round']={n:sum(x.get('host_spans_ms',{}).get('generation',{}).get(n,0) for x in traced)/trace_rounds for n in names} if trace_rounds else {}
    point['trace_request_overhead_percent']=100*((sum(x['wall_seconds'] for x in traced)/sum(x['wall_seconds'] for x in plain))-1)
    trace_tokens=sum(x['tokens'] for x in traced);draft_seconds=sum(x.get('draft_full_ms',0) for x in traced)/1000;trace_wall=sum(x['wall_seconds'] for x in traced);trace_decode=sum(x['timings']['predicted_ms'] for x in traced)/1000
    point['optimistic_zero_draft_request_tps']=trace_tokens/(trace_wall-draft_seconds) if trace_wall>draft_seconds else None
@@ -75,13 +91,19 @@ def build(root,out):
  out.mkdir(parents=True,exist_ok=True);points=[]
  for p in sorted(root.rglob('result.json')):
   if p.parent==out:continue
-  try:
-   data=read(p)
-   if isinstance(data.get('rows'),list) and data['rows'] and 'arm' in data['rows'][0]:points+=summarize(p.parent,root)
-  except (KeyError,TypeError):continue
+  data=read(p)
+  if data.get('status')=='COMPLETE' and isinstance(data.get('rows'),list) and data['rows'] and 'arm' in data['rows'][0]:points+=summarize(p.parent,root)
+ # Point-estimate three-objective frontier; retain uncertainty and training histories.
+ for point in points:
+  peers=[p for p in points if all(p[k]==point[k] for k in ('cohort','runtime_series','scope')) and p['correct'] and p['acceptance'] is not None and p['full_draft_ms'] is not None]
+  point['point_estimate_pareto']=None
+  if point in peers:
+   point['point_estimate_pareto']=not any(p['acceptance']>=point['acceptance'] and p['full_draft_ms']<=point['full_draft_ms'] and p['model_bytes']<=point['model_bytes'] and (p['acceptance']>point['acceptance'] or p['full_draft_ms']<point['full_draft_ms'] or p['model_bytes']<point['model_bytes']) for p in peers)
  completion=read(root/'campaign-completion.json') if (root/'campaign-completion.json').exists() else None
  payload=dict(status='FULL_INITIAL_COMPARISON_COMPLETE' if completion else 'MEASURED_CHECKPOINT_NOT_CAMPAIGN_COMPLETION',completion=completion,blocked=read(root/'tranche.json').get('blocked',[]) if (root/'tranche.json').exists() else [],points=points,limitations=['RTX5080 / modern Qwen3.5-4B Q4_K_M only.','Smokes and repeated confirmations are separated by panel/cohort.','A1/A2 execute INT8-code DP4A fallback, not hypothetical binary kernels.','Full draft cost uses disjoint instrumented host spans including catchup, generation and accept; asynchronous work may be charged at a later synchronization.','Sampled device-memory peak includes display/unrelated baseline and is not exact allocator peak.','Confidence intervals resample reused prompts/repetitions; no independent-training variance estimate.'])
- (out/'comparison.json').write_text(json.dumps(payload,indent=2)+'\n');fields=['id','cohort','scope','runtime_series','family','execution','training_updates','accepted','proposed','rounds','acceptance','emitted_per_round','full_draft_ms','request_tps','decode_tps','request_vs_q4','optimistic_zero_draft_request_tps','model_bytes','total_peak_device_MiB','incremental_peak_device_MiB_vs_target','incremental_model_allocator_MiB_vs_target','correct']
+ payload['frontier_policy']='Point estimates maximize acceptance and minimize full draft latency and actual bytes within cohort/runtime/scope. Confidence-overlapping near ties remain in the table; this is not a deployment promotion or matched-history precision attribution.'
+ payload['failures_and_recoveries']=[dict(item='runtime03 generic CUDA gain op',reason='Tiny signed inputs flushed by inherited fast-math',resolution='Fused gained-stream runtime04 passes36 actual CUDA cases; controls remeasured, old series retained separately.'),dict(item='first mutation source snapshot',reason='Top-level exporter dependency omitted; import failed before any training',resolution='Complete dependency snapshot import-qualified; replacement serial job retained source/ownership receipts.')]
+ (out/'comparison.json').write_text(json.dumps(payload,indent=2)+'\n');fields=['id','cohort','scope','runtime_series','family','execution','training_updates','training_seconds','accepted','proposed','rounds','acceptance','prefix_survival','emitted_per_round','full_draft_ms','request_tps','decode_tps','request_vs_q4','decode_vs_q4','optimistic_zero_draft_request_tps','model_bytes','combined_deployment_bytes','total_peak_device_MiB','incremental_peak_device_MiB_vs_target','incremental_model_allocator_MiB_vs_target','point_estimate_pareto','correct']
  with (out/'comparison.csv').open('w') as f:
   writer=csv.DictWriter(f,fields,extrasaction='ignore');writer.writeheader();writer.writerows(points)
  def fmt(v):return '—' if v is None else f'{v:.3f}' if isinstance(v,float) else str(v)
@@ -97,7 +119,17 @@ def build(root,out):
    size=25+max(0,(p['model_bytes'] or 0)/1e7);ax.scatter(p['full_draft_ms'],100*p['acceptance'],s=size,color=color(p),alpha=.7);ax.annotate(p['arm'],(p['full_draft_ms'],100*p['acceptance']),fontsize=7)
   ax.set(xlabel='Complete native draft ms/round (traced)',ylabel='Accepted / proposed (%)',title=group);ax.grid(alpha=.2)
  fig.tight_layout();fig.savefig(out/'acceptance-latency.png',dpi=160);fig.savefig(out/'acceptance-latency.svg');plt.close(fig)
- fig,ax=plt.subplots(figsize=(max(10,len(points)*.18),5));selected=[p for p in display if p.get('request_vs_q4') is not None];ax.bar(range(len(selected)),[p['request_vs_q4'] for p in selected],color=[color(p) for p in selected]);ax.axhline(1,color='black',lw=1);ax.set_xticks(range(len(selected)),[p['panel'].split('/')[-1]+' / '+p['arm'] for p in selected],rotation=90,fontsize=6);ax.set(ylabel='Full request throughput / matched Q4',title='Native throughput; each bar uses its own matched panel control');fig.tight_layout();fig.savefig(out/'throughput.png',dpi=160);fig.savefig(out/'throughput.svg');plt.close(fig)
+ selected=[p for p in display if p.get('request_vs_q4') is not None];height=max(5,max((sum(p['cohort']==g for p in selected) for g in groups),default=1)*.34)
+ fig,axes=plt.subplots(1,len(groups),figsize=(10*len(groups),height),squeeze=False)
+ for ax,group in zip(axes[0],groups):
+  bars=[p for p in selected if p['cohort']==group];y=np.arange(len(bars))
+  for offset,key,label,hatch in [(-.18,'request_vs_q4','Full request',None),(.18,'decode_vs_q4','Decode','///')]:
+   values=[p[key] for p in bars];ax.barh(y+offset,values,height=.32,color=[color(p) for p in bars],alpha=.8 if hatch is None else .4,hatch=hatch,label=label)
+   for i,p in enumerate(bars):
+    ci=p.get(key+'_bootstrap95')
+    if ci:ax.plot(ci,[y[i]+offset]*2,color='#20252a',lw=1)
+  ax.axvline(1,color='black',lw=1);ax.set_yticks(y,[p['arm'] for p in bars],fontsize=8);ax.invert_yaxis();ax.set(xlabel='Throughput / matched DFlash Q4_K_M',title=group+' · native execution');ax.legend(fontsize=8);ax.grid(axis='x',alpha=.15)
+ fig.tight_layout();fig.savefig(out/'throughput.png',dpi=160);fig.savefig(out/'throughput.svg');plt.close(fig)
  fig,axes=plt.subplots(1,2,figsize=(13,5))
  for p in display:
   if p['acceptance'] is None:continue
@@ -106,8 +138,8 @@ def build(root,out):
  axes[0].set(xlabel='Actual drafter GGUF MiB (private tensors included)',ylabel='Acceptance (%)');axes[1].set(xlabel='Sampled total device peak MiB',ylabel='Full request tokens/s');fig.tight_layout();fig.savefig(out/'size-memory.png',dpi=160);fig.savefig(out/'size-memory.svg');plt.close(fig)
  fig,ax=plt.subplots(figsize=(12,6));curves={}
  for p in points:
-  match=re.fullmatch(r'(G[1248]D[1248](?:-[a-z-]+)?)-(zero|256|1024)',p['arm'])
-  if p['cohort']=='natural12' and p['training_updates'] in (0,256,1024) and p['acceptance'] is not None and match:
+  match=re.fullmatch(r'(G[1248]D[1248](?:-[a-z-]+)?)-(zero|256|1024|1536|2048)',p['arm'])
+  if p['cohort']=='natural12' and p['training_updates'] in (0,256,1024,1536,2048) and p['acceptance'] is not None and match:
    key=(p['runtime_series'],match[1]);prior=curves.setdefault(key,{}).get(p['training_updates'])
    if prior is None or p['repetitions']>prior['repetitions']:curves[key][p['training_updates']]=p
  for (series,name),values in curves.items():
@@ -119,6 +151,8 @@ def build(root,out):
  # Standalone interactive SVG and sortable evidence table: no network/CDN/server.
  data=json.dumps(points).replace('</','<\\/');columns=json.dumps(fields)
  body='''<!doctype html><html><head><meta charset="utf-8"><title>DFlash precision comparison</title><style>body{font:14px system-ui;margin:24px;color:#172232;background:#f6f8fb}h1{font-size:24px}select,input{padding:7px;margin:5px}svg{width:100%;max-width:1000px;background:white;border:1px solid #ddd}table{border-collapse:collapse;font-size:12px;white-space:nowrap}th,td{padding:7px;border-bottom:1px solid #d6dce6;text-align:right}th{cursor:pointer;position:sticky;top:0;background:#e5ebf3}.scroll{overflow:auto;max-height:650px}#tip{position:fixed;display:none;background:#172232;color:white;padding:10px;max-width:400px;pointer-events:none}img{max-width:100%}</style></head><body><h1>DFlash precision campaign — measured evidence</h1><p id="status">A checkpoint chart is incomplete until the campaign record marks full comparison complete.</p><p>RTX 5080 · Qwen3.5 4B Q4_K_M target · depth 2 · greedy target-sample-and-match. A1/A2 use measured INT8-code DP4A execution. Traced host spans include draft generation, catch-up and acceptance; timings are diagnostic.</p><label>Panel <select id="panel"></select></label><label>X <select id="x"><option value="full_draft_ms">Complete draft ms/round</option value="model_bytes">Actual model bytes</option><option value="total_peak_device_MiB">Sampled total peak MiB</option><option value="training_updates">Segment updates</option></select></label><label>Y <select id="y"><option value="acceptance">Acceptance</option><option value="request_vs_q4">Request throughput / Q4</option><option value="decode_vs_q4">Decode throughput / Q4</option><option value="request_tps">Request tokens/s</option></select></label><svg id="plot" viewBox="0 0 1000 540"></svg><div id="tip"></div><p>Missing measurements are omitted from the selected plot, never plotted as zero. Bubble radius indicates actual GGUF bytes. Hover for counts, lineage and execution details. Click a column to sort.</p><input id="filter" placeholder="Filter rows"><div class="scroll"><table id="table"></table></div>'''
+ body=body.replace('A checkpoint chart is incomplete until the campaign record marks full comparison complete.', 'Full initial comparison complete; final DEV and heldout cohorts remain separate.' if completion else 'Measured checkpoint only; full initial confirmation and heldout are still pending.')
+ body+='<p>'+html.escape(payload['frontier_policy'])+'</p><p>'+html.escape(json.dumps(payload['blocked']))+'</p>'
  body+='<script>const points='+data+',columns='+columns+''';let sort="id";const panel=document.querySelector('#panel'),sx=document.querySelector('#x'),sy=document.querySelector('#y'),tip=document.querySelector('#tip');panel.innerHTML='<option value="">All panels (different cohorts remain distinct)</option>'+[...new Set(points.map(p=>p.panel))].map(p=>'<option>'+p+'</option>').join('');function draw(){let rows=points.filter(p=>(!panel.value||p.panel===panel.value)&&JSON.stringify(p).toLowerCase().includes(document.querySelector('#filter').value.toLowerCase()));const valid=rows.filter(p=>p[sx.value]!=null&&p[sy.value]!=null);let maxX=Math.max(1,...valid.map(p=>p[sx.value]))*1.08,maxY=Math.max(.01,...valid.map(p=>p[sy.value]))*1.1;const svg=document.querySelector('#plot');svg.innerHTML='<path d="M70 20V470H970" stroke="#789" fill="none"/><text x="500" y="528" text-anchor="middle">'+sx.selectedOptions[0].text+'</text><text x="20" y="240" transform="rotate(-90 20 240)" text-anchor="middle">'+sy.selectedOptions[0].text+'</text>';for(let i=0;i<=5;i++){let x=70+i*180,y=470-i*85;svg.innerHTML+='<text x="'+x+'" y="491" text-anchor="middle">'+(maxX*i/5).toPrecision(3)+'</text><text x="62" y="'+y+'" text-anchor="end">'+(maxY*i/5).toPrecision(3)+'</text>';}valid.forEach(p=>{let c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',70+900*p[sx.value]/maxX);c.setAttribute('cy',470-425*p[sy.value]/maxY);c.setAttribute('r',Math.max(5,Math.sqrt((p.model_bytes||1)/1e7)));c.setAttribute('fill',p.family.startsWith('G1')?'#bd4d6c':p.family.startsWith('G2')?'#d98c22':p.family.startsWith('G4')?'#38976b':'#3269a8');c.setAttribute('opacity','.65');c.onmousemove=e=>{tip.style.display='block';tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY+12)+'px';tip.textContent=p.id+' | '+p.scope+' | '+p.family+' | '+p.accepted+'/'+p.proposed+' accepted | '+p.request_tps.toFixed(2)+' request tok/s | '+JSON.stringify(p.config.components||{})};c.onmouseleave=()=>tip.style.display='none';svg.append(c)});rows.sort((a,b)=>typeof a[sort]==='number'?(a[sort]||0)-(b[sort]||0):String(a[sort]).localeCompare(String(b[sort])));const esc=x=>String(x??'—').replaceAll('&','&amp;').replaceAll('<','&lt;');document.querySelector('#table').innerHTML='<thead><tr>'+columns.map(k=>'<th data-key="'+k+'">'+k+'</th>').join('')+'</tr></thead><tbody>'+rows.map(p=>'<tr>'+columns.map(k=>'<td>'+esc(typeof p[k]==='number'?Number(p[k].toPrecision(6)):p[k])+'</td>').join('')+'</tr>').join('')+'</tbody>';document.querySelectorAll('th').forEach(t=>t.onclick=()=>{sort=t.dataset.key;draw()})}for(const s of [panel,sx,sy,document.querySelector('#filter')])s.oninput=draw;draw();</script>'''
  for name in ('acceptance-latency','throughput','size-memory','recovery'):body+='<img alt="'+name+'" src="data:image/png;base64,'+base64.b64encode((out/(name+'.png')).read_bytes()).decode()+'">'
  (out/'comparison.html').write_text(body+'</body></html>');return payload
