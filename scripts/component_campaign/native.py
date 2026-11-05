@@ -62,8 +62,9 @@ def main():
   if a.cohort!='capture3' or not 0<a.stress_length<=3840:raise ValueError('stress uses consumed capture token IDs and<=3840 positions')
   for item in prompts:
    ids=item['payload']['prompt'];item['payload']['prompt']=(ids*((a.stress_length+len(ids)-1)//len(ids)))[:a.stress_length]
+   item['payload']['ignore_eos']=True
    item['id']+='-synthetic-context-'+str(a.stress_length)
-  save(a.out/'context-stress.json',dict(positions=a.stress_length,construction='Repeated already-consumed DEV token sequence; context/cache stress, not natural heldout quality.',source=a.cohort))
+  save(a.out/'context-stress.json',dict(positions=a.stress_length,construction='Repeated already-consumed DEV token sequence; context/cache stress, not natural heldout quality.',stopping='ignore_eos=true in every matched arm to exercise full256-token reserve and sequential cache growth',source=a.cohort))
  if a.limit:prompts=prompts[:a.limit]
  if a.output_cap:
   for x in prompts:x['payload']['n_predict']=min(x['payload']['n_predict'],a.output_cap)

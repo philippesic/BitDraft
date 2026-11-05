@@ -12,7 +12,9 @@ def panel(name,model,kv=('f16','f16')):
  if (folder/'result.json').exists():return
  arms=dict(target=None,q4=str(Q4),**{name:str(model)})
  save(R/'panels'/(name+'.json'),arms);save(R/'panels'/(name+'-cache.json'),{name:kv})
- run([sys.executable,'-m','scripts.component_campaign.native','--arms',R/'panels'/(name+'.json'),'--draft-cache-map',R/'panels'/(name+'-cache.json'),'--runtime',R/'runtime03','--out',folder,'--cohort','capture3','--reps','1','--output-cap','64'])
+ policy=json.load(open(R/'runtime-policy.json')) if (R/'runtime-policy.json').exists() else {}
+ runtime=Path(policy.get('runtime',str(R/'runtime03')))
+ run([sys.executable,'-m','scripts.component_campaign.native','--arms',R/'panels'/(name+'.json'),'--draft-cache-map',R/'panels'/(name+'-cache.json'),'--runtime',runtime,'--out',folder,'--cohort','capture3','--reps','1','--output-cap','64'])
 
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('arms',nargs='+');a=ap.parse_args()

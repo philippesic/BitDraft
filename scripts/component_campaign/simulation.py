@@ -38,6 +38,11 @@ def cache_round(x,format):
   rounded=(codes*d.half().float()).reshape(shape)
  return x+(rounded-x).detach()
 
+def cache_read(x,format):
+ # SM120 DFlash N3 and the fixed N16 training block use MMA_F16 attention.
+ # Its actual native read path dequantizes cache blocks into F16 operands.
+ return stored(cache_round(x,format),True) if format!='f16' else cache_round(x,format)
+
 class StorageProjection(Projection):
  def stream(self,x):
   # Round the EXPORTED exp values, with STE to the F32 latent masters.
@@ -71,7 +76,7 @@ class ComponentLayer(BlockLayer):
   k=_rope(self.norm(k,'attn_k_norm'),positions,cfg.rope_theta)
   if self.kformat!='f16':k=hadamard(k,128)
   if self.vformat!='f16':v=hadamard(v,64)
-  return cache_round(k,self.kformat),cache_round(v,self.vformat)
+  return cache_read(k,self.kformat),cache_read(v,self.vformat)
  def forward(self,state,context_kv,positions,allowed):
   cfg=self.config;norm=self.norm(state,'attn_norm')
   q=self.attn_q(norm).view(-1,cfg.num_heads,cfg.head_dim)
@@ -82,7 +87,7 @@ class ComponentLayer(BlockLayer):
   if self.kformat!='f16':q,k=hadamard(q,128),hadamard(k,128)
   if self.vformat!='f16':v=hadamard(v,64)
   noise=(k,v);ck,cv=context_kv
-  k=torch.cat((ck,cache_round(k,self.kformat)),0);v=torch.cat((cv,cache_round(v,self.vformat)),0)
+  k=torch.cat((ck,cache_read(k,self.kformat)),0);v=torch.cat((cv,cache_read(v,self.vformat)),0)
   groups=cfg.num_heads//cfg.num_kv_heads;q=q.view(cfg.block_size,cfg.num_kv_heads,groups,cfg.head_dim)
   score=torch.einsum('qhgd,khd->hgqk',q,k)/math.sqrt(cfg.head_dim)
   score=score.masked_fill(~allowed[None,None],-torch.inf)

@@ -70,10 +70,12 @@ def main():
  def point(label):
   torch.cuda.synchronize();start=time.perf_counter();metrics=evaluation(m,dev)
   dev_seconds=time.perf_counter()-start;export_start=time.perf_counter()
-  state=dict(version=2,config=c,config_hash=digest(c),parameters=parameters(m),progress=copy.deepcopy(progress),lineage=lineage)
+  from .deployment import values
+  stored_exps,rounding_differences=values(m,spec)
+  state=dict(version=2,config=c,config_hash=digest(c),parameters=parameters(m),progress=copy.deepcopy(progress),lineage=lineage,deployment_exps=stored_exps)
   base=out/f'base-{label}.gguf'
   export(None,base,state=state,checkpoint_pin=lineage['parent'])
-  rewrite(base,out/f'model-{label}.gguf',spec,head_log_d=state['parameters'].get('head_log_d'));base.unlink();base.with_suffix('.json').unlink()
+  rewrite(base,out/f'model-{label}.gguf',spec,head_log_d=state['parameters'].get('head_log_d'),deployment_exps=stored_exps);base.unlink();base.with_suffix('.json').unlink()
   model_path=out/f'model-{label}.gguf';model_pin=pin(model_path)
   export_seconds=time.perf_counter()-export_start;archive_start=time.perf_counter()
   # One frozen native basis per vocabulary format; later points keep only lossless deltas.
@@ -84,7 +86,7 @@ def main():
    # Hard link prevents duplicate physical storage for the first basis point.
    basis.hardlink_to(model_path)
   elif not model_path.samefile(basis):archive(model_path,basis)
-  record=dict(update=progress['updates'],progress={k:v for k,v in progress.items() if k!='order'},dev=metrics,seconds=time.perf_counter()-start,dev_seconds=dev_seconds,native_export_seconds=export_seconds,archive_seconds=time.perf_counter()-archive_start,peak_training_bytes=torch.cuda.max_memory_allocated(),model=model_pin)
+  record=dict(update=progress['updates'],progress={k:v for k,v in progress.items() if k!='order'},dev=metrics,seconds=time.perf_counter()-start,dev_seconds=dev_seconds,native_export_seconds=export_seconds,archive_seconds=time.perf_counter()-archive_start,peak_training_bytes=torch.cuda.max_memory_allocated(),model=model_pin,cpu_gpu_half_exp_rounding_differences=rounding_differences)
   readouts.append(record);save(out/'readouts.json',readouts);print('READOUT',spec['name'],record['update'],metrics['ce'],metrics['agreement'],flush=True)
  def recoverable():
   io_start=time.perf_counter()
@@ -97,7 +99,9 @@ def main():
    old=json.load(open(out/'recovery.json'))
    if old['archive']==str(existing) and pin(existing)['sha256']==old['archive_sha256']:return old
    raise ValueError('unexpected existing recovery state')
-  state=dict(version=2,config=c,config_hash=digest(c),parameters=parameters(m),optimizer=opt.state_dict(),progress=copy.deepcopy(progress),rng=rng(),lineage=lineage,component_spec=spec,resume_capable=True)
+  from .deployment import values
+  stored_exps,_=values(m,spec)
+  state=dict(version=2,config=c,config_hash=digest(c),parameters=parameters(m),optimizer=opt.state_dict(),progress=copy.deepcopy(progress),rng=rng(),lineage=lineage,component_spec=spec,resume_capable=True,deployment_exps=stored_exps)
   free=__import__('shutil').disk_usage(directory).free
   required=int(policy['observed_bytes']*1.05)+(512<<20) if delta else 4_800_000_000
   if free<required:raise RuntimeError(f'insufficient rolling checkpoint space: need{required}bytes free; observed{free}')

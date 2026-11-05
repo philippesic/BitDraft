@@ -215,3 +215,52 @@ This adjusts expensive I/O cadence without changing updates, examples, optimizer
 RNG, objective or precision. Detailed DEV/export/archive/checkpoint costs are
 recorded separately. Final frontier retention remains two resumable states,
 with original paid B0 and all useful native evidence protected.
+
+## Copy controls, context qualification and finite Q3 —14:40Pacific
+
+H0/H4 full4096windows and native0/256/1024/4096smokes completed. H4's final
+short native count is49/273 versus H055/263; this is a small consumed diagnostic,
+not a formal rejection or irrecoverability result. Native head-memory/latency and
+broader warm repeated comparison still decide usefulness and any bounded R2.
+
+Exact private Q6 head/embedding controls reuse H0's identical frozen-Q6 training
+forward/order/exposure/optimizer policy, with zero extra updates claimed. Their
+private native storage/execution are measured separately at all four readouts.
+Q3_K was selected only after H4 recovery, encoded from the same pinned Q6 source,
+admitted natively and is completing its full4096R1window.
+
+Short/medium/near-limit synthetic cache panels use128/1536/3840input positions
+with256output reserve and ignore_eos in all arms. All6requested K/V types are
+actually allocated; source logs confirm rotations and cache formats. These
+repeated consumed-DEV contexts are cache stress tests, not new natural heldout.
+No new sealed payload has been opened.
+
+Full tensor-delta checkpoint recovery passed all real F32 parameters, Adam, RNG,
+cursor/order and native full-file bytes. It measured4,278,862,226bytes versus
+4,251,488,319for streamed byte-shuffle: no size win. Future arms retain the simpler
+byte-shuffled format; the current exact CPT state stays recoverable until its
+next verified replacement. See `checkpoint-policy.json`.
+
+A further concrete cache audit finds native SM120 N3/N16 attention uses MMA_F16,
+converting quantized stored K/V to F16 read operands. Simulation now includes that
+read rounding. The first quantized-cache trainer must pass the actual CUDA
+cache-to-F16 fixture before training. Existing query/softmax surrogate precision
+is unchanged from the matched control; actual native requests include tail paths.
+
+Future F16 positive scalar exports capture GPU exp-then-half values directly,
+record CPU/GPU half-rounding differences and save the small derived deployment
+values alongside full masters/optimizer/RNG. This prevents an export CPU exp
+rounding tie from changing the simulated deployed value.
+
+A prepared runtime04 adds real IEEE-F16 clip bits in UINT16 GGUF scalar fields,
+converted once into the existing F32 kernel parameter. It has NOT yet passed GPU
+admission; runtime03 remains live. Existing Sclip is a rounding diagnostic with
+F32 metadata until the physical-storage variant is separately qualified. Clip
+storage can save only36payload bytes and never shrinks F32 runtime op_params.
+No old qualified runtime/source/chart was modified.
+
+No compatible full-vocabulary higher-precision target initializer was found in
+the pinned model directory. EAGLE's BF16 output has only50,000rows versus248,320
+required; using it would change vocabulary/capacity and is ineligible. DFlash/
+DSpark BF16 drafts contain no head/embedding table. See
+`higher-precision-initializer-inventory.json`.

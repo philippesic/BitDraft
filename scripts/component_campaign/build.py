@@ -3,7 +3,7 @@ import json,subprocess,difflib,shutil
 from pathlib import Path
 from .common import P,R,OPT,ROOT,pin,save
 
-def build(r=None):
+def build(r=None,half_clip=False):
  r=Path(r) if r is not None else R/'runtime';r.mkdir(exist_ok=False,parents=True);(r/'bin').mkdir()
  frozen=P/'runs/precision-native-20261104-04';base=P/'runs/w1a8-modern-packed-runtime-20261103-01/build02'
  manifest=json.load(open(frozen/'build.json'))
@@ -22,6 +22,10 @@ def build(r=None):
 ''' + cpp[position:]
  # F16 metadata storage is converted explicitly to F32 graph operands. Kernels remain exact.
  cpp=cpp.replace('sm->type!=GGML_TYPE_F32','(sm->type!=GGML_TYPE_F32 && sm->type!=GGML_TYPE_F16)')
+ if half_clip:
+  cpp=cpp.replace('ml->get_key(base+".w1ax.clip",clip);','''const int clip_key = gguf_find_key(ml->metadata,(base+".w1ax.clip").c_str());
+            if(clip_key>=0 && gguf_get_kv_type(ml->metadata,clip_key)==GGUF_TYPE_UINT16) clip=ggml_fp16_to_fp32(gguf_get_val_u16(ml->metadata,clip_key));
+            else ml->get_key(base+".w1ax.clip",clip);''')
  cpp=cpp.replace('auto gain=tensor(base+".w1ax_gain");','auto gain=tensor(base+".w1ax_gain"); if(gain && gain->type!=GGML_TYPE_F32) gain=ggml_cast(ctx0,gain,GGML_TYPE_F32);')
  cpp=cpp.replace('ggml_w1ax_mul_mat_shared(ctx0,p.packed,p.scales,packed,p.logical_k,bits)','ggml_w1ax_mul_mat_shared(ctx0,p.packed,p.scales->type==GGML_TYPE_F32?p.scales:ggml_cast(ctx0,p.scales,GGML_TYPE_F32),packed,p.logical_k,bits)')
  cpp=cpp.replace('result->src[4]=tensor(base+".w1ax_midpoint");','result->src[4]=tensor(base+".w1ax_midpoint"); if(result->src[4] && result->src[4]->type!=GGML_TYPE_F32) result->src[4]=ggml_cast(ctx0,result->src[4],GGML_TYPE_F32);')

@@ -6,6 +6,7 @@ def freeze(label):
  directory=R/'python-sources'/(label+'-'+str(time.time_ns()));directory.mkdir(parents=True,exist_ok=False)
  paths=[*list((ROOT/'src').rglob('*.py')),*list((ROOT/'scripts').glob('*.py'))]
  for name in ('component_campaign','dflash_baseline','execution_campaign'):paths+=list((ROOT/'scripts'/name).glob('*.py'))
+ paths+=list((ROOT/'scripts/component_campaign').glob('*.cpp'))
  paths.append(ROOT/'experiments/w1a8-standing-20261102/baseline.json')
  for source in paths:
   dest=directory/source.relative_to(ROOT);dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(source,dest)

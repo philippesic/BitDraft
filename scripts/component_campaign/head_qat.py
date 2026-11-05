@@ -15,10 +15,10 @@ from .simulation import ComponentModel,stored
 def scale_offset(format):
  return 0 if format=='Q4_K' else GGML_QUANT_SIZES[Type[format]][1]-2
 
-def encoded_scales(data,format,log_d):
+def encoded_scales(data,format,log_d,deployment_d=None):
  result=np.array(data,copy=True);blocks=result.reshape(*log_d.shape,-1)
  offset=scale_offset(format)
- rounded=log_d.detach().cpu().float().exp().half().numpy()
+ rounded=deployment_d.cpu().numpy() if deployment_d is not None else log_d.detach().cpu().float().exp().half().numpy()
  if not np.isfinite(rounded).all():raise ValueError('head block-scale overflow')
  blocks[...,offset:offset+2]=np.ascontiguousarray(rounded).view(np.uint8).reshape(*rounded.shape,2)
  return result
