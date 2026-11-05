@@ -2,6 +2,8 @@
 import json,os,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2];P=Path('/home/philip/binary-eagle-decoding');r=P/'runs/precision-campaign-20261104-01';runtime=P/'runs/precision-native-20261104-04'
+sys.path.insert(0,str(ROOT))
+from scripts.dflash_baseline.native_archive import available
 def main():
  lock=json.load(open(r/'search-lock.json'))
  if lock['status']!='INITIAL_SEARCH_LOCKED_FOR_CONFIRMATION':raise ValueError('search decisions must lock before final confirmation')
@@ -18,7 +20,7 @@ def main():
   arms[name+'-1024']=str(out/'model-final.gguf')
   arms[name+'-256']=str(out/'model-256.gguf')
  for name,model in lock.get('additional_confirmations',{}).items():
-  if not Path(model).is_file():raise ValueError('additional locked model missing')
+  if not available(model):raise ValueError('additional locked model missing')
   arms[name]=model
  af=r/'confirmation-arms.json'
  if af.exists() and json.load(open(af))!=arms:raise ValueError('confirmation arms changed')

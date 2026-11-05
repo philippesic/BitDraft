@@ -47,6 +47,11 @@ def summarize(panel,root):
   point['private_head_format']=config.get('components',{}).get('head')
   point['size_accounting']='Actual target and drafter GGUF bytes include metadata; target tied embedding/head charged once in combined bytes. Any drafter private head is additional inside its GGUF. Allocator/peak measurements separately include execution buffers.'
   progress=info.get('progress',{});point['supervised_positions']=progress.get('supervised_tokens');point['data_cursor']=progress.get('cursor');point['immediate_parent']=config.get('parent')
+  if point['training_seconds'] is None:point['training_seconds']=info.get('update_seconds')
+  if arm=='vanilla-zero':point['training_updates']=0
+  if point['family']=='vanilla W1A8':point['execution']='Native packed W1 / INT8-code DP4A (vanilla reference)'
+  if coverage:
+   components=config.get('components',{});point['formats']=dict(ffn_weights='Packed1 sign + F32 row scale/midpoint; F32 positive channel gains',gate_up_activations='A'+str(bits[0]),down_activations='A'+str(down[0]),activation_execution='INT8-code DP4A for all logical widths',fusion=components.get('fusion','BF16'),attention_qk=components.get('attention_qk','BF16'),attention_vo=components.get('attention_vo','BF16'),norms='F32 original trainable norms',head=components.get('head','shared target Q6_K'),embedding='shared target Q6_K',target_and_draft_KV='F16')
   training_result=Path(model).parent/'result.json' if model else None
   point['training_peak_allocated_bytes']=read(training_result).get('peak_bytes') if training_result and training_result.exists() and (point['training_updates'] or 0)>0 else None
   baseline=[x for x in rows if x['arm']=='q4' and not x['warmup'] and not x.get('instrumented')]

@@ -403,3 +403,34 @@ repeat DEV with two same-process excluded warmups and five alternating measured
 repetitions; lock max4 finalists before fresh24-case heldout; audit and produce
 full charts. Proper-warmup GPU protocol and protected-component independent
 code audits remain required. Full campaign is unfinished; continue in this thread.
+
+## Reserved trials and storage — November5,02:05Pacific
+
+All12 standard arms and their natural12 native panels completed. Reserved GPU
+owner is precision-reserved-20261105-01, immutable snapshot/ownership/stop
+receipts in its canonical run. Same-process two-warmup native smoke passed.
+Learned A8 reaches1075/3292 and166.97request tokens/s at1024, nearly identical
+to learned A4; dynamic-vs-learned range policy is a major confound in attributing
+the earlier G4 improvement. Combined small G4 interaction and paired dynamic
+G1/A8 continuations remain underway. These are still diagnostic panels.
+
+Storage supervisor precision-reserved-storage-20261105-01 exited0. Eight
+reproducible zero caches released; three paid pilot checkpoints relocated
+losslessly to the existing Windows artifact store with verified canonical
+symlinks. Receipts zero-cache-release-final.json and reserved-storage-relocation.json
+record exact paths/hashes and both filesystem free bytes. Checkpoints unchanged.
+
+The pre-selection record also reserved four2048-update finalist confirmations.
+Honor that exposure: exact1024→2048 continuations have the same history as
+uninterrupted common-parent2048 training under the constant schedule. Reuse
+matching completed continuations, charge all additional confirmation updates,
+lock their configs before confirmation and distinguish mixed recipes from pure
+precision effects. Final four-family dynamic1024 attribution stays matched.
+
+To make space without dropping any paid bytes, lossless dictionary archival of
+GGUF exports is CPU-fixture qualified. A frozen full native GGUF is the pinned
+recovery dictionary; full raw SHA256 is verified before removing a redundant
+uncompressed copy and again on hydration. Training checkpoint archives untouched.
+Native execution always receives the exact original GGUF, with hydration outside
+request timing. Actual full-model archival/admission qualification remains pending
+after the reserved GPU job. Sixteen CPU correctness tests pass; receipt saved.

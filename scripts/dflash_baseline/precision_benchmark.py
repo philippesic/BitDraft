@@ -3,8 +3,12 @@ import argparse,hashlib,json,os,re,signal,socket,subprocess,sys,threading,time,u
 from collections import Counter
 from pathlib import Path
 P=Path('/home/philip/binary-eagle-decoding');ROOT=Path(__file__).resolve().parents[2]
+sys.path.insert(0,str(ROOT))
+from scripts.dflash_baseline.native_archive import reference as archived_reference,hydrate,release
 def pin(path):
- p=Path(path);return dict(path=str(p.resolve()),sha256=hashlib.file_digest(p.open('rb'),'sha256').hexdigest(),bytes=p.stat().st_size)
+ p=Path(path)
+ if p.suffix=='.gguf' and not p.exists():return archived_reference(p)
+ return dict(path=str(p.resolve()),sha256=hashlib.file_digest(p.open('rb'),'sha256').hexdigest(),bytes=p.stat().st_size)
 def save(path,x):
  tmp=path.with_suffix(path.suffix+'.tmp');tmp.write_text(json.dumps(x,indent=2)+'\n');tmp.replace(path)
 def auth(ref):
@@ -75,6 +79,7 @@ def main():
    if model:argv+=['-md',str(model),'-ngld','99','--cache-type-k-draft','f16','--cache-type-v-draft','f16','--spec-draft-n-max','2','--spec-draft-n-min','0','--spec-draft-p-min','0','--spec-draft-sampling','greedy']
    if traced:env.update(LD_PRELOAD=str(P/'runs/data-cost-transfer-20261104-01/libdecode-cost-trace.so'),DECODE_COST_TRACE=str(cell/'cost-trace.jsonl'))
    save(cell/'command.json',dict(argv=argv,environment={k:v for k,v in env.items() if k.startswith(('GGML_','CUDA_','LD_','OMP_','DECODE_')) or k in ('PATH','LANG')}))
+   created_native=hydrate(model) if model else False
    done=threading.Event();memory=[]
    def sample():
     while not done.is_set():
@@ -83,7 +88,11 @@ def main():
      done.wait(.2)
    watcher=threading.Thread(target=sample,daemon=True);watcher.start()
    with (cell/'server.log').open('w') as log:
-    process=subprocess.Popen(argv,env=env,stdout=log,stderr=subprocess.STDOUT)
+    try:process=subprocess.Popen(argv,env=env,stdout=log,stderr=subprocess.STDOUT)
+    except BaseException:
+     done.set();watcher.join(timeout=5)
+     if model:release(model,created_native)
+     raise
     save(cell/'ownership.json',dict(pid=process.pid,stat=Path(f'/proc/{process.pid}/stat').read_text(),boot_id=Path('/proc/sys/kernel/random/boot_id').read_text(),inherited_supervised_group=os.getpgrp()))
     try:
      for _ in range(120):
@@ -125,6 +134,7 @@ def main():
      try:process.wait(timeout=15)
      except subprocess.TimeoutExpired:process.kill();process.wait()
      done.set();watcher.join(timeout=5);save(cell/'memory.json',memory);save(cell/'release.json',dict(reaped=True,returncode=process.returncode))
+     if model:release(model,created_native)
    if traced:
     spans=[json.loads(line) for line in (cell/'cost-trace.jsonl').read_text().splitlines()]
     for row in [x for x in rows if x['rep']==rep and x['arm']==label and x['instrumented']]:
