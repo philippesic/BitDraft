@@ -4,7 +4,7 @@
   "starting_point": "Plain DFlash; user-selected W1 and activations above one bit; modern DFlash Q4_K_M remains baseline.",
   "classification": {
     "Q": "Chosen learned/task-adapted variant belongs in QAT or auxiliary training. Not a claim that the generic mechanism mathematically requires end-to-end QAT.",
-    "I": "Can be screened or applied without full task-QAT. Calibration or small optimization is explicitly disclosed; independence does not promise preserved acceptance."
+    "I": "Fixed/analytic/calibration-search variant can be screened without task-loss parameter training. Learned recovery is separately assigned to Q; independence does not promise preserved acceptance."
   },
   "priorities": {
     "include": "Proposed reference capability or engineering principle, not approved implementation.",
@@ -441,10 +441,10 @@
     },
     {
       "id": "I06",
-      "name": "Fixed rotations, channel equalization and post-training transform fitting",
+      "name": "Fixed rotations and channel equalization",
       "group": "independent_of_full_qat_variant",
       "recommendation": "test",
-      "mechanism": "Explore QuaRot/SmoothQuant and fitted SpinQuant/FlatQuant preprocessing as distinct variants.",
+      "mechanism": "Explore fixed QuaRot/SmoothQuant-style preprocessing or search fixed transforms using calibration statistics.",
       "backlog_mechanisms": [
         "input"
       ],
@@ -454,7 +454,7 @@
         "SpinQuant",
         "FlatQuant"
       ],
-      "qualification": "Fitted variants require optimization, but not full drafter QAT. Folding a general rotation/column gain into W1 does not preserve the binary format."
+      "qualification": "Learned SpinQuant/FlatQuant variants belong in Q07, even when described as PTQ. Folding a general rotation/column gain into W1 does not preserve the binary format."
     },
     {
       "id": "I07",
@@ -477,14 +477,14 @@
       "name": "Post-training factorization and capacity allocation",
       "group": "independent_of_full_qat_variant",
       "recommendation": "later",
-      "mechanism": "AF1-like factorization and sensitivity allocation as an alternate initializer/control.",
+      "mechanism": "Factorization and sensitivity allocation as an alternate initializer/control; exclude learned global recovery from this independent portion.",
       "backlog_mechanisms": [
         "multibinary"
       ],
       "source_ids": [
         "AF1"
       ],
-      "qualification": "Not optimization-free: AF1 includes global learned-scale reconstruction. Does not use the plain single-sign-matrix representation."
+      "qualification": "The full AF1 pipeline includes learned-scale global reconstruction, assigned to Q01/Q23, so full AF1 is not a training-free feature. Factorization changes the single-sign-matrix representation."
     },
     {
       "id": "I09",
