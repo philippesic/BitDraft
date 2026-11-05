@@ -1169,3 +1169,25 @@ this scope confusion. Freeze the actual requested checkpoint and compatible
 target before choosing baselines; never silently replace it with a modern
 architecture. The original-Qwen3 DFlash model was available as a small released
 GGUF, allowing a direct bounded comparison without retraining.
+
+### 2026-11-04: Keep target NVFP4 separate from drafter precision
+
+The user cited Blackwell NVFP4 support as a reason to target that GPU because
+the target models can run in NVFP4. The assistant unnecessarily emphasized
+not requiring an NVFP4 drafter, despite the existing discussion favoring
+Q4_K_M for drafters. The user clarified that our tests already favored Q4_K_M
+for drafting. This was agent-caused scope confusion, not a user error.
+Keep target precision and drafter precision explicit, and explain the requested
+hardware execution mechanisms before proposing additional precision choices.
+
+### 2026-11-04: Profile the retained DSpark arithmetic before characterizing it
+
+During the binary design discussion, explanations centered on the modern actor's
+DP4A implementation and standalone popcount prototypes. The user asked for a
+quick bottleneck comparison. The actual retained historical DSpark endpoint uses
+imma_mix: packed signs expanded for integer Tensor Core computation at seven
+positions. The native trace confirms this; existing planes7 is slower on the same
+weights, activations and decisions. This is an agent framing gap, not a user
+error. Check the exact deployed dispatch before proposing basic DP4A as the
+engineering comparator or presenting token reuse as absent from the endpoint.
+Evidence: experiments/binary-pipeline-profile-20261104/README.md.
