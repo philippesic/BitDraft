@@ -15,6 +15,8 @@ def tensor_component(name):
 def encoded(weight,format):
  # Native GGUF weight block quantization; fixed weights, no new trainable masters.
  if format not in FORMATS:raise ValueError('unsupported component format')
+ if len(weight)>1024:
+  return np.concatenate([quantize(np.ascontiguousarray(weight[start:start+256],dtype=np.float32),FORMATS[format]) for start in range(0,len(weight),256)],axis=0)
  return quantize(np.ascontiguousarray(weight,dtype=np.float32),FORMATS[format])
 def decoded(weight,format):
  # Bound conversion scratch for the large vocabulary head.
