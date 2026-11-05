@@ -5983,3 +5983,15 @@ target labels matched. Capture supervisor05 exited0. Native graph replay06
 is now supervised by scripts/remote_job.py in local tmux binary-eagle-runtime.
 State/identities and stop target are in runs/dflash-modern-replay-20261104-06/state.json;
 authenticate identity before TERM of its supervisor. No training updates yet.
+
+## Initial baseline run launched
+
+Actual two-update checkpoint, exact resume hash equality, all18 scale tensors
+changed and2162468 sign flips qualified. Native exported two-update model
+matched32 target-only tokens on the TRAIN smoke. Main1800second allocation
+launched fresh from initializer (qualification updates not its parent).
+Run: runs/dflash-modern-train-20261104-14/artifacts. Owner root; local tmux
+binary-eagle-runtime/session dflash-modern-train-20261104-14. Authenticated
+boot/startticks/source hashes and stop procedure: sibling ownership.json.
+Checkpoint times0/300/900/1800 update seconds; save/eval excluded. Full final
+matched native evaluation remains outstanding. Preserve healthy training.

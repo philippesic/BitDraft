@@ -2,6 +2,11 @@
 
 ## Current work — vanilla DFlash W1A8 screening reference
 
+Root has launched the1800-second initial run after actual sign/scale updates,
+exact resume and native zero/updated correctness qualification. Ownership and
+stop instructions: runs/dflash-modern-train-20261104-14/ownership.json.
+Use the baseline registry for actual checkpoints; launch is not completion.
+
 November4 user decision: use a frozen zero-update W1A8 reference, a frozen short
 checkpoint, matched no-feature continuations and a separately promoted incumbent.
 [Candidate protocol](CANDIDATE_BENCHMARKING.md) is the entry point;

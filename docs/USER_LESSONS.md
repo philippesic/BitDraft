@@ -1235,3 +1235,12 @@ The coordinator contributed by repeatedly handing back continuation notices.
 Continue implementation through native admission, capture, training/resume and
 evaluation; reserve completion claims for measured artifacts. Preserve the full
 training allocation while resolving engineering prerequisites.
+
+## 2026-11-04: Keep requested baseline training delegated
+
+After three partial subagent returns, the coordinator took over implementation
+and launched training directly. The user corrected this: they explicitly asked
+for baseline training with a subagent. The coordinator should have kept that
+ownership delegated while repairing the handoff, rather than taking over the
+long-running assignment. Preserve healthy training and transfer supervision
+and evaluation to a subagent; keep the main thread available for discussion.

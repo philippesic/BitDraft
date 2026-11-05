@@ -1,6 +1,6 @@
 {
   "schema": "dflash_w1a8_screening_reference_v1",
-  "status": "CUDA_ZERO_SMOKE_PASSED_UPDATE_RESUME_QUALIFICATION_IN_PROGRESS",
+  "status": "INITIAL_1800_SECOND_RUN_LAUNCHED",
   "date": "2026-11-04",
   "protocol": "docs/CANDIDATE_BENCHMARKING.md",
   "authority": "User requested durable protocol plus a subagent to prepare the vanilla baseline and run its initial checkpoint.",
@@ -208,8 +208,8 @@
     "smoke": "/home/philip/binary-eagle-decoding/runs/dflash-modern-native-20261104-03/smoke-result.json",
     "scope": "one TRAIN prompt, 32 output tokens, not benchmark"
   },
-  "run_directory": "/home/philip/binary-eagle-decoding/runs/dflash-modern-20261104-02",
-  "owner": "root current thread",
+  "run_directory": "/home/philip/binary-eagle-decoding/runs/dflash-modern-train-20261104-14",
+  "owner": "handoff to requested background subagent; preserve existing supervised run",
   "blockers": [],
   "notes": [
     "No trained modern W1A8 DFlash performance is implied by this planned registry.",
@@ -217,11 +217,13 @@
   ],
   "source_inventory": "experiments/dflash-w1a8-baseline-20261104/source-inventory.json",
   "execution": {
-    "training_started": false,
+    "training_started": true,
     "completed_updates": 0,
     "training_update_seconds": 0,
     "native_evaluation_started": false,
-    "owned_live_processes": []
+    "owned_live_processes": [
+      "/home/philip/binary-eagle-decoding/runs/dflash-modern-train-20261104-14/ownership.json"
+    ]
   },
   "runtime_patch": "experiments/dflash-w1a8-baseline-20261104/runtime/modern-admission.patch",
   "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
@@ -231,5 +233,10 @@
     "isolated_ffn_relative_error": 1.2382506042740715e-07,
     "untrained_draft_token_agreement": "38/45 F32;42/45 BF16-input diagnostic",
     "decision": "Provisional token agreement gate did not pass. Layerwise probe shows quantization amplifying small floating differences, not integer arithmetic mismatch. Preserve F32 training reference; native correctness and actual native checkpoint evaluations are required. No bit-exact claim."
+  },
+  "qualification": {
+    "exact_resume": "/home/philip/binary-eagle-decoding/runs/dflash-modern-resume-20261104-12/artifacts/result.json",
+    "movement": "/home/philip/binary-eagle-decoding/runs/dflash-modern-resume-20261104-12/movement.json",
+    "native_updated_smoke": "/home/philip/binary-eagle-decoding/runs/dflash-modern-native-20261104-03/smoke-updated-two-result.json"
   }
 }
