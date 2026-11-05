@@ -1,0 +1,841 @@
+{
+  "micro": [
+    {
+      "mode": "W1A8_DP4A",
+      "m": 9728,
+      "k": 2560,
+      "n": 1,
+      "pack_us": 3.2259998843073845,
+      "dot_us": 5.677000153809786,
+      "pack_dot_us": 8.647999726235867
+    },
+    {
+      "mode": "W1A1_XOR_POPC",
+      "m": 9728,
+      "k": 2560,
+      "n": 1,
+      "pack_us": 3.877999959513545,
+      "dot_us": 2.6320000179111958,
+      "pack_dot_us": 6.393999792635441
+    },
+    {
+      "mode": "W1A4_bitserial",
+      "m": 9728,
+      "k": 2560,
+      "n": 1,
+      "pack_us": 3.722999943420291,
+      "dot_us": 3.551000030711293,
+      "pack_dot_us": 7.133999839425087
+    },
+    {
+      "mode": "W1A8_bitserial",
+      "m": 9728,
+      "k": 2560,
+      "n": 1,
+      "pack_us": 3.9079999551177025,
+      "dot_us": 4.4280001893639565,
+      "pack_dot_us": 8.440000005066395
+    },
+    {
+      "mode": "W1A8_DP4A",
+      "m": 9728,
+      "k": 2560,
+      "n": 7,
+      "pack_us": 3.0900000128895044,
+      "dot_us": 31.143000349402428,
+      "pack_dot_us": 34.08300131559372
+    },
+    {
+      "mode": "W1A1_XOR_POPC",
+      "m": 9728,
+      "k": 2560,
+      "n": 7,
+      "pack_us": 3.7350000347942114,
+      "dot_us": 11.865999549627304,
+      "pack_dot_us": 15.429000370204449
+    },
+    {
+      "mode": "W1A4_bitserial",
+      "m": 9728,
+      "k": 2560,
+      "n": 7,
+      "pack_us": 3.728999989107251,
+      "dot_us": 17.467999830842018,
+      "pack_dot_us": 20.72799950838089
+    },
+    {
+      "mode": "W1A8_bitserial",
+      "m": 9728,
+      "k": 2560,
+      "n": 7,
+      "pack_us": 4.017999861389399,
+      "dot_us": 24.76399950683117,
+      "pack_dot_us": 28.505999594926834
+    },
+    {
+      "mode": "W1A8_DP4A",
+      "m": 2560,
+      "k": 9728,
+      "n": 1,
+      "pack_us": 8.243000134825706,
+      "dot_us": 5.702999886125326,
+      "pack_dot_us": 13.694999739527702
+    },
+    {
+      "mode": "W1A1_XOR_POPC",
+      "m": 2560,
+      "k": 9728,
+      "n": 1,
+      "pack_us": 8.639000356197357,
+      "dot_us": 2.068999921903014,
+      "pack_dot_us": 10.590000078082085
+    },
+    {
+      "mode": "W1A4_bitserial",
+      "m": 2560,
+      "k": 9728,
+      "n": 1,
+      "pack_us": 9.816000238060951,
+      "dot_us": 3.092000028118491,
+      "pack_dot_us": 12.56099995225668
+    },
+    {
+      "mode": "W1A8_bitserial",
+      "m": 2560,
+      "k": 9728,
+      "n": 1,
+      "pack_us": 10.64400002360344,
+      "dot_us": 4.468999803066254,
+      "pack_dot_us": 14.73500020802021
+    },
+    {
+      "mode": "W1A8_DP4A",
+      "m": 2560,
+      "k": 9728,
+      "n": 7,
+      "pack_us": 8.042999543249607,
+      "dot_us": 27.535000815987587,
+      "pack_dot_us": 35.57400032877922
+    },
+    {
+      "mode": "W1A1_XOR_POPC",
+      "m": 2560,
+      "k": 9728,
+      "n": 7,
+      "pack_us": 8.825999684631824,
+      "dot_us": 7.156000006943941,
+      "pack_dot_us": 15.740999951958656
+    },
+    {
+      "mode": "W1A4_bitserial",
+      "m": 2560,
+      "k": 9728,
+      "n": 7,
+      "pack_us": 10.092999786138535,
+      "dot_us": 12.515000067651272,
+      "pack_dot_us": 22.174999117851257
+    },
+    {
+      "mode": "W1A8_bitserial",
+      "m": 2560,
+      "k": 9728,
+      "n": 7,
+      "pack_us": 10.955000296235085,
+      "dot_us": 20.354000851511955,
+      "pack_dot_us": 31.075000762939453
+    }
+  ],
+  "native": [
+    {
+      "arm": "dspark_w1a8_parent3504",
+      "request_us": 708325.378,
+      "all_kernel_sum_us": 622343.3299999997,
+      "kernel_active_union_us": 586880.553,
+      "binary_stages": {
+        "w1ax_quantize": {
+          "count": 264,
+          "sum_us": 809.4200000000021,
+          "launch_shapes": [
+            [
+              7,
+              1,
+              256,
+              1
+            ]
+          ],
+          "median_us": 2.368
+        },
+        "void imma_expanded<(int)4, (bool)0>": {
+          "count": 330,
+          "sum_us": 2085.534000000003,
+          "launch_shapes": [
+            [
+              608,
+              1,
+              128,
+              1
+            ]
+          ],
+          "median_us": 6.304
+        },
+        "w1a8_sum_codes": {
+          "count": 99,
+          "sum_us": 174.21199999999996,
+          "launch_shapes": [
+            [
+              7,
+              1,
+              256,
+              1
+            ]
+          ],
+          "median_us": 1.76
+        },
+        "void imma_expanded<(int)4, (bool)1>": {
+          "count": 99,
+          "sum_us": 1275.9479999999999,
+          "launch_shapes": [
+            [
+              160,
+              1,
+              128,
+              1
+            ]
+          ],
+          "median_us": 12.864
+        }
+      },
+      "top_kernels": [
+        [
+          "void mul_mat_vec_f<__half, __half, (int)6, (int)256, (bool)0, (bool)0>",
+          {
+            "count": 5792,
+            "sum_us": 213808.99899999966,
+            "launch_shapes": [
+              [
+                4096,
+                1,
+                256,
+                1
+              ],
+              [
+                1024,
+                1,
+                256,
+                1
+              ],
+              [
+                2560,
+                1,
+                256,
+                1
+              ],
+              [
+                151936,
+                1,
+                256,
+                1
+              ]
+            ],
+            "median_us": 32.641
+          }
+        ],
+        [
+          "void mul_mat_vec_f<__half, float, (int)6, (int)256, (bool)1, (bool)0>",
+          {
+            "count": 1152,
+            "sum_us": 162010.2220000001,
+            "launch_shapes": [
+              [
+                9728,
+                1,
+                256,
+                1
+              ]
+            ],
+            "median_us": 139.01
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_64x1_tn_align8>",
+          {
+            "count": 770,
+            "sum_us": 47493.22600000001,
+            "launch_shapes": [
+              [
+                8,
+                38,
+                128,
+                1
+              ]
+            ],
+            "median_us": 61.345
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_tensorop_h16816gemm_64x64_64x6_tn_align8>",
+          {
+            "count": 385,
+            "sum_us": 21830.045999999995,
+            "launch_shapes": [
+              [
+                8,
+                5,
+                128,
+                1
+              ]
+            ],
+            "median_us": 56.704
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x1_tn_align8>",
+          {
+            "count": 1188,
+            "sum_us": 16760.126000000022,
+            "launch_shapes": [
+              [
+                8,
+                16,
+                128,
+                1
+              ],
+              [
+                8,
+                4,
+                128,
+                1
+              ]
+            ],
+            "median_us": 7.424
+          }
+        ],
+        [
+          "void flash_attn_ext_vec<(int)128, (int)1, (ggml_type)1, (ggml_type)1, (bool)0>",
+          {
+            "count": 1188,
+            "sum_us": 16647.40099999999,
+            "launch_shapes": [
+              [
+                6,
+                4,
+                32,
+                4
+              ],
+              [
+                5,
+                4,
+                32,
+                4
+              ]
+            ],
+            "median_us": 14.048
+          }
+        ],
+        [
+          "void mul_mat_vec_q<(ggml_type)12, (int)1, (bool)1, (bool)1, (bool)0>",
+          {
+            "count": 231,
+            "sum_us": 16448.815999999995,
+            "launch_shapes": [
+              [
+                37984,
+                1,
+                32,
+                4
+              ]
+            ],
+            "median_us": 69.633
+          }
+        ],
+        [
+          "void mul_mat_q<(ggml_type)12, (int)8, (bool)0>",
+          {
+            "count": 948,
+            "sum_us": 14412.882000000047,
+            "launch_shapes": [
+              [
+                84,
+                1,
+                32,
+                8
+              ],
+              [
+                1187,
+                1,
+                32,
+                8
+              ]
+            ],
+            "median_us": 3.68
+          }
+        ],
+        [
+          "void rms_norm_f32<(int)1024, (bool)1, (bool)0>",
+          {
+            "count": 3671,
+            "sum_us": 13723.505000000001,
+            "launch_shapes": [
+              [
+                32,
+                1,
+                1024,
+                1
+              ],
+              [
+                13,
+                1,
+                1024,
+                1
+              ],
+              [
+                1,
+                1,
+                1024,
+                1
+              ],
+              [
+                7,
+                1,
+                1024,
+                1
+              ],
+              [
+                6,
+                1,
+                1024,
+                1
+              ],
+              [
+                5,
+                1,
+                1024,
+                1
+              ]
+            ],
+            "median_us": 3.872
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>",
+          {
+            "count": 396,
+            "sum_us": 9949.457999999997,
+            "launch_shapes": [
+              [
+                8,
+                10,
+                128,
+                1
+              ]
+            ],
+            "median_us": 25.025
+          }
+        ],
+        [
+          "void cub::CUB_300104_SM_1200::detail::radix_sort::DeviceRadixSortOnesweepKernel<cub::CUB_300104_SM_1200::detail::radix::policy_hub<float, int, unsigned int>",
+          {
+            "count": 924,
+            "sum_us": 7532.748999999981,
+            "launch_shapes": [
+              [
+                18,
+                1,
+                384,
+                1
+              ]
+            ],
+            "median_us": 8.064
+          }
+        ],
+        [
+          "void k_bin_bcast<&op_add, float, float, float, const float *>",
+          {
+            "count": 3547,
+            "sum_us": 7239.836999999957,
+            "launch_shapes": [
+              [
+                320,
+                1,
+                128,
+                1
+              ],
+              [
+                130,
+                1,
+                128,
+                1
+              ],
+              [
+                10,
+                1,
+                128,
+                1
+              ],
+              [
+                70,
+                1,
+                128,
+                1
+              ],
+              [
+                60,
+                1,
+                128,
+                1
+              ],
+              [
+                50,
+                1,
+                128,
+                1
+              ]
+            ],
+            "median_us": 2.08
+          }
+        ]
+      ],
+      "speculative": {
+        "proposed": 164,
+        "accepted": 94,
+        "rounds": 33
+      },
+      "output_tokens": 128,
+      "scope": "One already-consumed DEV request after one warmup; instrumented duration, not throughput or SM occupancy; unix request bounds aligned to profiler session epoch."
+    },
+    {
+      "arm": "dspark_w1a8_planes7",
+      "request_us": 725984.653,
+      "all_kernel_sum_us": 641038.3200000003,
+      "kernel_active_union_us": 605351.535,
+      "binary_stages": {
+        "w1ax_quantize": {
+          "count": 264,
+          "sum_us": 809.7980000000026,
+          "launch_shapes": [
+            [
+              7,
+              1,
+              256,
+              1
+            ]
+          ],
+          "median_us": 2.368
+        },
+        "w1a8_make_planes": {
+          "count": 429,
+          "sum_us": 363.042999999999,
+          "launch_shapes": [
+            [
+              10,
+              7,
+              256,
+              1
+            ],
+            [
+              38,
+              7,
+              256,
+              1
+            ]
+          ],
+          "median_us": 0.768
+        },
+        "void w1a8_dot_planes<(int)7>": {
+          "count": 429,
+          "sum_us": 21940.132000000016,
+          "launch_shapes": [
+            [
+              2432,
+              1,
+              32,
+              4
+            ],
+            [
+              640,
+              1,
+              32,
+              4
+            ]
+          ],
+          "median_us": 50.337
+        }
+      },
+      "top_kernels": [
+        [
+          "void mul_mat_vec_f<__half, __half, (int)6, (int)256, (bool)0, (bool)0>",
+          {
+            "count": 5792,
+            "sum_us": 214712.47500000038,
+            "launch_shapes": [
+              [
+                4096,
+                1,
+                256,
+                1
+              ],
+              [
+                1024,
+                1,
+                256,
+                1
+              ],
+              [
+                2560,
+                1,
+                256,
+                1
+              ],
+              [
+                151936,
+                1,
+                256,
+                1
+              ]
+            ],
+            "median_us": 32.641
+          }
+        ],
+        [
+          "void mul_mat_vec_f<__half, float, (int)6, (int)256, (bool)1, (bool)0>",
+          {
+            "count": 1152,
+            "sum_us": 161551.33299999996,
+            "launch_shapes": [
+              [
+                9728,
+                1,
+                256,
+                1
+              ]
+            ],
+            "median_us": 138.914
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_64x1_tn_align8>",
+          {
+            "count": 770,
+            "sum_us": 47513.819000000025,
+            "launch_shapes": [
+              [
+                8,
+                38,
+                128,
+                1
+              ]
+            ],
+            "median_us": 61.409
+          }
+        ],
+        [
+          "void w1a8_dot_planes<(int)7>",
+          {
+            "count": 429,
+            "sum_us": 21940.132000000016,
+            "launch_shapes": [
+              [
+                2432,
+                1,
+                32,
+                4
+              ],
+              [
+                640,
+                1,
+                32,
+                4
+              ]
+            ],
+            "median_us": 50.337
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_tensorop_h16816gemm_64x64_64x6_tn_align8>",
+          {
+            "count": 385,
+            "sum_us": 21829.41299999999,
+            "launch_shapes": [
+              [
+                8,
+                5,
+                128,
+                1
+              ]
+            ],
+            "median_us": 56.641
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x1_tn_align8>",
+          {
+            "count": 1188,
+            "sum_us": 16760.381000000005,
+            "launch_shapes": [
+              [
+                8,
+                16,
+                128,
+                1
+              ],
+              [
+                8,
+                4,
+                128,
+                1
+              ]
+            ],
+            "median_us": 7.424
+          }
+        ],
+        [
+          "void flash_attn_ext_vec<(int)128, (int)1, (ggml_type)1, (ggml_type)1, (bool)0>",
+          {
+            "count": 1188,
+            "sum_us": 16651.52700000001,
+            "launch_shapes": [
+              [
+                6,
+                4,
+                32,
+                4
+              ],
+              [
+                5,
+                4,
+                32,
+                4
+              ]
+            ],
+            "median_us": 14.048
+          }
+        ],
+        [
+          "void mul_mat_vec_q<(ggml_type)12, (int)1, (bool)1, (bool)1, (bool)0>",
+          {
+            "count": 231,
+            "sum_us": 16463.509000000002,
+            "launch_shapes": [
+              [
+                37984,
+                1,
+                32,
+                4
+              ]
+            ],
+            "median_us": 69.665
+          }
+        ],
+        [
+          "void mul_mat_q<(ggml_type)12, (int)8, (bool)0>",
+          {
+            "count": 948,
+            "sum_us": 14388.392000000023,
+            "launch_shapes": [
+              [
+                84,
+                1,
+                32,
+                8
+              ],
+              [
+                1187,
+                1,
+                32,
+                8
+              ]
+            ],
+            "median_us": 3.68
+          }
+        ],
+        [
+          "void rms_norm_f32<(int)1024, (bool)1, (bool)0>",
+          {
+            "count": 3671,
+            "sum_us": 13385.200000000039,
+            "launch_shapes": [
+              [
+                32,
+                1,
+                1024,
+                1
+              ],
+              [
+                13,
+                1,
+                1024,
+                1
+              ],
+              [
+                1,
+                1,
+                1024,
+                1
+              ],
+              [
+                7,
+                1,
+                1024,
+                1
+              ],
+              [
+                6,
+                1,
+                1024,
+                1
+              ],
+              [
+                5,
+                1,
+                1024,
+                1
+              ]
+            ],
+            "median_us": 3.84
+          }
+        ],
+        [
+          "void cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>",
+          {
+            "count": 396,
+            "sum_us": 9953.076999999996,
+            "launch_shapes": [
+              [
+                8,
+                10,
+                128,
+                1
+              ]
+            ],
+            "median_us": 25.072499999999998
+          }
+        ],
+        [
+          "void cub::CUB_300104_SM_1200::detail::radix_sort::DeviceRadixSortOnesweepKernel<cub::CUB_300104_SM_1200::detail::radix::policy_hub<float, int, unsigned int>",
+          {
+            "count": 924,
+            "sum_us": 7366.60399999998,
+            "launch_shapes": [
+              [
+                18,
+                1,
+                384,
+                1
+              ]
+            ],
+            "median_us": 8.064
+          }
+        ]
+      ],
+      "speculative": {
+        "proposed": 164,
+        "accepted": 94,
+        "rounds": 33
+      },
+      "output_tokens": 128,
+      "scope": "One already-consumed DEV request after one warmup; instrumented duration, not throughput or SM occupancy; unix request bounds aligned to profiler session epoch."
+    }
+  ],
+  "checks": 20,
+  "native_tokens_and_speculative_counters_equal": true
+}

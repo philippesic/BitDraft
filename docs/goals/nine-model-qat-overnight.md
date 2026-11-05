@@ -5862,3 +5862,19 @@ GPU empty. This small reused-prompt result does not establish a modern baseline
 win or optimal DFlash setting. Report: experiments/dspark-w1a8-dflash-20261104/README.md.
 Raw run: runs/dspark-w1a8-dflash-20261104-01. Candidate remains DSpark parent3504;
 no automatic training continuation or architecture selection.
+
+## Quick binary pipeline profile — completed November 4
+
+RTX5080, historical DSpark parent3504/Qwen3-4B F16. Three-repetition isolated
+actual-FFN-shape stage timings plus one warmed native DEV request per arithmetic
+path. Native imma_mix uses integer Tensor Cores; existing planes7 bit-serial dots
+cost6.53× more, with identical128output tokens and33round/164proposal/94accept
+counters. Retained binary pipeline sums4.345ms versus23.113ms; only0.70% of all
+kernel-duration sums in the retained historical request. Not draft-only share,
+removable wall time, modern-target result or throughput claim. Activation prep
+can dominate single-position standalone projections.20kernel correctness cases
+pass. Nsight Compute counters denied; occupancy/bandwidth saturation unmeasured.
+No BMMA timing, training or architecture selection. All jobs finished, GPU empty.
+Report: experiments/binary-pipeline-profile-20261104/README.md.
+Raw: runs/binary-pipeline-profile-20261104-01. Next: discuss binary execution
+mechanism using retained integer Tensor Core execution as engineering comparator.
