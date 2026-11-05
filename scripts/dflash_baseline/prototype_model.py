@@ -28,6 +28,9 @@ def install(model, config, source_weights):
     for p in model.parameters(): p.requires_grad_(False)
     for i,layer in enumerate(model.layers):
         shared=None
+        gate,up=layer.ffn_gate,layer.ffn_up
+        if isinstance(gate,Projection) and isinstance(up,Projection) and not torch.equal(gate.log_gain,up.log_gain):
+            raise ValueError('shared gate/up gain conflict')
         for name in ('ffn_gate','ffn_up','ffn_down'):
             key=f'blk.{i}.{name}'; spec=config['coverage'][key]; old=getattr(layer,name)
             if spec['weight']=='BF16':
@@ -37,6 +40,11 @@ def install(model, config, source_weights):
                 linear=NativeBF16Linear(weight.float())
                 setattr(layer,name,linear)
                 continue
+            if not hasattr(old,'latent_sign'):
+                from w1a1_eagle.block_qat import BlockBinaryLinear
+                from w1a1_eagle.recurrent_qat import W1AxContract
+                w=source_weights[key].float()
+                old=BlockBinaryLinear(w,w.abs().mean(-1),W1AxContract(activation_bits=8))
             if name!='ffn_down' and shared is None:
                 shared=nn.Parameter(torch.zeros(old.latent_sign.shape[1],device=old.latent_sign.device),requires_grad=features['gain'])
             gain=shared if name!='ffn_down' else nn.Parameter(torch.zeros(old.latent_sign.shape[1],device=old.latent_sign.device),requires_grad=features['gain'])
