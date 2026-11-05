@@ -38,8 +38,14 @@ def prepare(selection_path,out):
   if 'original_prompt_id' in row:evidence['forbidden_ids'].add(row['original_prompt_id'])
   if 'original_group' in row:evidence['groups'].add(row['original_group'])
   evidence['topics'].update(row.get('original_topics',[]))
+ prior_consumptions=selected.get('prior_consumptions',[])
+ for ref in prior_consumptions:
+  prior=auth(ref)
+  if prior.get('status')!='CONSUMED_FOR_LOCKED_COMPARISON' or not prior.get('failed_attempts_also_consume'):raise ValueError('invalid extra consumed cohort receipt')
+  for row in prior['records']:
+   evidence['hashes'].update(row['identities'].values());evidence['groups'].update([row['group_id'],row['original_group']]);evidence['forbidden_ids'].add(row['original_prompt_id']);evidence['topics'].update(row['original_topics'])
  # No new prompt payload has been opened above. Preserve freeze first.
- out.mkdir();save(out/'selection-freeze.json',dict(selection=selection_pin,natural_sources=base['natural_sources'],train192=exposure_ref,consumed_natural=consumed_ref,consumption_marker=consumed_inputs['marker'],native_tokenizer=pin(TOKENIZER_OUT/'build.json'),tokenizer_qualification=pin(TOKENIZER_OUT/'qualification.json'),sources={n:pin(p) for n,p in {'adapter':__file__,'natural':natural.__file__,'identity':fresh.__file__}.items()},settings=dict(output_limit=256,domains={'code':8,'reasoning':8,'prose':8},context_policy=selected['context_policy']),scope='24 unused native-context-admissible natural singleton source clusters; all historical TRAIN/DEV/pilot/matrix/sealed opaque indices and192TRAIN exposure remain excluded; no tuning after this freeze.'))
+ out.mkdir();save(out/'selection-freeze.json',dict(selection=selection_pin,natural_sources=base['natural_sources'],train192=exposure_ref,consumed_natural=consumed_ref,consumption_marker=consumed_inputs['marker'],prior_consumptions=prior_consumptions,native_tokenizer=pin(TOKENIZER_OUT/'build.json'),tokenizer_qualification=pin(TOKENIZER_OUT/'qualification.json'),sources={n:pin(p) for n,p in {'adapter':__file__,'natural':natural.__file__,'identity':fresh.__file__}.items()},settings=dict(output_limit=256,domains={'code':8,'reasoning':8,'prose':8},context_policy=selected['context_policy']),scope='24 unused native-context-admissible natural singleton source clusters; all historical TRAIN/DEV/pilot/matrix/sealed opaque indices and192TRAIN exposure remain excluded; no tuning after this freeze.'))
  geometry=[]
  with Tokenizer(out/'native-tokenizer') as tokenizer:
   def eligible(row):

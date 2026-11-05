@@ -30,8 +30,12 @@ def rng():return (torch.get_rng_state(),random.getstate(),np.random.get_state(),
 def restore_rng(r):
  torch.set_rng_state(r[0]);random.setstate(r[1]);np.random.set_state(r[2])
  if len(r)>3 and r[3] is not None:torch.cuda.set_rng_state_all(r[3])
-def checkpoint(path,m,opt,progress,lineage):
- atomic(path,dict(version=2,config=m.prototype_config,config_hash=digest(m.prototype_config),parameters=parameters(m),optimizer=opt.state_dict(),progress=progress,rng=rng(),lineage=lineage))
+def checkpoint(path,m,opt,progress,lineage,compressed=False):
+ state=dict(version=2,config=m.prototype_config,config_hash=digest(m.prototype_config),parameters=parameters(m),optimizer=opt.state_dict(),progress=progress,rng=rng(),lineage=lineage)
+ if compressed:
+  from .checkpoint_io import save_streamed
+  return save_streamed(path,state)
+ atomic(path,state)
 def restore(path,m,opt):
  s=load_checkpoint(path)
  if s['version']!=2 or s['config_hash']!=digest(m.prototype_config) or digest(s['config'])!=s['config_hash']:raise ValueError('resume config mismatch')
@@ -67,7 +71,7 @@ def packed_import(path,m):
  return s
 
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('config',type=Path);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--updates',type=int,required=True);ap.add_argument('--max-windows',type=int,required=True);ap.add_argument('--resume',type=Path);ap.add_argument('--adapt',action='store_true');ap.add_argument('--dry-run',action='store_true');ap.add_argument('--device',choices=['cpu','cuda'],default='cpu');ap.add_argument('--baseline-parent',action='store_true');ap.add_argument('--snapshots',type=int,nargs='*',default=[]);ap.add_argument('--native-points',type=int,nargs='*',default=[]);ap.add_argument('--calibrate-inputs',type=int,default=0);a=ap.parse_args()
+ ap=argparse.ArgumentParser();ap.add_argument('config',type=Path);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--updates',type=int,required=True);ap.add_argument('--max-windows',type=int,required=True);ap.add_argument('--resume',type=Path);ap.add_argument('--adapt',action='store_true');ap.add_argument('--dry-run',action='store_true');ap.add_argument('--device',choices=['cpu','cuda'],default='cpu');ap.add_argument('--baseline-parent',action='store_true');ap.add_argument('--snapshots',type=int,nargs='*',default=[]);ap.add_argument('--native-points',type=int,nargs='*',default=[]);ap.add_argument('--calibrate-inputs',type=int,default=0);ap.add_argument('--checkpoint-archive',action='store_true');a=ap.parse_args()
  if a.updates<0 or a.max_windows<0 or (a.resume and a.adapt):raise ValueError('invalid budget/mode')
  c=resolve(json.loads(a.config.read_text()));authenticate(c)
  if a.calibrate_inputs<0:raise ValueError('negative calibration window count')
@@ -134,7 +138,7 @@ def main():
  def synchronize():
   if a.device=='cuda':torch.cuda.synchronize()
  def save(label):
-  checkpoint(a.out/(label+'.pt'),m,opt,progress,lineage)
+  checkpoint(a.out/(label+'.pt'),m,opt,progress,lineage,compressed=a.checkpoint_archive)
   movement={}
   for n,p in m.named_parameters():
    v=p.detach().flatten()[::4096].cpu();old=initial[n];movement[n]=dict(samples=v.numel(),max_change=float((v-old).abs().max()),sign_changes=int(((v>=0)!=(old>=0)).sum()))

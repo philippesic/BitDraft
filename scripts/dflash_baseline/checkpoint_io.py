@@ -5,7 +5,8 @@ from pathlib import Path
 import torch
 import zstandard as zstd
 
-def sha(p):return hashlib.file_digest(open(p,'rb'),'sha256').hexdigest()
+def sha(p):
+ with open(p,'rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 def load(path):
  path=Path(path)
  if path.suffix not in ('.zst','.bsz'):return torch.load(path,map_location='cpu',weights_only=False,mmap=True)
@@ -45,3 +46,28 @@ def archive(path):
  if h.hexdigest()!=original:raise ValueError('archive roundtrip changed checkpoint')
  tmp.rename(dest);receipt=dict(format='dflash.byte_shuffle_zstd.v1',source=str(path),raw_sha256=original,raw_bytes=path.stat().st_size,archive=str(dest),archive_sha256=sha(dest),archive_bytes=dest.stat().st_size,lossless_verified=True)
  dest.with_suffix('.json').write_text(json.dumps(receipt,indent=2)+'\n');path.unlink();return receipt
+
+class _DigestingWriter:
+ def __init__(self,writer):self.writer=writer;self.digest=hashlib.sha256();self.count=0
+ def write(self,data):
+  size=self.writer.write(data)
+  if size!=len(data):raise OSError('short compressed checkpoint write')
+  self.digest.update(data);self.count+=size;return size
+ def flush(self):self.writer.flush()
+
+def save_streamed(path,state):
+ """Atomically save exact torch state without materializing a second raw file."""
+ import os
+ path=Path(path);dest=path.with_suffix(path.suffix+'.zst');tmp=dest.with_suffix('.partial')
+ if dest.exists() or tmp.exists():raise FileExistsError(dest)
+ with tmp.open('xb') as out:
+  with zstd.ZstdCompressor(level=1).stream_writer(out,closefd=False) as stream:
+   recorded=_DigestingWriter(stream);torch.save(state,recorded)
+  out.flush();os.fsync(out.fileno())
+ observed=hashlib.sha256();count=0
+ with tmp.open('rb') as source,zstd.ZstdDecompressor().stream_reader(source) as decoded:
+  for block in iter(lambda:decoded.read(8<<20),b''):observed.update(block);count+=len(block)
+ if observed.hexdigest()!=recorded.digest.hexdigest() or count!=recorded.count:raise ValueError('streamed checkpoint roundtrip changed bytes')
+ tmp.rename(dest)
+ receipt=dict(format='dflash.zstd.stream.v1',source=str(path),raw_sha256=observed.hexdigest(),raw_bytes=count,archive=str(dest),archive_sha256=sha(dest),archive_bytes=dest.stat().st_size,lossless_verified=True,raw_materialized=False)
+ dest.with_suffix('.json').write_text(json.dumps(receipt,indent=2)+'\n');return receipt
