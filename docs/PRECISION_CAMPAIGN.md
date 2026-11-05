@@ -643,3 +643,22 @@ source access, initial24 consumed group/topic/hash exclusions; new24 heldout wit
 cohort label clip-heldout24. Native completion is not followup chart completion.
 After that audit new panels/exposure, build a NEW chart directory and retain all
 initial publication hashes. No additional training extension is allocated.
+
+Followup continuation: fixed training completed1024 updates/146.605614 measured
+seconds, cursor17303 and15360 supervised positions, matching learned1024 history.
+First recovery gate incorrectly counted18 frozen clip constants as optimizer
+parameters; no training failure or re-run. Corrected guard validated against actual
+Autograd requires_grad flags (3 streamed-state fixtures pass). Replacement owner
+precision-clip-control-20261105-02 reuses the completed state, restored all92
+trainable Adam states/CUDA RNG, and exported byte-identical GGUF to the resident
+1024 point. RAM temp directory released; checkpoint-recovery.json and
+ram-recovery-storage.json retain full proof. Keep this healthy sole serial owner
+through native intermediate/DEV/new-heldout measurements; no extra updates.
+
+Storage-steward pass removed28 completed redundant packed.pt reference containers,
+keeping qual-four's reference example, every paid recovery checkpoint and native
+export. Receipt packed-reference-cache-cleanup.json records ownership/no live file
+consumers/recovery sources and hashes. Logical removal1,527,527,166bytes; measured
+WSL free9,193,504,768→10,721,099,776 (+1,527,595,008), Windows10,931,777,536 unchanged.
+No Windows/VHDX reclaim claim. New streamed checkpoint remains4,700,294,541bytes;
+no archive relocation or prior checkpoint mutation. Initial charts remain frozen.
