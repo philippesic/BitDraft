@@ -1,7 +1,7 @@
 """Matched native panels with authentic consumed DEV prompts and complete draft cost."""
 import argparse,hashlib,json,os,re,signal,socket,subprocess,sys,threading,time,urllib.request
 from pathlib import Path
-P=Path('/home/philip/binary-eagle-decoding')
+P=Path('/home/philip/binary-eagle-decoding');ROOT=Path(__file__).resolve().parents[2]
 def pin(path):
  p=Path(path);return dict(path=str(p.resolve()),sha256=hashlib.file_digest(p.open('rb'),'sha256').hexdigest(),bytes=p.stat().st_size)
 def save(path,x):
@@ -34,8 +34,9 @@ def delta(now,previous):return {k:v-(previous or {}).get(k,0) for k,v in now.ite
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--arms',type=Path,required=True);ap.add_argument('--runtime',type=Path,required=True);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--cohort',choices=['capture3','natural12','natural24'],default='capture3');ap.add_argument('--reps',type=int,default=1);ap.add_argument('--warmups',type=int,default=0);ap.add_argument('--prompts',type=Path);ap.add_argument('--trace',action='store_true');ap.add_argument('--paired-trace',action='store_true');a=ap.parse_args()
  arms=json.load(open(a.arms));prompts=json.load(open(a.prompts)) if a.prompts else cohort(a.cohort);a.out.mkdir(exist_ok=False);save(a.out/'prompts.json',prompts)
+ (a.out/'hardware.txt').write_text(subprocess.check_output(['/usr/lib/wsl/lib/nvidia-smi','-q'],text=True))
  if next(iter(arms))!='target':raise ValueError('target must be first for correctness')
- save(a.out/'freeze.json',dict(arms={k:pin(v) if v else None for k,v in arms.items()},source=pin(__file__),runtime={n:pin(a.runtime/'bin'/n) for n in ('libllama.so.0.8.0','libggml-base.so.0.28.0','libggml-cuda.so.0.28.0')},cohort='heldout24' if a.prompts else a.cohort,prompt_source=pin(a.prompts) if a.prompts else None,precision='Qwen3.5-4B Q4_K_M target;F16 KV;depth2;greedy;5080',sampling='target sample and match;temperature0',memory='nvidia-smi sampled device used MiB;includes display/unrelated baseline;not exact allocator peak'))
+ save(a.out/'freeze.json',dict(arms={k:pin(v) if v else None for k,v in arms.items()},source=pin(__file__),runtime={n:pin(a.runtime/'bin'/n) for n in ('libllama.so.0.8.0','libggml-base.so.0.28.0','libggml-cuda.so.0.28.0','libggml-cpu.so.0.28.0','libllama-common.so.0.8.0','libllama-server-impl.so','libggml.so.0.28.0','llama-server')},target=pin(P/'runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf'),baseline_registry=pin(ROOT/'experiments/w1a8-standing-20261102/baseline.json'),build=pin(a.runtime/'build.json'),trace_library=pin(P/'runs/data-cost-transfer-20261104-01/libdecode-cost-trace.so') if (a.trace or a.paired_trace) else None,cohort='heldout24' if a.prompts else a.cohort,prompt_source=pin(a.prompts) if a.prompts else None,precision='Qwen3.5-4B Q4_K_M target;F16 KV;depth2;greedy;5080',sampling='target sample and match;temperature0',memory='nvidia-smi sampled device used MiB;includes display/unrelated baseline;not exact allocator peak'))
  stop=False
  def stopping(*_):
   nonlocal stop;stop=True
@@ -53,7 +54,7 @@ def main():
    argv=[str(a.runtime/'bin/llama-server'),'-m',str(P/'runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf'),'-ngl','99','-c','4096','-np','1','-b','512','-ub','512','-t','4','-fa','on','--cache-type-k','f16','--cache-type-v','f16','--host','127.0.0.1','--port',str(port),'--metrics','--no-webui','--no-warmup','--spec-type','draft-dflash' if model else 'none','-lv','4']
    if model:argv+=['-md',str(model),'-ngld','99','--cache-type-k-draft','f16','--cache-type-v-draft','f16','--spec-draft-n-max','2','--spec-draft-n-min','0','--spec-draft-p-min','0','--spec-draft-sampling','greedy']
    if traced:env.update(LD_PRELOAD=str(P/'runs/data-cost-transfer-20261104-01/libdecode-cost-trace.so'),DECODE_COST_TRACE=str(cell/'cost-trace.jsonl'))
-   save(cell/'command.json',dict(argv=argv,environment=env))
+   save(cell/'command.json',dict(argv=argv,environment={k:v for k,v in env.items() if k.startswith(('GGML_','CUDA_','LD_','OMP_','DECODE_')) or k in ('PATH','LANG')}))
    done=threading.Event();memory=[]
    def sample():
     while not done.is_set():
@@ -70,6 +71,7 @@ def main():
       try:request(port,'health');break
       except Exception:time.sleep(1)
      else:raise RuntimeError('startup timeout')
+     (cell/'library-maps.txt').write_text(Path(f'/proc/{process.pid}/maps').read_text())
      previous=None
      for item in prompts:
       pause()
@@ -77,8 +79,9 @@ def main():
       payload=dict(item['payload']);payload['cache_prompt']=False;payload['return_tokens']=True
       save(cell/(item['id']+'-request.json'),payload);start_ns=time.monotonic_ns();start=time.perf_counter();response=request(port,'completion',payload);elapsed=time.perf_counter()-start;end_ns=time.monotonic_ns();save(cell/(item['id']+'-response.json'),response)
       tokens=response['tokens']
-      if label=='target':reference.setdefault(item['id'],tokens)
-      correct=tokens==reference[item['id']]
+      signature={k:response[k] for k in ('tokens','content','stop_type','stopping_word','truncated')}
+      if label=='target':reference.setdefault(item['id'],signature)
+      correct=signature==reference[item['id']]
       # Completion logs precede response; one short flush grace if required.
       text=(cell/'server.log').read_text(errors='replace');now=stats(text)
       metrics=delta(now,previous) if now else {};previous=now

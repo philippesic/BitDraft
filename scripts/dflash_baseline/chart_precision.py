@@ -16,17 +16,21 @@ def summarize(panel):
   accepted=sum(x.get('accepted',y['timings'].get('draft_n_accepted',0)) for x,y in zip(counts,plain));proposed=sum(x.get('proposed',y['timings'].get('draft_n',0)) for x,y in zip(counts,plain));rounds=sum(x.get('rounds',0) for x in counts)
   meta=freeze.get('arms',{}).get(arm);model=meta.get('path') if meta else None;sidecar=Path(model).with_suffix('.json') if model else None;info=read(sidecar) if sidecar and sidecar.exists() else {};config=info.get('config',{});coverage=config.get('coverage',{});bits=[coverage.get(f'blk.{i}.ffn_gate',{}).get('bits') for i in range(6)];down=[coverage.get(f'blk.{i}.ffn_down',{}).get('bits') for i in range(6)]
   family='G'+str(bits[0])+'/D'+str(down[0]) if bits and bits[0] else 'external' if arm in ('target','q4') else 'vanilla W1A8'
-  memories=[]
+  memories=[];allocator=[]
   for cell in panel.glob('*-'+arm):
    mp=cell/'memory.json'
    if mp.exists():memories.extend(x['MiB'] for x in read(mp))
+   log=cell/'server.log'
+   if log.exists():
+    match=re.findall(r'CUDA0.*?\((\d+)\s*=\s*(\d+)\s*\+\s*(\d+)\s*\+\s*(\d+)\)',log.read_text(errors='replace'))
+    if match:allocator.append(dict(zip(('self_MiB','model_MiB','context_MiB','compute_MiB'),map(int,match[-1]))))
   trace_rounds=sum(x['native'].get('rounds',0) for x in traced);full=sum(x.get('draft_full_ms',0) for x in traced)/trace_rounds if trace_rounds else None
   prefix=[]
   for n in counts:
    for i,v in enumerate(n.get('prefix_survival_counts',[])):
     if i==len(prefix):prefix.append(0)
     prefix[i]+=v
-  point=dict(id=panel.name+'::'+arm,panel=str(panel),arm=arm,cohort=cohort,scope='confirmation' if len({x['rep'] for x in plain})>=5 else 'diagnostic smoke',family=family,config=config,model=model,model_bytes=meta.get('bytes') if meta else (Path(model).stat().st_size if model else 0),correct=all(x['correct'] for x in plain+traced),requests=len(plain),prompts=len({x['prompt'] for x in plain}),repetitions=len({x['rep'] for x in plain}),accepted=accepted,proposed=proposed,rounds=rounds,acceptance=accepted/proposed if proposed else None,prefix_counts=prefix,prefix_survival=[x/rounds for x in prefix] if rounds else [],emitted_per_round=tokens/rounds if rounds else None,request_tps=tokens/wall,decode_tps=tokens/decode,full_draft_ms=full,narrow_generate_ms=sum(x.get('draft_ms',0) for x in counts)/rounds if rounds else None,total_peak_device_MiB=max(memories) if memories else None,training_updates=info.get('progress',{}).get('updates'),training_seconds=info.get('progress',{}).get('update_seconds'),lineage=info.get('lineage'),runtime=freeze.get('runtime'),instrumented_requests=len(traced),verified_paired_counters=result.get('paired_trace_counters_equal',False),target_verify_and_sample_ms_per_round=sum(x.get('target_verify_and_sample_ms',0) for x in traced)/trace_rounds if trace_rounds else None)
+  point=dict(id=panel.name+'::'+arm,panel=str(panel),arm=arm,cohort=cohort,scope='confirmation' if len({x['rep'] for x in plain})>=5 else 'diagnostic smoke',family=family,config=config,model=model,model_bytes=meta.get('bytes') if meta else (Path(model).stat().st_size if model else 0),correct=all(x['correct'] for x in plain+traced),requests=len(plain),prompts=len({x['prompt'] for x in plain}),repetitions=len({x['rep'] for x in plain}),accepted=accepted,proposed=proposed,rounds=rounds,acceptance=accepted/proposed if proposed else None,prefix_counts=prefix,prefix_survival=[x/rounds for x in prefix] if rounds else [],emitted_per_round=tokens/rounds if rounds else None,request_tps=tokens/wall,decode_tps=tokens/decode,full_draft_ms=full,narrow_generate_ms=sum(x.get('draft_ms',0) for x in counts)/rounds if rounds else None,total_peak_device_MiB=max(memories) if memories else None,allocator_shutdown_MiB=allocator[-1] if allocator else None,training_updates=info.get('progress',{}).get('updates',info.get('updates')),training_seconds=info.get('progress',{}).get('update_seconds'),lineage=info.get('lineage'),runtime=freeze.get('runtime'),instrumented_requests=len(traced),verified_paired_counters=result.get('paired_trace_counters_equal',False),target_verify_and_sample_ms_per_round=sum(x.get('target_verify_and_sample_ms',0) for x in traced)/trace_rounds if trace_rounds else None)
   baseline=[x for x in rows if x['arm']=='q4' and not x['warmup'] and not x.get('instrumented')]
   if baseline:
    point['request_vs_q4']=point['request_tps']/(sum(x['tokens'] for x in baseline)/sum(x['wall_seconds'] for x in baseline));point['decode_vs_q4']=point['decode_tps']/(sum(x['tokens'] for x in baseline)/(sum(x['timings']['predicted_ms'] for x in baseline)/1000))
@@ -36,6 +40,14 @@ def summarize(panel):
    for _ in range(2000):
     chosen=[by[(r,p)] for r in rng.choice(reps,len(reps)) for p in rng.choice(prompts,len(prompts))];ca=[x for x,y in chosen];ba=[y for x,y in chosen];ratios.append((sum(x['tokens'] for x in ca)/sum(x['wall_seconds'] for x in ca))/(sum(x['tokens'] for x in ba)/sum(x['wall_seconds'] for x in ba)))
    point['request_vs_q4_bootstrap95']=np.quantile(ratios,[.025,.975]).tolist()
+  target_cells=list(panel.glob('*-target'));target_peak=[];target_allocator=[]
+  for cell in target_cells:
+   if (cell/'memory.json').exists():target_peak.extend(x['MiB'] for x in read(cell/'memory.json'))
+   if (cell/'server.log').exists():
+    matches=re.findall(r'CUDA0.*?\((\d+)\s*=\s*(\d+)\s*\+\s*(\d+)\s*\+\s*(\d+)\)',(cell/'server.log').read_text(errors='replace'))
+    if matches:target_allocator.append(tuple(map(int,matches[-1])))
+  point['incremental_peak_device_MiB_vs_target']=max(memories)-max(target_peak) if memories and target_peak else None
+  point['incremental_model_allocator_MiB_vs_target']=allocator[-1]['model_MiB']-target_allocator[-1][1] if allocator and target_allocator else None
   points.append(point)
  return points
 
@@ -47,8 +59,9 @@ def build(root,out):
    data=read(p)
    if isinstance(data.get('rows'),list) and data['rows'] and 'arm' in data['rows'][0]:points+=summarize(p.parent)
   except (KeyError,TypeError):continue
- payload=dict(status='MEASURED_CHECKPOINT_NOT_CAMPAIGN_COMPLETION',points=points,limitations=['RTX5080 / modern Qwen3.5-4B Q4_K_M only.','Smokes and repeated confirmations are separated by panel/cohort.','A1/A2 execute INT8-code DP4A fallback, not hypothetical binary kernels.','Full draft cost uses disjoint instrumented host spans including catchup, generation and accept; asynchronous work may be charged at a later synchronization.','Sampled device-memory peak includes display/unrelated baseline and is not exact allocator peak.','Confidence intervals resample reused prompts/repetitions; no independent-training variance estimate.'])
- (out/'comparison.json').write_text(json.dumps(payload,indent=2)+'\n');fields=['id','cohort','scope','family','training_updates','accepted','proposed','rounds','acceptance','emitted_per_round','full_draft_ms','request_tps','decode_tps','request_vs_q4','model_bytes','total_peak_device_MiB','correct']
+ completion=read(root/'campaign-completion.json') if (root/'campaign-completion.json').exists() else None
+ payload=dict(status='FULL_INITIAL_COMPARISON_COMPLETE' if completion else 'MEASURED_CHECKPOINT_NOT_CAMPAIGN_COMPLETION',completion=completion,blocked=read(root/'tranche.json').get('blocked',[]) if (root/'tranche.json').exists() else [],points=points,limitations=['RTX5080 / modern Qwen3.5-4B Q4_K_M only.','Smokes and repeated confirmations are separated by panel/cohort.','A1/A2 execute INT8-code DP4A fallback, not hypothetical binary kernels.','Full draft cost uses disjoint instrumented host spans including catchup, generation and accept; asynchronous work may be charged at a later synchronization.','Sampled device-memory peak includes display/unrelated baseline and is not exact allocator peak.','Confidence intervals resample reused prompts/repetitions; no independent-training variance estimate.'])
+ (out/'comparison.json').write_text(json.dumps(payload,indent=2)+'\n');fields=['id','cohort','scope','family','training_updates','accepted','proposed','rounds','acceptance','emitted_per_round','full_draft_ms','request_tps','decode_tps','request_vs_q4','model_bytes','total_peak_device_MiB','incremental_peak_device_MiB_vs_target','incremental_model_allocator_MiB_vs_target','correct']
  with (out/'comparison.csv').open('w') as f:
   writer=csv.DictWriter(f,fields,extrasaction='ignore');writer.writeheader();writer.writerows(points)
  def fmt(v):return '—' if v is None else f'{v:.3f}' if isinstance(v,float) else str(v)
@@ -70,10 +83,15 @@ def build(root,out):
   axes[0].scatter((p['model_bytes'] or 0)/2**20,100*p['acceptance'],color=color(p),alpha=.6)
   if p['total_peak_device_MiB']:axes[1].scatter(p['total_peak_device_MiB'],p['request_tps'],color=color(p),alpha=.6)
  axes[0].set(xlabel='Actual drafter GGUF MiB (private tensors included)',ylabel='Acceptance (%)');axes[1].set(xlabel='Sampled total device peak MiB',ylabel='Full request tokens/s');fig.tight_layout();fig.savefig(out/'size-memory.png',dpi=160);fig.savefig(out/'size-memory.svg');plt.close(fig)
- fig,ax=plt.subplots(figsize=(10,5))
+ fig,ax=plt.subplots(figsize=(11,6));curves={}
  for p in points:
-  if p['training_updates'] is not None and p['acceptance'] is not None:ax.scatter(p['training_updates'],100*p['acceptance'],color=color(p));ax.annotate(p['arm'],(p['training_updates'],100*p['acceptance']),fontsize=6)
- ax.set(xlabel='Additional segment updates (ancestry in table)',ylabel='Native acceptance (%)',title='Measured recovery points; distinct recipes are not connected');ax.grid(alpha=.2);fig.tight_layout();fig.savefig(out/'recovery.png',dpi=160);fig.savefig(out/'recovery.svg');plt.close(fig)
+  if p['cohort']=='natural12' and p['training_updates'] is not None and p['acceptance'] is not None and '/adapted/' in p['panel']:
+   curves.setdefault(p['panel'],[]).append(p)
+ for panel,curve in curves.items():
+  curve=sorted(curve,key=lambda p:p['training_updates']);ax.plot([p['training_updates'] for p in curve],[100*p['acceptance'] for p in curve],marker='o',label=Path(panel).parent.name,color=color(curve[0]),alpha=.75)
+ ax.set(xlabel='Matched additional updates from common frozen foundation',ylabel='Native acceptance (%)',title='Recovery on the same consumed natural12 cohort');ax.grid(alpha=.2)
+ if curves:ax.legend(fontsize=7,ncol=2)
+ fig.tight_layout();fig.savefig(out/'recovery.png',dpi=160);fig.savefig(out/'recovery.svg');plt.close(fig)
  # Standalone interactive SVG and sortable evidence table: no network/CDN/server.
  data=json.dumps(points).replace('</','<\\/');columns=json.dumps(fields)
  body='''<!doctype html><html><head><meta charset="utf-8"><title>DFlash precision comparison</title><style>body{font:14px system-ui;margin:24px;color:#172232;background:#f6f8fb}h1{font-size:24px}select,input{padding:7px;margin:5px}svg{width:100%;max-width:1000px;background:white;border:1px solid #ddd}table{border-collapse:collapse;font-size:12px;white-space:nowrap}th,td{padding:7px;border-bottom:1px solid #d6dce6;text-align:right}th{cursor:pointer;position:sticky;top:0;background:#e5ebf3}.scroll{overflow:auto;max-height:650px}#tip{position:fixed;display:none;background:#172232;color:white;padding:10px;max-width:400px;pointer-events:none}img{max-width:100%}</style></head><body><h1>DFlash precision campaign — measured evidence</h1><p id="status">A checkpoint chart is incomplete until the campaign record marks full comparison complete.</p><p>RTX 5080 · Qwen3.5 4B Q4_K_M target · depth 2 · greedy target-sample-and-match. A1/A2 use measured INT8-code DP4A execution. Traced host spans include draft generation, catch-up and acceptance; timings are diagnostic.</p><label>Panel <select id="panel"></select></label><label>X <select id="x"><option value="full_draft_ms">Complete draft ms/round</option value="model_bytes">Actual model bytes</option><option value="total_peak_device_MiB">Sampled total peak MiB</option><option value="training_updates">Segment updates</option></select></label><label>Y <select id="y"><option value="acceptance">Acceptance</option><option value="request_vs_q4">Request throughput / Q4</option><option value="decode_vs_q4">Decode throughput / Q4</option><option value="request_tps">Request tokens/s</option></select></label><svg id="plot" viewBox="0 0 1000 540"></svg><div id="tip"></div><p>Missing measurements are omitted from the selected plot, never plotted as zero. Bubble radius indicates actual GGUF bytes. Hover for counts, lineage and execution details. Click a column to sort.</p><input id="filter" placeholder="Filter rows"><div class="scroll"><table id="table"></table></div>'''

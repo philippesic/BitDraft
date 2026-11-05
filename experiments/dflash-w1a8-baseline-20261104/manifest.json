@@ -1,6 +1,6 @@
 {
   "schema": "dflash_w1a8_screening_reference_v1",
-  "status": "TRAINING_COMPLETE_NATIVE_EVALUATION_RUNNING",
+  "status": "VANILLA_TRAINING_AND_INITIAL_NATIVE_PANEL_COMPLETE",
   "date": "2026-11-04",
   "protocol": "docs/CANDIDATE_BENCHMARKING.md",
   "authority": "User requested durable protocol plus a subagent to prepare the vanilla baseline and run its initial checkpoint.",
@@ -1547,7 +1547,10 @@
   "working_incumbent": null,
   "native_results": {
     "smoke": "/home/philip/binary-eagle-decoding/runs/dflash-modern-native-20261104-03/smoke-result.json",
-    "scope": "one TRAIN prompt, 32 output tokens, not benchmark"
+    "scope": "one TRAIN prompt, 32 output tokens, not benchmark",
+    "matched_panel": "/home/philip/binary-eagle-decoding/runs/precision-vanilla-eval-20261104-01/panel/result.json",
+    "summary": "experiments/precision-campaign-20261104/vanilla-panel.json",
+    "finding": "All outputs correct; trained vanilla remains slower than Q4 on this consumed3 panel. Common-runtime broader evaluation follows."
   },
   "run_directory": "/home/philip/binary-eagle-decoding/runs/dflash-modern-train-20261104-14",
   "owner": "sole precision campaign worker",
@@ -1562,9 +1565,7 @@
     "completed_updates": 14231,
     "training_update_seconds": 1800.0217024797457,
     "native_evaluation_started": true,
-    "owned_live_processes": [
-      "/home/philip/binary-eagle-decoding/runs/precision-vanilla-eval-20261104-01/ownership.json"
-    ]
+    "owned_live_processes": []
   },
   "runtime_patch": "experiments/dflash-w1a8-baseline-20261104/runtime/modern-admission.patch",
   "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",

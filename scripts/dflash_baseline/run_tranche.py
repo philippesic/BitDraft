@@ -26,7 +26,7 @@ def main():
   if record['status']!='COMPLETE' or record['progress']['updates']!=1024:raise RuntimeError('incomplete arm '+name)
   if not (out/'model-final.gguf').exists():export(out/'checkpoint.pt',out/'model-final.gguf')
   if not (out/'checkpoint.pt.bsz').exists():archive(out/'checkpoint.pt')
-  arms={'target':None,'q4':str(P/'runs/spec-shortlist-20261030/models/qwen35-4b-dflash-Q4_K_M.gguf'),name+'-256':str(out/'model-256.gguf'),name+'-1024':str(out/'model-final.gguf')}
+  arms={'target':None,'q4':str(P/'runs/spec-shortlist-20261030/models/qwen35-4b-dflash-Q4_K_M.gguf'),name+'-zero':str(r/'zero-arms'/(name+'.gguf')),name+'-256':str(out/'model-256.gguf'),name+'-1024':str(out/'model-final.gguf')}
   af=out/'panel-arms.json';af.write_text(json.dumps(arms,indent=2)+'\n')
   if not (out/'panel/result.json').exists():benchmark(af,out/'panel',cohort='natural12',paired=True)
   print('Matched native arm complete',name,flush=True)

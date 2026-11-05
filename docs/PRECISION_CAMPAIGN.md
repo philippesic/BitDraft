@@ -232,3 +232,40 @@ retained); retain four anchor zero files and every trained recovery state.
 Preserve raw metadata compatibility information and verify a byte-identical
 re-export before dropping any such cache. Do not remove training states to make
 room. Windows/WSL free-space readings remain separate.
+
+## All zero arms measured; matched anchors active — November4,23:08Pacific
+
+Four2048-update foundation/control trajectories and natural12 DEV smoke
+completed. Native acceptance: foundation756/3931; matched vanilla763/3915;
+no-midpoint697/4047; no-gain810/3819. Full-request rates142.95/143.08/139.52/
+146.29tok/s versus matched Q4 248.81. All outputs exact. These are one-repeat
+DEV diagnostics; no noisy scope change or deployment promotion. Common
+foundation remains frozen with the requested full package.
+
+All28 locked zero-update configurations were actually served under the final
+common runtime, including A1/A2/A4, learned bound, protected Q8_0/Q4_0 and
+private tied-source head variants.180 native responses (plain/traced), all exact
+target signatures; accepted/proposed/round/prefix counters invariant under
+tracing.36 CUDA operation cases requalified against final common libraries.
+Evidence: `runs/precision-campaign-20261104-01/{final-runtime-ops.jsonl,zero-panel/result.json}`.
+
+On capture3 smoke, Q4 accepts341/522 (~65.3%); G8/D8 accepts122/957 (~12.7%);
+G4/D8 ~4.74%,G2/D8 ~4.94%,G1/D8 ~1.81%,G1/D1 zero. Complete traced draft
+cost ~2.77–2.82ms/round for these binary-FFN arms versus Q4~2.14ms. No low-bit
+speedup in current INT8-code DP4A implementation. This is zero-swap damage,
+not a trained precision conclusion; A1/A2 bounded recovery remains mandatory.
+
+Active GPU owner: local supervised `precision-anchors-20261104-01`, socket
+`binary-eagle-runtime`; state/ownership in canonical runs. It trains all four
+anchors for1024 matched updates, retaining256/final native points and a full
+lossless final optimizer/RNG checkpoint, then measures zero/256/1024 on the
+same natural12 cohort with paired plain/traced requests. Source/config pins
+and stop identities are in ownership.json. Authenticate before TERM, allow
+120seconds for a boundary save, verify terminal/group absence. No competing GPU
+job. Zero export/screen and foundation supervisors exited0 and released.
+
+Raw-response auditor and standalone chart generator now exist. Current chart
+artifacts remain checkpoint-only until repeated DEV confirmation, frozen
+shortlist/heldout and full audit finish. Do not hand back the current partial
+chart as campaign completion. Preserved vanilla original-runtime summary is
+committed separately under experiments/precision-campaign-20261104.

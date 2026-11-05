@@ -1,0 +1,72 @@
+{
+  "scope": "RTX5080; modern4B Q4_K_M target; original matched modern runtime;3 consumed DEV prompts;2warmups+5alternating measured repetitions;not fresh generalization;all target-token outputs equal",
+  "source": "/home/philip/binary-eagle-decoding/runs/precision-vanilla-eval-20261104-01/panel/result.json",
+  "results": [
+    {
+      "arm": "target",
+      "tokens": 3025,
+      "requests": 15,
+      "correct": true,
+      "request_tps": 174.43458932712988,
+      "decode_tps": 195.5773148159223,
+      "accepted": 0,
+      "proposed": 0,
+      "acceptance": null
+    },
+    {
+      "arm": "q4",
+      "tokens": 3025,
+      "requests": 15,
+      "correct": true,
+      "request_tps": 219.3501739450657,
+      "decode_tps": 272.0141745911964,
+      "accepted": 1705,
+      "proposed": 2610,
+      "acceptance": 0.6532567049808429
+    },
+    {
+      "arm": "zero",
+      "tokens": 3025,
+      "requests": 15,
+      "correct": true,
+      "request_tps": 117.82946853284224,
+      "decode_tps": 132.73281643152407,
+      "accepted": 435,
+      "proposed": 5140,
+      "acceptance": 0.08463035019455253
+    },
+    {
+      "arm": "300",
+      "tokens": 3025,
+      "requests": 15,
+      "correct": true,
+      "request_tps": 128.69371963594378,
+      "decode_tps": 146.0408894213628,
+      "accepted": 670,
+      "proposed": 4665,
+      "acceptance": 0.14362272240085744
+    },
+    {
+      "arm": "900",
+      "tokens": 3025,
+      "requests": 15,
+      "correct": true,
+      "request_tps": 126.46555271519195,
+      "decode_tps": 143.24228364472393,
+      "accepted": 625,
+      "proposed": 4760,
+      "acceptance": 0.13130252100840337
+    },
+    {
+      "arm": "1800",
+      "tokens": 3025,
+      "requests": 15,
+      "correct": true,
+      "request_tps": 127.51181293449248,
+      "decode_tps": 144.8057114244765,
+      "accepted": 660,
+      "proposed": 4685,
+      "acceptance": 0.14087513340448238
+    }
+  ]
+}
