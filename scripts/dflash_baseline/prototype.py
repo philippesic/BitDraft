@@ -1,4 +1,4 @@
-"""Versioned CPU prototype contracts. Native admission is deliberately fail-closed."""
+"""Versioned CPU/CUDA quantizer contracts and static native-v2 eligibility."""
 import argparse
 import copy
 import hashlib

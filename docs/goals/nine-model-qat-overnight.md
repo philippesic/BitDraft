@@ -6049,3 +6049,5 @@ snapshots, archives/relocation receipts and next steps. Eight locked mutations,
 bounded interaction/recovery decisions, proper-warmup repeated confirmation,
 shortlist lock/heldout and full charts still outstanding. Continue, do not end
 from this checkpoint or a job launch. No push.
+
+November5 continuation: runtime04 zero/anchor/control requalification passed; sole live serial GPU owner precision-mutations-20261105-02. See PRECISION_CAMPAIGN for actual mutation results and frozen two-interaction/two-continuation allocation. Full measured confirmation/heldout/charts remain unfinished; continue existing goal.

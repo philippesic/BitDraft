@@ -363,3 +363,43 @@ ancestry; frozen observation verifies no parameter mutation. No new Stage2+
 features or heldout generation have begun. After runtime requalification,
 continue the8 locked component/down mutations before choosing interactions,
 extensions, repeated confirmation and heldout. Full chart remains unfinished.
+
+## Mutation checkpoint — November5,01:45Pacific
+
+Runtime04 requalification finished:28 zero-arm panel180 responses and
+anchor/control panel408 responses have exact full target output/stop signatures
+and unchanged plain/traced acceptance/prefix counters. Runtime03 remains a
+separate diagnostic series. Current sole GPU owner is
+`runs/precision-mutations-20261105-02`; ownership.json authenticates source
+snapshot, process birth/boot, group and TERM/grace120s stop procedure. Preserve
+this healthy serial job. First mutation launcher failed before training because
+its frozen snapshot omitted a top-level exporter dependency; corrected complete
+snapshot imports pass. No paid updates were lost or silently restarted.
+
+Six mutations have completed training; G2D2 native recovery panel is underway,
+then explicit G1D1 remains. All use the frozen common foundation, same1024
+updates/15360 supervised positions/order/cursor and reset Adam. Attention V/output
+Q4 reduces actual file size to354.6MiB but does not beat external Q4 throughput.
+Private Q4 head costs803.5MiB total and hurts latency; target tied Q6_K embedding
+is unchanged. G4/D8 learned clipping reaches1070/3301 acceptance and about165.8
+full-request tokens/s on consumed natural12, versus substantially poorer dynamic
+G4. This does not isolate precision from clipping policy or prove learned bounds
+beat fixed bounds. Diagnostic timing is not final confirmation.
+
+The remaining initial allocation is frozen in reserved-allocation.json before
+execution: two common-parent1024-update interactions, learned G8/D8 control and
+learned G4/D8 with Q4_0 fusion+attentionQK+VO; two exact one-window1024-update
+continuations, G1/D8 and unchanged G8/D8. Reserve decisions respond to clipping
+confounding, potential size frontier and G1's positive recovery slope. They use
+all initial interaction/recovery slots, not extra per-family mutations. Total
+extra4096 physical updates; paired control is charged. Calibrated A1/A2 and
+fixed-vs-learned ablations remain untested variants, eligible only after full
+initial chart if user is absent. No feature tier2+ or heldout has begun.
+
+After standard mutations finish: safely release only reproducible zero caches,
+relocate retained owned pilot archives if needed with verified canonical aliases
+and both-filesystem free-space receipts; run reserved allocation; freeze search;
+repeat DEV with two same-process excluded warmups and five alternating measured
+repetitions; lock max4 finalists before fresh24-case heldout; audit and produce
+full charts. Proper-warmup GPU protocol and protected-component independent
+code audits remain required. Full campaign is unfinished; continue in this thread.

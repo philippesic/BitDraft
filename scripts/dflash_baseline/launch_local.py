@@ -5,6 +5,7 @@ P=Path('/home/philip/binary-eagle-decoding');ROOT=Path(__file__).resolve().paren
 def launch(run,command):
  snapshot=P/'runs/precision-campaign-20261104-01/source-snapshots'/run;snapshot.mkdir(parents=True,exist_ok=False)
  files=[]
+ files.extend((p,p.relative_to(ROOT)) for p in (ROOT/'scripts').glob('*.py'))
  for directory in ('scripts/dflash_baseline','src/w1a1_eagle','scripts/w1a8_generalization','scripts/contender_pipeline','scripts/data_cost_transfer'):
   files.extend((p,p.relative_to(ROOT)) for p in (ROOT/directory).glob('*') if p.is_file() and p.suffix in ('.py','.cpp','.cu','.cuh'))
  files.append((ROOT/'experiments/w1a8-standing-20261102/baseline.json',Path('experiments/w1a8-standing-20261102/baseline.json')))

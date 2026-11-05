@@ -1,4 +1,4 @@
-"""CPU-capable config runner and versioned packed reference interchange (not native GGUF)."""
+"""Config-resolved CPU/CUDA training, recoverable state and native/reference export points."""
 import argparse, hashlib, json, random, time, signal
 from pathlib import Path
 import numpy as np
@@ -181,6 +181,6 @@ def main():
    if progress['updates'] in a.snapshots:save('checkpoint-'+str(progress['updates']))
    if progress['updates']%32==0:print(json.dumps(dict(update=progress['updates'],loss=loss,seconds=progress['update_seconds'])),flush=True)
   if not (a.calibrate_inputs and a.updates==0):save('checkpoint');packed_export(a.out/'packed.pt',m)
- result=dict(progress=progress,layers=len(m.layers),native_supported=False,dry_run=a.dry_run,status='INTERRUPTED' if stop else 'COMPLETE',peak_bytes=torch.cuda.max_memory_allocated() if a.device=='cuda' else None)
+ result=dict(progress=progress,layers=len(m.layers),packed_reference_native_supported=False,native_points_exported=[p.name for p in a.out.glob('model-*.gguf')],native_evaluation_status='ARTIFACT_SPECIFIC_PANEL_REQUIRED',dry_run=a.dry_run,status='INTERRUPTED' if stop else 'COMPLETE',peak_bytes=torch.cuda.max_memory_allocated() if a.device=='cuda' else None)
  (a.out/'result.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({**result,'progress':{k:v for k,v in progress.items() if k!='order'}}),flush=True)
 if __name__=='__main__':main()

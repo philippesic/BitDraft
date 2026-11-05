@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 import torch
 from .pipeline import sha
-from .prototype import digest
+from .prototype import digest,native_admit
 from .checkpoint_io import load as load_checkpoint
 from .components import tensor_component,encoded,FORMATS
 P=Path('/home/philip/binary-eagle-decoding');ROOT=Path(__file__).resolve().parents[2]
@@ -28,7 +28,7 @@ def export(checkpoint,destination,config=None,state=None,checkpoint_pin=None,inc
    if (name.endswith('.midpoint') and not config['features']['midpoint']) or (name.endswith('.log_gain') and not config['features']['gain']):params[name]=torch.zeros_like(value)
   saved=dict(version=2,config=config,config_hash=digest(config),parameters=params,progress=dict(updates=0,cursor=parent_progress['cursor'],order=parent_progress['order'],update_seconds=0.,supervised_tokens=0),lineage=dict(parent=config['parent'],parent_progress=parent_progress,optimizer_policy='reset-on-adaptation',reconfiguration_only=True))
  if saved['version']!=2 or saved['config_hash']!=digest(saved['config']):raise ValueError('checkpoint contract mismatch')
- c=saved['config'];params=saved['parameters'];source=Path(c['source']['path'])
+ c=saved['config'];native_admit(c);params=saved['parameters'];source=Path(c['source']['path'])
  if sha(source)!=c['source']['sha256']:raise ValueError('source hash changed')
  if any(v['weight']!='W1' for v in c['coverage'].values()):raise ValueError('native v2 requires all18 binary FFN; protected FFN unqualified')
  reader=GGUFReader(source);selected={k+'.weight' for k in c['coverage']}
@@ -62,11 +62,11 @@ def export(checkpoint,destination,config=None,state=None,checkpoint_pin=None,inc
   else:
    kind=tensor_component(t.name);format=c.get('components',{}).get(kind)
    if format:
-    weight=dequantize(t.data,t.tensor_type).reshape(tuple(t.shape[::-1])).astype(np.float32);writer.add_tensor(t.name,encoded(weight,format),raw_dtype=FORMATS[format])
+    weight=dequantize(t.data,t.tensor_type).reshape(tuple(t.shape[::-1])).astype(np.float32);coded=encoded(weight,format);writer.add_tensor(t.name,coded,raw_dtype=FORMATS[format]);audit[t.name]=raw_hash(coded)
    else:writer.add_tensor(t.name,t.data,raw_dtype=t.tensor_type)
  if 'head' in c.get('components',{}):
   target=GGUFReader(c['evaluation']['target']['path']);lookup={t.name:t for t in target.tensors};t=lookup.get('output.weight',lookup['token_embd.weight']);weight=dequantize(t.data,t.tensor_type).reshape(tuple(t.shape[::-1])).astype(np.float32)
-  writer.add_tensor('output.weight',encoded(weight,c['components']['head']),raw_dtype=FORMATS[c['components']['head']])
+  coded=encoded(weight,c['components']['head']);writer.add_tensor('output.weight',coded,raw_dtype=FORMATS[c['components']['head']]);audit['output.weight']=raw_hash(coded)
  writer.write_header_to_file();writer.write_kv_data_to_file();writer.write_tensors_to_file();writer.close()
  observed={t.name:t for t in GGUFReader(tmp).tensors}
  for t in reader.tensors:

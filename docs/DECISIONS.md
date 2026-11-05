@@ -1585,3 +1585,17 @@ first comparison finishes before their return (roughly 11am Pacific). See the
 [execution checkpoint](PRECISION_CAMPAIGN.md) for scope, baseline reconciliation, deliverables
 and continuation. Necessary native pipeline work is included. Preserve existing
 references and use one GPU owner. This continues the current goal.
+
+## November5: consume reserved initial precision slots
+
+Within the user's sustained campaign authorization, use two global interactions
+for learned G8/D8 clipping control and learned G4/D8 plus Q4_0 fusion+attention
+QK+VO, each common-parent matched1024 updates. G4 learned clipping improves
+DEV acceptance, but range-policy/precision/learning effects remain confounded;
+the A8 control addresses one of these. The combined model tests practical size
+reduction under the same policy. Use two one-window continuations for recovering
+G1/D8 and unchanged G8/D8, exact resume to2048 (1024 additional each). Both count
+in resources. No per-family third mutation, calibrated A1 variant or new feature
+tier is added before complete initial confirmation/heldout/chart. Reserved
+allocation and immutable configs live under the canonical campaign run. These
+are experiment allocations, not deployment promotion or evidence of superiority.
