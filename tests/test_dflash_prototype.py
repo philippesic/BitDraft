@@ -41,3 +41,68 @@ if __name__ == "__main__":
     for bits in (2,4,8): check_integer_and_midpoint(bits)
     test_gain_and_gradient_state()
     print("5 CPU cases passed")
+
+
+def test_independent_rounding():
+    for bits in (2,4,8):
+        q=(1<<(bits-1))-1
+        m=Projection(torch.ones(1,7),bits,quantizer={'mode':'fixed','clip':float(q)})
+        codes,_=m.stream(torch.tensor([[-1000.,-1.5,-.5,0.,.5,1.5,1000.]]))
+        expected=torch.tensor([[-q,max(-q,-2),0,0,0,min(q,2),q]],dtype=torch.float32)
+        torch.testing.assert_close(codes,expected,rtol=0,atol=0)
+
+
+def test_original_baseline_codes():
+    import sys
+    from pathlib import Path
+    sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
+    from w1a1_eagle.recurrent_qat import fixed_activation_codes
+    x=torch.tensor([[0.,0.,0.],[1e-40,-2e-40,0.],[.5,-1.5,127.]])
+    m=Projection(torch.tensor([[.2,-.7,.1]]),8)
+    codes,step=m.stream(x)
+    old,scale,_=fixed_activation_codes(x,8)
+    torch.testing.assert_close(codes,old,rtol=0,atol=0)
+    torch.testing.assert_close(step,scale,rtol=0,atol=0)
+    torch.testing.assert_close(m.latent_sign,torch.tensor([[.2,-.7,.1]]),rtol=0,atol=0)
+    expected=(old@torch.tensor([[1.],[-1.],[1.]]))*m.scale.detach()*scale
+    torch.testing.assert_close(m(x),expected,rtol=0,atol=0)
+
+
+def test_model_install_resume():
+    import tempfile
+    from pathlib import Path
+    from torch import nn
+    from scripts.dflash_baseline.prototype_model import install,optimizer,save,resume
+    class Old(nn.Module):
+        def __init__(self):
+            super().__init__();self.latent_sign=nn.Parameter(torch.tensor([[.2,-.7,.1]]))
+        def effective_scales(self): return self.latent_sign.detach().abs().mean(-1)
+    class Fixture(nn.Module):
+        def __init__(self):
+            super().__init__();self.layers=nn.ModuleList()
+            for _ in range(6):
+                l=nn.Module()
+                for name in ('ffn_gate','ffn_up','ffn_down'):setattr(l,name,Old())
+                for name in ('attn_norm','attn_q_norm','attn_k_norm','ffn_norm'):setattr(l,name,nn.Parameter(torch.ones(1)))
+                self.layers.append(l)
+            self.output_norm=nn.Parameter(torch.ones(1));self.output_norm_enc=nn.Parameter(torch.ones(1))
+        def binary_linears(self):return {f'blk.{i}.{n}':getattr(l,n) for i,l in enumerate(self.layers) for n in ('ffn_gate','ffn_up','ffn_down')}
+    c=resolve(config());m=install(Fixture(),c,{})
+    for l in m.layers:
+        assert l.ffn_gate.log_gain is l.ffn_up.log_gain
+        assert l.ffn_gate.log_gain is not l.ffn_down.log_gain
+    opt=optimizer(m)
+    params=[id(p) for g in opt.param_groups for p in g['params']]
+    assert len(params)==len(set(params))
+    def step():
+        x=torch.randn(2,3)
+        sum(p(x).sum() for p in m.binary_linears().values()).backward();opt.step();opt.zero_grad()
+    step()
+    with tempfile.TemporaryDirectory() as d:
+        p=Path(d)/'state.pt';progress=dict(updates=1,update_seconds=.1,cursor=1,order=[0,1])
+        save(p,m,opt,progress);step();expected={k:v.clone() for k,v in m.state_dict().items()}
+        assert resume(p,m,opt)==progress
+        step()
+        for k,v in m.state_dict().items():torch.testing.assert_close(v,expected[k],rtol=0,atol=0)
+        m.prototype_config=copy.deepcopy(c);m.prototype_config['coverage']['blk.0.ffn_gate']['bits']=4
+        with unittest.TestCase().assertRaisesRegex(ValueError,'adaptation'):resume(p,m,opt)
