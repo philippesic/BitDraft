@@ -30,7 +30,7 @@ def replay_panel(directory):
   records=[x for x in data['records'] if x['arm']==arm]
   rows=[x for rec in records for x in rec['result']['rows'] if not x['warmup']]
   # Each domain/context has the same weight; no timing rep acts as a new training seed.
-  result[arm]=dict(clean_gpu_forward_ms=float(np.mean([x['graph_event_ms'] for x in rows])),fixed_replay_forward_host_ms=float(np.mean([x['forward_host_ms'] for x in rows])),fixed_replay_catchup_host_ms=float(np.mean([x['catchup_host_ms'] for x in rows])),cells=len(records),forwards=len(rows),source_models={x['model']['sha256'] for x in records})
+  result[arm]=dict(clean_gpu_forward_ms=float(np.mean([x['graph_event_ms'] for x in rows])),fixed_replay_forward_host_ms=float(np.mean([x['forward_host_ms'] for x in rows])),fixed_replay_catchup_host_ms=float(np.mean([x['catchup_host_ms'] for x in rows])),timing_repetitions=len({x['rep'] for x in records}),cells=len(records),forwards=len(rows),source_models={x['model']['sha256'] for x in records})
   result[arm]['source_models']=sorted(result[arm]['source_models'])
  return dict(source=pin(directory/'result.json'),scope=data['scope'],arms=result)
 

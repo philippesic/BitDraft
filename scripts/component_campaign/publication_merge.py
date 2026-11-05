@@ -1,11 +1,22 @@
 """Attach explicitly indexed formal evidence to matching final native readouts."""
-import json
+import copy,json
 from .common import *
 
 def merge(rows):
  index_path=R/'publication-index.json'
  if not index_path.exists():return rows
  index=json.load(open(index_path));summary=json.load(open(index['summary']))
+ from .archive import reference
+ inventory=json.load(open(R/'reference-tensor-inventory.json'))
+ base=next(r for r in rows if r['arm']=='H0' and r['updates']==0)
+ for name,key,model in [('B0','B0',B/'model-final.gguf'),('q4','external-q4',Q4)]:
+  row=copy.deepcopy(base);row.update(arm=name,updates=0,component_spec={'reference':name},model=reference(model),model_path=str(model),model_sha256=reference(model)['sha256'],tensor_bytes=inventory[key]['tensor_bytes'],native={},status='Fixed immutable reference',training_peak_allocator_bytes=None,training_update_seconds=0.,supervised_positions=0,full_recovery_state_status='Original paid B0 retained' if name=='B0' else 'Frozen external reference',reference_tensor_map=str(R/'reference-tensor-inventory.json'))
+  for field in ('accepted','proposed','rounds','output_tokens','request_seconds','request_tok_s','acceptance','accepted_per_round','emitted_per_round','target_identical','responses','native_acceptance_gap_matched_control'):row[field]=None
+  if name=='q4':
+   for field in ('ce','agreement','mean_rank','mean_margin','ce_gap_matched_control'):row[field]=None
+   row.update(ffn_weights='Q4_K_M; full tensor map linked',gate_up_activation='Native Q4 kernel contract',down_activation='Native Q4 kernel contract',fusion_weights='See frozen tensor map',attention_qk_weights='See frozen tensor map',attention_vo_weights='See frozen tensor map',trainable_policy='Frozen external DFlash Q4_K_M reference')
+  else:row['trainable_policy']='Frozen learned-small2048 B0 reference; no extra updates'
+  rows.append(row)
  for row in rows:
   arm=row['arm'];final=max(x['updates'] for x in rows if x['arm']==arm)
   row['status']=index.get('arm_status',{}).get(arm,row['status'])
@@ -30,7 +41,8 @@ def merge(rows):
     row['private_cpu_mapped_model_bytes']=row['actual_cpu_model_bytes']-sum(v for k,v in target.items() if k.startswith('CPU'))
   replay=summary['replay'].get(index.get('gpu_panel',''),{});entry=replay.get('arms',{}).get(arm)
   if entry:
-   row['clean_gpu_forward_ms']=entry['clean_gpu_forward_ms'];row['gpu_forward_evidence']=replay['source']['path'];row['fixed_replay_forward_host_ms']=entry['fixed_replay_forward_host_ms']
+   prefix='' if entry['timing_repetitions']>=5 else 'selection_'
+   row[prefix+'clean_gpu_forward_ms']=entry['clean_gpu_forward_ms'];row[prefix+'gpu_forward_evidence']=replay['source']['path'];row[prefix+'fixed_replay_forward_host_ms']=entry['fixed_replay_forward_host_ms'];row[prefix+'gpu_forward_repetitions']=entry['timing_repetitions']
   trace=summary['native'].get(index.get('trace_panel',''),{});entry=trace.get('arms',{}).get(arm)
   if entry:
    if not entry['instrumented'] or entry['timing_repetitions']<5:raise ValueError('formal trace repetitions absent')
@@ -40,5 +52,5 @@ def merge(rows):
  for row in rows:
   control=controls.get(row['arm'],'H0');c=lookup.get((control,row['updates']))
   row['matched_recovery_control']=control
-  if c:row['ce_gap_matched_control']=row['ce']-c['ce']
+  if c and row['ce'] is not None:row['ce_gap_matched_control']=row['ce']-c['ce']
  return rows

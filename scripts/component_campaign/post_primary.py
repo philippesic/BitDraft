@@ -34,6 +34,8 @@ def main():
   run('replay',R/'panels/physical-tie-arms.json','--out',audit,'--runtime',R/'runtime04','--reps','1','--audit')
  run('allocation_audit')
  run('formal_summary','--native',selection,'--replay',replay,'--out',R/'selection-primary-summary.json')
+ save(R/'publication-index.json',dict(status='IN_PROGRESS',summary=str(R/'selection-primary-summary.json'),selection_panel=selection.name,gpu_panel=replay.name,arm_status={n:'4096 R1 window complete; measured selection, final frontier pending' for n in names}))
+ run('publish')
  save(R/'post-primary-result.json',dict(status='SELECTION_MEASUREMENTS_COMPLETE_COMBINATIONS_REQUIRED',owner=identity(),selection=pin(R/'selection-primary-summary.json')))
  print('POST_PRIMARY_SELECTION_COMPLETE_NOT_CAMPAIGN_COMPLETION',flush=True)
 
