@@ -1599,3 +1599,18 @@ in resources. No per-family third mutation, calibrated A1 variant or new feature
 tier is added before complete initial confirmation/heldout/chart. Reserved
 allocation and immutable configs live under the canonical campaign run. These
 are experiment allocations, not deployment promotion or evidence of superiority.
+
+
+## 2026-11-05: Execution scope deepened with Astra xhigh
+
+The user requested deeper debate on preparation, reuse/matrix kernels, fusion
+and true low-bit execution before more head/embedding/KV precision changes. Root
+accepts the independent review revisions in
+[EXECUTION_OPTIMIZATION.md](EXECUTION_OPTIMIZATION.md). Main new leads: twelve
+candidate redundant copy nodes, unnecessary fixed-bound maximum reductions,
+weight reuse across the expected three positions, and unused anchor head output.
+Q4 uses DP4A too under the frozen grouped consistency path; preserve target and
+verifier settings. Trace first, qualify model-specific replay state, test copy
+and bound changes separately, then one DP4A and one signed MMA candidate. Choose
+subsequent fusion/head work by measured removable cost. Low-bit alternatives are
+bounded reserves; no implementation/speed claim or GPU launch from this debate.

@@ -1286,3 +1286,19 @@ completion or protocol claims from a prior worker's script.
   winners, identify DP4A versus Tensor Core execution explicitly, and distinguish
   draft-round latency from time per emitted token. Do not attribute the gap to
   packing or promise Tensor Core recovery without measuring the current shapes.
+
+
+### 2026-11-05 correction: Q4 also uses DP4A under the selected runtime
+
+- Context: The execution-scope debate checked the actual pinned Q4 backend,
+  following root's emphasis on the missing historical Tensor Core path.
+- Evidence: GGML_CUDA_DECODE_CONSISTENT=32 disables generic fusion and selects
+  grouped vector dispatch for eligible Q4_K/Q6_K operations. Q4_K vecdot also
+  uses DP4A. The grouped baseline reuses weights over up to four columns; the
+  W1 kernel assigns positions separately. Native trace confirmation is pending.
+- Correction: Missing DSpark Tensor Core reuse is a candidate opportunity, not
+  an established explanation of why W1 is slower than Q4. Root accepts Astra's
+  correction. No user error. Compare layout, preparation, reuse and complete
+  execution; never infer a bottleneck merely from the DP4A instruction label.
+- Resolution: The agreed plan promotes redundant copies/known-bound preparation
+  and compares DP4A reuse against MMA while preserving target dispatch.

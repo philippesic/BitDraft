@@ -2,6 +2,13 @@
 
 ## Precision comparison complete; GPU released
 
+Next execution investigation is agreed in
+[EXECUTION_OPTIMIZATION.md](EXECUTION_OPTIMIZATION.md): trace/replay qualification,
+copy removal and known-bound specialization, three-position DP4A reuse versus
+signed INT8 MMA, then one profile-selected fusion or unused-anchor-head test.
+Astra xhigh and root agree; this planning update launches no GPU work. Q4 also
+uses DP4A in the frozen dispatch, so instruction family alone is not the cause.
+
 The modern Qwen3.5-4B Q4_K_M / RTX5080 campaign and one bounded clipping control
 are complete: 258 measured panel/arm records, 67 formal confirmed rows, and
 10,580 formal target-identical responses. Reports and artifacts:

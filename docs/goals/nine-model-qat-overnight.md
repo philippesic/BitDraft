@@ -6086,3 +6086,15 @@ cases independently pass. Charts are ready for inline display; no W1 throughput
 promotion. See [campaign review](../PRECISION_CAMPAIGN.md#parent-review-and-integration--november-5-2026).
 No active GPU owner or new training allocation; paid states and useful evidence
 remain retained. The broader goal stays open.
+
+
+## Execution optimization scope agreed — November 5, 2026
+
+Root and independent Astra xhigh resolved the execution-plan debate; see
+[EXECUTION_OPTIMIZATION.md](../EXECUTION_OPTIMIZATION.md). The next proposed
+experiments are trace/replay qualification, a four-arm copy/bound specialization
+test, cross-position DP4A versus signed INT8 MMA, then one evidenced fusion or
+unused-anchor-head test. Ordinary generation is expected to use three positions;
+confirm with trace. Preserve current model/precision and target/verifier. Q4's
+vector path also uses DP4A, so relative reuse/dispatch/preparation need measurement.
+This is source-reviewed planning progress only; no new GPU job or measured win.
