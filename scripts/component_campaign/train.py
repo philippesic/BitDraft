@@ -82,6 +82,11 @@ def main():
  def recoverable():
   directory=Path('/mnt/c/binary-eagle-component-20261105-01');directory.mkdir(exist_ok=True)
   destination=directory/(spec['name']+f"-{progress['updates']}.pt")
+  existing=destination.with_suffix('.pt.bsz')
+  if existing.exists() and (out/'recovery.json').exists():
+   old=json.load(open(out/'recovery.json'))
+   if old['archive']==str(existing) and pin(existing)['sha256']==old['archive_sha256']:return old
+   raise ValueError('unexpected existing recovery state')
   state=dict(version=2,config=c,config_hash=digest(c),parameters=parameters(m),optimizer=opt.state_dict(),progress=copy.deepcopy(progress),rng=rng(),lineage=lineage,component_spec=spec,resume_capable=True)
   free=__import__('shutil').disk_usage(directory).free
   if free<4_800_000_000:raise RuntimeError(f'insufficient rolling checkpoint space: need4.8GB free; observed{free}')

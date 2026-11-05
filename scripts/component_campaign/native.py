@@ -56,8 +56,14 @@ def stats(text):
  m=matches[-1];values=[int(m[i]) for i in range(1,8)]+[float(m[i]) for i in range(8,11)]
  return dict(zip(('begin_calls','rounds','accept_calls','drafts','accepted_rounds','proposed','accepted','begin_ms','draft_ms','accept_ms'),values))
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('--arms',type=Path,required=True);ap.add_argument('--runtime',type=Path,required=True);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--cohort',choices=['capture3','natural12','natural24'],default='capture3');ap.add_argument('--reps',type=int,default=1);ap.add_argument('--warmups',type=int,default=0);ap.add_argument('--prompts',type=Path);ap.add_argument('--cohort-label');ap.add_argument('--trace',action='store_true');ap.add_argument('--paired-trace',action='store_true');ap.add_argument('--profile',action='store_true');ap.add_argument('--limit',type=int);ap.add_argument('--output-cap',type=int);ap.add_argument('--runtime-map',type=Path);ap.add_argument('--draft-cache-map',type=Path);a=ap.parse_args()
+ ap=argparse.ArgumentParser();ap.add_argument('--arms',type=Path,required=True);ap.add_argument('--runtime',type=Path,required=True);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--cohort',choices=['capture3','natural12','natural24'],default='capture3');ap.add_argument('--reps',type=int,default=1);ap.add_argument('--warmups',type=int,default=0);ap.add_argument('--prompts',type=Path);ap.add_argument('--cohort-label');ap.add_argument('--trace',action='store_true');ap.add_argument('--paired-trace',action='store_true');ap.add_argument('--profile',action='store_true');ap.add_argument('--limit',type=int);ap.add_argument('--output-cap',type=int);ap.add_argument('--runtime-map',type=Path);ap.add_argument('--draft-cache-map',type=Path);ap.add_argument('--stress-length',type=int);a=ap.parse_args()
  arms=json.load(open(a.arms));prompts=heldout(a.prompts,arms,a.runtime) if a.prompts else cohort(a.cohort);a.out.mkdir(exist_ok=False);save(a.out/'prompts.json',prompts)
+ if a.stress_length:
+  if a.cohort!='capture3' or not 0<a.stress_length<=3840:raise ValueError('stress uses consumed capture token IDs and<=3840 positions')
+  for item in prompts:
+   ids=item['payload']['prompt'];item['payload']['prompt']=(ids*((a.stress_length+len(ids)-1)//len(ids)))[:a.stress_length]
+   item['id']+='-synthetic-context-'+str(a.stress_length)
+  save(a.out/'context-stress.json',dict(positions=a.stress_length,construction='Repeated already-consumed DEV token sequence; context/cache stress, not natural heldout quality.',source=a.cohort))
  if a.limit:prompts=prompts[:a.limit]
  if a.output_cap:
   for x in prompts:x['payload']['n_predict']=min(x['payload']['n_predict'],a.output_cap)
