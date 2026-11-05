@@ -1,5 +1,11 @@
 # Implementation checkpoint
 
+Current state: a packed zero-update export exists and has passed independent
+source-derived sign/scale and protected-tensor checks. Native admission, training
+and evaluation remain unqualified; all 1800 update seconds remain unspent.
+
+## Initial inspection (superseded by export progress below)
+
 The requested baseline is **not complete**. No zero-update export, optimizer
 update, training checkpoint, capture or native evaluation was produced. The
 1800-second allocation remains entirely unspent. No GPU job was launched.

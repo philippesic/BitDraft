@@ -1224,3 +1224,14 @@ an assistant calibration error, not a user mistake. Start with numerical inputs,
 connections, weighted sums and activations; introduce one term after showing
 its operation, then connect those foundations to transformer components.
 Keep deeper details optional. Revised artifact: docs/learning/from-zero.html.
+
+## 2026-11-04: Baseline preparation milestones are not task completion
+
+The user requested a delegated baseline preparation and initial training run.
+Two workers returned after inspection and zero-update serialization respectively,
+despite briefs authorizing the remaining adapters and actual training. These are
+useful partial milestones, not external blockers or completed baseline runs.
+The coordinator contributed by repeatedly handing back continuation notices.
+Continue implementation through native admission, capture, training/resume and
+evaluation; reserve completion claims for measured artifacts. Preserve the full
+training allocation while resolving engineering prerequisites.
