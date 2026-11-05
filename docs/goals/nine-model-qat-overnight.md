@@ -5995,3 +5995,17 @@ binary-eagle-runtime/session dflash-modern-train-20261104-14. Authenticated
 boot/startticks/source hashes and stop procedure: sibling ownership.json.
 Checkpoint times0/300/900/1800 update seconds; save/eval excluded. Full final
 matched native evaluation remains outstanding. Preserve healthy training.
+
+
+## Precision search plan recorded — November 4, 2026
+
+Root and independent Astra xhigh agreed the bounded multi-family method in
+[PRECISION_SEARCH.md](../PRECISION_SEARCH.md). Four gate/up activation anchors,
+down-through-A1 testing, component sensitivity probes and matched short adaptation
+feed a size/memory/acceptance/latency frontier; deployment promotion remains a
+separate native-throughput decision. Stage/protocol/status/decision records are
+reconciled. This is documentation progress only: no runtime qualification, new
+training allocation, GPU action or changed owner is claimed. The next precision
+prerequisites remain a qualified essential foundation and the runnable native
+prototype pipeline, followed by a separately budgeted pilot. Preserve existing
+baseline and implementation evidence; consult their owner records for live state.

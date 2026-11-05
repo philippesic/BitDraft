@@ -2,6 +2,12 @@
 
 ## Current direction: essential-feature foundation before precision selection
 
+Agreed precision plan: [PRECISION_SEARCH.md](PRECISION_SEARCH.md). After the
+foundation, explore gate/up A8/A4/A2/A1 families, down through A1, and bounded
+component reductions. Retain a tradeoff frontier separately from the deployment
+incumbent. Root accepted all Astra xhigh review revisions; no measured winner,
+new training allocation or GPU ownership change follows from this plan.
+
 User correction: the common foundation includes signs, row scales, midpoints,
 input-channel gains and existing norm gains BEFORE comparing precision setups.
 Then add progressively experimental features. See the agreed

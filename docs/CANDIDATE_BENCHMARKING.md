@@ -5,6 +5,8 @@ November 4 that the sequence is **essential-feature foundation first, precision
 selection second, experimental feature tiers afterward**. Exact scope is in
 [CANDIDATE_STAGES.md](CANDIDATE_STAGES.md): the proposed common foundation includes
 signs, row scales, row midpoints, input-channel gains and existing norm gains.
+The agreed [adaptive precision search](PRECISION_SEARCH.md) defines four activation
+families, bounded component trials, matched adaptation and frontier reporting.
 
 The already-authorized vanilla W1A8 run below remains a minimal control. Its
 midpoint/gain exclusions apply to THAT frozen reference, not to the separate
@@ -23,9 +25,12 @@ owns the experiment report and manifest; STATUS links to the current evidence.
 | Reference | Role | Replacement policy |
 | --- | --- | --- |
 | Vanilla W1A8 zero-update export | Measures conversion damage and starting execution cost | Freeze exact model, initialization and export bytes |
-| Vanilla W1A8 initial trained checkpoint | Common parent for feature branches | Freeze parameters, optimizer, RNG, schedule, cursor and exposure |
+| Vanilla W1A8 initial trained checkpoint | Frozen minimal-control parent; not the essential precision foundation | Freeze parameters, optimizer, RNG, schedule, cursor and exposure |
 | No-feature continuation from that parent | Controls for the benefit of extra training | Produce a matched continuation for each comparison budget |
-| Working incumbent | Best sufficiently supported candidate so far | Promote with an explicit evidence record; keep old references |
+| Essential-feature foundation checkpoint | Frozen parent for precision anchors and final attribution comparisons | Freeze separately after qualification; do not relabel vanilla |
+| Unchanged essential/family continuation | Controls extra training for each precise parent and exposure | Reuse only with matching ancestry, data/order and training policy |
+| Candidate tradeoff frontier | Useful size, memory, latency and acceptance alternatives | Retain evidence and uncertain near-ties; no external-throughput win required |
+| Deployment incumbent | Best sufficiently supported deployment candidate so far | Promote with matched native correctness/throughput evidence; keep old references |
 | DFlash Q4_K_M | External primary throughput baseline | Never replace with the incumbent |
 | Target-only | Correctness reference | Same target/runtime as each comparison |
 
@@ -40,8 +45,9 @@ Qwen3.5 baseline numbers or a substitute DFlash training checkpoint.
 The coordinator-selected initial allocation is **1,800 seconds (30 minutes) of
 actual training-update wall time**, with zero-update and approximately
 300/900/1800-second checkpoints. Save at complete update boundaries; report
-actual times and any one-update overshoot. This is a practical first screening
-budget, not a measured optimal horizon or a convergence claim. The user requested
+actual times and any one-update overshoot. This allocation belongs to the vanilla
+run only; the precision-search plan grants no additional allocation. This is a practical first screening budget, not a
+measured optimal horizon or a convergence claim. The user requested
 preparation and an initial run, not a new long-QAT campaign.
 
 Measure forward/backward/optimizer update time consistently, synchronizing at
@@ -101,11 +107,20 @@ remain proposed comparisons, not selected additions to vanilla.
    fixed-baseline and external-Q4 results. For the next addition, again run an
    unchanged-incumbent continuation. Test combinations against their components.
 
-Promotion requires matched native output correctness and useful complete-request
-throughput, not just lower training loss, reconstruction error or higher acceptance
+Deployment promotion requires matched native output correctness and useful
+complete-request throughput, not just lower training loss, reconstruction error or higher acceptance
 percentage. Short-run promotion is provisional. Extend promising candidates and
 selected slow starters when authorized; no universal early-to-long predictor is
 established and a short loss does not permanently invalidate a feature.
+
+For precision searches, follow PRECISION_SEARCH.md: exploratory mutations branch
+from matched immediate parents; final precision-attribution arms use the frozen
+essential foundation, identical exposure/data order and training policy. Different
+curricula are different recipes even with equal total tokens. Initially train only
+foundation groups and qualified quantizers; other master weights remain frozen,
+with their selected quantized arithmetic present in the training forward pass.
+Frontier retention is not deployment promotion and may preserve a smaller, slower
+candidate. Freeze finalists/recipes on DEV before opening held-out results.
 
 ## Measurement contract
 

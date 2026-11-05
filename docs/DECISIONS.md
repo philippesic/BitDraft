@@ -1556,3 +1556,22 @@ not as a blocker to the A8 reference. Group scales, rotations and additional
 distillation stay later. Design inclusion does not claim empirical benefit.
 Existing vanilla run remains a preserved control; no new training budget is
 authorized by the roadmap. See the scope-debate section for resolved objections.
+
+
+## 2026-11-04: Bounded multi-family precision search agreed
+
+User requested a precision/latency/acceptance map spanning gate/up A8/A4/A2/A1,
+then incremental component precision reductions, increasingly expensive screens
+and short adaptation. Root debated this with Astra xhigh and accepted all reviewer
+revisions. [PRECISION_SEARCH.md](PRECISION_SEARCH.md) is the authoritative plan.
+
+Include down A1 and explicit G1/D1; screen head/down early and prioritize by
+cost/sensitivity rather than strict head-first order. Preserve four families with
+bounded mutations, interactions and recovery extensions. Keep a tradeoff frontier
+separate from a throughput-qualified deployment incumbent. Match final training
+histories, declare trainable groups and draft-only shared-tensor copies, remeasure
+relevant arms after runtime changes, and lock finalists before held-out evaluation.
+This supersedes the earlier A8/A4-only Stage 1 and deferral of W1A1 precision;
+W1A1 trees/retries and other architecture changes remain later. It is design
+agreement, not empirical support or a new sweep/training allocation. Preserve the
+vanilla run, frozen essential foundation, and external DFlash Q4_K_M references.

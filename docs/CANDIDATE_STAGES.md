@@ -106,14 +106,23 @@ precision, except for explicitly coupled quantizer choices below.
 
 ## Stage 1: precision setups on the common essential baseline
 
-| Arm | FFN gate/up input activations | FFN down input activations | Common features |
-| --- | --- | --- | --- |
-| P0 | A8 | A8 | Stage 0 package |
-| P1 | A4 | A8 | Same package |
-| P2 | A4 | A4 | Same package |
+The agreed adaptive search is specified in [PRECISION_SEARCH.md](PRECISION_SEARCH.md).
+It replaces the earlier A8/A4-only trio with four gate/up starting families:
 
-A8/A4 describe matrix inputs, not residuals, accumulation, scales, softmax, head
-or KV. Keep binary coverage and other precisions identical in the initial trio.
+| Arm | FFN gate/up input activations | Initial FFN down inputs | Common features |
+| --- | --- | --- | --- |
+| G8/D8 | A8 | A8 | Stage 0 package |
+| G4/D8 | A4 | A8 | Same package |
+| G2/D8 | A2 | A8 | Same package |
+| G1/D8 | A1 | A8 | Same package; qualified two-level quantizer |
+
+All listed FFN weights start binary. A widths describe projection inputs, not
+residuals, accumulation, scales, softmax, head or KV. Down precision search includes
+A8/A4/A2/A1, with an explicit G1/D1 candidate. Protected components remain declared;
+G1/D1 is not a whole-model one-bit claim. Start other precisions identically, then
+probe head/down reductions early and prioritize component adaptation by measured
+cost, damage, recoverable memory and implementation readiness. Fusion, attention
+and embedding weight precision join the finite queue; target precision never changes.
 
 Precision-stage features and decisions:
 
@@ -128,10 +137,13 @@ Precision-stage features and decisions:
   adaptation of each precision. A zero-training swap is diagnostic only. More
   elaborate curricula stay in Stage 3.
 
-Select precision, quantizer and protected-operation map together. Use equally
-trained A8 continuations, matched data and native full-request throughput. Retain
-one runner-up and revisit interactions when later features earn inclusion. Do not
-infer that A4 is faster merely from its nominal bit width.
+Select precision, quantizer and protected-operation map together. Use matched
+unchanged continuations and preserve training history. Retain the bounded
+multi-family frontier in PRECISION_SEARCH.md, separately from the deployment
+incumbent; a useful small candidate need not win throughput. Confirm final
+precision-attribution comparisons from the same frozen foundation and matched
+training policy/exposure. Revisit interactions when later features earn inclusion.
+Nominal activation width alone establishes neither smaller storage nor faster execution.
 
 ## Stage 2: incremental parameterization and conditioning experiments
 
@@ -202,9 +214,9 @@ Do not include these in the first precision/feature campaign:
   slicing or frozen-head factorization (I19).
 - Heuristic vocabulary shortlists (I16), tree/beam proposals, retries and suffix
   reuse (I17), and drafter KV quantization (I18).
-- W1A1 parallel drafting/tree/retry revisit: retained research lead, separate from
-  this W1Ax precision campaign; historical acceptance/latency recollections are
-  not a selected or validated modern configuration.
+- Parallel drafting, trees, retries and other proposal-system/architecture changes
+  remain deferred. W1A1 precision itself is now in Stage 1, including G1/D1.
+  Historical W1A1 acceptance/latency recollections do not validate modern DFlash.
 
 These can change the model or verification workload enough to require their own
 explicit research decision and matched baseline comparison.
