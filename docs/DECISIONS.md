@@ -1487,3 +1487,13 @@ latency does not by itself establish unchanged or improved total throughput.
 RTX5080 remains the primary hardware focus; NVFP4 is a target precision option,
 and DFlash Q4_K_M remains the selected modern drafter comparator. No new run,
 precision policy, tree implementation or final architecture selected here.
+
+## 2026-11-04: Binary quantization scope and external kernel leads
+
+User clarified binary quantization is central, not mandatory binary arithmetic;
+W1Ax versus W1A1 remains open. Broad quick web search identifies LUT-GEMM as an
+existing alternative to investigate and TCBNN/APNN-TC as older binary-matrix
+references. No verified ready-made5080 speed win found. Current CUTLASS binary
+wrappers excludeSM120; old5080 functional BMMA test needs machine-code audit
+before asserting native binary Tensor Core execution. No new experiment selected.
+Sources/limits: experiments/blackwell-binary-search-20261104/README.md.
