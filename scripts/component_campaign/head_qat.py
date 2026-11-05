@@ -85,6 +85,7 @@ def install(model,spec):
  model.register_buffer('head_coefficients',torch.from_numpy(coefficients))
  model.register_buffer('head_offset',torch.from_numpy(offsets) if offsets is not None else None)
  model.head_log_d=nn.Parameter(torch.from_numpy(np.log(np.maximum(d,1e-12))))
+ if spec.get('embedding'):model.embedding_cpu=torch.empty(0) # one trainable vocabulary grid; old CPU lookup buffer is unused
  return dict(recipe='R2-native-block-scale',component='head+embedding' if spec.get('tied') else 'head' if spec.get('head') else 'embedding',format=format,trainable_scalars=d.size,grouping=256,initial_zero_blocks=int((d==0).sum()),frozen_codes=True,extra_vocabulary_F32_master=False,head_scale_lr=1e-4)
 
 def optimizer(model):

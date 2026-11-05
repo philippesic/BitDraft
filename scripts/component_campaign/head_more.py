@@ -23,6 +23,15 @@ def main():
   if pin(path)['sha256']!=hashlib.sha256(t.data).hexdigest():raise ValueError('Q3 basis mismatch')
   save(R/'Q3-matrix-retention.json',dict(matrix=pin(path),recoverable_basis=pin(basis),offset=int(t.data_offset),bytes=t.data.nbytes));path.unlink()
  panel('H3-zero',model)
+ # These synthetic contexts are fixed diagnostics, separated from natural DEV quality.
+ arms=dict(target=None,q4=str(Q4),B0=str(R/'zero/H0.gguf'))
+ cache={}
+ for name in ('K8F','KF8','K88','K48','K84','K44'):
+  arms[name]=str(R/'zero'/(name+'.gguf'));cache[name]=json.load(open(R/'specs'/(name+'.json')))['kv']
+ save(R/'context-zero-arms.json',arms);save(R/'context-zero-cache.json',cache)
+ for length in (128,1536,3840):
+  output=R/('context-zero-'+str(length))
+  if not (output/'result.json').exists():run([sys.executable,'-m','scripts.component_campaign.native','--arms',R/'context-zero-arms.json','--draft-cache-map',R/'context-zero-cache.json','--runtime',R/'runtime03','--out',output,'--cohort','capture3','--stress-length',str(length),'--reps','1'])
  run([sys.executable,'-m','scripts.component_campaign.queue','H3','E4','HE4','K8F','KF8','K88','K48','K84','K44','Sscale','Smidpoint','Sgain','Sclip','Snorm','Sall'])
  print('ISOLATED_COMPONENTS_COMPLETE_COMBINATIONS_REQUIRED',flush=True)
 

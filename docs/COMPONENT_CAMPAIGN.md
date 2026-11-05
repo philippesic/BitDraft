@@ -180,3 +180,38 @@ frozen tensor slices. An actual trained native export roundtrip passed with
 complete original hash equality. This preserves changed block-scale bytes without
 storing another full vocabulary matrix. The fixture was safely removed after
 keeping `qualification/xor-roundtrip.json`.
+
+## H4 full window / automatic serial handoff —14:14Pacific
+
+H4 completed4096updates; dense DEV CE7.32178 versus equally trained H0
+7.05519, a+0.26658gap. Its readouts are0/256/1024/4096; no early elimination.
+Native readouts and final full recovery save are finishing before lane release.
+H0 short native counts are55/263,49/273,51/269,55/263 at the four readouts;
+these three64-token DEV requests are noisy diagnostics, not convergence or
+formal throughput claims. Native tensors changed persistently: H0 has16.12M,
+30.10M and55.41Msign-bit differences from B0 at256/1024/4096.
+
+Bounded successor supervisor is waiting for the owned head supervisor's terminal
+success and process-group disappearance before taking the GPU lane. Current
+worktree `runs/component-main-recovery-20261105-01`, tmux session same name,
+socket `binary-eagle-runtime`; exact process/birth/boot records are in its state
+and canonical `successor-owner.json`. It performs a real full-checkpoint storage
+qualification, then Q6 private-copy controls, finite Q3 probe, short/medium/
+near4096cache diagnostics, and all embedding/KV/scalar primary4096windows.
+The waiter launches no competing GPU process. On user pause, stop both owned
+supervisors as appropriate; successor has180sgrace, head supervisor90s.
+
+Storage pilot now includes an optional lossless tensor-aware delta container
+against the immutable paid B0 checkpoint. Its small exact nested-state/memfd
+recovery fixture passed, including matrices/scalars, missing-basis tensors,
+optimizer state, Torch/NumPy RNG and data cursor/order. The successor will require
+actual full CUDA-produced state recovery, complete tensor/metadata equality and
+byte-identical native re-export before writing `checkpoint-policy.json` or
+retiring the old NEW container. No adoption is inferred from this CPU fixture.
+
+After the first pair, future primary arms keep native0/256/1024/4096readouts,
+with full rolling states at1024and4096. The first pair already kept256states.
+This adjusts expensive I/O cadence without changing updates, examples, optimizer,
+RNG, objective or precision. Detailed DEV/export/archive/checkpoint costs are
+recorded separately. Final frontier retention remains two resumable states,
+with original paid B0 and all useful native evidence protected.

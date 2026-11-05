@@ -42,10 +42,12 @@ class StorageProjection(Projection):
  def stream(self,x):
   # Round the EXPORTED exp values, with STE to the F32 latent masters.
   gain=stored(self.log_gain.exp(),self.storage.get('gain',False))
+  if not bool((gain>0).all()):raise ValueError('positive gain storage underflow; range bridge required')
   x=x.float()*gain
   if not torch.isfinite(x).all():raise ValueError('nonfinite gained input')
   qmax=max(1,2**(self.bits-1)-1)
   bound=stored(self.log_clip.exp(),self.storage.get('clip',False))
+  if not bool((bound>0).all()):raise ValueError('positive clip storage underflow; range bridge required')
   clipped=torch.maximum(torch.minimum(x,bound),-bound);z=clipped*(qmax/bound)
   hard=torch.where(x>=0,1.,-1.) if self.bits==1 else z.round().clamp(-qmax,qmax)
   return z+(hard-z).detach(),bound/qmax

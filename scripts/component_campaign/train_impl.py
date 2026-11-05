@@ -9,8 +9,8 @@ from scripts.dflash_baseline.model import Model,Capture
 from scripts.dflash_baseline.prototype_model import install,optimizer
 from scripts.dflash_baseline.prototype import digest
 from scripts.dflash_baseline.pipeline import load_parameters,parameters,rng,update,restore_rng
-from scripts.dflash_baseline.checkpoint_io import load
-from .checkpoint import save_state
+from .tensor_checkpoint import load
+from .checkpoint import save_state as save_bsz
 from scripts.dflash_baseline.components import install_components
 from scripts.dflash_baseline.export_precision import export
 from .export import rewrite
@@ -27,7 +27,8 @@ def evaluation(m,captures):
  return dict(records=records,positions=sum(x['positions'] for x in records),ce=float(np.mean([x['ce'] for x in records])),agreement=sum(x['agree'] for x in records)/sum(x['positions'] for x in records),mean_rank=sum(x['rank_sum'] for x in records)/sum(x['positions'] for x in records),mean_margin=sum(x['margin_sum'] for x in records)/sum(x['positions'] for x in records))
 
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('spec',type=Path);ap.add_argument('--updates',type=int,default=4096);ap.add_argument('--resume',type=Path);ap.add_argument('--out-name');ap.add_argument('--pilot',action='store_true');a=ap.parse_args()
+ began=time.perf_counter()
+ ap=argparse.ArgumentParser();ap.add_argument('spec',type=Path);ap.add_argument('--updates',type=int,default=4096);ap.add_argument('--resume',type=Path);ap.add_argument('--out-name');ap.add_argument('--pilot',action='store_true');ap.add_argument('--checkpoint-points',type=int,nargs='*',default=[1024]);a=ap.parse_args()
  spec=json.load(open(a.spec));out=R/'arms'/(a.out_name or spec['name']);out.mkdir(parents=True,exist_ok=False)
  save(out/'spec.json',spec);save(out/'ownership.json',identity())
  torch.set_num_threads(2);torch.manual_seed(8101);random.seed(8101);np.random.seed(8101);torch.backends.cuda.matmul.allow_tf32=False
@@ -68,11 +69,13 @@ def main():
  readouts=[]
  def point(label):
   torch.cuda.synchronize();start=time.perf_counter();metrics=evaluation(m,dev)
+  dev_seconds=time.perf_counter()-start;export_start=time.perf_counter()
   state=dict(version=2,config=c,config_hash=digest(c),parameters=parameters(m),progress=copy.deepcopy(progress),lineage=lineage)
   base=out/f'base-{label}.gguf'
   export(None,base,state=state,checkpoint_pin=lineage['parent'])
   rewrite(base,out/f'model-{label}.gguf',spec,head_log_d=state['parameters'].get('head_log_d'));base.unlink();base.with_suffix('.json').unlink()
   model_path=out/f'model-{label}.gguf';model_pin=pin(model_path)
+  export_seconds=time.perf_counter()-export_start;archive_start=time.perf_counter()
   # One frozen native basis per vocabulary format; later points keep only lossless deltas.
   from .archive import archive
   family=spec.get('head') or spec.get('embedding') or 'shared'
@@ -81,19 +84,26 @@ def main():
    # Hard link prevents duplicate physical storage for the first basis point.
    basis.hardlink_to(model_path)
   elif not model_path.samefile(basis):archive(model_path,basis)
-  record=dict(update=progress['updates'],progress={k:v for k,v in progress.items() if k!='order'},dev=metrics,seconds=time.perf_counter()-start,peak_training_bytes=torch.cuda.max_memory_allocated(),model=model_pin)
+  record=dict(update=progress['updates'],progress={k:v for k,v in progress.items() if k!='order'},dev=metrics,seconds=time.perf_counter()-start,dev_seconds=dev_seconds,native_export_seconds=export_seconds,archive_seconds=time.perf_counter()-archive_start,peak_training_bytes=torch.cuda.max_memory_allocated(),model=model_pin)
   readouts.append(record);save(out/'readouts.json',readouts);print('READOUT',spec['name'],record['update'],metrics['ce'],metrics['agreement'],flush=True)
  def recoverable():
+  io_start=time.perf_counter()
   directory=Path('/mnt/c/binary-eagle-component-20261105-01');directory.mkdir(exist_ok=True)
   destination=directory/(spec['name']+f"-{progress['updates']}.pt")
-  existing=destination.with_suffix('.pt.bsz')
+  policy=json.load(open(R/'checkpoint-policy.json')) if (R/'checkpoint-policy.json').exists() else {}
+  delta=policy.get('format')=='tensor-delta-v1'
+  existing=destination.with_suffix('.pt.cpt' if delta else '.pt.bsz')
   if existing.exists() and (out/'recovery.json').exists():
    old=json.load(open(out/'recovery.json'))
    if old['archive']==str(existing) and pin(existing)['sha256']==old['archive_sha256']:return old
    raise ValueError('unexpected existing recovery state')
   state=dict(version=2,config=c,config_hash=digest(c),parameters=parameters(m),optimizer=opt.state_dict(),progress=copy.deepcopy(progress),rng=rng(),lineage=lineage,component_spec=spec,resume_capable=True)
   free=__import__('shutil').disk_usage(directory).free
-  if free<4_800_000_000:raise RuntimeError(f'insufficient rolling checkpoint space: need4.8GB free; observed{free}')
+  required=int(policy['observed_bytes']*1.05)+(512<<20) if delta else 4_800_000_000
+  if free<required:raise RuntimeError(f'insufficient rolling checkpoint space: need{required}bytes free; observed{free}')
+  if delta:
+   from .tensor_checkpoint import save_state
+  else:save_state=save_bsz
   receipt=save_state(destination,state);save(out/'recovery.json',receipt)
   # Only NEW campaign states participate in this declared rolling policy.
   # Atomically publish the replacement before retiring its predecessor.
@@ -105,6 +115,7 @@ def main():
     if old.parent!=directory or old.is_symlink() or pin(old)['sha256']!=previous['receipt']['archive_sha256']:raise ValueError('rolling predecessor changed')
     with (R/'rolling-retention.jsonl').open('a') as f:f.write(json.dumps(dict(retired=previous,replaced_by=receipt,policy='NEW campaign rolling state; immutable B0 and all native readouts preserved; final shortlist recovery states regenerated under same history and retained'))+'\n')
     old.unlink()
+  with (out/'recovery-cost.jsonl').open('a') as f:f.write(json.dumps(dict(update=progress['updates'],seconds=time.perf_counter()-io_start,receipt=receipt))+'\n')
   return receipt
  start_update=progress['updates']
  if not a.resume:point(0)
@@ -120,11 +131,11 @@ def main():
   with (out/'updates.jsonl').open('a') as f:f.write(json.dumps(dict(update=progress['updates'],loss=loss,gradient_norm=m.last_gradient_norm,seconds=elapsed,sequence=str(train[i].path),anchor=anchor))+'\n')
   if progress['updates'] in (256,1024,a.updates):
    point(progress['updates'])
-   if progress['updates']!=a.updates:recoverable()
+   if progress['updates']!=a.updates and progress['updates'] in a.checkpoint_points:recoverable()
   if progress['updates']%32==0:
    save(out/'live.json',dict(progress={k:v for k,v in progress.items() if k!='order'},last_loss=loss,seconds_per_update=float(np.median(times[-32:])),identity=identity()));print(spec['name'],progress['updates'],loss,flush=True)
  recovery=recoverable()
- save(out/'result.json',dict(status='INTERRUPTED' if stopped else 'COMPLETE',spec=spec,progress={k:v for k,v in progress.items() if k!='order'},updates_this_process=progress['updates']-start_update,unique_label_positions=len(unique_labels),unique_windows=len(windows),supervised_positions=progress['supervised_tokens'],median_update_seconds=float(np.median(times)) if times else None,peak_training_bytes=torch.cuda.max_memory_allocated(),recovery=recovery,readouts=readouts))
+ save(out/'result.json',dict(status='INTERRUPTED' if stopped else 'COMPLETE',spec=spec,progress={k:v for k,v in progress.items() if k!='order'},updates_this_process=progress['updates']-start_update,unique_label_positions=len(unique_labels),unique_windows=len(windows),supervised_positions=progress['supervised_tokens'],median_update_seconds=float(np.median(times)) if times else None,peak_training_bytes=torch.cuda.max_memory_allocated(),recovery=recovery,readouts=readouts,process_wall_seconds=time.perf_counter()-began,checkpoint_points=a.checkpoint_points,native_points=[0,256,1024,a.updates]))
  print('TRAINING_COMPLETE',spec['name'],progress['updates'],flush=True)
 
 if __name__=='__main__':

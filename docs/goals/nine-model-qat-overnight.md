@@ -2,8 +2,8 @@
 
 **Latest component checkpoint — November5:** the user authorized implementation,
 qualification, matched4096-update recovery and native component combinations.
-The sole implementation owner is running the supervised resource pilot from exact
-learned-small2048 B0; see [COMPONENT_CAMPAIGN](../COMPONENT_CAMPAIGN.md).
+The sole implementation owner completed the H0/H44096-update training windows
+and is evaluating their native readouts from exact learned-small2048 B0; see [COMPONENT_CAMPAIGN](../COMPONENT_CAMPAIGN.md).
 Prior planning-only limits below are historical and superseded for this campaign.
 No new goal, pushes, or target/verifier changes.
 
