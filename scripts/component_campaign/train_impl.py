@@ -95,7 +95,7 @@ def main():
  def recoverable():
   io_start=time.perf_counter()
   directory=Path('/mnt/c/binary-eagle-component-20261105-01');directory.mkdir(exist_ok=True)
-  destination=directory/(spec['name']+f"-{progress['updates']}.pt")
+  destination=directory/(out.name+f"-{progress['updates']}.pt")
   policy=json.load(open(R/'checkpoint-policy.json')) if (R/'checkpoint-policy.json').exists() else {}
   delta=policy.get('format')=='tensor-delta-v1'
   existing=destination.with_suffix('.pt.cpt' if delta else '.pt.bsz')
@@ -116,13 +116,16 @@ def main():
   # Only NEW campaign states participate in this declared rolling policy.
   # Atomically publish the replacement before retiring its predecessor.
   rolling=directory/'rolling.json';previous=json.load(open(rolling)) if rolling.exists() else None
-  save(rolling,dict(arm=spec['name'],update=progress['updates'],receipt=receipt))
+  save(rolling,dict(arm=out.name,update=progress['updates'],receipt=receipt))
   if previous:
    old=Path(previous['receipt']['archive'])
    if old!=Path(receipt['archive']):
     if old.parent!=directory or old.is_symlink() or pin(old)['sha256']!=previous['receipt']['archive_sha256']:raise ValueError('rolling predecessor changed')
-    with (R/'rolling-retention.jsonl').open('a') as f:f.write(json.dumps(dict(retired=previous,replaced_by=receipt,policy='NEW campaign rolling state; immutable B0 and all native readouts preserved; final shortlist recovery states regenerated under same history and retained'))+'\n')
-    old.unlink()
+    protected=json.load(open(directory/'frontier-retained.json')) if (directory/'frontier-retained.json').exists() else {}
+    keeping=str(old) in protected
+    if keeping and protected[str(old)]['archive_sha256']!=previous['receipt']['archive_sha256']:raise ValueError('retained frontier pin conflict')
+    with (R/'rolling-retention.jsonl').open('a') as f:f.write(json.dumps(dict(retired=None if keeping else previous,preserved_frontier=previous if keeping else None,replaced_by=receipt,policy='NEW campaign rolling state; immutable B0/all native readouts and authenticated retained frontier states preserved'))+'\n')
+    if not keeping:old.unlink()
   with (out/'recovery-cost.jsonl').open('a') as f:f.write(json.dumps(dict(update=progress['updates'],seconds=time.perf_counter()-io_start,receipt=receipt))+'\n')
   return receipt
  start_update=progress['updates']
