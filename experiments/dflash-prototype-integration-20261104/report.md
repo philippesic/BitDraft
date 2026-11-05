@@ -25,3 +25,24 @@ schedule is constant only; protected projection execution uses source-dequantize
 F32 linear and is not qualified against native BF16 input rounding. Dynamic STE
 has not been demonstrated gradient-equivalent to baseline. No native ready-to-run
 qualification command exists yet because required implementation is missing.
+
+## Follow-up arithmetic correction
+
+Recovered both prior commits into the assigned checkout. Dynamic quantization now
+uses detached integer forward codes and a dequantized identity surrogate, avoiding
+zero-row gradient loss and division by subnormal steps. Sign gradients use the
+original clipped hard_sign_ste. Seven CPU functions pass, including direct
+BlockBinaryLinear input/sign/scale gradients and AdamW updates for zero,
+subnormal and ordinary rows. Scale updates agree within F32 rounding tolerance;
+input and parameter gradients agree exactly in these fixtures.
+
+Installer now preserves prototype scales and enabled compensation on subsequent
+conversion and uses the baseline NativeBF16Linear for protected projections.
+An explicit authenticated adaptation entry records parent kind/config and resets
+optimizer state. This adaptation entry is not yet qualified on a real model;
+lineage persistence and shared-gain mismatch validation remain unfinished.
+
+No native build or GPU work occurred. The requested runnable pipeline remains
+incomplete: training runner, compact recoverable checkpoints, packed export/import,
+native runtime/build, and benchmark aggregation are still required. This is not
+an integration-ready handoff or evidence of native compatibility.

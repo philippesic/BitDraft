@@ -67,11 +67,7 @@ class Projection(nn.Module):
                 fallback=(x.double()/bound.double().clamp_min(torch.finfo(torch.float64).tiny)*qmax).float()
                 normalized=torch.where(overflow,fallback,normalized)
             hard=normalized.round().clamp(-qmax,qmax)
-            # Gradient follows dequantized identity, including zero rows.
-            step=bound/qmax
-            safe=torch.where(step>0,step,torch.ones_like(step))
-            codes=hard.detach()+(x-x.detach())/safe
-            return codes,step
+            return hard.detach(),bound/qmax
         bound=self.log_clip.exp() if self.quantizer['mode']=='learned' else x.new_tensor(self.quantizer['clip'])
         clipped=torch.maximum(torch.minimum(x,bound),-bound)
         z=clipped*(qmax/bound)
@@ -82,9 +78,17 @@ class Projection(nn.Module):
         self.scale.clamp_(min=0)
     def forward(self,x):
         codes,step=self.stream(x)
-        signs=self.latent_sign+(torch.where(self.latent_sign<0,-1.,1.)-self.latent_sign).detach()
-        # Integer dot then row scale then token scale preserves vanilla order.
-        return (F.linear(codes,signs)*self.scale.clamp_min(0))*step + (codes.sum(-1,keepdim=True)*step)*self.midpoint
+        from w1a1_eagle.recurrent_binary import hard_sign_ste
+        signs=hard_sign_ste(self.latent_sign)
+        scale=self.scale.clamp_min(0)
+        native=(F.linear(codes,signs)*scale)*step + (codes.sum(-1,keepdim=True)*step)*self.midpoint
+        values=codes*step
+        if self.quantizer['mode']=='dynamic':
+            raw=x.float()*self.log_gain.exp()
+            values=values.detach()+(raw-raw.detach())
+        surrogate=F.linear(values,signs)*scale+values.sum(-1,keepdim=True)*self.midpoint
+        return native.detach()+(surrogate-surrogate.detach())
+
 
 
 def native_admit(config):
