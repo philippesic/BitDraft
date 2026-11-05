@@ -1,0 +1,48 @@
+{
+  "schema": "dflash_w1a8_screening_reference_v1",
+  "status": "PREPARATION_AUTHORIZED_NOT_YET_STARTED",
+  "date": "2026-11-04",
+  "protocol": "docs/CANDIDATE_BENCHMARKING.md",
+  "authority": "User requested durable protocol plus a subagent to prepare the vanilla baseline and run its initial checkpoint.",
+  "budget_authority": "Coordinator-selected provisional initial duration; not a user-specified convergence horizon.",
+  "initial_training_update_seconds": 1800,
+  "checkpoint_update_seconds": [
+    0,
+    300,
+    900,
+    1800
+  ],
+  "target_lane": "Qwen3.5-4B-Q4_K_M / RTX5080",
+  "external_baseline_manifest": "experiments/w1a8-standing-20261102/baseline.json",
+  "external_baseline_row": "4B-Q4_K_M",
+  "proposed_recipe": {
+    "architecture": "Released compatible DFlash; inspect actual topology",
+    "binary_coverage": "FFN gate/up/down; exact tensor list pending inspection",
+    "activations": "A8 at binary projection inputs",
+    "scales": "one learned scale per output row",
+    "trainable": "binary signs, row scales, existing drafter norm gains",
+    "extras_disabled": [
+      "midpoints",
+      "input gains",
+      "group scales",
+      "learned clipping",
+      "rotations",
+      "correction branches",
+      "new losses",
+      "confidence heads"
+    ],
+    "objective": "original compatible DFlash token objective with original position weighting"
+  },
+  "resolved_recipe": null,
+  "zero_update": null,
+  "initial_checkpoints": [],
+  "working_incumbent": null,
+  "native_results": null,
+  "run_directory": null,
+  "owner": null,
+  "blockers": [],
+  "notes": [
+    "No trained modern W1A8 DFlash performance is implied by this planned registry.",
+    "Never overwrite the frozen external Q4 baseline or prior W1A8 reference after promotion."
+  ]
+}

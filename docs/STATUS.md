@@ -1,5 +1,22 @@
 # Current project status
 
+## Current work — vanilla DFlash W1A8 screening reference
+
+November4 user decision: use a frozen zero-update W1A8 reference, a frozen short
+checkpoint, matched no-feature continuations and a separately promoted incumbent.
+[Candidate protocol](CANDIDATE_BENCHMARKING.md) is the entry point;
+[baseline registry](../experiments/dflash-w1a8-baseline-20261104/manifest.json)
+will contain the actual benchmark/export/checkpoint pins. Preparation and initial
+training are authorized for one delegated worker. Coordinator proposes30minutes
+of measured update time, checkpoints at0/5/15/30minutes; no checkpoint exists yet.
+Initial lane: modern4B Q4_K_M target on5080. Keep DFlash Q4_K_M external baseline
+frozen. No feature sweep or long-QAT allocation. This continues the existing goal.
+
+The dated records below preserve historical evidence; earlier statements that
+architecture is undecided do not override this current DFlash/W1A8 preparation.
+
+## Historical design leads
+
 Near-term design lead: revisit W1A1 parallel proposals, retries and target-verified
 trees. User recalls old untrained EAGLE W1A1 at roughly half W1A8 acceptance and
 draft latency; exact historical comparison remains to be reverified. Recorded in

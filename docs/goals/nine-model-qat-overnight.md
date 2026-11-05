@@ -5924,3 +5924,17 @@ empty. Retained ~238MB of evidence/runtime; 191,508,480 more WSL free bytes obse
 after removing preliminary build/trace scratch. No Windows-space claim. Next:
 discuss architecture/activation precision with Tensor Core expansion as default
 and W1A1 XOR/popcount retained as a shape-specific option.
+
+
+## DFlash short baseline preparation — November 4, 2026
+
+Latest user authorizes recording the staged feature-screening protocol and a
+subagent to prepare vanilla W1A8 DFlash and run an initial checkpoint. This is a
+bounded new run within this unfinished goal, not a restart of the old nine-model
+campaign or a reduction of any healthy prior allocation. Current work is governed
+by [CANDIDATE_BENCHMARKING.md](../CANDIDATE_BENCHMARKING.md) and
+[registry](../../experiments/dflash-w1a8-baseline-20261104/manifest.json).
+Coordinator-selected initial budget:1800seconds actual update wall with
+zero/300/900/1800second snapshots, modern4B Q4_K_M target,5080. No initial
+checkpoint yet; delegation begins after protocol integration. Worker will own GPU
+qualification/capture/training/evaluation and record live handles and stop steps.

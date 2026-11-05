@@ -1513,3 +1513,20 @@ optimization. A1 here is an activation override on A8-trained DSpark weights,
 not a quality verdict on trained A1 or a re-test of the older untrained EAGLE
 half-latency lead. The user still owns W1Ax versus W1A1 and drafting architecture.
 Modern DFlash Q4_K_M primary-baseline settings remain unchanged.
+
+
+## DFlash staged candidate comparisons — November 4, 2026
+
+User approved preserving a zero-update vanilla W1A8 DFlash reference and a short
+trained parent, comparing single-feature branches against matched vanilla
+continuations, and promoting a separate working incumbent without replacing
+fixed references or the external DFlash Q4_K_M baseline. Sign-update and
+initialization variants also need zero-update comparisons. Short-run wins are
+provisional; short losses are not universal feature rejection.
+
+User requested an easy-to-find durable protocol plus a subagent to prepare the
+baseline and run its initial checkpoint. See [protocol](CANDIDATE_BENCHMARKING.md)
+and its baseline registry. Coordinator selects a provisional1800second update-time
+budget with0/300/900/1800second checkpoints; preparation/evaluation are accounted
+separately. First lane is modern4B Q4_K_M on5080. Necessary baseline adapters and
+qualification are within scope; no feature sweep or long-QAT allocation selected.
