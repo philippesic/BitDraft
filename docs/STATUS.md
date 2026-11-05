@@ -1,9 +1,9 @@
 # Current project status
 
-Current: user-authorized remaining-component implementation/recovery campaign is active.
-The sole GPU owner has authenticated learned-small2048 B0 and launched the supervised
-32-update resource/recovery pilot; broad4096 arms remain pending qualification.
-See [COMPONENT_CAMPAIGN](COMPONENT_CAMPAIGN.md) for live ownership and exact paths.
+Current: the remaining-component campaign is active. H0 completed4096matched
+updates; its saved states are in native evaluation, followed by H4. Native
+head/embedding, six draft-cache pairs and scalar-storage admission passed.
+The broader component/recovery/combination campaign remains unfinished.
 
 
 ## Active: remaining component precision and recovery

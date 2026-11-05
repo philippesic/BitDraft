@@ -150,3 +150,33 @@ pure update time at pilot speed; actual cost is tracked separately.
 Remaining: full head recovery, finite Q3 probe/conditional bridge/R2, embeddings,
 KV long-context/history qualification and recovery, scalar recovery, interactions,
 locked frontier confirmations and charts. Entire component campaign remains OPEN.
+
+## H0 full window —13:53Pacific
+
+The unchanged-precision continuation completed4096cumulative NEW updates, with
+0/256/1024/4096native exports and full rolling optimizer/RNG checkpoints.
+Consumed-DEV CE6.89435→6.67338→6.82900→7.05519; agreement
+11.11%→14.07%→14.81%→13.33%. More training did not monotonically improve DEV;
+this control, not only B0, is the comparator for precision recovery. No threshold
+shortening occurred. Actual-native short readouts are now running serially after
+trainer GPU release, followed by H4's full matched window.
+
+A source-freezing wrapper now copies each future arm's small Python execution
+closure before importing training code, runs that immutable copy, and archives
+the closure after terminal result. A CPU import gate passed. This prevents
+subsequent implementation edits from changing live long-arm imports or pins.
+The current H0 process was already loaded and remained healthy/unmodified.
+
+Prepared, not yet native/CUDA-qualified: R2 native vocabulary block-scale rescue.
+One existing half scale per256weights is trainable with identical capacity in
+privateQ6 and Q4/Q3 controls; codes/subscales stay frozen and native export writes
+those actual half scales. This avoids the extra7.63GB gradient/moment allocation
+that dense vocabulary-master Adam would add to the10.60GB R1 CUDA peak.
+Its independent CPU analytic-gradient fixture passed exactly; full-head CUDA,
+format export/resume and native readouts remain required before use.
+
+Tensor-slice archival now also supports lossless XOR payloads against matching
+frozen tensor slices. An actual trained native export roundtrip passed with
+complete original hash equality. This preserves changed block-scale bytes without
+storing another full vocabulary matrix. The fixture was safely removed after
+keeping `qualification/xor-roundtrip.json`.

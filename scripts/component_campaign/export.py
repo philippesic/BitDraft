@@ -7,7 +7,7 @@ from .quant import target_tensor
 from scripts.dflash_baseline.model import GGUFReader
 from gguf import GGUFWriter,GGMLQuantizationType as Type
 
-def rewrite(source,dest,spec):
+def rewrite(source,dest,spec,head_log_d=None):
  dest=Path(dest);tmp=dest.with_suffix('.partial.gguf');reader=GGUFReader(source)
  writer=GGUFWriter(tmp,'dflash')
  scalar=spec.get('scalar',{});audit={};total=0
@@ -35,6 +35,10 @@ def rewrite(source,dest,spec):
   else:
    from .quant import matrix_data
    value=matrix_data(format)
+  if spec.get('r2_vocab_scale') and (key=='head' or not spec.get('head')):
+   if head_log_d is None:raise ValueError('R2 export requires trained native block-scales')
+   from .head_qat import encoded_scales
+   value=encoded_scales(value,format,head_log_d)
   writer.add_tensor(name,value,raw_dtype=Type[format]);total+=value.nbytes
   audit[name]=dict(type=format,bytes=value.nbytes,exact_original_codes=format=='Q6_K')
  writer.write_header_to_file();writer.write_kv_data_to_file();writer.write_tensors_to_file();writer.close();tmp.rename(dest)

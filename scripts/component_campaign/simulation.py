@@ -91,11 +91,13 @@ class ComponentLayer(BlockLayer):
   return residual+self.ffn_down(F.silu(self.ffn_gate(norm))*self.ffn_up(norm)),noise
 
 class ComponentModel(Model):
+ def token_lookup(self,ids,device):return F.embedding(ids,self.embedding_cpu).to(device)
+ def project_logits(self,hidden):return F.linear(hidden,self.head)
  def forward(self,features,tokens,anchor,slots=16):
   device=self.head.device;self.config.block_size=slots
   positions=torch.arange(anchor,anchor+slots,device=device);context_positions=torch.arange(anchor,device=device)
   inp=torch.tensor([tokens[anchor]]+[self.mask]*(slots-1))
-  state=F.embedding(inp,self.embedding_cpu).to(device)
+  state=self.token_lookup(inp,device)
   encoded=_rms(self.fc(features[:anchor].to(device)),stored(self.output_norm_enc,self.scalar.get('norm',False)),1e-6)
   key_positions=torch.cat((context_positions,positions))
   for i,layer in enumerate(self.layers):
@@ -103,7 +105,7 @@ class ComponentModel(Model):
    allowed=torch.ones((slots,anchor+slots),dtype=torch.bool,device=device)
    if i<5:allowed&=(positions[:,None]-key_positions[None,:]).abs()<4096
    state,_=layer(state,context,positions,allowed)
-  return F.linear(_rms(state,stored(self.output_norm,self.scalar.get('norm',False)),1e-6),self.head)
+  return self.project_logits(_rms(state,stored(self.output_norm,self.scalar.get('norm',False)),1e-6))
 
 def install(model,spec):
  from .common import R
