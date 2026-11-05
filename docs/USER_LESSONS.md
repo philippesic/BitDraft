@@ -1213,3 +1213,14 @@ Q8 exception and missing9B DSpark comparison. Historical F16-target DSpark gains
 must not outweigh modern matched evidence without explaining the scope change.
 Source: experiments/qwen35-correctness-matrix-20261101/matrix.csv and
 experiments/w1a8-standing-20261102/report.md.
+
+## 2026-11-04: Teach neural-network foundations before the drafter architecture
+
+The first interactive DFlash walkthrough assumed familiarity with vectors,
+projections, attention and normalization. The user explained that it started
+above their current neural-network background and requested a left-to-right
+connected-node network before diagrams of feature fusion and heads. This was
+an assistant calibration error, not a user mistake. Start with numerical inputs,
+connections, weighted sums and activations; introduce one term after showing
+its operation, then connect those foundations to transformer components.
+Keep deeper details optional. Revised artifact: docs/learning/from-zero.html.
