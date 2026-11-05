@@ -3,7 +3,8 @@
 For current DFlash W1A8 candidate work, start with
 [docs/CANDIDATE_BENCHMARKING.md](docs/CANDIDATE_BENCHMARKING.md) and its linked
 baseline registry. Use [docs/CANDIDATE_STAGES.md](docs/CANDIDATE_STAGES.md) for
-the user-selected precision-first sequence and exact feature tiers. Keep fixed
+the user-selected essential-features-first sequence: common compensation
+package, then precision selection, then experimental feature tiers. Keep fixed
 references and the moving incumbent distinct.
 
 This is a bounded research project. Use `docs/PROJECT_OVERVIEW.md` for research

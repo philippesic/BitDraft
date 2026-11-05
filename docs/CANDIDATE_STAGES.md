@@ -1,136 +1,179 @@
-# DFlash candidate stages: precision first, then feature tiers
+# DFlash candidate stages: essential features, precision, then experiments
 
-## Current direction and authority
+## Direction and authority
 
-User decision, November 4, 2026: establish one useful binary-weight foundation,
-validate activation/mixed-precision setups on that common foundation, then work
-incrementally through tiers of additional features. Do not build a large feature
-bundle before selecting precision. The detailed tier ordering below is the
-coordinator's recommended experiment queue, not evidence that these features
-work or permission to launch every experiment automatically.
+User correction, November 4, 2026: build a strong common feature foundation
+FIRST, including high-impact compensation for binary weight quantization. Then
+compare precision setups on that foundation. Only afterward expand into more
+experimental feature tiers. “Essential” is the design scope selected for this
+foundation, not a claim that each feature has already shown a local speed win.
 
-**Current research phase: precision selection.** The delegated vanilla W1A8 run
-is its reference-building prerequisite (Stage 0), not a completed precision
-comparison. No A4 winner or final mixed-precision recipe has been established.
-Keep baseline training/supervision/evaluation delegated as the user requested;
-keep the main conversation available for architecture discussion. Preserve its
-existing run and budget. This document does not authorize new training budgets,
-feature sweeps, architecture changes, or a replacement active goal.
+The existing delegated vanilla W1A8 run is a **minimal control**, not the proposed
+essential-feature baseline. Preserve that run, its allocation and its frozen
+artifacts. Do not retrofit new features into it or relabel its results. A separate
+foundation candidate must be implemented, trained and evaluated before the
+precision comparison. This document records feature scope; it does not launch
+new GPU runs or grant new training allocations.
 
-Read [CANDIDATE_BENCHMARKING.md](CANDIDATE_BENCHMARKING.md) for comparison rules and
-[the baseline registry](../experiments/dflash-w1a8-baseline-20261104/manifest.json)
-for actual implementation/results. IDs below refer to the complete
-[feature inventory](../experiments/dflash-feature-survey-20261104/inventory.json).
-That inventory remains the evidence catalog; this file defines experiment order.
+Read [CANDIDATE_BENCHMARKING.md](CANDIDATE_BENCHMARKING.md) for matched comparisons,
+[the vanilla registry](../experiments/dflash-w1a8-baseline-20261104/manifest.json)
+for actual results, and the complete
+[feature inventory](../experiments/dflash-feature-survey-20261104/inventory.json)
+for evidence and Q/I identifiers. Current research phase: establish the essential
+feature baseline that will support precision selection. No precision winner yet.
 
-## Stage 0: common foundation and frozen references
+## Stage 0: essential-feature baseline, before precision selection
 
-Include these in the starting candidate, before comparing precision:
+### Included common model features
 
-- Released modern DFlash topology, existing feature fusion, target taps, shared
-  embedding/head and original within-block position-weighted token objective.
-  These are base-model components, not new features.
-- Trainable binary FFN signs and one learned nonnegative output-row scale per
-  binary matrix row (Q01). Initial coverage: all 18 gate/up/down matrices.
-- Train the existing drafter normalization gains (existing-gain portion of Q05).
-  No extra normalization layers or residual gains yet.
-- Matching native target-feature/label replay and correct masks, positions and
-  data splits (foundation portion of Q15).
-- Explicit latent-sign initialization, STE gradient rule, separate sign versus
-  scale/norm learning rates and a resumable optimizer (foundation Q16).
-  The current run uses latent weights with AdamW; direct sign flipping is a
-  later comparison, not an already implemented baseline optimizer.
-- A8 binary-matrix inputs with a fixed symmetric per-token absmax quantizer;
-  preserve fusion, attention, embedding/head and KV at the declared working
-  precisions (initial I01/I02). Record training simulation versus native execution.
+- **Trainable binary signs and learned output-row scales (Q01).** Initially all
+  18 DFlash FFN gate/up/down matrices; explicitly record any coverage exception.
+- **Learned binary midpoint per output row (Q04 center portion).** Use
+  `w = midpoint + row_scale * sign`, with zero midpoint as a reversible starting
+  point. This admits two unequal levels around zero. Its computation includes
+  a midpoint times the sum of the gained, quantized inputs; it is NOT an
+  ordinary output bias. Native/export and training arithmetic must implement
+  the same definition. A nonzero calibrated
+  midpoint initializer is a separate initialization test, not an unnoticed change.
+- **Learned positive input-channel gains (Q02)** in addition to output-row scales, as the
+  proposed common channel-compensation mechanism. Initialize gains to one and
+  apply them before the activation quantizer. Use one shared gain vector for
+  gate/up per layer and a separate down-input gain vector. This preserves the
+  possibility of shared gate/up activation quantization; it is an initial design
+  constraint, not a measured optimum. Declare the positivity/scale convention.
+  Qualify runtime cost; do not silently fold gains away if that changes binary
+  weights or quantization.
+- **Adapt the existing normalization gains (existing Q05)** without adding new
+  normalization layers or residual branches.
+- **Protected operations (I01):** preserve fusion, attention, shared embedding/
+  head and KV at declared working precision initially. These exceptions are an
+  explicit part of the foundation; W1 does not describe the entire model.
 
-Freeze the zero-update export and short-trained W1A8 checkpoint. Learned
-midpoints, input-channel gains, group scales, learned clipping, rotations,
-correction branches and new losses stay OFF in this reference. Do not restart
-its existing run to add them.
+For the combined affine binary projection, define:
 
-## Stage 1: activation precision and mixed precision
+`u = Q_A(g * x)`
 
-Use the same foundation above for every arm. Compare these first:
+`y_o = s_o * sum_j(b_oj * u_j) + m_o * sum_j(u_j)`
 
-| Arm | FFN gate/up input activations | FFN down input activations | Other operations |
+Here `Q_A` returns dequantized quantized activations, `g` is the positive input
+channel gain, `s_o` the nonnegative row scale, `b_oj` the binary sign and `m_o`
+the row midpoint. Both terms consume the SAME `u`; using raw input for the
+midpoint term is a different model. Include the shared input-sum computation
+in native cost. Midpoint zero and gain one recover the row-scaled reference.
+
+### Included training and evaluation essentials
+
+- Effective sign updates, explicit latent magnitude/initialization and STE,
+  separate sign/scale/midpoint/gain/norm learning rates, scale constraints and
+  complete optimizer/RNG/data-cursor resume (Q16). Measure persistent sign changes,
+  gradient health and validation quality. Do not equate many flips with learning.
+- Choose/qualify the sign-update mechanism here, before fixing the foundation:
+  latent-gradient updates versus a direct accumulated-gradient sign-flip rule
+  (Q24 optimizer portion). Current vanilla AdamW already changes signs; a Bop-like
+  rule is a candidate, not automatically necessary or already validated. Use a
+  bounded from-zero comparison if evidence warrants changing the optimizer.
+- Native target features/labels, correct masks/positions, representative TRAIN
+  coverage and retained DEV separation (foundation Q15). No mislabeled old taps.
+- Preserve the pinned, source-compatible DFlash objective, its supervision and
+  original position weighting; audit these rather than assuming every released
+  DFlash recipe uses the same targets. Original fusion,
+  taps, topology and shared head remain base components, not added features.
+- Data-aware scale initialization, baseline sign initialization and basic input
+  range/outlier diagnostics (basic I04/I20), without an initialization sweep.
+- Fix the extensible activation quantizer contract (I02/I03/Q06): signedness,
+  rounding, saturation, scale granularity, zero-point handling, STE and export
+  version. Qualify fixed A8 here. Stage 1 qualifies learned clipping/step size
+  (gradients, resume, export and native arithmetic) before precision selection.
+  Its implementation need not delay freezing the A8 foundation, and active
+  learned clipping is not mandatory in the A8 default.
+
+### Foundation acceptance and controls
+
+Freeze a separate essential-feature reference after bounded QAT and native
+qualification. Compare the bundle with the vanilla control and keep removal
+ablations for midpoint and input gains; they are controls on the chosen scope,
+not a reason to postpone all binary compensation until after precision selection.
+Qualification requires valid execution, healthy training and acceptable bounded
+resource cost; a noisy short pilot need not beat vanilla before this package can
+serve as the precision reference. If a feature demonstrably harms correctness,
+quality or native throughput, record a justified
+revision of foundation scope rather than silently dropping it.
+
+Midpoints and input gains are planned scope, not claims about implemented modern
+DFlash support. Avoid a large feature search here: qualify one concrete package,
+its update mechanism and its essential controls. Fix the package before comparing
+precision, except for explicitly coupled quantizer choices below.
+
+## Stage 1: precision setups on the common essential baseline
+
+| Arm | FFN gate/up input activations | FFN down input activations | Common features |
 | --- | --- | --- | --- |
-| P0 reference | A8 | A8 | Same protected precision as Stage 0 |
-| P1 mixed | A4 | A8 | Same as P0 |
-| P2 low activation precision | A4 | A4 | Same as P0 |
+| P0 | A8 | A8 | Stage 0 package |
+| P1 | A4 | A8 | Same package |
+| P2 | A4 | A4 | Same package |
 
-Weights remain binary on the same 18 FFN matrices in P0/P1/P2. A8/A4 label
-matrix inputs, not residual streams, attention softmax, accumulation, scales,
-KV, embeddings or the output head. Document each of those separately.
+A8/A4 describe matrix inputs, not residuals, accumulation, scales, softmax, head
+or KV. Keep binary coverage and other precisions identical in the initial trio.
 
-Include in this stage because they define or interact directly with precision:
+Precision-stage features and decisions:
 
-- Per-operation A8/A4 and activation-scale granularity (I02).
-- Fixed/calibrated clipping thresholds, symmetric/asymmetric code grids and
-  activation scaling (I03), with exact export/native arithmetic recorded.
-- Learned activation clipping or step size (Q06), as a separately identified
-  quantizer arm if plain A4 underperforms. Do not silently give only one precision
-  more training or extra features. Compare an unchanged control with each arm.
-- Sensitivity-guided protected operations (I01): first try restoring A8 to a
-  failing operation/layer in an A4 candidate. If that is insufficient, separately
-  test leaving that FFN projection at its original weight precision. This changes
-  W1 coverage and must be labeled explicitly; it is not the same W1A4 arm.
-- Fixed rotations/channel equalization (I06) or training-integrated transforms
-  (Q07) are conditional precision-rescue arms, not defaults. Try only when a
-  diagnosed outlier/quantization issue justifies their cost; do not fold them into
-  every candidate. Verify that any transform preserves the intended binary form.
+- Per-operation activation widths and activation-scale granularity (I02).
+- Fixed/calibrated clipping, scale and code-grid choices (I03).
+- Learned clipping/step sizes (Q06), evaluated as part of the precision/quantizer
+  combination, not withheld until after judging A4. Compare matched fixed/learned
+  controls as needed; do not confuse quantizer capability with proven superiority.
+- Sensitivity-guided A8 restoration for individual operations/layers (I01), and
+  only then separately labeled higher-precision weight exceptions if necessary.
+- Activation-precision adaptation/warmup schedule (basic Q18): allow matched QAT
+  adaptation of each precision. A zero-training swap is diagnostic only. More
+  elaborate curricula stay in Stage 3.
 
-Select **precision plus quantizer plus protected-operation map** together.
-Give each changed forward path matched short QAT adaptation and compare it with
-an equally trained A8 continuation. A no-training A8-to-A4 swap is a diagnostic,
-not a fair final rejection. Measure actual native request throughput as well as
-acceptance and draft latency; narrower activations do not guarantee a faster
-available kernel. Keep a runner-up, and treat the selection as provisional.
+Select precision, quantizer and protected-operation map together. Use equally
+trained A8 continuations, matched data and native full-request throughput. Retain
+one runner-up and revisit interactions when later features earn inclusion. Do not
+infer that A4 is faster merely from its nominal bit width.
 
-## Stage 2: low-cost parameterization additions
+## Stage 2: incremental parameterization and conditioning experiments
 
-Hold the provisional precision/quantizer map fixed. Test separately, in this
-suggested order; retain only demonstrated improvements:
+These are not required for the first common package:
 
-1. Learned input-channel gains alongside existing row scales (Q02).
-2. Learned binary midpoint/center per output row (Q04):
-   `w = midpoint + scale * sign`. Initialize midpoint to zero. A learned additive
-   projection bias is a separate Q04 arm, not equivalent to a binary midpoint.
-3. Finer within-row weight group scales (Q03), including explicit metadata and
-   execution cost. Fixed/calibrated group scales or affine corrections (relevant
-   I05 portions) are diagnostic controls for these learned variants.
-4. Extra normalization or learned residual-branch gains (remaining Q05), separate
-   from adaptation of the original norms already present in Stage 0.
+- Learned within-row weight group scales (Q03); fixed group scales/affine
+  calibration (relevant I05 portions) as controls. Row scales and row midpoints
+  already belong to Stage 0; finer granularity is the experiment.
+- Separate gate/up input gains (remaining Q02), relaxing the initial shared-gain
+  constraint, with the cost of separate quantization measured.
+- Ordinary additive projection bias (remaining Q04), distinct from a midpoint.
+- Extra normalization and learned residual-branch gains (remaining Q05).
+- Fixed rotations/channel equalization (I06) and training-integrated transforms
+  (Q07), with explicit binary-representation and native execution checks.
+- Advanced data-aware sign/center initialization or row-orientation rescue
+  (remaining I04), including from-zero comparisons.
 
-Do not launch all four as one bundle. After a clear winner, test its interaction
-with the retained precision runner-up before treating precision as permanently
-settled. This feedback check prevents the staged process from hiding interactions.
+Test additions separately against the unchanged foundation/precision incumbent,
+then combine supported winners. A diagnosed failure of the initial foundation
+can justify pulling a specific remedy forward, with evidence and an explicit
+scope revision; do not move whole speculative bundles into “essentials.”
 
-## Stage 3: optimization, supervision and training robustness
+## Stage 3: experimental training and supervision
 
-These change how the selected candidate learns, rather than adding large
-inference components. Use the feature incumbent and matched controls:
-
-- Latent-sign magnitude/initialization, STE variants and parameter-group learning
-  rates (remaining Q16); data-aware initialization/row-orientation rescue (I04).
-- Direct sign-flip optimizer, such as a Bop-style accumulated-gradient threshold
-  rule, versus the existing latent-weight optimizer (Q24 optimizer portion).
-  Measure flips, persistence and validation gains; flip count alone is not success.
+- Broader STE, sign-latent initialization and parameter-group LR sweeps (Q16),
+  beyond the healthy update mechanism fixed in Stage 0.
 - Oscillation damping, selective freezing and stability schedules (Q17).
-- A8-to-A4 or protected-to-binary precision/coverage curricula (Q18).
-- Target-distribution distillation (Q12), independently of the base hard-label
-  token objective.
-- Output/block reconstruction or intermediate-feature auxiliary losses (Q13).
-- Verification-aware, prefix-survival or expected-progress objectives (Q14),
-  independently of original DFlash position weighting already in Stage 0.
-- Replay balancing, native serving-state coverage, hard-prefix/margin retention
-  and candidate-dependent replay refresh (additional Q15 variants).
+- Extended precision/coverage curricula (remaining Q18).
+- Additional target-distribution distillation (Q12), beyond the source-compatible
+  supervision preserved in Stage 0. It is not presumed necessary for the initial
+  weight-compensation package; inadequate recovery may justify a specifically
+  documented earlier remedy.
+- Output/block reconstruction and intermediate-feature auxiliary losses (Q13).
+- Verification-aware, prefix-survival and expected-progress losses (Q14), beyond
+  original DFlash position weighting already included in Stage 0.
+- Hard-prefix/margin retention, candidate-dependent replay and advanced data
+  balancing (remaining Q15), beyond basic representative native replay.
+- Reduced-state optimizers (remaining Q24), with numerical and resume checks.
 
-Initialization, optimizer and curriculum comparisons also need from-zero arms:
-branching only from an adapted incumbent can conceal their initial-conversion
-behavior. These are not blockers to the initial precision screen unless updates
-are unhealthy. Reduced-state training optimizers (remaining Q24) must demonstrate
-that changed numerics do not invalidate the comparison.
+Optimizer/initialization/curriculum hypotheses need from-zero arms when a trained
+parent could conceal their effects. No local or literature result is presumed
+transferable to this binary DFlash merely because it helped another model.
 
 ## Stage 4: additional capacity and trained computation
 
@@ -183,8 +226,35 @@ Fixed transforms, clipping, corrections, shortlists and cache quantization can
 change outputs and must be evaluated. Some need matched QAT adaptation to assess
 fairly. Representation/execution optimizations require correctness checks.
 
-At every tier, branch a candidate and an unchanged continuation from the same
-parent with matched data/exposure and training budget. Promote a separate moving
+For continuation comparisons, branch a candidate and an unchanged continuation
+from the same parent with matched data/exposure and training budget. Optimizer,
+initialization and curriculum comparisons also permit matched from-zero arms,
+where starting from an adapted parent would conceal the hypothesis. Promote a separate moving
 incumbent only with native evidence. Preserve frozen zero/initial references and
 external DFlash Q4_K_M. No short-run result proves long-run convergence, and no
 stage assignment means a feature is already validated or selected for deployment.
+
+## Scope debate and agreement
+
+Root and an independent Astra agent debated this revision on November 4.
+The agreed package includes midpoint and gains BEFORE precision selection,
+with bounded removal controls and explicit scope revision if evidence warrants.
+The debate resolved four points:
+
+1. Input gains are included in the first candidate, not an unconditional promise
+   of deployment benefit. Shared gate/up and separate down gains are the concrete
+   starting choice; removal controls distinguish contribution from bundle effects.
+2. Midpoints consume the same gained, quantized stream as the signed dot product.
+3. Learned clipping belongs to precision selection. Root challenged requiring
+   its implementation before freezing an A8 foundation; Astra agreed that Stage 0
+   needs the extension contract/fixed-A8 qualification, and Stage 1 needs the
+   learned-quantizer implementation before selection. Unavailable implementation
+   leaves that arm untested; it does not show A4 is inferior.
+4. Group scales/rotations remain later conditioning experiments; additional
+   distillation remains later supervision work. Healthy sign updates are essential
+   now, but Bop itself is not mandatory. Neither agent claims empirical validation
+   from this design agreement.
+
+No remaining scope disagreement. Implementation/results must still be established
+by the benchmark protocol. This supersedes the earlier midpoint-after-precision
+roadmap, which misread the user's intended feature scope.

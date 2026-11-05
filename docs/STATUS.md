@@ -1,11 +1,13 @@
 # Current project status
 
-## Current work — precision selection and its W1A8 reference
+## Current direction: essential-feature foundation before precision selection
 
-User direction: validate precision on a common foundation, then incrementally
-add feature tiers. [Exact stage/feature queue](CANDIDATE_STAGES.md) is the agent
-entry point. The delegated W1A8 baseline run is the prerequisite; A4/mixed
-comparisons have not yet established a winner. This roadmap does not start sweeps.
+User correction: the common foundation includes signs, row scales, midpoints,
+input-channel gains and existing norm gains BEFORE comparing precision setups.
+Then add progressively experimental features. See the agreed
+[exact stage/feature scope](CANDIDATE_STAGES.md). The existing delegated vanilla
+run is a minimal control, not the expanded foundation. Preserve its run/budget;
+this scope revision launches no new sweep and chooses no precision winner.
 
 Root has launched the1800-second initial run after actual sign/scale updates,
 exact resume and native zero/updated correctness qualification. Ownership and

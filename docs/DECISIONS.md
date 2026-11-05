@@ -1541,3 +1541,18 @@ queue, not a claim of validation or permission to launch all runs. The delegated
 vanilla baseline remains its prerequisite and keeps its existing allocation.
 Learned clipping/step sizes belong with precision selection; later additions
 are tested with matched unchanged continuations and preserve frozen baselines.
+
+## 2026-11-04 correction: essential feature scope precedes precision
+
+The earlier precision-first entry and roadmap deferred midpoints/gains too late.
+The user clarified that the starting candidate should already contain essential,
+high-impact binary compensation. Root and Astra debated and agreed the revised
+[CANDIDATE_STAGES.md](CANDIDATE_STAGES.md): signs, row scales, row midpoints,
+positive shared gate/up plus separate down-input gains, existing norms and healthy
+training/native contracts; THEN precision/quantizer selection; THEN incremental
+experimental tiers. Fixed-A8 qualification precedes the foundation freeze;
+learned clipping/step implementation is required during precision selection,
+not as a blocker to the A8 reference. Group scales, rotations and additional
+distillation stay later. Design inclusion does not claim empirical benefit.
+Existing vanilla run remains a preserved control; no new training budget is
+authorized by the roadmap. See the scope-debate section for resolved objections.

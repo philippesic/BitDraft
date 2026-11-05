@@ -1,13 +1,16 @@
 # DFlash candidate training and benchmarking
 
-This is the entry point for the user-approved candidate-screening protocol
-(November 4, 2026). Start from plain DFlash with binary weights and activations
-above one bit. Prepare a vanilla W1A8 reference first, validate activation/mixed precision on
-that common foundation, then evaluate feature tiers through matched short
-training continuations. The exact stage/feature queue is in
-[CANDIDATE_STAGES.md](CANDIDATE_STAGES.md). Preserve a fixed baseline while
-promoting a separate working incumbent. This protocol supplements
-[EVALUATION.md](EVALUATION.md); it does not replace its correctness and data rules.
+This is the entry point for candidate comparisons. The user clarified on
+November 4 that the sequence is **essential-feature foundation first, precision
+selection second, experimental feature tiers afterward**. Exact scope is in
+[CANDIDATE_STAGES.md](CANDIDATE_STAGES.md): the proposed common foundation includes
+signs, row scales, row midpoints, input-channel gains and existing norm gains.
+
+The already-authorized vanilla W1A8 run below remains a minimal control. Its
+midpoint/gain exclusions apply to THAT frozen reference, not to the separate
+essential-feature candidate. Preserve the live delegated run and its budget;
+do not retrofit it or relabel it as the expanded foundation. Future training
+allocations remain separate. This protocol supplements [EVALUATION.md](EVALUATION.md).
 
 ## Reference registry
 

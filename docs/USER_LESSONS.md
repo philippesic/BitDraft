@@ -1244,3 +1244,14 @@ for baseline training with a subagent. The coordinator should have kept that
 ownership delegated while repairing the handoff, rather than taking over the
 long-running assignment. Preserve healthy training and transfer supervision
 and evaluation to a subagent; keep the main thread available for discussion.
+
+## 2026-11-04: Essential feature scope is not a minimal vanilla baseline
+
+The user proposed a useful common feature baseline, then precision comparisons,
+then increasingly experimental features. Root documented a minimal vanilla
+foundation and deferred midpoints/gains, contrary to the intended scope. The
+user explicitly corrected this. Distinguish the existing vanilla control from
+the planned essential-feature package. Include the selected major binary
+compensation mechanisms before precision selection; distinguish design inclusion
+from measured benefit. Astra debate resolved scope and quantizer scheduling;
+see docs/CANDIDATE_STAGES.md. This was the agent's interpretation error.
