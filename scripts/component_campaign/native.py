@@ -41,7 +41,7 @@ def cohort(name):
   if len(records)!=3:raise ValueError('capture DEV coverage changed')
   rows=[]
   for r in records:
-   m=auth(r['metadata']);rows.append(dict(id=r['name'],source=r['metadata'],payload=dict(prompt=m['input_tokens'][:m['prompt_tokens']],n_predict=256,temperature=0,seed=1234,cache_prompt=False,return_tokens=True)))
+   m=auth(r['metadata']);rows.append(dict(id=r['name'],domain=next(d for d in ('code','reasoning','prose') if d in r['name']),source=r['metadata'],payload=dict(prompt=m['input_tokens'][:m['prompt_tokens']],n_predict=256,temperature=0,seed=1234,cache_prompt=False,return_tokens=True)))
   return rows
  refs=json.load(open(P/'runs/data-cost-transfer-20261104-01/consumed-natural-inputs.json'));auth(refs['manifest']);marker=auth(refs['marker'])
  if not marker['evaluated']:raise ValueError('natural DEV consumption not authenticated')
@@ -68,6 +68,7 @@ def main():
  if a.limit:prompts=prompts[:a.limit]
  if a.output_cap:
   for x in prompts:x['payload']['n_predict']=min(x['payload']['n_predict'],a.output_cap)
+ save(a.out/'prompts.json',prompts)
  runtime_map=json.load(open(a.runtime_map)) if a.runtime_map else {}
  draft_cache_map=json.load(open(a.draft_cache_map)) if a.draft_cache_map else {}
  original_runtime=a.runtime
