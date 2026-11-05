@@ -48,7 +48,7 @@ def rewrite(source,dest,spec,head_log_d=None,deployment_exps=None):
    from .head_qat import encoded_scales
    value=encoded_scales(value,format,head_log_d,deployment_exps.get('vocabulary.block_scale'))
   writer.add_tensor(name,value,raw_dtype=Type[format]);total+=value.nbytes
-  audit[name]=dict(type=format,bytes=value.nbytes,exact_original_codes=format=='Q6_K')
+  audit[name]=dict(type=format,bytes=value.nbytes,exact_original_codes=format=='Q6_K' and not spec.get('r2_vocab_scale'),native_block_scale_trainable=bool(spec.get('r2_vocab_scale')))
  writer.write_header_to_file();writer.write_kv_data_to_file();writer.write_tensors_to_file();writer.close();tmp.rename(dest)
  save(dest.with_suffix('.component.json'),dict(model=pin(dest),base=pin(source),spec=spec,tensors=audit,tensor_bytes=total,tied_physical_allocation=bool(spec.get('tied')),target_head_unchanged=True,metadata_conversion='F16 tensor values converted to F32 graph operands; conversion workspace charged. Clip uses binary16 bits in UINT16 GGUF scalar with runtime04 when requested, otherwise rounded F32 metadata; native clip op_params remain F32.',gpu_exported_exp_values=sorted(deployment_exps)))
  return dest
