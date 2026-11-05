@@ -52,6 +52,18 @@ def campaign(root):
    require(cfg['parent']==registry['parent'] and cfg['data']==registry['data'],'matched ancestry failure '+name)
    archive=read(out/'checkpoint.pt.json');require(archive['lossless_verified'] and pin(archive['archive'])['sha256']==archive['archive_sha256'],'archive changed '+name)
    matched.append(dict(arm=name,updates=1024,supervised_positions=15360,cursor=progress['cursor'],checkpoint_archive=pin(archive['archive']),config=pin(out/'resolved.json')))
- return dict(status='CAMPAIGN_CHECKPOINT_AUDITED',panels=panels,physical_training_updates=physical_updates,physical_training_update_seconds=update_seconds,supervised_positions=15*physical_updates,training=training,matched=matched,scope='Qualification and research updates are itemized; preserved vanilla training is separate. No phase extrapolation or missing-measurement zeros.')
+ finalists=[]
+ if (root/'finalist-training-confirmation.json').exists():
+  from scripts.dflash_baseline.prototype import digest
+  plan=read(root/'finalist-training-plan.json');confirmation=read(root/'finalist-training-confirmation.json');foundation=read(root/'foundation/result.json')['progress']
+  require(confirmation['status']=='FOUR_MATCHED_2048_RECIPES_COMPLETE' and confirmation['plan']==pin(root/'finalist-training-plan.json'),'finalist lock changed')
+  require(len(confirmation['records'])==4 and set(confirmation['records'])==set(plan['arms']),'four-family confirmation coverage')
+  for name,record in confirmation['records'].items():
+   arm=plan['arms'][name];out=Path(arm['out']);cfg=read(out/'resolved.json');result=read(out/'result.json');progress=result['progress']
+   require(result['status']=='COMPLETE' and progress['updates']==2048 and progress['supervised_tokens']==30720 and progress['cursor']==foundation['cursor']+2048 and progress['order']==foundation['order'],'finalist matched exposure/order failure '+name)
+   require(digest(cfg)==arm['resolved_hash'] and cfg['parent']==plan['parent'] and cfg['data']==plan['data'],'finalist matched parent/config failure '+name)
+   for ref in (record['model'],record['checkpoint'],arm['config'],arm['resume']):require(pin(ref['path'])==ref,'finalist artifact changed '+ref['path'])
+   finalists.append(dict(arm=name,updates=2048,supervised_positions=30720,cursor=progress['cursor'],checkpoint=record['checkpoint'],model=record['model'],reuse=arm['reuse_exact_matching_2048']))
+ return dict(status='CAMPAIGN_CHECKPOINT_AUDITED',panels=panels,physical_training_updates=physical_updates,physical_training_update_seconds=update_seconds,supervised_positions=15*physical_updates,training=training,matched=matched,finalists=finalists,scope='Qualification and research updates are itemized; preserved vanilla training is separate. No phase extrapolation or missing-measurement zeros.')
 if __name__=='__main__':
  ap=argparse.ArgumentParser();ap.add_argument('root',type=Path);ap.add_argument('out',type=Path);a=ap.parse_args();result=campaign(a.root);save(a.out,result);print(json.dumps({k:result[k] for k in ('status','physical_training_updates','physical_training_update_seconds')},indent=2))
