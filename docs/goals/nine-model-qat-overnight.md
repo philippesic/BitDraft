@@ -1,5 +1,13 @@
 # Nine-model RTX5080 overnight QAT
 
+**Latest component checkpoint — November5:** the user authorized implementation,
+qualification, matched4096-update recovery and native component combinations.
+The sole implementation owner is running the supervised resource pilot from exact
+learned-small2048 B0; see [COMPONENT_CAMPAIGN](../COMPONENT_CAMPAIGN.md).
+Prior planning-only limits below are historical and superseded for this campaign.
+No new goal, pushes, or target/verifier changes.
+
+
 **Latest checkpoint — November 5:** the modern 4B/Q4 precision campaign and
 bounded clipping control are complete: 258 measured records, 10,580 exact formal
 responses, full native comparison charts and reports. Q4 retains the throughput

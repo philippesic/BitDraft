@@ -1,5 +1,11 @@
 # Current project status
 
+Current: user-authorized remaining-component implementation/recovery campaign is active.
+The sole GPU owner has authenticated learned-small2048 B0 and launched the supervised
+32-update resource/recovery pilot; broad4096 arms remain pending qualification.
+See [COMPONENT_CAMPAIGN](COMPONENT_CAMPAIGN.md) for live ownership and exact paths.
+
+
 ## Active: remaining component precision and recovery
 
 User now authorizes executing the remaining head/embedding/drafter-KV/scalar

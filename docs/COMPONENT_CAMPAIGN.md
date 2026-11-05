@@ -68,3 +68,38 @@ The operational worker owns subsequent checkpoints here, manifest/report and
 STATUS/active-goal updates. Keep large outputs/raw logs out of Git, commit coherent
 source/evidence progress, clean safe owned scratch/processes at handback and
 preserve healthy active training if the user asks a question during work.
+
+## Implementation owner checkpoint — November5,13:20Pacific
+
+Implementation runs in the supplied T3 worktree, without delegates or pushes.
+Fresh RTX5080 check: idle1352MiB/0%, no project process; pause clear.
+Canonical artifacts: `/home/philip/binary-eagle-decoding/runs/component-campaign-20261105-01`.
+Full B0 archive authenticated against the inference sidecar: exact learned-small2048
+parameters/Adam/RNG/order,5,100,543,059raw bytes and4,207,188,154archive bytes.
+All prior artifacts remain protected.
+
+The new model-only runtime overlay reuses the immutable optimized CUDA library,
+adds private/tied embedding admission and F16 metadata conversion to F32 graph
+operands. Q4_K uses the pinned GGML native quantizer from targetQ6_K, notQ4_0.
+Preparation completed; native admission and full-model arithmetic remain to test.
+Draft-cache source audit finds implicit Hadamard rotations:K128,V64, followed by
+32-value blocks, native scale-half rounding and read dequantization. Simulation
+implements these semantics, pending native fixture/history qualification.
+
+Live pilot: local tmux socket `binary-eagle-runtime`, session
+`component-pilot-20261105-01`; supervisor record and stdout under the CURRENT
+WORKTREE `runs/component-pilot-20261105-01/`, not the canonical artifacts directory.
+Exact supervisor/group birth identities are in `state.json` and arm ownership.
+Stop the authenticated supervisor withSIGTERM, allow90seconds for recovery save,
+then verify its group and GPU release; never stop unrelated processes.
+Pilot is32updates, NOT the primary4096allocation; full checkpoint and exact
+resume/native gates precede the broad queue.
+
+Resource policy: recover B0 into owned RAM-backed scratch, stream NEW full
+checkpoints without a raw disk duplicate, keep bounded rolling NEW recovery
+states and selected frontier resumability, archive native exports against shared
+component bases. Windows campaign checkpoint destination is
+`/mnt/c/binary-eagle-component-20261105-01`. Report real device/tensor/cache bytes
+separately from archival compression. Training exposure repeats the24original
+TRAIN sequences unless compatible broader captures are explicitly admitted;
+overlapping windows never count as fresh labels. Budget remains pilot-defined.
