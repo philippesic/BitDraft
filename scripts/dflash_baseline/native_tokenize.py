@@ -7,9 +7,9 @@ P=Path('/home/philip/binary-eagle-decoding');R=P/'runs/precision-campaign-202611
 def build():
  if not (R/'confirmation-dev12/result.json').exists():raise ValueError('respect formal timing quiet window')
  OUT.mkdir(exist_ok=False)
- source=ROOT/'scripts/dflash_baseline/tokenize.cpp';binary=OUT/'tokenize';argv=['c++','-std=c++17','-O2',str(source),'-I'+str(base/'include'),'-I'+str(runtime/'ggml/include'),'-I'+str(base/'ggml/include'),'-I'+str(base/'vendor'),'-L'+str(runtime/'bin'),'-Wl,-rpath,'+str(runtime/'bin'),'-Wl,-rpath-link,'+str(runtime/'bin'),'-l:libllama.so.0.8.0','-o',str(binary)]
+ source=ROOT/'scripts/dflash_baseline/tokenize.cpp';binary=OUT/'tokenize';argv=['c++','-std=c++17','-O2',str(source),'-I'+str(base/'include'),'-I'+str(base/'ggml/include'),'-I'+str(base/'vendor'),'-L'+str(runtime/'bin'),'-Wl,-rpath,'+str(runtime/'bin'),'-Wl,-rpath-link,'+str(runtime/'bin'),'-l:libllama.so.0.8.0','-o',str(binary)]
  subprocess.run(argv,check=True,timeout=120)
- save(OUT/'build.json',dict(command=argv,source=pin(source),binary=pin(binary),headers=dict(llama=pin(base/'include/llama.h'),ggml=pin(runtime/'ggml/include/ggml.h'),json=pin(base/'vendor/nlohmann/json.hpp')),libraries={p.name:pin(p) for p in (runtime/'bin').glob('*.so*') if p.is_file()},compiler=subprocess.check_output(['c++','--version'],text=True),scope='Vocabulary only; same libllama/target as measured HTTP; no runtime replacement or model generation.'))
+ save(OUT/'build.json',dict(command=argv,source=pin(source),binary=pin(binary),headers=dict(llama=pin(base/'include/llama.h'),ggml=pin(base/'ggml/include/ggml.h'),json=pin(base/'vendor/nlohmann/json.hpp')),libraries={p.name:pin(p) for p in (runtime/'bin').glob('*.so*') if p.is_file()},compiler=subprocess.check_output(['c++','--version'],text=True),scope='Vocabulary only; same libllama/target as measured HTTP; no runtime replacement or model generation.'))
 class Tokenizer:
  def __init__(self,out):self.out=Path(out)
  def readline(self,timeout):

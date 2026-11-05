@@ -7,8 +7,8 @@ P=Path('/home/philip/binary-eagle-decoding');R=P/'runs/precision-campaign-202611
 def main():
  if not (R/'confirmation-dev12/result.json').exists():raise ValueError('respect formal measurement quiet window')
  pause();out=R/'slot16-qualification';out.mkdir(exist_ok=False);binary=out/'op-check';source=ROOT/'scripts/dflash_baseline/precision_op_check.cpp'
- command=['c++','-std=c++17','-O2','-ffp-contract=off',str(source),'-I'+str(runtime/'ggml/include'),'-I'+str(base/'ggml/include'),'-L'+str(runtime/'bin'),'-Wl,-rpath,'+str(runtime/'bin'),'-Wl,-rpath-link,'+str(runtime/'bin'),'-l:libggml.so.0.28.0','-l:libggml-base.so.0.28.0','-l:libggml-cuda.so.0.28.0','-l:libggml-cpu.so.0.28.0','-o',str(binary)]
- subprocess.run(command,check=True,timeout=120);save(out/'build.json',dict(command=command,source=pin(source),binary=pin(binary),header=pin(runtime/'ggml/include/ggml.h'),runtime=pin(runtime/'build.json'),compiler=subprocess.check_output(['c++','--version'],text=True),scope='Additional operation-only test binary; production runtime and all measured models unchanged.'))
+ command=['c++','-std=c++17','-O2','-ffp-contract=off',str(source),'-I'+str(base/'ggml/include'),'-L'+str(runtime/'bin'),'-Wl,-rpath,'+str(runtime/'bin'),'-Wl,-rpath-link,'+str(runtime/'bin'),'-l:libggml.so.0.28.0','-l:libggml-base.so.0.28.0','-l:libggml-cuda.so.0.28.0','-l:libggml-cpu.so.0.28.0','-o',str(binary)]
+ subprocess.run(command,check=True,timeout=120);save(out/'build.json',dict(command=command,source=pin(source),binary=pin(binary),header=pin(base/'ggml/include/ggml.h'),runtime=pin(runtime/'build.json'),compiler=subprocess.check_output(['c++','--version'],text=True),scope='Additional operation-only test binary; production runtime and all measured models unchanged.'))
  pause()
  with (out/'ops.jsonl').open('w') as stdout,(out/'stderr.log').open('w') as stderr:subprocess.run([str(binary),str(out/'library-maps.txt'),'fused','16'],env=dict(os.environ,LD_LIBRARY_PATH=str(runtime/'bin')),stdout=stdout,stderr=stderr,check=True,timeout=300)
  rows=[json.loads(x) for x in (out/'ops.jsonl').read_text().splitlines() if x.lstrip().startswith('{')];cases=[x for x in rows if 'N' in x]
