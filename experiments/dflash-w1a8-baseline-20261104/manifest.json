@@ -34,11 +34,166 @@
     "objective": "original compatible DFlash token objective with original position weighting"
   },
   "resolved_recipe": null,
-  "zero_update": null,
+  "zero_update": {
+    "status": "PACKED_SERIALIZATION_VERIFIED_NATIVE_UNQUALIFIED",
+    "source_sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521",
+    "output_sha256": "8e6ee641dede3ee9265f73ebb5b4d49b37ce54a3e2ee8d6830edec7a03871bd4",
+    "output": "/home/philip/binary-eagle-decoding/runs/dflash-modern-20261104-02/zero.gguf",
+    "projections": {
+      "blk.0.ffn_down": {
+        "packed_sha256": "8716b559ad4605b65c253779b89bab967f021773e2a007372a9db374306207eb",
+        "scale_sha256": "22561629b3f1db9c2c4fb8c156b65ef61d8242588e28c4ab2927950d931b81b7",
+        "shape": [
+          2560,
+          9216
+        ]
+      },
+      "blk.0.ffn_gate": {
+        "packed_sha256": "4335e79235c9369e932d66b6de33e667d64ec2f120348368181e551abf957680",
+        "scale_sha256": "7a8181b2c5baaa47893894ff49a2351d07fb5efd1d1368cae4c8a5e440c6e901",
+        "shape": [
+          9216,
+          2560
+        ]
+      },
+      "blk.0.ffn_up": {
+        "packed_sha256": "acce7e966c9f7354ad64546d52635bf384e8b332f246152a98ca644f1d1a4719",
+        "scale_sha256": "5219025fc7f486be90138d7fb6aca0d141f2185caafccd4486fca88f11d45e53",
+        "shape": [
+          9216,
+          2560
+        ]
+      },
+      "blk.1.ffn_down": {
+        "packed_sha256": "351098e25912dc962b1f58088fc699c5da0e92bbc1b315dff1e9b0f45dad0ef9",
+        "scale_sha256": "0adae0637382993cb72976400f3346f36538e1dc32a33d2a0aa0f8af179743a0",
+        "shape": [
+          2560,
+          9216
+        ]
+      },
+      "blk.1.ffn_gate": {
+        "packed_sha256": "aef2afdd755f89412886742f728208ef8084da59fa111bddf94fc48f948a6286",
+        "scale_sha256": "518d3ed6a5bdfca5951445045665194834b0ddd0084e36df0b37d851f935770e",
+        "shape": [
+          9216,
+          2560
+        ]
+      },
+      "blk.1.ffn_up": {
+        "packed_sha256": "abc1195b37f0412b4d4759d10d76322ddd7109d4a0f43e22015842756eeda488",
+        "scale_sha256": "3225f45cdd20d960cf34324454693c6fa1630348ebf975d28c44beacf2095ec7",
+        "shape": [
+          9216,
+          2560
+        ]
+      },
+      "blk.2.ffn_down": {
+        "packed_sha256": "9d75fe9a6e52bf260ef8c14ee36eb4398ba61b963d88af33b858da4cfd69ede2",
+        "scale_sha256": "ada362f589a36a588d05a2b3ff7d9d10c073df4814ce68708e5fd3e31d5f3420",
+        "shape": [
+          2560,
+          9216
+        ]
+      },
+      "blk.2.ffn_gate": {
+        "packed_sha256": "458b2956cdbab1798585d5058ba74fb2da377e24344d79cc5fb70a53e4561dde",
+        "scale_sha256": "9ca50e57972c18925cb8d0aba5e75e12a2a8e7aff0dbe0392a15c00e0e6ff260",
+        "shape": [
+          9216,
+          2560
+        ]
+      },
+      "blk.2.ffn_up": {
+        "packed_sha256": "b491f17261dcb183f5ec0b379d77999a08320b4abc190ce602f909eac272c26a",
+        "scale_sha256": "44c5d0a98975b34f29b8cf640d385e3137e0ca8077461ca360efb20ce686fa39",
+        "shape": [
+          9216,
+          2560
+        ]
+      },
+      "blk.3.ffn_down": {
+        "packed_sha256": "8fc1a536924da845dfc892642addc4c813707c8f07b8778fda13b8b52503b10c",
+        "scale_sha256": "147ff06227a5d6a5f7295d6d6bd461c3cc0fef914f6d979e1fdc6eca2cd7a48c",
+        "shape": [
+          2560,
+          9216
+        ]
+      },
+      "blk.3.ffn_gate": {
+        "packed_sha256": "04594ab53641c095ee049b1c4365d214a453a248baaec8b997bf9b7ac35a2a4f",
+        "scale_sha256": "d0dd34e644bd42a72c050674ba18cf5cda92e5d9fa619d35895f92f44ca8a287",
+        "shape": [
+          9216,
+          2560
+        ]
+      },
+      "blk.3.ffn_up": {
+        "packed_sha256": "7f0d33cd9660c9d13e612d28cd03c8ccfcc212e801c7dda683513c3bcf3142c0",
+        "scale_sha256": "6b6b0bac7dadab69dcdc21953d0f48e24669d363ad94e6b1d85f6a98e66e6112",
+        "shape": [
+          9216,
+          2560
+        ]
+      },
+      "blk.4.ffn_down": {
+        "packed_sha256": "c919e425c85980f5e3f8e6a292bba76a18d45d2df89faa46c4f68659182cd634",
+        "scale_sha256": "f6224172e22533d823be17fc8b32bc310cac5a081241bdf5c9be92cb70b6523b",
+        "shape": [
+          2560,
+          9216
+        ]
+      },
+      "blk.4.ffn_gate": {
+        "packed_sha256": "81e72bdbdc945d71e7361d7ecc198d48f3d2e3408654412a431d89904f32cc0c",
+        "scale_sha256": "4345ca552cb6f053ee5b550dd35ca6c4d15be7a3f64e30e31daf77ca215769d2",
+        "shape": [
+          9216,
+          2560
+        ]
+      },
+      "blk.4.ffn_up": {
+        "packed_sha256": "1c779d36b745d3d6fb544eadc6aebbe486f4801553248fcb3424870969a6c2cd",
+        "scale_sha256": "19f3be691a5f5b0eac8b82932e1d5296d7526751f5f016c630da1bb30bf5832b",
+        "shape": [
+          9216,
+          2560
+        ]
+      },
+      "blk.5.ffn_down": {
+        "packed_sha256": "84228aaeaf560bd5de5df6d4c006dc1518bd3d137edf9dfe7e11820d830fdb72",
+        "scale_sha256": "e77599340710dc9460a6ebf6568ad9bcc5ce68a5dcf632d7d53a9e7638b8f538",
+        "shape": [
+          2560,
+          9216
+        ]
+      },
+      "blk.5.ffn_gate": {
+        "packed_sha256": "9c2c2766701e903819a0f44d4b5b461e871630222d76544e1f2120cbe94aa95e",
+        "scale_sha256": "0191c0306e1992ef4cf244a7fa2b3c212e11cdf55ed8ddbe820583e73074804e",
+        "shape": [
+          9216,
+          2560
+        ]
+      },
+      "blk.5.ffn_up": {
+        "packed_sha256": "09632841b27e0d4753f887534289918678751a685afc9a9cb7b1b654145641ed",
+        "scale_sha256": "d8081827bafe6968507ad1b6bcb29147a5fc67af357d4fa5cb8000ebd1c8d301",
+        "shape": [
+          9216,
+          2560
+        ]
+      }
+    },
+    "updates": 0,
+    "native_admission": false,
+    "preserved_precision": "original BF16 matrices/F32 norms; shared target head and embedding",
+    "latent_initialization": "original BF16 values decoded to F32; sign >=0 positive; row mean absolute scales"
+  },
   "initial_checkpoints": [],
   "working_incumbent": null,
   "native_results": null,
-  "run_directory": null,
+  "run_directory": "/home/philip/binary-eagle-decoding/runs/dflash-modern-20261104-02",
   "owner": "assigned implementation worker",
   "blockers": [
     "Existing BlockQATConfig and load_block_gguf enforce five layers, seven slots and five historical taps; actual modern source has six layers, sixteen slots, eight taps and sliding-window attention. Modern training/capture/export adapters are not implemented or qualified.",

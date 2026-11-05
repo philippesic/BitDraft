@@ -31,3 +31,17 @@ not resolve these engineering dependencies or claim a finished baseline.
 
 No runtime changes, gitlink changes, push, shared-file edits or owned background
 processes. GPU ownership is released. Frozen external baseline remains unchanged.
+
+## Packed zero-update serialization produced
+
+Implementation now includes `scripts/dflash_baseline/export_zero.py`. Actual
+462MiB artifact and audit: `/home/philip/binary-eagle-decoding/runs/dflash-modern-20261104-02/{zero.gguf,zero-audit.json}`.
+All18 FFN matrices use nonnegative-is-positive packed signs and F32 row mean
+absolute scales; original BF16 attention/fusion and F32 norms remain byte-identical.
+Packed signs/scales pass byte-hash roundtrip. Shared head/embedding remain external.
+Native admission is **not qualified**; no throughput or correctness claim.
+Author graph downloaded from https://raw.githubusercontent.com/z-lab/dflash/main/dflash/model.py
+into the run source directory; this moving-source download is not yet a qualified
+training-source pin. No training/capture/evaluation performed;1800seconds unspent.
+No GPU process launched. Training/resume, modern capture, native adapters and
+matched evaluation still require implementation. This is partial work, not completion.

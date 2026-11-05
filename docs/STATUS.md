@@ -485,3 +485,17 @@ has6layers/8taps/18FFN and16slots with sliding-window attention; historical
 training/export/native guards cannot admit it. See
 [implementation checkpoint](../experiments/dflash-w1a8-baseline-20261104/README.md). No owned job is live;
 GPU released. Full1800second update allocation remains unspent.
+
+## Packed zero-update serialization produced
+
+Implementation now includes `scripts/dflash_baseline/export_zero.py`. Actual
+462MiB artifact and audit: `/home/philip/binary-eagle-decoding/runs/dflash-modern-20261104-02/{zero.gguf,zero-audit.json}`.
+All18 FFN matrices use nonnegative-is-positive packed signs and F32 row mean
+absolute scales; original BF16 attention/fusion and F32 norms remain byte-identical.
+Packed signs/scales pass byte-hash roundtrip. Shared head/embedding remain external.
+Native admission is **not qualified**; no throughput or correctness claim.
+Author graph downloaded from https://raw.githubusercontent.com/z-lab/dflash/main/dflash/model.py
+into the run source directory; this moving-source download is not yet a qualified
+training-source pin. No training/capture/evaluation performed;1800seconds unspent.
+No GPU process launched. Training/resume, modern capture, native adapters and
+matched evaluation still require implementation. This is partial work, not completion.
