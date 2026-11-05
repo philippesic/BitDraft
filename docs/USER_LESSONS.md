@@ -1267,3 +1267,22 @@ user error occurred. Preserve the measured diagnostic series with this scope
 limitation, and use two excluded requests within each live server cell for
 formal confirmation. Check lifecycle and actual evidence before inheriting
 completion or protocol claims from a prior worker's script.
+
+
+### 2026-11-05: Distinguish logical precision, kernel path and recipe latency
+
+- Context: After the precision campaign, the user asked why latency was poor and
+  why A4 appeared faster than A1/A2. Earlier discussion had favored the historical
+  DSpark Tensor Core path; the modern DFlash campaign used ordinary CUDA-core
+  DP4A. Root reported the implementation but did not foreground that distinction.
+- Evidence: The runtime04 w1ax_integer_dot uses __dp4a with register sign expansion.
+  Matched dynamic G8/G4/G2/G1, all D8 and 1,024 updates on confirmation-dev12,
+  have full host draft spans 2.862/2.895/2.893/2.889 ms per round. The compact A4
+  finalist also changes range policy and fusion/attention weights. Full-request
+  throughput additionally depends on accepted prefix length and target rounds.
+- Status: Confirmed agent communication gap; no user error. No kernel-level
+  profile yet apportions modern packing versus dot/attention/head costs.
+- Practical lesson: Present matched bit-width comparisons separately from recipe
+  winners, identify DP4A versus Tensor Core execution explicitly, and distinguish
+  draft-round latency from time per emitted token. Do not attribute the gap to
+  packing or promise Tensor Core recovery without measuring the current shapes.
