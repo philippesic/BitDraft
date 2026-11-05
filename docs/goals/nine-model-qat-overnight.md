@@ -5969,3 +5969,17 @@ CPU library builds and frozen zero.gguf loads successfully. Native CUDA executio
 and correctness are not qualified. No captures or training updates performed;
 all1800 update seconds remain. No GPU jobs launched. Next: qualify shared-target
 CUDA decoder and semantic rejection cases, then implement captures/QAT/resume.
+
+## Root continuation: modern native execution and captures
+
+Root owns the5080 lane after three partial worker returns. Isolated source
+checkout: /home/philip/.codex/worktrees/dflash-baseline-completion.
+Modern matched runtime relink lives in runs/dflash-modern-native-20261104-03;
+it preserves existing modern target/verifier and adds packed DFlash FFNs.
+A32-token TRAIN smoke matched target-only/Q4/W1 outputs; not throughput evidence.
+All24 existing fit sequences and3 consumed DEV sequences were recaptured with
+eight taps under runs/dflash-modern-capture-20261104-04/data. Existing overlapping
+target labels matched. Capture supervisor05 exited0. Native graph replay06
+is now supervised by scripts/remote_job.py in local tmux binary-eagle-runtime.
+State/identities and stop target are in runs/dflash-modern-replay-20261104-06/state.json;
+authenticate identity before TERM of its supervisor. No training updates yet.
