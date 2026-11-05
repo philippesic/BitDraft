@@ -1575,3 +1575,13 @@ This supersedes the earlier A8/A4-only Stage 1 and deferral of W1A1 precision;
 W1A1 trees/retries and other architecture changes remain later. It is design
 agreement, not empirical support or a new sweep/training allocation. Preserve the
 vanilla run, frozen essential foundation, and external DFlash Q4_K_M references.
+
+
+## Extensive precision campaign authorized — November 4, 2026
+
+User authorizes executing the agreed search to full acceptance/latency/throughput
+charts, with evidence-led further combinations, training or features only if the
+first comparison finishes before their return (roughly 11am Pacific). See the
+[execution checkpoint](PRECISION_CAMPAIGN.md) for scope, baseline reconciliation, deliverables
+and continuation. Necessary native pipeline work is included. Preserve existing
+references and use one GPU owner. This continues the current goal.

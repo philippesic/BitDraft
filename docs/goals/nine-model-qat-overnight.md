@@ -6009,3 +6009,13 @@ training allocation, GPU action or changed owner is claimed. The next precision
 prerequisites remain a qualified essential foundation and the runnable native
 prototype pipeline, followed by a separately budgeted pilot. Preserve existing
 baseline and implementation evidence; consult their owner records for live state.
+
+
+## Extensive precision campaign authorized — November 4, 2026
+
+User authorizes executing the agreed search to full acceptance/latency/throughput
+charts, with evidence-led further combinations, training or features only if the
+first comparison finishes before their return (roughly 11am Pacific). See the
+[execution checkpoint](../PRECISION_CAMPAIGN.md) for scope, baseline reconciliation, deliverables
+and continuation. Necessary native pipeline work is included. Preserve existing
+references and use one GPU owner. This continues the current goal.
