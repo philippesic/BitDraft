@@ -1,0 +1,84 @@
+"""Versioned CPU prototype contracts. Native admission is deliberately fail-closed."""
+import argparse
+import copy
+import hashlib
+import json
+import math
+from pathlib import Path
+import torch
+from torch import nn
+from torch.nn import functional as F
+
+PRESETS = {'vanilla': (8,8,False), 'essential-a8': (8,8,True),
+           'gate-up-a4': (4,8,True), 'all-a4': (4,4,True),
+           'a2-stress': (2,2,True), 'protected-example': (4,8,True)}
+
+def digest(config):
+    return hashlib.sha256(json.dumps(config,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+
+def resolve(request):
+    allowed={'version','preset','source','parent','data','budget_seconds','evaluation','overrides','features','quantizer'}
+    if set(request)-allowed: raise ValueError('unknown config fields')
+    if request.get('version') != 1: raise ValueError('unsupported config version')
+    for name in ('source','parent','data'):
+        pin=request.get(name)
+        if not isinstance(pin,dict) or set(pin)!={'path','sha256'} or len(pin['sha256'])!=64:
+            raise ValueError(f'{name} requires path and SHA256 pin')
+    budget=request.get('budget_seconds')
+    if type(budget) not in (int,float) or not math.isfinite(budget) or budget<=0: raise ValueError('explicit positive update-time budget required')
+    gate,down,affine=PRESETS[request['preset']]
+    features={'midpoint':affine,'gain':affine,'scale':True,'sign':True,'norm':True}
+    for k,v in request.get('features',{}).items():
+        if k not in features or type(v) is not bool: raise ValueError('invalid feature switch')
+        features[k]=v
+    quantizer=request.get('quantizer',{'mode':'dynamic','clip':1.0})
+    if set(quantizer)!={'mode','clip'} or quantizer['mode'] not in ('dynamic','fixed','learned') or not math.isfinite(quantizer['clip']) or quantizer['clip']<=0: raise ValueError('invalid quantizer')
+    coverage={f'blk.{i}.ffn_{p}':{'weight':'W1','bits':down if p=='down' else gate} for i in range(6) for p in ('gate','up','down')}
+    if request['preset']=='protected-example': coverage['blk.0.ffn_down']={'weight':'BF16','bits':None}
+    for name,value in request.get('overrides',{}).items():
+        if name not in coverage or set(value)!={'weight','bits'}: raise ValueError('invalid projection override')
+        if not ((value['weight']=='W1' and type(value['bits']) is int and value['bits'] in (2,4,8)) or (value['weight']=='BF16' and value['bits'] is None)): raise ValueError('unsupported weight/activation combination')
+        coverage[name]=copy.deepcopy(value)
+    result=copy.deepcopy(request)
+    result.update(coverage=coverage,features=features,quantizer=quantizer,arithmetic='signed-symmetric-round-away-v1',schedule='constant',operand_storage='int8-reference')
+    return result
+
+class Projection(nn.Module):
+    def __init__(self,weight,bits=8,midpoint=True,gain=None,quantizer=None):
+        super().__init__()
+        if bits not in (2,4,8): raise ValueError('unsupported activation width')
+        self.bits=bits
+        self.quantizer=quantizer or {'mode':'dynamic','clip':1.0}
+        self.latent_sign=nn.Parameter(torch.where(weight<0,-torch.ones_like(weight),torch.ones_like(weight)))
+        self.scale=nn.Parameter(weight.abs().mean(-1))
+        self.midpoint=nn.Parameter(torch.zeros(weight.shape[0]),requires_grad=midpoint)
+        self.log_gain=gain if gain is not None else nn.Parameter(torch.zeros(weight.shape[1]),requires_grad=False)
+        self.log_clip=nn.Parameter(torch.tensor(math.log(self.quantizer['clip'])),requires_grad=self.quantizer['mode']=='learned')
+    def stream(self,x):
+        x=x.float()*self.log_gain.exp()
+        qmax=2**(self.bits-1)-1
+        bound=x.detach().abs().amax(-1,keepdim=True).clamp_min(1e-12) if self.quantizer['mode']=='dynamic' else self.log_clip.exp()
+        clipped=torch.maximum(torch.minimum(x,bound),-bound)
+        z=clipped/(bound/qmax)
+        hard=torch.sign(z)*torch.floor(z.abs()+0.5)
+        codes=z+(hard-z).detach()
+        return codes, bound/qmax
+    def forward(self,x):
+        codes,step=self.stream(x)
+        signs=self.latent_sign+(torch.where(self.latent_sign<0,-1.,1.)-self.latent_sign).detach()
+        # Integer dot then row scale then token scale preserves vanilla order.
+        return (F.linear(codes,signs)*self.scale.clamp_min(0))*step + (codes.sum(-1,keepdim=True)*step)*self.midpoint
+
+
+def native_admit(config):
+    raise ValueError('prototype v1 has no native loader: affine/per-projection metadata unsupported; legacy baseline export only')
+
+def main():
+    parser=argparse.ArgumentParser()
+    parser.add_argument('mode',choices=['resolve','native-screen'])
+    parser.add_argument('config',type=Path)
+    args=parser.parse_args()
+    config=resolve(json.loads(args.config.read_text()))
+    if args.mode=='native-screen': native_admit(config)
+    print(json.dumps({'config':config,'sha256':digest(config),'qualification':'CPU arithmetic only'},indent=2))
+if __name__=='__main__': main()
