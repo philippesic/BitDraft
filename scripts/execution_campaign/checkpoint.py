@@ -3,7 +3,7 @@ from pathlib import Path
 import json,os,subprocess,time,shutil
 P=Path('/home/philip/binary-eagle-decoding');R=P/'runs/execution-campaign-20261105-01'
 rows=[]
-for name in ['execution-profile-20261105-01','execution-tranche1-20261105-01']:
+for name in sorted(x.name for x in (P/'runs').glob('execution-*-20261105-*') if (x/'state.json').exists()):
  f=P/'runs'/name/'state.json'
  if not f.exists():continue
  d=json.load(open(f));d['boot_id']=Path('/proc/sys/kernel/random/boot_id').read_text().strip()

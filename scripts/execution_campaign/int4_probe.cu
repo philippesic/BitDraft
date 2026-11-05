@@ -1,0 +1,2 @@
+#include <stdint.h>
+__global__ void int4_probe(const uint32_t*a,const uint32_t*b,int*c){int lane=threadIdx.x;int x=0,y=0,z=0,w=0;uint32_t a0=a[lane*4],a1=a[lane*4+1],a2=a[lane*4+2],a3=a[lane*4+3],b0=b[lane*2],b1=b[lane*2+1];asm volatile("mma.sync.aligned.m16n8k64.row.col.s32.s4.s4.s32 {%0,%1,%2,%3},{%4,%5,%6,%7},{%8,%9},{%0,%1,%2,%3};":"+r"(x),"+r"(y),"+r"(z),"+r"(w):"r"(a0),"r"(a1),"r"(a2),"r"(a3),"r"(b0),"r"(b1));c[lane*4]=x;c[lane*4+1]=y;c[lane*4+2]=z;c[lane*4+3]=w;}

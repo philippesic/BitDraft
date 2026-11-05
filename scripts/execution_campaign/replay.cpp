@@ -4,6 +4,7 @@
 #include "json.hpp"
 #include <algorithm>
 #include <chrono>
+#include <cstdlib>
 #include <dlfcn.h>
 #include <fstream>
 #include <vector>
@@ -15,7 +16,7 @@ static uint64_t hash(const void*p,size_t n){auto*b=(const uint8_t*)p;uint64_t h=
 struct Audit {json tensors=json::array();bool enabled=false;};
 static bool trace(ggml_tensor*t,bool ask,void*u){
  auto&a=*(Audit*)u;std::string name=ggml_get_name(t);
- bool want=a.enabled && ggml_nbytes(t)<32*1024*1024 && (name.find("ffn")!=std::string::npos||name.find("l_out")!=std::string::npos||name=="result_norm"||name=="result_output");
+ bool want=a.enabled && ggml_nbytes(t)<32*1024*1024 && (t->op==GGML_OP_W1AX_PACK || name.find("ffn")!=std::string::npos||name.find("l_out")!=std::string::npos||name=="result_norm"||name=="result_output");
  if(ask)return want;if(!want)return true;
  std::vector<uint8_t>bytes(ggml_nbytes(t));ggml_backend_tensor_get(t,bytes.data(),0,bytes.size());
  a.tensors.push_back({{"name",name},{"bytes",bytes.size()},{"hash_fnv1a64",hash(bytes.data(),bytes.size())},{"shape",{t->ne[0],t->ne[1],t->ne[2],t->ne[3]}}});return true;
@@ -40,9 +41,9 @@ int main(int argc,char**argv){try{
  for(int rep=-2;rep<reps;++rep)for(int offset:{0,1,2}){
   int a=anchor+offset;llama_memory_clear(llama_get_memory(dc),true);audit.tensors=json::array();double t=now();
   for(int start=0;start<a;start+=512){llama_batch_ext_clear(b);for(int r=start;r<std::min(a,start+512);++r){int i=llama_batch_ext_add_embd(b,0,{features.data()+size_t(r)*20480,1,20480});check(i>=0&&llama_batch_ext_set_pos(b,i,&r),"inject input");}check(llama_process(dc,LLAMA_PROCESS_TYPE_DECODE,b)==0,"inject process");}llama_synchronize(dc);double catchup=now()-t;
-  llama_batch_ext_clear(b);for(int i=0;i<3;++i){int pos=a+i,idx=llama_batch_ext_add_token(b,0,i==0?tokens.at(a):mask);check(idx>=0&&llama_batch_ext_set_pos(b,idx,&pos)&&llama_batch_ext_set_output_logits(b,idx,true),"decode input");}
+  llama_batch_ext_clear(b);for(int i=0;i<3;++i){int pos=a+i,idx=llama_batch_ext_add_token(b,0,i==0?tokens.at(a):mask);check(idx>=0&&llama_batch_ext_set_pos(b,idx,&pos)&&llama_batch_ext_set_output_logits(b,idx,i>0||!getenv("EXEC_REQUEST_MASKS")),"decode input");}
   t=now();if(begin)begin();check(llama_process(dc,LLAMA_PROCESS_TYPE_DECODE,b)==0,"decode process");llama_synchronize(dc);double forward=now()-t;int graphs=0;float gpu=end?end(&graphs):0;
-  json output=json::array();for(int i=0;i<3;++i){auto*p=llama_get_logits_ith(dc,i);check(p,"logits");output.push_back({{"hash_fnv1a64",hash(p,nv*4)},{"argmax",int(std::max_element(p,p+nv)-p)}});}
+  json output=json::array();for(int i=getenv("EXEC_REQUEST_MASKS")?1:0;i<3;++i){auto*p=llama_get_logits_ith(dc,i);check(p,"logits");output.push_back({{"hash_fnv1a64",hash(p,nv*4)},{"argmax",int(std::max_element(p,p+nv)-p)}});}
   size_t size=llama_state_seq_get_size(dc,0);std::vector<uint8_t>state(size);check(llama_state_seq_get_data(dc,state.data(),size,0)==size,"cache snapshot");
   rows.push_back({{"rep",rep},{"warmup",rep<0},{"anchor",a},{"N",3},{"catchup_host_ms",catchup},{"forward_host_ms",forward},{"graph_event_ms",gpu},{"graph_count",graphs},{"outputs",output},{"cache_bytes",size},{"cache_hash_fnv1a64",hash(state.data(),state.size())},{"audit",audit.tensors}});
   std::ofstream(argv[6])<<json({{"scope","fixed external native captured DEV features/history; model-specific full cache rebuild before each forward; changing contexts; no proposal mutation reuse"},{"audit_mode",audit.enabled},{"rows",rows}}).dump(2)<<'\n';

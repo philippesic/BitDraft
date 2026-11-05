@@ -108,3 +108,64 @@ both2561.385ms. These sequential early screens do not establish confidence or a
 final gain. Warp-bound32 is rejected at2.293ms; dot variants built on it are
 qualified but need fair faster-prep reruns. Exact changes are not promoted from
 microbench alone. Native actual-request comparison remains outstanding.
+
+### Broader execution gate — November5 11:28 Pacific
+
+Actual N3 projection screen and SASS are retained in `micro/`, `mechanisms/`.
+Signed INT8 MMA executes IMMA.16832.S8.S8. The tested INT4 PTX compiles on
+SM120a but lowers to two signed INT8 IMMA sites; no native INT4 mechanism claim.
+FP16-code and resident-expanded INT8 alternatives were timed with activation
+conversion charged; down projection loses, resident gate/up gains modestly with
+its explicit memory tradeoff. No historical N7 ratio is reused as modern evidence.
+
+Tiled fixed-bound quantization executes its completion reduction/workspace and
+passes native logits/cache checks. Early graph-event median1.264ms versus
+original1.427ms; joint gate/up1.302ms. These are screens, not final paired effects.
+The twelve candidate CONT nodes do NOT appear as copy kernels in the live draft
+CUDA graph: backend allocation aliases them. Six named copies are visible only
+in callback audit graphs. Copy-removal remains a small graph simplification,
+not a claimed12-copy GPU saving.
+
+Head-output pruning honors per-token requested-logit flags and standard output
+index mapping; ordinary DFlash sampler never requests anchor logits. DSpark,
+selector/LiliCorr and all-output diagnostics retain their requested outputs.
+Final-layer crop occurs only after final attention/cache writes, with embedding
+requests excluded. Both variants preserve requested mask logits and cache bytes.
+Drafter-only generic fusion changes activation pack bytes in some contexts and
+is an approximate rejected/deferred lane unless separately qualified. Target/
+verifier fusion restriction remains32 throughout. Narrow fusion implementation
+needed one failed admission-header build-order repair; failure logs preserved.
+Next: combine exact wins, complete bounded reserves/edge checks, and perform
+alternating matched live-request confirmation and charts. Campaign still active.
+
+### Inventory covered; confirmation preparing — November5 11:40 Pacific
+
+Thirty-eight explicit inventory entries are recorded in `ledger-start.json`.
+Modern N1/N3 bitplane/LUT/FP16-code/resident INT8 screens completed; selective
+LUT4 was also built and measured in native full forward, losing to the retained
+joint/tiled combination. SiLU/down-pack fusion now actually dispatches;12 CUDA
+fixtures show changed packed streams (including A1/subnormal cases), so it is a
+separate approximate rejected lane despite matching the bounded primary native
+trajectory. Prenorm fusion actually executes; no approximate path is in the
+retained combination. Generic drafter fusion is likewise rejected.
+
+Current retained exact candidate: `runtime-combined-last02` (tiled known-bound
+pack, graph copy simplification, joint gate/up, requested head rows, final-layer
+postattention crop). Early N3 graph-event screen1.174ms vs original1.428ms;
+fair cropped Q4~1.194ms. These are sequential screens and do not establish a
+win/tie against Q4. Requested W1/Q4 mask logits and model-specific cache bytes
+remain identical. Target/verifier code paths/precision/settings are unchanged.
+
+Additional edge receipts `edge-checks03/result.json` cover all4bits/3modes,
+strided fallback, signed-zero/subnormal streams, explicit ties, tiny/high finite
+bounds, and known-bound nonfinite/overflow rejection. Original max-float-bound
+CPU NaN-payload comparison needs a native-original cross-check; ordinary extreme
+finite1e30 bound passes. Failure artifacts remain intact.
+
+Next: final independent joint/overflow checks, alternating cache-restoring replay
+across3consumed captureDEV domains, then5alternating actual-request repetitions
+on consumed natural12 with paired plain/host-trace panels. Final artifacts and
+release are still outstanding; do not infer completion from the prepared runtime.
+Current task storage~2.8GiB, WSL~6.7GB/Windows~11.5GB free. Bounded budget revised
+to3.5GiB including final evidence; no expanded full models on disk. Paid models,
+archives and shared dictionary basis remain protected.
