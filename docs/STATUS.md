@@ -22,8 +22,10 @@ Original vanilla 14,231 updates / 1,800.021702 seconds and all fixed references
 remain unchanged. All paid recovery states and native exports are retained;
 owned jobs/process groups are released and the GPU is idle. Storage/process
 proof: `runs/precision-campaign-20261104-01/final-storage-process-inventory.json`.
-No pushes or parent integration performed. No further training is allocated.
-Parent review/integration/display is next. The broader nine-model goal remains
+Parent reviewed and integrated the campaign locally, verified both published
+artifact packages, and independently passed 16 function fixtures plus 20 unittest
+cases. Inline chart preview executes without console errors. No pushes; no new
+training launched during review. The broader nine-model goal remains
 active; no 9B/NVFP4 qualification or nine-model restart was performed. Historical
 preparation-only/no-sweep limits below were superseded for this campaign by the
 latest explicit authorization.

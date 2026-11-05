@@ -722,3 +722,29 @@ standalone HTML. Keep the current worktree/branch until integration; broader
 active goal remains open for future user direction. Do not restart experiments
 from historical launch metadata. This handback contains actual charts/results,
 not a scaffold, CPU-only endpoint or job launch.
+
+
+## Parent review and integration — November 5, 2026
+
+Reviewed the native benchmark/counter recovery, quantizer, training/resume and
+GGUF export code plus both experiment reports. Verified sizes and SHA256 hashes
+for every artifact in both completion receipts. Independently passed 16 function
+fixtures and 20 unittest cases with PYTHONPATH=.:src:tests; no new GPU experiments
+were needed. The first local test invocation lacked tests on PYTHONPATH; corrected
+invocation passed. Runtime patch whitespace diagnostics refer to retained patch
+context lines; the reproduction patch is preserved verbatim. No submodule gitlink
+change. Integrated the coherent campaign branch into main without touching
+unrelated dirty files.
+
+Previewed the interactive chart successfully with no console errors. The inline
+version uses theme styling, short panel labels, a held-out default and metrics
+first in its table; the frozen original artifacts and their hashes remain intact.
+All original/follow-up cohorts and recipe-versus-precision labels are preserved.
+Actual chart display follows this checkpoint in the parent conversation.
+
+Fresh local observation confirms RTX5080 at 1,352 MiB / 0% and no native server
+or trainer jobs. Retained evidence and paid recovery archives remain protected;
+final-storage-process-inventory.json supplies the bounded retention inventory and
+measured WSL/Windows cleanup deltas. No additional training allocation or push
+was made in the review. This campaign is complete, including the early-finish
+clipping follow-up; the broader research goal remains open.

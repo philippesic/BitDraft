@@ -6076,3 +6076,13 @@ Native16-slot36case and12DEV native-tokenizer qualification pass. Four2048 model
 Focused followup: fixed compact G4 bound control completed1024 matched updates and full92-state Adam/CUDA-RNG/native-export recovery. Repeated4-arm DEV complete; new source-disjoint24-case heldout active under precision-clip-control-20261105-02. Initial240-point publication stays frozen. Finish raw followup audit/new charts and process/storage handback; no more training window allocated.
 
 Final campaign handback: initial and bounded-followup charts published, raw/matching/state/export audits pass, owned GPU processes released, storage inventory complete. See latest PRECISION_CAMPAIGN/report links; no additional training or push. Broader goal remains active for user direction.
+
+
+## Precision campaign parent integration — November 5, 2026
+
+Integrated the reviewed modern4B/Q4 campaign and clipping-control follow-up.
+All published artifact hashes verified; 16 function fixtures and 20 unittest
+cases independently pass. Charts are ready for inline display; no W1 throughput
+promotion. See [campaign review](../PRECISION_CAMPAIGN.md#parent-review-and-integration--november-5-2026).
+No active GPU owner or new training allocation; paid states and useful evidence
+remain retained. The broader goal stays open.
