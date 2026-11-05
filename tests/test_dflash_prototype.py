@@ -106,3 +106,23 @@ def test_model_install_resume():
         for k,v in m.state_dict().items():torch.testing.assert_close(v,expected[k],rtol=0,atol=0)
         m.prototype_config=copy.deepcopy(c);m.prototype_config['coverage']['blk.0.ffn_gate']['bits']=4
         with unittest.TestCase().assertRaisesRegex(ValueError,'adaptation'):resume(p,m,opt)
+
+
+def test_baseline_backward_optimizer():
+    from w1a1_eagle.block_qat import BlockBinaryLinear
+    from w1a1_eagle.recurrent_qat import W1AxContract
+    weight=torch.tensor([[2.,-.7,.1],[-2.,.2,-.1]])
+    scale=weight.abs().mean(-1)
+    old=BlockBinaryLinear(weight,scale,W1AxContract(activation_bits=8))
+    new=Projection(weight,8,midpoint=False)
+    a=torch.optim.AdamW(old.parameters(),lr=1e-4,weight_decay=0,foreach=False)
+    b=torch.optim.AdamW([new.latent_sign,new.scale],lr=1e-4,weight_decay=0,foreach=False)
+    for values in ([[0.,0.,0.]],[[1e-40,-2e-40,0.]],[[.5,-1.5,127.]]):
+        x=torch.tensor(values,requires_grad=True);y=x.detach().clone().requires_grad_()
+        old(x).sum().backward();new(y).sum().backward()
+        for actual,expected in ((y.grad,x.grad),(new.latent_sign.grad,old.latent_sign.grad),(new.scale.grad,old.scale_offset.grad)):
+            assert torch.isfinite(actual).all()
+            torch.testing.assert_close(actual,expected,rtol=0,atol=0)
+        a.step();b.step();a.zero_grad();b.zero_grad()
+        torch.testing.assert_close(new.latent_sign,old.latent_sign,rtol=0,atol=0)
+        torch.testing.assert_close(new.scale,old.effective_scales(),rtol=1e-6,atol=1e-7)

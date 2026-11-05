@@ -33,15 +33,20 @@ def install(model, config, source_weights):
             if spec['weight']=='BF16':
                 weight=source_weights[key]
                 if weight.dtype!=torch.bfloat16: raise ValueError('protected source must be BF16')
-                linear=nn.Linear(weight.shape[1],weight.shape[0],bias=False,device=weight.device)
-                linear.weight=nn.Parameter(weight.float(),requires_grad=False)
+                from .model import NativeBF16Linear
+                linear=NativeBF16Linear(weight.float())
                 setattr(layer,name,linear)
                 continue
             if name!='ffn_down' and shared is None:
                 shared=nn.Parameter(torch.zeros(old.latent_sign.shape[1],device=old.latent_sign.device),requires_grad=features['gain'])
             gain=shared if name!='ffn_down' else nn.Parameter(torch.zeros(old.latent_sign.shape[1],device=old.latent_sign.device),requires_grad=features['gain'])
             new=Projection(old.latent_sign.detach(),spec['bits'],features['midpoint'],gain,config['quantizer']).to(old.latent_sign.device)
-            with torch.no_grad(): new.scale.copy_(old.effective_scales())
+            with torch.no_grad():
+                new.scale.copy_(old.scale if isinstance(old,Projection) else old.effective_scales())
+                if isinstance(old,Projection):
+                    if features['midpoint']: new.midpoint.copy_(old.midpoint)
+                    if features['gain']: new.log_gain.copy_(old.log_gain)
+                    if config['quantizer']==old.quantizer: new.log_clip.copy_(old.log_clip)
             new.latent_sign.requires_grad_(features['sign']);new.scale.requires_grad_(features['scale'])
             setattr(layer,name,new)
         for name in ('attn_norm','attn_q_norm','attn_k_norm','ffn_norm'):
@@ -80,3 +85,18 @@ def resume(path,model,opt):
     torch.set_rng_state(state['rng']['torch']);random.setstate(state['rng']['python']);np.random.set_state(state['rng']['numpy'])
     if state['rng']['cuda'] is not None: torch.cuda.set_rng_state_all(state['rng']['cuda'])
     return state['progress']
+
+
+def adapt(model, config, source_weights):
+    """Explicit model adaptation resets optimizer and exposure accounting.
+
+    Caller must load the authenticated parent before adapting. Strict resume
+    remains a different operation and never passes through this function.
+    """
+    authenticate(config)
+    previous=getattr(model,'prototype_config',None)
+    install(model,config,source_weights)
+    model.prototype_lineage=dict(parent=config['parent'],
+        parent_config_hash=digest(previous) if previous else None,
+        parent_kind='prototype' if previous else 'baseline',optimizer_policy='reset')
+    return model,optimizer(model)
