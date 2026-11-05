@@ -25,6 +25,13 @@ class StreamedCheckpointTests(unittest.TestCase):
    for name,value in parameters(m).items():torch.testing.assert_close(value,expected[name],rtol=0,atol=0)
    for key,state in opt.state_dict()['state'].items():
     for name,value in state.items():torch.testing.assert_close(value,expected_opt[key][name],rtol=0,atol=0)
+ def test_recovery_coverage_matches_actual_autograd_flags(self):
+  from scripts.dflash_baseline.recover_clip_checkpoint import trainable_names
+  m=torch.nn.Sequential(Projection(torch.tensor([[.2,-.3,.4]]),4,quantizer=dict(mode='fixed',clip=1.)))
+  c=dict(quantizer=dict(mode='fixed'),features=dict(sign=True,scale=True,midpoint=True,gain=False,norm=True))
+  expected={name for name,p in m.named_parameters() if p.requires_grad}
+  self.assertEqual(trainable_names(c,parameters(m)),expected)
+  self.assertLess(len(expected),len(parameters(m)))
  def test_existing_archive_is_preserved(self):
   with tempfile.TemporaryDirectory() as d:
    p=Path(d)/'state.pt';save_streamed(p,{'x':torch.tensor([2.])});before=p.with_suffix('.pt.zst').read_bytes()
