@@ -300,3 +300,27 @@ cache files and the active reusable main cache were retained. Evidence:
 or shared source/basis were removed. WSL free was3.5GiB and WindowsC5.4GiB after
 HE4; checkpoint writes remain guarded and old NEW states retire only after a
 verified replacement.
+
+
+## Serialized measurement successor —15:38Pacific
+
+`runs/component-post-primary-20261105-01/state.json` is a passive supervised
+successor, matching tmux session/socket. It waits for the rest-recovery supervisor
+terminal success and absence of that group before any GPU use. It then qualifies
+physical F16 clip metadata against the identical F16-rounded F32 precision
+reference (required logits/cache and native counters), runs a one-repetition
+natural12selection panel and clean native replay, and audits actual head/embedding
+CUDA tensor/data pointers. One-repetition selection is explicitly not final
+formal timing. The successor ends after selection; combined recovery, reserved
+rescue decisions and final two-warmup/five-repetition comparisons remain required.
+On pause, authenticate and stop both active recovery and passive successor
+supervisors, allowing180seconds recovery grace. No competing GPU job is launched.
+
+A bounded R2 candidate uses one existing native half block-scale per256vocabulary
+weights, with frozen packed codes/subscales and signed block-scale sign. Q6/Q3
+can have negative scales; a CPU exact native-grid fixture preserves those signs
+and reproduces initial packed bytes/dequantized values exactly. The analytic
+backward fixture also passes. These CPU results do not qualify the full-head
+CUDA gradient, optimizer/memory, export or resumability; an evidence-led R2 must
+pass those actual gates with a matched private-Q6 control before use. Dense
+full-vocabulary Adam still does not fit the measured VRAM envelope.
