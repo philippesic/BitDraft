@@ -1,6 +1,11 @@
 # Current project status
 
-## Current work — vanilla DFlash W1A8 screening reference
+## Current work — precision selection and its W1A8 reference
+
+User direction: validate precision on a common foundation, then incrementally
+add feature tiers. [Exact stage/feature queue](CANDIDATE_STAGES.md) is the agent
+entry point. The delegated W1A8 baseline run is the prerequisite; A4/mixed
+comparisons have not yet established a winner. This roadmap does not start sweeps.
 
 Root has launched the1800-second initial run after actual sign/scale updates,
 exact resume and native zero/updated correctness qualification. Ownership and
@@ -13,7 +18,8 @@ checkpoint, matched no-feature continuations and a separately promoted incumbent
 [baseline registry](../experiments/dflash-w1a8-baseline-20261104/manifest.json)
 will contain the actual benchmark/export/checkpoint pins. Preparation and initial
 training are authorized for one delegated worker. Coordinator proposes30minutes
-of measured update time, checkpoints at0/5/15/30minutes; no checkpoint exists yet.
+of measured update time, checkpoints at0/5/15/30minutes; consult the registry
+and run evidence for produced checkpoints.
 Initial lane: modern4B Q4_K_M target on5080. Keep DFlash Q4_K_M external baseline
 frozen. No feature sweep or long-QAT allocation. This continues the existing goal.
 

@@ -2,8 +2,10 @@
 
 This is the entry point for the user-approved candidate-screening protocol
 (November 4, 2026). Start from plain DFlash with binary weights and activations
-above one bit. Prepare a vanilla W1A8 reference first, then evaluate additions
-through matched short training continuations. Preserve a fixed baseline while
+above one bit. Prepare a vanilla W1A8 reference first, validate activation/mixed precision on
+that common foundation, then evaluate feature tiers through matched short
+training continuations. The exact stage/feature queue is in
+[CANDIDATE_STAGES.md](CANDIDATE_STAGES.md). Preserve a fixed baseline while
 promoting a separate working incumbent. This protocol supplements
 [EVALUATION.md](EVALUATION.md); it does not replace its correctness and data rules.
 

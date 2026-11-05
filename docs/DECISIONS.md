@@ -1530,3 +1530,14 @@ and its baseline registry. Coordinator selects a provisional1800second update-ti
 budget with0/300/900/1800second checkpoints; preparation/evaluation are accounted
 separately. First lane is modern4B Q4_K_M on5080. Necessary baseline adapters and
 qualification are within scope; no feature sweep or long-QAT allocation selected.
+
+## 2026-11-04: Precision selection before incremental feature tiers
+
+User explicitly requested this sequence be recorded for agents: one useful
+common binary foundation, validate activation/mixed-precision setups, then
+work incrementally through feature tiers. See [CANDIDATE_STAGES.md](CANDIDATE_STAGES.md)
+for exact features and stage membership. The detailed ordering is a recommended
+queue, not a claim of validation or permission to launch all runs. The delegated
+vanilla baseline remains its prerequisite and keeps its existing allocation.
+Learned clipping/step sizes belong with precision selection; later additions
+are tested with matched unchanged continuations and preserve frozen baselines.
