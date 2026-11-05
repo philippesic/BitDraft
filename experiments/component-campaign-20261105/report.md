@@ -69,3 +69,12 @@ comparisons and final charts are still required.
 
 Live supervisor ownership and stop procedure are in
 [COMPONENT_CAMPAIGN](../../docs/COMPONENT_CAMPAIGN.md). No pushes or gitlink updates.
+
+
+Checkpoint15:29Pacific: the first head, embedding and tied head+embedding R1
+windows completed4096updates each; H3 also completed the finite lower-precision
+probe. Cache and scalar primary recovery now follows the actual CUDA read gate.
+The initial gate error was an unsupported generic fixture copy, corrected to the
+native flash-attention conversion. All Q8/Q4/Q5 fixture values then match exactly.
+Formal latency, tied allocation audit, combinations and heldout remain pending;
+this checkpoint is not campaign completion.

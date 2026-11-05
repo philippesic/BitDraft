@@ -6191,3 +6191,10 @@ embedding/tying, drafterKV and scalar storage with matched recovery, retained
 slow starters and combined confirmation. Start0/256/1024/4096readouts for initial
 primary arms, with pilot/resource budgeting. See [campaign checkpoint](../COMPONENT_CAMPAIGN.md).
 One delegated GPU owner, frozen target/verifier and current goal; no pushes.
+
+
+Component checkpoint15:29Pacific: H0/H4/H3/E4/HE4 full4096 plus exactQ6 private
+controls and all four native readouts complete. Actual CUDA cache read conversion
+and CPU/CUDA full-vocab lookup gates pass. Cache/scalar recovery continues under
+`component-rest-recovery-20261105-01`; see COMPONENT_CAMPAIGN for identity/stop and
+remaining combinations/formal comparison obligations. Broader goal remains open.

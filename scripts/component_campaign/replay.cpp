@@ -20,6 +20,7 @@ static bool trace(ggml_tensor*t,bool ask,void*u){
  bool want=a.enabled && ggml_nbytes(t)<32*1024*1024 && (vocabulary || t->op==GGML_OP_W1AX_PACK || name.find("ffn")!=std::string::npos||name.find("l_out")!=std::string::npos||name=="result_norm"||name=="result_output");
  if(ask)return want;if(!want)return true;
  if(vocabulary){auto*w=t->src[0];a.tensors.push_back({{"kind","vocabulary_allocation"},{"op",ggml_op_name(t->op)},{"name",name},{"weight_tensor_address",uint64_t(uintptr_t(w))},{"weight_data_address",uint64_t(uintptr_t(w->data))},{"weight_bytes",ggml_nbytes(w)},{"weight_type",ggml_type_name(w->type)},{"weight_buffer",w->buffer?ggml_backend_buft_name(ggml_backend_buffer_get_type(w->buffer)):"none"}});}
+ if(t->src[0] && (vocabulary || t->op==GGML_OP_W1AX_MUL_MAT_SHARED || (t->op==GGML_OP_MUL_MAT && ggml_is_quantized(t->src[0]->type)))){auto*w=t->src[0];if(w->buffer)a.tensors.push_back({{"kind","permanent_weight_buffer"},{"name",name},{"buffer_address",uint64_t(uintptr_t(w->buffer))},{"buffer_bytes",ggml_backend_buffer_get_size(w->buffer)},{"buffer_type",ggml_backend_buft_name(ggml_backend_buffer_get_type(w->buffer))},{"tensor_bytes",ggml_nbytes(w)}});}
  std::vector<uint8_t>bytes(ggml_nbytes(t));ggml_backend_tensor_get(t,bytes.data(),0,bytes.size());
  a.tensors.push_back({{"name",name},{"bytes",bytes.size()},{"hash_fnv1a64",hash(bytes.data(),bytes.size())},{"shape",{t->ne[0],t->ne[1],t->ne[2],t->ne[3]}}});return true;
 }

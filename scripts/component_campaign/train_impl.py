@@ -1,5 +1,5 @@
 """Matched common-parent R1 recovery, dense DEV and authenticated rolling recovery state."""
-import argparse,copy,gc,json,os,random,signal,time
+import argparse,copy,gc,json,os,random,signal,time,resource
 from pathlib import Path
 import numpy as np
 import torch
@@ -66,7 +66,7 @@ def main():
  def stop(*_):
   nonlocal stopped;stopped=True
  signal.signal(signal.SIGTERM,stop);signal.signal(signal.SIGINT,stop)
- readouts=[]
+ readouts=[];setup_seconds=time.perf_counter()-began
  def point(label):
   torch.cuda.synchronize();start=time.perf_counter();metrics=evaluation(m,dev)
   dev_seconds=time.perf_counter()-start;export_start=time.perf_counter()
@@ -139,7 +139,7 @@ def main():
   if progress['updates']%32==0:
    save(out/'live.json',dict(progress={k:v for k,v in progress.items() if k!='order'},last_loss=loss,seconds_per_update=float(np.median(times[-32:])),identity=identity()));print(spec['name'],progress['updates'],loss,flush=True)
  recovery=recoverable()
- save(out/'result.json',dict(status='INTERRUPTED' if stopped else 'COMPLETE',spec=spec,progress={k:v for k,v in progress.items() if k!='order'},updates_this_process=progress['updates']-start_update,unique_label_positions=len(unique_labels),unique_windows=len(windows),supervised_positions=progress['supervised_tokens'],median_update_seconds=float(np.median(times)) if times else None,peak_training_bytes=torch.cuda.max_memory_allocated(),recovery=recovery,readouts=readouts,process_wall_seconds=time.perf_counter()-began,checkpoint_points=a.checkpoint_points,native_points=[0,256,1024,a.updates]))
+ save(out/'result.json',dict(status='INTERRUPTED' if stopped else 'COMPLETE',spec=spec,progress={k:v for k,v in progress.items() if k!='order'},updates_this_process=progress['updates']-start_update,unique_label_positions=len(unique_labels),unique_windows=len(windows),supervised_positions=progress['supervised_tokens'],median_update_seconds=float(np.median(times)) if times else None,peak_training_bytes=torch.cuda.max_memory_allocated(),peak_training_reserved_bytes=torch.cuda.max_memory_reserved(),peak_host_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*1024,recovery=recovery,readouts=readouts,setup_seconds=setup_seconds,process_wall_seconds=time.perf_counter()-began,checkpoint_points=a.checkpoint_points,native_points=[0,256,1024,a.updates]))
  print('TRAINING_COMPLETE',spec['name'],progress['updates'],flush=True)
 
 if __name__=='__main__':

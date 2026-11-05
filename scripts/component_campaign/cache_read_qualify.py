@@ -10,9 +10,9 @@ def main():
  if (output/'result.json').exists():
   if __import__('json').load(open(output/'result.json'))['status']!='CUDA_NATIVE_MMA_CACHE_READ_PASS':raise ValueError('cache read qualification invalid')
   return
- output.mkdir(exist_ok=False)
+ output.mkdir(exist_ok=True)
  source=P/'runs/w1a8-modern-packed-runtime-20261103-01/source';runtime=R/'runtime03';exe=output/'cache-read-fixture'
- cmd=['c++','-O2','-std=c++17','-I'+str(source/'ggml/include'),'-I'+str(source/'ggml/src'),str(ROOT/'scripts/component_campaign/cache_fixture.cpp'),'-L'+str(runtime/'bin'),'-lggml-cuda','-lggml-base','-lggml','-Wl,-rpath,'+str(runtime/'bin'),'-o',str(exe)]
+ cmd=['c++','-O2','-std=c++17','-DCOMPONENT_CACHE_DIRECT_READ','-I/usr/local/cuda/include','-I'+str(source/'ggml/include'),'-I'+str(source/'ggml/src'),str(ROOT/'scripts/component_campaign/cache_fixture.cpp'),'-L'+str(runtime/'bin'),'-L/usr/local/cuda/lib64','-lcudart','-lggml-cuda','-lggml-base','-lggml','-Wl,-rpath,'+str(runtime/'bin'),'-o',str(exe)]
  subprocess.run(cmd,check=True);records=[]
  for format in ('q8_0','q4_0','q5_0'):
   dest=output/format;subprocess.run([str(exe),format,str(dest),'read-f16'],env=dict(os.environ,LD_LIBRARY_PATH=str(runtime/'bin'),GGML_CUDA_DECODE_CONSISTENT='32'),check=True)

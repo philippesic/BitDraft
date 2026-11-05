@@ -5,7 +5,7 @@ from .archive import hydrate,release,reference
 
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('arms',type=Path);ap.add_argument('--cache-map',type=Path);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--reps',type=int,default=5);a=ap.parse_args()
- a.out.mkdir(exist_ok=False);source=P/'runs/w1a8-modern-packed-runtime-20261103-01/source';runtime=R/'runtime03';exe=R/'component-replay'
+ a.out.mkdir(exist_ok=False);source=P/'runs/w1a8-modern-packed-runtime-20261103-01/source';runtime=R/'runtime03';exe=R/'replay-binaries'/pin(ROOT/'scripts/component_campaign/replay.cpp')['sha256'][:12];exe.parent.mkdir(exist_ok=True)
  cmd=['c++','-O2','-std=c++17','-I'+str(source/'include'),'-I'+str(source/'ggml/include'),'-I'+str(source/'vendor/nlohmann'),str(ROOT/'scripts/component_campaign/replay.cpp'),'-L'+str(runtime/'bin'),'-lllama','-lggml-base','-lggml','-ldl','-Wl,-rpath,'+str(runtime/'bin'),'-o',str(exe)]
  if not exe.exists():subprocess.run(cmd,check=True)
  arms=json.load(open(a.arms));cache=json.load(open(a.cache_map)) if a.cache_map else {};records=[]
@@ -26,6 +26,6 @@ def main():
      records.append(row);save(a.out/'progress.json',records)
    finally:release(model,created)
    print('REPLAY_COMPLETE',rep,name,flush=True)
- save(a.out/'result.json',dict(status='COMPLETE',records=records,source=pin(__file__),cpp=pin(ROOT/'scripts/component_campaign/replay.cpp'),runtime=pin(runtime/'build.json'),scope='Five alternating process-cell repetitions; two same-process warmups per cell; three consumed DEV domains and3changing contexts each. CUDA event graph region, no backend sampler. Host spans and catchup separate. Cache formats explicit.'))
+ save(a.out/'result.json',dict(status='COMPLETE',records=records,source=pin(__file__),cpp=pin(ROOT/'scripts/component_campaign/replay.cpp'),runtime=pin(runtime/'build.json'),scope=f'{a.reps} alternating process-cell repetitions; two same-process warmups per cell; three consumed DEV domains and3changing contexts each. CUDA event graph region, no backend sampler. Host spans and catchup separate. Cache formats explicit.'))
 
 if __name__=='__main__':main()

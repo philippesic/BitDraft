@@ -1,9 +1,11 @@
 # Current project status
 
-Current: the remaining-component campaign is active. H0 completed4096matched
-updates; its saved states are in native evaluation, followed by H4. Native
-head/embedding, six draft-cache pairs and scalar-storage admission passed.
-The broader component/recovery/combination campaign remains unfinished.
+Current: the remaining-component campaign is active. H0/H4/H3/E4/tied HE4
+completed full4096matched updates and native recovery readouts; exact private
+Q6 controls are also measured. The actual CUDA cache read gate passed after a
+fixture correction. Six draft-cache and six scalar recovery windows are running
+serially. Combinations, formal repeated comparisons and final charts remain
+unfinished; no throughput promotion is claimed.
 
 
 ## Active: remaining component precision and recovery
@@ -22,7 +24,7 @@ Next planned precision work: [REMAINING_PRECISION.md](REMAINING_PRECISION.md).
 Start with shared Q6_K/private exact Q6_K/private Q4_K head isolation, then
 private/tied embeddings, K/V cache ladders and scalar storage. Give damaged
 variants matched recovery opportunities, including reserved slow starters and
-explicit training eligibility. This plan launches no GPU or QAT run.
+explicit training eligibility. The original planning-only restriction is superseded by the active authorization above.
 
 The 38-item execution inventory is covered and the retained runtime is integrated.
 [Report](../experiments/execution-campaign-20261105/report.md) ·

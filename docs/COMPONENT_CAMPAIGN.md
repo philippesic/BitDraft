@@ -264,3 +264,39 @@ the pinned model directory. EAGLE's BF16 output has only50,000rows versus248,320
 required; using it would change vocabulary/capacity and is ineligible. DFlash/
 DSpark BF16 drafts contain no head/embedding table. See
 `higher-precision-initializer-inventory.json`.
+
+
+## Primary recovery checkpoint —15:29Pacific
+
+H0, exact private H6/E6, H4, finite H3, E4 and tied HE4 have all four native
+0/256/1024/4096readouts. Physical R1 H3/E4/HE4 each completed the full4096
+updates. Final consumed dense DEV CE is7.09648/7.07406/7.12048 respectively,
+versus equally trained H07.05519. These are selection diagnostics, not final
+heldout or throughput findings. Full-vocabulary CPU/CUDA embedding lookup passed
+for selected mask/special/common/rare/unseen/high IDs before HE4.
+
+The first cache read gate initially failed because its fixture used generic
+GGML CPY, which does not support quantized-to-F16. Native flash attention instead
+calls convert.cu directly. The corrected fixture calls that same CUDA conversion;
+all2432values for each Q8_0/Q4_0/Q5_0 match simulation exactly, with finite
+upstream gradients. No cache training was performed before this gate passed.
+The failure/log/source closure remain retained; this was a fixture failure,
+not evidence against cache quality or native cache support.
+
+Current sole owner: worktree `runs/component-rest-recovery-20261105-01/state.json`,
+matching local tmux session on socket `binary-eagle-runtime`. It serially runs
+K8F/KF8/K88/K48/K84/K44 and Sscale/Smidpoint/Sgain/Sclip/Snorm/Sall at4096updates
+with native0/256/1024/4096readouts. Exact boot/birth/group identity is in each
+arm ownership and supervisor state. Stop: authenticate that identity, SIGTERM the
+supervisor, allow180seconds for recovery/group cleanup. User pause wins. The
+prior main supervisor ended with fixture exit1 and its group is absent; healthy
+completed training and all paid sources were preserved. Reusable main-job CUDA
+cache is reused explicitly, avoiding another redundant PTX cache.
+
+Storage consolidation authenticated bytes and terminal ownership before removing
+1,547,805,163bytes of duplicate completed-job CUDA cache files. Seven distinct
+cache files and the active reusable main cache were retained. Evidence:
+`cuda-cache-consolidation.json`. No learned states, prior paid data, host settings
+or shared source/basis were removed. WSL free was3.5GiB and WindowsC5.4GiB after
+HE4; checkpoint writes remain guarded and old NEW states retire only after a
+verified replacement.

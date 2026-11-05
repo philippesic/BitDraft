@@ -18,7 +18,9 @@ def scale_offset(format):
 def encoded_scales(data,format,log_d,deployment_d=None):
  result=np.array(data,copy=True);blocks=result.reshape(*log_d.shape,-1)
  offset=scale_offset(format)
+ signs=np.sign(np.ascontiguousarray(blocks[...,offset:offset+2]).view('<f2').reshape(log_d.shape).astype(np.float32))
  rounded=deployment_d.cpu().numpy() if deployment_d is not None else log_d.detach().cpu().float().exp().half().numpy()
+ rounded=(rounded*signs).astype('<f2')
  if not np.isfinite(rounded).all():raise ValueError('head block-scale overflow')
  blocks[...,offset:offset+2]=np.ascontiguousarray(rounded).view(np.uint8).reshape(*rounded.shape,2)
  return result
@@ -74,7 +76,10 @@ def install(model,spec):
   if format=='Q4_K':blocks[...,2:4]=0
   value=dequantize(raw,Type[format]).reshape(-1,width)
   if not np.equal(value,value.astype(np.int16)).all():raise ValueError('head grid is not integral')
-  coefficients[start:start+256]=value.astype(np.int16)
+  # Q6_K/Q3_K block scales can be signed. Keep that sign in the frozen
+  # integer grid; the learned master is log(abs(d)), with native sign restored
+  # at export. A positive-only initializer would silently destroy source codes.
+  coefficients[start:start+256]=(value*np.sign(d[start:start+256,:,None]).repeat(256,axis=2).reshape(value.shape)).astype(np.int16)
   if offsets is not None:
    original=np.array(data[start:start+256],copy=True).reshape(-1,width//256,bytes_per_block)
    original[...,0:2]=0
@@ -84,9 +89,9 @@ def install(model,spec):
  model.__class__=CalibratedModel;model.component_spec=spec
  model.register_buffer('head_coefficients',torch.from_numpy(coefficients))
  model.register_buffer('head_offset',torch.from_numpy(offsets) if offsets is not None else None)
- model.head_log_d=nn.Parameter(torch.from_numpy(np.log(np.maximum(d,1e-12))))
+ model.head_log_d=nn.Parameter(torch.from_numpy(np.log(np.maximum(np.abs(d),1e-12))))
  if spec.get('embedding'):model.embedding_cpu=torch.empty(0) # one trainable vocabulary grid; old CPU lookup buffer is unused
- return dict(recipe='R2-native-block-scale',component='head+embedding' if spec.get('tied') else 'head' if spec.get('head') else 'embedding',format=format,trainable_scalars=d.size,grouping=256,initial_zero_blocks=int((d==0).sum()),frozen_codes=True,extra_vocabulary_F32_master=False,head_scale_lr=1e-4)
+ return dict(recipe='R2-native-block-scale',component='head+embedding' if spec.get('tied') else 'head' if spec.get('head') else 'embedding',format=format,trainable_scalars=d.size,grouping=256,initial_zero_blocks=int((d==0).sum()),initial_negative_blocks=int((d<0).sum()),frozen_codes=True,frozen_block_scale_sign=True,extra_vocabulary_F32_master=False,head_scale_lr=1e-4)
 
 def optimizer(model):
  from scripts.dflash_baseline.prototype_model import optimizer as ordinary
