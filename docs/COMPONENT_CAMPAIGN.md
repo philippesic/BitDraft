@@ -324,3 +324,17 @@ backward fixture also passes. These CPU results do not qualify the full-head
 CUDA gradient, optimizer/memory, export or resumability; an evidence-led R2 must
 pass those actual gates with a matched private-Q6 control before use. Dense
 full-vocabulary Adam still does not fit the measured VRAM envelope.
+
+
+Bounded source-order numeric diagnostic: native FWHT normalizes input before
+butterflies while the mathematically identical training surrogate normalizes
+output. On16,384seeded F32 values, H64 is exact; H128 maximum difference is
+7.15e-7 and analytic gradients are identical. After actual format grouping/read
+rounding, Q4_0/Q5_0 readouts are unchanged and Q8_0 differs in27values, max0.001953,
+RMS3.25e-5. This is a CPU source-order diagnostic, not a CUDA/full-attention
+bit-exactness claim. `qualification/hadamard-normalization-order.json` records
+the bound. Quantized cache write and native read conversion are independently
+CUDA-qualified; actual native recovery/context/request trajectories remain the
+practical deployment gate. Existing common F32 query/softmax surrogate likewise
+does not claim native MMA bit-exactness. Any changed decisions/conclusions require
+further bounded investigation rather than declaring quantization unsupported.
