@@ -1600,6 +1600,15 @@
     "formal_responses": 8980,
     "all_formal_target_signatures_exact": true,
     "working_incumbent_policy": "No W1 deployment promotion over matched modern DFlash Q4_K_M; retained frontier remains separate from fixed vanilla references.",
-    "followup_plan": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/clip-control-followup/plan.json"
+    "followup_plan": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/clip-control-followup/plan.json",
+    "followup": {
+      "status": "NEW_HELDOUT_ACTIVE",
+      "owner_run": "precision-clip-control-20261105-02",
+      "plan": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/clip-control-followup/plan.json",
+      "physical_updates": 1024,
+      "training_complete": true,
+      "full_checkpoint_native_roundtrip_pass": true,
+      "initial_results_frozen": true
+    }
   }
 }

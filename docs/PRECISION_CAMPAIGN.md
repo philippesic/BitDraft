@@ -616,7 +616,7 @@ identities/groups/topics are frozen exclusions; cohorts stay separate.
 
 A streamed Zstd checkpoint option avoids raw-plus-archive disk duplication;
 2 exact optimizer/RNG resume fixtures and2 existing pipeline fixtures pass.
-No existing paid checkpoint moved/deleted or Windows space consumed. Full trained
+No existing paid checkpoint moved/deleted; no additional archive moved onto Windows. Full trained
 checkpoint decoding/export qualification uses an owned RAM temporary, admitted
 against actual RAM/tmpfs headroom; it must release before native timing. Preserve
 an8GiB WSL reserve. Current code/plan preparation is complete; launch one supervised
@@ -662,3 +662,25 @@ consumers/recovery sources and hashes. Logical removal1,527,527,166bytes; measur
 WSL free9,193,504,768→10,721,099,776 (+1,527,595,008), Windows10,931,777,536 unchanged.
 No Windows/VHDX reclaim claim. New streamed checkpoint remains4,700,294,541bytes;
 no archive relocation or prior checkpoint mutation. Initial charts remain frozen.
+
+Followup formal DEV is active under precision-clip-control-20261105-02; third
+repetition complete (24/40 cells). Intermediate DEV smoke completed; all observed
+outputs exact. No tests/builds or other GPU work until the full serial DEV/heldout
+window ends. Pending unqualified source-only publication helpers:
+publish_clip_control.py audits only new raw panels, exact1024 example order,
+full recovery, native bound metadata, and all frozen initial artifact hashes;
+chart_precision.py adds separate clip-heldout24 facets and paired-effect receipts.
+After native-measurements.json exists and owner exits0, syntax/import-check these,
+run data audit, build charts-clip-control, inspect all figures/controller, then
+publish followup marker. Do not rerun initial publish/data after additional
+training or overwrite charts-initial. Final report and storage/process handback
+remain. The original initial full chart is already complete and frozen.
+
+Followup DEV completed40 cells/560 responses, all exact and paired counters equal.
+Both predeclared1024 model pins locked before new source payload selection.
+Fresh24-case roster and source-disjointness pass; heldout-panel is now active
+under the same sole precision-clip-control-20261105-02 owner. Its frozen cohort
+label is clip-heldout24, distinct from initial heldout24. Prior initial identities,
+groups and topics were excluded before whole-component selection; no replacement
+or truncation. Continue all40 new heldout cells, then raw audit/new charts. Initial
+publication remains byte-frozen; no more training is allocated.

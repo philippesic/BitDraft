@@ -15,8 +15,9 @@ with174.94 versus363.78 MiB drafter bytes. No W1 deployment promotion.
 The original vanilla14,231-update/1800.021702-second reference and all fixed
 checkpoints are unchanged. Additional work is authorized because the full initial
 chart finished before the user's return. One fixed-versus-learned clipping
-control is locked for1,024 matched updates from the common foundation, then
-repeated DEV and a new disjoint24-case heldout. No new architecture/loss/target.
+control completed1,024 matched updates from the common foundation and passed
+full streamed optimizer/RNG/native-export recovery. Repeated DEV is complete;
+a new disjoint24-case heldout is active under precision-clip-control-20261105-02. No new architecture/loss/target.
 See PRECISION_CAMPAIGN for exact current ownership and resource qualification.
 The broader nine-model goal remains active; this is not a nine-model restart.
 Historical preparation-only and no-sweep limits below are superseded for this
