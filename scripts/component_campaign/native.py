@@ -56,7 +56,7 @@ def stats(text):
  m=matches[-1];values=[int(m[i]) for i in range(1,8)]+[float(m[i]) for i in range(8,11)]
  return dict(zip(('begin_calls','rounds','accept_calls','drafts','accepted_rounds','proposed','accepted','begin_ms','draft_ms','accept_ms'),values))
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('--arms',type=Path,required=True);ap.add_argument('--runtime',type=Path,required=True);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--cohort',choices=['capture3','natural12','natural24'],default='capture3');ap.add_argument('--reps',type=int,default=1);ap.add_argument('--warmups',type=int,default=0);ap.add_argument('--prompts',type=Path);ap.add_argument('--cohort-label');ap.add_argument('--trace',action='store_true');ap.add_argument('--paired-trace',action='store_true');ap.add_argument('--profile',action='store_true');ap.add_argument('--limit',type=int);ap.add_argument('--output-cap',type=int);ap.add_argument('--runtime-map',type=Path);ap.add_argument('--draft-cache-map',type=Path);ap.add_argument('--stress-length',type=int);ap.add_argument('--selector-audit',type=Path);ap.add_argument('--target',type=Path,default=P/'runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf');ap.add_argument('--depth',type=int,default=2);a=ap.parse_args()
+ ap=argparse.ArgumentParser();ap.add_argument('--arms',type=Path,required=True);ap.add_argument('--runtime',type=Path,required=True);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--cohort',choices=['capture3','natural12','natural24'],default='capture3');ap.add_argument('--reps',type=int,default=1);ap.add_argument('--warmups',type=int,default=0);ap.add_argument('--prompts',type=Path);ap.add_argument('--cohort-label');ap.add_argument('--trace',action='store_true');ap.add_argument('--paired-trace',action='store_true');ap.add_argument('--profile',action='store_true');ap.add_argument('--limit',type=int);ap.add_argument('--output-cap',type=int);ap.add_argument('--runtime-map',type=Path);ap.add_argument('--draft-cache-map',type=Path);ap.add_argument('--stress-length',type=int);ap.add_argument('--host-memory-snapshots',action='store_true');ap.add_argument('--selector-audit',type=Path);ap.add_argument('--target',type=Path,default=P/'runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf');ap.add_argument('--depth',type=int,default=2);a=ap.parse_args()
  arms=json.load(open(a.arms));prompts=heldout(a.prompts,arms,a.runtime) if a.prompts else cohort(a.cohort);a.out.mkdir(exist_ok=False);save(a.out/'prompts.json',prompts)
  if a.prompts and (a.depth!=2 or a.target!=P/'runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf'):raise ValueError('Frozen heldout contract is 4B Q4 depth2')
  if a.stress_length:
@@ -150,6 +150,14 @@ def main():
       if not (0<len(ids) and len(ids)+payload['n_predict']<=4096):raise RuntimeError('frozen prompt exceeds native context; no truncation/replacement')
       geometry.append(dict(id=item['id'],prompt_tokens=len(ids),output_reserve=payload['n_predict']))
      save(cell/'geometry.json',geometry)
+     snapshots=[]
+     def memory_snapshot(phase):
+      if not a.host_memory_snapshots:return
+      host=Path(f'/proc/{process.pid}/smaps_rollup').read_text()
+      item=dict(monotonic=time.monotonic(),phase=phase,scope='Separate post-request warmed-process diagnostic; outside latency bounds, not a timed peak.')
+      item.update({key+'_bytes':int(re.search(r'^'+key+r':\s+(\d+) kB',host,re.M)[1])*1024 for key in ('Rss','Pss','Private_Clean','Private_Dirty','Shared_Clean','Shared_Dirty')})
+      item['MiB']=int(subprocess.check_output(['/usr/lib/wsl/lib/nvidia-smi','--query-gpu=memory.used','--format=csv,noheader,nounits'],text=True).strip())
+      snapshots.append(item);save(cell/'memory-snapshots.json',snapshots)
      previous=None
      items=[dict(prompts[i%len(prompts)],id='warmup-'+str(i)+'-'+prompts[i%len(prompts)]['id'],_warmup=True) for i in range(a.warmups)]+prompts
      for item in items:
@@ -157,6 +165,7 @@ def main():
       if stop:raise RuntimeError('supervisor stop')
       payload=dict(item['payload']);payload['cache_prompt']=False;payload['return_tokens']=True
       save(cell/(item['id']+'-request.json'),payload);start_ns=time.monotonic_ns();start=time.perf_counter();response=request(port,'completion',payload);elapsed=time.perf_counter()-start;end_ns=time.monotonic_ns();save(cell/(item['id']+'-response.json'),response)
+      memory_snapshot(item['id'])
       tokens=response['tokens']
       signature={k:response[k] for k in ('tokens','content','stop_type','stopping_word','truncated')}
       if label=='target':reference.setdefault(item['id'],signature)
