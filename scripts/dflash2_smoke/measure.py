@@ -114,6 +114,9 @@ def gpu_replay(dest, row, arms, cache, audit=False):
             finally:release(arms[name],created)
     save(out/'result.json',dict(status='COMPLETE' if records else 'UNSUPPORTED_NO_MATCHED_DFLASH2',records=records,
         diagnostic_audit=audit,
+        runtime=pin(RUNTIME/'build.json'),executable=pin(R/'replay'),
+        timer_library=pin(P/'runs/execution-campaign-20261105-01/libgraph-timer.so'),
+        source=pin(ROOT/'scripts/dflash2_smoke/replay.cpp'),target=row['target_pin'],cache_formats=cache,
         scope='Two alternating process reps; two same-process warmup passes; three changing native target histories per domain. Target capture excluded. Draft graph includes selector/convolution for actual DFlash2; no host proposal selection.'))
 
 
