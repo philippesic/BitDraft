@@ -14,7 +14,7 @@ def merge(rows):
   for field in ('accepted','proposed','rounds','output_tokens','request_seconds','request_tok_s','acceptance','accepted_per_round','emitted_per_round','target_identical','responses','native_acceptance_gap_matched_control'):row[field]=None
   if name=='q4':
    for field in ('ce','agreement','mean_rank','mean_margin','ce_gap_matched_control'):row[field]=None
-   row.update(ffn_weights='Q4_K_M; full tensor map linked',gate_up_activation='Native Q4 kernel contract',down_activation='Native Q4 kernel contract',fusion_weights='See frozen tensor map',attention_qk_weights='See frozen tensor map',attention_vo_weights='See frozen tensor map',trainable_policy='Frozen external DFlash Q4_K_M reference',source_model_sha256=reference(model)['sha256'],data_manifest_sha256=None,B0_checkpoint_sha256=None,training_resolved_evidence=None,training_sequences=None)
+   row.update(ffn_weights='Q4_K_M; full tensor map linked',gate_up_activation='Native Q4 kernel contract',down_activation='Native Q4 kernel contract',fusion_weights='See frozen tensor map',attention_qk_weights='See frozen tensor map',attention_vo_weights='See frozen tensor map',trainable_policy='Frozen external DFlash Q4_K_M reference',source_model_sha256=reference(model)['sha256'],data_manifest_sha256=None,B0_checkpoint_sha256=None,training_resolved_evidence=None,training_sequences=None,row_scale_storage='Native quant-block format; see tensor map',midpoint_storage='No W1 midpoint group',positive_gain_storage='No W1 gain group',clip_storage='No W1 clipping group')
   else:row.update(trainable_policy='Frozen learned-small2048 B0 reference; no extra updates',training_resolved_evidence=str(B/'model-final.json'))
   rows.append(row)
  for row in rows:
