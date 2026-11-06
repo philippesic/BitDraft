@@ -8,6 +8,10 @@ def main():
  from .frozen_source import freeze
  spec=json.load(open(sys.argv[1]))
  if shutil.disk_usage('/mnt/c').free<4_800_000_000:raise RuntimeError('Checkpoint preflight needs4.8GB free on WindowsC before new recovery training; prior state preserved')
+ # The queue has released H4R2 and its native readouts at this boundary. Run a
+ # bounded actual full-head arithmetic audit before the remaining R2 windows;
+ # never interrupt or compete with the healthy trainer for this diagnostic.
+ if spec['name']=='H6R2':subprocess.run([sys.executable,'-m','scripts.component_campaign.head_forward_qualify','--tag','head-forward-initial','--arms','H0','H4','H3','HE4','H4R2'],check=True)
  directory=freeze(spec['name'])
  env=dict(os.environ,PYTHONPATH=str(directory)+':'+str(directory/'src'),COMPONENT_FROZEN_SOURCE=str(directory))
  if spec.get('embedding'):

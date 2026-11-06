@@ -22,11 +22,11 @@ def matrix(prefix,kind,meta):
  return np.ndarray((ne[1],ne[0]),dtype='<f4',buffer=raw,strides=(nb[1],nb[0])).copy()
 
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('--compile-only',action='store_true');a=ap.parse_args();compile_fixture()
+ ap=argparse.ArgumentParser();ap.add_argument('--compile-only',action='store_true');ap.add_argument('--arms',nargs='+',default=['H0','H4','H3','HE4','H4R2','H6R2','HE4R2','HE6R2']);ap.add_argument('--tag',default='head-forward');a=ap.parse_args();compile_fixture()
  if a.compile_only:print('HEAD_CAPTURE_CPP_BUILD_PASS_NATIVE_PENDING',flush=True);return
- out=R/'qualification/head-forward';out.mkdir(exist_ok=True)
+ out=R/'qualification'/a.tag;out.mkdir(exist_ok=True)
  if (out/'verified.json').exists():return
- names=['H0','H4','H3','HE4','H4R2','H6R2','HE4R2','HE6R2'];registry=completed();models=dict(q4=str(Q4),**{n:registry[n]['model'] for n in names});save(out/'arms.json',models)
+ names=a.arms;registry=completed();models=dict(q4=str(Q4),**{n:registry[n]['model'] for n in names});save(out/'arms.json',models)
  if not (out/'replay/result.json').exists():subprocess.run([sys.executable,'-m','scripts.component_campaign.replay',str(out/'arms.json'),'--runtime',str(R/'runtime04'),'--out',str(out/'replay'),'--reps','1','--audit','--head-capture'],cwd=ROOT,check=True)
  torch.set_num_threads(2);torch.backends.cuda.matmul.allow_tf32=False;records=[];failures=[]
  for name,model_path in models.items():
