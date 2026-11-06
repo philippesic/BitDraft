@@ -1,5 +1,6 @@
 """One bounded selector failure probe and independent native head/lattice audit."""
 import json
+import argparse
 import os
 import subprocess
 import sys
@@ -9,6 +10,8 @@ from scripts.dflash2_smoke.build import RUNTIME
 
 
 def main():
+    parser=argparse.ArgumentParser();parser.add_argument('--numeric',action='store_true');args=parser.parse_args()
+    if args.numeric:return numeric()
     out=R/'diagnostics/selector01';out.mkdir(parents=True,exist_ok=False)
     save(out/'owner.json',identity())
     draft=R/'models/dflash2-4b-Q4_K_M.gguf'
@@ -33,6 +36,26 @@ def main():
     save(out/'result.json',dict(probe_returncode=probe.returncode,audit_returncode=audit.returncode,
         source=pin(__file__),scope='Diagnostic only; no latency accepted from these passes.'))
     print('SELECTOR_DIAGNOSTICS_FINISHED',probe.returncode,audit.returncode,flush=True)
+
+
+def numeric():
+    out=R/'diagnostics/selector02';out.mkdir(parents=True,exist_ok=False)
+    save(out/'owner.json',identity());records=[]
+    target=P/'runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf'
+    capture=P/'runs/dflash-modern-capture-20261104-04/data/development-code-00/capture'
+    anchor=json.load(open(capture/'capture.json'))['prompt_tokens']+5
+    env=dict(os.environ,LD_LIBRARY_PATH=str(RUNTIME/'bin'),
+        LD_PRELOAD=str(P/'runs/execution-campaign-20261105-01/libgraph-timer.so'),
+        GGML_CUDA_DECODE_CONSISTENT='32',CUDA_VISIBLE_DEVICES='0',EXEC_REQUEST_MASKS='1',COMPONENT_K='f16',COMPONENT_V='f16')
+    for precision in ('Q4_K_M','F16'):
+        draft=R/'models'/f'dflash2-4b-{precision}.gguf'
+        command=[str(R/'replay-numeric'),str(target),str(draft),str(capture),str(anchor),'1',str(out/f'{precision}.json'),'1','2']
+        save(out/f'{precision}-command.json',dict(argv=command,source=pin(ROOT/'scripts/dflash2_smoke/replay.cpp'),executable=pin(R/'replay-numeric'),model=pin(draft)))
+        with (out/f'{precision}.log').open('w') as log:
+            result=subprocess.run(command,env=env,stdout=log,stderr=subprocess.STDOUT)
+        records.append(dict(precision=precision,returncode=result.returncode))
+    save(out/'result.json',dict(records=records,scope='Bounded Q4-versus-retained-F16 compatibility diagnosis; no clean latency claims.'))
+    print('NUMERIC_DIAGNOSTICS_FINISHED',records,flush=True)
 
 
 if __name__=='__main__':main()
