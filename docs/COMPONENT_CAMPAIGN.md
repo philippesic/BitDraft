@@ -551,3 +551,57 @@ then all-arm natural12 selection, clean GPU replay and physical-tie allocation.
 Its launched code predates later publication/scalar-audit additions; run those
 manually after it releases. The campaign is still in progress: rescue decisions,
 combinations, full-state frontier retention and formal final panels remain.
+
+## Measured selection and next allocation —19:29Pacific
+
+The one-repetition natural12 selection is complete: Q4 is246.91request tok/s,
+B0179.06, H0175.76, H4172.69, HE4178.76 and K44174.25. Acceptance is
+1631/2183for Q4,1124/3196B0,1098/3246H0,1050/3342H4,1100/3240HE4,
+1098/3245K44. These are consumed-DEV selection observations, not formal promotion.
+Clean one-repetition GPU replay is1.1762msH0,1.0168H4,1.0057HE4,1.2005H3,
+1.2238K44. Scalar row-scale/midpoint storage costs1.2577/1.2703ms; Sall1.2934.
+Actual physical-tie audit passes, including54exact Q6-control logit/cache checks.
+Actual graph readers consumed all74F16 scalar tensor fields; clip conversion has
+its separate81-row byte-equivalence proof. Raw proof/decision packet is
+`runs/component-campaign-20261105-01/selection-evidence.json` (canonical root).
+
+Use the two reserved recovery opportunities for head-only and tied Q4 native
+block-scale QAT, each with a separately matched private-Q6 control. These learn
+only the existing2,483,200half native block scales, preserving packed integer
+codes/subscales, native scale signs and tying. Full dense vocabulary Adam does
+not fit the GPU resource estimate. The R2 CUDA gradient/Adam/export/resume pilot
+must pass and publish actual cost/peak before its4096continuation. This is a
+separate trainability recipe, not relabeled R1 compensation or extra architecture.
+
+Three common-B0/original-history R1 combinations follow: Csmall=K44+gain/clip/norm
+half storage; Chead=H4+Csmall; Ctied=HE4+Csmall. This actually tests head/cache/
+scalar/embedding interactions. Row scales/midpoints stay F32 in useful combinations
+because their quarter-MiB saving has measured conversion cost. The all-scalar
+isolated recovery remains retained. Q3 head is slower here; private E4 adds memory
+without a measured lookup/request advantage. No Q3 embedding/Q5 bridge/Q2 extreme
+is currently selected; none is declared irrecoverable.
+
+Then capture16already-admitted TRAIN inputs with the qualified native DFlash taps
+and hard labels, and run an explicitly separate matched H0broad/Csmallbroad recipe.
+Do not reuse old EAGLE features or modify primary data/history. Current primary
+continuation worsens dense DEV loss after its early best point, and1,762unique
+labels are a concrete coverage limitation. Keep new heldout sealed until final
+recipes/native states are locked. Planned total is28physical4096windows:17done,
+fourR2(two variants/two controls),three combinations,two broader-data windows and
+two authenticated frontier regenerations. Pilot32updates resume within4096.
+This is planning/accounting, not proof that the later stages have completed.
+
+`component-post-primary-20261105-01` finished normally. Current GPU owner is
+`component-selection-followup-20261105-01` (tmux same socket; state under workspace
+`runs/`, supervisor566178/group566179, actual birth/boot identity in its receipts).
+It finishes all-arm one-repetition captureDEV host traces, summary and charts.
+Passive successor `component-recovery-combinations-20261105-01` has supervisor
+569261/group569262 and waits for both terminal success and prior group release.
+It qualifies exact tied Q6, runs the four R2 windows/three combinations, then the
+new capture/two broader windows, all serially. Both new supervisors use the fixed
+group grace implementation and300seconds; worker-first graceful checkpointing is
+still preferred. Fresh authenticate identities before any stop. No other GPU
+owner. The old post-primary owner receipt is preserved as
+`post-primary-initial-owner.json`; an old loaded wait helper may rewrite its old
+owner filename when the followup starts, so use distinct successor owner receipts
+and supervisor states as current authority.
