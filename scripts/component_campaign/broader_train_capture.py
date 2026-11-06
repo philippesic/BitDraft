@@ -47,7 +47,8 @@ def main():
   records.append(dict(name='broader-'+row['id'],metadata=pin(capture/'capture.json'),split='TRAIN',files=[*[pin(capture/f'layer-{t}.f32') for t in meta['taps']],pin(proofpath)],TRAIN_group_id=row['group_id'],input_ancestry=row,training_last_input_position=end,native_eog_ids=sorted(eos_ids),stop_policy='Only supervision through first native EOG, including its prediction; no post-EOG labels; original captures retained.',hard_label_proof=pin(proofpath)))
   save(out/'progress.json',records);print('BROADER_NATIVE_TRAIN_CAPTURED',row['id'],end-len(tokens)+1,'eligible continuation tokens',flush=True)
  original=json.load(open(R/'freeze.json'))['B0_config']['data']
- if pin(original['path'])!=original:raise ValueError('original training manifest changed')
+ actual_original=pin(original['path'])
+ if any(actual_original[key]!=value for key,value in original.items()):raise ValueError('original training manifest changed')
  baseline=json.load(open(original['path']))
  save(out/'manifest.json',dict(status='ADMITTED_NATIVE_DFLASH_BROADER_TRAIN',records=baseline['records']+records,taps=[2,6,10,14,18,22,26,30],original_manifest=original,new_input_plan=pin(plan),selection_evidence=pin(decision),target=pin(TARGET),producer_template=pin(P/'runs/dflash-modern-capture-20261104-04/data/fit-code-00/command.json'),source=pin(__file__),policy='New matched-control recipe only; previous R1history/data unchanged. Native TRAIN bank inputs permanently excluded from heldout; earlier EAGLE feature/label files never reused.'))
  print('BROADER_NATIVE_TRAIN_MANIFEST_READY',flush=True)
