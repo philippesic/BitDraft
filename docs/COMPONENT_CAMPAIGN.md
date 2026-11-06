@@ -489,3 +489,48 @@ GPU exp-then-half deployment values, authenticates full masters/Adam/RNG and
 requires exact recovered native bytes. `verify_frontier_recovery` remains pending.
 Optional extensions now preserve4096readouts rather than skipping directly to
 an extended endpoint; no extension or new training recipe has run.
+
+
+## Gain/clip recovery and continuity —18:44Pacific
+
+Sgain and Sclip completed4096updates plus all four native readouts. Sgain native
+counts0/256/1024/4096are56/261,52/267,51/271,55/261; final dense DEV CE7.25814.
+It saves141,312tensor bytes with zero new underflows. Actual GPU-versus-CPU
+exp-then-half rounding differs in1/2/3/6gain values across the four points; the
+export and full state preserve the GPU values used by training.
+
+Sclip counts are58/257,54/263,48/277,56/259; final dense DEV CE7.25606.
+Its current native file stores the F16-rounded value in F32metadata. Physical
+half-bit field admission remains pending under runtime04; no runtime memory
+saving is claimed for the clip constant. Snorm is at1024and continues to4096;
+Sall is the final primary window. Fifteen physical windows are complete.
+
+Continuation checklist after the old passive successor runs its launched work:
+
+1. Inspect `post-primary-result.json` and selection/native/replay results; fix
+   routine qualification failures without replacing old qualified artifacts.
+2. Run `scalar_import_audit` in the free GPU lane. The launched successor does
+   not include this later-added call. It also does not write the later-added
+   publication index: link `selection-primary-summary.json` manually and publish.
+3. Obtain a one-repetition all-arm consumed-DEV host trace if needed to fill
+   selection host cost; label it diagnostic. Formal finalists still require
+   two same-process warmups and five alternating repetitions. Profiling is
+   separately flagged and excluded from plain request performance.
+4. Record actual evidence-led rescue/bridge/combination decisions. Run common-B0
+   matched4096combinations, including actual head/cache/scalar interaction. No
+   global nonrecoverability claim from frozen-head R1 or unrun R2. Broader TRAIN
+   and native block-scale R2 are prepared options, not completed work.
+5. Lock useful configurations, regenerate/pin two exact full frontier states,
+   verify full recovery including saved GPU exp-half values, and lock actual
+   native weights before opening new heldout. If a same-history reproduction
+   differs, investigate/re-measure the actual retained state; never label an
+   unmatched optimizer checkpoint as the measured original native snapshot.
+6. Complete formal native/clean-GPU/host/context and post-lock heldout24 panels,
+   actual format profiles, JSON/CSV/PNG/SVG/standalone HTML, final report/state,
+   scoped storage cleanup and verified owned-process/GPU release. No pushes.
+
+Current supervisors remain `component-rest-recovery-20261105-01` and passive
+`component-post-primary-20261105-01`, local tmux socket `binary-eagle-runtime`.
+They still have pre-fix group-stop code loaded: use the authenticated worker-first
+stop procedure above if a user pause arrives. Healthy jobs stay alive through
+source edits/context rotation. The broader nine-model goal remains open.

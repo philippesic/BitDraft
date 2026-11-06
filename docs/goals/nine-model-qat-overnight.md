@@ -6218,3 +6218,9 @@ Component checkpoint18:11Pacific: row-scale and midpoint4096windows/native reado
 complete; Sgain active. Thirteen physical primary windows complete. Current live
 state/stop guidance and pending scalar graph-import proof, combinations and formal
 comparisons are recorded in COMPONENT_CAMPAIGN. No new heldout or promotion.
+
+
+Component checkpoint18:44Pacific: Sgain/Sclip complete4096and all native readouts;
+Snorm active, Sall pending. Fifteen physical windows complete. Gain export preserves
+actual GPU exp-half ties. Detailed post-primary manual steps and safe old-supervisor
+stopping are current in COMPONENT_CAMPAIGN. No heldout, new goal or push.
