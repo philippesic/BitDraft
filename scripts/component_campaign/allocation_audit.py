@@ -28,6 +28,7 @@ def main():
  control_checks=0
  for baseline in [x for x in data['records'] if x['arm']=='H0']:
   for name in ('H6','E6'):
+   if name not in arms:continue
    private=next(x for x in data['records'] if x['arm']==name and x['domain']==baseline['domain'] and x['rep']==baseline['rep'])
    for a,b in zip(baseline['result']['rows'],private['result']['rows'],strict=True):
     if any(a[k]!=b[k] for k in ('outputs','cache_bytes','cache_hash_fnv1a64')):raise ValueError('exact private Q6 copy control changes required logits/cache '+name)
