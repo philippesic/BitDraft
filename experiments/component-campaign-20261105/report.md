@@ -78,3 +78,34 @@ The initial gate error was an unsupported generic fixture copy, corrected to the
 native flash-attention conversion. All Q8/Q4/Q5 fixture values then match exactly.
 Formal latency, tied allocation audit, combinations and heldout remain pending;
 this checkpoint is not campaign completion.
+
+
+## Completed initial windows —16:14Pacific checkpoint
+
+Every row below has4096additional logical updates from B0 and four actual native
+readouts,0/256/1024/4096. Exact H6/E6 frozen-Q6 forward controls reuse H0's
+identical physical training; all other rows consumed their own4096updates.
+CE is full-vocabulary cross entropy on135consumed DEV positions (lower is better).
+Native counts are three64-token consumed-DEV requests and remain diagnostics,
+without final timing or independent training-seed confidence intervals.
+
+| Component | Final DEV CE | Native accepted/proposed | Added private vocabulary tensor bytes |
+|---|---:|---:|---:|
+| H0 sharedQ6 control |7.05519|55/263|0|
+| H6 exact privateQ6 head |7.05519|55/263|521,472,000|
+| H4 privateQ4_K head |7.32178|49/273|357,580,800|
+| H3 privateQ3_K head |7.09648|58/257|273,152,000|
+| E6 exact privateQ6 embedding |7.05519|55/263|521,472,000|
+| E4 privateQ4_K embedding |7.07413|57/259|357,580,800|
+| HE4 tied privateQ4_K |7.12048|55/261|357,580,800|
+| K8F Q8_0K/F16V |7.18649|54/265|0|
+| KF8 F16K/Q8_0V |7.47662|55/262|0|
+
+The private head does not replace the immutable target head: even Q3 adds memory
+versus target-sharing. These are exact vocabulary tensor payloads, not GGUF file
+size or archive ratios; actual CPU/GPU buffer placement and peak are separate.
+HE4 has one vocabulary tensor in its native file; native pointer/device-sharing
+audit is still pending. The target/verifier keeps F16KV in every row. K88 is now
+training, followed by the three lower-bit cache pairs and six scalar windows.
+No new heldout data has been opened, no precision frontier or throughput promotion
+has been declared, and the campaign is not complete.

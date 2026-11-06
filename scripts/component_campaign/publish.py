@@ -78,15 +78,17 @@ def charts(rows,out):
   fig.suptitle('Matched recovery on consumed DEV; native readouts are short diagnostics');fig.tight_layout();fig.savefig(out/(filename+'.png'));fig.savefig(out/(filename+'.svg'));plt.close(fig)
  fig,axes=plt.subplots(1,3,figsize=(14,4.4))
  final=[max([r for r in rows if r['arm']==n],key=lambda x:x['updates']) for n in names]
+ acceptance_field='final_acceptance' if any(r.get('final_acceptance') is not None for r in final) else 'acceptance'
+ acceptance_scope=next((r.get('final_request_cohort') for r in final if r.get('final_acceptance') is not None),'short consumed DEV smoke')
  for r in final:
   n=r['arm'];mem=r['tensor_bytes']/2**20
-  for ax,x,y in [(axes[0],mem,r.get('final_acceptance',r.get('acceptance'))),(axes[1],r.get('clean_gpu_forward_ms'),r.get('final_acceptance',r.get('acceptance'))),(axes[2],mem,r.get('final_request_tok_s'))]:
+  for ax,x,y in [(axes[0],mem,r.get(acceptance_field)),(axes[1],r.get('clean_gpu_forward_ms'),r.get(acceptance_field)),(axes[2],mem,r.get('final_request_tok_s'))]:
    if x is not None and y is not None:ax.scatter(x,y,color=colors[n]);ax.annotate(n,(x,y),fontsize=7)
  axes[0].set(xlabel='Private drafter tensor MiB (shared target excluded)',ylabel='Native accepted / proposed',title='Storage / acceptance')
  axes[1].set(xlabel='Clean GPU forward ms',ylabel='Native accepted / proposed',title='Latency / acceptance')
  axes[2].set(xlabel='Private drafter tensor MiB',ylabel='Formal request tokens / second',title='Full-request frontier')
  for ax in axes:ax.grid(alpha=.2)
- fig.suptitle('Measured component tradeoffs; unmeasured fields stay blank');fig.tight_layout();fig.savefig(out/'tradeoffs.png');fig.savefig(out/'tradeoffs.svg');plt.close(fig)
+ fig.suptitle('Measured component tradeoffs; acceptance cohort: '+acceptance_scope+'; unmeasured fields blank');fig.tight_layout();fig.savefig(out/'tradeoffs.png');fig.savefig(out/'tradeoffs.svg');plt.close(fig)
 
 HTML='''<!doctype html><meta charset="utf-8"><title>DFlash component campaign</title>
 <style>body{font:15px system-ui;margin:24px;color:#182438;background:#f6f8fb}h1{font-size:24px}.note{max-width:1100px;color:#47566b}#filters{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}label{background:white;padding:5px;border-radius:4px}svg{background:white;border:1px solid #ccd5e3;width:100%;height:480px}table{border-collapse:collapse;background:white;font-size:12px}td,th{padding:7px;border:1px solid #dce3ef}#tip{position:fixed;background:#182438;color:white;padding:8px;display:none;pointer-events:none;border-radius:4px}select{padding:6px}</style>

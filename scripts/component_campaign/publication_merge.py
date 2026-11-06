@@ -34,6 +34,7 @@ def merge(rows):
    row.update({prefix+'_request_tok_s':entry['request_tok_s'],prefix+'_accepted':entry['accepted'],prefix+'_proposed':entry['proposed'],prefix+'_acceptance':entry['acceptance'],prefix+'_emitted_per_round':entry['emitted_per_round'],prefix+'_request_cohort':panel['cohort'],prefix+'_request_responses':entry['responses'],prefix+'_request_repetitions':entry['timing_repetitions'],prefix+'_request_evidence':panel['source']['path'],prefix+'_vs_q4':entry.get('vs_q4'),prefix+'_prefix_counts':entry['prefix_counts']})
    if prefix=='final':
     if entry['instrumented'] or entry['timing_repetitions']<5 or freeze['warmup_policy']['per_server_cell']<2:raise ValueError('formal final protocol not met')
+   if prefix=='final' or row.get('allocation_evidence') is None:
     allocation=entry['allocations'][0]['allocation'];model=allocation['model_buffers'];cache=allocation['cache_buffers']
     row.update(actual_gpu_model_bytes=sum(v for k,v in model.items() if k.startswith('CUDA') and k!='CUDA_Host'),actual_cpu_model_bytes=sum(v for k,v in model.items() if k.startswith('CPU')),draft_cache_bytes=sum(x['total_reported_bytes'] for x in cache[1:]),draft_rotation_bytes=sum(x['reported_bytes'] for x in allocation['rotation_buffers']),sampled_combined_device_peak_bytes=entry['sampled_device_peak_bytes'],allocation_evidence=entry['allocations'][0]['cell'],allocation_rounding='Native logs0.01MiB; persistent tensor bytes exact. Peak includes target/desktop/workspace.')
     target=panel['arms']['target']['allocations'][0]['allocation']['model_buffers']
@@ -45,8 +46,9 @@ def merge(rows):
    row[prefix+'clean_gpu_forward_ms']=entry['clean_gpu_forward_ms'];row[prefix+'gpu_forward_evidence']=replay['source']['path'];row[prefix+'fixed_replay_forward_host_ms']=entry['fixed_replay_forward_host_ms'];row[prefix+'gpu_forward_repetitions']=entry['timing_repetitions']
   trace=summary['native'].get(index.get('trace_panel',''),{});entry=trace.get('arms',{}).get(arm)
   if entry:
-   if not entry['instrumented'] or entry['timing_repetitions']<5:raise ValueError('formal trace repetitions absent')
-   row['full_draft_host_ms']=entry['full_draft_host_ms_per_round'];row['full_draft_host_cohort']=trace['cohort'];row['full_draft_host_evidence']=trace['source']['path']
+   if not entry['instrumented']:raise ValueError('trace instrumentation absent')
+   prefix='' if entry['timing_repetitions']>=5 else 'selection_'
+   row[prefix+'full_draft_host_ms']=entry['full_draft_host_ms_per_round'];row[prefix+'full_draft_host_cohort']=trace['cohort'];row[prefix+'full_draft_host_evidence']=trace['source']['path'];row[prefix+'full_draft_host_repetitions']=entry['timing_repetitions']
  controls=index.get('matched_controls',{})
  lookup={(r['arm'],r['updates']):r for r in rows}
  for row in rows:

@@ -270,7 +270,7 @@ DSpark BF16 drafts contain no head/embedding table. See
 
 H0, exact private H6/E6, H4, finite H3, E4 and tied HE4 have all four native
 0/256/1024/4096readouts. Physical R1 H3/E4/HE4 each completed the full4096
-updates. Final consumed dense DEV CE is7.09648/7.07406/7.12048 respectively,
+updates. Final consumed dense DEV CE is7.09648/7.07413/7.12048 respectively,
 versus equally trained H07.05519. These are selection diagnostics, not final
 heldout or throughput findings. Full-vocabulary CPU/CUDA embedding lookup passed
 for selected mask/special/common/rare/unseen/high IDs before HE4.
