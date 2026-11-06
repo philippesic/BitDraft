@@ -18,6 +18,14 @@ def panel(name,model,kv=('f16','f16')):
 
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('arms',nargs='+');a=ap.parse_args()
+ policy_path=R/'queue-policy.json'
+ if policy_path.exists():
+  policy=json.load(open(policy_path));resolved=[]
+  for name in a.arms:
+   for item in [*policy.get('prerequisites',{}).get(name,[]),name]:
+    if item not in resolved:resolved.append(item)
+  save(R/'panels'/('queue-'+a.arms[0]+'-plan.json'),dict(requested=a.arms,resolved=resolved,policy=pin(policy_path),source=pin(__file__)))
+  a.arms=resolved
  for name in a.arms:
   pause();spec=json.load(open(R/'specs'/(name+'.json')));out=R/'arms'/name
   if not (out/'result.json').exists():

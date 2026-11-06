@@ -6,8 +6,9 @@ from .measure import completed
 
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--after',type=Path,required=True);a=ap.parse_args();wait_release(a.after)
- names=['H0','H4','HE4','K44','H4R2','H6R2','HE4R2','HE6R2','Csmall','Chead','Ctied','H0broad','Csmallbroad'];registry=completed()
+ names=['H0','H4','HE4','K44','H4R2','H6R2','HE4R2','HE6R2','Csmall','Chead','CtieKV','Ctied','H0broad','Csmallbroad'];registry=completed()
  save(R/'post-recovery-owner.json',dict(owner=identity(),predecessor=pin(a.after),decision=pin(R/'selection-evidence.json'),source=pin(__file__)))
+ run('head_forward_qualify')
  for n in names:
   if n not in registry:raise ValueError('Selected recovery not actually complete '+n)
   if not (R/'arms'/n/'native-tensor-audit.json').exists():run('audit',n)
