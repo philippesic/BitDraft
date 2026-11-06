@@ -52,6 +52,7 @@ def main():
    if private:release(model_path,created)
   print('FULL_NATIVE_HEAD_FORWARD_AUDITED',name,flush=True)
  result=dict(status='FULL_NATIVE_HEAD_FORWARD_GRADIENT_PASS' if not failures else 'NUMERIC_GATE_REQUIRES_REVIEW',records=records,failures=failures,replay=pin(out/'replay/result.json'),source=pin(__file__),cpp=pin(ROOT/'scripts/component_campaign/replay.cpp'),gate=dict(full_vocab=248320,contexts=3,required_columns=2,rms_error_max=.03,max_absolute_error=.25,decision_change_requires_review_above_native_margin=.05),scope='Actual native captured histories and normalized head inputs; every vocabulary logit compared with exact dequantized packed weights used by QAT. Native activation quantization/reduction drift is bounded, not claimed bit-exact. Labels are immutable native target labels. Upstream gradient covers full vocabulary. Audit timing excluded; no new TRAIN or heldout exposure.')
+ result['output_retention']='On a passing gate, only NEW full native head-output scratch is retired after pinning; actual input vectors, layout metadata, full-output hashes, discrepancy/rank/decision metrics, replay, native model/runtime/source pins remain. Models/checkpoints/captures are preserved. Re-running the diagnostic reconstructs the outputs.'
  save(out/'result.json',result)
  if failures:raise ValueError('Native head arithmetic requires bounded review; evidence preserved')
  save(out/'verified.json',result)
