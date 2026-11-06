@@ -362,3 +362,27 @@ three separate warm/five-repetition cache context panels and authenticated two-s
 frontier retention. They are preparation, not completed evaluations. Two-frontier
 retention protects selected NEW full states and skips intermediate checkpoints in
 the second same-history regeneration to avoid a third full state in flight.
+
+
+## Value-cache control and budget —16:07Pacific
+
+KF8(F16K/Q8_0V) also completed4096and all native readouts; K88 now starts the
+both-Q8control. No unhealthy process or storage failure occurred. KF8 final dense
+DEV CE7.47662 versus H07.05519, with the same18/135target-token agreements. Loss
+alone is not native acceptance and is not a permanent recovery rejection.
+
+Budget accounting explicitly distinguishes18initial logical arms from16physical
+training arms: exact H6/E6 reuse H0's identical4096history. Their8192saved physical
+updates cover matched controls for up to two evidence-led R2rescue opportunities;
+the overall114688physical-update scheduling ceiling is unchanged. All initial
+qualified variants still receive4096. Native exports/controls/checkpoint saves,
+selection/formal panels, two final retained reproductions and reserved interaction
+work are counted separately. `budget.json` and `accounting.json` retain evidence.
+
+Readout publication now derives actual unique exposed label positions from
+sequence/anchor update logs, including the H0pilot prefix and exactQ6reuse. It
+separates that count from the1762-position admitted pool and repeated supervised
+positions. Future resumes record authenticated archive/source-arm ancestry; B0
+archive authentication is checked against the frozen receipt before hydration.
+Repeated identical hashing was removed without changing configuration, optimizer,
+examples, RNG or any precision semantics. Active frozen trainers are unchanged.
