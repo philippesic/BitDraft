@@ -1,5 +1,14 @@
 # Current project status
 
+## Development priority: HE4; Csmallbroad fallback
+
+User decision, November 6: prioritize **HE4** for future binary-drafter development
+toward beating external DFlash Q4_K_M request throughput. Preserve **Csmallbroad**
+as the compact fallback, especially if memory or longer-context costs become
+limiting. [Decision and exact retained recipe](DECISIONS.md#2026-11-06-prioritize-he4-retain-csmallbroad-fallback).
+This selects the development direction; it grants no additional GPU run or
+training budget and does not promote HE4 over the external deployment incumbent.
+
 ## Completed: precision campaign and DFlash2 follow-up
 
 Both user-authorized investigations are complete. Source, compact findings,
