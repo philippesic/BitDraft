@@ -130,6 +130,10 @@ def main():
       try:request(port,'health');break
       except Exception:time.sleep(1)
      else:raise RuntimeError('startup timeout')
+     actual_cache=re.findall(r'llama_kv_cache: size =.*?K \(([^)]+)\):.*?V \(([^)]+)\):',(cell/'server.log').read_text(errors='replace'))
+     expected_cache=draft_cache_map.get(label,['f16','f16'])
+     if not actual_cache or list(actual_cache[0])!=['f16','f16'] or (model and (len(actual_cache)<2 or any(list(x)!=expected_cache for x in actual_cache[1:]))):raise ValueError('Actual native target/draft cache allocation differs from frozen precision '+label)
+     save(cell/'cache-allocation.json',dict(actual=actual_cache,target=['f16','f16'],draft=expected_cache if model else None,policy='Observed native allocation after health readiness, before requests; target immutable, draft-only formats.'))
      (cell/'library-maps.txt').write_text(Path(f'/proc/{process.pid}/maps').read_text())
      geometry=[]
      for item in prompts:
