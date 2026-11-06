@@ -21,30 +21,38 @@ matched broader-data control and reaching 168.95 request tokens/s. External Q4
 remains the deployment incumbent. Controls, complete training recipes and
 cohorts remain distinct; full HF/native graph parity is still unresolved.
 
-## Authorized next action
+## Active DFlash2 follow-up
 
-Execute [DFlash2 smoke](DFLASH2_SMOKE.md): genuine DFlash2 across the frozen
-4B/9B × Q4_K_M/NVFP4 target matrix, ordinary DFlash Q4_K_M comparisons, plus
-one additional 1,800-second actual-update continuation of the best retained
-candidate. Select Csmallbroad for that continuation using the native request
-throughput criterion among retained binary candidates; preserve HE4 as the
-faster-draft comparison. This is artifact/recipe selection, not an isolated
-precision claim or proof of a significant win over HE4. Measure before/after
-on consumed DEV; the old fresh24 cohort is now consumed and cannot be relabeled
-sealed. Do not start another broad training sweep.
+The sole follow-up GPU operator is the tool-created worktree
+`/home/philip/.t3/worktrees/binary-eagle-decoding/t3-e6fc8d06`, branch
+`t3/dflash2-smoke-baseline-candidate-train`. Parent owns review/integration and
+external message delivery after completion and GPU release. No external message
+has been sent by this worker.
 
-The previous campaign source checkout and pinned runtimes remain preserved.
-Parent is integrating and preparing one follow-up GPU owner. Fresh ownership,
-pause and storage checks precede launch; old running receipts from three WSL
-restarts are historical, not live authority. See [component record](COMPONENT_CAMPAIGN.md)
-and [operations](AGENT_OPERATIONS.md). All retained states/parents/data and
-unpublished source must remain recoverable. The explicitly retired earlier
-optimizer states are listed in the [retirement record](../experiments/precision-campaign-20261104/checkpoint-retirement-20261105.md).
+Csmallbroad exact full-state restoration, byte-identical zero-update native
+export and a scratch GPU Adam4096→4097 qualification passed. The single extra
+1,800-second synchronized-update continuation is running under local tmux
+`dflash2-smoke-train-20261106-01`, supervised by canonical `remote_job.py`.
+[Supervisor](../runs/dflash2-smoke-train-20261106-01/state.json) ·
+[Live progress](../runs/dflash2-smoke-20261106-01/candidate/live.json) ·
+[Smoke record](../experiments/dflash2-smoke-20261106/report.md).
+Raw outputs use canonical `runs/dflash2-smoke-20261106-01`; current full-state
+parents/frontiers, old sources/runtimes and charts remain protected. The explicitly
+authorized obsolete one-step roundtrip diagnostic was retired, freeing4.5GiB of
+Windows physical headroom; its configs/results/native exports remain and its
+retirement receipt is tracked with this experiment. The final continuation state
+will use a new Windows directory without replacing the parent.
 
-After the DFlash2/candidate follow-up finishes and is reviewed, release the GPU
-and send the exact queued shader benchmark message. The destination, message
-and deduplicated key are in the [pending handoff](../runs/component-campaign-20261105-01/pending-thread-message.json).
-The component campaign's completion alone does not trigger delivery.
+A genuine Qwen3.5-4B DFlash2 release has been authenticated and converted;
+selector/convolution metadata and tensor coverage are present. No compatible9B
+release has yet been found. Runtime qualification and all four final cell statuses
+remain pending; prepared artifacts are not measurements. Continue the bounded
+smoke with target-only exact greedy references, two warmups and two alternating
+repetitions on consumed DEV. Preserve HE4 unmodified. Do not start any other GPU
+job while this continuation owns the lane.
+
+The exact queued shader message remains pending until this follow-up finishes,
+parent review completes and the GPU is released. Parent will deliver it once.
 
 ## Reference and history
 
