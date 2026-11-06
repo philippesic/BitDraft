@@ -109,3 +109,11 @@ audit is still pending. The target/verifier keeps F16KV in every row. K88 is now
 training, followed by the three lower-bit cache pairs and six scalar windows.
 No new heldout data has been opened, no precision frontier or throughput promotion
 has been declared, and the campaign is not complete.
+
+
+Checkpoint17:45Pacific: all6draft-cache windows and the first scalar window are
+complete. Sscale stores251,904fewer tensor bytes, has zero new scale underflows,
+and ends with61/250accepted/proposed on the short native diagnostic. Its dense
+DEV loss is higher than H0, while token agreement is19/135versus18/135. These
+are actual consumed-DEV outcomes and do not establish a deployment benefit.
+Smidpoint and the other four scalar windows remain in the serialized queue.

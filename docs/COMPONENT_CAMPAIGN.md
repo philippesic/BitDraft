@@ -448,3 +448,22 @@ response reconciliation validates accepted/proposed and reconstructs exact prefi
 counts within its rounding bound. Sscale is starting, followed by the other five
 scalar windows. Current GPU owner and passive successor are unchanged; stopping
 old supervisors remains worker-first as described above.
+
+
+## First scalar storage window complete —17:45Pacific
+
+Sscale completed4096updates and native0/256/1024/4096readouts:
+57/259,57/257,53/267,61/250. Final dense consumed DEV CE7.37839 versus
+H07.05519, with19/135versus18/135target-token agreements. The different dense
+loss and short native outcomes reinforce that neither alone proves throughput.
+Stored tensor payload is172,236,800bytes, saving251,904bytes versus B0. No new
+scale underflows were found; maximum same-master F16 rounding error5.0932e-5.
+Actual native conversion cost, buffer allocation and request benefit remain to be
+measured. Smidpoint is now training; five scalar windows remain.
+
+The standalone HTML now supports recovery curves and latest-readout latency/
+acceptance/model+cache payload scatter views, with separate fields for short DEV,
+selection and final data. V8 syntax and DOM-stub mode/filter checks pass after
+fixing tooltip newline escaping. This validates interaction code, not browser
+appearance or any unmeasured performance. Source/data/runtime hashes and actual
+unique/repeated exposure are in the full CSV/JSON. No external JS dependency.
