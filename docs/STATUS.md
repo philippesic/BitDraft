@@ -38,10 +38,13 @@ Windows C and WSL have low free space; do not infer another training allocation
 from completion. Preserve paid states, source/dictionary dependencies and captures.
 Prior explicitly authorized retirements remain recorded in their campaign receipts.
 
-The exact queued shader benchmark message is ready for parent delivery now that
-review/integration and GPU release are complete. Delivery status/identity lives in
+The exact queued shader benchmark message was delivered to the
+[requested thread](<t3-thread://v2/de4b951c-7cc7-4d2d-bbb0-1f3e6d7f79f7/aba88598-10c1-4c3c-b760-9aa7a0353548>)
+after review/integration/push and fresh GPU release checks. Delivery started a new
+turn there. Delivery identity and the unchanged message are in the
 [handoff receipt](../runs/component-campaign-20261105-01/pending-thread-message.json).
-Do not resend if a successful delivery receipt is recorded.
+Do not resend. That separate shader investigation now owns its next actions;
+this binary-model thread has no new GPU allocation.
 
 ## References
 
