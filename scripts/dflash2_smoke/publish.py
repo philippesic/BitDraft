@@ -38,6 +38,7 @@ def cell_rows(directory):
     for method in METHODS:
         row=dict(cell=cell,method=method,label=LABELS[method],depth=plan['registry']['draft_depth'],
                  status='MEASURED' if method in stats else 'UNSUPPORTED_NO_MATCHED_9B_RELEASE' if method=='dflash2' else 'UNTESTED_NO_9B_CANDIDATE_WEIGHTS')
+        if method=='dflash2':row['original_dflash2_q4_status']='INVALID_NONFINITE_LOGITS' if cell.startswith('4B') else 'NO_MATCHED_RELEASE'
         if method not in stats:
             out.append(row);continue
         if method=='dflash2' and plan.get('dflash2_variant',{}).get('f32_down_fallback'):
@@ -69,6 +70,12 @@ def cell_rows(directory):
             chosen=[x for x in selected if x['rep']==rep]
             lo=min(x['bounds_ns'][0] for x in chosen)/1e9;hi=max(x['bounds_ns'][1] for x in chosen)/1e9
             residency += [x for x in json.load(open(d/'memory.json')) if lo<=x['monotonic']<=hi]
+        row['residency_sampling_scope']='Samples within clean measured request windows; sampled maxima, not exact allocator peaks.'
+        if not residency:
+            diagnostic=R/'memory'/cell/f'00-{method}'/'memory-snapshots.json'
+            residency=[x for x in json.load(open(diagnostic)) if not x['phase'].startswith('warmup-')]
+            row['residency_sampling_scope']='Separate post-request warmed-process snapshots; timed sampler missed this cell because the device query blocked. No diagnostic throughput reused.'
+            row['residency_diagnostic']=pin(diagnostic)
         assert residency
         row['native_allocations']=alloc[0]
         for key in ('MiB','Rss_bytes','Pss_bytes','Private_Clean_bytes','Private_Dirty_bytes','Shared_Clean_bytes','Shared_Dirty_bytes'):
@@ -149,8 +156,8 @@ def figures(rows,training):
 
 def main():
     rows=[]
-    for directory in sorted((R/'matrix').iterdir()):
-        if directory.is_dir() and (directory/'plan.json').exists():rows+=cell_rows(directory)
+    for cell in ('4B-Q4_K_M','4B-NVFP4','9B-Q4_K_M','9B-NVFP4'):
+        rows+=cell_rows(R/'matrix'/cell)
     assert len({x['cell'] for x in rows})==4
     training=json.load(open(OUT/'result.json'));resume=json.load(open(OUT/'final-recovery/result.json'))
     assert training['status']=='COMPLETE' and resume['status']=='FULL_FINAL_STATE_NATIVE_BYTE_IDENTITY_AND_GPU_RESUME_PASS'
@@ -162,20 +169,25 @@ def main():
         additional_updates=invalid_training['additional_updates'],result=pin(R/'candidate-attempt02-invalid-step/result.json'))
     failed_seconds=failed['actual_update_seconds']+invalid['actual_update_seconds']
     resolved=json.load(open(OUT/'resolved.json'))
+    fallback=json.load(open(R/'models/dflash2-4b-Q4-F32down.fallback.json'))
+    byte_audit=json.load(open(R/'release-audit/fallback-byte-audit.json'))
+    assert byte_audit['status']=='ALL_76_UNCHANGED_TENSORS_AND_5_EXACT_RELEASED_F32_DOWN_MATRICES_PASS'
+    fallback['byte_identity_audit']=pin(R/'release-audit/fallback-byte-audit.json')
+    fallback['original_export_status']=fallback['status'];fallback['status']='QUALIFIED_NATIVE_FALLBACK_MEASURED_IN_BOTH_4B_CELLS'
     compact=dict(status='COMPLETE',rows=rows,training=training,final_resume=resume,
         failed_attempts=[failed,invalid],failed_invalid_update_seconds=failed_seconds,
         recipe={key:resolved[key] for key in ('config','spec','lineage','windows','unique_labels','sequences','parameters')},
         dflash2_original_q4_status='INVALID_NONFINITE_NATIVE_LOGITS_AND_SELECTOR_SCORES',
-        dflash2_fallback=json.load(open(R/'models/dflash2-4b-Q4-F32down.fallback.json')),
+        dflash2_fallback=fallback,
         dflash2_failed_path_evidence=[pin(R/'diagnostics/selector01/result.json'),pin(R/'diagnostics/selector02/result.json')],
         metadata=json.load(open(R/'release-audit/native-metadata.json')),
         no_9b_release=json.load(open(R/'release-audit/bounded-9b-search-summary.json')),
         scope='Consumed DEV smoke; two alternating process repetitions, no deployment promotion or statistical ranking. Methods/cells remain distinct. Before/after is additional training, not isolated precision attribution; no extra matched30-minute control.',
         memory_scope='Model/cache allocations from native logs (0.01MiB rounding); process resident/private/shared/PSS sampled during measured requests; device sampled total includes desktop/target/workspace. These are separate quantities, not one exact allocator peak.',
-        provenance=[pin(p) for p in (R/'release-audit/adaptation.json',R/'diagnostic-build.json',OUT/'zero-resume-proof.json',OUT/'resolved.json',R/'cpu-validation.json')],
+        provenance=[pin(p) for p in (R/'release-audit/adaptation.json',R/'diagnostic-build.json',OUT/'zero-resume-proof.json',OUT/'resolved.json',R/'cpu-validation.json',R/'source-byte-retention.json')],
         source=pin(__file__))
     save(DEST/'results.json',compact)
-    fields=['cell','method','status','depth','request_tok_s','request_rep_min','request_rep_max','ratio_to_q4','mean_request_seconds','output_tokens','accepted','proposed','rounds','acceptance','accepted_per_round','emitted_per_round','clean_gpu_forward_ms','full_draft_host_ms_per_round','full_draft_all_phases_host_ms_per_round','immutable_target_gpu_model_bytes','private_gpu_model_bytes','target_cache_bytes','target_recurrent_state_bytes','draft_cache_bytes','rotation_bytes','sampled_peak_MiB','sampled_private_resident_bytes','sampled_shared_resident_bytes','sampled_peak_Pss_bytes','correct']
+    fields=['cell','method','label','status','precision','runtime_format_fallback','original_dflash2_q4_status','depth','request_tok_s','request_rep_min','request_rep_max','ratio_to_q4','mean_request_seconds','output_tokens','accepted','proposed','rounds','acceptance','accepted_per_round','emitted_per_round','clean_gpu_forward_ms','gpu_graph_regions','gpu_scope','full_draft_host_ms_per_round','full_draft_all_phases_host_ms_per_round','immutable_target_gpu_model_bytes','private_gpu_model_bytes','target_cache_bytes','target_recurrent_state_bytes','draft_cache_bytes','rotation_bytes','sampled_peak_MiB','sampled_private_resident_bytes','sampled_shared_resident_bytes','sampled_peak_Pss_bytes','residency_sampling_scope','correct']
     with (DEST/'comparison.csv').open('w',newline='') as f:
         writer=csv.DictWriter(f,fieldnames=fields,extrasaction='ignore');writer.writeheader();writer.writerows(rows)
     trajectory=[]

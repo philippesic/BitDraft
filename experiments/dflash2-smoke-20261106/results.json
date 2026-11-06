@@ -1,0 +1,5409 @@
+{
+  "status": "COMPLETE",
+  "rows": [
+    {
+      "cell": "4B-Q4_K_M",
+      "method": "target",
+      "label": "Target only",
+      "depth": 2,
+      "status": "MEASURED",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1210,
+      "request_wall_seconds": 6.957139701000415,
+      "request_tok_s": 173.92205015316938,
+      "accepted": 0,
+      "proposed": 0,
+      "rounds": 0,
+      "accepted_per_round": null,
+      "emitted_per_round": null,
+      "acceptance": null,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": null,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 0.0,
+      "full_draft_all_phases_host_ms_per_round": null,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        175.12189845291857,
+        172.73853150043112
+      ],
+      "request_rep_min": 172.73853150043112,
+      "request_rep_max": 175.12189845291857,
+      "mean_request_seconds": 1.159523283500069,
+      "max_request_seconds": 1.4810971379993134,
+      "ratio_to_q4": 0.7443091588704743,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Samples within clean measured request windows; sampled maxima, not exact allocator peaks.",
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 521467330.56,
+          "CUDA0": 2742812672.0
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          }
+        ],
+        "rotation_buffers": [],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 81809899.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 4381,
+      "sampled_peak_Rss_bytes": 1622458368,
+      "sampled_peak_Pss_bytes": 1616671744,
+      "sampled_peak_Private_Clean_bytes": 643534848,
+      "sampled_peak_Private_Dirty_bytes": 972394496,
+      "sampled_peak_Shared_Clean_bytes": 6529024,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1615929344,
+      "sampled_shared_resident_bytes": 6529024,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 52690944.0,
+      "draft_cache_bytes": 0,
+      "rotation_bytes": 0,
+      "combined_gpu_model_bytes": 2742812672.0,
+      "clean_gpu_forward_ms": null,
+      "clean_gpu_forward_samples": 0,
+      "gpu_graph_regions": [],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": null,
+      "runtime_format_fallback": false,
+      "private_gpu_model_bytes": 0.0,
+      "immutable_target_gpu_model_bytes": 2742812672.0
+    },
+    {
+      "cell": "4B-Q4_K_M",
+      "method": "q4",
+      "label": "DFlash Q4_K_M",
+      "depth": 2,
+      "status": "MEASURED",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1210,
+      "request_wall_seconds": 5.178262798996002,
+      "request_tok_s": 233.66909849276158,
+      "accepted": 682,
+      "proposed": 1044,
+      "rounds": 522,
+      "accepted_per_round": 1.3065134099616857,
+      "emitted_per_round": 2.318007662835249,
+      "acceptance": 0.6532567049808429,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": 2.1082703716475097,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 9.313126333333335,
+      "full_draft_all_phases_host_ms_per_round": 2.2153178007662837,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        234.42035119621372,
+        232.92264552375937
+      ],
+      "request_rep_min": 232.92264552375937,
+      "request_rep_max": 234.42035119621372,
+      "mean_request_seconds": 0.863043799832667,
+      "max_request_seconds": 1.2161719819996506,
+      "ratio_to_q4": 1.0,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [
+        398,
+        284
+      ],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Samples within clean measured request windows; sampled maxima, not exact allocator peaks.",
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 521467330.56,
+          "CUDA0": 3113327001.6
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          },
+          {
+            "total_reported_bytes": 16777216.0,
+            "k_type": "f16",
+            "k_bytes": 8388608.0,
+            "v_type": "f16",
+            "v_bytes": 8388608.0
+          },
+          {
+            "total_reported_bytes": 83886080.0,
+            "k_type": "f16",
+            "k_bytes": 41943040.0,
+            "v_type": "f16",
+            "v_bytes": 41943040.0
+          }
+        ],
+        "rotation_buffers": [],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 81809899.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 513802240.0
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 1023357747.2
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 118510059.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 5949,
+      "sampled_peak_Rss_bytes": 1862373376,
+      "sampled_peak_Pss_bytes": 1856483328,
+      "sampled_peak_Private_Clean_bytes": 647897088,
+      "sampled_peak_Private_Dirty_bytes": 1207869440,
+      "sampled_peak_Shared_Clean_bytes": 6627328,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1855766528,
+      "sampled_shared_resident_bytes": 6627328,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 158072832.0,
+      "draft_cache_bytes": 100663296.0,
+      "rotation_bytes": 0,
+      "combined_gpu_model_bytes": 3113327001.6,
+      "clean_gpu_forward_ms": 1.1780622270372179,
+      "clean_gpu_forward_samples": 18,
+      "gpu_graph_regions": [
+        1
+      ],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": "F16 draft KV",
+      "runtime_format_fallback": false,
+      "private_gpu_model_bytes": 370514329.5999999,
+      "immutable_target_gpu_model_bytes": 2742812672.0
+    },
+    {
+      "cell": "4B-Q4_K_M",
+      "method": "dflash2",
+      "label": "DFlash2 Q4 + F32 down",
+      "depth": 2,
+      "status": "MEASURED",
+      "original_dflash2_q4_status": "INVALID_NONFINITE_LOGITS",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1210,
+      "request_wall_seconds": 6.575155304999498,
+      "request_tok_s": 184.02607145719614,
+      "accepted": 622,
+      "proposed": 1160,
+      "rounds": 580,
+      "accepted_per_round": 1.0724137931034483,
+      "emitted_per_round": 2.086206896551724,
+      "acceptance": 0.5362068965517242,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": 3.6455453344827586,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 8.565018,
+      "full_draft_all_phases_host_ms_per_round": 3.734148968965517,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        183.67279946057536,
+        184.38070502293425
+      ],
+      "request_rep_min": 183.67279946057536,
+      "request_rep_max": 184.38070502293425,
+      "mean_request_seconds": 1.0958592174999164,
+      "max_request_seconds": 1.6881611560020247,
+      "ratio_to_q4": 0.7875498841918832,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [
+        368,
+        254
+      ],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Samples within clean measured request windows; sampled maxima, not exact allocator peaks.",
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 521467330.56,
+          "CUDA0": 3522533785.6
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          },
+          {
+            "total_reported_bytes": 83886080.0,
+            "k_type": "f16",
+            "k_bytes": 41943040.0,
+            "v_type": "f16",
+            "v_bytes": 41943040.0
+          }
+        ],
+        "rotation_buffers": [],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 81809899.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 544242401.28
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 9458155.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 544242401.28
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 9458155.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 102781419.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 5853,
+      "sampled_peak_Rss_bytes": 1793171456,
+      "sampled_peak_Pss_bytes": 1787244544,
+      "sampled_peak_Private_Clean_bytes": 644759552,
+      "sampled_peak_Private_Dirty_bytes": 1141923840,
+      "sampled_peak_Shared_Clean_bytes": 6651904,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1786519552,
+      "sampled_shared_resident_bytes": 6651904,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 158072832.0,
+      "draft_cache_bytes": 83886080.0,
+      "rotation_bytes": 0,
+      "combined_gpu_model_bytes": 3522533785.6,
+      "clean_gpu_forward_ms": 2.844958225886027,
+      "clean_gpu_forward_samples": 18,
+      "gpu_graph_regions": [
+        2
+      ],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": "Mixed Q4_K_M weights with five original BF16 FFN-down matrices stored/executed F32; F16 draft KV; unchanged runtime04.",
+      "runtime_format_fallback": true,
+      "selector_proof": {
+        "status": "ACTUAL_DFLASH2_SELECTOR_LATTICE_READ_PASS",
+        "calls": 520,
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/libselector-audit.so",
+          "sha256": "852a14e963071a781d405a70d89fbda93ef6f804a5993b57b8a6aa45b16b55e6",
+          "bytes": 16968
+        },
+        "scope": "Diagnostic interposition on the exact native lattice getter used by speculative.cpp; candidate IDs and pairwise scores checked on each call. Clean latency excludes this library."
+      },
+      "actual_head_selector_audit": {
+        "status": "PASS",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/matrix/4B-Q4_K_M/audit/result.json",
+          "sha256": "7e212bba8a27a01247a5bd5a1b85408d08b4a59dcb6f484ecf3ff3f7a03d48ed",
+          "bytes": 806126
+        },
+        "scope": "All248320native head logits finite and unordered selector candidate set contains unary argmax at each draft position; diagnostic warmups+three neighboring consumed-code histories; timing excluded."
+      },
+      "private_gpu_model_bytes": 779721113.5999999,
+      "immutable_target_gpu_model_bytes": 2742812672.0
+    },
+    {
+      "cell": "4B-Q4_K_M",
+      "method": "before",
+      "label": "Csmallbroad before",
+      "depth": 2,
+      "status": "MEASURED",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1210,
+      "request_wall_seconds": 7.737315956001112,
+      "request_tok_s": 156.3849798665022,
+      "accepted": 394,
+      "proposed": 1616,
+      "rounds": 808,
+      "accepted_per_round": 0.4876237623762376,
+      "emitted_per_round": 1.4975247524752475,
+      "acceptance": 0.2438118811881188,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": 2.326909992574257,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 11.165675,
+      "full_draft_all_phases_host_ms_per_round": 2.409823420792079,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        156.61202033380158,
+        156.15859672746694
+      ],
+      "request_rep_min": 156.15859672746694,
+      "request_rep_max": 156.61202033380158,
+      "mean_request_seconds": 1.2895526593335187,
+      "max_request_seconds": 1.826183827000932,
+      "ratio_to_q4": 0.6692582839375595,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [
+        282,
+        112
+      ],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Samples within clean measured request windows; sampled maxima, not exact allocator peaks.",
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 521467330.56,
+          "CUDA0": 2915083223.04
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          },
+          {
+            "total_reported_bytes": 4718592.0,
+            "k_type": "q4_0",
+            "k_bytes": 2359296.0,
+            "v_type": "q4_0",
+            "v_bytes": 2359296.0
+          },
+          {
+            "total_reported_bytes": 23592960.0,
+            "k_type": "q4_0",
+            "k_bytes": 11796480.0,
+            "v_type": "q4_0",
+            "v_bytes": 11796480.0
+          }
+        ],
+        "rotation_buffers": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 83886.08
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 408944.64
+          }
+        ],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 81809899.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 546308096.0
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 1055863603.2
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 118510059.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 5727,
+      "sampled_peak_Rss_bytes": 1860374528,
+      "sampled_peak_Pss_bytes": 1854524416,
+      "sampled_peak_Private_Clean_bytes": 649895936,
+      "sampled_peak_Private_Dirty_bytes": 1203949568,
+      "sampled_peak_Shared_Clean_bytes": 6635520,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1853751296,
+      "sampled_shared_resident_bytes": 6635520,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 158072832.0,
+      "draft_cache_bytes": 28311552.0,
+      "rotation_bytes": 492830.72000000003,
+      "combined_gpu_model_bytes": 2915083223.04,
+      "clean_gpu_forward_ms": 1.2491520047187805,
+      "clean_gpu_forward_samples": 18,
+      "gpu_graph_regions": [
+        1
+      ],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": "Q4_0 Hadamard K128/V64 draft KV",
+      "runtime_format_fallback": false,
+      "private_gpu_model_bytes": 172270551.03999996,
+      "immutable_target_gpu_model_bytes": 2742812672.0
+    },
+    {
+      "cell": "4B-Q4_K_M",
+      "method": "mid300",
+      "label": "Csmallbroad +5min",
+      "depth": 2,
+      "status": "MEASURED",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1210,
+      "request_wall_seconds": 7.801058606997685,
+      "request_tok_s": 155.10715416425776,
+      "accepted": 384,
+      "proposed": 1636,
+      "rounds": 818,
+      "accepted_per_round": 0.46943765281173594,
+      "emitted_per_round": 1.4792176039119804,
+      "acceptance": 0.23471882640586797,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": 2.2512611246943766,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 10.832678,
+      "full_draft_all_phases_host_ms_per_round": 2.3307184205378975,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        155.19804846834305,
+        155.01636626535972
+      ],
+      "request_rep_min": 155.01636626535972,
+      "request_rep_max": 155.19804846834305,
+      "mean_request_seconds": 1.3001764344996143,
+      "max_request_seconds": 1.858319028000551,
+      "ratio_to_q4": 0.6637897572453832,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [
+        284,
+        100
+      ],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Samples within clean measured request windows; sampled maxima, not exact allocator peaks.",
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 521467330.56,
+          "CUDA0": 2915083223.04
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          },
+          {
+            "total_reported_bytes": 4718592.0,
+            "k_type": "q4_0",
+            "k_bytes": 2359296.0,
+            "v_type": "q4_0",
+            "v_bytes": 2359296.0
+          },
+          {
+            "total_reported_bytes": 23592960.0,
+            "k_type": "q4_0",
+            "k_bytes": 11796480.0,
+            "v_type": "q4_0",
+            "v_bytes": 11796480.0
+          }
+        ],
+        "rotation_buffers": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 83886.08
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 408944.64
+          }
+        ],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 81809899.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 546308096.0
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 1055863603.2
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 118510059.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 5727,
+      "sampled_peak_Rss_bytes": 1862696960,
+      "sampled_peak_Pss_bytes": 1856787456,
+      "sampled_peak_Private_Clean_bytes": 649797632,
+      "sampled_peak_Private_Dirty_bytes": 1206272000,
+      "sampled_peak_Shared_Clean_bytes": 6647808,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1856069632,
+      "sampled_shared_resident_bytes": 6647808,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 158072832.0,
+      "draft_cache_bytes": 28311552.0,
+      "rotation_bytes": 492830.72000000003,
+      "combined_gpu_model_bytes": 2915083223.04,
+      "clean_gpu_forward_ms": 1.2466382318072848,
+      "clean_gpu_forward_samples": 18,
+      "gpu_graph_regions": [
+        1
+      ],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": "Q4_0 Hadamard K128/V64 draft KV",
+      "runtime_format_fallback": false,
+      "private_gpu_model_bytes": 172270551.03999996,
+      "immutable_target_gpu_model_bytes": 2742812672.0
+    },
+    {
+      "cell": "4B-Q4_K_M",
+      "method": "mid900",
+      "label": "Csmallbroad +15min",
+      "depth": 2,
+      "status": "MEASURED",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1210,
+      "request_wall_seconds": 7.69487417399796,
+      "request_tok_s": 157.24753552030216,
+      "accepted": 404,
+      "proposed": 1594,
+      "rounds": 798,
+      "accepted_per_round": 0.506265664160401,
+      "emitted_per_round": 1.5162907268170427,
+      "acceptance": 0.2534504391468005,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": 2.2474655764411025,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 11.463853333333333,
+      "full_draft_all_phases_host_ms_per_round": 2.3336599624060144,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        157.75481655412793,
+        156.743506484917
+      ],
+      "request_rep_min": 156.743506484917,
+      "request_rep_max": 157.75481655412793,
+      "mean_request_seconds": 1.28247902899966,
+      "max_request_seconds": 1.8995767769993108,
+      "ratio_to_q4": 0.6729496391889117,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [
+        296,
+        108
+      ],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Samples within clean measured request windows; sampled maxima, not exact allocator peaks.",
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 521467330.56,
+          "CUDA0": 2915083223.04
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          },
+          {
+            "total_reported_bytes": 4718592.0,
+            "k_type": "q4_0",
+            "k_bytes": 2359296.0,
+            "v_type": "q4_0",
+            "v_bytes": 2359296.0
+          },
+          {
+            "total_reported_bytes": 23592960.0,
+            "k_type": "q4_0",
+            "k_bytes": 11796480.0,
+            "v_type": "q4_0",
+            "v_bytes": 11796480.0
+          }
+        ],
+        "rotation_buffers": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 83886.08
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 408944.64
+          }
+        ],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 81809899.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 546308096.0
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 1055863603.2
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 118510059.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 5727,
+      "sampled_peak_Rss_bytes": 1860222976,
+      "sampled_peak_Pss_bytes": 1854333952,
+      "sampled_peak_Private_Clean_bytes": 649834496,
+      "sampled_peak_Private_Dirty_bytes": 1203712000,
+      "sampled_peak_Shared_Clean_bytes": 6676480,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1853546496,
+      "sampled_shared_resident_bytes": 6676480,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 158072832.0,
+      "draft_cache_bytes": 28311552.0,
+      "rotation_bytes": 492830.72000000003,
+      "combined_gpu_model_bytes": 2915083223.04,
+      "clean_gpu_forward_ms": 1.2462809019618564,
+      "clean_gpu_forward_samples": 18,
+      "gpu_graph_regions": [
+        1
+      ],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": "Q4_0 Hadamard K128/V64 draft KV",
+      "runtime_format_fallback": false,
+      "private_gpu_model_bytes": 172270551.03999996,
+      "immutable_target_gpu_model_bytes": 2742812672.0
+    },
+    {
+      "cell": "4B-Q4_K_M",
+      "method": "after",
+      "label": "Csmallbroad +30min",
+      "depth": 2,
+      "status": "MEASURED",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1210,
+      "request_wall_seconds": 7.910301495001477,
+      "request_tok_s": 152.96509251443823,
+      "accepted": 392,
+      "proposed": 1620,
+      "rounds": 810,
+      "accepted_per_round": 0.4839506172839506,
+      "emitted_per_round": 1.4938271604938271,
+      "acceptance": 0.2419753086419753,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": 2.307833343209876,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 10.765146666666666,
+      "full_draft_all_phases_host_ms_per_round": 2.3875751703703703,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        153.6347856279714,
+        152.3012124384782
+      ],
+      "request_rep_min": 152.3012124384782,
+      "request_rep_max": 153.6347856279714,
+      "mean_request_seconds": 1.3183835825002461,
+      "max_request_seconds": 1.8444317229987064,
+      "ratio_to_q4": 0.6546226843904936,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [
+        282,
+        110
+      ],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Samples within clean measured request windows; sampled maxima, not exact allocator peaks.",
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 521467330.56,
+          "CUDA0": 2915083223.04
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          },
+          {
+            "total_reported_bytes": 4718592.0,
+            "k_type": "q4_0",
+            "k_bytes": 2359296.0,
+            "v_type": "q4_0",
+            "v_bytes": 2359296.0
+          },
+          {
+            "total_reported_bytes": 23592960.0,
+            "k_type": "q4_0",
+            "k_bytes": 11796480.0,
+            "v_type": "q4_0",
+            "v_bytes": 11796480.0
+          }
+        ],
+        "rotation_buffers": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 83886.08
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 408944.64
+          }
+        ],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 81809899.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 546308096.0
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 1055863603.2
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 118510059.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 5727,
+      "sampled_peak_Rss_bytes": 1862520832,
+      "sampled_peak_Pss_bytes": 1856581632,
+      "sampled_peak_Private_Clean_bytes": 649871360,
+      "sampled_peak_Private_Dirty_bytes": 1206235136,
+      "sampled_peak_Shared_Clean_bytes": 6672384,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1855848448,
+      "sampled_shared_resident_bytes": 6672384,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 158072832.0,
+      "draft_cache_bytes": 28311552.0,
+      "rotation_bytes": 492830.72000000003,
+      "combined_gpu_model_bytes": 2915083223.04,
+      "clean_gpu_forward_ms": 1.2448604438039992,
+      "clean_gpu_forward_samples": 18,
+      "gpu_graph_regions": [
+        1
+      ],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": "Q4_0 Hadamard K128/V64 draft KV",
+      "runtime_format_fallback": false,
+      "private_gpu_model_bytes": 172270551.03999996,
+      "immutable_target_gpu_model_bytes": 2742812672.0
+    },
+    {
+      "cell": "4B-Q4_K_M",
+      "method": "HE4",
+      "label": "HE4 unchanged",
+      "depth": 2,
+      "status": "MEASURED",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1210,
+      "request_wall_seconds": 7.7787952270009555,
+      "request_tok_s": 155.55108017241182,
+      "accepted": 374,
+      "proposed": 1654,
+      "rounds": 828,
+      "accepted_per_round": 0.45169082125603865,
+      "emitted_per_round": 1.461352657004831,
+      "acceptance": 0.22611850060459493,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": 1.988432171497584,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 17.615953666666666,
+      "full_draft_all_phases_host_ms_per_round": 2.116084009661835,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        156.03384911355914,
+        155.07128939234966
+      ],
+      "request_rep_min": 155.07128939234966,
+      "request_rep_max": 156.03384911355914,
+      "mean_request_seconds": 1.296465871166826,
+      "max_request_seconds": 1.8312505829999282,
+      "ratio_to_q4": 0.6656895634714419,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [
+        278,
+        96
+      ],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Samples within clean measured request windows; sampled maxima, not exact allocator peaks.",
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 521467330.56,
+          "CUDA0": 3272878325.76
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          },
+          {
+            "total_reported_bytes": 16777216.0,
+            "k_type": "f16",
+            "k_bytes": 8388608.0,
+            "v_type": "f16",
+            "v_bytes": 8388608.0
+          },
+          {
+            "total_reported_bytes": 83886080.0,
+            "k_type": "f16",
+            "k_bytes": 41943040.0,
+            "v_type": "f16",
+            "v_bytes": 41943040.0
+          }
+        ],
+        "rotation_buffers": [],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 81809899.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 544473088.0
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 8409579.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 1054028595.2
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 8409579.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 118510059.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 6131,
+      "sampled_peak_Rss_bytes": 1867636736,
+      "sampled_peak_Pss_bytes": 1861767168,
+      "sampled_peak_Private_Clean_bytes": 650002432,
+      "sampled_peak_Private_Dirty_bytes": 1211072512,
+      "sampled_peak_Shared_Clean_bytes": 6574080,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1861062656,
+      "sampled_shared_resident_bytes": 6574080,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 158072832.0,
+      "draft_cache_bytes": 100663296.0,
+      "rotation_bytes": 0,
+      "combined_gpu_model_bytes": 3272878325.76,
+      "clean_gpu_forward_ms": 1.000805334912406,
+      "clean_gpu_forward_samples": 18,
+      "gpu_graph_regions": [
+        1
+      ],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": "F16 draft KV",
+      "runtime_format_fallback": false,
+      "private_gpu_model_bytes": 530065653.7600002,
+      "immutable_target_gpu_model_bytes": 2742812672.0
+    },
+    {
+      "cell": "4B-NVFP4",
+      "method": "target",
+      "label": "Target only",
+      "depth": 3,
+      "status": "MEASURED",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1106,
+      "request_wall_seconds": 6.207159169000079,
+      "request_tok_s": 178.1813499359913,
+      "accepted": 0,
+      "proposed": 0,
+      "rounds": 0,
+      "accepted_per_round": null,
+      "emitted_per_round": null,
+      "acceptance": null,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": null,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 0.0,
+      "full_draft_all_phases_host_ms_per_round": null,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        177.92663068943304,
+        178.43679953878922
+      ],
+      "request_rep_min": 177.92663068943304,
+      "request_rep_max": 178.43679953878922,
+      "mean_request_seconds": 1.0345265281666798,
+      "max_request_seconds": 1.432949477002694,
+      "ratio_to_q4": 0.724996189638047,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Samples within clean measured request windows; sampled maxima, not exact allocator peaks.",
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 521467330.56,
+          "CUDA0": 2532929699.84
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          }
+        ],
+        "rotation_buffers": [],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 81809899.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 4081,
+      "sampled_peak_Rss_bytes": 1390239744,
+      "sampled_peak_Pss_bytes": 1384488960,
+      "sampled_peak_Private_Clean_bytes": 629305344,
+      "sampled_peak_Private_Dirty_bytes": 754438144,
+      "sampled_peak_Shared_Clean_bytes": 6533120,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1383743488,
+      "sampled_shared_resident_bytes": 6533120,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 52690944.0,
+      "draft_cache_bytes": 0,
+      "rotation_bytes": 0,
+      "combined_gpu_model_bytes": 2532929699.84,
+      "clean_gpu_forward_ms": null,
+      "clean_gpu_forward_samples": 0,
+      "gpu_graph_regions": [],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": null,
+      "runtime_format_fallback": false,
+      "private_gpu_model_bytes": 0.0,
+      "immutable_target_gpu_model_bytes": 2532929699.84
+    },
+    {
+      "cell": "4B-NVFP4",
+      "method": "q4",
+      "label": "DFlash Q4_K_M",
+      "depth": 3,
+      "status": "MEASURED",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1106,
+      "request_wall_seconds": 4.5001667460019235,
+      "request_tok_s": 245.76867090149537,
+      "accepted": 664,
+      "proposed": 1304,
+      "rounds": 436,
+      "accepted_per_round": 1.5229357798165137,
+      "emitted_per_round": 2.536697247706422,
+      "acceptance": 0.50920245398773,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": 2.1589413302752294,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 6.473787999999999,
+      "full_draft_all_phases_host_ms_per_round": 2.248030155963303,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        243.7327412456322,
+        247.83889980637517
+      ],
+      "request_rep_min": 243.7327412456322,
+      "request_rep_max": 247.83889980637517,
+      "mean_request_seconds": 0.7500277910003206,
+      "max_request_seconds": 1.208972974000062,
+      "ratio_to_q4": 1.0,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [
+        306,
+        210,
+        148
+      ],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Samples within clean measured request windows; sampled maxima, not exact allocator peaks.",
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 521467330.56,
+          "CUDA0": 2903444029.44
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          },
+          {
+            "total_reported_bytes": 16777216.0,
+            "k_type": "f16",
+            "k_bytes": 8388608.0,
+            "v_type": "f16",
+            "v_bytes": 8388608.0
+          },
+          {
+            "total_reported_bytes": 83886080.0,
+            "k_type": "f16",
+            "k_bytes": 41943040.0,
+            "v_type": "f16",
+            "v_bytes": 41943040.0
+          }
+        ],
+        "rotation_buffers": [],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 81809899.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 513802240.0
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 1023357747.2
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 118510059.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 5701,
+      "sampled_peak_Rss_bytes": 1663500288,
+      "sampled_peak_Pss_bytes": 1657616384,
+      "sampled_peak_Private_Clean_bytes": 639967232,
+      "sampled_peak_Private_Dirty_bytes": 1016856576,
+      "sampled_peak_Shared_Clean_bytes": 6709248,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1656823808,
+      "sampled_shared_resident_bytes": 6709248,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 210763776.0,
+      "draft_cache_bytes": 100663296.0,
+      "rotation_bytes": 0,
+      "combined_gpu_model_bytes": 2903444029.44,
+      "clean_gpu_forward_ms": 1.2179271181424458,
+      "clean_gpu_forward_samples": 18,
+      "gpu_graph_regions": [
+        1
+      ],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": "F16 draft KV",
+      "runtime_format_fallback": false,
+      "private_gpu_model_bytes": 370514329.5999999,
+      "immutable_target_gpu_model_bytes": 2532929699.84
+    },
+    {
+      "cell": "4B-NVFP4",
+      "method": "dflash2",
+      "label": "DFlash2 Q4 + F32 down",
+      "depth": 3,
+      "status": "MEASURED",
+      "original_dflash2_q4_status": "INVALID_NONFINITE_LOGITS",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1106,
+      "request_wall_seconds": 6.156914988998324,
+      "request_tok_s": 179.63541838344216,
+      "accepted": 598,
+      "proposed": 1502,
+      "rounds": 502,
+      "accepted_per_round": 1.1912350597609562,
+      "emitted_per_round": 2.2031872509960158,
+      "acceptance": 0.3981358189081225,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": 4.20665490438247,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 15.540311666666668,
+      "full_draft_all_phases_host_ms_per_round": 4.392395681274901,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        181.5032258319051,
+        177.80566170670824
+      ],
+      "request_rep_min": 177.80566170670824,
+      "request_rep_max": 181.5032258319051,
+      "mean_request_seconds": 1.0261524981663872,
+      "max_request_seconds": 1.7011837970021588,
+      "ratio_to_q4": 0.7309126005545289,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [
+        304,
+        174,
+        120
+      ],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Samples within clean measured request windows; sampled maxima, not exact allocator peaks.",
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 521467330.56,
+          "CUDA0": 3312650813.44
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          },
+          {
+            "total_reported_bytes": 83886080.0,
+            "k_type": "f16",
+            "k_bytes": 41943040.0,
+            "v_type": "f16",
+            "v_bytes": 41943040.0
+          }
+        ],
+        "rotation_buffers": [],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 81809899.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 544242401.28
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 9458155.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 544242401.28
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 9458155.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 102781419.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 5703,
+      "sampled_peak_Rss_bytes": 1767014400,
+      "sampled_peak_Pss_bytes": 1761077248,
+      "sampled_peak_Private_Clean_bytes": 645124096,
+      "sampled_peak_Private_Dirty_bytes": 1115222016,
+      "sampled_peak_Shared_Clean_bytes": 6680576,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1760337920,
+      "sampled_shared_resident_bytes": 6680576,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 210763776.0,
+      "draft_cache_bytes": 83886080.0,
+      "rotation_bytes": 0,
+      "combined_gpu_model_bytes": 3312650813.44,
+      "clean_gpu_forward_ms": 3.3945795562532215,
+      "clean_gpu_forward_samples": 18,
+      "gpu_graph_regions": [
+        2
+      ],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": "Mixed Q4_K_M weights with five original BF16 FFN-down matrices stored/executed F32; F16 draft KV; unchanged runtime04.",
+      "runtime_format_fallback": true,
+      "selector_proof": {
+        "status": "ACTUAL_DFLASH2_SELECTOR_LATTICE_READ_PASS",
+        "calls": 464,
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/libselector-audit.so",
+          "sha256": "852a14e963071a781d405a70d89fbda93ef6f804a5993b57b8a6aa45b16b55e6",
+          "bytes": 16968
+        },
+        "scope": "Diagnostic interposition on the exact native lattice getter used by speculative.cpp; candidate IDs and pairwise scores checked on each call. Clean latency excludes this library."
+      },
+      "actual_head_selector_audit": {
+        "status": "PASS",
+        "source": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/matrix/4B-NVFP4/audit/result.json",
+          "sha256": "83700cf212664a65b821700d273f037c740dff066f6503b6893a9ac9d28f577a",
+          "bytes": 807231
+        },
+        "scope": "All248320native head logits finite and unordered selector candidate set contains unary argmax at each draft position; diagnostic warmups+three neighboring consumed-code histories; timing excluded."
+      },
+      "private_gpu_model_bytes": 779721113.5999999,
+      "immutable_target_gpu_model_bytes": 2532929699.84
+    },
+    {
+      "cell": "4B-NVFP4",
+      "method": "before",
+      "label": "Csmallbroad before",
+      "depth": 3,
+      "status": "MEASURED",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1106,
+      "request_wall_seconds": 7.59161839299486,
+      "request_tok_s": 145.68698566573863,
+      "accepted": 342,
+      "proposed": 2270,
+      "rounds": 758,
+      "accepted_per_round": 0.45118733509234826,
+      "emitted_per_round": 1.4591029023746702,
+      "acceptance": 0.15066079295154186,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": 2.3595417440633253,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 7.862775333333334,
+      "full_draft_all_phases_host_ms_per_round": 2.4217800712401063,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        146.02449013487097,
+        145.35103773820703
+      ],
+      "request_rep_min": 145.35103773820703,
+      "request_rep_max": 146.02449013487097,
+      "mean_request_seconds": 1.26526973216581,
+      "max_request_seconds": 1.883345220998308,
+      "ratio_to_q4": 0.5927809477560723,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [
+        232,
+        74,
+        36
+      ],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Samples within clean measured request windows; sampled maxima, not exact allocator peaks.",
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 521467330.56,
+          "CUDA0": 2705200250.88
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          },
+          {
+            "total_reported_bytes": 4718592.0,
+            "k_type": "q4_0",
+            "k_bytes": 2359296.0,
+            "v_type": "q4_0",
+            "v_bytes": 2359296.0
+          },
+          {
+            "total_reported_bytes": 23592960.0,
+            "k_type": "q4_0",
+            "k_bytes": 11796480.0,
+            "v_type": "q4_0",
+            "v_bytes": 11796480.0
+          }
+        ],
+        "rotation_buffers": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 83886.08
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 408944.64
+          }
+        ],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 81809899.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 546308096.0
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 1055863603.2
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 118510059.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 5481,
+      "sampled_peak_Rss_bytes": 1633976320,
+      "sampled_peak_Pss_bytes": 1628116992,
+      "sampled_peak_Private_Clean_bytes": 634687488,
+      "sampled_peak_Private_Dirty_bytes": 992645120,
+      "sampled_peak_Shared_Clean_bytes": 6647808,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1627332608,
+      "sampled_shared_resident_bytes": 6647808,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 210763776.0,
+      "draft_cache_bytes": 28311552.0,
+      "rotation_bytes": 492830.72000000003,
+      "combined_gpu_model_bytes": 2705200250.88,
+      "clean_gpu_forward_ms": 1.373326215479109,
+      "clean_gpu_forward_samples": 18,
+      "gpu_graph_regions": [
+        1
+      ],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": "Q4_0 Hadamard K128/V64 draft KV",
+      "runtime_format_fallback": false,
+      "private_gpu_model_bytes": 172270551.03999996,
+      "immutable_target_gpu_model_bytes": 2532929699.84
+    },
+    {
+      "cell": "4B-NVFP4",
+      "method": "mid300",
+      "label": "Csmallbroad +5min",
+      "depth": 3,
+      "status": "MEASURED",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1106,
+      "request_wall_seconds": 7.2891114149970235,
+      "request_tok_s": 151.73317254068226,
+      "accepted": 360,
+      "proposed": 2208,
+      "rounds": 738,
+      "accepted_per_round": 0.4878048780487805,
+      "emitted_per_round": 1.4986449864498645,
+      "acceptance": 0.16304347826086957,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": 2.3847198888888883,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 9.521173666666668,
+      "full_draft_all_phases_host_ms_per_round": 2.462127804878048,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        152.09767577869812,
+        151.37041219538094
+      ],
+      "request_rep_min": 151.37041219538094,
+      "request_rep_max": 152.09767577869812,
+      "mean_request_seconds": 1.214851902499504,
+      "max_request_seconds": 1.8447083409992047,
+      "ratio_to_q4": 0.6173820771545664,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [
+        240,
+        76,
+        44
+      ],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Samples within clean measured request windows; sampled maxima, not exact allocator peaks.",
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 521467330.56,
+          "CUDA0": 2705200250.88
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          },
+          {
+            "total_reported_bytes": 4718592.0,
+            "k_type": "q4_0",
+            "k_bytes": 2359296.0,
+            "v_type": "q4_0",
+            "v_bytes": 2359296.0
+          },
+          {
+            "total_reported_bytes": 23592960.0,
+            "k_type": "q4_0",
+            "k_bytes": 11796480.0,
+            "v_type": "q4_0",
+            "v_bytes": 11796480.0
+          }
+        ],
+        "rotation_buffers": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 83886.08
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 408944.64
+          }
+        ],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 81809899.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 546308096.0
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 1055863603.2
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 118510059.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 5481,
+      "sampled_peak_Rss_bytes": 1633103872,
+      "sampled_peak_Pss_bytes": 1627247616,
+      "sampled_peak_Private_Clean_bytes": 634601472,
+      "sampled_peak_Private_Dirty_bytes": 991870976,
+      "sampled_peak_Shared_Clean_bytes": 6643712,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1626464256,
+      "sampled_shared_resident_bytes": 6643712,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 210763776.0,
+      "draft_cache_bytes": 28311552.0,
+      "rotation_bytes": 492830.72000000003,
+      "combined_gpu_model_bytes": 2705200250.88,
+      "clean_gpu_forward_ms": 1.3739359908633761,
+      "clean_gpu_forward_samples": 18,
+      "gpu_graph_regions": [
+        1
+      ],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": "Q4_0 Hadamard K128/V64 draft KV",
+      "runtime_format_fallback": false,
+      "private_gpu_model_bytes": 172270551.03999996,
+      "immutable_target_gpu_model_bytes": 2532929699.84
+    },
+    {
+      "cell": "4B-NVFP4",
+      "method": "mid900",
+      "label": "Csmallbroad +15min",
+      "depth": 3,
+      "status": "MEASURED",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1106,
+      "request_wall_seconds": 7.1246387170031085,
+      "request_tok_s": 155.23594162894273,
+      "accepted": 376,
+      "proposed": 2168,
+      "rounds": 724,
+      "accepted_per_round": 0.5193370165745856,
+      "emitted_per_round": 1.5276243093922652,
+      "acceptance": 0.17343173431734318,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": 2.357950842541437,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 10.259439333333333,
+      "full_draft_all_phases_host_ms_per_round": 2.4429738204419893,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        157.01785190074693,
+        153.49402139457084
+      ],
+      "request_rep_min": 153.49402139457084,
+      "request_rep_max": 157.01785190074693,
+      "mean_request_seconds": 1.1874397861671848,
+      "max_request_seconds": 1.84743949499898,
+      "ratio_to_q4": 0.6316343782123541,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [
+        248,
+        78,
+        50
+      ],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Samples within clean measured request windows; sampled maxima, not exact allocator peaks.",
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 521467330.56,
+          "CUDA0": 2705200250.88
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          },
+          {
+            "total_reported_bytes": 4718592.0,
+            "k_type": "q4_0",
+            "k_bytes": 2359296.0,
+            "v_type": "q4_0",
+            "v_bytes": 2359296.0
+          },
+          {
+            "total_reported_bytes": 23592960.0,
+            "k_type": "q4_0",
+            "k_bytes": 11796480.0,
+            "v_type": "q4_0",
+            "v_bytes": 11796480.0
+          }
+        ],
+        "rotation_buffers": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 83886.08
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 408944.64
+          }
+        ],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 81809899.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 546308096.0
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 1055863603.2
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 118510059.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 5481,
+      "sampled_peak_Rss_bytes": 1633185792,
+      "sampled_peak_Pss_bytes": 1627322368,
+      "sampled_peak_Private_Clean_bytes": 634679296,
+      "sampled_peak_Private_Dirty_bytes": 991862784,
+      "sampled_peak_Shared_Clean_bytes": 6643712,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1626542080,
+      "sampled_shared_resident_bytes": 6643712,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 210763776.0,
+      "draft_cache_bytes": 28311552.0,
+      "rotation_bytes": 492830.72000000003,
+      "combined_gpu_model_bytes": 2705200250.88,
+      "clean_gpu_forward_ms": 1.3760817779435053,
+      "clean_gpu_forward_samples": 18,
+      "gpu_graph_regions": [
+        1
+      ],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": "Q4_0 Hadamard K128/V64 draft KV",
+      "runtime_format_fallback": false,
+      "private_gpu_model_bytes": 172270551.03999996,
+      "immutable_target_gpu_model_bytes": 2532929699.84
+    },
+    {
+      "cell": "4B-NVFP4",
+      "method": "after",
+      "label": "Csmallbroad +30min",
+      "depth": 3,
+      "status": "MEASURED",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1106,
+      "request_wall_seconds": 7.476461835005466,
+      "request_tok_s": 147.93093637174854,
+      "accepted": 344,
+      "proposed": 2262,
+      "rounds": 756,
+      "accepted_per_round": 0.455026455026455,
+      "emitted_per_round": 1.462962962962963,
+      "acceptance": 0.15207780725022105,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": 2.35611307936508,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 10.337403666666667,
+      "full_draft_all_phases_host_ms_per_round": 2.438155965608466,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        147.7275430681556,
+        148.13489051688524
+      ],
+      "request_rep_min": 147.7275430681556,
+      "request_rep_max": 148.13489051688524,
+      "mean_request_seconds": 1.246076972500911,
+      "max_request_seconds": 1.8567809110027156,
+      "ratio_to_q4": 0.6019112844168799,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [
+        234,
+        70,
+        40
+      ],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Samples within clean measured request windows; sampled maxima, not exact allocator peaks.",
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 521467330.56,
+          "CUDA0": 2705200250.88
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          },
+          {
+            "total_reported_bytes": 4718592.0,
+            "k_type": "q4_0",
+            "k_bytes": 2359296.0,
+            "v_type": "q4_0",
+            "v_bytes": 2359296.0
+          },
+          {
+            "total_reported_bytes": 23592960.0,
+            "k_type": "q4_0",
+            "k_bytes": 11796480.0,
+            "v_type": "q4_0",
+            "v_bytes": 11796480.0
+          }
+        ],
+        "rotation_buffers": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 83886.08
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 408944.64
+          }
+        ],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 81809899.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 546308096.0
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 1055863603.2
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 13652459.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 118510059.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 5481,
+      "sampled_peak_Rss_bytes": 1633599488,
+      "sampled_peak_Pss_bytes": 1627712512,
+      "sampled_peak_Private_Clean_bytes": 634671104,
+      "sampled_peak_Private_Dirty_bytes": 992317440,
+      "sampled_peak_Shared_Clean_bytes": 6680576,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1626988544,
+      "sampled_shared_resident_bytes": 6680576,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 210763776.0,
+      "draft_cache_bytes": 28311552.0,
+      "rotation_bytes": 492830.72000000003,
+      "combined_gpu_model_bytes": 2705200250.88,
+      "clean_gpu_forward_ms": 1.3724728756480746,
+      "clean_gpu_forward_samples": 18,
+      "gpu_graph_regions": [
+        1
+      ],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": "Q4_0 Hadamard K128/V64 draft KV",
+      "runtime_format_fallback": false,
+      "private_gpu_model_bytes": 172270551.03999996,
+      "immutable_target_gpu_model_bytes": 2532929699.84
+    },
+    {
+      "cell": "4B-NVFP4",
+      "method": "HE4",
+      "label": "HE4 unchanged",
+      "depth": 3,
+      "status": "MEASURED",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1106,
+      "request_wall_seconds": 7.417011278994323,
+      "request_tok_s": 149.1166668617987,
+      "accepted": 324,
+      "proposed": 2324,
+      "rounds": 776,
+      "accepted_per_round": 0.4175257731958763,
+      "emitted_per_round": 1.425257731958763,
+      "acceptance": 0.13941480206540446,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": 2.035433567010309,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 9.607558666666668,
+      "full_draft_all_phases_host_ms_per_round": 2.1097188144329895,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        149.03007168093484,
+        149.20336273489193
+      ],
+      "request_rep_min": 149.03007168093484,
+      "request_rep_max": 149.20336273489193,
+      "mean_request_seconds": 1.236168546499054,
+      "max_request_seconds": 1.8343850589990325,
+      "ratio_to_q4": 0.606735863911495,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [
+        238,
+        62,
+        24
+      ],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Samples within clean measured request windows; sampled maxima, not exact allocator peaks.",
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 521467330.56,
+          "CUDA0": 3062995353.6000004
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          },
+          {
+            "total_reported_bytes": 16777216.0,
+            "k_type": "f16",
+            "k_bytes": 8388608.0,
+            "v_type": "f16",
+            "v_bytes": 8388608.0
+          },
+          {
+            "total_reported_bytes": 83886080.0,
+            "k_type": "f16",
+            "k_bytes": 41943040.0,
+            "v_type": "f16",
+            "v_bytes": 41943040.0
+          }
+        ],
+        "rotation_buffers": [],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 81809899.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 544473088.0
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 8409579.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 1054028595.2
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 8409579.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 118510059.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 25186795.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 5883,
+      "sampled_peak_Rss_bytes": 1645408256,
+      "sampled_peak_Pss_bytes": 1639522304,
+      "sampled_peak_Private_Clean_bytes": 634691584,
+      "sampled_peak_Private_Dirty_bytes": 1004118016,
+      "sampled_peak_Shared_Clean_bytes": 6598656,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1638809600,
+      "sampled_shared_resident_bytes": 6598656,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 210763776.0,
+      "draft_cache_bytes": 100663296.0,
+      "rotation_bytes": 0,
+      "combined_gpu_model_bytes": 3062995353.6000004,
+      "clean_gpu_forward_ms": 1.1281848814752367,
+      "clean_gpu_forward_samples": 18,
+      "gpu_graph_regions": [
+        1
+      ],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": "F16 draft KV",
+      "runtime_format_fallback": false,
+      "private_gpu_model_bytes": 530065653.7600002,
+      "immutable_target_gpu_model_bytes": 2532929699.84
+    },
+    {
+      "cell": "9B-Q4_K_M",
+      "method": "target",
+      "label": "Target only",
+      "depth": 3,
+      "status": "MEASURED",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1336,
+      "request_wall_seconds": 11.238453554000444,
+      "request_tok_s": 118.87756563485881,
+      "accepted": 0,
+      "proposed": 0,
+      "rounds": 0,
+      "accepted_per_round": null,
+      "emitted_per_round": null,
+      "acceptance": null,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": null,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 0.0,
+      "full_draft_all_phases_host_ms_per_round": null,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        119.24427270597106,
+        118.51310708769067
+      ],
+      "request_rep_min": 118.51310708769067,
+      "request_rep_max": 119.24427270597106,
+      "mean_request_seconds": 1.8730755923334073,
+      "max_request_seconds": 2.1740486420021625,
+      "ratio_to_q4": 0.5794290215028405,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Samples within clean measured request windows; sampled maxima, not exact allocator peaks.",
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 572124037.12,
+          "CUDA0": 5117973626.88
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          }
+        ],
+        "rotation_buffers": [],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 113267179.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 37769707.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 6677,
+      "sampled_peak_Rss_bytes": 1688678400,
+      "sampled_peak_Pss_bytes": 1682932736,
+      "sampled_peak_Private_Clean_bytes": 695070720,
+      "sampled_peak_Private_Dirty_bytes": 987189248,
+      "sampled_peak_Shared_Clean_bytes": 6447104,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1682231296,
+      "sampled_shared_resident_bytes": 6447104,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 52690944.0,
+      "draft_cache_bytes": 0,
+      "rotation_bytes": 0,
+      "combined_gpu_model_bytes": 5117973626.88,
+      "clean_gpu_forward_ms": null,
+      "clean_gpu_forward_samples": 0,
+      "gpu_graph_regions": [],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": null,
+      "runtime_format_fallback": false,
+      "private_gpu_model_bytes": 0.0,
+      "immutable_target_gpu_model_bytes": 5117973626.88
+    },
+    {
+      "cell": "9B-Q4_K_M",
+      "method": "q4",
+      "label": "DFlash Q4_K_M",
+      "depth": 3,
+      "status": "MEASURED",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1336,
+      "request_wall_seconds": 6.511886145999597,
+      "request_tok_s": 205.1632921777565,
+      "accepted": 866,
+      "proposed": 1392,
+      "rounds": 466,
+      "accepted_per_round": 1.8583690987124464,
+      "emitted_per_round": 2.866952789699571,
+      "acceptance": 0.6221264367816092,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": 2.8312716566523606,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 14.818153666666666,
+      "full_draft_all_phases_host_ms_per_round": 3.0220633347639487,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        204.3460637764107,
+        205.98708340602298
+      ],
+      "request_rep_min": 204.3460637764107,
+      "request_rep_max": 205.98708340602298,
+      "mean_request_seconds": 1.0853143576665996,
+      "max_request_seconds": 1.5085003120002511,
+      "ratio_to_q4": 1.0,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [
+        368,
+        278,
+        220
+      ],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Separate post-request warmed-process snapshots; timed sampler missed this cell because the device query blocked. No diagnostic throughput reused.",
+      "residency_diagnostic": {
+        "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/memory/9B-Q4_K_M/00-q4/memory-snapshots.json",
+        "sha256": "ee89b96778b41c1bed4f7852a440bbf46621b4a50d6d8720a1494063e3b35ef1",
+        "bytes": 2031
+      },
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 572124037.12,
+          "CUDA0": 5872990289.92
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          },
+          {
+            "total_reported_bytes": 16777216.0,
+            "k_type": "f16",
+            "k_bytes": 8388608.0,
+            "v_type": "f16",
+            "v_bytes": 8388608.0
+          },
+          {
+            "total_reported_bytes": 83886080.0,
+            "k_type": "f16",
+            "k_bytes": 41943040.0,
+            "v_type": "f16",
+            "v_bytes": 41943040.0
+          }
+        ],
+        "rotation_buffers": [],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 113267179.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 37769707.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 525336576.0
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 16798187.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 1034892083.2
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 16798187.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 171987435.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 37769707.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 8699,
+      "sampled_peak_Rss_bytes": 1999601664,
+      "sampled_peak_Pss_bytes": 1992306688,
+      "sampled_peak_Private_Clean_bytes": 693489664,
+      "sampled_peak_Private_Dirty_bytes": 1296375808,
+      "sampled_peak_Shared_Clean_bytes": 9891840,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1989865472,
+      "sampled_shared_resident_bytes": 9891840,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 210763776.0,
+      "draft_cache_bytes": 100663296.0,
+      "rotation_bytes": 0,
+      "combined_gpu_model_bytes": 5872990289.92,
+      "clean_gpu_forward_ms": 1.9121031098895602,
+      "clean_gpu_forward_samples": 18,
+      "gpu_graph_regions": [
+        1
+      ],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": "F16 draft KV",
+      "runtime_format_fallback": false,
+      "private_gpu_model_bytes": 755016663.04,
+      "immutable_target_gpu_model_bytes": 5117973626.88
+    },
+    {
+      "cell": "9B-Q4_K_M",
+      "method": "dflash2",
+      "label": "DFlash2 Q4_K_M",
+      "depth": 3,
+      "status": "UNSUPPORTED_NO_MATCHED_9B_RELEASE",
+      "original_dflash2_q4_status": "NO_MATCHED_RELEASE"
+    },
+    {
+      "cell": "9B-Q4_K_M",
+      "method": "before",
+      "label": "Csmallbroad before",
+      "depth": 3,
+      "status": "UNTESTED_NO_9B_CANDIDATE_WEIGHTS"
+    },
+    {
+      "cell": "9B-Q4_K_M",
+      "method": "mid300",
+      "label": "Csmallbroad +5min",
+      "depth": 3,
+      "status": "UNTESTED_NO_9B_CANDIDATE_WEIGHTS"
+    },
+    {
+      "cell": "9B-Q4_K_M",
+      "method": "mid900",
+      "label": "Csmallbroad +15min",
+      "depth": 3,
+      "status": "UNTESTED_NO_9B_CANDIDATE_WEIGHTS"
+    },
+    {
+      "cell": "9B-Q4_K_M",
+      "method": "after",
+      "label": "Csmallbroad +30min",
+      "depth": 3,
+      "status": "UNTESTED_NO_9B_CANDIDATE_WEIGHTS"
+    },
+    {
+      "cell": "9B-Q4_K_M",
+      "method": "HE4",
+      "label": "HE4 unchanged",
+      "depth": 3,
+      "status": "UNTESTED_NO_9B_CANDIDATE_WEIGHTS"
+    },
+    {
+      "cell": "9B-NVFP4",
+      "method": "target",
+      "label": "Target only",
+      "depth": 3,
+      "status": "MEASURED",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1096,
+      "request_wall_seconds": 8.722954600994854,
+      "request_tok_s": 125.64550088051601,
+      "accepted": 0,
+      "proposed": 0,
+      "rounds": 0,
+      "accepted_per_round": null,
+      "emitted_per_round": null,
+      "acceptance": null,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": null,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 0.0,
+      "full_draft_all_phases_host_ms_per_round": null,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        125.76745481202975,
+        125.52378323196776
+      ],
+      "request_rep_min": 125.52378323196776,
+      "request_rep_max": 125.76745481202975,
+      "mean_request_seconds": 1.4538257668324757,
+      "max_request_seconds": 2.019056594999711,
+      "ratio_to_q4": 0.6093177680180325,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Samples within clean measured request windows; sampled maxima, not exact allocator peaks.",
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 572124037.12,
+          "CUDA0": 4730262650.88
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          }
+        ],
+        "rotation_buffers": [],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 113267179.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 37769707.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 6207,
+      "sampled_peak_Rss_bytes": 1455886336,
+      "sampled_peak_Pss_bytes": 1450162176,
+      "sampled_peak_Private_Clean_bytes": 682467328,
+      "sampled_peak_Private_Dirty_bytes": 766988288,
+      "sampled_peak_Shared_Clean_bytes": 6438912,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1449455616,
+      "sampled_shared_resident_bytes": 6438912,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 52690944.0,
+      "draft_cache_bytes": 0,
+      "rotation_bytes": 0,
+      "combined_gpu_model_bytes": 4730262650.88,
+      "clean_gpu_forward_ms": null,
+      "clean_gpu_forward_samples": 0,
+      "gpu_graph_regions": [],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": null,
+      "runtime_format_fallback": false,
+      "private_gpu_model_bytes": 0.0,
+      "immutable_target_gpu_model_bytes": 4730262650.88
+    },
+    {
+      "cell": "9B-NVFP4",
+      "method": "q4",
+      "label": "DFlash Q4_K_M",
+      "depth": 3,
+      "status": "MEASURED",
+      "responses": 6,
+      "timing_repetitions": 2,
+      "prompts": 3,
+      "output_tokens": 1096,
+      "request_wall_seconds": 5.3150512280008115,
+      "request_tok_s": 206.206855396998,
+      "accepted": 696,
+      "proposed": 1178,
+      "rounds": 394,
+      "accepted_per_round": 1.766497461928934,
+      "emitted_per_round": 2.781725888324873,
+      "acceptance": 0.5908319185059423,
+      "correct": true,
+      "instrumented": false,
+      "full_draft_host_ms_per_round": 2.932693279187817,
+      "profiled": false,
+      "draft_prefill_host_ms_per_request": 14.431719000000001,
+      "full_draft_all_phases_host_ms_per_round": 3.1524656497461927,
+      "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.",
+      "request_rep_rates": [
+        205.84783281641467,
+        206.56713251998897
+      ],
+      "request_rep_min": 205.84783281641467,
+      "request_rep_max": 206.56713251998897,
+      "mean_request_seconds": 0.8858418713334686,
+      "max_request_seconds": 1.3842049749982834,
+      "ratio_to_q4": 1.0,
+      "trace_counters_match_plain": true,
+      "prefix_survival_counts": [
+        312,
+        220,
+        164
+      ],
+      "prefix_count_method": "Summed native per-request rounded rate times exact rounds; rounding may differ by<0.5/request.",
+      "residency_sampling_scope": "Samples within clean measured request windows; sampled maxima, not exact allocator peaks.",
+      "native_allocations": {
+        "model_buffers": {
+          "CPU_Mapped": 572124037.12,
+          "CUDA0": 5485279313.92
+        },
+        "cache_buffers": [
+          {
+            "total_reported_bytes": 134217728.0,
+            "k_type": "f16",
+            "k_bytes": 67108864.0,
+            "v_type": "f16",
+            "v_bytes": 67108864.0
+          },
+          {
+            "total_reported_bytes": 16777216.0,
+            "k_type": "f16",
+            "k_bytes": 8388608.0,
+            "v_type": "f16",
+            "v_bytes": 8388608.0
+          },
+          {
+            "total_reported_bytes": 83886080.0,
+            "k_type": "f16",
+            "k_bytes": 41943040.0,
+            "v_type": "f16",
+            "v_bytes": 41943040.0
+          }
+        ],
+        "rotation_buffers": [],
+        "compute_buffer_history": [
+          {
+            "device": "CUDA0",
+            "reported_bytes": 113267179.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 37769707.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 525336576.0
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 16798187.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 1034892083.2
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 16798187.52
+          },
+          {
+            "device": "CUDA0",
+            "reported_bytes": 171987435.52
+          },
+          {
+            "device": "CUDA_Host",
+            "reported_bytes": 37769707.52
+          }
+        ],
+        "precision": "Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate."
+      },
+      "sampled_peak_MiB": 8231,
+      "sampled_peak_Rss_bytes": 1804931072,
+      "sampled_peak_Pss_bytes": 1799090176,
+      "sampled_peak_Private_Clean_bytes": 697475072,
+      "sampled_peak_Private_Dirty_bytes": 1100861440,
+      "sampled_peak_Shared_Clean_bytes": 6594560,
+      "sampled_peak_Shared_Dirty_bytes": 0,
+      "sampled_private_resident_bytes": 1798336512,
+      "sampled_shared_resident_bytes": 6594560,
+      "target_cache_bytes": 134217728.0,
+      "target_recurrent_state_bytes": 210763776.0,
+      "draft_cache_bytes": 100663296.0,
+      "rotation_bytes": 0,
+      "combined_gpu_model_bytes": 5485279313.92,
+      "clean_gpu_forward_ms": 1.9111466606458027,
+      "clean_gpu_forward_samples": 18,
+      "gpu_graph_regions": [
+        1
+      ],
+      "gpu_scope": "CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps\u00d73domains\u00d73neighbor contexts.",
+      "precision": "F16 draft KV",
+      "runtime_format_fallback": false,
+      "private_gpu_model_bytes": 755016663.04,
+      "immutable_target_gpu_model_bytes": 4730262650.88
+    },
+    {
+      "cell": "9B-NVFP4",
+      "method": "dflash2",
+      "label": "DFlash2 Q4_K_M",
+      "depth": 3,
+      "status": "UNSUPPORTED_NO_MATCHED_9B_RELEASE",
+      "original_dflash2_q4_status": "NO_MATCHED_RELEASE"
+    },
+    {
+      "cell": "9B-NVFP4",
+      "method": "before",
+      "label": "Csmallbroad before",
+      "depth": 3,
+      "status": "UNTESTED_NO_9B_CANDIDATE_WEIGHTS"
+    },
+    {
+      "cell": "9B-NVFP4",
+      "method": "mid300",
+      "label": "Csmallbroad +5min",
+      "depth": 3,
+      "status": "UNTESTED_NO_9B_CANDIDATE_WEIGHTS"
+    },
+    {
+      "cell": "9B-NVFP4",
+      "method": "mid900",
+      "label": "Csmallbroad +15min",
+      "depth": 3,
+      "status": "UNTESTED_NO_9B_CANDIDATE_WEIGHTS"
+    },
+    {
+      "cell": "9B-NVFP4",
+      "method": "after",
+      "label": "Csmallbroad +30min",
+      "depth": 3,
+      "status": "UNTESTED_NO_9B_CANDIDATE_WEIGHTS"
+    },
+    {
+      "cell": "9B-NVFP4",
+      "method": "HE4",
+      "label": "HE4 unchanged",
+      "depth": 3,
+      "status": "UNTESTED_NO_9B_CANDIDATE_WEIGHTS"
+    }
+  ],
+  "training": {
+    "status": "COMPLETE",
+    "parent": {
+      "path": "/mnt/c/binary-eagle-component-20261105-01/Csmallbroad-4096.pt.bsz",
+      "sha256": "7ec2b71aefc58ff17de06636c9e30f7ee24fdf19f31b9015b5cf75f7fc4f73e6",
+      "bytes": 4244125704
+    },
+    "starting_progress": {
+      "updates": 4096,
+      "cursor": 4096,
+      "update_seconds": 729.9636431940244,
+      "supervised_tokens": 61440
+    },
+    "final_progress": {
+      "updates": 14094,
+      "cursor": 14094,
+      "update_seconds": 2530.036370423969,
+      "supervised_tokens": 211410
+    },
+    "additional_updates": 9998,
+    "actual_update_seconds": 1800.0727272299446,
+    "budget_seconds": 1800,
+    "one_update_overshoot_seconds": 0.07272722994457581,
+    "last_update_seconds": 0.19233175599947572,
+    "supervised_positions": 149970,
+    "unique_positions_exposed": 3794,
+    "unique_windows": 3234,
+    "total_unique_label_positions": 3794,
+    "sequences": 40,
+    "setup_and_qualification_seconds": 169.6598013619987,
+    "final_checkpoint_seconds": 61.13130266100052,
+    "process_wall_seconds": 2169.9160325310004,
+    "peak_allocated_bytes": 10597126656,
+    "peak_reserved_bytes": 10777264128,
+    "peak_host_rss_bytes": 14361419776,
+    "readouts": [
+      {
+        "label": "0",
+        "progress": {
+          "updates": 4096,
+          "cursor": 4096,
+          "update_seconds": 729.9636431940244,
+          "supervised_tokens": 61440
+        },
+        "additional_update_seconds": 0.0,
+        "dev": {
+          "records": [
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+              "anchor": 168,
+              "positions": 15,
+              "ce": 8.127585411071777,
+              "agree": 4,
+              "rank_sum": 82976,
+              "margin_sum": -77.79759216308594
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+              "anchor": 200,
+              "positions": 15,
+              "ce": 8.434172630310059,
+              "agree": 0,
+              "rank_sum": 16002,
+              "margin_sum": -98.32350158691406
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+              "anchor": 231,
+              "positions": 15,
+              "ce": 7.165529251098633,
+              "agree": 1,
+              "rank_sum": 69183,
+              "margin_sum": -67.11439514160156
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+              "anchor": 38,
+              "positions": 15,
+              "ce": 7.850977897644043,
+              "agree": 0,
+              "rank_sum": 15610,
+              "margin_sum": -70.30612182617188
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+              "anchor": 70,
+              "positions": 15,
+              "ce": 8.570432662963867,
+              "agree": 1,
+              "rank_sum": 52123,
+              "margin_sum": -88.46263122558594
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+              "anchor": 101,
+              "positions": 15,
+              "ce": 8.777268409729004,
+              "agree": 0,
+              "rank_sum": 33114,
+              "margin_sum": -101.60968017578125
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+              "anchor": 72,
+              "positions": 15,
+              "ce": 5.9334635734558105,
+              "agree": 4,
+              "rank_sum": 4947,
+              "margin_sum": -64.94598388671875
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+              "anchor": 104,
+              "positions": 15,
+              "ce": 3.8942902088165283,
+              "agree": 4,
+              "rank_sum": 541,
+              "margin_sum": -17.74542236328125
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+              "anchor": 135,
+              "positions": 15,
+              "ce": 3.501818895339966,
+              "agree": 3,
+              "rank_sum": 300,
+              "margin_sum": -26.535198211669922
+            }
+          ],
+          "positions": 135,
+          "ce": 6.9172821044921875,
+          "agreement": 0.1259259259259259,
+          "mean_rank": 2035.525925925926,
+          "mean_margin": -4.539559456154152
+        },
+        "model": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-0.gguf",
+          "sha256": "36a40befce8c6b9c64d49ae7074a14938bd0817687f49d40b3f8251ee2111156",
+          "bytes": 183225472
+        },
+        "evaluation_seconds": 1.2514531839988194,
+        "readout_seconds": 1.3544987969980866,
+        "elapsed_process_seconds": 169.64402865699958
+      },
+      {
+        "label": "300",
+        "progress": {
+          "updates": 5747,
+          "cursor": 5747,
+          "update_seconds": 1030.0373382640073,
+          "supervised_tokens": 86205
+        },
+        "additional_update_seconds": 300.07369506998293,
+        "dev": {
+          "records": [
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+              "anchor": 168,
+              "positions": 15,
+              "ce": 7.964232444763184,
+              "agree": 1,
+              "rank_sum": 50074,
+              "margin_sum": -63.2164192199707
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+              "anchor": 200,
+              "positions": 15,
+              "ce": 8.180496215820312,
+              "agree": 0,
+              "rank_sum": 32010,
+              "margin_sum": -82.62704467773438
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+              "anchor": 231,
+              "positions": 15,
+              "ce": 7.209463119506836,
+              "agree": 1,
+              "rank_sum": 22918,
+              "margin_sum": -65.76456451416016
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+              "anchor": 38,
+              "positions": 15,
+              "ce": 7.82977819442749,
+              "agree": 1,
+              "rank_sum": 20123,
+              "margin_sum": -73.58000946044922
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+              "anchor": 70,
+              "positions": 15,
+              "ce": 8.310920715332031,
+              "agree": 1,
+              "rank_sum": 75471,
+              "margin_sum": -80.88082885742188
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+              "anchor": 101,
+              "positions": 15,
+              "ce": 8.798834800720215,
+              "agree": 0,
+              "rank_sum": 44417,
+              "margin_sum": -105.93617248535156
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+              "anchor": 72,
+              "positions": 15,
+              "ce": 5.497199535369873,
+              "agree": 3,
+              "rank_sum": 2808,
+              "margin_sum": -48.685142517089844
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+              "anchor": 104,
+              "positions": 15,
+              "ce": 3.1878256797790527,
+              "agree": 4,
+              "rank_sum": 150,
+              "margin_sum": -6.250913143157959
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+              "anchor": 135,
+              "positions": 15,
+              "ce": 3.274698495864868,
+              "agree": 5,
+              "rank_sum": 448,
+              "margin_sum": -24.294788360595703
+            }
+          ],
+          "positions": 135,
+          "ce": 6.694827689064874,
+          "agreement": 0.11851851851851852,
+          "mean_rank": 1840.1407407407407,
+          "mean_margin": -4.083228764710603
+        },
+        "model": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-300.gguf",
+          "sha256": "82b3e4f04b5cb8b56d1134e195e5a12c788f2fbd0f0ad8e8cac0ac6f31cfc256",
+          "bytes": 183225472
+        },
+        "evaluation_seconds": 0.7436960890008777,
+        "readout_seconds": 30.70577596699877,
+        "elapsed_process_seconds": 504.3315414280005,
+        "native_archive": {
+          "schema": "dflash.lossless_gguf_dictionary.v1",
+          "original": {
+            "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-300.gguf",
+            "sha256": "82b3e4f04b5cb8b56d1134e195e5a12c788f2fbd0f0ad8e8cac0ac6f31cfc256",
+            "bytes": 183225472
+          },
+          "archive": {
+            "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-300.gguf.native.zst",
+            "sha256": "eecb27262aef44d291934b6a924aefc9ffff20c8a463b9b156bbce4e40d1d66f",
+            "bytes": 46312278
+          },
+          "basis": {
+            "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-0.gguf",
+            "sha256": "36a40befce8c6b9c64d49ae7074a14938bd0817687f49d40b3f8251ee2111156",
+            "bytes": 183225472
+          },
+          "verified_full_byte_roundtrip": true,
+          "semantics": "Storage container only; recover exact GGUF before native execution; timing excludes hydration; frozen source and original sidecar retained."
+        }
+      },
+      {
+        "label": "900",
+        "progress": {
+          "updates": 9077,
+          "cursor": 9077,
+          "update_seconds": 1630.0194651199972,
+          "supervised_tokens": 136155
+        },
+        "additional_update_seconds": 900.0558219259729,
+        "dev": {
+          "records": [
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+              "anchor": 168,
+              "positions": 15,
+              "ce": 8.129663467407227,
+              "agree": 4,
+              "rank_sum": 72637,
+              "margin_sum": -69.84075927734375
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+              "anchor": 200,
+              "positions": 15,
+              "ce": 8.216331481933594,
+              "agree": 1,
+              "rank_sum": 82749,
+              "margin_sum": -72.37181091308594
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+              "anchor": 231,
+              "positions": 15,
+              "ce": 7.410365581512451,
+              "agree": 1,
+              "rank_sum": 41590,
+              "margin_sum": -71.53621673583984
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+              "anchor": 38,
+              "positions": 15,
+              "ce": 8.657303810119629,
+              "agree": 0,
+              "rank_sum": 74661,
+              "margin_sum": -87.60003662109375
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+              "anchor": 70,
+              "positions": 15,
+              "ce": 7.971840858459473,
+              "agree": 1,
+              "rank_sum": 72157,
+              "margin_sum": -76.54566192626953
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+              "anchor": 101,
+              "positions": 15,
+              "ce": 9.708270072937012,
+              "agree": 0,
+              "rank_sum": 21523,
+              "margin_sum": -118.98509979248047
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+              "anchor": 72,
+              "positions": 15,
+              "ce": 4.488409519195557,
+              "agree": 5,
+              "rank_sum": 1617,
+              "margin_sum": -33.91357421875
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+              "anchor": 104,
+              "positions": 15,
+              "ce": 3.2994704246520996,
+              "agree": 6,
+              "rank_sum": 196,
+              "margin_sum": -3.1186327934265137
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+              "anchor": 135,
+              "positions": 15,
+              "ce": 5.477984428405762,
+              "agree": 3,
+              "rank_sum": 3226,
+              "margin_sum": -67.49205017089844
+            }
+          ],
+          "positions": 135,
+          "ce": 7.039959960513645,
+          "agreement": 0.15555555555555556,
+          "mean_rank": 2743.3777777777777,
+          "mean_margin": -4.454843277401395
+        },
+        "model": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-900.gguf",
+          "sha256": "6ea58a1e9073d51d39d0372e3293bb12bb8431c22f11775d5335ba5c4bd12069",
+          "bytes": 183225472
+        },
+        "evaluation_seconds": 0.6964594720011519,
+        "readout_seconds": 29.189830208000785,
+        "elapsed_process_seconds": 1152.485480372001,
+        "native_archive": {
+          "schema": "dflash.lossless_gguf_dictionary.v1",
+          "original": {
+            "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-900.gguf",
+            "sha256": "6ea58a1e9073d51d39d0372e3293bb12bb8431c22f11775d5335ba5c4bd12069",
+            "bytes": 183225472
+          },
+          "archive": {
+            "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-900.gguf.native.zst",
+            "sha256": "4acd87bdc02ee3311bada30eec36aa74a9502cc6d0ba7cb805599a6ffd55ba7a",
+            "bytes": 53041953
+          },
+          "basis": {
+            "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-0.gguf",
+            "sha256": "36a40befce8c6b9c64d49ae7074a14938bd0817687f49d40b3f8251ee2111156",
+            "bytes": 183225472
+          },
+          "verified_full_byte_roundtrip": true,
+          "semantics": "Storage container only; recover exact GGUF before native execution; timing excludes hydration; frozen source and original sidecar retained."
+        }
+      },
+      {
+        "label": "1800",
+        "progress": {
+          "updates": 14094,
+          "cursor": 14094,
+          "update_seconds": 2530.036370423969,
+          "supervised_tokens": 211410
+        },
+        "additional_update_seconds": 1800.0727272299446,
+        "dev": {
+          "records": [
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+              "anchor": 168,
+              "positions": 15,
+              "ce": 8.423290252685547,
+              "agree": 4,
+              "rank_sum": 121476,
+              "margin_sum": -91.56584930419922
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+              "anchor": 200,
+              "positions": 15,
+              "ce": 8.271778106689453,
+              "agree": 1,
+              "rank_sum": 13310,
+              "margin_sum": -96.79660034179688
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+              "anchor": 231,
+              "positions": 15,
+              "ce": 7.590895652770996,
+              "agree": 1,
+              "rank_sum": 136970,
+              "margin_sum": -78.44337463378906
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+              "anchor": 38,
+              "positions": 15,
+              "ce": 8.109658241271973,
+              "agree": 1,
+              "rank_sum": 51104,
+              "margin_sum": -81.45127868652344
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+              "anchor": 70,
+              "positions": 15,
+              "ce": 8.487092971801758,
+              "agree": 1,
+              "rank_sum": 61745,
+              "margin_sum": -83.39090728759766
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+              "anchor": 101,
+              "positions": 15,
+              "ce": 10.23085880279541,
+              "agree": 0,
+              "rank_sum": 65932,
+              "margin_sum": -121.7752685546875
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+              "anchor": 72,
+              "positions": 15,
+              "ce": 4.849463939666748,
+              "agree": 4,
+              "rank_sum": 1151,
+              "margin_sum": -38.473358154296875
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+              "anchor": 104,
+              "positions": 15,
+              "ce": 4.4647722244262695,
+              "agree": 4,
+              "rank_sum": 257,
+              "margin_sum": -27.79230499267578
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+              "anchor": 135,
+              "positions": 15,
+              "ce": 3.8378210067749023,
+              "agree": 6,
+              "rank_sum": 1369,
+              "margin_sum": -39.041282653808594
+            }
+          ],
+          "positions": 135,
+          "ce": 7.140625688764784,
+          "agreement": 0.16296296296296298,
+          "mean_rank": 3357.8814814814814,
+          "mean_margin": -4.879483145254629
+        },
+        "model": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-1800.gguf",
+          "sha256": "b498820f4c5a64ddf0c788fffedafcf1589ccd8494b0b6f0537f5e1a563120f5",
+          "bytes": 183225472
+        },
+        "evaluation_seconds": 0.7073206449967984,
+        "readout_seconds": 21.545567799999844,
+        "elapsed_process_seconds": 2108.6995407469985
+      }
+    ],
+    "recovery": {
+      "format": "dflash.byte_shuffle_zstd.stream.v1",
+      "archive": "/mnt/c/binary-eagle-dflash2-smoke-20261106-01/Csmallbroad-exact-plus1800-14094.pt.bsz",
+      "archive_sha256": "181ffb6d0d93fb911cf02102e6f67736336627e23dc89d06ee04eb5b0c726a13",
+      "archive_bytes": 4246079884,
+      "raw_sha256": "d0b2c1a7ae3a8ff805c258cc877cc0d6810b328ca49e5e27307eb4dc6ee4333d",
+      "raw_bytes": 5100698375,
+      "lossless_verified": true,
+      "raw_materialized": false
+    },
+    "source": {
+      "path": "/home/philip/.t3/worktrees/binary-eagle-decoding/t3-e6fc8d06/scripts/dflash2_smoke/train.py",
+      "sha256": "497dec9a8db641ad44c5d3515cd763333236e6a9b01d177afaf0f14df0b5089b",
+      "bytes": 11574
+    }
+  },
+  "final_resume": {
+    "status": "FULL_FINAL_STATE_NATIVE_BYTE_IDENTITY_AND_GPU_RESUME_PASS",
+    "recovery": {
+      "format": "dflash.byte_shuffle_zstd.stream.v1",
+      "archive": "/mnt/c/binary-eagle-dflash2-smoke-20261106-01/Csmallbroad-exact-plus1800-14094.pt.bsz",
+      "archive_sha256": "181ffb6d0d93fb911cf02102e6f67736336627e23dc89d06ee04eb5b0c726a13",
+      "archive_bytes": 4246079884,
+      "raw_sha256": "d0b2c1a7ae3a8ff805c258cc877cc0d6810b328ca49e5e27307eb4dc6ee4333d",
+      "raw_bytes": 5100698375,
+      "lossless_verified": true,
+      "raw_materialized": false
+    },
+    "native": {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-1800.gguf",
+      "sha256": "b498820f4c5a64ddf0c788fffedafcf1589ccd8494b0b6f0537f5e1a563120f5",
+      "bytes": 183225472
+    },
+    "optimizer_steps": [
+      14094
+    ],
+    "master_count": 104,
+    "optimizer_groups": [
+      {
+        "lr": 0.001,
+        "name": "sign",
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0,
+        "amsgrad": false,
+        "maximize": false,
+        "foreach": false,
+        "capturable": false,
+        "differentiable": false,
+        "fused": null,
+        "decoupled_weight_decay": true,
+        "parameter_count": 18
+      },
+      {
+        "lr": 1e-05,
+        "name": "scale",
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0,
+        "amsgrad": false,
+        "maximize": false,
+        "foreach": false,
+        "capturable": false,
+        "differentiable": false,
+        "fused": null,
+        "decoupled_weight_decay": true,
+        "parameter_count": 18
+      },
+      {
+        "lr": 1e-05,
+        "name": "midpoint",
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0,
+        "amsgrad": false,
+        "maximize": false,
+        "foreach": false,
+        "capturable": false,
+        "differentiable": false,
+        "fused": null,
+        "decoupled_weight_decay": true,
+        "parameter_count": 18
+      },
+      {
+        "lr": 1e-05,
+        "name": "gain",
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0,
+        "amsgrad": false,
+        "maximize": false,
+        "foreach": false,
+        "capturable": false,
+        "differentiable": false,
+        "fused": null,
+        "decoupled_weight_decay": true,
+        "parameter_count": 12
+      },
+      {
+        "lr": 1e-05,
+        "name": "clip",
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0,
+        "amsgrad": false,
+        "maximize": false,
+        "foreach": false,
+        "capturable": false,
+        "differentiable": false,
+        "fused": null,
+        "decoupled_weight_decay": true,
+        "parameter_count": 12
+      },
+      {
+        "lr": 1e-05,
+        "name": "norm",
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0,
+        "amsgrad": false,
+        "maximize": false,
+        "foreach": false,
+        "capturable": false,
+        "differentiable": false,
+        "fused": null,
+        "decoupled_weight_decay": true,
+        "parameter_count": 26
+      }
+    ],
+    "gpu_resume": {
+      "status": "ACTUAL_GPU_MASTER_ADAM_RNG_CURSOR_RESUME_UPDATE_PASS",
+      "owner": {
+        "pid": 65890,
+        "stat": "65890 (python) R 65872 65872 65872 0 -1 4194304 6754641 36 107077 0 7006 2881 0 0 20 0 23 0 2232665 70861762560 2680711 18446744073709551615 95563517034496 95563527790889 140730643128672 0 0 0 0 19927040 2 0 0 0 17 15 0 0 0 0 0 95563569987584 95563570041736 95563912450048 140730643129730 140730643129820 140730643129820 140730643132356 0\n",
+        "boot_id": "f263f22b-7779-45b6-8247-e702f692b44a\n",
+        "pgid": 65872
+      },
+      "arm": "Csmallbroad",
+      "saved_updates": 14094,
+      "retained_state_trainer": {
+        "path": "/home/philip/binary-eagle-decoding/runs/component-campaign-20261105-01/arms/Csmallbroad/result.json",
+        "sha256": "bf0d19b06a6c13eb2002e5226bc0f32fec9537a8c3a2bede7f50b7649ce6027c",
+        "bytes": 23087
+      },
+      "qualification_updates": 1,
+      "next_adam_steps": [
+        14095
+      ],
+      "next_cursor": 14095,
+      "next_capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/fit-prose-07/capture",
+      "next_anchor": 63,
+      "loss": 0.1767532378435135,
+      "gradient_norm": 2.720984935760498,
+      "update_seconds": 14.30940585099961,
+      "changed_master_names": [
+        "output_norm_enc",
+        "output_norm",
+        "layers.0.attn_norm",
+        "layers.0.attn_q_norm",
+        "layers.0.attn_k_norm",
+        "layers.0.ffn_norm",
+        "layers.0.ffn_gate.latent_sign",
+        "layers.0.ffn_gate.scale",
+        "layers.0.ffn_gate.midpoint",
+        "layers.0.ffn_gate.log_gain",
+        "layers.0.ffn_gate.log_clip",
+        "layers.0.ffn_up.latent_sign",
+        "layers.0.ffn_up.scale",
+        "layers.0.ffn_up.midpoint",
+        "layers.0.ffn_down.latent_sign",
+        "layers.0.ffn_down.scale",
+        "layers.0.ffn_down.midpoint",
+        "layers.0.ffn_down.log_gain",
+        "layers.0.ffn_down.log_clip",
+        "layers.1.attn_norm",
+        "layers.1.attn_q_norm",
+        "layers.1.attn_k_norm",
+        "layers.1.ffn_norm",
+        "layers.1.ffn_gate.latent_sign",
+        "layers.1.ffn_gate.scale",
+        "layers.1.ffn_gate.midpoint",
+        "layers.1.ffn_gate.log_gain",
+        "layers.1.ffn_gate.log_clip",
+        "layers.1.ffn_up.latent_sign",
+        "layers.1.ffn_up.scale",
+        "layers.1.ffn_up.midpoint",
+        "layers.1.ffn_down.latent_sign",
+        "layers.1.ffn_down.scale",
+        "layers.1.ffn_down.midpoint",
+        "layers.1.ffn_down.log_gain",
+        "layers.1.ffn_down.log_clip",
+        "layers.2.attn_norm",
+        "layers.2.attn_q_norm",
+        "layers.2.attn_k_norm",
+        "layers.2.ffn_norm",
+        "layers.2.ffn_gate.latent_sign",
+        "layers.2.ffn_gate.scale",
+        "layers.2.ffn_gate.midpoint",
+        "layers.2.ffn_gate.log_gain",
+        "layers.2.ffn_gate.log_clip",
+        "layers.2.ffn_up.latent_sign",
+        "layers.2.ffn_up.scale",
+        "layers.2.ffn_up.midpoint",
+        "layers.2.ffn_down.latent_sign",
+        "layers.2.ffn_down.scale",
+        "layers.2.ffn_down.midpoint",
+        "layers.2.ffn_down.log_gain",
+        "layers.2.ffn_down.log_clip",
+        "layers.3.attn_norm",
+        "layers.3.attn_q_norm",
+        "layers.3.attn_k_norm",
+        "layers.3.ffn_norm",
+        "layers.3.ffn_gate.latent_sign",
+        "layers.3.ffn_gate.scale",
+        "layers.3.ffn_gate.midpoint",
+        "layers.3.ffn_gate.log_gain",
+        "layers.3.ffn_gate.log_clip",
+        "layers.3.ffn_up.latent_sign",
+        "layers.3.ffn_up.scale",
+        "layers.3.ffn_up.midpoint",
+        "layers.3.ffn_down.latent_sign",
+        "layers.3.ffn_down.scale",
+        "layers.3.ffn_down.midpoint",
+        "layers.3.ffn_down.log_gain",
+        "layers.3.ffn_down.log_clip",
+        "layers.4.attn_norm",
+        "layers.4.attn_q_norm",
+        "layers.4.attn_k_norm",
+        "layers.4.ffn_norm",
+        "layers.4.ffn_gate.latent_sign",
+        "layers.4.ffn_gate.scale",
+        "layers.4.ffn_gate.midpoint",
+        "layers.4.ffn_gate.log_gain",
+        "layers.4.ffn_gate.log_clip",
+        "layers.4.ffn_up.latent_sign",
+        "layers.4.ffn_up.scale",
+        "layers.4.ffn_up.midpoint",
+        "layers.4.ffn_down.latent_sign",
+        "layers.4.ffn_down.scale",
+        "layers.4.ffn_down.midpoint",
+        "layers.4.ffn_down.log_gain",
+        "layers.4.ffn_down.log_clip",
+        "layers.5.attn_norm",
+        "layers.5.attn_q_norm",
+        "layers.5.attn_k_norm",
+        "layers.5.ffn_norm",
+        "layers.5.ffn_gate.latent_sign",
+        "layers.5.ffn_gate.scale",
+        "layers.5.ffn_gate.midpoint",
+        "layers.5.ffn_gate.log_gain",
+        "layers.5.ffn_gate.log_clip",
+        "layers.5.ffn_up.latent_sign",
+        "layers.5.ffn_up.scale",
+        "layers.5.ffn_up.midpoint",
+        "layers.5.ffn_down.latent_sign",
+        "layers.5.ffn_down.scale",
+        "layers.5.ffn_down.midpoint",
+        "layers.5.ffn_down.log_gain",
+        "layers.5.ffn_down.log_clip"
+      ],
+      "gpu_deployment_values_exact": true,
+      "caller_optimizer_unchanged": true,
+      "source": {
+        "path": "/home/philip/.t3/worktrees/binary-eagle-decoding/t3-e6fc8d06/scripts/component_campaign/gpu_resume.py",
+        "sha256": "56f036a183e17c4330753906197d0e862af34c6db8019708e2681d5adce23239",
+        "bytes": 7577
+      },
+      "peak_allocated_bytes": 10533487616,
+      "policy": "Actual next TRAIN window with saved Adam/RNG/order/cursor; one qualification update only. Retained4096 state and evaluated native bytes remain unchanged. This scratch update is not another recovery window, independent seed or reported finalist."
+    },
+    "source": {
+      "path": "/home/philip/.t3/worktrees/binary-eagle-decoding/t3-e6fc8d06/scripts/dflash2_smoke/verify_final.py",
+      "sha256": "ae63a37e460da0563331b1fedeffa2610de250d1f649360d9165a9b1b0e40226",
+      "bytes": 2282
+    },
+    "qualification_charged_to_budget": false
+  },
+  "failed_attempts": [
+    {
+      "status": "FAILED_READOUT",
+      "error": "Export state omitted version=2; failure at first300-second native export",
+      "actual_update_seconds": 300.00822123106263,
+      "updates": 1562,
+      "recoverable": false,
+      "parent_unchanged": true,
+      "policy": "Preserved logs; restart from original4096state. Failed attempt cost reported separately, never called a completed1800s continuation."
+    },
+    {
+      "status": "INVALID_EXACT_RESUME_TRAJECTORY",
+      "recorded_updates": 14019,
+      "actual_adam_steps": [
+        14020
+      ],
+      "full_state": {
+        "format": "dflash.byte_shuffle_zstd.stream.v1",
+        "archive": "/mnt/c/binary-eagle-dflash2-smoke-20261106-01/Csmallbroad-plus1800-14019.pt.bsz",
+        "archive_sha256": "7e6fa2ba484b4de305758af641d714303f6a3410ca34fb8083d8ef0f635c987f",
+        "archive_bytes": 4245373028,
+        "raw_sha256": "d5645e6a5c070544e7869995a9212b145beeba406a44a2c6ffd574f46ed5f027",
+        "raw_bytes": 5100698375,
+        "lossless_verified": true,
+        "raw_materialized": false
+      },
+      "diagnosis": "Scratch GPU resume qualification aliases CPU Adam step tensors through load_state_dict; qualification advanced the in-memory parent step4096\u21924097, then main continuation restored that mutated step with original moments and cursor4096. Final steps are one greater than actual trajectory updates. Preserve this paid invalid diagnostic; never decrement final counters and call it exact.",
+      "actual_update_seconds": 1800.0146279329783,
+      "additional_updates": 9923,
+      "result": {
+        "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate-attempt02-invalid-step/result.json",
+        "sha256": "9f02aeb4daa0bd25293283fc180bf01c6d36a0efc07d3d29a7df3f714d6bbc46",
+        "bytes": 18050
+      }
+    }
+  ],
+  "failed_invalid_update_seconds": 2100.022849164041,
+  "recipe": {
+    "config": {
+      "version": 1,
+      "preset": "gate-up-a4",
+      "source": {
+        "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-bf16.gguf",
+        "sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521"
+      },
+      "parent": {
+        "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/finalists/G4D8-learned-small/checkpoint.pt.bsz",
+        "sha256": "f0a1bb0fd8a30549ca197c17d79fd9d250eb854c1c93a9222a62db7232c3b9f9"
+      },
+      "data": {
+        "path": "/home/philip/binary-eagle-decoding/runs/component-campaign-20261105-01/broader-train-capture/manifest.json",
+        "sha256": "022cfe8ececc2f69198448dcebd7db216c39197c49eccc819c77b03b2fd11ca2",
+        "bytes": 189196
+      },
+      "evaluation": {
+        "target": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+          "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+        }
+      },
+      "budget_seconds": 86400,
+      "overrides": {
+        "blk.0.ffn_down": {
+          "weight": "W1",
+          "bits": 8
+        },
+        "blk.1.ffn_down": {
+          "weight": "W1",
+          "bits": 8
+        },
+        "blk.2.ffn_down": {
+          "weight": "W1",
+          "bits": 8
+        },
+        "blk.3.ffn_down": {
+          "weight": "W1",
+          "bits": 8
+        },
+        "blk.4.ffn_down": {
+          "weight": "W1",
+          "bits": 8
+        },
+        "blk.5.ffn_down": {
+          "weight": "W1",
+          "bits": 8
+        }
+      },
+      "quantizer": {
+        "mode": "learned",
+        "clip": 1.0
+      },
+      "components": {
+        "fusion": "Q4_0",
+        "attention_qk": "Q4_0",
+        "attention_vo": "Q4_0"
+      },
+      "coverage": {
+        "blk.0.ffn_gate": {
+          "weight": "W1",
+          "bits": 4
+        },
+        "blk.0.ffn_up": {
+          "weight": "W1",
+          "bits": 4
+        },
+        "blk.0.ffn_down": {
+          "weight": "W1",
+          "bits": 8
+        },
+        "blk.1.ffn_gate": {
+          "weight": "W1",
+          "bits": 4
+        },
+        "blk.1.ffn_up": {
+          "weight": "W1",
+          "bits": 4
+        },
+        "blk.1.ffn_down": {
+          "weight": "W1",
+          "bits": 8
+        },
+        "blk.2.ffn_gate": {
+          "weight": "W1",
+          "bits": 4
+        },
+        "blk.2.ffn_up": {
+          "weight": "W1",
+          "bits": 4
+        },
+        "blk.2.ffn_down": {
+          "weight": "W1",
+          "bits": 8
+        },
+        "blk.3.ffn_gate": {
+          "weight": "W1",
+          "bits": 4
+        },
+        "blk.3.ffn_up": {
+          "weight": "W1",
+          "bits": 4
+        },
+        "blk.3.ffn_down": {
+          "weight": "W1",
+          "bits": 8
+        },
+        "blk.4.ffn_gate": {
+          "weight": "W1",
+          "bits": 4
+        },
+        "blk.4.ffn_up": {
+          "weight": "W1",
+          "bits": 4
+        },
+        "blk.4.ffn_down": {
+          "weight": "W1",
+          "bits": 8
+        },
+        "blk.5.ffn_gate": {
+          "weight": "W1",
+          "bits": 4
+        },
+        "blk.5.ffn_up": {
+          "weight": "W1",
+          "bits": 4
+        },
+        "blk.5.ffn_down": {
+          "weight": "W1",
+          "bits": 8
+        }
+      },
+      "features": {
+        "midpoint": true,
+        "gain": true,
+        "scale": true,
+        "sign": true,
+        "norm": true
+      },
+      "arithmetic": "fixed_w1ax_finite_reciprocal_v2",
+      "schedule": "constant",
+      "operand_storage": "int8-reference"
+    },
+    "spec": {
+      "name": "Csmallbroad",
+      "kv": [
+        "q4_0",
+        "q4_0"
+      ],
+      "scalar": {
+        "gain": true,
+        "clip": true,
+        "norm": true
+      },
+      "clip_bits_storage": true,
+      "training_data": {
+        "path": "/home/philip/binary-eagle-decoding/runs/component-campaign-20261105-01/broader-train-capture/manifest.json",
+        "sha256": "022cfe8ececc2f69198448dcebd7db216c39197c49eccc819c77b03b2fd11ca2",
+        "bytes": 189196
+      }
+    },
+    "lineage": {
+      "parent": {
+        "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/finalists/G4D8-learned-small/checkpoint.pt.bsz",
+        "sha256": "f0a1bb0fd8a30549ca197c17d79fd9d250eb854c1c93a9222a62db7232c3b9f9",
+        "bytes": 4207188154
+      },
+      "parent_native": {
+        "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/finalists/G4D8-learned-small/model-final.json",
+        "sha256": "e5d799e14fd4ae0a932853d12d101f22648386ead5bc138433358f5123c1b1d8",
+        "bytes": 51699
+      },
+      "parent_progress": {
+        "updates": 2048,
+        "cursor": 18327,
+        "update_seconds": 279.51960978863644,
+        "supervised_tokens": 30720
+      },
+      "recipe": "R1 existing signs/scale/midpoint/gain/learned clip/norm; frozen quantized vocabulary; Adam reset identically",
+      "spec": {
+        "name": "Csmallbroad",
+        "kv": [
+          "q4_0",
+          "q4_0"
+        ],
+        "scalar": {
+          "gain": true,
+          "clip": true,
+          "norm": true
+        },
+        "clip_bits_storage": true,
+        "training_data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/component-campaign-20261105-01/broader-train-capture/manifest.json",
+          "sha256": "022cfe8ececc2f69198448dcebd7db216c39197c49eccc819c77b03b2fd11ca2",
+          "bytes": 189196
+        }
+      },
+      "data_recipe": {
+        "manifest": {
+          "path": "/home/philip/binary-eagle-decoding/runs/component-campaign-20261105-01/broader-train-capture/manifest.json",
+          "sha256": "022cfe8ececc2f69198448dcebd7db216c39197c49eccc819c77b03b2fd11ca2",
+          "bytes": 189196
+        },
+        "original_B0_data": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/result.json",
+          "sha256": "26c51ccf460adf4b903e041cb2dbbfa7538aa6dbd3a93a702a5299184afe9098"
+        },
+        "order_policy": "Seed8101 explicit new-manifest order; cursor0; identical matched controls; original R1history unchanged",
+        "objective": "Original15-position decay-weighted hard-target CE; no distillation change"
+      },
+      "continuation": {
+        "parent": {
+          "path": "/mnt/c/binary-eagle-component-20261105-01/Csmallbroad-4096.pt.bsz",
+          "sha256": "7ec2b71aefc58ff17de06636c9e30f7ee24fdf19f31b9015b5cf75f7fc4f73e6",
+          "bytes": 4244125704
+        },
+        "budget": "1800 seconds synchronized forward/backward/optimizer updates",
+        "optimizer": "Restored all Adam state, groups and learning rates; no reset",
+        "source": {
+          "path": "/home/philip/.t3/worktrees/binary-eagle-decoding/t3-e6fc8d06/scripts/dflash2_smoke/train.py",
+          "sha256": "497dec9a8db641ad44c5d3515cd763333236e6a9b01d177afaf0f14df0b5089b",
+          "bytes": 11574
+        }
+      }
+    },
+    "windows": 3234,
+    "unique_labels": 3794,
+    "sequences": 40,
+    "parameters": {
+      "output_norm_enc": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "output_norm": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.0.attn_norm": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.0.attn_q_norm": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.0.attn_k_norm": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.0.ffn_norm": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.0.ffn_gate.latent_sign": {
+        "shape": [
+          9216,
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.0.ffn_gate.scale": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.0.ffn_gate.midpoint": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.0.ffn_gate.log_gain": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.0.ffn_gate.log_clip": {
+        "shape": [],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.0.ffn_up.latent_sign": {
+        "shape": [
+          9216,
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.0.ffn_up.scale": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.0.ffn_up.midpoint": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.0.ffn_down.latent_sign": {
+        "shape": [
+          2560,
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.0.ffn_down.scale": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.0.ffn_down.midpoint": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.0.ffn_down.log_gain": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.0.ffn_down.log_clip": {
+        "shape": [],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.1.attn_norm": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.1.attn_q_norm": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.1.attn_k_norm": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.1.ffn_norm": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.1.ffn_gate.latent_sign": {
+        "shape": [
+          9216,
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.1.ffn_gate.scale": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.1.ffn_gate.midpoint": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.1.ffn_gate.log_gain": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.1.ffn_gate.log_clip": {
+        "shape": [],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.1.ffn_up.latent_sign": {
+        "shape": [
+          9216,
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.1.ffn_up.scale": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.1.ffn_up.midpoint": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.1.ffn_down.latent_sign": {
+        "shape": [
+          2560,
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.1.ffn_down.scale": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.1.ffn_down.midpoint": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.1.ffn_down.log_gain": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.1.ffn_down.log_clip": {
+        "shape": [],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.2.attn_norm": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.2.attn_q_norm": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.2.attn_k_norm": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.2.ffn_norm": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.2.ffn_gate.latent_sign": {
+        "shape": [
+          9216,
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.2.ffn_gate.scale": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.2.ffn_gate.midpoint": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.2.ffn_gate.log_gain": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.2.ffn_gate.log_clip": {
+        "shape": [],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.2.ffn_up.latent_sign": {
+        "shape": [
+          9216,
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.2.ffn_up.scale": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.2.ffn_up.midpoint": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.2.ffn_down.latent_sign": {
+        "shape": [
+          2560,
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.2.ffn_down.scale": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.2.ffn_down.midpoint": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.2.ffn_down.log_gain": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.2.ffn_down.log_clip": {
+        "shape": [],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.3.attn_norm": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.3.attn_q_norm": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.3.attn_k_norm": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.3.ffn_norm": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.3.ffn_gate.latent_sign": {
+        "shape": [
+          9216,
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.3.ffn_gate.scale": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.3.ffn_gate.midpoint": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.3.ffn_gate.log_gain": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.3.ffn_gate.log_clip": {
+        "shape": [],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.3.ffn_up.latent_sign": {
+        "shape": [
+          9216,
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.3.ffn_up.scale": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.3.ffn_up.midpoint": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.3.ffn_down.latent_sign": {
+        "shape": [
+          2560,
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.3.ffn_down.scale": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.3.ffn_down.midpoint": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.3.ffn_down.log_gain": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.3.ffn_down.log_clip": {
+        "shape": [],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.4.attn_norm": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.4.attn_q_norm": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.4.attn_k_norm": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.4.ffn_norm": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.4.ffn_gate.latent_sign": {
+        "shape": [
+          9216,
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.4.ffn_gate.scale": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.4.ffn_gate.midpoint": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.4.ffn_gate.log_gain": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.4.ffn_gate.log_clip": {
+        "shape": [],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.4.ffn_up.latent_sign": {
+        "shape": [
+          9216,
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.4.ffn_up.scale": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.4.ffn_up.midpoint": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.4.ffn_down.latent_sign": {
+        "shape": [
+          2560,
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.4.ffn_down.scale": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.4.ffn_down.midpoint": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.4.ffn_down.log_gain": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.4.ffn_down.log_clip": {
+        "shape": [],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.5.attn_norm": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.5.attn_q_norm": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.5.attn_k_norm": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.5.ffn_norm": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.5.ffn_gate.latent_sign": {
+        "shape": [
+          9216,
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.5.ffn_gate.scale": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.5.ffn_gate.midpoint": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.5.ffn_gate.log_gain": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.5.ffn_gate.log_clip": {
+        "shape": [],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.5.ffn_up.latent_sign": {
+        "shape": [
+          9216,
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.5.ffn_up.scale": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.5.ffn_up.midpoint": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.5.ffn_down.latent_sign": {
+        "shape": [
+          2560,
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.5.ffn_down.scale": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.5.ffn_down.midpoint": {
+        "shape": [
+          2560
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.5.ffn_down.log_gain": {
+        "shape": [
+          9216
+        ],
+        "dtype": "torch.float32",
+        "trainable": true
+      },
+      "layers.5.ffn_down.log_clip": {
+        "shape": [],
+        "dtype": "torch.float32",
+        "trainable": true
+      }
+    }
+  },
+  "dflash2_original_q4_status": "INVALID_NONFINITE_NATIVE_LOGITS_AND_SELECTOR_SCORES",
+  "dflash2_fallback": {
+    "status": "QUALIFIED_NATIVE_FALLBACK_MEASURED_IN_BOTH_4B_CELLS",
+    "original": {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/models/dflash2-4b-Q4_K_M.gguf",
+      "sha256": "a24aa75f09144dae8c531e597c40130a3eda966002005a2e2b599f2bc57d8641",
+      "bytes": 397333152
+    },
+    "released_weights": {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/models/dflash2-4b/model.safetensors",
+      "sha256": "c919a019f84c8be86fcfc24a3e694dd2e90f4f616ac6aa103f27f5308b5f5e6c",
+      "bytes": 1324107408
+    },
+    "model": {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/models/dflash2-4b-Q4-F32down.gguf",
+      "sha256": "5e214d316687f56c78a0ab6a4308e0c330e25e8c162525463fd5cd9f09df672f",
+      "bytes": 790672192
+    },
+    "exceptions": [
+      {
+        "name": "blk.0.ffn_down.weight",
+        "source_type": "Q4_K",
+        "execution_type": "F32",
+        "bytes": 94371840
+      },
+      {
+        "name": "blk.1.ffn_down.weight",
+        "source_type": "Q4_K",
+        "execution_type": "F32",
+        "bytes": 94371840
+      },
+      {
+        "name": "blk.2.ffn_down.weight",
+        "source_type": "Q6_K",
+        "execution_type": "F32",
+        "bytes": 94371840
+      },
+      {
+        "name": "blk.3.ffn_down.weight",
+        "source_type": "Q4_K",
+        "execution_type": "F32",
+        "bytes": 94371840
+      },
+      {
+        "name": "blk.4.ffn_down.weight",
+        "source_type": "Q6_K",
+        "execution_type": "F32",
+        "bytes": 94371840
+      }
+    ],
+    "unchanged": "All other native tensor bytes and metadata preserved; no training or selector weights invented.",
+    "reason": "Observed finite FFN GLU values~1.1e8 overflow legacy F16/Q8_1 down-input arithmetic; F32 down weight selects F32 input path.",
+    "source": {
+      "path": "/home/philip/.t3/worktrees/binary-eagle-decoding/t3-e6fc8d06/scripts/dflash2_smoke/export_range.py",
+      "sha256": "7e61c51f4e0c270cc94befa4c4dcc8f344290450f38e07056bf32806f74efa1a",
+      "bytes": 2472
+    },
+    "byte_identity_audit": {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/release-audit/fallback-byte-audit.json",
+      "sha256": "ccfd3713d4c730da7cb773ab088c2596a34876a42320df5baa79cf249e4411c4",
+      "bytes": 17662
+    },
+    "original_export_status": "EXPORTED_NOT_YET_QUALIFIED"
+  },
+  "dflash2_failed_path_evidence": [
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/diagnostics/selector01/result.json",
+      "sha256": "e20efb8affd14a61e6c72313ad85ae65dc6dd448be726af243f313adbbbd5c57",
+      "bytes": 352
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/diagnostics/selector02/result.json",
+      "sha256": "2c385ea5d51670295605ca02cccbe4ccac1e0d9751470b7ff40e3b92cc123fac",
+      "bytes": 242
+    }
+  ],
+  "metadata": {
+    "cells": [
+      {
+        "cell": "4B-Q4_K_M",
+        "target": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf",
+          "bytes": 2834975040,
+          "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+        },
+        "draft": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-Q4_K_M.gguf",
+          "bytes": 381456064,
+          "sha256": "83586a63eab58b4ef9dd1d72de667738fcedb289e97d98d01d8df66f23df610f"
+        },
+        "vocabulary": {
+          "token_embd.weight": {
+            "type": "Q6_K",
+            "shape": [
+              2560,
+              248320
+            ],
+            "sha256": "9bb406bff36f8a27a70d3f1f642759443eeab13786f361938a3a22658f8211ad"
+          }
+        },
+        "metadata": {
+          "general.architecture": "qwen35",
+          "qwen35.embedding_length": 2560,
+          "tokenizer.ggml.tokens": "8bfe390ebcafdb6eedaf2ab4ff4a5aab8073130146af100cd1370eea0c92b53c",
+          "tokenizer.ggml.token_type": "5088c8c298fc06af8382ddb3b76c888703ac2634e82263b97eedcc2ad202738b",
+          "tokenizer.ggml.eos_token_id": 248046
+        },
+        "selector_top_k": 0
+      },
+      {
+        "cell": "4B-NVFP4",
+        "target": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-mtp-nvfp4.gguf",
+          "bytes": 2611783424,
+          "sha256": "5447bdb8596601fa20f41e849da0a15fca7da389d3ffdab6d0aeb64634064fa5"
+        },
+        "draft": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-Q4_K_M.gguf",
+          "bytes": 381456064,
+          "sha256": "83586a63eab58b4ef9dd1d72de667738fcedb289e97d98d01d8df66f23df610f"
+        },
+        "vocabulary": {
+          "token_embd.weight": {
+            "type": "Q6_K",
+            "shape": [
+              2560,
+              248320
+            ],
+            "sha256": "9bb406bff36f8a27a70d3f1f642759443eeab13786f361938a3a22658f8211ad"
+          }
+        },
+        "metadata": {
+          "general.architecture": "qwen35",
+          "qwen35.embedding_length": 2560,
+          "tokenizer.ggml.tokens": "8bfe390ebcafdb6eedaf2ab4ff4a5aab8073130146af100cd1370eea0c92b53c",
+          "tokenizer.ggml.token_type": "5088c8c298fc06af8382ddb3b76c888703ac2634e82263b97eedcc2ad202738b",
+          "tokenizer.ggml.eos_token_id": 248046
+        },
+        "selector_top_k": 0
+      },
+      {
+        "cell": "9B-Q4_K_M",
+        "target": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/Qwen3.5-9B-Q4_K_M.gguf",
+          "bytes": 5868826976,
+          "sha256": "e8dd94817e95d6c0939102049d068418269978377b13616c4726235e232841fe"
+        },
+        "draft": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-9b-dflash-Q4_K_M.gguf",
+          "bytes": 765959872,
+          "sha256": "56bf9df07d6f8b140c818d387d4758530bee1ba18f10d54982dba602471035e7"
+        },
+        "vocabulary": {
+          "output.weight": {
+            "type": "Q6_K",
+            "shape": [
+              4096,
+              248320
+            ],
+            "sha256": "b363940730dcf627551b0b4f4f89e1858deee9a64226f4c9d36a5676ddfc65fa"
+          },
+          "token_embd.weight": {
+            "type": "Q4_K",
+            "shape": [
+              4096,
+              248320
+            ],
+            "sha256": "c8557659f65bf858fd9c503f36fea17c9b5d60990559a9fbc838a0991634e22e"
+          }
+        },
+        "metadata": {
+          "general.architecture": "qwen35",
+          "qwen35.embedding_length": 4096,
+          "tokenizer.ggml.tokens": "8bfe390ebcafdb6eedaf2ab4ff4a5aab8073130146af100cd1370eea0c92b53c",
+          "tokenizer.ggml.token_type": "5088c8c298fc06af8382ddb3b76c888703ac2634e82263b97eedcc2ad202738b",
+          "tokenizer.ggml.eos_token_id": 248046
+        },
+        "selector_top_k": 0
+      },
+      {
+        "cell": "9B-NVFP4",
+        "target": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-9b-mtp-nvfp4.gguf",
+          "bytes": 5450280768,
+          "sha256": "d12d0404f246a01a4546efa255918842ff097d4b318986f8a2cdf087205c9aa3"
+        },
+        "draft": {
+          "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-9b-dflash-Q4_K_M.gguf",
+          "bytes": 765959872,
+          "sha256": "56bf9df07d6f8b140c818d387d4758530bee1ba18f10d54982dba602471035e7"
+        },
+        "vocabulary": {
+          "output.weight": {
+            "type": "Q6_K",
+            "shape": [
+              4096,
+              248320
+            ],
+            "sha256": "b363940730dcf627551b0b4f4f89e1858deee9a64226f4c9d36a5676ddfc65fa"
+          },
+          "token_embd.weight": {
+            "type": "NVFP4",
+            "shape": [
+              4096,
+              248320
+            ],
+            "sha256": "9ab7b323f5bf19479141eab200c302f0814582c62a1bb7edfebd9efc4e6b29ec"
+          }
+        },
+        "metadata": {
+          "general.architecture": "qwen35",
+          "qwen35.embedding_length": 4096,
+          "tokenizer.ggml.tokens": "8bfe390ebcafdb6eedaf2ab4ff4a5aab8073130146af100cd1370eea0c92b53c",
+          "tokenizer.ggml.token_type": "5088c8c298fc06af8382ddb3b76c888703ac2634e82263b97eedcc2ad202738b",
+          "tokenizer.ggml.eos_token_id": 248046
+        },
+        "selector_top_k": 0
+      }
+    ],
+    "dflash2": {
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/models/dflash2-4b-Q4_K_M.gguf",
+        "sha256": "a24aa75f09144dae8c531e597c40130a3eda966002005a2e2b599f2bc57d8641",
+        "bytes": 397333152
+      },
+      "metadata": {
+        "dflash.block_count": 5,
+        "dflash.context_length": 262144,
+        "dflash.embedding_length": 2560,
+        "dflash.feed_forward_length": 9216,
+        "dflash.attention.head_count": 16,
+        "dflash.attention.head_count_kv": 4,
+        "dflash.attention.causal": false,
+        "dflash.rope.freq_base": 10000.0,
+        "dflash.attention.layer_norm_rms_epsilon": 9.999999974752427e-07,
+        "dflash.attention.key_length": 256,
+        "dflash.attention.value_length": 256,
+        "dflash.block_size": 16,
+        "dflash.conv_kernel_size": 2,
+        "dflash.conv_group_size": 16,
+        "dflash.selector_rank": 256,
+        "dflash.selector_top_k": 16,
+        "dflash.target_layers": [
+          2,
+          10,
+          17,
+          24,
+          29
+        ],
+        "dflash.rope.dimension_sections": [
+          128,
+          0,
+          0,
+          0
+        ]
+      },
+      "tensors": {
+        "enc.output_norm.weight": {
+          "type": "F32",
+          "shape": [
+            2560
+          ],
+          "bytes": 10240
+        },
+        "fc.weight": {
+          "type": "Q4_K",
+          "shape": [
+            12800,
+            2560
+          ],
+          "bytes": 18432000
+        },
+        "output_norm.weight": {
+          "type": "F32",
+          "shape": [
+            2560
+          ],
+          "bytes": 10240
+        },
+        "selector_hidden.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            256
+          ],
+          "bytes": 368640
+        },
+        "selector_predecessor.weight": {
+          "type": "Q4_K",
+          "shape": [
+            256,
+            248320
+          ],
+          "bytes": 35758080
+        },
+        "selector_successor.weight": {
+          "type": "Q4_K",
+          "shape": [
+            256,
+            248320
+          ],
+          "bytes": 35758080
+        },
+        "blk.0.attn_conv_base": {
+          "type": "F32",
+          "shape": [
+            2560,
+            2,
+            2
+          ],
+          "bytes": 40960
+        },
+        "blk.0.attn_conv_proj.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            640
+          ],
+          "bytes": 921600
+        },
+        "blk.0.attn_k.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            1024
+          ],
+          "bytes": 1474560
+        },
+        "blk.0.attn_k_norm.weight": {
+          "type": "F32",
+          "shape": [
+            256
+          ],
+          "bytes": 1024
+        },
+        "blk.0.attn_norm.weight": {
+          "type": "F32",
+          "shape": [
+            2560
+          ],
+          "bytes": 10240
+        },
+        "blk.0.attn_output.weight": {
+          "type": "Q4_K",
+          "shape": [
+            4096,
+            2560
+          ],
+          "bytes": 5898240
+        },
+        "blk.0.attn_q.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            4096
+          ],
+          "bytes": 5898240
+        },
+        "blk.0.attn_q_norm.weight": {
+          "type": "F32",
+          "shape": [
+            256
+          ],
+          "bytes": 1024
+        },
+        "blk.0.attn_v.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            1024
+          ],
+          "bytes": 1474560
+        },
+        "blk.0.ffn_conv_base": {
+          "type": "F32",
+          "shape": [
+            2560,
+            2,
+            2
+          ],
+          "bytes": 40960
+        },
+        "blk.0.ffn_conv_proj.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            640
+          ],
+          "bytes": 921600
+        },
+        "blk.0.ffn_down.weight": {
+          "type": "Q4_K",
+          "shape": [
+            9216,
+            2560
+          ],
+          "bytes": 13271040
+        },
+        "blk.0.ffn_gate.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            9216
+          ],
+          "bytes": 13271040
+        },
+        "blk.0.ffn_norm.weight": {
+          "type": "F32",
+          "shape": [
+            2560
+          ],
+          "bytes": 10240
+        },
+        "blk.0.ffn_up.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            9216
+          ],
+          "bytes": 13271040
+        },
+        "blk.1.attn_conv_base": {
+          "type": "F32",
+          "shape": [
+            2560,
+            2,
+            2
+          ],
+          "bytes": 40960
+        },
+        "blk.1.attn_conv_proj.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            640
+          ],
+          "bytes": 921600
+        },
+        "blk.1.attn_k.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            1024
+          ],
+          "bytes": 1474560
+        },
+        "blk.1.attn_k_norm.weight": {
+          "type": "F32",
+          "shape": [
+            256
+          ],
+          "bytes": 1024
+        },
+        "blk.1.attn_norm.weight": {
+          "type": "F32",
+          "shape": [
+            2560
+          ],
+          "bytes": 10240
+        },
+        "blk.1.attn_output.weight": {
+          "type": "Q4_K",
+          "shape": [
+            4096,
+            2560
+          ],
+          "bytes": 5898240
+        },
+        "blk.1.attn_q.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            4096
+          ],
+          "bytes": 5898240
+        },
+        "blk.1.attn_q_norm.weight": {
+          "type": "F32",
+          "shape": [
+            256
+          ],
+          "bytes": 1024
+        },
+        "blk.1.attn_v.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            1024
+          ],
+          "bytes": 1474560
+        },
+        "blk.1.ffn_conv_base": {
+          "type": "F32",
+          "shape": [
+            2560,
+            2,
+            2
+          ],
+          "bytes": 40960
+        },
+        "blk.1.ffn_conv_proj.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            640
+          ],
+          "bytes": 921600
+        },
+        "blk.1.ffn_down.weight": {
+          "type": "Q4_K",
+          "shape": [
+            9216,
+            2560
+          ],
+          "bytes": 13271040
+        },
+        "blk.1.ffn_gate.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            9216
+          ],
+          "bytes": 13271040
+        },
+        "blk.1.ffn_norm.weight": {
+          "type": "F32",
+          "shape": [
+            2560
+          ],
+          "bytes": 10240
+        },
+        "blk.1.ffn_up.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            9216
+          ],
+          "bytes": 13271040
+        },
+        "blk.2.attn_conv_base": {
+          "type": "F32",
+          "shape": [
+            2560,
+            2,
+            2
+          ],
+          "bytes": 40960
+        },
+        "blk.2.attn_conv_proj.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            640
+          ],
+          "bytes": 921600
+        },
+        "blk.2.attn_k.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            1024
+          ],
+          "bytes": 1474560
+        },
+        "blk.2.attn_k_norm.weight": {
+          "type": "F32",
+          "shape": [
+            256
+          ],
+          "bytes": 1024
+        },
+        "blk.2.attn_norm.weight": {
+          "type": "F32",
+          "shape": [
+            2560
+          ],
+          "bytes": 10240
+        },
+        "blk.2.attn_output.weight": {
+          "type": "Q4_K",
+          "shape": [
+            4096,
+            2560
+          ],
+          "bytes": 5898240
+        },
+        "blk.2.attn_q.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            4096
+          ],
+          "bytes": 5898240
+        },
+        "blk.2.attn_q_norm.weight": {
+          "type": "F32",
+          "shape": [
+            256
+          ],
+          "bytes": 1024
+        },
+        "blk.2.attn_v.weight": {
+          "type": "Q6_K",
+          "shape": [
+            2560,
+            1024
+          ],
+          "bytes": 2150400
+        },
+        "blk.2.ffn_conv_base": {
+          "type": "F32",
+          "shape": [
+            2560,
+            2,
+            2
+          ],
+          "bytes": 40960
+        },
+        "blk.2.ffn_conv_proj.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            640
+          ],
+          "bytes": 921600
+        },
+        "blk.2.ffn_down.weight": {
+          "type": "Q6_K",
+          "shape": [
+            9216,
+            2560
+          ],
+          "bytes": 19353600
+        },
+        "blk.2.ffn_gate.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            9216
+          ],
+          "bytes": 13271040
+        },
+        "blk.2.ffn_norm.weight": {
+          "type": "F32",
+          "shape": [
+            2560
+          ],
+          "bytes": 10240
+        },
+        "blk.2.ffn_up.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            9216
+          ],
+          "bytes": 13271040
+        },
+        "blk.3.attn_conv_base": {
+          "type": "F32",
+          "shape": [
+            2560,
+            2,
+            2
+          ],
+          "bytes": 40960
+        },
+        "blk.3.attn_conv_proj.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            640
+          ],
+          "bytes": 921600
+        },
+        "blk.3.attn_k.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            1024
+          ],
+          "bytes": 1474560
+        },
+        "blk.3.attn_k_norm.weight": {
+          "type": "F32",
+          "shape": [
+            256
+          ],
+          "bytes": 1024
+        },
+        "blk.3.attn_norm.weight": {
+          "type": "F32",
+          "shape": [
+            2560
+          ],
+          "bytes": 10240
+        },
+        "blk.3.attn_output.weight": {
+          "type": "Q4_K",
+          "shape": [
+            4096,
+            2560
+          ],
+          "bytes": 5898240
+        },
+        "blk.3.attn_q.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            4096
+          ],
+          "bytes": 5898240
+        },
+        "blk.3.attn_q_norm.weight": {
+          "type": "F32",
+          "shape": [
+            256
+          ],
+          "bytes": 1024
+        },
+        "blk.3.attn_v.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            1024
+          ],
+          "bytes": 1474560
+        },
+        "blk.3.ffn_conv_base": {
+          "type": "F32",
+          "shape": [
+            2560,
+            2,
+            2
+          ],
+          "bytes": 40960
+        },
+        "blk.3.ffn_conv_proj.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            640
+          ],
+          "bytes": 921600
+        },
+        "blk.3.ffn_down.weight": {
+          "type": "Q4_K",
+          "shape": [
+            9216,
+            2560
+          ],
+          "bytes": 13271040
+        },
+        "blk.3.ffn_gate.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            9216
+          ],
+          "bytes": 13271040
+        },
+        "blk.3.ffn_norm.weight": {
+          "type": "F32",
+          "shape": [
+            2560
+          ],
+          "bytes": 10240
+        },
+        "blk.3.ffn_up.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            9216
+          ],
+          "bytes": 13271040
+        },
+        "blk.4.attn_conv_base": {
+          "type": "F32",
+          "shape": [
+            2560,
+            2,
+            2
+          ],
+          "bytes": 40960
+        },
+        "blk.4.attn_conv_proj.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            640
+          ],
+          "bytes": 921600
+        },
+        "blk.4.attn_k.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            1024
+          ],
+          "bytes": 1474560
+        },
+        "blk.4.attn_k_norm.weight": {
+          "type": "F32",
+          "shape": [
+            256
+          ],
+          "bytes": 1024
+        },
+        "blk.4.attn_norm.weight": {
+          "type": "F32",
+          "shape": [
+            2560
+          ],
+          "bytes": 10240
+        },
+        "blk.4.attn_output.weight": {
+          "type": "Q4_K",
+          "shape": [
+            4096,
+            2560
+          ],
+          "bytes": 5898240
+        },
+        "blk.4.attn_q.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            4096
+          ],
+          "bytes": 5898240
+        },
+        "blk.4.attn_q_norm.weight": {
+          "type": "F32",
+          "shape": [
+            256
+          ],
+          "bytes": 1024
+        },
+        "blk.4.attn_v.weight": {
+          "type": "Q6_K",
+          "shape": [
+            2560,
+            1024
+          ],
+          "bytes": 2150400
+        },
+        "blk.4.ffn_conv_base": {
+          "type": "F32",
+          "shape": [
+            2560,
+            2,
+            2
+          ],
+          "bytes": 40960
+        },
+        "blk.4.ffn_conv_proj.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            640
+          ],
+          "bytes": 921600
+        },
+        "blk.4.ffn_down.weight": {
+          "type": "Q6_K",
+          "shape": [
+            9216,
+            2560
+          ],
+          "bytes": 19353600
+        },
+        "blk.4.ffn_gate.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            9216
+          ],
+          "bytes": 13271040
+        },
+        "blk.4.ffn_norm.weight": {
+          "type": "F32",
+          "shape": [
+            2560
+          ],
+          "bytes": 10240
+        },
+        "blk.4.ffn_up.weight": {
+          "type": "Q4_K",
+          "shape": [
+            2560,
+            9216
+          ],
+          "bytes": 13271040
+        }
+      },
+      "tokenizer_sha256": "8bfe390ebcafdb6eedaf2ab4ff4a5aab8073130146af100cd1370eea0c92b53c"
+    },
+    "candidate_nvfp4_shared_vocabulary_exact": true
+  },
+  "no_9b_release": {
+    "queries": {
+      "hf-9b-speculator": "https://huggingface.co/api/models?search=Qwen3.5-9B&limit=100",
+      "incoai-qwen35": "https://huggingface.co/api/models?author=incoai&search=Qwen3.5&limit=100",
+      "zlab-qwen35": "https://huggingface.co/api/models?author=z-lab&search=Qwen3.5&limit=100",
+      "vllm-dflash2": "https://huggingface.co/api/models?author=vllm-project&search=DFlash2&limit=100"
+    },
+    "relevant_results": {
+      "hf-9b-speculator": [
+        "guglxni/Qwen3.5-9B-abliterated-DFlash"
+      ],
+      "incoai-qwen35": [],
+      "zlab-qwen35": [
+        "z-lab/Qwen3.5-35B-A3B-DFlash",
+        "z-lab/Qwen3.5-9B-DFlash",
+        "z-lab/Qwen3.5-4B-DFlash",
+        "z-lab/Qwen3.5-27B-DFlash",
+        "z-lab/Qwen3.5-122B-A10B-DFlash",
+        "z-lab/Qwen3.5-397B-A17B-DFlash"
+      ],
+      "vllm-dflash2": [
+        "vllm-project/Qwen3.5-4B-DFlash2"
+      ]
+    },
+    "conclusion": "No compatible Qwen3.5-9B DFlash2 checkpoint found in these queried inventories; no cross-family checkpoint substitution authorized."
+  },
+  "scope": "Consumed DEV smoke; two alternating process repetitions, no deployment promotion or statistical ranking. Methods/cells remain distinct. Before/after is additional training, not isolated precision attribution; no extra matched30-minute control.",
+  "memory_scope": "Model/cache allocations from native logs (0.01MiB rounding); process resident/private/shared/PSS sampled during measured requests; device sampled total includes desktop/target/workspace. These are separate quantities, not one exact allocator peak.",
+  "provenance": [
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/release-audit/adaptation.json",
+      "sha256": "c89ddc141165f133bfe8879b41df1243ce776fd68b6bae475f89fb209d358079",
+      "bytes": 1977
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/diagnostic-build.json",
+      "sha256": "9b97bf04b08ffa5ef5a3e46b63b1f473649871df05c82a0cc35f87bc04e5ee77",
+      "bytes": 4825
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/zero-resume-proof.json",
+      "sha256": "38dd059902c4fbb26d7fb985c048f2e3c7de6d19db7d42cdee7ee62f5a56e97f",
+      "bytes": 5729
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/resolved.json",
+      "sha256": "3147783ca19afde2230db615238d9b5e065604ae0f9fd421cd07e4b28027c31a",
+      "bytes": 57518
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/cpu-validation.json",
+      "sha256": "ed1ba0d043a1844115d21e02ce44e6ef77a2f7c371e4dec885d1a2cf70737cf0",
+      "bytes": 968
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/source-byte-retention.json",
+      "sha256": "4ca5b0f1136bad49d56dcbb495fc6aed87c7400ccb56f68f858c662c6a1585c5",
+      "bytes": 267717
+    }
+  ],
+  "source": {
+    "path": "/home/philip/.t3/worktrees/binary-eagle-decoding/t3-e6fc8d06/scripts/dflash2_smoke/publish.py",
+    "sha256": "d916988953de9e2f2aacc77b6437b5ba01db9117de2af5ff0bf3114f3fef28c8",
+    "bytes": 19159
+  }
+}

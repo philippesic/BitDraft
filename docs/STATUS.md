@@ -21,38 +21,33 @@ matched broader-data control and reaching 168.95 request tokens/s. External Q4
 remains the deployment incumbent. Controls, complete training recipes and
 cohorts remain distinct; full HF/native graph parity is still unresolved.
 
-## Active DFlash2 follow-up
+## DFlash2 follow-up complete; parent review pending
 
-The sole follow-up GPU operator is the tool-created worktree
-`/home/philip/.t3/worktrees/binary-eagle-decoding/t3-e6fc8d06`, branch
-`t3/dflash2-smoke-baseline-candidate-train`. Parent owns review/integration and
-external message delivery after completion and GPU release. No external message
-has been sent by this worker.
+The implementation operator in `t3/dflash2-smoke-baseline-candidate-train`
+completed the frozen four-cell smoke and released all owned GPU groups/passives.
+Genuine DFlash2 runs on both4B targets with a declared five-matrix F32 down
+fallback; the original Q4/F16 paths are invalid (nonfinite logits). No matched9B
+release was found in the bounded inventory search, so both9B DFlash2 rows are
+explicitly unsupported. Ordinary DFlash Q4 remains fastest in all four cells.
 
-The corrected exact continuation completed1,800.072727s/9,998additional updates,
-4096→14094, with a live Adam-step identity check at every update. Native readouts
-and a full state are saved; trainer exited0 and released the GPU. The two earlier
-failed/invalid attempts remain preserved and excluded from this trajectory.
+Csmallbroad's accepted continuation completed1800.073 actual synchronized update
+seconds/9998updates,4096→14094. Final native byte recovery and actual GPU next
+update pass with all104masters/Adam/RNG/cursor preserved. Before/after request
+throughput changes−2.19% on4B Q4 and+1.54% on4B NVFP4; no consistent gain or
+promotion. Two rejected implementation attempts cost another2100.023update
+seconds and are preserved/separately reported. HE4 is unchanged;9B candidate
+weights do not exist. This is consumed DEV smoke, not a fresh formal panel.
+
+[Full report/charts/table](../experiments/dflash2-smoke-20261106/report.md) ·
+[JSON](../experiments/dflash2-smoke-20261106/results.json) ·
 [Continuation](../experiments/dflash2-smoke-20261106/continuation.json) ·
-[Attempt history](../experiments/dflash2-smoke-20261106/attempts.md).
+[GPU release](../runs/dflash2-smoke-20261106-01/gpu-release.json).
+Raw/source/full states are retained with dependency inventories. Windows and guest
+free space are low; original component states/source/runtime/charts remain intact.
 
-Final archive/native-byte/GPU-resume verification and the four-cell smoke now run
-under canonical `remote_job.py`, local tmux `dflash2-smoke-measure-20261106-02`.
-[Supervisor](../runs/dflash2-smoke-measure-20261106-02/state.json) ·
-[Smoke record](../experiments/dflash2-smoke-20261106/report.md).
-One operator, one GPU lane. No external message has been sent; parent owns that
-after completion, review and final release. No performance conclusion yet.
-
-A genuine Qwen3.5-4B DFlash2 release has been authenticated and converted;
-selector/convolution metadata and tensor coverage are present. No compatible9B
-release has yet been found. Runtime qualification and all four final cell statuses
-remain pending; prepared artifacts are not measurements. Continue the bounded
-smoke with target-only exact greedy references, two warmups and two alternating
-repetitions on consumed DEV. Preserve HE4 unmodified. Do not start any other GPU
-job while this measurement owner holds the lane.
-
-The exact queued shader message remains pending until this follow-up finishes,
-parent review completes and the GPU is released. Parent will deliver it once.
+Parent owns review/integration and the exact queued shader message after review.
+**No external message has been sent by this worker.** No GPU job is active or
+assigned by this status. See the handoff receipt for branch/source/push identity.
 
 ## Reference and history
 

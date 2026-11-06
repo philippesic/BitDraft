@@ -1,123 +1,189 @@
 # DFlash2 smoke and Csmallbroad continuation
 
-Exact continuation retry is active after final-state verification rejected attempt02. No native performance conclusion yet.
+Completed November 6, 2026 on RTX 5080. Ordinary DFlash Q4_K_M remains fastest in
+all four target cells. Genuine DFlash2 is measured on both 4B targets using a
+qualified, explicitly declared precision fallback. No matched 9B release was
+found in the bounded search. The accepted Csmallbroad continuation completed
+1,800.073 actual update seconds; before/after throughput did not improve
+consistently. These consumed-DEV smoke results do not establish a statistical
+ranking or justify promotion. Parent owns review, main integration and the exact
+queued external message. This worker has **not sent that message**.
 
-The user authorized a quick native DFlash2 comparison across the frozen four
-Qwen3.5 target cells and one1,800-second actual-update continuation of retained
-Csmallbroad. Parent owns main integration and the queued external message.
+[Standalone interactive charts/table](comparison.html) · [PNG](comparison.png) ·
+[SVG](comparison.svg) · [Diagnostic PNG](diagnostics.png) ·
+[Diagnostic SVG](diagnostics.svg) · [JSON](results.json) ·
+[Full CSV](comparison.csv) · [Readout trajectory CSV](trajectory.csv) ·
+[Continuation/recovery](continuation.json) · [Rejected attempts](attempts.md).
 
-## Contract
+## Measured request throughput
 
-Two same-process warmups per cell and two alternating measured process
-repetitions on the three already-consumed code/reasoning/prose DEV captures.
-Context4096, output cap256, greedy T0/seed1234, one request at a time,
-cache_prompt=false, flash attention on, F16 target KV and consistent decode32.
-Baseline depths2 for4B Q4 and3 otherwise. Target-only references are recomputed
-in each target cell; NVFP4 MTP metadata does not enable MTP execution. This is a
-smoke screen, not the full formal panel or an incumbent promotion.
+Tokens/s is total output tokens divided by complete request wall time within
+each target cohort, including verification and host work. Parent chose retained
+Csmallbroad by the prior campaign's slightly higher native request rate over HE4;
+that small difference was not an established ranking. HE4 remains unmodified.
 
-All methods within a target cell use one common qualified runtime. A changed
-runtime requires fresh comparators. Accepted/proposed/prefix counts diagnose
-proposal quality; full request tokens/time establishes observed performance.
-Clean latency, instrumented host spans, GPU forward and residency remain separate.
-Unsupported cells remain explicit rather than receiving fabricated zeroes.
+| Fixed target | Target only | Ordinary DFlash Q4 | DFlash2 Q4 + F32 down | Csmallbroad before → +30 min | HE4 unchanged |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 4B Q4_K_M, depth 2 | 173.92 | **233.67** | 184.03 | 156.39 → 152.97 | 155.55 |
+| 4B NVFP4, depth 3 | 178.18 | **245.77** | 179.64 | 145.69 → 147.93 | 149.12 |
+| 9B Q4_K_M, depth 3 | 118.88 | **205.16** | Unsupported: no matched release found | Untested: no 9B weights | Untested: no 9B weights |
+| 9B NVFP4, depth 3 | 125.65 | **206.21** | Unsupported: no matched release found | Untested: no 9B weights | Untested: no 9B weights |
 
-## Continuation
+The DFlash2 fallback reaches 78.75% and 73.09% of ordinary DFlash throughput on
+4B Q4 and NVFP4 respectively. Candidate before/after changes are −2.19% and
++1.54%; mean complete request latency changes 1.2896→1.3184s and
+1.2653→1.2461s respectively. No extra matched 30-minute control was allocated,
+so these are continuation observations, not an isolated precision benefit.
+Intermediate +5/+15-minute native measurements are retained in the charts/CSV.
+All distinct target/model/precision cohorts remain separate.
 
-Restore the original Csmallbroad4096 state with104 master parameters, full Adam,
-RNG/order/cursor and identical eligibility/learning rates. Train on the original
-broader40 native TRAIN sequences,3234 overlapping windows/3794 unique label
-positions. R1 output compensation, frozen head, no added capacity. One1800-second
-synchronized forward/backward/update budget; setup, qualification, evaluation,
-export and save are excluded. Native readouts near0/300/900/1800seconds. Preserve
-all original frontier states and HE4. Before/after is a continuation recipe
-comparison; no extra unchanged30-minute control is allocated.
+## Protocol and correctness
+
+Immutable registry: [baseline.json](../w1a8-standing-20261102/baseline.json).
+One common unchanged component runtime04 serves fresh comparators in every cell:
+canonical `runs/component-campaign-20261105-01/runtime04`. Context 4096, output
+cap 256, greedy T0/seed1234, concurrency1, cache_prompt=false, flash attention on,
+F16 target KV, and `GGML_CUDA_DECODE_CONSISTENT=32`. Per-cell baseline depths are
+preserved. NVFP4 files retain MTP metadata, but execution uses the ordinary fixed
+verifier; no MTP mode was enabled. No old/new-runtime gain is attributed to models.
+
+Three consumed DEV prompts (code, prose, reasoning), two same-process warmups,
+and two alternating measured process repetitions per method. This is a quick
+smoke, not the formal panel, fresh/sealed heldout evaluation or a depth search.
+Twenty measured model/target combinations yield 120 measured requests and 80
+excluded warmups. All 200 outputs exactly match their cell's newly established
+target-only greedy token signature. Diagnostic traces match clean-run proposal
+counters and are excluded from clean request latency. No 4B checkpoint was
+transplanted to 9B. Two repetitions provide no useful confidence interval.
+
+CSV/JSON retain accepted/proposed counts, prefix survival, emitted/round, full
+request latency/throughput, complete disjoint host draft spans, GPU event metrics,
+and actual memory. GPU timing sums captured CUDA graph regions per invocation:
+DFlash2 has two regions and ordinary DFlash one. It excludes CPU/inter-region work
+and copies outside captured regions, so it is not complete device/host draft time.
+Both graph regions and this scope are explicit in CSV/JSON. Separate GPU replay
+uses two repetitions × three prompts × three neighboring contexts per draft;
+head/selector audit and tracing are outside clean latency.
+
+Memory records distinguish immutable/shared target storage, private draft model,
+KV/recurrent/cache/rotation allocations, CPU RSS/PSS/private/shared residency and
+sampled whole-device usage (including desktop/target/workspaces). Native allocator
+logs round to 0.01MiB; sampling is not an exact allocator peak. One busy 9B Q4
+ordinary-DFlash timed sampler returned no in-window device sample; its resident
+memory comes from separately labeled warmed post-request snapshots, with no
+replacement throughput. See each row's `residency_sampling_scope`.
+
+## Genuine DFlash2 and the native fallback
+
+The [community Qwen3.5-4B DFlash2 release](https://huggingface.co/nchapman/Qwen3.5-4B-DFlash2/tree/8d8bb62873a4fe6165e644163e9ff76e06ab78ba)
+is byte-identical to the [vLLM CI mirror](https://huggingface.co/vllm-project/Qwen3.5-4B-DFlash2/tree/50d7919bb821601f23301bc72d2c34f4046a055d).
+It has five layers, dynamic convolutions, a rank256/top-k16 selector, full
+248320 vocabulary and target taps2/10/17/24/29. Tokenizer and shared Q6_K
+vocabulary bytes match both frozen 4B targets. The metadata adapter preserves the
+upstream hidden-state indexing convention; all 81 source tensors are finite.
+The checkpoint was trained against a GPTQ 4B verifier; transfer to these two
+native fixed verifier quants is an observed compatibility result here.
+
+Original Q4_K_M **and F16** native execution produced nonfinite logits and selector
+scores. These runs are invalid and quarantined outside the accepted results.
+Numeric audit located the first nonfinite values at final FFN down arithmetic:
+large finite GLU input exceeded the legacy half-range input path. The fallback
+stores/executes the five original released FFN down matrices as F32; all other
+76 tensors are byte-identical to the Q4 conversion. The five F32 tensors exactly
+match the released BF16 values converted to F32. No selector weights, learned
+values or capacity were invented. Tensor/metadata authentication is in
+[the byte audit](../../runs/dflash2-smoke-20261106-01/release-audit/fallback-byte-audit.json).
+This is mixed Q4/F32 execution, **not a fully Q4 DFlash2 result**.
+
+Both 4B cells passed actual native selector lattice reads (16 valid IDs and 256
+finite scores), all-vocabulary finite-logit audits, top-k inclusion of the unary
+argmax, and CUDA F32 down-projection buffer/type checks. Native top-k results are
+unordered; qualification checks membership rather than assuming entry0 is argmax.
+The selector path's mere presence was never accepted as measurement. Old
+`dflash-canonical-dflash-v2` helper revisions are not DFlash2 measurements.
+
+The bounded HF/owner searches and reproducible receipts are under
+`release-audit/bounded-9b-search-summary.json`; absence there is the concrete
+9B blocker, not a universal assertion that no repository could contain a release.
+No new DFlash2 training architecture or vocabulary/target-family change was made.
+
+## Exact continuation, quality and cost
+
+Accepted trajectory restores the original Csmallbroad step4096 retained full
+state: all104 masters, full Adam/groups and learning rates, RNG/order/cursor,
+40 TRAIN sequences,3234 overlapping windows and3794 unique label positions.
+It preserves R1 upstream compensation and frozen head; no objective, capacity,
+trainable groups or scheduler reset. G4D8 learned clipped W1 all18 FFN,
+A4 gate/up and A8 down, F32 row scale/midpoint, F16-native gain/clip/norm with F32
+math, Q4_0 fusion attention, target-shared Q6_K embedding/head and actual
+Hadamard K128/V64 Q4_0 cache are unchanged. Binary dot and midpoint use the same
+gained quantized input. Csmallbroad remains ordinary binary DFlash.
+
+Zero-update native export is byte-identical to the paid parent. Actual synchronized
+forward/backward/optimizer update time is **1800.072727s**, **9998 updates**,
+step/cursor4096→14094. One-update budget overshoot is0.072727s (last update0.192332s).
+The same data contributes149970 additional supervised positions, no new labels.
+Setup/qualification169.660s, final full-state write61.131s and process wall2169.916s
+are separate. Post-zero readout/evaluation/export cost81.441s; remaining loop,
+logging and state construction overhead is57.611s. Four standalone scratch resume
+probes across accepted/rejected attempts cost57.976s of GPU update/probe wall time
+and are not counted toward the accepted1800s budget.
+
+Consumed Q4-capture DEV quality (135 label positions): cross entropy
+6.9173→7.1406 (worse), top1 agreement12.59%→16.30% (higher). Intermediate readouts
+and rank/margin are in trajectory CSV. These proxy metrics disagree and are not
+NVFP4-specific quality or fresh heldout evidence. Inherited full HF/native graph
+parity remains unresolved; the matched native output/counter checks are distinct.
+
+Two implementation failures consumed **2100.022849 additional actual update
+seconds**: attempt01 lost300.008s/1562updates at its first export; attempt02
+spent1800.015s/9923updates but was rejected because scratch Adam restoration
+aliased a caller CPU scalar step tensor. The corrected loader clones scalar
+state, checks the caller's complete optimizer fingerprint, and the accepted run
+asserts live Adam/progress equality at every update. These failed/invalid costs
+are not hidden inside the successful30-minute trajectory. Attempt02's paid full
+state and all attempts' source/raw/native evidence are preserved, labeled invalid.
+
+Final archive authentication, exact native byte recovery and actual GPU next
+update14094→14095 all pass; caller optimizer remains unchanged. Final state is
+fully resumable with all104 masters/Adam/RNG/cursor, qualified optimizer groups
+and original dictionary dependencies. See [final recovery](../../runs/dflash2-smoke-20261106-01/candidate/final-recovery/result.json).
+The retained archive and native hashes/bytes are in continuation JSON; no hashes
+or process identifiers are needed to read the outcome.
+
+## Reproduction, preservation and handoff
+
+Maintained entry points: `python -m scripts.dflash2_smoke.{acquire_release,prepare_release,train,measure,publish}`;
+`verify_range`, `verify_final`, `diagnose`, `export_range` and `freeze_sources`
+provide qualification/preservation helpers. Run with canonical `.venv`, from this
+source worktree. `measure --skip-recovery --cells 4B-Q4_K_M 4B-NVFP4
+--dflash2-model <raw-root>/models/dflash2-4b-Q4-F32down.gguf` reproduces the valid
+4B panel; omitting `--cells` covers all four cells. The default DFlash2 model now points
+to the qualified fallback; the original Q4 file remains preserved and invalid. Commands,
+source pins and exit state are retained in the canonical `remote_job.py`
+supervisor receipts: train03, measure02/03/04, memory01/02. **Do not automatically
+re-run a GPU command from this report**; first claim the lane and recheck storage.
+The frozen helper source bytes for all three training attempts are authenticated
+in `source-byte-retention.json`, including one recovered historical native helper.
+The successful training source checkpoint is linked by its source-pin receipts.
 
 Raw root: `/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01`.
-Supervisor: canonical `runs/dflash2-smoke-train-20261106-02/state.json`.
-Owned tmux socket `binary-eagle-runtime`, session
-`dflash2-smoke-train-20261106-02`. Graceful stop must authenticate process and boot
-identity, signal its supervisor, allow checkpoint save, then verify release.
+New resumable archive:
+`/mnt/c/binary-eagle-dflash2-smoke-20261106-01/Csmallbroad-exact-plus1800-14094.pt.bsz`.
+The rejected step14019 archive is retained in that same new directory for review.
+Original component frontiers, parents, captures, source/runtime04 and old charts
+remain intact. Intermediate/invalid native exports use lossless authenticated
+archives against retained zero dictionaries; do not remove those dependencies.
+[Retention and inventory](../../runs/dflash2-smoke-20261106-01/milestone-retention.json).
+One explicitly authorized obsolete one-step diagnostic was retired to reserve
+checkpoint headroom: [receipt](diagnostic-retirement.json); its old diagnostic is
+now unresumable. Current free space is only about2.7GiB guest/1.1GiB Windows;
+no further deletion is implied. Large raw artifacts remain outside Git and have
+no independent-backup claim. Authored source and compact results are in this
+working branch; p-stack is not their backup.
 
-## Storage
-
-[Retirement receipt](diagnostic-retirement.json) records the exact obsolete
-one-step diagnostic retired under the user cleanup authorization. It is now
-unresumable. Its source/configuration/results/native exports survive. Neither
-original retained frontier nor B0/captures were deleted. Windows free space rose
-from4.71GB to9.59GB before the run. This is physical free space, not guest VHD
-compaction. New final state is reserved under
-`/mnt/c/binary-eagle-dflash2-smoke-20261106-01`.
-
-## Preserved failed attempt
-
-Attempt01 completed300.008221seconds/1562actual updates, then its first readout
-failed because the new adapter omitted the export state's requiredversion field.
-Its masters were not saved; these updates are lost and do not belong to the
-completed continuation. Source and receipts survive in Git and canonical
-`candidate-attempt01`. Attempt02 restarts from the original paid4096fullstate.
-The corrected adapter supplies version and lineage and checkpoints at a failed
-readout boundary. Report failed-attempt compute separately from successful1800s.
-
-## Release and native format qualification
-
-[nchapman/Qwen3.5-4B-DFlash2](https://huggingface.co/nchapman/Qwen3.5-4B-DFlash2/tree/8d8bb62873a4fe6165e644163e9ff76e06ab78ba)
-provides the genuine five-layer DFlash2 checkpoint with dynamic convolutions,
-rank256/top-k16 selector and full248320vocabulary. The authenticated weights are
-also the [vLLM CI copy](https://huggingface.co/vllm-project/Qwen3.5-4B-DFlash2/tree/50d7919bb821601f23301bc72d2c34f4046a055d).
-This is a community checkpoint trained against a GPTQ Qwen3.5-4B verifier;
-transfer to these fixed native target quants is measured here, not assumed.
-
-The adapter flattens speculators metadata, preserves tensor bytes and converts
-auxiliary hidden-state indices to the existing native converter's layer convention.
-Native taps remain2,10,17,24,29. The ordinary draft uses its original eight taps.
-Native metadata/tensor audit confirms all selector/conv tensors, unchanged
-vocabulary, Q4_K_M draft quantization and identical sharedQ6_K vocabulary bytes
-across4B Q4 and NVFP4 targets. The build uses retained runtime04 and its CUDA
-correctness path; every target cell still requires fresh runtime/output qualification.
-No9B checkpoint was found in the bounded HF/model-owner inventories recorded in
-`release-audit/bounded-9b-search-summary.json`; this is an explicit no-matched-
-release blocker, not proof that every possible repository lacks one.
-
-## Completed continuation budget
-
-[Machine-readable receipt](continuation.json):9,923additional updates,1,800.014628s
-of synchronized forward/backward/optimizer update time,0.014628sone-update
-overshoot. Cursor/Adam advanced4096→14019. Exposure148,845supervised positions
-from the same3,794unique labels/3,234overlapping windows/40TRAIN sequences;
-there are no fresh labels. Original optimizer groups/learning rates, schedule,
-RNG and order/cursor were restored. Process wall2140.846s; setup/qualification
-155.947s and final streamed checkpoint60.659s, with readouts and loop/state
-construction overhead separate from update accounting. Earlier failed attempt:
-300.008s/1562lost updates; it does not contribute to the final trajectory.
-
-Native exports at0/300/900/1800actual-update seconds survive. The final4.2GB-class
-streamed full state is retained under the new Windows directory; its complete
-archive/raw hashes and exact bytes are in the receipt. Trainer exited0 and GPU
-returned to its1102MiBdesktop baseline before the measurement supervisor launched.
-Actual next-update/native byte recovery remains pending at this milestone.
-
-## Attempt02 rejected by final recovery
-
-The above1800.014628-second trajectory is **INVALID for exact resume**. Final
-archive inspection found Adamstep14020, progress14019. PyTorch's non-capturable
-Adam loading preserves CPU scalar tensors by reference: scratch qualification
-advanced the caller's step4096→4097 before the main trainer loaded it. Moments
-and disk parent were unchanged, but the main trajectory used the wrong Adam
-bias-correction counter. Decrementing the final counter would not repair history.
-The worker rejected this trajectory and preserved its full4.245GBstate, raw logs,
-configs and all native byte streams. Owned redundant raw native exports were
-losslessly archived against their frozen zero export to keep headroom; complete
-roundtrip hashes were checked. `invalid-attempt-retention.json` records them.
-
-The fix clones CPU scalar optimizer tensors before scratch restore, checks the
-caller's complete Adam fingerprint remains unchanged, validates startingsteps4096,
-and verifies every live update's actual Adamsteps equal its progress count. A CPU
-Adam regression passed. Attempt03 restarts from the immutable original4096state;
-this is a corrective execution of the same selected continuation, not an extra
-control/architecture experiment. Attempt02's1800.014628s and attempt01's300.008221s
-are failed/invalid cost, separate from the accepted1800-second trajectory.
-
-Attempt03 stores only one final full state (or one paused state), keeping
-intermediate native exports in authenticated lossless archives against its zero
-export. No original paid frontier, parent, data or old runtime/source was removed.
+All12 owned supervisor runs have exited; no owned worker/passive process group
+or local job tmux session remains. Fresh GPU audit shows1102MiB desktop usage,
+0% utilization and no compute applications. [GPU release receipt](../../runs/dflash2-smoke-20261106-01/gpu-release.json).
+Parent must review/integrate this pushed branch and then deliver the pending exact
+message once; this worker has not read or sent the other thread's message.

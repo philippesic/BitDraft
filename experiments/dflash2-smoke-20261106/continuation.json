@@ -522,7 +522,7 @@
     "sha256": "497dec9a8db641ad44c5d3515cd763333236e6a9b01d177afaf0f14df0b5089b",
     "bytes": 11574
   },
-  "qualification_status": "FINAL_GPU_RESUME_AND_NATIVE_RECOVERY_PENDING",
+  "qualification_status": "FULL_FINAL_STATE_NATIVE_BYTE_IDENTITY_AND_GPU_RESUME_PASS",
   "failed_attempts": [
     {
       "status": "FAILED_READOUT",
@@ -549,7 +549,295 @@
         "lossless_verified": true,
         "raw_materialized": false
       },
-      "diagnosis": "Scratch GPU resume qualification aliases CPU Adam step tensors through load_state_dict; qualification advanced the in-memory parent step4096\u21924097, then main continuation restored that mutated step with original moments and cursor4096. Final steps are one greater than actual trajectory updates. Preserve this paid invalid diagnostic; never decrement final counters and call it exact."
+      "diagnosis": "Scratch GPU resume qualification aliases CPU Adam step tensors through load_state_dict; qualification advanced the in-memory parent step4096\u21924097, then main continuation restored that mutated step with original moments and cursor4096. Final steps are one greater than actual trajectory updates. Preserve this paid invalid diagnostic; never decrement final counters and call it exact.",
+      "actual_update_seconds": 1800.0146279329783,
+      "additional_updates": 9923,
+      "result": {
+        "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate-attempt02-invalid-step/result.json",
+        "sha256": "9f02aeb4daa0bd25293283fc180bf01c6d36a0efc07d3d29a7df3f714d6bbc46",
+        "bytes": 18050
+      }
     }
-  ]
+  ],
+  "final_recovery": {
+    "status": "FULL_FINAL_STATE_NATIVE_BYTE_IDENTITY_AND_GPU_RESUME_PASS",
+    "recovery": {
+      "format": "dflash.byte_shuffle_zstd.stream.v1",
+      "archive": "/mnt/c/binary-eagle-dflash2-smoke-20261106-01/Csmallbroad-exact-plus1800-14094.pt.bsz",
+      "archive_sha256": "181ffb6d0d93fb911cf02102e6f67736336627e23dc89d06ee04eb5b0c726a13",
+      "archive_bytes": 4246079884,
+      "raw_sha256": "d0b2c1a7ae3a8ff805c258cc877cc0d6810b328ca49e5e27307eb4dc6ee4333d",
+      "raw_bytes": 5100698375,
+      "lossless_verified": true,
+      "raw_materialized": false
+    },
+    "native": {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-1800.gguf",
+      "sha256": "b498820f4c5a64ddf0c788fffedafcf1589ccd8494b0b6f0537f5e1a563120f5",
+      "bytes": 183225472
+    },
+    "optimizer_steps": [
+      14094
+    ],
+    "master_count": 104,
+    "optimizer_groups": [
+      {
+        "lr": 0.001,
+        "name": "sign",
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0,
+        "amsgrad": false,
+        "maximize": false,
+        "foreach": false,
+        "capturable": false,
+        "differentiable": false,
+        "fused": null,
+        "decoupled_weight_decay": true,
+        "parameter_count": 18
+      },
+      {
+        "lr": 1e-05,
+        "name": "scale",
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0,
+        "amsgrad": false,
+        "maximize": false,
+        "foreach": false,
+        "capturable": false,
+        "differentiable": false,
+        "fused": null,
+        "decoupled_weight_decay": true,
+        "parameter_count": 18
+      },
+      {
+        "lr": 1e-05,
+        "name": "midpoint",
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0,
+        "amsgrad": false,
+        "maximize": false,
+        "foreach": false,
+        "capturable": false,
+        "differentiable": false,
+        "fused": null,
+        "decoupled_weight_decay": true,
+        "parameter_count": 18
+      },
+      {
+        "lr": 1e-05,
+        "name": "gain",
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0,
+        "amsgrad": false,
+        "maximize": false,
+        "foreach": false,
+        "capturable": false,
+        "differentiable": false,
+        "fused": null,
+        "decoupled_weight_decay": true,
+        "parameter_count": 12
+      },
+      {
+        "lr": 1e-05,
+        "name": "clip",
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0,
+        "amsgrad": false,
+        "maximize": false,
+        "foreach": false,
+        "capturable": false,
+        "differentiable": false,
+        "fused": null,
+        "decoupled_weight_decay": true,
+        "parameter_count": 12
+      },
+      {
+        "lr": 1e-05,
+        "name": "norm",
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0,
+        "amsgrad": false,
+        "maximize": false,
+        "foreach": false,
+        "capturable": false,
+        "differentiable": false,
+        "fused": null,
+        "decoupled_weight_decay": true,
+        "parameter_count": 26
+      }
+    ],
+    "gpu_resume": {
+      "status": "ACTUAL_GPU_MASTER_ADAM_RNG_CURSOR_RESUME_UPDATE_PASS",
+      "owner": {
+        "pid": 65890,
+        "stat": "65890 (python) R 65872 65872 65872 0 -1 4194304 6754641 36 107077 0 7006 2881 0 0 20 0 23 0 2232665 70861762560 2680711 18446744073709551615 95563517034496 95563527790889 140730643128672 0 0 0 0 19927040 2 0 0 0 17 15 0 0 0 0 0 95563569987584 95563570041736 95563912450048 140730643129730 140730643129820 140730643129820 140730643132356 0\n",
+        "boot_id": "f263f22b-7779-45b6-8247-e702f692b44a\n",
+        "pgid": 65872
+      },
+      "arm": "Csmallbroad",
+      "saved_updates": 14094,
+      "retained_state_trainer": {
+        "path": "/home/philip/binary-eagle-decoding/runs/component-campaign-20261105-01/arms/Csmallbroad/result.json",
+        "sha256": "bf0d19b06a6c13eb2002e5226bc0f32fec9537a8c3a2bede7f50b7649ce6027c",
+        "bytes": 23087
+      },
+      "qualification_updates": 1,
+      "next_adam_steps": [
+        14095
+      ],
+      "next_cursor": 14095,
+      "next_capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/fit-prose-07/capture",
+      "next_anchor": 63,
+      "loss": 0.1767532378435135,
+      "gradient_norm": 2.720984935760498,
+      "update_seconds": 14.30940585099961,
+      "changed_master_names": [
+        "output_norm_enc",
+        "output_norm",
+        "layers.0.attn_norm",
+        "layers.0.attn_q_norm",
+        "layers.0.attn_k_norm",
+        "layers.0.ffn_norm",
+        "layers.0.ffn_gate.latent_sign",
+        "layers.0.ffn_gate.scale",
+        "layers.0.ffn_gate.midpoint",
+        "layers.0.ffn_gate.log_gain",
+        "layers.0.ffn_gate.log_clip",
+        "layers.0.ffn_up.latent_sign",
+        "layers.0.ffn_up.scale",
+        "layers.0.ffn_up.midpoint",
+        "layers.0.ffn_down.latent_sign",
+        "layers.0.ffn_down.scale",
+        "layers.0.ffn_down.midpoint",
+        "layers.0.ffn_down.log_gain",
+        "layers.0.ffn_down.log_clip",
+        "layers.1.attn_norm",
+        "layers.1.attn_q_norm",
+        "layers.1.attn_k_norm",
+        "layers.1.ffn_norm",
+        "layers.1.ffn_gate.latent_sign",
+        "layers.1.ffn_gate.scale",
+        "layers.1.ffn_gate.midpoint",
+        "layers.1.ffn_gate.log_gain",
+        "layers.1.ffn_gate.log_clip",
+        "layers.1.ffn_up.latent_sign",
+        "layers.1.ffn_up.scale",
+        "layers.1.ffn_up.midpoint",
+        "layers.1.ffn_down.latent_sign",
+        "layers.1.ffn_down.scale",
+        "layers.1.ffn_down.midpoint",
+        "layers.1.ffn_down.log_gain",
+        "layers.1.ffn_down.log_clip",
+        "layers.2.attn_norm",
+        "layers.2.attn_q_norm",
+        "layers.2.attn_k_norm",
+        "layers.2.ffn_norm",
+        "layers.2.ffn_gate.latent_sign",
+        "layers.2.ffn_gate.scale",
+        "layers.2.ffn_gate.midpoint",
+        "layers.2.ffn_gate.log_gain",
+        "layers.2.ffn_gate.log_clip",
+        "layers.2.ffn_up.latent_sign",
+        "layers.2.ffn_up.scale",
+        "layers.2.ffn_up.midpoint",
+        "layers.2.ffn_down.latent_sign",
+        "layers.2.ffn_down.scale",
+        "layers.2.ffn_down.midpoint",
+        "layers.2.ffn_down.log_gain",
+        "layers.2.ffn_down.log_clip",
+        "layers.3.attn_norm",
+        "layers.3.attn_q_norm",
+        "layers.3.attn_k_norm",
+        "layers.3.ffn_norm",
+        "layers.3.ffn_gate.latent_sign",
+        "layers.3.ffn_gate.scale",
+        "layers.3.ffn_gate.midpoint",
+        "layers.3.ffn_gate.log_gain",
+        "layers.3.ffn_gate.log_clip",
+        "layers.3.ffn_up.latent_sign",
+        "layers.3.ffn_up.scale",
+        "layers.3.ffn_up.midpoint",
+        "layers.3.ffn_down.latent_sign",
+        "layers.3.ffn_down.scale",
+        "layers.3.ffn_down.midpoint",
+        "layers.3.ffn_down.log_gain",
+        "layers.3.ffn_down.log_clip",
+        "layers.4.attn_norm",
+        "layers.4.attn_q_norm",
+        "layers.4.attn_k_norm",
+        "layers.4.ffn_norm",
+        "layers.4.ffn_gate.latent_sign",
+        "layers.4.ffn_gate.scale",
+        "layers.4.ffn_gate.midpoint",
+        "layers.4.ffn_gate.log_gain",
+        "layers.4.ffn_gate.log_clip",
+        "layers.4.ffn_up.latent_sign",
+        "layers.4.ffn_up.scale",
+        "layers.4.ffn_up.midpoint",
+        "layers.4.ffn_down.latent_sign",
+        "layers.4.ffn_down.scale",
+        "layers.4.ffn_down.midpoint",
+        "layers.4.ffn_down.log_gain",
+        "layers.4.ffn_down.log_clip",
+        "layers.5.attn_norm",
+        "layers.5.attn_q_norm",
+        "layers.5.attn_k_norm",
+        "layers.5.ffn_norm",
+        "layers.5.ffn_gate.latent_sign",
+        "layers.5.ffn_gate.scale",
+        "layers.5.ffn_gate.midpoint",
+        "layers.5.ffn_gate.log_gain",
+        "layers.5.ffn_gate.log_clip",
+        "layers.5.ffn_up.latent_sign",
+        "layers.5.ffn_up.scale",
+        "layers.5.ffn_up.midpoint",
+        "layers.5.ffn_down.latent_sign",
+        "layers.5.ffn_down.scale",
+        "layers.5.ffn_down.midpoint",
+        "layers.5.ffn_down.log_gain",
+        "layers.5.ffn_down.log_clip"
+      ],
+      "gpu_deployment_values_exact": true,
+      "caller_optimizer_unchanged": true,
+      "source": {
+        "path": "/home/philip/.t3/worktrees/binary-eagle-decoding/t3-e6fc8d06/scripts/component_campaign/gpu_resume.py",
+        "sha256": "56f036a183e17c4330753906197d0e862af34c6db8019708e2681d5adce23239",
+        "bytes": 7577
+      },
+      "peak_allocated_bytes": 10533487616,
+      "policy": "Actual next TRAIN window with saved Adam/RNG/order/cursor; one qualification update only. Retained4096 state and evaluated native bytes remain unchanged. This scratch update is not another recovery window, independent seed or reported finalist."
+    },
+    "source": {
+      "path": "/home/philip/.t3/worktrees/binary-eagle-decoding/t3-e6fc8d06/scripts/dflash2_smoke/verify_final.py",
+      "sha256": "ae63a37e460da0563331b1fedeffa2610de250d1f649360d9165a9b1b0e40226",
+      "bytes": 2282
+    },
+    "qualification_charged_to_budget": false
+  },
+  "failed_invalid_update_seconds": 2100.022849164041,
+  "qualification_probe_update_seconds": 57.97608250200574
 }

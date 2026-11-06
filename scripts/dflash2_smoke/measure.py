@@ -21,7 +21,8 @@ def main():
     ap=argparse.ArgumentParser()
     ap.add_argument('--cells',nargs='*')
     ap.add_argument('--skip-recovery',action='store_true')
-    ap.add_argument('--dflash2-model',type=Path,default=R/'models/dflash2-4b-Q4_K_M.gguf')
+    ap.add_argument('--dflash2-model',type=Path,default=R/'models/dflash2-4b-Q4-F32down.gguf',
+                    help='Qualified mixed Q4/F32-down fallback; original Q4 native path is invalid.')
     ap.add_argument('--phase',choices=['all','preflight','native','trace','gpu','audit'],default='all')
     a=ap.parse_args()
     pause()
