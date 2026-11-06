@@ -1,14 +1,15 @@
 # Current project status
 
-Current: the remaining-component campaign is active. All17 physical4096-update
-primary windows and19 logical arms (two private-Q6 controls reuse H0) are complete,
-with all four actual native readouts retained. Physical half-clip admission passed
-81 required-logit/cache comparisons. Larger consumed-DEV request, clean GPU and
-physical allocation measurements are complete for primary selection.
-Head-only R2 Q4/Q6 matched recovery also completed4096;
-tied-table R2 is running. Four incremental/interaction combinations, a separate
-broader-data matched recipe, formal final panels and final heldout remain;
-no throughput promotion. Latest ownership/budget is in COMPONENT_CAMPAIGN.
+Current: component campaign resumed after the unexpected WSL restart. All21
+physical4096windows (17primary+4R2) and their actual native readouts survived.
+The old running receipts are preserved as stale old-boot evidence. A complete
+archive byte audit passed; Csmall setup had no optimizer updates and was saved
+separately. The sole new supervisor finishes authenticated archive repacking,
+then runs four combinations and the broader-data pair. Final selection, full
+retained-state qualification, formal panels, fresh heldout and release remain.
+See [COMPONENT_CAMPAIGN](COMPONENT_CAMPAIGN.md) and canonical
+`runs/component-campaign-20261105-01/restart-live-owner.json`. No pushes or
+throughput promotion; parent owns integration and delayed thread message.
 
 
 ## Active: remaining component precision and recovery
