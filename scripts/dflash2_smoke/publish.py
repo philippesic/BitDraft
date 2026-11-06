@@ -156,8 +156,8 @@ def main():
         table+='<tr>'+''.join('<td>'+html.escape(f'{row[k]:.5g}' if isinstance(row.get(k),float) else str(row.get(k,'')))+'</td>' for k in fields)+'</tr>'
     table+='</tbody></table>'
     document='''<!doctype html><html><meta charset="utf-8"><title>DFlash2 native smoke</title>
-<style>body{font:14px system-ui;margin:24px;color:#17243a}p{line-height:1.5;max-width:1100px}svg{width:100%;height:auto}table{border-collapse:collapse;font-size:11px}td,th{padding:6px;border:1px solid #ddd;white-space:nowrap}th{position:sticky;top:0;background:#eef2ff}select{padding:8px}tr.hidden{display:none}</style>
-<h1>DFlash2 + Csmallbroad continuation</h1><p>RTX5080 · immutable Qwen3.5 targets · consistent decode32 · target F16 KV · context4096 · greedy output cap256 · three consumed DEV prompts. Two warmups and two alternating process repetitions. Tick marks show repetition rates; they are not confidence intervals. No sealed heldout reuse claim.</p>'''
+<style>body{font:14px var(--font-sans,system-ui);margin:0;color:var(--foreground,#17243a)}p{line-height:1.5;max-width:1100px}svg{width:100%;height:520px}svg:nth-of-type(2){height:300px}table{border-collapse:collapse;font-size:11px}td,th{padding:6px;border:1px solid var(--border,#ddd);white-space:nowrap}th{position:sticky;top:0;background:var(--secondary,#eef2ff)}select{padding:8px}tr.hidden{display:none}</style>
+<p>RTX5080 · immutable Qwen3.5 targets · consistent decode32 · target F16 KV · context4096 · greedy output cap256 · three consumed DEV prompts. Two warmups and two alternating process repetitions. Tick marks show repetition rates; they are not confidence intervals. No sealed heldout reuse claim.</p>'''
     document+='<svg'+(DEST/'comparison.svg').read_text().split('<svg',1)[1]
     document+='<p>DFlash2 uses the authenticated released five-layer conv/selector model, Q4_K_M draft with F16 KV. Csmallbroad is ordinary binary DFlash with its original recipe and Q4_0 Hadamard KV. HE4 remains unchanged. No compatible9B DFlash2 release was found in the queried inventories; no9B candidate weights exist.</p>'
     document+='<svg'+(DEST/'diagnostics.svg').read_text().split('<svg',1)[1]
