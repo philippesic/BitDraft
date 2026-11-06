@@ -830,3 +830,27 @@ SIGTERM and allow300seconds checkpoint grace. No stale predecessor wait or paid
 training rerun. H0broad/Csmallbroad each still receive4096updates from B0 under
 the separate matched broader manifest. Audits, selection/lock, retained actual
 GPU resume/export, formal comparisons, heldout and publication remain required.
+
+### Recovery queue complete; final audits active —November6,01:00Pacific
+
+All27planned physical recovery windows completed4096updates each:
+17primary +4R2 +4combinations +2broader. Accounting records110,592updates and
+17,381.88seconds of actual update compute; setup, native measurement, checkpoint
+I/O and interruptions are separate. Retention may require up to two additional
+same-history regeneration windows; an existing selected final rolling state is
+reused rather than retrained when possible. Neither is an independent seed.
+
+The broader recipe has40native sequences,3,234overlapping windows and3,794unique
+supervised label positions. Each paired arm consumes61,440positions through
+repeated exposure. H0broad/Csmallbroad use identical cursor0/seed8101order and
+4096updates from B0. Trainer walls were919.31/1091.57seconds; actual update compute
+552.80/729.96seconds. Four short native readouts passed output semantics, ending
+55/263and61/251accepted/proposed. These are consumed captureDEV diagnostics.
+
+`component-broader-recovery-20261106-01` finished0 and released its group.
+Current sole GPU supervisor is `component-recovered-selection-20261106-01`,
+using the recorded source/birth/boot identity in `broader-recovery-launch.json`.
+It is running the final full-head audit including all four R2 arms, then tensor
+audits, natural12selection, clean GPU replay and full host traces. Finalist lock,
+retained-state native/GPU qualification, formal alternating measurements, fresh24
+heldout, publication and release remain required. No heldout has been opened.
