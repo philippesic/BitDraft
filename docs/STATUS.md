@@ -3,9 +3,12 @@
 Current: the remaining-component campaign is active. All17 physical4096-update
 primary windows and19 logical arms (two private-Q6 controls reuse H0) are complete,
 with all four actual native readouts retained. Physical half-clip admission passed
-81 required-logit/cache comparisons. The sole owner is measuring larger consumed
-DEV request performance, clean GPU cost and physical allocation. Recovery decisions,
-combinations, formal final panels and final heldout remain; no throughput promotion.
+81 required-logit/cache comparisons. Larger consumed-DEV request, clean GPU and
+physical allocation measurements are complete for primary selection.
+Head-only R2 Q4/Q6 matched recovery also completed4096;
+tied-table R2 is running. Four incremental/interaction combinations, a separate
+broader-data matched recipe, formal final panels and final heldout remain;
+no throughput promotion. Latest ownership/budget is in COMPONENT_CAMPAIGN.
 
 
 ## Active: remaining component precision and recovery

@@ -4,8 +4,10 @@
 qualification, matched4096-update recovery and native component combinations.
 The sole implementation owner completed all17 physical4096-update primary windows,
 including head, embedding, six cache pairs and six scalar-storage arms, with19
-logical arms and all four native readouts. Larger consumed-DEV selection and clean
-GPU/allocation measurements are running; combinations and final confirmation remain.
+logical arms and all four native readouts. Larger consumed-DEV, clean GPU and
+allocation selection measurements are complete; head-only matched Q4/Q6 targeted
+recovery completed4096and tied-table recovery is running. Four combinations,
+broader-data matched recovery and final confirmation remain.
 See [COMPONENT_CAMPAIGN](../COMPONENT_CAMPAIGN.md) for live ownership.
 Prior planning-only limits below are historical and superseded for this campaign.
 No new goal, pushes, or target/verifier changes.

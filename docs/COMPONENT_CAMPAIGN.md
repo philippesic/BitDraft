@@ -660,3 +660,57 @@ Its loaded code predates the new head-forward helper: **run the default final
 heads, before final lock/formal panels. It does not select finalists or finish
 the campaign. No fresh heldout is opened. WindowsC stillabout4.9GiB free outside
 rolling writes; WSLabout2.2GiB. Future source changes must preserve healthy jobs.
+
+## Matched R2 pair and explicit combination ladder —20:32Pacific
+
+H6R2 completed4096and native0/256/1024/4096:55/263,48/275,53/267,52/268.
+Its final dense DEV CE7.27905 leaves H4R2's equally trained residual gap0.11156,
+versus0.26658under the frozen-head R1 recipe. Short native endpoints53/265Q4
+versus52/268Q6are near each other; larger consumed DEV and request cost still
+decide usefulness. Do not infer final throughput from this smoke. Both R2 recipes
+start B0 with matched examples/order/exposure and native block-scale capacity.
+HE4R2 is now training (past1,200), followed by HE6R2. Nineteen physical4096windows
+are complete,77,824actual updates and11,843.14seconds of update compute; setup/
+checkpoint/native costs remain separate. No new heldout has been opened.
+
+The explicit ladder amendment isolates the requested KV-before-scalars stage:
+H4 -> HE4 -> CtieKV(HE4+K44) -> Ctied(HE4+K44+half gain/clip/norm).
+The two extra interaction/restoration arms are Csmall(K44+half gain/clip/norm)
+and Chead(H4+K44, all scalar storage F32), preserving the no-embedding alternative.
+Chead's **unlaunched** prior plan was backed up before this revision; no paid or
+active state changed. `selection-ladder-amendment.json` and `queue-policy.json`
+pin the rationale/old plan. The future queue expands Ctied's CtieKV prerequisite;
+the existing active source closure and optimizer are untouched. Total accounting
+is now29physical4096windows (17primary+4R2+4combinations+2broader+2frontier
+regenerations),118,784updates. The added existing-parameter window projects586.65
+pure compute seconds, with setup/checkpoint/native overhead separate. This is a
+necessary ladder isolation, not an externally imposed budget or a shortened arm.
+
+The old passive post-recovery `-01` was intentionally SIGTERMed after matching
+its command/cwd/start time/group and verifying it owned no GPU work; its terminal
+status is correctly **interrupted**, and the group is absent. Active GPU group
+569892 was preserved. Replacement `component-post-recovery-20261105-02` has
+supervisor575695/group575700; its initial full state and birth/boot identity are
+in `post-recovery-watcher-replacement.json`. It now includes CtieKV selection and
+the default final full-head audit before its measurements. The earlier manual
+head-audit reminder is superseded if this new default audit passes. Both runtime
+owners still use serial release checks; do not start competing GPU work.
+
+Legacy B0 hydration now streams through the same authenticated model+256MiB
+headroom policy as new slices, without modifying the old archive/receipt/basis.
+A real B0 decode into NEW scratch matched every byte; an existing-partial fixture
+proved exclusive-open failure cannot remove another partial. Verified scratch
+was released; evidence `qualification/hydration-safety/verified.json`. No host
+config/compaction or prior paid deletion. Per-readout table memory now comes from
+reaped native cells, with exact model tensor bytes, rounded allocator/cache/
+rotation logs, compute history and sampled device peak separate. Full-state
+status names the actual retained update, rather than labeling every readout as
+resumable. Interim charts currently contain85readouts; final selection remains open.
+
+Existing zero-cache stress offers no strong long-context-specific K44 failure:
+short128B0250/1023vsK44256/1011; medium1536B0290/944vs285/954; near3840B0269/984
+vs268/986. These synthetic repeated consumed inputs are cache/history stress,
+not natural generalization. No additional long TRAIN capture is motivated by
+these observations yet; final selected recipes still require separate5-repetition
+short/medium/near-limit panels. The planned broader16native TRAIN captures remain
+a distinct matched short-context recipe; never claim they validate long training.
