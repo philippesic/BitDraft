@@ -107,17 +107,28 @@ def hydrate(path):
  p=Path(path)
  if p.exists():return False
  archive,receipt=paths(p)
- if not receipt.exists():return old.hydrate(p)
- record=json.load(open(receipt));authenticate(record)
+ legacy=not receipt.exists()
+ if legacy:
+  _,receipt=old.paths(p);record=json.load(open(receipt));old.authenticate(record)
+  if record['original']['path']!=str(p.resolve()):raise ValueError('legacy native archive destination changed')
+ else:record=json.load(open(receipt));authenticate(record)
  if shutil.disk_usage(p.parent).free<record['original']['bytes']+(256<<20):raise RuntimeError('native hydration needs model bytes plus256MiB free')
- tmp=p.with_suffix('.gguf.hydrating');h=hashlib.sha256()
+ tmp=p.with_suffix('.gguf.hydrating');h=hashlib.sha256();created_tmp=False
  try:
   with tmp.open('xb') as out:
-   for block in blocks(record):out.write(block);h.update(block)
+   created_tmp=True
+   if legacy:
+    with open(record['archive']['path'],'rb') as source,z.ZstdDecompressor(dict_data=old.dictionary(record['basis']['path']),max_window_size=2**30).stream_reader(source) as decoded:
+     for block in iter(lambda:decoded.read(8<<20),b''):out.write(block);h.update(block)
+   else:
+    for block in blocks(record):out.write(block);h.update(block)
   if h.hexdigest()!=record['original']['sha256'] or tmp.stat().st_size!=record['original']['bytes']:raise ValueError('hydrated native bytes differ')
-  tmp.rename(p)
+  # Publish exclusively: never replace another owner's concurrently hydrated
+  # model, and never remove a pre-existing partial after an exclusive-open error.
+  p.hardlink_to(tmp);tmp.unlink()
  except BaseException:
-  tmp.unlink(missing_ok=True);raise
+  if created_tmp:tmp.unlink(missing_ok=True)
+  raise
  return True
 
 def release(path,created):
