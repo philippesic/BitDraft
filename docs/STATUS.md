@@ -34,7 +34,9 @@ on consumed DEV; the old fresh24 cohort is now consumed and cannot be relabeled
 sealed. Do not start another broad training sweep.
 
 The previous campaign source checkout and pinned runtimes remain preserved.
-Parent is integrating and preparing one follow-up GPU owner. Fresh ownership,
+Component integration is pushed to `origin/main`. The
+[follow-up worker](<t3-thread://v2/92296584-2a2c-4998-8f7d-4ecb7d7f5ff2/thread:delegated-task:command%3Amcp%3Ac989a2e7-31b3-422d-9d92-027d545b4901%3Adelegate-task%3Adflash2-matrix-smoke-and-candidate-1800s-20261106-01>)
+is active, qualifying DFlash2 inputs and the Csmallbroad continuation. Fresh ownership,
 pause and storage checks precede launch; old running receipts from three WSL
 restarts are historical, not live authority. See [component record](COMPONENT_CAMPAIGN.md)
 and [operations](AGENT_OPERATIONS.md). All retained states/parents/data and
@@ -44,7 +46,8 @@ optimizer states are listed in the [retirement record](../experiments/precision-
 After the DFlash2/candidate follow-up finishes and is reviewed, release the GPU
 and send the exact queued shader benchmark message. The destination, message
 and deduplicated key are in the [pending handoff](../runs/component-campaign-20261105-01/pending-thread-message.json).
-The component campaign's completion alone does not trigger delivery.
+The component campaign's completion alone does not trigger delivery. The worker
+must not send the message; parent delivers it once after follow-up review.
 
 ## Reference and history
 
