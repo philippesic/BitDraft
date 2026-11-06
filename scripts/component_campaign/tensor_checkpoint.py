@@ -56,10 +56,10 @@ def save_state(path,state,basis_path=None):
  basis_path=Path(basis_path or B/'checkpoint.pt.bsz');basis_pin=pin(basis_path);basis=memory_load(basis_path);old=tensors(basis)
  destination=Path(path).with_suffix('.pt.cpt');partial=destination.with_suffix('.partial')
  if destination.exists() or partial.exists():raise FileExistsError(destination)
- records=[];compressor=z.ZstdCompressor(level=3)
+ records=[];compressor=z.ZstdCompressor(level=3);created_partial=False
  try:
   with partial.open('xb') as out:
-   out.write(MAGIC)
+   created_partial=True;out.write(MAGIC)
    def encode(value,path):
     if torch.is_tensor(value):
      raw=bytes_of(value);previous=old.get(path)
@@ -83,7 +83,8 @@ def save_state(path,state,basis_path=None):
   if pin(basis_path)!=basis_pin:raise ValueError('immutable basis changed')
   partial.rename(destination)
  except BaseException:
-  partial.unlink(missing_ok=True);raise
+  if created_partial:partial.unlink(missing_ok=True)
+  raise
  receipt=dict(format='dflash.lossless_tensor_delta.v1',archive=str(destination),archive_sha256=pin(destination)['sha256'],archive_bytes=destination.stat().st_size,basis=basis_pin,tensors=len(records),tensor_bytes=sum(r['bytes'] for r in records),lossless_verified=True,raw_materialized=False)
  save(destination.with_suffix('.json'),receipt);return receipt
 

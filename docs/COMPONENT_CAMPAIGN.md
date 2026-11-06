@@ -746,3 +746,9 @@ only for the new authenticated recovery supervisor's successful terminal state
 and group release, then runs the final full-head audit (all four R2 arms), native
 tensor audits and consumed natural12/GPU/host selection. It cannot lock finalists
 or open heldout. Both new supervisors must be terminal at completed handoff.
+
+Checkpoint creation/conversion now removes a failed partial only after this
+writer successfully opened it exclusively. Three isolated exclusive-open race
+fixtures preserve the other writer's sentinel; a real streamed CPU checkpoint
+roundtrip remains exact. Proof: `qualification/checkpoint-partial-ownership.json`.
+No paid checkpoint was changed. Future frozen trainer closures include the fix.
