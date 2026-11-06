@@ -912,3 +912,50 @@ Common runtime04 formal natural12DEV now runs2warmups and5alternating measured
 repetitions for target/Q4/B0/H0/H0broad/HE4/Csmallbroad. Host/GPU/context/profiles,
 post-lock fresh24heldout, publication, inventory and release remain. The same
 authenticated final supervisor owns the single GPU lane; preserve it.
+
+## Completed comparison and released GPU —November6,03:13Pacific
+
+The authorized remaining-component campaign is complete. All27recovery windows
+and one necessary HE4 state-regeneration window completed their full4096updates:
+114,688physical updates plus2separately accounted actual GPU resume-qualification
+updates. Both retained full states re-export exact evaluated native files and
+restore real GPU masters/Adam/RNG/cursor. Full native head, tensor, scalar/cache
+reader and physical vocabulary-allocation proofs passed.
+
+Formal runtime04 panels completed2warmups and5alternating measured repetitions
+for target/Q4/B0/H0/H0broad/HE4/Csmallbroad: consumed natural12DEV, clean GPU,
+full host traces, separate128/1536/3840context stress, actual format profiles and
+fresh24heldout after lock. Packet validation passed1,680measured native requests,
+420excluded warmups, frozen identities, greedy output/stopping semantics and
+accepted/prefix accounting. No post-heldout tuning occurred.
+
+HE4:0.9954ms clean forward versus1.1694ms matchedH0; heldout167.06tok/s versus
+163.44(+2.21%, paired95%1.17–3.28%). Its one tied privateQ4 vocabulary allocation
+adds341.02MiB versus target-sharing. Csmallbroad:191.76MiB private-model plus
+draft-cache/rotation payload versus260.50MiB matchedH0broad, saving68.74MiB;
+heldout168.95tok/s versus170.95, ratio0.9883[0.9758,1.0022]. Near-limit synthetic
+cache stress improves versus that control, separately from natural heldout.
+ExternalQ4 is236.67tok/s on heldout; neither finalist earns request-throughput
+promotion. This retains a faster-head endpoint and a smaller-cache endpoint.
+Full HF/native graph parity remains unresolved; bounded native audits are stated
+as such, and repeated process timing does not establish training-seed uncertainty.
+
+The [final report](../experiments/component-campaign-20261105/report.md) and
+[compact results](../experiments/component-campaign-20261105/results.json) preserve
+the measured conclusions and complete precision/trainability/source/data ancestry.
+Canonical `charts/` holds118readouts,120separate panel/model summaries,20PNG,
+20SVG,fullJSON/CSV and two standalone interactive HTML views. Publication and
+formal-proof indices are `final-publication.json` and `qualification/final-protocol.json`.
+
+`component-final-confirmation-20261106-01` finished0. Every supervisor created by
+this continuation is terminal and its owned group is absent; the GPU is released.
+Proof/keep set: `milestone-retention-and-release.json`, with complete bounded
+campaign/checkpoint inventories and121current native receipts/8,633dependencies.
+Keep Csmallbroad original full state, HE4-confirm full state, B0/required parents,
+native exports, dictionaries, source archives, TRAIN captures and raw evidence.
+No further valuable-data deletion or retired exploratory-state reconstruction was
+performed. All large artifacts remain outside Git; compact source/findings/figures
+are local commits on the existing branch. No pushes or external messages.
+Parent owns canonical STATUS, review/integration and delivery of the unchanged
+pending shader-thread message after review. Earlier active/waiting labels above
+are historical checkpoints, not present ownership assignments.

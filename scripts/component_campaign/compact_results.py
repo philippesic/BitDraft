@@ -1,5 +1,6 @@
 """Keep compact findings in Git while retaining captures/weights/raw panels outside it."""
 import json
+import shutil
 
 from .common import R, ROOT, pin, save
 
@@ -47,6 +48,18 @@ def main():
             peak_training_reserved_bytes=run.get('peak_training_reserved_bytes'),
             peak_host_rss_bytes=run.get('peak_host_rss_bytes')))
     destination = ROOT / 'experiments/component-campaign-20261105/results.json'
+    figure_dir = destination.parent / 'figures'
+    figure_dir.mkdir(exist_ok=True)
+    compact_figures = []
+    for name in ('formal-finalists', 'formal-memory-and-training-peaks',
+                 'component-recovery', 'incremental-ladder', 'context-request-panels'):
+        source = R / 'charts' / (name + '.png')
+        target = figure_dir / source.name
+        shutil.copyfile(source, target)
+        original, copied = pin(source), pin(target)
+        if original['sha256'] != copied['sha256']:
+            raise ValueError('Compact figure copy differs')
+        compact_figures.append(dict(path=str(target.relative_to(ROOT)), original=original))
     save(destination, dict(
         status='COMPACT_MEASURED_FINDINGS', endpoints=latest,
         physical_recovery_updates=accounting['physical_updates_completed'],
@@ -54,6 +67,7 @@ def main():
         cumulative_actual_update_seconds=accounting['cumulative_actual_update_seconds'],
         checkpoint_save_seconds=accounting['checkpoint_save_seconds'],
         retained_state_training_runs=retained_runs,
+        compact_figures=compact_figures,
         recipe_decision=json.loads((R / 'final-recipe-decision.json').read_text()),
         publication=pin(R / 'final-publication.json'),
         full_comparison=pin(R / 'charts/comparison.json'),
