@@ -24,6 +24,7 @@ def main():
    if result['status']!='COMPLETE' or result['progress']['updates']!=32:raise ValueError('Full-head CUDA/optimizer pilot incomplete')
    diagnostics=result['readouts'][-1]['head_qat_diagnostics']
    if not diagnostics['gradient_finite'] or not diagnostics['adam_moments_valid'] or diagnostics['adam_step']!=32:raise ValueError('Pilot gradient/optimizer qualification failed')
+   seconds=result['progress']['update_seconds'];save(R/'r2-pilot-budget.json',dict(status='ACTUAL_FULL_HEAD_R2_PILOT_PASS',pilot=pin(pilot/'result.json'),actual_updates=32,actual_update_seconds=seconds,median_update_seconds=result['median_update_seconds'],projected4096pure_update_seconds=seconds/32*4096,planned_R2_windows=len(a.arms),projected_R2_pure_update_seconds=seconds/32*4096*len(a.arms),peak_training_allocated_bytes=result['peak_training_bytes'],peak_training_reserved_bytes=result['peak_training_reserved_bytes'],peak_host_rss_bytes=result['peak_host_rss_bytes'],setup_seconds=result['setup_seconds'],pilot_total_wall_seconds=result['process_wall_seconds'],diagnostics=diagnostics,policy='Actual32updates resume into4096; matched control/variants have identical native block-scale parameter count/optimizer. Projection excludes all later setup/checkpoint/export/native readouts.'))
    for step in (0,32):panel(name+'-pilot-'+str(step),pilot/f'model-{step}.gguf',spec.get('kv',('f16','f16')))
    receipt=json.load(open(pilot/'recovery.json'));resume=['--resume',receipt['archive']]
   if not (out/'result.json').exists():
