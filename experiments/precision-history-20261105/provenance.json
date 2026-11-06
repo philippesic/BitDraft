@@ -1,0 +1,72 @@
+{
+  "recorded": "2026-11-05",
+  "purpose": "Historical precision chart export; not current component-campaign status",
+  "files": [
+    {
+      "source": "runs/precision-campaign-20261104-01/charts-preheld-20261105/full-table.md",
+      "retained": "full-table.md",
+      "bytes": 30582,
+      "sha256": "2e464587d396feb09d020a4bd47dc5cfb1e6cdd178d7d168643f4f6f23978ae9"
+    },
+    {
+      "source": "runs/precision-campaign-20261104-01/charts-preheld-20261105/comparison.csv",
+      "retained": "comparison.csv",
+      "bytes": 136630,
+      "sha256": "07643d3309d0b4c9a64549621cd6b498f28dc3fa0b642d547166422da21c96fe"
+    },
+    {
+      "source": "runs/precision-campaign-20261104-01/charts-preheld-20261105/domains.csv",
+      "retained": "domains.csv",
+      "bytes": 136550,
+      "sha256": "378eacbd47363cd45ef1d4159f9e4b6ac046050cbd4703fc730ad666ad088cad"
+    },
+    {
+      "source": "runs/precision-campaign-20261104-01/charts-preheld-20261105/generator.py",
+      "retained": "generator.py",
+      "bytes": 37268,
+      "sha256": "160068e32c113ad2cdc22bf6ab227b163f3aaef8645ef41809037e638b21c459"
+    },
+    {
+      "source": "runs/precision-campaign-20261104-01/charts-preheld-20261105/comparison.html",
+      "retained": "comparison.html",
+      "bytes": 399737,
+      "sha256": "a7f2847462369de977e658b87e6f95f876a74c6b0c4b7e7981da78579d9cfaca"
+    },
+    {
+      "source": "runs/precision-campaign-20261104-01/charts-preheld-20261105/precision-grid.png",
+      "retained": "precision-grid.png",
+      "bytes": 163974,
+      "sha256": "36e7f7336239fcfacfe6b3f268f110aef7b0b20e4b985aa450b2b7352cce8588"
+    },
+    {
+      "source": "runs/precision-campaign-20261104-01/charts-preheld-20261105/size-memory.png",
+      "retained": "size-memory.png",
+      "bytes": 93563,
+      "sha256": "c6c3ae618a937bc878cc7112e323b43af96b9101eb5f848b66a5380895965e23"
+    },
+    {
+      "source": "runs/precision-campaign-20261104-01/charts-preheld-20261105/acceptance-latency.png",
+      "retained": "acceptance-latency.png",
+      "bytes": 84255,
+      "sha256": "46001e6a662420335897facebb26e5593fc4bfec5a3a9d350172b9cb96524ef0"
+    },
+    {
+      "source": "runs/precision-campaign-20261104-01/charts-preheld-20261105/throughput.png",
+      "retained": "throughput.png",
+      "bytes": 283280,
+      "sha256": "11cc61f57694c708a900b6f2151e1a20df82a68ca699ab05181356fdc211ce4a"
+    },
+    {
+      "source": "runs/precision-campaign-20261104-01/charts-preheld-20261105/recovery.png",
+      "retained": "recovery.png",
+      "bytes": 209673,
+      "sha256": "6904c77d2297ceb11166b7d5cb031e89459040be145c2af2bcac764b0d189922"
+    }
+  ],
+  "not_copied": [
+    "comparison.json (full ancestry/detail; retained at original location)",
+    "model checkpoints",
+    "raw evaluation outputs"
+  ],
+  "backup_status": "Original run retained locally; independent artifact backup not verified"
+}

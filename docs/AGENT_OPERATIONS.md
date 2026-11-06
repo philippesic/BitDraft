@@ -3,8 +3,8 @@
 ## Local repository
 
 On Philip's Linux machine, `/home/philip/binary-eagle-decoding` is the canonical
-checkout and the registered T3 project root. This session runs directly in WSL
-on the RTX 5080 machine. Use this local shell and GPU for experiment work.
+checkout and the registered T3 project root. Agents may be running on a Mac or another machine. Access the WSL environment
+for experiment work; a local copy is not the canonical runtime.
 Existing pinned worktrees are historical or isolated source snapshots, not
 separate device installations. Keep local artifacts and the Python environment
 in place.
@@ -15,13 +15,13 @@ Work directly in the current thread. Delegate or create another chat only when
 explicitly requested by the user. No model-specific roles, task ownership
 acknowledgments, or worker rotation are required.
 
-Keep one active goal with a concise checkpoint under `docs/goals/`, linked from
-`docs/STATUS.md`. The user makes major research decisions. Record pending options
+Keep the active objective and next action in `docs/STATUS.md`, linking the
+existing campaign for detailed execution state. Do not require a duplicate goal file. The user makes major research decisions. Record pending options
 and evidence in `docs/DECISIONS.md`, and continue independent authorized work.
 
 ## Checkpoints and context continuity
 
-At milestones, update the active goal file with actual changes, checks, results,
+At milestones, update the existing current-state/campaign record with actual changes, checks, results,
 source/checkpoint pins, active run paths, local tmux sessions, process birth/boot
 identities, stop procedures, and the next action. Keep detailed logs in run
 artifacts. Refresh durable state after compaction and continue in this thread.
@@ -32,9 +32,8 @@ actual process and run evidence before stopping or resuming an experiment.
 
 `main` is the integration branch. Commit coherent progress without waiting for a
 large final batch. Push only when covered by the current user authorization. Use
-one short subject line and no coauthors or body. For independent edits, make
-temporary worktrees; share a worktree only for read-only work or explicit file
-partitioning. Integrate changes into `main` after relevant checks pass, push
+one short subject line and no coauthors or body. Use temporary worktrees when edits conflict with active or pinned work;
+routine scoped edits may use the current checkout with ownership checks. Integrate changes into `main` after relevant checks pass, push
 `main` when authorized, then remove a merged worktree and its branch. Before
 removal check for uncommitted changes, unpublished commits, and live tasks. Do not
 run broad `git clean` on a shared checkout.
@@ -48,9 +47,9 @@ baselines recorded when updating it.
 ## Local GPU execution
 
 The RTX 5080 is attached to this WSL environment. Before experiment work, check
-`hostname`, `nvidia-smi`, current processes and resource headroom locally. No
-SSH transport, tmux MCP, host-address lookup, machine linking, code transfer, or
-separate device checkout is part of the current workflow. Historical reports'
+`hostname`, `nvidia-smi` (or `/usr/lib/wsl/lib/nvidia-smi` when WSL PATH
+  omits it), current processes and resource headroom locally. From another machine, use the existing linked environment or established SSH/WSL
+route to this checkout. Do not run WSL commands against a stale Mac copy. Historical reports'
 addresses, transport panes and device checkouts are provenance, not launch
 instructions. The RTX 2080 Ti track is historical and outside the current task;
 local SM120 evidence does not validate SM75.
@@ -96,10 +95,29 @@ shared control files and verify they have not changed before updating them.
 Leave other devices' pause state unchanged. No new user confirmation is needed
 for work already authorized within the active investigation.
 
-Codex may ask the user to review and trust the repository hook before it runs. The
-[Codex hooks reference](https://learn.chatgpt.com/docs/hooks) describes that trust
-step and the `SessionStart` behavior. The [subagents
-reference](https://learn.chatgpt.com/docs/agent-configuration/subagents) documents
-project agent profiles; the [skills
-reference](https://learn.chatgpt.com/docs/build-skills) documents repository-local
-skills.
+## Milestone artifact retention
+
+Clean up when an investigation/feature finishes, not continuously during training.
+Use `python3 scripts/milestone_inventory.py RUN_DIRECTORY` for a bounded metadata
+inventory of checkpoints, exports and evidence. It does not load models, claim
+resumability, infer ownership or delete files. An existing campaign retention
+helper remains the execution path where available; do not add another daemon.
+
+Choose the keep set with the campaign owner: current resumable state and required
+parents/data, fixed baseline, selected frontier/incumbent and any unresolved
+reproduction evidence. Keep compact machine-readable measurements, configuration,
+source/data ancestry, charts and decision history. Most superseded intermediate
+precision variants/update intervals can then be removed after their remaining
+consumers are checked. Archive summaries alone cannot recreate training state.
+
+Record exact keep/delete paths and reasons in the existing campaign record,
+verify the retained set and owned job termination, then perform authorized cleanup.
+Recheck identity immediately before deletion. Uncertain ownership or uniquely
+valuable states stay protected pending a decision. The current component campaign's
+explicit preservation requirements remain in force; this policy does not release
+older paid states or authorize deleting an active run. No automatic reclaim or
+new launch gate is introduced.
+
+Old team skills, named agent roles and lifecycle hooks have been retired. Normal
+instructions and the current campaign record provide continuity; no compaction
+counter, mandatory worker rotation or user-lessons log is part of this workflow.

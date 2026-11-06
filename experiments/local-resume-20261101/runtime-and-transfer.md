@@ -254,7 +254,7 @@ Reports and reproducible source audits: [upstream investigation](../upstream-cud
 [modern evidence](modern-evidence.md), [training-transfer audit](transfer-diagnosis.md).
 Large models, raw arrays and logs remain outside Git under
 `runs/upstream-consistency-20261101/`; current ownership/stop procedures are in
-[the active checkpoint](../../docs/goals/nine-model-qat-overnight.md).
+[the active checkpoint](../../docs/history/goals/nine-model-qat-overnight.md).
 
 The two clean integrated evidence-worker worktrees and branches were removed
 only after checking patch equivalence, ignored files and empty submodules. The

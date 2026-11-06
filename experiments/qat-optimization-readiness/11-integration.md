@@ -67,7 +67,7 @@ Preserve failed evidence. The existing corpus preparation is incomplete
 No acceptance, speed or quality improvement is inferred from these CPU checks.
 Q4_0 EAGLE remains the primary success comparison.
 
-The [runbook](../../docs/QAT_OPTIMIZATION_RUNBOOK.md) specifies the launch gates;
-[goal state](../../docs/goals/qat-optimization-readiness.md) records integration
+The [runbook](../../docs/history/QAT_OPTIMIZATION_RUNBOOK.md) specifies the launch gates;
+[goal state](../../docs/history/goals/qat-optimization-readiness.md) records integration
 and retained worktrees. Reports01–10 contain bounded worker findings; this
 checkpoint supersedes their earlier interim test counts and smoke limitations.

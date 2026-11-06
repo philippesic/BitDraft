@@ -4,7 +4,7 @@
 
 **Concurrent project progress:** while this review ran, the suite owner updated
 `main` through `57ea68b`, recording W1Ax SM75 operator/replay gates and a running
-historical comparison. That checkpoint is preserved in the [active goal](../docs/goals/w1ax-activation-precision-suite.md). This literature review does not independently validate or analyze those new runs; its historical performance arguments remain tied to the stated baseline. Revisit the recommendations when the suite owner seals the comparison.
+historical comparison. That checkpoint is preserved in the [active goal](../docs/history/goals/w1ax-activation-precision-suite.md). This literature review does not independently validate or analyze those new runs; its historical performance arguments remain tied to the stated baseline. Revisit the recommendations when the suite owner seals the comparison.
 
 ## Changes to the advice
 

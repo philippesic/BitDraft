@@ -22,7 +22,7 @@ use the copied CUDA runtime. No SM75 or performance/quality-win claim.
 
 Readiness SHA3badd9775a848ff5ace09fd96e573f96e19b86e85a88a9bb81aa18d8d3e608c7;
 untouched sidecar4816152723691eb94df34529a1174af0036a3e8a4622cec4ac609e14d0a68a13.
-All164originals are saved/independently hashed outsideGit. The [active goal](../../docs/goals/qat-optimization-readiness.md#actual-full-source-model-readiness-passed--october-3-1155-utc)
+All164originals are saved/independently hashed outsideGit. The [active goal](../../docs/history/goals/qat-optimization-readiness.md#actual-full-source-model-readiness-passed--october-3-1155-utc)
 records exact data/state/runtime/source/command/artifact pins and finite first-run
 caps1000steps/3600trainerseconds/1epoch. Optional controls stay inactive and no
 quality winner is selected. Q4_0 remains primary; FP16 EAGLE is diagnostic.

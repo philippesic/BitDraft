@@ -1,13 +1,34 @@
-# W1A1 EAGLE speculative decoding
+# Binary speculative decoding
+
+This project develops compact speculative drafters and evaluates their **native
+end-to-end decoding** against frozen target and DFlash baselines. Current work
+includes DFlash W1A8 and component precision/recovery; the original W1A1 EAGLE
+scaffold below is historical, not the current execution guide.
+
+Start with [STATUS](docs/STATUS.md) for the current owner, active work and pauses.
+Use [candidate stages](docs/CANDIDATE_STAGES.md) and
+[candidate benchmarking](docs/CANDIDATE_BENCHMARKING.md) for the current scientific
+contracts. The maintained [training/evaluation workflow](scripts/contender_pipeline/README.md)
+documents candidate records, full elapsed budgets, compatible data reuse,
+checkpoint recovery, native export/admission and evaluation tiers.
+
+The current [component campaign](docs/COMPONENT_CAMPAIGN.md) owns its GPU lane.
+Reading this guide does not start or resume a campaign. Preserve active training
+and use the current owner's recorded handoff before competing GPU work. Earlier
+runtime-only speedups do not establish a trained-model improvement; training
+throughput, exact output correctness, acceptance and native request latency are
+separate measurements.
+
+## Original scaffold reference
 
 A bounded systems/ML experiment: can a genuinely binary EAGLE drafter improve
 end-to-end LLM throughput enough to offset lower speculative-token acceptance?
 
-Start with the [project overview](docs/PROJECT_OVERVIEW.md), which defines the
+Start with the [project overview](docs/history/PROJECT_OVERVIEW_20261105.md), which defines the
 goal, scope, milestones, and decision criteria. See [setup](docs/SETUP.md) for
 build instructions and [evaluation](docs/EVALUATION.md) for measurement rules.
-For Codex desktop teamwork, see [agent operations](docs/AGENT_OPERATIONS.md).
-Invoke `$start-goal-team` with a rough objective to open the next official goal.
+Historical operations are described in [agent operations](docs/AGENT_OPERATIONS.md);
+current ownership and execution contracts above take precedence.
 
 This checkout runs directly in WSL on the RTX 5080 machine at
 `/home/philip/binary-eagle-decoding`. Use the local shell and GPU; current
@@ -45,9 +66,9 @@ src/w1a1_eagle/           Future simulation, QAT, export, and analysis code
 third_party/llama.cpp/   Pinned upstream Git submodule
 ```
 
-This initial scaffold includes the upstream runtime and build tooling. W1A1
-simulation, training, kernels, model downloads, and benchmark execution are
-future milestones; no speedup or model compatibility has been measured yet.
+At initial scaffold creation, only the upstream runtime and build tooling existed.
+That historical milestone description is superseded by the current status and
+maintained workflow linked above; it does not describe today's implementation.
 
 Development tools are pinned in `uv.lock`. The llama.cpp revision is pinned by
 the submodule gitlink; see [third-party notes](third_party/README.md). Large

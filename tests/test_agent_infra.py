@@ -1,4 +1,4 @@
-"""Check the two agent lifecycle boundaries that must survive long runs."""
+"""Check process supervision and recovery for long runs."""
 
 import json
 import os
@@ -15,27 +15,6 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class AgentInfrastructureTests(unittest.TestCase):
-    def test_second_compact_requests_handoff(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            repo = Path(directory)
-            subprocess.run(["git", "init", "-q", str(repo)], check=True)
-            hook = ROOT / ".codex/hooks/compaction_handoff.py"
-            event = {"cwd": str(repo), "session_id": "test-session", "source": "compact"}
-            messages = []
-            for _ in range(2):
-                result = subprocess.run(
-                    [sys.executable, str(hook)],
-                    input=json.dumps(event),
-                    text=True,
-                    capture_output=True,
-                    check=True,
-                )
-                messages.append(
-                    json.loads(result.stdout)["hookSpecificOutput"]["additionalContext"]
-                )
-            self.assertIn("First compaction", messages[0])
-            self.assertIn("fresh successor", messages[1])
-
     def test_remote_supervisor_interrupts_child_group(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

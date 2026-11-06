@@ -49,7 +49,7 @@ Additional ragged control chains have valid lengths [1,2,4], each with invalid p
 
 ## Smallest isolated remedy and owner decision
 
-The focused [Astra review](../../../docs/parallel20261002/astra-lsq-review.md) identifies the named `learned-activations` and `combined-contract-smoke` profiles as exposing this permitted combination.
+The focused [Astra review](../../../docs/history/parallel20261002/astra-lsq-review.md) identifies the named `learned-activations` and `combined-contract-smoke` profiles as exposing this permitted combination.
 
 `reference/serial_learned_head.patch` proposes only a provider dispatch guard: while gradients are enabled and the attached head quantizer is trainable, preserve the serial head path. Fixed-activation training and no-grad learned inference retain batching. This preserves existing serial normalization, shared parameter ownership, masks, recurrent graphs, cache semantics and update cadence. Its diagnostics honestly retain last-valid-row saturation scope. It sacrifices the learned-head batching optimization; no speed claim is made. The exact patch is compiled into a private module for tests, without touching production files. Nine actual-native proposal cases check every VJP and one update. Separate call-count controls prove batched inference/fixed training remain enabled. The actual `ObservedAdapter` wrapper delegates `linears`, so the guard sees the learned head; its first attached state still receives a nonzero later-depth gradient. `optimize_head=True` metadata must explicitly describe this fallback and last-row saturation scope rather than imply batched learned-head execution.
 

@@ -5,6 +5,15 @@ not select an architecture, invent a learning-curve predictor, or qualify an
 unknown export format. The current adapter is the existing Qwen3.5-4B Q4_K_M /
 fixed-sign row-W1A8 branch, RTX5080, frozen mode32 correctness runtime.
 
+## Check the workflow without training
+
+From the repository root, `make workflow-check` runs the maintained CPU contract
+suite with `.venv/bin/python`; override `PY` explicitly for another prepared
+Python environment. It covers accounting, stale inputs, failure recovery,
+comparison integrity and artifact packaging. Linux process-identity tests require
+Linux. This command does not train or allocate a GPU and does not qualify a new
+candidate. Respect an active owner's quiet measurement window even for CPU tests.
+
 ## Entry requirements for a candidate
 
 Write a candidate record before training: architecture/weight/activation/head

@@ -1,16 +1,8 @@
-# Goal files
+# Goal records
 
-Create one file per user-started goal. Keep the active file short enough for a
-fresh agent to read immediately. Suggested fields:
+Current work is recorded once in [STATUS](../STATUS.md) and its linked campaign.
+Use a separate goal file only when it adds information beyond that checkpoint;
+creating one is not a required step or permission to launch a team.
 
-- Objective and evidence required for completion.
-- Current stage and last update time.
-- Decisions pending with the user; independent work still possible.
-- Worker/task owners, branches/worktrees, and exact deliverables.
-- Live GPU jobs: host alias, tmux session, run directory, process/status, and
-  cleanup responsibility.
-- Completed commits, tests, experiment IDs, and observed results.
-- Next concrete actions and any blockers.
-
-Update at milestones and before compaction handoff. Keep long data and logs in
-`results/` or remote run directories, with links/hashes here.
+[Former goal records](../history/goals/README.md) preserve previous attempts and
+allocations without treating their old active labels as current ownership.

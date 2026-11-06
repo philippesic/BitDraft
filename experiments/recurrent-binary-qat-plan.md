@@ -1,7 +1,7 @@
 # Joint binary body and head: CPU preparation and frozen trial protocol
 
 > **Superseded planning status, 2026-09-28:** The user has authorized a fresh
-> CPU-only EAGLE W1 team under [W1_RESEARCH_PLAN.md](../docs/W1_RESEARCH_PLAN.md).
+> CPU-only EAGLE W1 team under [W1_RESEARCH_PLAN.md](../docs/history/W1_RESEARCH_PLAN.md).
 > Its practical numerical policy, latency accounting, W1Ax training preparation
 > and larger-data plan take precedence over the historical gates below. The
 > 96-prompt/500-step proposal is a smoke reference, not a sufficient full-body
@@ -14,7 +14,7 @@ The frozen 96-prompt native training capture is complete and audited, but its
 bundle remains `training_eligible: false`. The proposed all-body optimization
 budget, numeric parity gate, and reserved-final use remain user decisions;
 no model training or new quality measurement has run for this goal. See the
-[active goal](../docs/goals/recurrent-binary-body-head.md) for current evidence.
+[active goal](../docs/history/goals/recurrent-binary-body-head.md) for current evidence.
 
 ## Objective and representation
 

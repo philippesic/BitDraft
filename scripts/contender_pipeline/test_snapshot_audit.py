@@ -6,7 +6,7 @@ from runner import pin
 from snapshot_audit import snapshot_audit
 
 # Use admitted original validator, not a test-shaped substitute.
-sys.path.insert(0,'/home/philip/.codex/worktrees/w1a8-actual-training-20261103/scripts/w1a8_generalization')
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'w1a8_generalization'))
 from modern_actual_union import Audit
 
 class SnapshotTests(unittest.TestCase):

@@ -32,13 +32,285 @@ from gguf import GGUFReader
 from w1a1_eagle.block_data import (
     BLOCK_LOGITS_SELECTION,
     PARTIAL_LABEL_POLICY,
+    TAPS,
     block_teacher_indices,
     generated_block_anchors,
     validate_logits_indices,
 )
 
+ALIGNED_PROMPTS = {
+    "source-00-0569": (
+        "train",
+        "magicoder:line-000854-index-39750",
+        "520fc196ca6a59159c9c9a373655e248c140301d25db8ef0df0e265d96aa0a14",
+    ),
+    "source-03-0539": (
+        "train",
+        "gsm8k:train-000763",
+        "b787bd36a3a713b8cfb22ae7b7baee6c246d40a6eb647466d1e9c79fe832aeaf",
+    ),
+    "source-00-0199": (
+        "reference",
+        "magicoder:line-015359-index-34538",
+        "ef45524781dcf21ad9edf8a6c31952cce8da867593605d64fed3a6ea53fa5926",
+    ),
+    "source-00-0274": (
+        "reference",
+        "dolly:line-009016",
+        "d17b02801e776686934aed3cd4f26879daf27ff2eee7b648de823136834ffc4c",
+    ),
+}
+ALIGNED_TARGET = "05a259dca043f1089ec94ace1edc2a0086e4264c805eee81f57cc57f2dc720a6"
+ALIGNED_TEMPLATE = "a55ee1b1660128b7098723e0abcd92caa0788061051c62d51cbe87d9cf1974d8"
+
+
+def validate_deployment_rendering(rendering):
+    """A named diagnostic contract; flags never substitute for native tokens."""
+    messages = rendering.get("original_messages")
+    tokens = rendering.get("prompt_token_ids")
+    text = rendering.get("rendered_prompt")
+    if (
+        rendering.get("schema") != "dspark_deployment_rendering_v1"
+        or rendering.get("target", {}).get("sha256") != ALIGNED_TARGET
+        or rendering.get("template_sha256") != ALIGNED_TEMPLATE
+        or rendering.get("chat_template_kwargs") != {"enable_thinking": False}
+        or rendering.get("tokenizer") != {"add_special": True, "parse_special": True}
+        or not isinstance(messages, list)
+        or not messages
+        or any(
+            set(m) != {"role", "content"} or not all(isinstance(v, str) for v in m.values())
+            for m in messages
+        )
+        or not isinstance(text, str)
+        or not text.endswith("<|im_start|>assistant\n<think>\n\n</think>\n\n")
+        or not isinstance(tokens, list)
+        or not tokens
+        or any(type(t) is not int or t < 0 for t in tokens)
+        or rendering.get("prompt_token_count") != len(tokens)
+    ):
+        raise ValueError("explicit deployment render/template/token boundary differs")
+    for role in (
+        "renderer_binary",
+        "target",
+        "render_request",
+        "render_response",
+        "tokenize_request",
+        "tokenize_response",
+    ):
+        record = rendering.get(role, {})
+        if (
+            set(record) != {"path", "sha256"}
+            or not Path(record["path"]).is_absolute()
+            or len(record["sha256"]) != 64
+        ):
+            raise ValueError("actual deployment renderer source/response locators required")
+    return rendering
+
+
+def prepare_aligned_requests(rows):
+    """Join saved source messages and native rendering artifacts, without model IO."""
+    if len(rows) != 4 or [r.get("chain_id") for r in rows] != list(ALIGNED_PROMPTS):
+        raise ValueError("exact two TRAIN and two separate reference prompts required")
+    requests = []
+    for row in rows:
+        source = row["original_source"]
+        rendering_pin = row["deployment_rendering"]
+        for record in (source, rendering_pin):
+            if sha256(Path(record["path"])) != record["sha256"]:
+                raise ValueError("original source or deployment rendering changed")
+        original = json.loads(Path(source["path"]).read_text())
+        rendering = validate_deployment_rendering(
+            json.loads(Path(rendering_pin["path"]).read_text())
+        )
+        role, prompt_id, prompt_sha = ALIGNED_PROMPTS[row["chain_id"]]
+        ancestry = original["chain_ancestry"]
+        if (
+            original.get("prompt", {}).get("messages") != rendering["original_messages"]
+            or ancestry.get("prompt_id") != prompt_id
+            or ancestry.get("prompt_sha256") != prompt_sha
+            or original.get("target_sha256") != ALIGNED_TARGET
+            or original.get("target_chat_template_sha256") != ALIGNED_TEMPLATE
+        ):
+            raise ValueError("aligned capture original message/source identity differs")
+        for name in ("render_request", "render_response", "tokenize_request", "tokenize_response"):
+            record = rendering[name]
+            if sha256(Path(record["path"])) != record["sha256"]:
+                raise ValueError("native rendering/tokenization artifact changed")
+        render_request = json.loads(Path(rendering["render_request"]["path"]).read_text())
+        render_response = json.loads(Path(rendering["render_response"]["path"]).read_text())
+        tokenize_request = json.loads(Path(rendering["tokenize_request"]["path"]).read_text())
+        tokenize_response = json.loads(Path(rendering["tokenize_response"]["path"]).read_text())
+        if (
+            render_request.get("messages") != rendering["original_messages"]
+            or render_request.get("chat_template_kwargs") != {"enable_thinking": False}
+            or render_response.get("prompt") != rendering["rendered_prompt"]
+            or tokenize_request
+            != {"content": rendering["rendered_prompt"], "add_special": True, "parse_special": True}
+            or tokenize_response.get("tokens") != rendering["prompt_token_ids"]
+        ):
+            raise ValueError("actual native render/token response join differs")
+        requests.append(
+            {
+                "template_mode": "raw_text",
+                "prompt_text": rendering["rendered_prompt"],
+                "max_new_tokens": 32,
+                "max_prompt_tokens": 2016,
+                "tap_ids": list(TAPS),
+                "logits_mode": "all",
+                "deployment_rendering": rendering,
+                "alignment_source": {
+                    "chain_id": row["chain_id"],
+                    "role": role,
+                    "original_source": source,
+                    "rendering_receipt": rendering_pin,
+                    "original_prompt_sha256": prompt_sha,
+                },
+                "chain_ancestry": {
+                    **{k: ancestry[k] for k in ("prompt_id", "domain", "source_split")},
+                    "prompt_sha256": hashlib.sha256(
+                        rendering["rendered_prompt"].encode()
+                    ).hexdigest(),
+                    "prompt_length": len(rendering["prompt_token_ids"]),
+                },
+            }
+        )
+    return requests
+
+
+def render_aligned_inputs(plan, base_url, output):
+    """Use the existing live native renderer/tokenizer; never generate tokens."""
+    from benchmark_native_eagle import request_json
+
+    if (
+        plan.get("schema") != "dspark_mode_aligned_capture_inputs_v1"
+        or plan.get("preparation_only") is not True
+        or [r.get("chain_id") for r in plan["rows"]] != list(ALIGNED_PROMPTS)
+        or not base_url.startswith("http://127.0.0.1:")
+        or output.exists()
+    ):
+        raise ValueError("fixed four-message preparation and fresh native renderer output required")
+    sources = []
+    for row in plan["rows"]:
+        source = row["original_source"]
+        if sha256(Path(source["path"])) != source["sha256"]:
+            raise ValueError("saved original source changed before rendering")
+        old = json.loads(Path(source["path"]).read_text())
+        expected = ALIGNED_PROMPTS[row["chain_id"]]
+        if (
+            old["chain_ancestry"]["prompt_id"] != expected[1]
+            or old["chain_ancestry"]["prompt_sha256"] != expected[2]
+        ):
+            raise ValueError("fixed original source messages differ")
+        sources.append(old)
+    output.mkdir(parents=True, exist_ok=False)
+    updated = json.loads(json.dumps(plan))
+    for row, old in zip(updated["rows"], sources, strict=True):
+        directory = output / row["chain_id"]
+        directory.mkdir()
+        render = {
+            "messages": old["prompt"]["messages"],
+            "chat_template_kwargs": {"enable_thinking": False},
+            "reasoning_format": "none",
+        }
+        records = {}
+        for name, endpoint, body in (("render", "/apply-template", render),):
+            req = directory / (name + "-request.json")
+            req.write_text(json.dumps(body, sort_keys=True) + "\n")
+            status, raw = request_json(base_url + endpoint, body, 30)
+            resp = directory / (name + "-response.json")
+            resp.write_text(raw)
+            if status != 200:
+                raise RuntimeError("native deployment rendering failed")
+            records[name + "_request"] = {"path": str(req.resolve()), "sha256": sha256(req)}
+            records[name + "_response"] = {"path": str(resp.resolve()), "sha256": sha256(resp)}
+        prompt = json.loads(raw)["prompt"]
+        body = {"content": prompt, "add_special": True, "parse_special": True}
+        req = directory / "tokenize-request.json"
+        req.write_text(json.dumps(body, sort_keys=True) + "\n")
+        status, raw = request_json(base_url + "/tokenize", body, 30)
+        resp = directory / "tokenize-response.json"
+        resp.write_text(raw)
+        if status != 200:
+            raise RuntimeError("native deployment tokenization failed")
+        for name, path in (("tokenize_request", req), ("tokenize_response", resp)):
+            records[name] = {"path": str(path.resolve()), "sha256": sha256(path)}
+        tokens = json.loads(raw)["tokens"]
+        rendering = {
+            "schema": "dspark_deployment_rendering_v1",
+            **records,
+            "renderer_binary": plan["renderer_binary"],
+            "target": plan["target"],
+            "template_sha256": ALIGNED_TEMPLATE,
+            "original_messages": render["messages"],
+            "chat_template_kwargs": render["chat_template_kwargs"],
+            "rendered_prompt": prompt,
+            "prompt_token_ids": tokens,
+            "prompt_token_count": len(tokens),
+            "tokenizer": {"add_special": True, "parse_special": True},
+        }
+        validate_deployment_rendering(rendering)
+        path = directory / "deployment-rendering.json"
+        path.write_text(json.dumps(rendering, indent=2, sort_keys=True) + "\n")
+        row["deployment_rendering"] = {"path": str(path.resolve()), "sha256": sha256(path)}
+    path = output / "rendered-inputs.json"
+    path.write_text(json.dumps(updated, indent=2, sort_keys=True) + "\n")
+    return path
+
 
 class NativeTeacher:
+    def generate_deployment_aligned(self, request):
+        """Explicit raw-text capture, with native deployment rendering ancestry."""
+        rendering = validate_deployment_rendering(request["deployment_rendering"])
+        source = request.get("alignment_source", {})
+        expected = ALIGNED_PROMPTS.get(source.get("chain_id"))
+        if expected is None or source.get("role") != expected[0]:
+            raise ValueError("fixed original TRAIN/reference role differs")
+        if (
+            request.get("template_mode") != "raw_text"
+            or request.get("prompt_text") != rendering["rendered_prompt"]
+            or request.get("max_new_tokens") != 32
+            or request.get("tap_ids") != list(TAPS)
+            or request.get("logits_mode") != "all"
+            or self.ancestry["target_sha256"] != rendering["target"]["sha256"]
+            or self.ancestry["target_chat_template_sha256"] != rendering["template_sha256"]
+            or self.ancestry["target_precision"] != "F16"
+            or self.ancestry["target_kv_type"] != "F16"
+        ):
+            raise ValueError("aligned raw-text capture target/method differs")
+        receipt = self.generate_capture(
+            prompt_text=request["prompt_text"],
+            template_mode="raw_text",
+            max_new_tokens=32,
+            max_prompt_tokens=request["max_prompt_tokens"],
+            tap_ids=request["tap_ids"],
+            logits_mode="all",
+            chain_ancestry=request["chain_ancestry"],
+        )
+        receipt["deployment_rendering"] = rendering
+        receipt["alignment_source"] = request["alignment_source"]
+        self._save_receipt(receipt)
+        if (
+            receipt["rendered_prompt"] != rendering["rendered_prompt"]
+            or receipt["prompt_length"] != len(rendering["prompt_token_ids"])
+            or receipt["tokens"][: receipt["prompt_length"]] != rendering["prompt_token_ids"]
+        ):
+            raise ValueError("deployment versus raw capture rendered-token equality failed")
+        anchors = generated_block_anchors(receipt["prompt_length"], len(receipt["tokens"]))
+        role = expected[0]
+        if role not in {"train", "reference"}:
+            raise ValueError("aligned capture must retain its fixed TRAIN/reference role")
+        if role == "train" and len(anchors) < 4:
+            raise ValueError("actual generated chain lacks complete blocks1-3; no padding allowed")
+        receipt["mode_alignment_status"] = "EXACT_RENDERED_TOKEN_PREFIX_MATCH"
+        receipt["complete_post_seed_blocks"] = [i for i in (1, 2, 3) if i < len(anchors)]
+        receipt["reference_support"] = (
+            ("complete_block_reader" if anchors else "native_prefix_only_no_complete_block")
+            if role == "reference"
+            else "not_reference"
+        )
+        self._save_receipt(receipt)
+        return receipt
+
     def __init__(
         self,
         binary: Path,
@@ -229,23 +501,35 @@ class NativeTeacher:
     ):
         if label_policy is not None:
             if label_policy != PARTIAL_LABEL_POLICY or logits_mode != "indexed":
-                raise ValueError("partial-label generation requires all_available_v1 indexed replay")
+                raise ValueError(
+                    "partial-label generation requires all_available_v1 indexed replay"
+                )
             # ecff native generated-index mode physically truncates incomplete tails.
             # Generate honestly without logits, then replay exact tokens and decode
             # partitions with an explicit map. Keep both original receipts/payloads.
             generated = self.generate_capture(
-                messages=messages, prompt_text=prompt_text, template_mode=template_mode,
-                max_new_tokens=max_new_tokens, max_prompt_tokens=max_prompt_tokens,
-                tap_ids=tap_ids, logits_mode="none", chain_ancestry=chain_ancestry)
+                messages=messages,
+                prompt_text=prompt_text,
+                template_mode=template_mode,
+                max_new_tokens=max_new_tokens,
+                max_prompt_tokens=max_prompt_tokens,
+                tap_ids=tap_ids,
+                logits_mode="none",
+                chain_ancestry=chain_ancestry,
+            )
             tokens = generated["tokens"]
             anchors = generated_block_anchors(generated["prompt_length"], len(tokens), partial=True)
             indices = block_teacher_indices(anchors, len(tokens))
             if not indices:
                 raise ValueError("native generation has no observed loss-bearing decision")
             replay = self.capture_prefix(
-                tokens, tap_ids, logits_mode="indexed", logits_indices=indices,
+                tokens,
+                tap_ids,
+                logits_mode="indexed",
+                logits_indices=indices,
                 chain_ancestry=generated["chain_ancestry"],
-                decode_history=generated["decode_history"])
+                decode_history=generated["decode_history"],
+            )
             source = self.root / generated["id"] / "receipt.json"
             replay["generation_source"] = {"path": str(source.resolve()), "sha256": sha256(source)}
             self._save_receipt(replay)
@@ -513,13 +797,82 @@ def supervisor_stop(signum, _frame):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    preparing = any(k in sys.argv for k in ("--prepare-aligned-inputs", "--render-aligned-inputs"))
+    parser.add_argument("--prepare-aligned-inputs", type=Path)
+    parser.add_argument("--render-aligned-inputs", type=Path)
+    parser.add_argument("--renderer-url")
+    parser.add_argument("--execute-aligned", action="store_true")
     for flag in ("binary", "target", "output-root", "requests"):
-        parser.add_argument("--" + flag, type=Path, required=True)
-    parser.add_argument("--target-sha256", required=True)
-    parser.add_argument("--producer-source-revision", required=True)
-    parser.add_argument("--max-tokens", type=int, required=True)
-    parser.add_argument("--gpu-layers", type=int, required=True)
+        parser.add_argument("--" + flag, type=Path, required=not preparing)
+    parser.add_argument("--target-sha256", required=not preparing)
+    parser.add_argument("--producer-source-revision", required=not preparing)
+    parser.add_argument("--max-tokens", type=int, required=not preparing)
+    parser.add_argument("--gpu-layers", type=int, required=not preparing)
     args = parser.parse_args()
+    if args.render_aligned_inputs:
+        if args.output_root is None or not str(args.output_root.resolve()).startswith("/mnt/c/"):
+            raise ValueError("live native renderer artifacts require a C-backed output root")
+        plan = json.loads(args.render_aligned_inputs.read_text())
+        path = render_aligned_inputs(plan, args.renderer_url, args.output_root)
+        print(
+            json.dumps(
+                {
+                    "status": "DEPLOYMENT_RENDERED_ONLY_NO_CAPTURE",
+                    "inputs": str(path),
+                    "sha256": sha256(path),
+                }
+            )
+        )
+        return
+    if preparing:
+        plan = json.loads(args.prepare_aligned_inputs.read_text())
+        if (
+            plan.get("schema") != "dspark_mode_aligned_capture_inputs_v1"
+            or plan.get("preparation_only") is not True
+        ):
+            raise ValueError("explicit preparation-only aligned input required")
+        requests = prepare_aligned_requests(plan["rows"])
+        if args.requests is None or args.requests.exists() or args.requests.is_symlink():
+            raise ValueError("fresh aligned request output required")
+        args.requests.parent.mkdir(parents=True, exist_ok=True)
+        with args.requests.open("x") as stream:
+            for request in requests:
+                request["alignment_preparation_only"] = True
+                stream.write(json.dumps(request, sort_keys=True) + "\n")
+        print(
+            json.dumps(
+                {
+                    "status": "ALIGNED_REQUESTS_PREPARED_NOT_CAPTURED",
+                    "requests": str(args.requests),
+                    "sha256": sha256(args.requests),
+                    "count": 4,
+                    "model_loaded": False,
+                }
+            )
+        )
+        return
+    requests = [json.loads(line) for line in args.requests.read_text().splitlines()]
+    aligned = any("deployment_rendering" in request for request in requests)
+    if aligned:
+        if (
+            not args.execute_aligned
+            or len(requests) != 4
+            or [r.get("alignment_source", {}).get("chain_id") for r in requests]
+            != list(ALIGNED_PROMPTS)
+            or any(r.get("alignment_preparation_only") is not False for r in requests)
+            or not str(args.output_root.resolve()).startswith("/mnt/c/")
+            or args.output_root.exists()
+            or args.output_root.is_symlink()
+            or args.max_tokens != 2048
+            or args.target_sha256 != ALIGNED_TARGET
+        ):
+            raise ValueError("new explicitly activated C-backed four-capture operation required")
+        for variable in ("TMPDIR", "TMP", "TEMP", "CUDA_CACHE_PATH"):
+            value = os.environ.get(variable)
+            if value is None or not str(Path(value).resolve()).startswith("/mnt/c/"):
+                raise ValueError(
+                    "aligned capture temporary/cache paths must be C-backed: " + variable
+                )
     signal.signal(signal.SIGTERM, supervisor_stop)
     signal.signal(signal.SIGINT, supervisor_stop)
     with NativeTeacher(
@@ -531,30 +884,30 @@ def main():
         gpu_layers=args.gpu_layers,
         producer_source_revision=args.producer_source_revision,
     ) as teacher:
-        with args.requests.open() as stream:
-            for line in stream:
-                request = json.loads(line)
-                if "template_mode" in request:
-                    receipt = teacher.generate_capture(
-                        messages=request.get("messages"),
-                        prompt_text=request.get("prompt_text"),
-                        template_mode=request["template_mode"],
-                        max_new_tokens=request["max_new_tokens"],
-                        max_prompt_tokens=request.get("max_prompt_tokens"),
-                        tap_ids=request["tap_ids"],
-                        logits_mode=request.get("logits_mode", "all"),
-                        chain_ancestry=request.get("chain_ancestry"),
-                    )
-                else:
-                    receipt = teacher.capture_prefix(
-                        request["tokens"],
-                        request["tap_ids"],
-                        logits_mode=request.get("logits_mode", "all"),
-                        chain_ancestry=request.get("chain_ancestry"),
-                        decode_history=request.get("decode_history"),
-                        logits_indices=request.get("logits_indices"),
-                    )
-                print(json.dumps(receipt), flush=True)
+        for request in requests:
+            if "deployment_rendering" in request:
+                receipt = teacher.generate_deployment_aligned(request)
+            elif "template_mode" in request:
+                receipt = teacher.generate_capture(
+                    messages=request.get("messages"),
+                    prompt_text=request.get("prompt_text"),
+                    template_mode=request["template_mode"],
+                    max_new_tokens=request["max_new_tokens"],
+                    max_prompt_tokens=request.get("max_prompt_tokens"),
+                    tap_ids=request["tap_ids"],
+                    logits_mode=request.get("logits_mode", "all"),
+                    chain_ancestry=request.get("chain_ancestry"),
+                )
+            else:
+                receipt = teacher.capture_prefix(
+                    request["tokens"],
+                    request["tap_ids"],
+                    logits_mode=request.get("logits_mode", "all"),
+                    chain_ancestry=request.get("chain_ancestry"),
+                    decode_history=request.get("decode_history"),
+                    logits_indices=request.get("logits_indices"),
+                )
+            print(json.dumps(receipt), flush=True)
 
 
 if __name__ == "__main__":

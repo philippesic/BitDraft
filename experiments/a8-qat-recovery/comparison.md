@@ -228,4 +228,4 @@ RTX5080 idle baseline 2766 MiB/0%. See [final-physical-release.json](final-physi
 The first transport closed 16:05:50UTC; the bounded remaining three-report metadata
 read changed no hashes or GPU state, and its transport closed 16:17:24UTC. No owned
 experiment remains. Final publication, worktree cleanup and SAME heartbeat pause
-are recorded in the [goal completion checkpoint](../../docs/goals/a8-qat-recovery-and-comparison.md).
+are recorded in the [goal completion checkpoint](../../docs/history/goals/a8-qat-recovery-and-comparison.md).

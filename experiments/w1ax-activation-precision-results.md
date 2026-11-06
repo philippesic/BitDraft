@@ -671,4 +671,4 @@ the measurement limits above. The 12-cell policy analysis passed without droppin
 output divergences or the fixed-policy comparison. The 120 interrupted D2/p0
 records remain preserved and excluded from completed-cell rates. Reproduction
 paths, hashes and the final process/GPU verification are recorded in the
-[goal checkpoint](../docs/goals/w1ax-activation-precision-suite.md).
+[goal checkpoint](../docs/history/goals/w1ax-activation-precision-suite.md).

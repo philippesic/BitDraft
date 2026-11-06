@@ -226,7 +226,7 @@ library internals as free of accelerator API side effects.
 Hourly heartbeat `a8-a1-health-check-enable-after-manual-start` is saved PAUSED,
 attached to this preparation chat. Its tool exposes no model/reasoning override;
 current chat Sol does not guarantee Luna-only future heartbeat execution.
-[Monitor setup](../docs/CONTINUOUS_W1AX_MONITOR.md) records supported Luna/high
+[Monitor setup](../docs/history/CONTINUOUS_W1AX_MONITOR.md) records supported Luna/high
 configuration and the exact limitation; leave paused until verified after user
 start. A standalone model-pinned schedule requires the user's explicit choice;
 it was not silently substituted. No Sol/Astra coordinator is required for the

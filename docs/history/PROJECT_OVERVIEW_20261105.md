@@ -1,0 +1,292 @@
+# Project overview: W1A1 EAGLE speculative decoding
+
+> Historical record: retained for context, not current instructions or ownership.
+> Follow the current STATUS and campaign for live work.
+
+## Current comparison policy — November 2, 2026
+
+For the modern Qwen3.5 4B/9B × Q4_K_M/NVFP4 correctness-mode track, the user
+selected **DFlash Q4_K_M** as the primary baseline. Target-only is the correctness
+reference; Q4_0 EAGLE remains an architecture diagnostic. Use the pinned
+[baseline settings](../../experiments/w1a8-standing-20261102/baseline.json).
+The historical Qwen3 F16/SM75 studies below retain their frozen Q4_0 comparators;
+they are not direct measurements against these modern targets. The
+[W1A8 inventory](../../experiments/w1a8-standing-20261102/report.md) explains the gap.
+
+## Purpose and central question
+
+Investigate whether an EAGLE speculative drafter with true one-bit weights and
+one-bit activations improves end-to-end inference throughput. The target model,
+verification, and sampling semantics remain unchanged.
+
+The central question is whether reduced draft execution time outweighs reduced
+speculative acceptance. A faster binary matrix multiplication alone is not a
+successful outcome. A reproducible negative result that identifies the limiting
+cost is also a successful research outcome.
+
+For future W1A1 candidates, use both ordinary FP16 EAGLE and the standard
+Q4_0 EAGLE draft as same-device throughput anchors, with the target and verifier
+held fixed. The Q4_0 control is a block-scaled draft weight format, not the
+separate whole-row/whole-token W4A4 research quantizer. After the completed
+2080 Ti suite, prioritize quantization-aware training (QAT) that recovers
+held-out draft acceptance. Consider alternative drafter architectures after
+this quality-focused phase; no non-EAGLE W1A1 result exists yet. The later
+[primary-source review](../../experiments/research-cross-reference-2026-09-25.md)
+favors a paired released DSpark/DFlash screen, with DSpark as the lead
+normal-precision quality candidate; its W1A1 robustness remains untested.
+
+Treat this document as the project's overarching guidance. Update it when an
+experiment changes a major assumption, and record the evidence in `experiments/`.
+The initial time budget is approximately two to three weeks of experimental work.
+
+## Starting point and boundaries
+
+- Candidate target: `Qwen/Qwen3-4B`.
+- Candidate drafter: `AngelSlim/Qwen3-4B_eagle3`.
+- Runtime: extend llama.cpp/ggml rather than building an inference engine.
+- Day-to-day experiment hardware: RTX 5080. Use it for conversion, W1A1
+  simulation/QAT, and general iteration when available.
+- Binary Tensor Core measurement hardware: RTX 2080 Ti, Turing, compute
+  capability 7.5. Re-run all comparison anchors on this device before making
+  an SM75 end-to-end speedup claim.
+- Start from existing draft weights. Fine-tune the small EAGLE component with
+  quantization-aware training if needed; do not train a foundation model.
+- Keep target precision, weights, sampling, and verifier settings fixed within
+  each comparison. If memory requires a quantized target, label that experimental
+  track explicitly and use the same target in every baseline in that track.
+
+Out of scope: broad architecture support, a general binary CUDA library, a new
+serving engine, extensive production integration, and foundation-model training.
+
+## What W1A1 means here
+
+For selected major drafter linear layers, approximate weights and activations as
+
+```text
+W_b = alpha * sign(W)
+X_b = beta  * sign(X)
+```
+
+The sign convention at zero, scaling granularity, scale precision, clipping, and
+STE gradient rule are explicit experiment parameters. QAT retains latent
+full-precision weights while the forward pass uses binarized operands. Begin
+with PyTorch simulation to evaluate acceptance before substantial kernel work.
+
+The final accelerated path packs both operands and performs binary arithmetic.
+For equal bit encodings of ±1 values and a logical reduction length K:
+
+```text
+dot(a, b) = K - 2 * popcount(packed(a) XOR packed(b))
+```
+
+Padding bits must be masked or accounted for; alpha and beta are applied to the
+integer dot product. One-bit storage followed by floating-point dequantization
+does not qualify as true binary execution. Normalization, attention softmax,
+residual additions, bias, and scaling may remain at normal precision.
+
+Audit the actual drafter graph before deciding coverage. Record each linear
+layer's shape, latency, precision, and binary eligibility. Treat feature fusion,
+attention/MLP projections, and the vocabulary head separately. If a large head
+remains FP16, report the mixed-precision coverage and its share of total cost.
+
+## System design
+
+```text
+unchanged Qwen3 target -> target hidden states -> EAGLE drafter
+                                                |
+                              activation sign extraction + packing
+                                                |
+                                packed W1A1 linear operations
+                                                |
+                              scaling + normal-precision scaffolding
+                                                |
+                                           draft tokens
+                                                |
+                                  unchanged target verification
+```
+
+Reuse upstream target inference, EAGLE feature plumbing, verification, sampling,
+KV caches, CLI, and server. Custom runtime work is limited to a packed W1 tensor
+representation/export, activation packing, an SM75 binary matrix operation, and
+dispatch for the selected EAGLE linear layers. Keep development prototypes in
+this repository; integrate graph/backend changes in the llama.cpp submodule and
+preserve them as reviewable commits or patches before sharing experiments.
+
+## Milestones and decision gates
+
+| Stage | Work and deliverable | Decision gate |
+| --- | --- | --- |
+| 0: preparation, days 1–3 | Pin and convert the target/draft pair; audit drafter layer shapes, precision, and binary eligibility. Resolve conversion or memory issues that block W1A1 work. | The model artifacts and graph information needed for simulation are available. A separate FP16 EAGLE benchmark is not a prerequisite. |
+| 1: acceptance, days 3–7 | Simulate W1A1 in PyTorch; ablate linear groups and scaling; use bounded QAT if initial acceptance is poor. | Measure held-out W1A1 acceptance and choose a candidate for native execution. Defer relative throughput and break-even conclusions until paired comparison runs. |
+| 2: kernels, days 7–11 | Implement a numerical reference, packer, and SM75 XOR/POPCOUNT kernel for measured shapes; benchmark packing-inclusive latency. | Correctness covers tails, scales, layouts, and zero-sign behavior. Real layer shapes show useful savings after packing and launch costs. |
+| 3: integration and comparison, days 11–15 | Route selected draft operations to binary execution. Run target-only, FP16 EAGLE, and native W1A1 under matched settings on each relevant GPU; measure acceptance and end-to-end latency together, profile bottlenecks, and write a report. | Report repeatable throughput gains or a quantified negative result with artifacts sufficient to reproduce it. |
+
+These dates are planning estimates, not a reason to expand scope. If a gate fails,
+run a small diagnostic or ablation, record the outcome, and favor a clear result
+over adding more architectures or training infrastructure.
+
+### Evidence at the current gate (2026-09-24)
+
+The pinned PyTorch fake-binary drafter and 12-prompt held-out RTX 5080 sweep are
+implemented. Under the AngelSlim BF16 verifier, ordinary EAGLE accepted 2.317
+draft tokens/round, head-only W1A1 1.677, and all selected W1A1 groups 0.202.
+W4A4 and W8A8 simulations over all candidate linears accepted 0.288 and 2.182
+respectively. The nine candidate linears occupied 38.32% of one-prompt
+instrumented draft time. See the [W1A1 CUDA report](../../experiments/pytorch-w1a1-cuda-acceptance.md)
+and [W4A4/W8A8 report](../../experiments/pytorch-int4-int8-cuda-acceptance.md).
+
+Strict target-only versus ordinary EAGLE greedy parity fails at generated
+token 4 on CUDA BF16 through a target-selected verifier tie. A bounded 5080
+replay found that off-path sibling tokens do not alter the selected hidden
+state or logits; the tree row's 21.0 tie versus the incremental/full-prefix
+target's 20.875 logit for ID 11 is the immediate mismatch source. The
+acceptance counts are verifier-relative exploratory evidence, not a
+target-equivalent speed claim.
+The current autonomous goal investigated that discrepancy and completed one
+bounded head-only QAT recovery path. Validation KL improved, but held-out
+W1A1 accepted drafts/round fell from 1.677 untrained to 1.565 after training;
+the recipe is stopped without held-out tuning. See the
+[QAT report](../../experiments/qat-head-pilot-results.md). The
+[native integration plan](native-w1a1-path.md) records the narrow GGML/GGUF
+path before end-to-end comparison.
+
+The standalone packed CUDA kernel has since passed eight-width correctness
+and packing-inclusive component timing on the 5080; see the
+[native prototype report](../../experiments/native-w1a1-cuda-prototype.md). A
+dedicated GGML operation and EAGLE packed-head bridge are in the pinned
+llama.cpp fork, with CPU tests and local GGUF load checks. Integrated GGML
+CUDA backend correctness passed five focused cases on the 5080; model-level
+CUDA dispatch and a matched five-repetition end-to-end comparison then ran.
+The standalone packed CUDA checker also matched exact integer dots for
+eight captured drafter inputs across all 32,000 real head rows; see the
+[captured-input parity report](../../experiments/real-head-parity-5080.md).
+Packed-head W1A1 reached 0.931× ordinary EAGLE request throughput and
+0.925× its decode throughput on the 5080, while both exceeded target-only.
+See the [native comparison](../../experiments/native-end-to-end-5080.md) and
+[CUDA integration report](../../experiments/ggml-w1a1-cuda-5080.md). The 5080 prototype uses
+portable XOR/`__popc`; a separate
+[SM75 binary-MMA probe](../../experiments/sm75-binary-mma-plan.md) is scoped for
+the 2080 Ti before a claim about Turing Tensor Core performance. That probe
+cross-compiled to SM75 and passed exact integer-dot checks through a 5080
+proxy mode, but has not run on Turing.
+
+The native ordinary EAGLE and packed-head paths produced identical decoded
+text across all 60 paired 5080 requests, but both differed from target-only
+on two prompt IDs. A separate opt-in raw-logit diagnostic reproduced those
+ordinary EAGLE outputs and showed that the emitted verifier rows themselves
+ranked the speculative token first; the differing drafts were rejected.
+This narrows the immediate discrepancy to a target-verifier versus
+target-only argmax difference, without proving whether rounding or target
+cache/position state caused it. Keep target-only throughput ratios labeled
+as timing observations, not strict lossless speedups. See the
+[native verifier trace](../../experiments/native-verifier-trace-5080.md).
+
+An opt-in integrated binary-MMA branch passed 8/8 scalar-reference CUDA
+backend checks on the 5080, and one packed-draft request matched the
+production portable path's 85 token IDs. A separate SM75 compile emitted
+`BMMA.88128.XOR.POPC` in the candidate GGML library. This is 5080 proxy
+correctness and SM75 compile-only evidence; no Turing runtime or timing has
+been measured. See the [integrated MMA
+report](../../experiments/integrated-binary-mma-5080.md).
+
+An approximate planning model is `throughput = emitted tokens per round / round
+time`, with round time including draft, verification, and all other overhead.
+Use values measured in the paired comparison, including target-emitted tokens,
+when estimating the break-even draft cost. The final decision comes from
+end-to-end timing.
+
+### RTX 2080 Ti hardware result (2026-09-25)
+
+The completed [SM75 quantization suite](../../experiments/rtx2080ti-quantization-suite.md)
+used the same FP16 target and frozen 12-prompt/five-repetition protocol on
+the 2080 Ti. All five native W1A1 coverage settings lost to ordinary EAGLE:
+head-only reached 0.907× ordinary decode rate and all-nine W1A1 0.561×.
+Head draft arithmetic became faster, but lower accepted drafts required
+more verification rounds. An actual binary Tensor Core head path passed
+correctness and instruction gates yet tied the portable binary path at
+1.002× decode rate (95% paired interval 0.997–1.006).
+
+Genuine all-nine W8A8 reached 0.990× ordinary decode rate (0.975–1.005),
+while W4A4 reached 0.511× (0.466–0.561) as acceptance collapsed. Opt-in
+live SM75 INT8 and INT4 MMA paths matched their same-format default outputs
+and accepted counts but were slower: 0.821× W8A8 DP4A and 0.880× W4A4
+packed-vector decode rate. A separate CUDA trace measured N=1 head
+pack-plus-dot medians of 149 versus 435 µs for W8A8 default/MMA and 153
+versus 362 µs for W4A4 default/MMA; at N=37 the MMA kernels were faster.
+The existing Q4_0/Q8_0 draft GGUF controls were
+faster than ordinary at 1.109×/1.064×. An isolated executed-path trace
+confirmed they quantize F32 activations to Q8_1 and select MMVQ at the
+observed one/two-token shapes and MMQ at an observed 38-token shape; their
+block-scale contracts remain distinct from W4A4/W8A8.
+
+All speculative variants in the matched runs produced identical text to
+their paired speculative anchors. Target-only differed on one stable
+heading-capitalization prompt, so ratios to target-only remain timing
+observations rather than strict lossless speedups. The result establishes a
+negative finding for these W1A1 and W4A4 recipes on this workload; it does
+not rule out other quantizers, QAT objectives, batch shapes, or kernel layouts.
+
+## Comparison and evidence
+
+Mandatory anchors for future W1A1 work are no speculation, normal FP16 EAGLE,
+and Q4_0 EAGLE. Desired additional comparisons are W8A8, W4A4, and W1A1
+EAGLE. Record the actual execution path for
+every precision; weight-only GGUF quantization is not automatically W8A8/W4A4.
+If a genuine low-bit baseline is unavailable within scope, state that limitation.
+Keep 5080 development results separate from 2080 Ti binary-speed conclusions;
+each hardware track needs its own same-device anchors. Measure the anchors in
+direct, matched comparisons with native W1A1 rather than as a separate early
+baseline milestone.
+
+Measure draft latency, activation packing, binary kernels, output-head cost,
+verification latency, accepted/drafted tokens, accepted tokens per round,
+end-to-end output tokens/sec, and speedup over each mandatory anchor. Include
+memory usage and runtime/environment metadata. Separate prefill from decode and
+report request time as well as decode throughput. See [evaluation](../EVALUATION.md).
+
+Success requires correct binary math, preserved target/verifier behavior, clear
+precision coverage, and repeatable measurements on the RTX 2080 Ti. Validation
+includes greedy equivalence checks and appropriate sampling correctness checks;
+do not assume identical seeded sampled sequences across different execution paths.
+The [RTX 2080 Ti runbook](RTX2080TI_RUNBOOK.md) records the remaining host,
+memory, correctness, and matched-comparison gates. Its address is in the
+shared local registry, but Ubuntu WSL and reachable SSH are still needed for
+the first actual SM75 run.
+
+## Principal risks and responses
+
+| Risk | Evidence to collect / bounded response |
+| --- | --- |
+| Acceptance collapses | Layer-group and scaling ablations, then limited QAT; evaluate held-out prompts. |
+| Packing costs exceed savings | Time sign extraction, packing, scales, and GEMM together; investigate fusion/reuse only if profiling supports it. |
+| Small matrices underutilize hardware | Use measured batch/token shapes; include launch and synchronization costs rather than large-GEMM peak claims. |
+| Vocabulary head dominates | Profile and ablate head precision explicitly; calculate the maximum gain from accelerating the remaining layers. |
+| Hardware/toolchain mismatch | Compile an SM75 instruction probe, validate numerical behavior, and inspect generated instructions on the benchmark host. |
+| Target, draft, and caches exceed memory | Establish the memory budget early; reduce fixed context/batch settings or define a separately labeled target-precision track. |
+
+## Novelty and final deliverables
+
+The candidate contribution is the combination of EAGLE drafting, W1A1 operands,
+packed native binary execution, and an end-to-end acceptance/latency evaluation.
+Do not claim to invent binary inference or quantized speculative decoding.
+A [focused related-work review](../../experiments/related-work-note.md) found
+prior quantized EAGLE QAT and native deployment; the narrow W1A1
+weight-and-activation combination remains a provisional experimental claim,
+not an established first.
+
+Deliver a pinned runtime, conversion/quantization configuration, bounded training
+recipe if used, binary correctness checks and kernels, reproducible benchmark
+commands/raw results, and a short report explaining gains or failure modes.
+
+## Verified starting references
+
+At repository setup, llama.cpp revision
+`6e60f35608ec6918b44a9839c0c433687165f086` documents this target/drafter pair and
+`draft-eagle3`. That establishes upstream support, not a successful local model
+run. The starting scaffold had no W1A1 implementation or measured results;
+the current state is summarized above and in `docs/STATUS.md`.
+
+- [Pinned upstream EAGLE-3 instructions](https://github.com/ggml-org/llama.cpp/blob/6e60f35608ec6918b44a9839c0c433687165f086/docs/speculative.md)
+- [Candidate draft checkpoint](https://huggingface.co/AngelSlim/Qwen3-4B_eagle3)
+- [Candidate target checkpoint](https://huggingface.co/Qwen/Qwen3-4B)
+- [NVIDIA PTX ISA 8.5](https://docs.nvidia.com/cuda/archive/12.6.0/parallel-thread-execution/index.html): binary `mma` XOR/POPCOUNT and architecture requirements. Validate the exact instruction shape and toolkit on SM75; do not assume all binary instruction variants work on Turing.

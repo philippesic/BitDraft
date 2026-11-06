@@ -6,7 +6,7 @@ admission and CPU-only dependency setup. The human then paused all RTX5080 use
 and directed Mac-only continuation. No CUDA compilation, CUDA test, model load,
 TRAIN capture, real-model backward, optimizer update, training, or evaluation
 occurred. No further remote action is planned while paused. See the
-[authoritative pause checkpoint](../../docs/goals/nine-model-qat-preparation.md#current-hardware-boundary-mac-only).
+[authoritative pause checkpoint](../../docs/history/goals/nine-model-qat-preparation.md#current-hardware-boundary-mac-only).
 
 ## Historical startup gate — before direct RTX5080 authorization
 

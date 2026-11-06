@@ -3,7 +3,7 @@
 This file archives the long chronological goal checkpoints through the main
 benchmark and Q4_0/Q8_0 trace. It preserves exact intermediate commits,
 owners, runs, and decisions. The concise completed goal file is
-[here](../docs/goals/rtx2080ti-quantization-suite.md), and the final result is
+[here](../docs/history/goals/rtx2080ti-quantization-suite.md), and the final result is
 in the [synthesis](rtx2080ti-synthesis.md) and
 [experiment provenance](rtx2080ti-quantization-suite.md).
 

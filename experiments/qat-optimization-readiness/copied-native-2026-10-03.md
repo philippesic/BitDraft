@@ -18,7 +18,7 @@ readiness, optimizer training and Q4_0 acceptance/throughput remain pending.
   All22collected originals and unchanged Python validator independently checked.
 
 Raw files, copied runtime/toolchain inventory and exact environment/source hashes
-remain in ignored runs. See the [active goal checkpoint](../../docs/goals/qat-optimization-readiness.md#actual-copied-native-cuda-fixture-passed--october-3-1110-utc)
+remain in ignored runs. See the [active goal checkpoint](../../docs/history/goals/qat-optimization-readiness.md#actual-copied-native-cuda-fixture-passed--october-3-1110-utc)
 for exact paths, hashes, closure correction and next gates. Q4_0 EAGLE remains the
 primary comparison; FP16 EAGLE is secondary. No latency, throughput, acceptance,
 convergence or training-readiness conclusion follows from this synthetic pass.

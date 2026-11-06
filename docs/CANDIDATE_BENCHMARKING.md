@@ -1,5 +1,26 @@
 # DFlash candidate training and benchmarking
 
+## Supported development routes
+
+| Work | Entry point | Evidence boundary |
+| --- | --- | --- |
+| Current component precision/recovery | [Component campaign](COMPONENT_CAMPAIGN.md), [remaining precision](REMAINING_PRECISION.md), `scripts/dflash_baseline` | Use the active owner's pinned commands; do not start a second trainer |
+| Build native runtime | `make build-cuda` / `scripts/build_llama.py` on the selected source | Build success is not native qualification |
+| Contender pipeline contract fixtures | `make workflow-check` | CPU fixtures; not the active component campaign or GPU coverage |
+| Training/resume/export/native acceptance | Current campaign receipts and `scripts/dflash_baseline`; [pipeline reference](../scripts/contender_pipeline/README.md) for that separate route | Require actual completed updates, recoverable state and native results |
+| Inspect/stop/recover a long job | [Operations](AGENT_OPERATIONS.md), `scripts/remote_job.py` and its run `state.json` | A recorded PID or pause flag alone is not live ownership or termination |
+| End-of-investigation cleanup | `python3 scripts/milestone_inventory.py RUN_DIRECTORY`, then [retention procedure](AGENT_OPERATIONS.md#milestone-artifact-retention) | Inventory is not deletion authority or a resume proof |
+
+Benchmark design starts with the user's decision: deep workload performance,
+compatibility across models/runtimes/machines, recovery quality, or a quick screen.
+Put claim, comparator, coverage, meaningful metrics, controls, budget and stopping
+rules in the existing campaign record. Label agent-proposed criteria explicitly;
+no universal repetition count or startup-payback horizon. Preserve training
+exposure/control matching. Acceptance and kernel counters diagnose mechanisms;
+matched native end-to-end results answer throughput claims. Unsupported/blocked,
+invalid, fallback and genuinely measured negative outcomes remain distinct.
+
+
 This is the entry point for candidate comparisons. The user clarified on
 November 4 that the sequence is **essential-feature foundation first, precision
 selection second, experimental feature tiers afterward**. Exact scope is in
@@ -15,17 +36,18 @@ pilot-defined; the historical vanilla allocation is not reused for new arms.
 
 The already-authorized vanilla W1A8 run below remains a minimal control. Its
 midpoint/gain exclusions apply to THAT frozen reference, not to the separate
-essential-feature candidate. Preserve the live delegated run and its budget;
-do not retrofit it or relabel it as the expanded foundation. Future training
-allocations remain separate. This protocol supplements [EVALUATION.md](EVALUATION.md).
+essential-feature candidate. Preserve that reference and its original budget; do not retrofit it or relabel
+it as the expanded foundation. Consult [STATUS](STATUS.md) for the current
+execution owner and [component campaign](COMPONENT_CAMPAIGN.md) for the active
+follow-on allocation; this historical reference section is not a live-run notice. This protocol supplements [EVALUATION.md](EVALUATION.md).
 
 ## Reference registry
 
 The initial reference is registered in
 [baseline manifest](../experiments/dflash-w1a8-baseline-20261104/manifest.json).
 Read its status before attempting a benchmark. Null checkpoint or evaluation
-fields mean not yet produced, never zero performance. The preparation worker
-owns the experiment report and manifest; STATUS links to the current evidence.
+fields mean not yet produced, never zero performance. STATUS links to current ownership and evidence; this reference registry does not
+assign a new worker or authorize a run.
 
 | Reference | Role | Replacement policy |
 | --- | --- | --- |

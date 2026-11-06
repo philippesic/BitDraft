@@ -2,7 +2,7 @@
 
 **Hardware:** NVIDIA RTX 2080 Ti, SM75, 11,264 MiB; Ubuntu 24.04 WSL2; CUDA 12.8.93.
 **Workload:** Qwen3-4B target and AngelSlim EAGLE-3 draft, 12 frozen prompts, greedy decoding, 128-token cap, F16 target/KV, context 2,048, one server at a time, two warmups and five measured repetitions per variant.
-**Evidence:** [raw provenance and per-run reports](rtx2080ti-quantization-suite.md); [active goal checkpoint](../docs/goals/rtx2080ti-quantization-suite.md). Raw captures remain on the WSL host under the report's hashed result directories.
+**Evidence:** [raw provenance and per-run reports](rtx2080ti-quantization-suite.md); [active goal checkpoint](../docs/history/goals/rtx2080ti-quantization-suite.md). Raw captures remain on the WSL host under the report's hashed result directories.
 
 ## Result
 

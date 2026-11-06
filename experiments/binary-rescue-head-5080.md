@@ -14,7 +14,7 @@ development prompts. The 24 reserved-final prompts remain untouched. All primary
 requests use native greedy sample-and-match, D=5, p_min=0, context2048, F16 KV,
 seed42, no thinking, no prompt reuse, one client, and at most128 output tokens.
 
-The [goal checkpoint](../docs/goals/binary-rescue-head-5080.md) records ownership,
+The [goal checkpoint](../docs/history/goals/binary-rescue-head-5080.md) records ownership,
 protocol, jobs and final evidence. Earlier scale-fitting and SM75 reports remain
 sealed. Development data is reused exploratory evidence; timing repetitions do
 not create additional independent quality prompts.

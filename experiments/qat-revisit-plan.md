@@ -4,7 +4,7 @@
 The user requested a QAT revisit and native tests of every previously simulated
 W1A1 coverage setting on the RTX 2080 Ti. Native post-training comparisons and
 QAT are separate experiments. See the [first pilot result](qat-head-pilot-results.md)
-and the [2080 Ti runbook](../docs/RTX2080TI_RUNBOOK.md).
+and the [2080 Ti runbook](../docs/history/RTX2080TI_RUNBOOK.md).
 
 **2026-09-25 direction:** the native five-setting 2080 Ti matrix is complete.
 QAT acceptance recovery is now the research priority. A trained native W1A1

@@ -91,7 +91,7 @@ def main() -> None:
         os.chmod(temp, 0o600)
         temp.replace(CONTROL)
         if args.action == "pause":
-            print("New runs blocked. Stop active jobs via tmux MCP and verify GPU memory is free.")
+            print("New runs blocked. Stop active jobs through the authenticated connection and verify GPU memory is free.")
         else:
             print("New runs allowed. Confirm host availability before starting.")
         return

@@ -237,7 +237,7 @@ separate held-out gate failed to recover acceptance; see its
 cross-compiled with BMMA SASS and passed 880 integer-dot checks on a 5080
 proxy path, but awaits actual RTX 2080 Ti execution and
 measurements; see the [probe record](sm75-binary-mma-plan.md) and
-[2080 Ti runbook](../docs/RTX2080TI_RUNBOOK.md).
+[2080 Ti runbook](../docs/history/RTX2080TI_RUNBOOK.md).
 
 The sealed raw run hashes are: `manifest.json`
 `86f5cd6b931132a41e4cf4132a0f490aefc13baa0753c66e987af458b0c9e24b`,
