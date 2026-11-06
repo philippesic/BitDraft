@@ -32,8 +32,8 @@ has been sent by this worker.
 Csmallbroad exact full-state restoration, byte-identical zero-update native
 export and a scratch GPU Adam4096→4097 qualification passed. The single extra
 1,800-second synchronized-update continuation is running under local tmux
-`dflash2-smoke-train-20261106-01`, supervised by canonical `remote_job.py`.
-[Supervisor](../runs/dflash2-smoke-train-20261106-01/state.json) ·
+`dflash2-smoke-train-20261106-02`, supervised by canonical `remote_job.py`.
+[Supervisor](../runs/dflash2-smoke-train-20261106-02/state.json) ·
 [Live progress](../runs/dflash2-smoke-20261106-01/candidate/live.json) ·
 [Smoke record](../experiments/dflash2-smoke-20261106/report.md).
 Raw outputs use canonical `runs/dflash2-smoke-20261106-01`; current full-state
@@ -42,6 +42,13 @@ authorized obsolete one-step roundtrip diagnostic was retired, freeing4.5GiB of
 Windows physical headroom; its configs/results/native exports remain and its
 retirement receipt is tracked with this experiment. The final continuation state
 will use a new Windows directory without replacing the parent.
+
+The first attempt's300.008seconds/1562updates were lost when its first readout
+hit a missing export-state version field. Its logs/source/accounting are preserved
+under `candidate-attempt01`; parent remains unchanged. The adapter now preserves
+version/lineage and saves state on readout failure. Attempt02 restarted from the
+original qualified4096state; failed-attempt cost is separate from its1800-second
+trajectory.
 
 A genuine Qwen3.5-4B DFlash2 release has been authenticated and converted;
 selector/convolution metadata and tensor coverage are present. No compatible9B
