@@ -4,7 +4,8 @@ from .common import *
 from .archive import hydrate,release,reference
 
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('arms',type=Path);ap.add_argument('--cache-map',type=Path);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--reps',type=int,default=5);ap.add_argument('--runtime',type=Path,default=R/'runtime03');ap.add_argument('--audit',action='store_true');a=ap.parse_args()
+ ap=argparse.ArgumentParser();ap.add_argument('arms',type=Path);ap.add_argument('--cache-map',type=Path);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--reps',type=int,default=5);ap.add_argument('--runtime',type=Path,default=R/'runtime03');ap.add_argument('--audit',action='store_true');ap.add_argument('--head-capture',action='store_true');a=ap.parse_args()
+ if a.head_capture and not a.audit:raise ValueError('Head capture is diagnostic audit work, never clean timing')
  a.out.mkdir(exist_ok=False);source=P/'runs/w1a8-modern-packed-runtime-20261103-01/source';runtime=a.runtime;exe=R/'replay-binaries'/pin(ROOT/'scripts/component_campaign/replay.cpp')['sha256'][:12];exe.parent.mkdir(exist_ok=True)
  cmd=['c++','-O2','-std=c++17','-I'+str(source/'include'),'-I'+str(source/'ggml/include'),'-I'+str(source/'vendor/nlohmann'),str(ROOT/'scripts/component_campaign/replay.cpp'),'-L'+str(runtime/'bin'),'-lllama','-lggml-base','-lggml','-ldl','-Wl,-rpath,'+str(runtime/'bin'),'-o',str(exe)]
  if not exe.exists():
@@ -21,6 +22,7 @@ def main():
      dest=a.out/f'{rep:02d}-{name}-{domain}.json'
      env={k:v for k,v in os.environ.items() if not k.startswith(('GGML_','CUDA_','LD_','W1A8_','LLAMA_'))}
      env.update(LD_LIBRARY_PATH=str(runtime/'bin'),LD_PRELOAD=str(P/'runs/execution-campaign-20261105-01/libgraph-timer.so'),GGML_CUDA_DECODE_CONSISTENT='32',CUDA_VISIBLE_DEVICES='0',OMP_NUM_THREADS='4',EXEC_REQUEST_MASKS='1',COMPONENT_K=cache.get(name,['f16','f16'])[0],COMPONENT_V=cache.get(name,['f16','f16'])[1])
+     if a.head_capture:env['COMPONENT_HEAD_CAPTURE_PREFIX']=str(dest.with_suffix(''))
      argv=[str(exe),str(TARGET),str(model),str(capture),str(anchor),'1',str(dest),str(int(a.audit))]
      with dest.with_suffix('.log').open('w') as log:subprocess.run(argv,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
      logtext=dest.with_suffix('.log').read_text();actual_cache=re.findall(r'llama_kv_cache: size =.*?K \(([^)]+)\):.*?V \(([^)]+)\):',logtext)
