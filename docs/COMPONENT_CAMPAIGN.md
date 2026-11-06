@@ -605,3 +605,22 @@ owner. The old post-primary owner receipt is preserved as
 `post-primary-initial-owner.json`; an old loaded wait helper may rewrite its old
 owner filename when the followup starts, so use distinct successor owner receipts
 and supervisor states as current authority.
+
+### Selection publication repair and R2 start —19:34Pacific
+
+All selection/scalar/host measurements succeeded, but the first followup exited1
+while publishing: the archive reference helper expected an archive receipt for
+the existing raw external-Q4 file. Fixed raw-file pinning; failed attempt retained.
+Its passive recovery successor also exited safely without GPU work. The `-02`
+followup reused all measurements, published78actual readouts and exited0.
+Current sole GPU group is workspace run
+`component-recovery-combinations-20261105-02`, supervisor569889/group569892.
+Its exact state/birth/boot/source records are under that run and canonical
+`recovery-combinations-owner.json`; the `-01` groups are finished, not live.
+
+Exact tied-Q6 native requests, single-allocation and required-logit/cache checks
+passed (`qualification/tied-q6/verified.json`). H4R2's32-update CUDA pilot is now
+loading/running; it will save full state, native-evaluate0/32, then resume4096
+before the matched control. Do not interrupt healthy training. Both filesystems
+remain constrained; .NET drive inventory finds only Windows C (about5.27GBfree).
+No host configuration, disk compaction, old paid artifacts or target changes.
