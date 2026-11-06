@@ -714,3 +714,27 @@ not natural generalization. No additional long TRAIN capture is motivated by
 these observations yet; final selected recipes still require separate5-repetition
 short/medium/near-limit panels. The planned broader16native TRAIN captures remain
 a distinct matched short-context recipe; never claim they validate long training.
+
+## Restart reconciliation —21:48Pacific
+
+Unexpected WSL restart terminated the old recovery and passive post-recovery
+supervisors. Their old `running` state receipts remain unchanged as historical
+evidence; no process was adopted or signalled. Fresh boot/GPU checks show no
+compute owner and5080pause clear;2080Ti pause remains untouched.
+`restart-reconciliation.json` authenticates every archived native byte stream
+and repack original identity. All21physical4096windows (17primary+4R2) survived.
+Csmall had setup/native-zero files but no update log, readout or recovery state;
+its entire setup directory is preserved under the timestamped reconciliation.
+The new attempt starts from B0 with the original full4096allocation.
+
+Resume supervisor: workspace `runs/component-restart-recovery-20261105-01`, local
+tmux socket `binary-eagle-runtime`, session `component-restart-recovery-20261105-01`.
+It first completes the authenticated NEW archive repack, then reuses completed
+R2 receipts and executes Csmall/Chead/CtieKV/Ctied,16native TRAIN captures and
+H0broad/Csmallbroad. No stale predecessor wait is used: its predecessor is the
+new successful restart-audit supervisor. Source and birth/boot identities are
+recorded in the new run and campaign owner receipts. Stop only the authenticated
+new supervisor with SIGTERM (300-second checkpoint grace); preserve other jobs.
+Final audits, consumed-DEV selection, retained-state qualification, locked formal
+panels, fresh heldout, charts/report and release remain required. This is a
+restart checkpoint, not completion. Parent owns integration and delayed message.

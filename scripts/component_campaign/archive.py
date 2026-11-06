@@ -72,28 +72,38 @@ def blob(coded):
  if ref['sha256']!=digest or ref['bytes']!=len(coded):raise ValueError('immutable coded chunk differs')
  return ref
 
+_BASIS_CACHE=None
+def basis_catalog():
+ global _BASIS_CACHE
+ from scripts.dflash_baseline.model import GGUFReader
+ bases=sorted((R/'bases').glob('*.gguf'));key=tuple((str(p),p.stat().st_ino,p.stat().st_size,p.stat().st_mtime_ns) for p in bases)
+ if _BASIS_CACHE is not None and _BASIS_CACHE[0]==key:return _BASIS_CACHE[1]
+ catalog={};by_tensor={};refs={};header_ref=None
+ for base in bases:
+  ref=pin(base);refs[ref['path']]=ref;reader=GGUFReader(base)
+  if base.name=='shared.gguf':header_ref=dict(path=ref['path'],offset=0,bytes=min(int(t.data_offset) for t in reader.tensors))
+  for t in reader.tensors:
+   item=dict(path=ref['path'],offset=int(t.data_offset),bytes=t.data.nbytes)
+   catalog.setdefault((hashlib.sha256(t.data).hexdigest(),t.data.nbytes),item);by_tensor.setdefault((t.name,int(t.tensor_type),t.data.nbytes),item)
+ if header_ref is None:raise ValueError('protected shared native header basis missing')
+ with open(header_ref['path'],'rb') as stream:dictionary=z.ZstdCompressionDict(stream.read(header_ref['bytes']),dict_type=z.DICT_TYPE_RAWCONTENT)
+ compressor=z.ZstdCompressor(dict_data=dictionary,compression_params=z.ZstdCompressionParameters.from_level(1,window_log=25,hash_log=23,chain_log=23,search_log=3,strategy=z.STRATEGY_GREEDY))
+ value=(catalog,by_tensor,refs,header_ref,compressor);_BASIS_CACHE=(key,value);return value
+
 def archive(path,basis=None):
  from scripts.dflash_baseline.model import GGUFReader
  p=Path(path);destination,receipt=paths(p)
+ if p.parent.resolve()==(R/'bases').resolve():raise ValueError('protected raw native bases must remain raw')
  if receipt.exists():
   record=json.load(open(receipt));authenticate(record)
   if p.exists():
    if pin(p)!=record['original']:raise ValueError('changed native file')
    p.unlink()
   return record
- original=pin(p);catalog={};by_tensor={};dependencies={}
+ original=pin(p);catalog,by_tensor,base_refs,header_ref,header_compressor=basis_catalog();dependencies={}
  # Raw bases remain permanent recovery dependencies. New payloads share immutable
  # compressed chunks; tokenizer/header bytes use the protected shared dictionary.
- for base in sorted((R/'bases').glob('*.gguf')):
-  if base.samefile(p):continue
-  for t in GGUFReader(base).tensors:
-   h=hashlib.sha256(t.data).hexdigest();catalog.setdefault((h,t.data.nbytes),dict(path=str(base.resolve()),offset=int(t.data_offset),bytes=t.data.nbytes))
-   by_tensor.setdefault((t.name,int(t.tensor_type),t.data.nbytes),dict(path=str(base.resolve()),offset=int(t.data_offset),bytes=t.data.nbytes))
  reader=GGUFReader(p);tensors=sorted(reader.tensors,key=lambda t:t.data_offset);segments=[];cursor=0;compressor=z.ZstdCompressor(level=1)
- header_path=R/'bases/shared.gguf';header_reader=GGUFReader(header_path);header_bytes=min(int(t.data_offset) for t in header_reader.tensors)
- with header_path.open('rb') as stream:header_dictionary=z.ZstdCompressionDict(stream.read(header_bytes),dict_type=z.DICT_TYPE_RAWCONTENT)
- header_compressor=z.ZstdCompressor(dict_data=header_dictionary,compression_params=z.ZstdCompressionParameters.from_level(1,window_log=24,strategy=z.STRATEGY_GREEDY))
- header_ref=dict(path=str(header_path),offset=0,bytes=header_bytes)
  partial=destination.with_suffix('.partial')
  with p.open('rb') as src,partial.open('xb') as out:
   def payload(offset,size):
@@ -101,14 +111,14 @@ def archive(path,basis=None):
    while size:
     block=src.read(min(size,8<<20));coded=(header_compressor if offset==0 else compressor).compress(block);ref=blob(coded);dependencies[ref['path']]=ref
     item=dict(kind='payload',offset=0,coded_bytes=len(coded),bytes=len(block),coded_source=ref)
-    if offset==0:item['dictionary']=header_ref;dependencies[str(header_path)]=pin(header_path)
+    if offset==0:item['dictionary']=header_ref;dependencies[header_ref['path']]=base_refs[header_ref['path']]
     segments.append(item);size-=len(block)
   for t in tensors:
    if t.data_offset>cursor:payload(cursor,int(t.data_offset)-cursor)
    n=t.data.nbytes;match=catalog.get((hashlib.sha256(t.data).hexdigest(),n))
    if match:
     segments.append(dict(kind='basis',**match))
-    if match['path'] not in dependencies:dependencies[match['path']]=pin(match['path'])
+    if match['path'] not in dependencies:dependencies[match['path']]=base_refs[match['path']]
    else:
     candidate=by_tensor.get((t.name,int(t.tensor_type),n))
     if candidate is None and t.name in ('output.weight','token_embd.weight'):
@@ -122,15 +132,16 @@ def archive(path,basis=None):
        diff=np.bitwise_xor(np.frombuffer(block,dtype=np.uint8),np.frombuffer(previous,dtype=np.uint8)).tobytes();coded=compressor.compress(diff)
        ref=blob(coded);dependencies[ref['path']]=ref
        segments.append(dict(kind='xor',path=candidate['path'],basis_offset=candidate['offset']+offset,offset=0,coded_bytes=len(coded),bytes=count,coded_source=ref));remaining-=count;offset+=count
-     if candidate['path'] not in dependencies:dependencies[candidate['path']]=pin(candidate['path'])
+     if candidate['path'] not in dependencies:dependencies[candidate['path']]=base_refs[candidate['path']]
     else:payload(int(t.data_offset),n)
    cursor=int(t.data_offset)+n
   if original['bytes']>cursor:payload(cursor,original['bytes']-cursor)
  partial.rename(destination)
- record=dict(schema='dflash.authenticated_tensor_slices.v1',original=original,archive=pin(destination),dependencies=list(dependencies.values()),segments=segments,verified_full_byte_roundtrip=True,storage='Content-addressed immutable coded chunks; shared raw header dictionary; exact original GGUF bytes.')
+ record=dict(schema='dflash.authenticated_tensor_slices.v1',original=original,archive=pin(destination),dependencies=list(dependencies.values()),segments=segments,verified_full_byte_roundtrip=True,storage_version=2,storage='Content-addressed immutable coded chunks; shared raw header dictionary with23-bit hash; exact original GGUF bytes.')
  h=hashlib.sha256();size=0
  for block in blocks(record):h.update(block);size+=len(block)
  if h.hexdigest()!=original['sha256'] or size!=original['bytes']:raise ValueError('complete native archive roundtrip failed')
+ authenticate(record)
  save(receipt,record)
  if pin(p)!=original:raise ValueError('native source changed during archival')
  p.unlink();return record

@@ -4,8 +4,12 @@ from .common import *
 from .post_primary import wait_release,run
 
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('--after',type=Path,required=True);a=ap.parse_args();wait_release(a.after)
- save(R/'recovery-combinations-owner.json',dict(owner=identity(),predecessor=pin(a.after),decision=pin(R/'selection-evidence.json'),source=pin(__file__),scope='One GPU lane; four bounded R2 windows, three original-history R1 combinations, native TRAIN capture then two explicitly matched broader-data windows. Final selection/retention/formal measurements remain.'))
+ ap=argparse.ArgumentParser();ap.add_argument('--after',type=Path,required=True);ap.add_argument('--restart-receipt',type=Path);a=ap.parse_args();wait_release(a.after)
+ if a.restart_receipt:
+  restart=json.load(open(a.restart_receipt))
+  if restart['status']!='RESTART_AUTHENTICATED_SERIAL_RESUME_ALLOWED' or restart['owner']['boot_id'].strip()!=Path('/proc/sys/kernel/random/boot_id').read_text().strip():raise ValueError('restart reconciliation does not authenticate this boot')
+  run('repack_archives')
+ save(R/'recovery-combinations-owner.json',dict(owner=identity(),predecessor=pin(a.after),restart_reconciliation=pin(a.restart_receipt) if a.restart_receipt else None,decision=pin(R/'selection-evidence.json'),source=pin(__file__),scope='One GPU lane; four bounded R2 windows, four original-history R1 combinations, native TRAIN capture then two explicitly matched broader-data windows. Completed training is reused; final selection/retention/formal measurements remain.'))
  run('tied_q6_qualify')
  run('recover','H4R2','H6R2','HE4R2','HE6R2','--pilot-first')
  run('queue','Csmall','Chead','Ctied')
