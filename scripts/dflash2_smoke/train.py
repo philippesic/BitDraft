@@ -116,7 +116,7 @@ def main():
         stored, _ = values(model, spec)
         if not reuse:
             export_state = dict(version=2, config=config, config_hash=digest(config), parameters=parameters(model),
-                                progress=copy.deepcopy(progress), deployment_exps=stored)
+                                progress=copy.deepcopy(progress), deployment_exps=stored, lineage=lineage)
             base = OUT / f'base-{label}.gguf'
             export(None, base, state=export_state, checkpoint_pin=actual)
             rewrite(base, OUT / f'model-{label}.gguf', spec, deployment_exps=stored)
@@ -168,7 +168,9 @@ def main():
                     additional_updates=len(times), recovery=recovery, progress=progress))
                 raise
             next_point = next(thresholds, float('inf'))
-    if stopped: point('paused')
+    if stopped:
+        recovery_snapshot('paused')
+        point('paused')
     torch.cuda.synchronize()
     stored, _ = values(model,spec)
     final_state = dict(version=2,config=config,config_hash=digest(config),parameters=parameters(model),
