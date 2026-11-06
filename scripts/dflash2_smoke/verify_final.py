@@ -31,6 +31,8 @@ def main():
     gpu = qualify(state,'Csmallbroad',dest,COMPONENT/'arms/Csmallbroad')
     save(dest/'result.json',dict(status='FULL_FINAL_STATE_NATIVE_BYTE_IDENTITY_AND_GPU_RESUME_PASS',
         recovery=receipt,native=expected,optimizer_steps=sorted(steps),master_count=104,
+        optimizer_groups=[dict({k:v for k,v in group.items() if k!='params'},
+                               parameter_count=len(group['params'])) for group in state['optimizer']['param_groups']],
         gpu_resume=gpu,source=pin(__file__),qualification_charged_to_budget=False))
     for p in (base,base.with_suffix('.json'),native,native.with_suffix('.component.json')):
         p.unlink()

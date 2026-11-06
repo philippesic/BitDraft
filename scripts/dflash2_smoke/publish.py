@@ -156,13 +156,15 @@ def main():
     invalid.update(actual_update_seconds=invalid_training['actual_update_seconds'],
         additional_updates=invalid_training['additional_updates'],result=pin(R/'candidate-attempt02-invalid-step/result.json'))
     failed_seconds=failed['actual_update_seconds']+invalid['actual_update_seconds']
+    resolved=json.load(open(OUT/'resolved.json'))
     compact=dict(status='COMPLETE',rows=rows,training=training,final_resume=resume,
         failed_attempts=[failed,invalid],failed_invalid_update_seconds=failed_seconds,
+        recipe={key:resolved[key] for key in ('config','spec','lineage','windows','unique_labels','sequences','parameters')},
         metadata=json.load(open(R/'release-audit/native-metadata.json')),
         no_9b_release=json.load(open(R/'release-audit/bounded-9b-search-summary.json')),
         scope='Consumed DEV smoke; two alternating process repetitions, no deployment promotion or statistical ranking. Methods/cells remain distinct. Before/after is additional training, not isolated precision attribution; no extra matched30-minute control.',
         memory_scope='Model/cache allocations from native logs (0.01MiB rounding); process resident/private/shared/PSS sampled during measured requests; device sampled total includes desktop/target/workspace. These are separate quantities, not one exact allocator peak.',
-        provenance=[pin(p) for p in (R/'release-audit/adaptation.json',R/'diagnostic-build.json',OUT/'zero-resume-proof.json')],
+        provenance=[pin(p) for p in (R/'release-audit/adaptation.json',R/'diagnostic-build.json',OUT/'zero-resume-proof.json',OUT/'resolved.json',R/'cpu-validation.json')],
         source=pin(__file__))
     save(DEST/'results.json',compact)
     fields=['cell','method','status','depth','request_tok_s','request_rep_min','request_rep_max','ratio_to_q4','mean_request_seconds','output_tokens','accepted','proposed','rounds','acceptance','accepted_per_round','emitted_per_round','clean_gpu_forward_ms','full_draft_host_ms_per_round','full_draft_all_phases_host_ms_per_round','immutable_target_gpu_model_bytes','private_gpu_model_bytes','target_cache_bytes','target_recurrent_state_bytes','draft_cache_bytes','rotation_bytes','sampled_peak_MiB','sampled_private_resident_bytes','sampled_shared_resident_bytes','sampled_peak_Pss_bytes','correct']
