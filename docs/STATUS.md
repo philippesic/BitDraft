@@ -12,13 +12,25 @@ statements are superseded; preserve the frozen optimized G4/D8 and references.
 
 ## Resume and next action
 
-The Nov 5 21:43 Pacific WSL restart cancelled the original worker and removed
-its GPU processes; old running receipts belong to the previous boot. A
-[replacement worker](<t3-thread://v2/92296584-2a2c-4998-8f7d-4ecb7d7f5ff2/thread:delegated-task:command%3Amcp%3A0fe2a54f-fe16-4ea5-81b3-28216f400484%3Adelegate-task%3Acomponent-campaign-20261105-01-restart-resume>)
-is reconciling and resuming the existing campaign in its preserved source
-checkout. All four targeted R2 windows finished; combinations and final panels
-remain. Preserve the archive repack edits and paid artifacts. The restart is
-not campaign completion and does not trigger the pending shader message.
+WSL restarts at Nov 5 21:43, 22:05 and 22:46 Pacific removed the GPU jobs.
+The [last worker](<t3-thread://v2/92296584-2a2c-4998-8f7d-4ecb7d7f5ff2/thread:delegated-task:command%3Amcp%3Ad403e916-bc69-4dbe-b9f4-2ac8f865dba8%3Adelegate-task%3Acomponent-campaign-20261105-01-second-restart>)
+is cancelled; no worker or campaign GPU process remains live. Its stream audit
+verified 93 native exports, both retained checkpoint streams and 21 paid source
+archives, but a later Windows checkpoint read failed with an I/O error. Preserve
+both observations: the later failure prevents claiming current resumability.
+Evidence is in [second reboot audit](../runs/component-campaign-20261105-01/second-reboot-audit-20261105-01/result.json)
+and the preserved checkout's `runs/component-reboot-state-audit-20261105-01/stdout.log`.
+
+The user authorized retiring superseded earlier precision checkpoints. Parent
+freed 12.1 GiB in WSL and 12.2 GiB directly on Windows; both filesystems now
+have approximately 14 GiB free. Exact exceptions and retained evidence are in the
+[checkpoint retirement record](../experiments/precision-campaign-20261104/checkpoint-retirement-20261105.md).
+All selected finalists, current parents and the component resume state remain.
+The [current worker](<t3-thread://v2/92296584-2a2c-4998-8f7d-4ecb7d7f5ff2/thread:delegated-task:command%3Amcp%3Ac989a2e7-31b3-422d-9d92-027d545b4901%3Adelegate-task%3Acomponent-campaign-20261105-01-storage-recovered>)
+is revalidating the checkpoint that previously failed to read before resuming
+the remaining combinations, broader recipe and final panels. All 21 completed
+training windows remain measured; the investigation and shader message are pending.
+Preserve dirty durability/audit source and unrelated archive transfers.
 
 Current run evidence: [queue and recorded process identity](../runs/component-campaign-20261105-01/queue-live.json),
 [training/evaluation accounting](../runs/component-campaign-20261105-01/accounting.json),
