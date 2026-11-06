@@ -60,9 +60,9 @@ def collect():
    recovery=json.load(open(directory/'recovery.json')) if (directory/'recovery.json').exists() else result.get('recovery',{})
    row['full_recovery_state_status']='retained' if recovery.get('archive') and Path(recovery['archive']).exists() else 'retired under NEW rolling policy; B0/native states retained'
    rows.append(row)
- control={r['updates']:r for r in rows if r['arm']=='H0'}
+ controls={'H4R2':'H6R2','H6R2':'H6R2','HE4R2':'HE6R2','HE6R2':'HE6R2','H0broad':'H0broad','Csmallbroad':'H0broad'};lookup={(r['arm'],r['updates']):r for r in rows}
  for r in rows:
-  c=control.get(r['updates']);r['ce_gap_matched_control']=r['ce']-c['ce'] if c else None
+  name=controls.get(r['arm'],'H0');c=lookup.get((name,r['updates']));r['matched_recovery_control']=name;r['ce_gap_matched_control']=r['ce']-c['ce'] if c else None
   r['native_acceptance_gap_matched_control']=r.get('acceptance')-c.get('acceptance') if c and r.get('acceptance') is not None and c.get('acceptance') is not None else None
  from .publication_merge import merge
  return merge(rows)

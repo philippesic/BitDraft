@@ -60,9 +60,11 @@ def merge(rows):
    row[prefix+'draft_prefill_host_ms_per_request']=entry.get('draft_prefill_host_ms_per_request');row[prefix+'full_draft_all_phases_host_ms_per_round']=entry.get('full_draft_all_phases_host_ms_per_round');row[prefix+'full_draft_host_scope']=entry['host_scope']
    row[prefix+'full_draft_host_vs_q4']=entry.get('host_vs_q4');row[prefix+'full_draft_host_vs_H0']=entry.get('host_vs_H0')
    row[prefix+'full_draft_host_vs_matched_control']=entry.get('host_vs_matched_control')
- controls=index.get('matched_controls',{})
+ controls={'H4R2':'H6R2','H6R2':'H6R2','HE4R2':'HE6R2','HE6R2':'HE6R2','H0broad':'H0broad','Csmallbroad':'H0broad',**index.get('matched_controls',{})}
  lookup={(r['arm'],r['updates']):r for r in rows}
  for row in rows:
+  if row['arm'] in ('B0','q4'):
+   row.update(matched_recovery_control=None,ce_gap_matched_control=None,native_acceptance_gap_matched_control=None);continue
   control=controls.get(row['arm'],'H0');c=lookup.get((control,row['updates']))
   row['matched_recovery_control']=control
   if c and row['ce'] is not None:row['ce_gap_matched_control']=row['ce']-c['ce']
