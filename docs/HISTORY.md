@@ -28,3 +28,14 @@ reports are preserved on this machine at
 See its README and verification receipt. This is outside Git; it is not current
 campaign source. Large obsolete Mac artifacts were approved for retirement;
 this archive does not promise exact old training-state recovery.
+
+
+## 2026-11-06: remaining component precision campaign
+
+Completed 28 physical 4,096-update windows and formal heldout/context panels.
+HE4 lowers clean draft latency; Csmallbroad reduces cache/model payload. Neither
+beats external DFlash Q4_K_M request throughput. Both retained full states
+actually resume and reproduce evaluated native weights. Parent validated the
+formal packet and raw heldout totals. [Report](../experiments/component-campaign-20261105/report.md).
+DFlash2 matrix smoke and one 30-minute candidate continuation are authorized next;
+the shader-thread handoff waits until that follow-up finishes.

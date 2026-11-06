@@ -2,12 +2,12 @@
 
 ## Objective and starting reference
 
-November 5, 2026: the user requests an incremental plan for output head,
-embeddings, drafter KV and scalar metadata/normalization gains. Extend
+November 5, 2026: the user authorized execution of this incremental output-head,
+embedding, drafter-KV and scalar plan after its training-cost estimate. Extend
 [PRECISION_SEARCH.md](PRECISION_SEARCH.md) on the qualified optimized G4/D8
-candidate; do not restart the activation-family campaign. This is planning only,
-not a new GPU/training allocation. The user has selected head reduction as the
-next experiment; no experiment is reported as run by this document.
+candidate; do not restart the activation-family campaign. The initial planning-only
+restriction is superseded. This document defines the protocol; actual outcomes and
+live ownership are recorded in [COMPONENT_CAMPAIGN.md](COMPONENT_CAMPAIGN.md).
 
 Freeze B0: exact learned-small2048 checkpoint, optimized qualified execution
 runtime, W1 gate/up/down weights, A4 gate/up inputs, A8 down inputs, Q4_0

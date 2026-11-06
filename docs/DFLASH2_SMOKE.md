@@ -57,3 +57,14 @@ GPU owner and the current campaign's artifacts. Follow the ordinary retention
 procedure at the completed milestone. The exact external message and deduplicated
 delivery key remain in
 [pending handoff](../runs/component-campaign-20261105-01/pending-thread-message.json).
+
+
+## Selected continuation after component review
+
+Csmallbroad has the highest measured request throughput among the two retained
+binary frontier states on both final consumed DEV and heldout. Use its actual
+4,096-update full state for the single extra 1,800-second continuation. HE4
+remains the unmodified lower-latency reference. The small throughput difference
+is not a statistically established ranking; selection here uses the requested
+request-throughput criterion among available retained recipes. H0broad remains
+a matched-control result, not a newly retained resumable checkpoint.

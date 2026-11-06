@@ -1,76 +1,52 @@
 # Current project status
 
-## Active: remaining component precision and recovery
+## Component campaign complete; DFlash2 follow-up next
 
-User now authorizes executing the remaining head/embedding/drafter-KV/scalar
-plan with matched recovery, combinations and charts. See
-[COMPONENT_CAMPAIGN.md](COMPONENT_CAMPAIGN.md) for scope, resource observations
-and operational ownership. Head Q6_K/private Q6_K/private Q4_K is first;
-qualified initial primary arms get cumulative0/256/1024/4096update readouts.
-One delegated worker will verify and own the GPU lane. Earlier planning-only
-statements are superseded; preserve the frozen optimized G4/D8 and references.
+The remaining head/embedding/drafter-KV/scalar campaign is complete on RTX 5080,
+Qwen3.5-4B Q4_K_M: 28 full 4,096-update windows, 118 readouts and 1,680 formal
+measured requests. Parent re-executed the formal packet validator, recomputed
+heldout totals and verified handoff file hashes. Actual retained-state GPU
+resume and exact native re-export passed. The worker released its GPU jobs.
 
-## Resume and next action
+[Report](../experiments/component-campaign-20261105/report.md) ·
+[Compact results](../experiments/component-campaign-20261105/results.json) ·
+[Full charts](../runs/component-campaign-20261105-01/charts/comparison.html) ·
+[Completion receipt](../runs/component-campaign-20261105-01/campaign-complete.json) ·
+[Parent review](../runs/component-campaign-20261105-01/parent-review-20261106.json).
 
-WSL restarts at Nov 5 21:43, 22:05 and 22:46 Pacific removed the GPU jobs.
-The [last worker](<t3-thread://v2/92296584-2a2c-4998-8f7d-4ecb7d7f5ff2/thread:delegated-task:command%3Amcp%3Ad403e916-bc69-4dbe-b9f4-2ac8f865dba8%3Adelegate-task%3Acomponent-campaign-20261105-01-second-restart>)
-is cancelled; no worker or campaign GPU process remains live. Its stream audit
-verified 93 native exports, both retained checkpoint streams and 21 paid source
-archives, but a later Windows checkpoint read failed with an I/O error. Preserve
-both observations: the later failure prevents claiming current resumability.
-Evidence is in [second reboot audit](../runs/component-campaign-20261105-01/second-reboot-audit-20261105-01/result.json)
-and the preserved checkout's `runs/component-reboot-state-audit-20261105-01/stdout.log`.
+HE4 has the faster draft: 0.995 ms clean GPU forward versus 1.179 ms external Q4;
+heldout request throughput is 167.06 versus 236.67 tokens/s. Csmallbroad is the
+smaller retained endpoint, saving 68.74 MiB of model/cache payload against its
+matched broader-data control and reaching 168.95 request tokens/s. External Q4
+remains the deployment incumbent. Controls, complete training recipes and
+cohorts remain distinct; full HF/native graph parity is still unresolved.
 
-The user authorized retiring superseded earlier precision checkpoints. Parent
-freed 12.1 GiB in WSL and 12.2 GiB directly on Windows; both filesystems now
-have approximately 14 GiB free. Exact exceptions and retained evidence are in the
-[checkpoint retirement record](../experiments/precision-campaign-20261104/checkpoint-retirement-20261105.md).
-All selected finalists, current parents and the component resume state remain.
-The [current worker](<t3-thread://v2/92296584-2a2c-4998-8f7d-4ecb7d7f5ff2/thread:delegated-task:command%3Amcp%3Ac989a2e7-31b3-422d-9d92-027d545b4901%3Adelegate-task%3Acomponent-campaign-20261105-01-storage-recovered>)
-is revalidating the checkpoint that previously failed to read before resuming
-the remaining combinations, broader recipe and final panels. All 21 completed
-training windows remain measured; the investigation and shader message are pending.
-Preserve dirty durability/audit source and unrelated archive transfers.
+## Authorized next action
 
-Current run evidence: [queue and recorded process identity](../runs/component-campaign-20261105-01/queue-live.json),
-[training/evaluation accounting](../runs/component-campaign-20261105-01/accounting.json),
-[checkpoint retention policy](../runs/component-campaign-20261105-01/checkpoint-policy.json).
-These are live-updated receipts, not a new owner assignment. The queue record's
-owner must be matched to live process start/boot identity before acting; follow
-[operations](AGENT_OPERATIONS.md#local-gpu-execution) for pause/stop/recovery.
-The queue source is under the existing component worker's pinned checkout;
-do not replace it with a generic contender launch or create a second operator.
+Execute [DFlash2 smoke](DFLASH2_SMOKE.md): genuine DFlash2 across the frozen
+4B/9B × Q4_K_M/NVFP4 target matrix, ordinary DFlash Q4_K_M comparisons, plus
+one additional 1,800-second actual-update continuation of the best retained
+candidate. Select Csmallbroad for that continuation using the native request
+throughput criterion among retained binary candidates; preserve HE4 as the
+faster-draft comparison. This is artifact/recipe selection, not an isolated
+precision claim or proof of a significant win over HE4. Measure before/after
+on consumed DEV; the old fresh24 cohort is now consumed and cannot be relabeled
+sealed. Do not start another broad training sweep.
 
-The active [component campaign](COMPONENT_CAMPAIGN.md) owns detailed allocation
-and worker updates. Reconcile its run/ownership receipts with live process birth
-and boot identity before adopting, stopping or resuming work. This workflow repair
-does not change that allocation or declare a checkpoint resumable.
+The previous campaign source checkout and pinned runtimes remain preserved.
+Parent is integrating and preparing one follow-up GPU owner. Fresh ownership,
+pause and storage checks precede launch; old running receipts from three WSL
+restarts are historical, not live authority. See [component record](COMPONENT_CAMPAIGN.md)
+and [operations](AGENT_OPERATIONS.md). All retained states/parents/data and
+unpublished source must remain recoverable. The explicitly retired earlier
+optimizer states are listed in the [retirement record](../experiments/precision-campaign-20261104/checkpoint-retirement-20261105.md).
 
-Next: continue the remaining component comparison through its existing owner;
-inspect the latest run receipts for completed updates, export/admission and native
-evaluation. Preparation, file existence and launch are not completed readouts.
-Keep external DFlash Q4_K_M, unchanged recovery controls, candidate frontier and
-deployment incumbent distinct. Current command routes are in
-[CANDIDATE_BENCHMARKING](CANDIDATE_BENCHMARKING.md).
+After the DFlash2/candidate follow-up finishes and is reviewed, release the GPU
+and send the exact queued shader benchmark message. The destination, message
+and deduplicated key are in the [pending handoff](../runs/component-campaign-20261105-01/pending-thread-message.json).
+The component campaign's completion alone does not trigger delivery.
 
-After this campaign finishes, execute the [DFlash2 smoke follow-up](DFLASH2_SMOKE.md):
-four frozen 4B/9B × Q4_K_M/NVFP4 baseline cells, plus the selected current
-candidate with one additional 30-minute QAT continuation and before/after native
-measurements. Then, after review and GPU release, send the user's exact benchmark
-instruction to the shader thread. The destination, unchanged message and delivery
-key are in the [pending handoff](../runs/component-campaign-20261105-01/pending-thread-message.json).
-Do not send after the component campaign alone; this follow-up now precedes it.
+## Reference and history
 
-## Revisit previous work
-
-- [Indexed prior status](history/STATUS_HISTORY_20261105.md): execution optimization,
-  precision comparison, earlier architecture and native diagnostic results.
-- [History](HISTORY.md): development chronology and prior attempts.
-- [Decisions](DECISIONS.md): dated rationale; old pending items are not a live queue.
-- [Precision campaign](PRECISION_CAMPAIGN.md) and [execution campaign](EXECUTION_CAMPAIGN.md): retained evidence and source/configuration identities.
-
-At meaningful milestones keep this page concise: objective, latest result and
-limits, current owner/run link, pending user choice and next action. Detailed
-accounting belongs in run receipts and campaign records. History entries should
-state what was tried, under which conditions, why the direction changed, and what
-would justify revisiting. Do not duplicate every progress update across records.
+[Candidate protocol](CANDIDATE_BENCHMARKING.md) · [Stages](CANDIDATE_STAGES.md) ·
+[History](HISTORY.md) · [Decisions](DECISIONS.md) · [Git and artifacts](GIT_AND_ARTIFACTS.md).
