@@ -54,7 +54,7 @@ static bool trace(ggml_tensor*t,bool ask,void*u){
   a.tensors.push_back({{"kind","selector_unary_candidate_identity"},{"positions",t->ne[1]-1},{"pass",true}});
  }
 
- a.tensors.push_back({{"name",name},{"op",ggml_op_name(t->op)},{"type",ggml_type_name(t->type)},{"bytes",bytes.size()},{"hash_fnv1a64",hash(bytes.data(),bytes.size())},{"shape",{t->ne[0],t->ne[1],t->ne[2],t->ne[3]}}});return true;
+ a.tensors.push_back({{"name",name},{"op",ggml_op_name(t->op)},{"type",ggml_type_name(t->type)},{"source_type",t->src[0]?ggml_type_name(t->src[0]->type):"none"},{"source_buffer",t->src[0]&&t->src[0]->buffer?ggml_backend_buft_name(ggml_backend_buffer_get_type(t->src[0]->buffer)):"none"},{"bytes",bytes.size()},{"hash_fnv1a64",hash(bytes.data(),bytes.size())},{"shape",{t->ne[0],t->ne[1],t->ne[2],t->ne[3]}}});return true;
 }
 static double now(){return std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now().time_since_epoch()).count();}
 int main(int argc,char**argv){try{
