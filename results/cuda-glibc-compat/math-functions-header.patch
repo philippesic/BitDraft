@@ -1,0 +1,20 @@
+--- /usr/local/cuda/targets/x86_64-linux/include/crt/math_functions.h	2025-12-16 19:49:41.000000000 -0800
++++ results/cuda-glibc-compat/include/crt/math_functions.h	2026-09-24 03:20:26.121484815 -0700
+@@ -626,7 +626,7 @@
+  *
+  * \note_accuracy_double
+  */
+-extern __DEVICE_FUNCTIONS_DECL__ __device_builtin__ double                 rsqrt(double x);
++extern __DEVICE_FUNCTIONS_DECL__ __device_builtin__ double                 rsqrt(double x) noexcept (true);
+ 
+ /**
+  * \ingroup CUDA_MATH_SINGLE
+@@ -650,7 +650,7 @@
+  *
+  * \note_accuracy_single
+  */
+-extern __DEVICE_FUNCTIONS_DECL__ __device_builtin__ float                  rsqrtf(float x);
++extern __DEVICE_FUNCTIONS_DECL__ __device_builtin__ float                  rsqrtf(float x) noexcept (true);
+ 
+ #if defined(__QNX__) && !defined(_LIBCPP_VERSION)
+ namespace std {

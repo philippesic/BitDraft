@@ -1,0 +1,68 @@
+--- a/src/models/dflash.cpp
++++ b/src/models/dflash.cpp
+@@ -174,7 +174,7 @@
+         std::set<std::string> expected;
+         for(int i=0;i<6;++i) for(auto p : {"gate","up","down"}) expected.insert("blk."+std::to_string(i)+".ffn_"+p+".weight");
+         const std::vector<int32_t> taps={2,6,10,14,18,22,26,30};
+-        bool ok=version==1 && bits==8 && profile=="ffn18" && order=="little" &&
++        bool ok=(version==1 || version==2) && bits==8 && profile=="ffn18" && order=="little" &&
+             sign=="nonnegative_is_one" && scale=="f32_learned_nonnegative" &&
+             declared==expected && names.size()==18 && n_layer==6 && n_embd==2560 &&
+             target_layer_ids==taps && hparams.dflash_block_size==16 && hparams.n_swa==4096 &&
+@@ -193,7 +193,7 @@
+         for(auto suffix : {".w1a1_packed",".w1a1_scale",".w1ax_midpoint"}) {
+             const std::string end=suffix;
+             if(name.size()>=end.size() && name.compare(name.size()-end.size(),end.size(),end)==0 &&
+-                (!binary || end==".w1ax_midpoint" || !declared.count(name.substr(0,name.size()-end.size())+".weight")))
++                (!binary || (end==".w1ax_midpoint" && version!=2) || !declared.count(name.substr(0,name.size()-end.size())+".weight")))
+                 throw std::runtime_error("undeclared DFlash packed tensor: "+name);
+         }
+     }
+@@ -208,6 +208,14 @@
+         packed.packed=create_tensor(LLM_TN_IMPL(LLM_ARCH_DFLASH,tensor,"w1a1_packed",bid,-1),{k/32,rows},0);
+         packed.scales=create_tensor(LLM_TN_IMPL(LLM_ARCH_DFLASH,tensor,"w1a1_scale",bid,-1),{rows},0);
+         packed.logical_k=k;
++        if(version==2) {
++            uint32_t abits=0, mode=0; float clip=0;
++            ml->get_key(base+".w1ax.bits",abits); ml->get_key(base+".w1ax.mode",mode); ml->get_key(base+".w1ax.clip",clip);
++            if((abits!=1 && abits!=2 && abits!=4 && abits!=8) || mode>2 || !std::isfinite(clip) || (mode && clip<=0)) throw std::runtime_error("invalid quantizer metadata");
++            memcpy(packed.scales->op_params,&abits,4); memcpy((char*)packed.scales->op_params+4,&mode,4); memcpy((char*)packed.scales->op_params+8,&clip,4);
++            create_tensor(tn(tensor,"w1ax_midpoint",bid),{rows},0);
++            if(tensor!=LLM_TENSOR_FFN_UP) create_tensor(tn(tensor,"w1ax_gain",bid),{k},0);
++        }
+         dense=nullptr;
+     };
+ 
+@@ -1171,11 +1179,27 @@
+         }
+ 
+         if (layer.ffn_up_w1a8.packed) {
+-            auto packed = ggml_w1ax_pack(ctx0, ggml_cont(ctx0, cur), 8);
+-            auto up = ggml_w1ax_mul_mat_shared(ctx0, layer.ffn_up_w1a8.packed, layer.ffn_up_w1a8.scales, packed, layer.ffn_up_w1a8.logical_k, 8);
+-            auto gate = ggml_w1ax_mul_mat_shared(ctx0, layer.ffn_gate_w1a8.packed, layer.ffn_gate_w1a8.scales, packed, layer.ffn_gate_w1a8.logical_k, 8);
+-            cur = ggml_mul(ctx0, ggml_silu(ctx0, gate), up);
+-            cur = ggml_w1ax_mul_mat(ctx0, layer.ffn_down_w1a8.packed, layer.ffn_down_w1a8.scales, ggml_cont(ctx0, cur), layer.ffn_down_w1a8.logical_k, 8);
++            auto tensor=[&](const std::string &n) { return const_cast<ggml_tensor *>(model.get_tensor(n.c_str())); };
++            auto pack=[&](ggml_tensor * input, const llama_w1a8_linear &p, const std::string &base) {
++                auto gain=tensor(base+".w1ax_gain"); if(gain) input=ggml_mul(ctx0,input,gain);
++                int bits=p.scales->op_params[0]; if(!bits) bits=8;
++                auto result=ggml_w1ax_pack(ctx0,ggml_cont(ctx0,input),bits);
++                if(p.scales->op_params[0]) memcpy((char*)result->op_params+4,(char*)p.scales->op_params+4,8);
++                return result;
++            };
++            auto project=[&](const llama_w1a8_linear &p,ggml_tensor *packed,const std::string &base) {
++                int bits=p.scales->op_params[0]; if(!bits) bits=8;
++                auto result=ggml_w1ax_mul_mat_shared(ctx0,p.packed,p.scales,packed,p.logical_k,bits);
++                result->src[4]=tensor(base+".w1ax_midpoint"); return result;
++            };
++            const std::string base="blk."+std::to_string(il)+".ffn_";
++            if(memcmp(layer.ffn_gate_w1a8.scales->op_params,layer.ffn_up_w1a8.scales->op_params,12)) throw std::runtime_error("gate/up quantizers must match");
++            auto packed=pack(cur,layer.ffn_gate_w1a8,base+"gate");
++            auto up=project(layer.ffn_up_w1a8,packed,base+"up");
++            auto gate=project(layer.ffn_gate_w1a8,packed,base+"gate");
++            cur=ggml_mul(ctx0,ggml_silu(ctx0,gate),up);
++            auto down=pack(cur,layer.ffn_down_w1a8,base+"down");
++            cur=project(layer.ffn_down_w1a8,down,base+"down");
+         } else {
+         cur = build_ffn(cur,
+                 layer.ffn_up,   NULL, layer.ffn_up_s,

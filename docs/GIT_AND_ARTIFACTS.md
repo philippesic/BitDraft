@@ -5,7 +5,7 @@ AGENTS.md, current state, indexed history, decisions and compact result summarie
 Keep credentials, machine-specific private settings, large models/data, raw captures,
 logs and regenerable build caches outside Git. Ignored does not mean disposable.
 
-## Current audit, 2026-11-05
+## Historical audit, 2026-11-05 (before preservation commits)
 
 Maintained source/document/configuration directories were checked for ignored files;
 only expected generated/cache entries were found. Many useful files are untracked:
@@ -36,3 +36,13 @@ retirement. Frozen source snapshots, nested repositories and third-party depende
 retain their own history and exclusions; do not apply current rules over pinned runs.
 Raw metadata inventories and audit limits are retained outside Git in the performing
 agent's `~/.local/share/p-stack/repairs/20261105-ignore-audit/` receipt directory.
+
+## Git maintenance update, 2026-11-06
+
+Project AGENTS.md now authorizes milestone and handoff pushes to the established
+user-owned origin. Source, project agent guidance and compact findings belong in
+this repository, not in p-stack. Campaign-level authored scripts and written reports
+are Git-visible even inside run directories; deeper frozen copies and large raw
+artifacts remain local. This is not permission to delete them. Maintained source
+directories were audited for hidden files; caches remain excluded. Git synchronization
+is verified separately from runtime correctness and artifact backup.

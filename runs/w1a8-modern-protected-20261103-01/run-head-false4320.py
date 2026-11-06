@@ -1,0 +1,19 @@
+from pathlib import Path
+import json,subprocess,hashlib,os,time,datetime,sys
+P=Path('/home/philip/binary-eagle-decoding');W=Path('/home/philip/.codex/worktrees/w1a8-actual-training-20261103');R=P/'runs/w1a8-modern-protected-20261103-01';C=Path('/mnt/c/Users/philip/binary-eagle-decoding-artifacts');out=C/'w1a8-selected-head-false4320-01';reference=C/'w1a8-head-resident-reference4320-01'
+def pin(p):
+ p=Path(p).resolve()
+ with p.open('rb') as f:h=hashlib.file_digest(f,'sha256').hexdigest()
+ return dict(path=str(p),bytes=p.stat().st_size,sha256=h)
+assert json.loads((R/'head-real-qualification-root-audit.json').read_text())['status']=='ROOT_REAL512_HEAD_GRADIENT_RESUME_ZERO_EXPORT_PASS';script=W/'scripts/w1a8_generalization/modern_train_selected_head.py';assert pin(script)['sha256']=='54ed1dd8bb927148abbdc1bdd23d08ebf2bb3b7b23aeb14bfb1aa3ccbc39b961';assert not out.exists()
+args=[str(P/'.venv/bin/python'),str(script),'--manifest',str(P/'runs/w1a8-modern-actual-training-data-20261103-01/final01/manifest.json'),'--union-manifest',str(C/'w1a8-modern-fit-expansion-20261103-01/union01/manifest.json'),'--resident-proof',str(R/'resident-row-real-qualification.json'),'--resident-capacity-mode','error','--reference',str(P/'runs/w1a8-modern-actual-training-20261103-01/reference02/reference.json'),'--parent',str(C/'w1a8-expanded-ce-resident-new24-3840-01/checkpoint-00003840.pt'),'--learn-signs','false','--expanded-ce','true','--extra-fit-readout','--final-updates','4320','--out',str(out),'--allow-cuda']
+(R/'head-false4320-plan.json').write_text(json.dumps(dict(source=pin(script),argv=args,reference=pin(reference/'checkpoint-00004320.pt'),scope='false480 migration equivalence only; no capacity outcome'),indent=2)+'\n');t=time.monotonic();proc=subprocess.Popen(args,cwd=W);q=Path('/proc')/str(proc.pid);i=dict(pid=proc.pid,pgid=os.getpgid(proc.pid),boot_id=Path('/proc/sys/kernel/random/boot_id').read_text().strip(),start_ticks=int((q/'stat').read_text().rsplit(')',1)[1].split()[19]),cmdline=(q/'cmdline').read_bytes().replace(b'\0',b' ').decode(),at_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),root_owner=True);(R/'head-false4320-child-identity.json').write_text(json.dumps(i,indent=2)+'\n');code=proc.wait()
+if code==0:
+ import torch
+ sys.path.insert(0,str(W/'scripts/w1a8_generalization'));from modern_selected_head_qualify import bit_equal
+ torch.set_num_threads(1);a=torch.load(reference/'checkpoint-00004320.pt',map_location='cpu',weights_only=False);b=torch.load(out/'checkpoint-00004320.pt',map_location='cpu',weights_only=False)
+ checks={k:bit_equal(a[k],b[k]) for k in ['cursor','rng','cuda_rng','python_rng','exposure','optimizer','ce_stage_exposure']};checks['raw_scale_offsets']=bit_equal(a['scales']['scale_offsets'],b['selected_state']['scale_offsets']);checks['selected_bits_unchanged']=bool((b['selected_state']['selected_latent'].abs()==1).all());checks['native_export']=pin(reference/'model.gguf')['sha256']==pin(out/'model.gguf')['sha256']
+ for n in ['after-development.json','after-fit.json','after-extra-fit.json']:checks[n]=bit_equal(json.loads((reference/n).read_text())['rows'],json.loads((out/n).read_text())['rows'])
+ report=dict(status='HEAD_DISABLED_MIGRATION480_EXACT' if all(checks.values()) else 'HEAD_DISABLED_MIGRATION_MISMATCH_STOP',all_exact=all(checks.values()),checks=checks,checkpoint=pin(out/'checkpoint-00004320.pt'),reference=pin(reference/'checkpoint-00004320.pt'),model=pin(out/'model.gguf'),scope='bitexact480scale/Adam/RNG/cursor/exposure/readout/nativeGGUF vs originalresident; physicalcost/cache excluded')
+ (R/'head-false4320-parity.json').write_text(json.dumps(report,indent=2)+'\n');code=0 if report['all_exact'] else 2
+(R/'head-false4320-job-result.json').write_text(json.dumps(dict(exit_code=code,wall_seconds=time.monotonic()-t,out=str(out)),indent=2)+'\n');raise SystemExit(code)

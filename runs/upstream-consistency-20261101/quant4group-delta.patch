@@ -1,0 +1,40 @@
+diff --git a/ggml/src/ggml-cuda/ggml-cuda.cu b/ggml/src/ggml-cuda/ggml-cuda.cu
+index 1e5fecb..0642979 100644
+--- a/ggml/src/ggml-cuda/ggml-cuda.cu
++++ b/ggml/src/ggml-cuda/ggml-cuda.cu
+@@ -2136,6 +2136,35 @@ static void ggml_cuda_mul_mat(ggml_backend_cuda_context & ctx, const ggml_tensor
+             ggml_is_matrix(src0) && ggml_is_matrix(src1) && ggml_is_matrix(dst)) {
+         const bool use_q = ggml_cuda_should_use_mmvq(src0->type, cc, 1);
+         const bool use_f = ggml_cuda_should_use_mmvf(src0->type, cc, warp_size, src0->ne, src0->nb, 1);
++        if (use_q && cc == GGML_CUDA_CC_BLACKWELL && src0->ne[0] >= 2560 &&
++                ggml_is_contiguous(src1) && ggml_is_contiguous(dst) &&
++                (src0->type == GGML_TYPE_Q4_K || src0->type == GGML_TYPE_Q5_K ||
++                 src0->type == GGML_TYPE_Q6_K || src0->type == GGML_TYPE_NVFP4)) {
++            // SM120 uses the same four-warp reduction for one to four columns.
++            // Share weight reads within four-column groups; keep Q8_1 staging.
++            const auto run_group = [&](int64_t count, int64_t groups, int64_t offset) {
++                ggml_tensor columns = *src1;
++                ggml_tensor outputs = *dst;
++                columns.data = (char *) columns.data + offset * columns.nb[1];
++                outputs.data = (char *) outputs.data + offset * outputs.nb[1];
++                columns.ne[1] = outputs.ne[1] = count;
++                columns.ne[2] = outputs.ne[2] = groups;
++                columns.nb[2] = count * columns.nb[1];
++                outputs.nb[2] = count * outputs.nb[1];
++                columns.nb[3] = groups * columns.nb[2];
++                outputs.nb[3] = groups * outputs.nb[2];
++                ggml_cuda_mul_mat_vec_q(ctx, src0, &columns, nullptr, &outputs);
++            };
++            const int64_t groups = ne11 / 4;
++            const int64_t tail = ne11 % 4;
++            if (groups) {
++                run_group(4, groups, 0);
++            }
++            if (tail) {
++                run_group(tail, 1, 4 * groups);
++            }
++            return;
++        }
+         if (use_q || use_f) {
+             ggml_tensor columns = *src1;
+             ggml_tensor outputs = *dst;

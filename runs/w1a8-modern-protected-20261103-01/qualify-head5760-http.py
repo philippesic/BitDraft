@@ -1,0 +1,11 @@
+from pathlib import Path
+import json,copy,argparse,sys,signal,time
+P=Path('/home/philip/binary-eagle-decoding');W=Path('/home/philip/.codex/worktrees/w1a8-actual-training-20261103');R=P/'runs/w1a8-modern-protected-20261103-01';C=Path('/mnt/c/Users/philip/binary-eagle-decoding-artifacts');sys.path.insert(0,str(W/'scripts/w1a8_generalization'))
+from modern_requests import Requests,atomic,pin
+training=json.loads((R/'head-matched5760-result.json').read_text());assert training['status']=='MATCHED1920_CAPACITY_TRAINING_COMPLETE_NOT_NATIVE_ADMITTED';m=json.loads((R/'selected-lr-models-verbose.json').read_text());template=next(a for a in m['arms'] if a['kind']=='w1a8');m['arms']=[a for a in m['arms'] if not a['id'].startswith('w1a8_sign_lr')];ids=[]
+for stage in training['stages']:
+ root=Path(stage['out']);d=json.loads((root/'result.json').read_text());assert pin(d['model']['path'])==d['model']==stage['model'];arm=copy.deepcopy(template);name='w1a8_'+stage['arm']+'5760';ids.append(name);arm.update(id=name,model=d['model']);arm['runtime']['log_verbosity']=4;arm['runtime'].pop('loader_qualification',None);m['arms'].insert(-1,arm);m['source_pins'].append(pin(root/'result.json'))
+m['source_pins'] += [pin(R/'head-matched5760-result.json'),pin(R/'head-finalization5760-proof.json'),pin(__file__)];m['data_usage']={'scope':'two14response cells on reused12DEV/2FITwarmups; nativecorrectness/acceptance/loaderqualification only, not repeatedthroughput/freshconfirmation'};models=R/'head-HTTP-models-verbose01.json';atomic(models,m);output=C/'w1a8-head-pair-20261103-01/http-qualification01'
+x=Requests(argparse.Namespace(models=models,inputs=P/'runs/w1a8-modern-actual-training-20261103-01/inputs480.json',output=output,repetitions=5,allow_cuda=True));x.stopping=False;x.records=[];signal.signal(signal.SIGTERM,x.request_stop);signal.signal(signal.SIGINT,x.request_stop);x.authenticate()
+for arm in [a for a in x.arms if a['id'] in ids]:x.cell(0,arm)
+atomic(output/'result.json',dict(status='MATCHED_HEAD5760_HTTP_NATIVE_QUALIFICATION_NOT_REPEATED_TIMING',records=x.records,models=pin(models),wall_seconds=time.perf_counter()-x.started));atomic(R/'head-HTTP-qualification-result.json',dict(result=pin(output/'result.json'),scope=m['data_usage']['scope']))

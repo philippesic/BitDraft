@@ -1,0 +1,878 @@
+--- a/ggml/include/ggml.h
++++ b/ggml/include/ggml.h
+@@ -606,6 +606,10 @@
+ 
+         GGML_OP_GLU,
+ 
++        // Appended fixed row W1A8 ops: preserve all pre-existing enum values.
++        GGML_OP_W1A1_MUL_MAT,
++        GGML_OP_W1AX_PACK,
++
+         GGML_OP_COUNT,
+     };
+ 
+@@ -1495,6 +1499,22 @@
+     // A: k columns, n rows => [ne03, ne02, n, k]
+     // B: k columns, m rows  (i.e. we transpose it internally) => [ne03 * x, ne02 * y, m, k]
+     // result is n columns, m rows => [ne03 * x, ne02 * y, m, n]
++    // Fixed row W1A8. Signs: I32 [ceil(K/32), M], bit1=+1, little bit order;
++    // scales: F32 [M]; activations: F32 [K,N]. Only activation_bits=8 and
++    // positive K divisible by32 are supported; N is1..65535.
++    // Packing stores token-major int8 codes in ceil(K*N/4) I32 words followed
++    // by N F32 per-token scales. Direct matmul adds an explicit pack node.
++    GGML_API struct ggml_tensor * ggml_w1ax_pack(
++            struct ggml_context * ctx, struct ggml_tensor * activations, int32_t activation_bits);
++    GGML_API struct ggml_tensor * ggml_w1ax_mul_mat(
++            struct ggml_context * ctx, struct ggml_tensor * packed_weights,
++            struct ggml_tensor * weight_scales, struct ggml_tensor * activations,
++            int64_t logical_k, int32_t activation_bits);
++    GGML_API struct ggml_tensor * ggml_w1ax_mul_mat_shared(
++            struct ggml_context * ctx, struct ggml_tensor * packed_weights,
++            struct ggml_tensor * weight_scales, struct ggml_tensor * packed_activations,
++            int64_t logical_k, int32_t activation_bits);
++
+     GGML_API struct ggml_tensor * ggml_mul_mat(
+             struct ggml_context * ctx,
+             struct ggml_tensor  * a,
+--- a/ggml/src/ggml.c
++++ b/ggml/src/ggml.c
+@@ -1116,9 +1116,12 @@
+     "OPT_STEP_SGD",
+ 
+     "GLU",
++
++    "W1A1_MUL_MAT",
++    "W1AX_PACK",
+ };
+ 
+-static_assert(GGML_OP_COUNT == 102, "GGML_OP_COUNT != 102");
++static_assert(GGML_OP_COUNT == 104, "GGML_OP_COUNT != 104");
+ 
+ static const char * GGML_OP_SYMBOL[GGML_OP_COUNT] = {
+     "none",
+@@ -1232,9 +1235,12 @@
+     "sgd(x)",
+ 
+     "glu(x)",
++
++    "w1a8(X,s,Y)",
++    "w1a8_pack(Y)",
+ };
+ 
+-static_assert(GGML_OP_COUNT == 102, "GGML_OP_COUNT != 102");
++static_assert(GGML_OP_COUNT == 104, "GGML_OP_COUNT != 104");
+ 
+ static_assert(GGML_OP_POOL_COUNT == 2, "GGML_OP_POOL_COUNT != 2");
+ 
+@@ -3385,6 +3391,47 @@
+         default:
+             return GGML_PREC_UNDEFINED;
+     };
++}
++
++// Fixed row W1A8. These constructors keep packing explicit in the graph.
++struct ggml_tensor * ggml_w1ax_pack(
++        struct ggml_context * ctx, struct ggml_tensor * activations, int32_t bits) {
++    GGML_ASSERT(bits == 8 && activations != NULL && activations->type == GGML_TYPE_F32);
++    GGML_ASSERT(activations->ne[0] > 0 && activations->ne[0] % 32 == 0 && activations->ne[0] <= INT32_MAX/127);
++    GGML_ASSERT(activations->ne[1] > 0 && activations->ne[1] <= 65535);
++    GGML_ASSERT(activations->ne[2] == 1 && activations->ne[3] == 1);
++    if (!ggml_is_contiguous(activations)) activations = ggml_cont(ctx, activations);
++    const struct ggml_w1ax_pack_layout layout = ggml_w1ax_pack_layout(activations->ne[0], activations->ne[1], bits);
++    struct ggml_tensor * result = ggml_new_tensor_1d(ctx, GGML_TYPE_I32, layout.total_words);
++    result->op = GGML_OP_W1AX_PACK;
++    result->src[0] = activations;
++    ggml_set_op_params_i32(result, 0, bits);
++    GGML_ASSERT(ggml_w1ax_is_supported(result));
++    return result;
++}
++
++struct ggml_tensor * ggml_w1ax_mul_mat_shared(
++        struct ggml_context * ctx, struct ggml_tensor * weights, struct ggml_tensor * scales,
++        struct ggml_tensor * packed, int64_t k, int32_t bits) {
++    GGML_ASSERT(bits == 8 && packed != NULL && packed->op == GGML_OP_W1AX_PACK);
++    GGML_ASSERT(ggml_w1ax_is_supported(packed) && packed->src[0]->ne[0] == k);
++    GGML_ASSERT(weights != NULL && scales != NULL);
++    struct ggml_tensor * result = ggml_new_tensor_2d(ctx, GGML_TYPE_F32, weights->ne[1], packed->src[0]->ne[1]);
++    result->op = GGML_OP_W1A1_MUL_MAT;
++    result->src[0] = weights;
++    result->src[1] = scales;
++    result->src[2] = packed->src[0];
++    result->src[3] = packed;
++    ggml_set_op_params(result, &k, sizeof(k));
++    ggml_set_op_params_i32(result, 2, bits);
++    GGML_ASSERT(ggml_w1ax_is_supported(result));
++    return result;
++}
++
++struct ggml_tensor * ggml_w1ax_mul_mat(
++        struct ggml_context * ctx, struct ggml_tensor * weights, struct ggml_tensor * scales,
++        struct ggml_tensor * activations, int64_t k, int32_t bits) {
++    return ggml_w1ax_mul_mat_shared(ctx, weights, scales, ggml_w1ax_pack(ctx, activations, bits), k, bits);
+ }
+ 
+ // ggml_mul_mat
+@@ -7326,6 +7373,8 @@
+         case GGML_OP_NONE: {
+             // noop
+         } break;
++        case GGML_OP_W1A1_MUL_MAT:
++        case GGML_OP_W1AX_PACK:
+         case GGML_OP_COUNT:
+         default: {
+             GGML_ABORT("%s: unsupported ggml op for backward pass: %s\n", __func__, ggml_op_name(tensor->op));
+--- a/ggml/src/ggml-impl.h
++++ b/ggml/src/ggml-impl.h
+@@ -27,6 +27,24 @@
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
++
++// Fixed A8 layout, in I32-sized words. No grouped/affine/learned extension.
++struct ggml_w1ax_pack_layout {
++    int64_t codes_words;
++    int64_t planes_words;
++    int64_t scale_offset;
++    int64_t total_words;
++};
++
++static inline struct ggml_w1ax_pack_layout ggml_w1ax_pack_layout(int64_t k, int64_t n, int bits) {
++    GGML_ASSERT(bits == 8 && k > 0 && k % 32 == 0 && k <= INT32_MAX/127 && n > 0 && n <= 65535);
++    struct ggml_w1ax_pack_layout layout;
++    layout.codes_words = (k*n + 3)/4;
++    layout.planes_words = 0;
++    layout.scale_offset = layout.codes_words;
++    layout.total_words = layout.scale_offset + n;
++    return layout;
++}
+ 
+ void ggml_print_backtrace(void);
+ 
+@@ -153,6 +171,64 @@
+ static int32_t ggml_get_op_params_i32(const struct ggml_tensor * tensor, uint32_t i) {
+     assert(i < GGML_MAX_OP_PARAMS / sizeof(int32_t));
+     return ((const int32_t *)(tensor->op_params))[i];
++}
++
++// Shared CPU/CUDA admission of canonical fixed row-A8 nodes. Backend copies
++// of src3 may be plain tensors, so runtime validation uses the physical layout;
++// the public constructor separately validates the producer op and its history.
++static inline bool ggml_w1ax_is_supported(const struct ggml_tensor * op) {
++    if (op == NULL || !ggml_is_contiguous(op)) {
++        return false;
++    }
++    if (op->op == GGML_OP_W1AX_PACK) {
++        const struct ggml_tensor * a = op->src[0];
++        if (a == NULL || a->type != GGML_TYPE_F32 || !ggml_is_contiguous(a) ||
++                a->ne[0] <= 0 || a->ne[0] % 32 != 0 || a->ne[0] > INT32_MAX/127 ||
++                a->ne[1] <= 0 || a->ne[1] > 65535 || a->ne[2] != 1 || a->ne[3] != 1 ||
++                ggml_get_op_params_i32(op, 0) != 8 || op->type != GGML_TYPE_I32 ||
++                op->ne[1] != 1 || op->ne[2] != 1 || op->ne[3] != 1) {
++            return false;
++        }
++        for (int i = 1; i < GGML_MAX_SRC; ++i) {
++            if (op->src[i] != NULL) return false;
++        }
++        for (uint32_t i = 1; i < GGML_MAX_OP_PARAMS/sizeof(int32_t); ++i) {
++            if (ggml_get_op_params_i32(op, i) != 0) return false;
++        }
++        const struct ggml_w1ax_pack_layout layout = ggml_w1ax_pack_layout(a->ne[0], a->ne[1], 8);
++        return op->ne[0] == layout.total_words;
++    }
++    if (op->op != GGML_OP_W1A1_MUL_MAT || ggml_get_op_params_i32(op, 2) != 8 ||
++            op->type != GGML_TYPE_F32) {
++        return false;
++    }
++    const struct ggml_tensor * w = op->src[0];
++    const struct ggml_tensor * s = op->src[1];
++    const struct ggml_tensor * a = op->src[2];
++    const struct ggml_tensor * p = op->src[3];
++    int64_t k;
++    memcpy(&k, op->op_params, sizeof(k));
++    if (w == NULL || s == NULL || a == NULL || p == NULL || k <= 0 || k % 32 != 0 || k > INT32_MAX/127 ||
++            w->type != GGML_TYPE_I32 || s->type != GGML_TYPE_F32 ||
++            a->type != GGML_TYPE_F32 || p->type != GGML_TYPE_I32 ||
++            !ggml_is_contiguous(w) || !ggml_is_contiguous(s) ||
++            !ggml_is_contiguous(a) || !ggml_is_contiguous(p) ||
++            w->ne[0] != (k+31)/32 || w->ne[1] <= 0 || w->ne[1] > INT32_MAX ||
++            w->ne[2] != 1 || w->ne[3] != 1 ||
++            s->ne[0] != w->ne[1] || s->ne[1] != 1 || s->ne[2] != 1 || s->ne[3] != 1 ||
++            a->ne[0] != k || a->ne[1] <= 0 || a->ne[1] > 65535 || a->ne[2] != 1 || a->ne[3] != 1 ||
++            p->ne[1] != 1 || p->ne[2] != 1 || p->ne[3] != 1 ||
++            op->ne[0] != w->ne[1] || op->ne[1] != a->ne[1] || op->ne[2] != 1 || op->ne[3] != 1) {
++        return false;
++    }
++    for (int i = 4; i < GGML_MAX_SRC; ++i) {
++        if (op->src[i] != NULL) return false;
++    }
++    for (uint32_t i = 3; i < GGML_MAX_OP_PARAMS/sizeof(int32_t); ++i) {
++        if (ggml_get_op_params_i32(op, i) != 0) return false;
++    }
++    const struct ggml_w1ax_pack_layout layout = ggml_w1ax_pack_layout(k, a->ne[1], 8);
++    return p->ne[0] == layout.total_words;
+ }
+ 
+ static float ggml_get_op_params_f32(const struct ggml_tensor * tensor, uint32_t i) {
+--- a/ggml/src/ggml-cpu/ggml-cpu.c
++++ b/ggml/src/ggml-cpu/ggml-cpu.c
+@@ -24,6 +24,7 @@
+ 
+ #include <assert.h>
+ #include <errno.h>
++#include <fenv.h>
+ #include <time.h>
+ #include <math.h>
+ #include <stdlib.h>
+@@ -1751,6 +1752,64 @@
+ 
+ /////////////////////////////////
+ 
++// Native fixed row-A8 reference. No implicit allocation/workspace is needed.
++static void ggml_compute_forward_w1ax_pack(
++        const struct ggml_compute_params * params, struct ggml_tensor * dst) {
++    GGML_ASSERT(ggml_w1ax_is_supported(dst));
++    GGML_ASSERT(fegetround() == FE_TONEAREST);
++    const struct ggml_tensor * acts = dst->src[0];
++    const int64_t k = acts->ne[0], n = acts->ne[1];
++    const struct ggml_w1ax_pack_layout layout = ggml_w1ax_pack_layout(k, n, 8);
++    int8_t * codes = (int8_t *) dst->data;
++    float * scales = (float *) ((uint32_t *) dst->data + layout.scale_offset);
++    if (params->ith == 0) memset(codes + k*n, 0, (size_t) (layout.codes_words*4 - k*n));
++    for (int64_t token = params->ith; token < n; token += params->nth) {
++        const float * row = (const float *) acts->data + token*k;
++        float absmax = 0.0f;
++        for (int64_t i = 0; i < k; ++i) {
++            GGML_ASSERT(isfinite(row[i]));
++            absmax = fmaxf(absmax, fabsf(row[i]));
++        }
++        scales[token] = absmax/127.0f;
++        const float inv = absmax == 0.0f ? 0.0f : 127.0f/absmax;
++        for (int64_t i = 0; i < k; ++i) {
++            // fixed_w1a8_finite_reciprocal_v2: tiny finite rows use F64
++            // divide-then-multiply, cast to F32 before integer RNE.
++            const float normalized = absmax == 0.0f ? 0.0f : isfinite(inv) ? row[i]*inv :
++                (float) ((double) row[i]/(double) absmax*127.0);
++            codes[token*k + i] = (int8_t) fmaxf(-127.0f, fminf(127.0f, nearbyintf(normalized)));
++        }
++    }
++}
++
++static void ggml_compute_forward_w1a1_mul_mat(
++        const struct ggml_compute_params * params, struct ggml_tensor * dst) {
++    GGML_ASSERT(ggml_w1ax_is_supported(dst));
++    const struct ggml_tensor * weights = dst->src[0];
++    const struct ggml_tensor * scales = dst->src[1];
++    const struct ggml_tensor * acts = dst->src[2];
++    const int64_t k = acts->ne[0], n = acts->ne[1], m = weights->ne[1], words = (k+31)/32;
++    const struct ggml_w1ax_pack_layout layout = ggml_w1ax_pack_layout(k, n, 8);
++    const uint32_t * weight_data = (const uint32_t *) weights->data;
++    const float * scale_data = (const float *) scales->data;
++    const int8_t * codes = (const int8_t *) dst->src[3]->data;
++    const float * beta = (const float *) ((const uint32_t *) dst->src[3]->data + layout.scale_offset);
++    float * output = (float *) dst->data;
++    for (int64_t token = 0; token < n; ++token) {
++        for (int64_t row = params->ith; row < m; row += params->nth) {
++            GGML_ASSERT(isfinite(scale_data[row]) && scale_data[row] >= 0.0f && !signbit(scale_data[row]));
++            GGML_ASSERT(isfinite(beta[token]) && beta[token] >= 0.0f && !signbit(beta[token]));
++            int32_t sum = 0;
++            for (int64_t i = 0; i < k; ++i) {
++                const int sign = (weight_data[row*words + i/32] >> (i%32)) & 1u ? 1 : -1;
++                sum += sign*(int32_t) codes[token*k + i];
++            }
++            volatile float weighted = (float) sum * scale_data[row];
++            output[token*m + row] = weighted * beta[token];
++        }
++    }
++}
++
+ static void ggml_compute_forward(struct ggml_compute_params * params, struct ggml_tensor * tensor) {
+     GGML_ASSERT(params);
+ 
+@@ -1875,6 +1934,14 @@
+         case GGML_OP_L2_NORM:
+             {
+                 ggml_compute_forward_l2_norm(params, tensor);
++            } break;
++        case GGML_OP_W1AX_PACK:
++            {
++                ggml_compute_forward_w1ax_pack(params, tensor);
++            } break;
++        case GGML_OP_W1A1_MUL_MAT:
++            {
++                ggml_compute_forward_w1a1_mul_mat(params, tensor);
+             } break;
+         case GGML_OP_MUL_MAT:
+             {
+@@ -2376,6 +2443,8 @@
+         case GGML_OP_L2_NORM:
+         case GGML_OP_GROUP_NORM:
+         case GGML_OP_CONCAT:
++        case GGML_OP_W1AX_PACK:
++        case GGML_OP_W1A1_MUL_MAT:
+         case GGML_OP_MUL_MAT:
+         case GGML_OP_MUL_MAT_ID:
+         case GGML_OP_OUT_PROD:
+@@ -2898,6 +2967,11 @@
+                 case GGML_OP_COUNT_EQUAL:
+                     {
+                         cur = ggml_type_size(node->type)*n_tasks;
++                    } break;
++                case GGML_OP_W1AX_PACK:
++                case GGML_OP_W1A1_MUL_MAT:
++                    {
++                        cur = 0; // explicit packed graph source, no scratch
+                     } break;
+                 case GGML_OP_MUL_MAT:
+                     {
+--- a/ggml/src/ggml-cpu/ggml-cpu.cpp
++++ b/ggml/src/ggml-cpu/ggml-cpu.cpp
+@@ -450,6 +450,9 @@
+                 op->type != GGML_TYPE_IQ2_S   &&
+                 op->type != GGML_TYPE_IQ1_S   &&
+                 op->type != GGML_TYPE_IQ1_M; // missing type_traits.from_float
++        case GGML_OP_W1AX_PACK:
++        case GGML_OP_W1A1_MUL_MAT:
++            return ggml_w1ax_is_supported(op);
+         case GGML_OP_MUL_MAT:
+             if (ggml_get_op_params_i32(op, 1) == GGML_HINT_SRC0_IS_HADAMARD &&
+                 src0->type == GGML_TYPE_F32 && op->type == GGML_TYPE_F32) {
+--- a/ggml/src/ggml-cuda/ggml-cuda.cu
++++ b/ggml/src/ggml-cuda/ggml-cuda.cu
+@@ -8,6 +8,7 @@
+ #include "ggml-cuda/add-id.cuh"
+ #include "ggml-cuda/arange.cuh"
+ #include "ggml-cuda/argmax.cuh"
++#include "ggml-cuda/w1a1.cuh"
+ #include "ggml-cuda/argsort.cuh"
+ #include "ggml-cuda/binbcast.cuh"
+ #include "ggml-cuda/clamp.cuh"
+@@ -2602,6 +2603,12 @@
+         case GGML_OP_RMS_NORM_BACK:
+             ggml_cuda_op_rms_norm_back(ctx, dst);
+             break;
++        case GGML_OP_W1AX_PACK:
++            ggml_cuda_w1ax_pack(ctx, dst);
++            break;
++        case GGML_OP_W1A1_MUL_MAT:
++            ggml_cuda_w1a1_mul_mat(ctx, dst);
++            break;
+         case GGML_OP_MUL_MAT:
+             ggml_cuda_mul_mat(ctx, dst->src[0], dst->src[1], dst);
+             break;
+@@ -5812,6 +5819,15 @@
+     }
+ 
+     switch (op->op) {
++        case GGML_OP_W1AX_PACK:
++        case GGML_OP_W1A1_MUL_MAT:
++#if !defined(GGML_USE_HIP) && !defined(GGML_USE_MUSA)
++            return ggml_w1ax_is_supported(op) &&
++                ggml_cuda_info().devices[dev_ctx->device].warp_size == 32 &&
++                ggml_cuda_info().devices[dev_ctx->device].cc >= 610;
++#else
++            return false;
++#endif
+         case GGML_OP_UNARY:
+             switch (ggml_get_unary_op(op)) {
+                 case GGML_UNARY_OP_ABS:
+@@ -6296,6 +6312,11 @@
+ static bool ggml_backend_cuda_device_offload_op(ggml_backend_dev_t dev, const ggml_tensor * op) {
+     ggml_backend_cuda_device_context * dev_ctx = (ggml_backend_cuda_device_context *) dev->context;
+ 
++    // Packing has a flat I32 output, so its apparent batch is one. Prefer the
++    // genuine CUDA path even for serial EAGLE steps with host-supplied features.
++    if (op->op == GGML_OP_W1AX_PACK || op->op == GGML_OP_W1A1_MUL_MAT) {
++        return ggml_backend_cuda_device_supports_op(dev, op);
++    }
+     return get_op_batch_size(op) >= dev_ctx->op_offload_min_batch_size;
+ }
+ 
+--- a/ggml/src/ggml-cuda/CMakeLists.txt
++++ b/ggml/src/ggml-cuda/CMakeLists.txt
+@@ -115,6 +115,10 @@
+     list(APPEND GGML_HEADERS_CUDA "../../include/ggml-cuda.h")
+ 
+     file(GLOB   GGML_SOURCES_CUDA "*.cu")
++    # Fixed A8 must preserve tiny finite values/reciprocal-overflow fallback.
++    if (CMAKE_CUDA_COMPILER_ID STREQUAL "NVIDIA")
++        set_source_files_properties(w1a1.cu PROPERTIES COMPILE_OPTIONS "--ftz=false")
++    endif()
+     file(GLOB   SRCS "template-instances/fattn-tile*.cu")
+     list(APPEND GGML_SOURCES_CUDA ${SRCS})
+     file(GLOB   SRCS "template-instances/fattn-mma*.cu")
+--- /dev/null
++++ b/ggml/src/ggml-cuda/w1a1.cu
+@@ -0,0 +1,125 @@
++#include "w1a1.cuh"
++#include "ggml-impl.h"
++
++#if !defined(GGML_USE_HIP) && !defined(GGML_USE_MUSA)
++
++// Fixed finite-reciprocal-v2 A8 quantizer from the retained packed runtime.
++// One token per block; byte codes are token-major. Compile with --ftz=false.
++static __global__ void w1ax_quantize(
++        const float * activations, int64_t k, int8_t * codes, float * scales) {
++    __shared__ uint32_t maxima[256];
++    __shared__ float token_absmax;
++    const int64_t token = blockIdx.x;
++    const float * row = activations + token*k;
++    uint32_t local_max = 0;
++    for (int64_t i = threadIdx.x; i < k; i += blockDim.x) {
++        const uint32_t magnitude = __float_as_uint(row[i]) & 0x7fffffffu;
++        if (magnitude >= 0x7f800000u) __trap(); // never silently quantize NaN/Inf
++        local_max = max(local_max, magnitude);
++    }
++    maxima[threadIdx.x] = local_max;
++    __syncthreads();
++    for (int stride = blockDim.x/2; stride > 0; stride /= 2) {
++        if (threadIdx.x < stride) maxima[threadIdx.x] = max(maxima[threadIdx.x], maxima[threadIdx.x + stride]);
++        __syncthreads();
++    }
++    if (threadIdx.x == 0) {
++        token_absmax = __uint_as_float(maxima[0]);
++        scales[token] = __fdiv_rn(token_absmax, 127.0f);
++    }
++    __syncthreads();
++    const bool zero = (__float_as_uint(token_absmax) & 0x7fffffffu) == 0;
++    const float inv = zero ? 0.0f : __fdiv_rn(127.0f, token_absmax);
++    const bool finite_inv = (__float_as_uint(inv) & 0x7f800000u) != 0x7f800000u;
++    for (int64_t i = threadIdx.x; i < k; i += blockDim.x) {
++        // If the reciprocal overflows on a tiny finite row, retain divide-then-
++        // multiply F64 arithmetic, casting to F32 before integer RNE.
++        const float normalized = zero ? 0.0f : finite_inv ? __fmul_rn(row[i], inv) :
++            __double2float_rn((double) row[i]/(double) token_absmax*127.0);
++        const int code = __float2int_rn(normalized);
++        codes[token*k + i] = (int8_t) max(-127, min(127, code));
++    }
++}
++
++// Four output rows per block, one complete warp per row. Weight signs remain
++// packed in global memory; sign expansion only occupies DP4A register lanes.
++static __global__ void w1ax_integer_dot(
++        const uint32_t * weights, const float * weight_scales,
++        const int8_t * codes, const float * activation_scales,
++        int64_t m, int64_t k, int64_t words, float * output) {
++    const int64_t row = (int64_t) blockIdx.x*4 + threadIdx.y;
++    const int64_t token = blockIdx.y;
++    const int lane = threadIdx.x;
++    int32_t sum = 0;
++    if (row < m) {
++#if defined(__CUDA_ARCH__) && __CUDA_ARCH__ >= 610
++        if (k % 4 == 0) {
++            for (int64_t i = (int64_t) lane*4; i < k; i += 128) {
++                const uint32_t signs = weights[row*words + i/32] >> (i%32);
++                const uint32_t spread = ((signs & 15u)*0x00204081u) & 0x01010101u;
++                const uint32_t packed_signs = ((spread ^ 0x01010101u)*0xfeu) | 0x01010101u;
++                const int packed_codes = *(const int *) (codes + token*k + i);
++                sum = __dp4a(packed_codes, (int) packed_signs, sum);
++            }
++        } else
++#endif
++        {
++            // Defensive code for lower compilation targets; backend admission
++            // requires CC>=610 and a native SM120 build uses the DP4A branch.
++            for (int64_t i = lane; i < k; i += 32) {
++                const int sign = (weights[row*words + i/32] >> (i%32)) & 1u ? 1 : -1;
++                sum += sign*(int) codes[token*k + i];
++            }
++        }
++    }
++    for (int stride = 16; stride > 0; stride /= 2) sum += __shfl_down_sync(0xffffffffu, sum, stride, 32);
++    if (row < m && lane == 0) {
++        const float alpha = weight_scales[row], beta = activation_scales[token];
++        // Scales are finite nonnegative F32; reject negative zero as the export
++        // contract does. Device traps survive Release/NDEBUG builds.
++        if ((__float_as_uint(alpha) & 0x80000000u) || !isfinite(alpha) ||
++                (__float_as_uint(beta) & 0x80000000u) || !isfinite(beta)) __trap();
++        const float weighted = __fmul_rn((float) sum, alpha);
++        output[token*m + row] = __fmul_rn(weighted, beta);
++    }
++}
++
++void ggml_cuda_w1ax_pack(ggml_backend_cuda_context & ctx, ggml_tensor * dst) {
++    GGML_ASSERT(ggml_w1ax_is_supported(dst));
++    const ggml_tensor * acts = dst->src[0];
++    const int64_t k = acts->ne[0], n = acts->ne[1];
++    const auto layout = ggml_w1ax_pack_layout(k, n, 8);
++    int8_t * codes = (int8_t *) dst->data;
++    float * scales = (float *) ((uint32_t *) dst->data + layout.scale_offset);
++    if (layout.codes_words*4 != k*n) {
++        CUDA_CHECK(cudaMemsetAsync(codes + k*n, 0, (size_t) (layout.codes_words*4 - k*n), ctx.stream()));
++    }
++    w1ax_quantize<<<dim3((unsigned) n), 256, 0, ctx.stream()>>>(
++        (const float *) acts->data, k, codes, scales);
++    CUDA_CHECK(cudaGetLastError());
++}
++
++void ggml_cuda_w1a1_mul_mat(ggml_backend_cuda_context & ctx, ggml_tensor * dst) {
++    GGML_ASSERT(ggml_w1ax_is_supported(dst));
++    GGML_ASSERT(ggml_cuda_info().devices[ctx.device].warp_size == 32 &&
++                ggml_cuda_info().devices[ctx.device].cc >= 610);
++    const int64_t k = dst->src[2]->ne[0], n = dst->src[2]->ne[1], m = dst->ne[0];
++    const auto layout = ggml_w1ax_pack_layout(k, n, 8);
++    const uint32_t * packed = (const uint32_t *) dst->src[3]->data;
++    w1ax_integer_dot<<<dim3((unsigned) ((m+3)/4), (unsigned) n), dim3(32, 4), 0, ctx.stream()>>>(
++        (const uint32_t *) dst->src[0]->data, (const float *) dst->src[1]->data,
++        (const int8_t *) packed, (const float *) (packed + layout.scale_offset),
++        m, k, (k+31)/32, (float *) dst->data);
++    CUDA_CHECK(cudaGetLastError());
++}
++
++#else
++// This first port is deliberately a CUDA/DP4A implementation. Other backends
++// do not advertise support and retain the existing ordinary model path.
++void ggml_cuda_w1ax_pack(ggml_backend_cuda_context &, ggml_tensor *) {
++    GGML_ABORT("fixed row W1A8 CUDA packing requires NVIDIA CUDA");
++}
++void ggml_cuda_w1a1_mul_mat(ggml_backend_cuda_context &, ggml_tensor *) {
++    GGML_ABORT("fixed row W1A8 DP4A requires NVIDIA CUDA");
++}
++#endif
+--- /dev/null
++++ b/ggml/src/ggml-cuda/w1a1.cuh
+@@ -0,0 +1,5 @@
++#pragma once
++#include "common.cuh"
++
++void ggml_cuda_w1ax_pack(ggml_backend_cuda_context & ctx, ggml_tensor * dst);
++void ggml_cuda_w1a1_mul_mat(ggml_backend_cuda_context & ctx, ggml_tensor * dst);
+--- a/src/llama-model.h
++++ b/src/llama-model.h
+@@ -261,7 +261,16 @@
+     struct ggml_tensor * b_down = nullptr;
+ };
+ 
++// Fixed row-scaled packed W1A8 projection; ordinary models leave both null.
++struct llama_w1a8_linear {
++    struct ggml_tensor * packed = nullptr;
++    struct ggml_tensor * scales = nullptr;
++    int64_t logical_k = 0;
++};
++
+ struct llama_layer {
++    llama_w1a8_linear wq_w1a8, wk_w1a8, wv_w1a8, wo_w1a8;
++    llama_w1a8_linear ffn_gate_w1a8, ffn_up_w1a8, ffn_down_w1a8;
+     // normalization
+     struct ggml_tensor * attn_norm       = nullptr;
+     struct ggml_tensor * attn_norm_b     = nullptr;
+@@ -767,6 +776,9 @@
+     struct ggml_tensor * output_b        = nullptr;
+     struct ggml_tensor * output_norm_enc = nullptr;
+ 
++    bool eagle_w1a8 = false;
++    llama_w1a8_linear fc_w1a8, output_w1a8;
++
+ 
+     // NVFP4 per-tensor scale2, input_scale for LM head
+     struct ggml_tensor * output_s    = nullptr;
+--- a/src/llama-model-loader.cpp
++++ b/src/llama-model-loader.cpp
+@@ -349,6 +349,9 @@
+         return true;
+     }
+ 
++    template bool llama_model_loader::get_arr<std::string>(
++        const std::string & key, std::vector<std::string> & result, bool required);
++
+     template<typename T, size_t N_MAX>
+     bool llama_model_loader::get_arr(const std::string & key, std::array<T, N_MAX> & result, bool required) {
+         const gguf_context * ctx = metadata;
+@@ -967,6 +970,14 @@
+             {
+                 ggml_tensor * b = ggml_new_tensor_4d(ctx, GGML_TYPE_F32, w->ne[0], 512, w->ne[2], w->ne[3]);
+                 op_tensor = ggml_mul_mat(ctx, w, b);
++            } break;
++        case GGML_OP_W1A1_MUL_MAT:
++            {
++                // Packed I32 weights must probe their actual operation; ordinary
++                // I32 matmul capability would incorrectly force them onto CPU.
++                ggml_tensor * scales = ggml_new_tensor_1d(ctx, GGML_TYPE_F32, w->ne[1]);
++                ggml_tensor * b = ggml_new_tensor_2d(ctx, GGML_TYPE_F32, w->ne[0] * 32, 512);
++                op_tensor = ggml_w1ax_mul_mat(ctx, w, scales, b, w->ne[0] * 32, 8);
+             } break;
+         case GGML_OP_MUL_MAT_ID:
+             {
+@@ -1201,7 +1212,11 @@
+         // tensors with "bias" suffix are always used with GGML_OP_ADD or GGML_OP_ADD_ID;
+         // embedded-adapter ".lora_a"/".lora_b" tensors are always used with GGML_OP_MUL_MAT_ID
+         ggml_op op;
+-        if (tn.suffix != nullptr && strcmp(tn.suffix, "bias") == 0) {
++        if (tn.suffix != nullptr && strcmp(tn.suffix, "w1a1_packed") == 0) {
++            op = GGML_OP_W1A1_MUL_MAT;
++        } else if (tn.suffix != nullptr && strcmp(tn.suffix, "w1a1_scale") == 0) {
++            op = GGML_OP_MUL;
++        } else if (tn.suffix != nullptr && strcmp(tn.suffix, "bias") == 0) {
+             op = info.op == GGML_OP_MUL_MAT_ID ? GGML_OP_ADD_ID : GGML_OP_ADD;
+         } else if (hparams.router_layer >= 0 && tn.suffix != nullptr &&
+                 (strcmp(tn.suffix, "lora_a") == 0 || strcmp(tn.suffix, "lora_b") == 0)) {
+--- a/src/models/eagle3.cpp
++++ b/src/models/eagle3.cpp
+@@ -1,4 +1,8 @@
+ #include "models.h"
++
++#include <algorithm>
++#include <cstdlib>
++#include <set>
+ 
+ void llama_model_eagle3::load_arch_hparams(llama_model_loader & ml) {
+     ml.get_key(LLM_KV_ATTENTION_LAYERNORM_RMS_EPS, hparams.f_norm_rms_eps);
+@@ -40,6 +44,104 @@
+ 
+     const int64_t n_embd_inp = hparams.n_embd_inp_enc();
+     const int64_t n_embd_attn_input = 2 * n_embd;
++
++    uint32_t packed_version = 0;
++    eagle_w1a8 = ml->get_key("eagle3.w1a1.version", packed_version, false);
++    const std::set<std::string> expected_weights = {
++        "fc.weight", "output.weight", "blk.0.attn_q.weight", "blk.0.attn_k.weight",
++        "blk.0.attn_v.weight", "blk.0.attn_output.weight", "blk.0.ffn_gate.weight",
++        "blk.0.ffn_up.weight", "blk.0.ffn_down.weight",
++    };
++    std::set<std::string> allowed_keys;
++    std::set<std::string> expected_packed;
++    if (eagle_w1a8) {
++        uint32_t group_size = 0, bits = 0;
++        std::vector<std::string> groups, weights;
++        std::string bit_order, sign_rule, scale_rule, arithmetic;
++        ml->get_key("eagle3.w1a1.scale_group_size", group_size);
++        ml->get_key("eagle3.w1a1.activation_bits", bits);
++        ml->get_arr("eagle3.w1a1.groups", groups);
++        ml->get_arr("eagle3.w1a1.tensors", weights);
++        ml->get_key("eagle3.w1a1.bit_order", bit_order);
++        ml->get_key("eagle3.w1a1.sign_rule", sign_rule);
++        ml->get_key("eagle3.w1a1.scale_rule", scale_rule);
++        ml->get_key("eagle3.w1a1.arithmetic", arithmetic);
++        const std::set<std::string> expected_groups = {"fusion", "attention", "ffn", "head"};
++        const char * ambient_bits = std::getenv("GGML_W1AX_ACT_BITS");
++        if (packed_version != 2 || group_size != 0 || bits != 8 || n_layer != 1 ||
++                groups.size() != 4 || std::set<std::string>(groups.begin(), groups.end()) != expected_groups ||
++                weights.size() != 9 || std::set<std::string>(weights.begin(), weights.end()) != expected_weights ||
++                bit_order != "little" || sign_rule != "nonnegative_is_one" ||
++                (scale_rule != "f32_mean_abs" && scale_rule != "f32_nonnegative_least_squares" &&
++                 scale_rule != "f32_learned_nonnegative") || arithmetic != "f32" ||
++                (ambient_bits && std::string(ambient_bits) != "8")) {
++            throw std::runtime_error("EAGLE3 packed model requires complete fixed row W1A8 v2 metadata");
++        }
++        for (const char * name : {"version", "scale_group_size", "activation_bits", "groups", "tensors",
++                                  "bit_order", "sign_rule", "scale_rule", "arithmetic"}) {
++            allowed_keys.insert(std::string("eagle3.w1a1.") + name);
++        }
++        for (const auto & weight : expected_weights) {
++            std::string audit = weight;
++            std::replace(audit.begin(), audit.end(), '.', '_');
++            for (const char * name : {"logical_k", "packed", "scale"}) {
++                allowed_keys.insert("eagle3.w1a1.tensor." + audit + "." + name);
++            }
++            expected_packed.insert(weight.substr(0, weight.size() - 7) + ".w1a1_packed");
++            expected_packed.insert(weight.substr(0, weight.size() - 7) + ".w1a1_scale");
++        }
++        LLAMA_LOG_INFO("%s: complete nine-linear fixed row W1A8, native packed signs/A8\n", __func__);
++    }
++    for (int64_t i = 0; i < gguf_get_n_kv(ml->metadata); ++i) {
++        const std::string key = gguf_get_key(ml->metadata, i);
++        if ((key.find("eagle3.w1a1.") == 0 && !allowed_keys.count(key)) ||
++                key.find("eagle3.w1a1_head.") == 0 ||
++                (eagle_w1a8 && (key.find("eagle3.affine_weights.") == 0 || key.find("eagle3.fusion_correction.") == 0))) {
++            throw std::runtime_error("unsupported EAGLE3 binary metadata: " + key);
++        }
++    }
++    for (int64_t i = 0; i < gguf_get_n_tensors(ml->metadata); ++i) {
++        const std::string name = gguf_get_tensor_name(ml->metadata, i);
++        if ((name.find(".w1a1_") != std::string::npos || name.find(".w1ax_") != std::string::npos) &&
++                !expected_packed.count(name)) {
++            throw std::runtime_error("unadmitted EAGLE3 binary tensor: " + name);
++        }
++    }
++    auto load_linear = [&](llm_tensor tensor, int bid, int64_t k, int64_t rows,
++                           ggml_tensor *& dense, llama_w1a8_linear & binary, int flags = 0) {
++        if (!eagle_w1a8) {
++            dense = create_tensor(tn(tensor, "weight", bid), {k, rows}, flags);
++            return;
++        }
++        if (k <= 0 || k % 32 || k > INT32_MAX / 127 || rows <= 0) {
++            throw std::runtime_error("EAGLE3 fixed W1A8 requires positive K divisible by32 and bounded integer dots");
++        }
++        const std::string weight = tn(tensor, "weight", bid).str();
++        const std::string base = weight.substr(0, weight.size() - 7);
++        const auto * packed = ml->get_tensor_meta((base + ".w1a1_packed").c_str());
++        const auto * scales = ml->get_tensor_meta((base + ".w1a1_scale").c_str());
++        std::string audit = weight;
++        std::replace(audit.begin(), audit.end(), '.', '_');
++        uint32_t audited_k = 0;
++        std::string packed_name, scale_name;
++        ml->get_key("eagle3.w1a1.tensor." + audit + ".logical_k", audited_k);
++        ml->get_key("eagle3.w1a1.tensor." + audit + ".packed", packed_name);
++        ml->get_key("eagle3.w1a1.tensor." + audit + ".scale", scale_name);
++        if (ml->get_tensor_meta(weight.c_str()) || !packed || !scales ||
++                packed->type != GGML_TYPE_I32 || scales->type != GGML_TYPE_F32 ||
++                packed->ne[0] != (k + 31) / 32 || packed->ne[1] != rows ||
++                packed->ne[2] != 1 || packed->ne[3] != 1 ||
++                scales->ne[0] != rows || scales->ne[1] != 1 || scales->ne[2] != 1 || scales->ne[3] != 1 ||
++                audited_k != k || packed_name != base + ".w1a1_packed" || scale_name != base + ".w1a1_scale") {
++            throw std::runtime_error("EAGLE3 W1A8 tensor type/shape/audit or dense-shadow mismatch: " + weight);
++        }
++        binary.packed = create_tensor(LLM_TN_IMPL(LLM_ARCH_EAGLE3, tensor, "w1a1_packed", bid, -1), {(k + 31) / 32, rows}, 0);
++        binary.scales = create_tensor(LLM_TN_IMPL(LLM_ARCH_EAGLE3, tensor, "w1a1_scale", bid, -1), {rows}, 0);
++        binary.logical_k = k;
++        dense = nullptr;
++        LLAMA_LOG_INFO("%s: W1A8 packed %s K=%lld rows=%lld bytes=%zu\n", __func__, weight.c_str(),
++                       (long long) k, (long long) rows, ggml_nbytes(binary.packed) + ggml_nbytes(binary.scales));
++    };
+ 
+     // Get vocab size from the d2t tensor in the GGUF file (optional - only needed if eagle3 has different vocab_size than target)
+     // d2t: draft to target vocabulary mapping
+@@ -55,7 +157,7 @@
+     }
+ 
+     // Feature fusion layer: projects 3 target layers to draft hidden size
+-    fc = create_tensor(tn(LLM_TENSOR_FC, "weight"), {n_embd_inp, n_embd}, 0);
++    load_linear(LLM_TENSOR_FC, -1, n_embd_inp, n_embd, fc, fc_w1a8);
+ 
+     // RMSNorm on the fused target features (input to fc), only when norm_before_fc is set.
+     if (hparams.norm_before_fc) {
+@@ -64,11 +166,14 @@
+ 
+     // Output layer (uses draft vocab size)
+     output_norm = create_tensor(tn(LLM_TENSOR_OUTPUT_NORM, "weight"), {n_embd}, 0);
+-    output      = create_tensor(tn(LLM_TENSOR_OUTPUT,      "weight"), {n_embd, n_draft_vocab}, TENSOR_NOT_REQUIRED);
++    load_linear(LLM_TENSOR_OUTPUT, -1, n_embd, n_draft_vocab, output, output_w1a8, TENSOR_NOT_REQUIRED);
+ 
+     // Token embeddings (optional - Llama 3.3 70B EAGLE3 has its own)
+     const struct ggml_tensor * tok_embd_meta = ml->get_tensor_meta(tn(LLM_TENSOR_TOKEN_EMBD, "weight").str().c_str());
+     if (tok_embd_meta) {
++        if (eagle_w1a8) {
++            throw std::runtime_error("W1A8 EAGLE must borrow exact target embeddings; private embedding rejected");
++        }
+         const int64_t n_target_vocab = tok_embd_meta->ne[1];
+         tok_embd = create_tensor(tn(LLM_TENSOR_TOKEN_EMBD, "weight"), {n_embd, n_target_vocab}, 0);
+         LLAMA_LOG_INFO("%s: EAGLE3 using its own token_embd (vocab = %lld)\n", __func__, (long long)n_target_vocab);
+@@ -85,15 +190,15 @@
+         layer.attn_norm_2 = create_tensor(tn(LLM_TENSOR_ATTN_NORM_2, "weight", i), {n_embd}, 0);
+ 
+         // Attention takes input_embeds_normed + fused_target_normed as input
+-        layer.wq = create_tensor(tn(LLM_TENSOR_ATTN_Q,   "weight", i), {n_embd_attn_input, n_embd_head_k * n_head}, 0);
+-        layer.wk = create_tensor(tn(LLM_TENSOR_ATTN_K,   "weight", i), {n_embd_attn_input, n_embd_k_gqa}, 0);
+-        layer.wv = create_tensor(tn(LLM_TENSOR_ATTN_V,   "weight", i), {n_embd_attn_input, n_embd_v_gqa}, 0);
+-        layer.wo = create_tensor(tn(LLM_TENSOR_ATTN_OUT, "weight", i), {n_embd_head_k * n_head, n_embd}, 0);
++        load_linear(LLM_TENSOR_ATTN_Q, i, n_embd_attn_input, n_embd_head_k * n_head, layer.wq, layer.wq_w1a8);
++        load_linear(LLM_TENSOR_ATTN_K, i, n_embd_attn_input, n_embd_k_gqa, layer.wk, layer.wk_w1a8);
++        load_linear(LLM_TENSOR_ATTN_V, i, n_embd_attn_input, n_embd_v_gqa, layer.wv, layer.wv_w1a8);
++        load_linear(LLM_TENSOR_ATTN_OUT, i, n_embd_head_k * n_head, n_embd, layer.wo, layer.wo_w1a8);
+ 
+         layer.ffn_norm = create_tensor(tn(LLM_TENSOR_FFN_NORM, "weight", i), {n_embd}, 0);
+-        layer.ffn_gate = create_tensor(tn(LLM_TENSOR_FFN_GATE, "weight", i), {n_embd,   n_ff}, 0);
+-        layer.ffn_down = create_tensor(tn(LLM_TENSOR_FFN_DOWN, "weight", i), {  n_ff, n_embd}, 0);
+-        layer.ffn_up   = create_tensor(tn(LLM_TENSOR_FFN_UP,   "weight", i), {n_embd,   n_ff}, 0);
++        load_linear(LLM_TENSOR_FFN_GATE, i, n_embd, n_ff, layer.ffn_gate, layer.ffn_gate_w1a8);
++        load_linear(LLM_TENSOR_FFN_DOWN, i, n_ff, n_embd, layer.ffn_down, layer.ffn_down_w1a8);
++        load_linear(LLM_TENSOR_FFN_UP, i, n_embd, n_ff, layer.ffn_up, layer.ffn_up_w1a8);
+ 
+         // rope_freqs for llama3 rope scaling (optional - only if eagle3 config has rope_scaling)
+         layer.rope_freqs = create_tensor(tn(LLM_TENSOR_ROPE_FREQS, "weight", i), {n_rot/2}, TENSOR_NOT_REQUIRED);
+@@ -134,7 +239,10 @@
+     }
+ 
+     // Feature fusion layer
+-    cur = build_lora_mm(model.fc, cur);
++    cur = model.fc_w1a8.packed
++        ? ggml_w1ax_mul_mat(ctx0, model.fc_w1a8.packed, model.fc_w1a8.scales,
++                           cur, model.fc_w1a8.logical_k, 8)
++        : build_lora_mm(model.fc, cur);
+     cb(cur, "fc_out", -1);
+ 
+     // Output: g_embeddings e.g. [4096, n_tokens]
+@@ -154,6 +262,19 @@
+ 
+     GGML_ASSERT(n_embd_head == hparams.n_embd_head_k());
+     GGML_ASSERT(n_layer == 1);  // eagle3 has only one decoder layer
++
++    auto project = [&](ggml_tensor * dense, const llama_w1a8_linear & binary,
++                       ggml_tensor * acts, ggml_tensor * shared = nullptr) {
++        if (!binary.packed) {
++            return build_lora_mm(dense, acts);
++        }
++        if (!ggml_is_contiguous(acts)) {
++            acts = ggml_cont(ctx0, acts);
++        }
++        return shared
++            ? ggml_w1ax_mul_mat_shared(ctx0, binary.packed, binary.scales, shared, binary.logical_k, 8)
++            : ggml_w1ax_mul_mat(ctx0, binary.packed, binary.scales, acts, binary.logical_k, 8);
++    };
+ 
+     ggml_tensor * cur;
+     ggml_tensor * inpL;
+@@ -221,13 +342,14 @@
+         cb(cur, "concat_embd", il);
+ 
+         // Self-attention with concatenated input
+-        ggml_tensor * Qcur = build_lora_mm(model.layers[il].wq, cur);
++        ggml_tensor * qkv_pack = model.eagle_w1a8 ? ggml_w1ax_pack(ctx0, cur, 8) : nullptr;
++        ggml_tensor * Qcur = project(model.layers[il].wq, model.layers[il].wq_w1a8, cur, qkv_pack);
+         cb(Qcur, "Qcur", il);
+ 
+-        ggml_tensor * Kcur = build_lora_mm(model.layers[il].wk, cur);
++        ggml_tensor * Kcur = project(model.layers[il].wk, model.layers[il].wk_w1a8, cur, qkv_pack);
+         cb(Kcur, "Kcur", il);
+ 
+-        ggml_tensor * Vcur = build_lora_mm(model.layers[il].wv, cur);
++        ggml_tensor * Vcur = project(model.layers[il].wv, model.layers[il].wv_w1a8, cur, qkv_pack);
+         cb(Vcur, "Vcur", il);
+ 
+         Qcur = ggml_reshape_3d(ctx0, Qcur, n_embd_head, n_head,    n_tokens);
+@@ -253,8 +375,11 @@
+         cb(Kcur, "Kcur_rope", il);
+ 
+         cur = build_attn(inp_attn,
+-                model.layers[il].wo, NULL, nullptr,
++                model.layers[il].wo_w1a8.packed ? nullptr : model.layers[il].wo, NULL, nullptr,
+                 Qcur, Kcur, Vcur, nullptr, nullptr, nullptr, kq_scale, il);
++        if (model.layers[il].wo_w1a8.packed) {
++            cur = project(nullptr, model.layers[il].wo_w1a8, cur);
++        }
+ 
+         // Add residual and update it
+         ggml_tensor * ffn_inp = ggml_add(ctx0, cur, inpSA);
+@@ -266,12 +391,20 @@
+                 LLM_NORM_RMS, il);
+         cb(cur, "post_attn_norm", il);
+ 
+-        cur = build_ffn(cur,
+-                model.layers[il].ffn_up,   NULL, NULL,
+-                model.layers[il].ffn_gate, NULL, NULL,
+-                model.layers[il].ffn_down, NULL, NULL,
+-                NULL,
+-                LLM_FFN_SILU, LLM_FFN_PAR, il);
++        if (model.eagle_w1a8) {
++            ggml_tensor * gate_up = ggml_w1ax_pack(ctx0, cur, 8);
++            ggml_tensor * up = project(nullptr, model.layers[il].ffn_up_w1a8, cur, gate_up);
++            ggml_tensor * gate = project(nullptr, model.layers[il].ffn_gate_w1a8, cur, gate_up);
++            cur = ggml_mul(ctx0, ggml_silu(ctx0, gate), up);
++            cur = project(nullptr, model.layers[il].ffn_down_w1a8, cur);
++        } else {
++            cur = build_ffn(cur,
++                    model.layers[il].ffn_up,   NULL, NULL,
++                    model.layers[il].ffn_gate, NULL, NULL,
++                    model.layers[il].ffn_down, NULL, NULL,
++                    NULL,
++                    LLM_FFN_SILU, LLM_FFN_PAR, il);
++        }
+         cb(cur, "ffn_out", il);
+ 
+         // Output norm with residual
+@@ -295,14 +428,14 @@
+     // lm_head - projects to draft vocabulary
+     // if the draft has no own output projection, inherit the target model's lm_head
+     auto * output = model.output;
+-    if (output == nullptr) {
++    if (output == nullptr && !model.output_w1a8.packed) {
+         GGML_ASSERT(cparams.ctx_other != nullptr);
+         const auto * model_other = llama_get_model(cparams.ctx_other);
+ 
+         GGML_ASSERT(model_other->output != nullptr && "EAGLE3 decoder requires an output projection (own or from target model)");
+         output = model_other->output;
+     }
+-    cur = build_lora_mm(output, cur);
++    cur = project(output, model.output_w1a8, cur);
+ 
+     if (model.d2t) {
+         const int64_t n_draft_vocab = cur->ne[0];

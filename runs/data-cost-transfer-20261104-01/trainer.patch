@@ -1,0 +1,63 @@
+--- 
++++ 
+@@ -35,7 +35,7 @@
+ from w1a1_eagle.recurrent_qat import shared_round_hard_signs
+ 
+ PARENT = Path('/mnt/c/Users/philip/binary-eagle-decoding-artifacts/w1a8-added-replay-pair-20261103-01/true5760/checkpoint-00005760.pt')
+-SCHEMA = 'modern_fixed_objective_checkpoint_v1'
++SCHEMA = 'modern_fixed_data_transfer_checkpoint_v1'
+ RECIPES = {
+     'control': {'depth_weights': [1., 1.], 'label_smoothing': 0.},
+     'depth': {'depth_weights': [1.5, .5], 'label_smoothing': 0.},
+@@ -128,6 +128,8 @@
+         Path(c['resident']['proof']['path']), Path(c['union_manifest']['path']), data.manifest)
+     cache = resident.bind_resident(data, c['resident']['config'])
+     embeddings = resident.load_embeddings(data, device, guard)
++    extra = make_extra()
++    if extra is not None: extra.add_embeddings(embeddings, device)
+     lookup = ExternalNativeF32Embedding(lookup=embeddings.__getitem__, vocab_size=248320,
+         hidden_size=2560, target_identity='frozen native Qwen3.5-4B Q4_K_M actual parent',
+         target_sha256=data.manifest['target']['sha256'], capture_sha256=c['union_manifest']['sha256'])
+@@ -161,13 +163,13 @@
+                     recipe_name=a.recipe, freeze=file_pin(a.freeze), actor=actor.contract,
+                     optimizer_paths=paths, replay='old356 + added407 independent lambda10',
+                     ce='2 windows/fixed4; static native reachable mask; cursor order unchanged',
+-                    parent_horizon=19200, max_bounded_cursor=7680)
++                    parent_horizon=19200, max_bounded_cursor=7680, data_arm=DATA_ARM, bank=extra.contract if extra else None)
+     saved = torch.load(a.resume, map_location='cpu', weights_only=False) if a.resume else parent
+ 
+     def expected_exposure(cursor):
+         expected = dict(ce_windows=0, labels=0, old_replay_tokens=0, added_replay_tokens=0)
+         for i in range(5760, cursor):
+-            for w in resident.ce_at(ce_fit, order, i):
++            for w in (extra.windows(ce_fit, order, i, resident.ce_at, metadata=True) if extra else resident.ce_at(ce_fit, order, i)):
+                 expected['ce_windows'] += 1
+                 expected['labels'] += sum(label in supported_ids and reachable for label, reachable
+                     in zip(w['labels'], w['native_supervision_reachable_mask']))
+@@ -195,7 +197,7 @@
+     random.setstate(saved['python_rng'])
+ 
+     def forward(window):
+-        batch = data.materialize(window, device)
++        batch = extra.materialize(window, device) if extra and window['id'] in extra.keys else data.materialize(window, device)
+         adapter = actor.adapter
+         cache = adapter.build_context_cache(batch.prefix_tokens, batch.prefix_rawfeatures, chunk_size=64)
+         state = adapter.encode_feature(batch.seed_rawfeature)
+@@ -236,7 +238,7 @@
+                 loss = 0.
+                 labels = 0
+                 with shared_round_hard_signs(actor.linears):
+-                    for w in resident.ce_at(ce_fit, order, cursor):
++                    for w in (extra.windows(ce_fit, order, cursor, resident.ce_at) if extra else resident.ce_at(ce_fit, order, cursor)):
+                         values = forward(w)
+                         classes = reverse[torch.tensor(w['labels'], device=device)]
+                         ce, n = ordinary_ce(values, classes, w['native_supervision_reachable_mask'], RECIPES[a.recipe])
+@@ -302,7 +304,7 @@
+         cursor=cursor, changed_scale_elements=changed, local_exposure=exposure,
+         local_trainer_seconds=seconds, wall_seconds=time.perf_counter()-started,
+         peak_cuda_allocated_bytes=torch.cuda.max_memory_allocated(),
+-        peak_cuda_reserved_bytes=torch.cuda.max_memory_reserved(), resident=cache.report(),
++        peak_cuda_reserved_bytes=torch.cuda.max_memory_reserved(), resident=cache.report(), bank=extra.report() if extra else None,
+         dev_windows=len(rows), dev_prefix_tokens=sum(r['prefix'] for r in rows),
+         scope='Consumed DEV only; no generalization or throughput claim'))
+ 

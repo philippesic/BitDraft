@@ -1,0 +1,86 @@
+--- a/ggml/src/ggml-cuda/w1a1.cu
++++ b/ggml/src/ggml-cuda/w1a1.cu
+@@ -6,9 +6,11 @@
+ // Fixed finite-reciprocal-v2 A8 quantizer from the retained packed runtime.
+ // One token per block; byte codes are token-major. Compile with --ftz=false.
+ static __global__ void w1ax_quantize(
+-        const float * activations, int64_t k, int8_t * codes, float * scales) {
++        const float * activations, int64_t k, int8_t * codes, float * scales, float * sums, int bits, int mode, float clip) {
+     __shared__ uint32_t maxima[256];
+     __shared__ float token_absmax;
++    __shared__ int totals[256];
++    const int qmax = bits <= 2 ? 1 : (1 << (bits-1))-1;
+     const int64_t token = blockIdx.x;
+     const float * row = activations + token*k;
+     uint32_t local_max = 0;
+@@ -24,21 +26,27 @@
+         __syncthreads();
+     }
+     if (threadIdx.x == 0) {
+-        token_absmax = __uint_as_float(maxima[0]);
+-        scales[token] = __fdiv_rn(token_absmax, 127.0f);
++        token_absmax = mode == 0 ? __uint_as_float(maxima[0]) : clip;
++        if (!isfinite(token_absmax) || token_absmax < 0 || (mode != 0 && token_absmax == 0)) __trap();
++        scales[token] = __fdiv_rn(token_absmax, (float) qmax);
+     }
+     __syncthreads();
+     const bool zero = (__float_as_uint(token_absmax) & 0x7fffffffu) == 0;
+-    const float inv = zero ? 0.0f : __fdiv_rn(127.0f, token_absmax);
++    const float inv = zero ? 0.0f : __fdiv_rn((float) qmax, token_absmax);
+     const bool finite_inv = (__float_as_uint(inv) & 0x7f800000u) != 0x7f800000u;
++    int total=0;
+     for (int64_t i = threadIdx.x; i < k; i += blockDim.x) {
+         // If the reciprocal overflows on a tiny finite row, retain divide-then-
+         // multiply F64 arithmetic, casting to F32 before integer RNE.
+         const float normalized = zero ? 0.0f : finite_inv ? __fmul_rn(row[i], inv) :
+-            __double2float_rn((double) row[i]/(double) token_absmax*127.0);
+-        const int code = __float2int_rn(normalized);
+-        codes[token*k + i] = (int8_t) max(-127, min(127, code));
++            __double2float_rn((double) row[i]/(double) token_absmax*(double) qmax);
++        const int code = bits == 1 ? (row[i] >= 0 ? 1 : -1) : max(-qmax, min(qmax, __float2int_rn(normalized)));
++        codes[token*k + i] = (int8_t) code;
++        total += code;
+     }
++    totals[threadIdx.x]=total; __syncthreads();
++    for(int stride=128;stride>0;stride/=2) { if(threadIdx.x<stride) totals[threadIdx.x]+=totals[threadIdx.x+stride]; __syncthreads(); }
++    if(threadIdx.x==0) sums[token]=__fmul_rn((float)totals[0],scales[token]);
+ }
+ 
+ // Four output rows per block, one complete warp per row. Weight signs remain
+@@ -46,7 +54,7 @@
+ static __global__ void w1ax_integer_dot(
+         const uint32_t * weights, const float * weight_scales,
+         const int8_t * codes, const float * activation_scales,
+-        int64_t m, int64_t k, int64_t words, float * output) {
++        int64_t m, int64_t k, int64_t words, float * output, const float * midpoints, const float * sums) {
+     const int64_t row = (int64_t) blockIdx.x*4 + threadIdx.y;
+     const int64_t token = blockIdx.y;
+     const int lane = threadIdx.x;
+@@ -80,7 +88,8 @@
+         if ((__float_as_uint(alpha) & 0x80000000u) || !isfinite(alpha) ||
+                 (__float_as_uint(beta) & 0x80000000u) || !isfinite(beta)) __trap();
+         const float weighted = __fmul_rn((float) sum, alpha);
+-        output[token*m + row] = __fmul_rn(weighted, beta);
++        const float dot = __fmul_rn(weighted, beta);
++        output[token*m + row] = midpoints ? __fadd_rn(dot,__fmul_rn(midpoints[row],sums[token])) : dot;
+     }
+ }
+ 
+@@ -95,7 +104,7 @@
+         CUDA_CHECK(cudaMemsetAsync(codes + k*n, 0, (size_t) (layout.codes_words*4 - k*n), ctx.stream()));
+     }
+     w1ax_quantize<<<dim3((unsigned) n), 256, 0, ctx.stream()>>>(
+-        (const float *) acts->data, k, codes, scales);
++        (const float *) acts->data, k, codes, scales, scales+n, ggml_get_op_params_i32(dst,0), ggml_get_op_params_i32(dst,1), ggml_get_op_params_f32(dst,2));
+     CUDA_CHECK(cudaGetLastError());
+ }
+ 
+@@ -109,7 +118,7 @@
+     w1ax_integer_dot<<<dim3((unsigned) ((m+3)/4), (unsigned) n), dim3(32, 4), 0, ctx.stream()>>>(
+         (const uint32_t *) dst->src[0]->data, (const float *) dst->src[1]->data,
+         (const int8_t *) packed, (const float *) (packed + layout.scale_offset),
+-        m, k, (k+31)/32, (float *) dst->data);
++        m, k, (k+31)/32, (float *) dst->data, dst->src[4] ? (const float *)dst->src[4]->data : nullptr, (const float *)(packed+layout.scale_offset+n));
+     CUDA_CHECK(cudaGetLastError());
+ }
+ 

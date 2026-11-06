@@ -1,0 +1,11 @@
+--- a/ggml/src/ggml-cpu/ggml-cpu.cpp
++++ b/ggml/src/ggml-cpu/ggml-cpu.cpp
+@@ -452,7 +452,7 @@
+                 op->type != GGML_TYPE_IQ1_M; // missing type_traits.from_float
+         case GGML_OP_W1AX_PACK:
+         case GGML_OP_W1A1_MUL_MAT:
+-            return ggml_w1ax_is_supported(op);
++            return false; // affine precision campaign requires CUDA
+         case GGML_OP_MUL_MAT:
+             if (ggml_get_op_params_i32(op, 1) == GGML_HINT_SRC0_IS_HADAMARD &&
+                 src0->type == GGML_TYPE_F32 && op->type == GGML_TYPE_F32) {

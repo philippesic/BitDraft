@@ -1,0 +1,20 @@
+--- a/ggml/src/ggml.c
++++ b/ggml/src/ggml.c
+@@ -3396,7 +3396,7 @@
+ // Fixed row W1A8. These constructors keep packing explicit in the graph.
+ struct ggml_tensor * ggml_w1ax_pack(
+         struct ggml_context * ctx, struct ggml_tensor * activations, int32_t bits) {
+-    GGML_ASSERT(bits == 8 && activations != NULL && activations->type == GGML_TYPE_F32);
++    GGML_ASSERT((bits == 1 || bits == 2 || bits == 4 || bits == 8) && activations != NULL && activations->type == GGML_TYPE_F32);
+     GGML_ASSERT(activations->ne[0] > 0 && activations->ne[0] % 32 == 0 && activations->ne[0] <= INT32_MAX/127);
+     GGML_ASSERT(activations->ne[1] > 0 && activations->ne[1] <= 65535);
+     GGML_ASSERT(activations->ne[2] == 1 && activations->ne[3] == 1);
+@@ -3413,7 +3413,7 @@
+ struct ggml_tensor * ggml_w1ax_mul_mat_shared(
+         struct ggml_context * ctx, struct ggml_tensor * weights, struct ggml_tensor * scales,
+         struct ggml_tensor * packed, int64_t k, int32_t bits) {
+-    GGML_ASSERT(bits == 8 && packed != NULL && packed->op == GGML_OP_W1AX_PACK);
++    GGML_ASSERT((bits == 1 || bits == 2 || bits == 4 || bits == 8) && packed != NULL && packed->op == GGML_OP_W1AX_PACK);
+     GGML_ASSERT(ggml_w1ax_is_supported(packed) && packed->src[0]->ne[0] == k);
+     GGML_ASSERT(weights != NULL && scales != NULL);
+     struct ggml_tensor * result = ggml_new_tensor_2d(ctx, GGML_TYPE_F32, weights->ne[1], packed->src[0]->ne[1]);
