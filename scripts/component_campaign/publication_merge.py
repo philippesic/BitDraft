@@ -14,8 +14,8 @@ def merge(rows):
   for field in ('accepted','proposed','rounds','output_tokens','request_seconds','request_tok_s','acceptance','accepted_per_round','emitted_per_round','target_identical','responses','native_acceptance_gap_matched_control'):row[field]=None
   if name=='q4':
    for field in ('ce','agreement','mean_rank','mean_margin','ce_gap_matched_control'):row[field]=None
-   row.update(ffn_weights='Q4_K_M; full tensor map linked',gate_up_activation='Native Q4 kernel contract',down_activation='Native Q4 kernel contract',fusion_weights='See frozen tensor map',attention_qk_weights='See frozen tensor map',attention_vo_weights='See frozen tensor map',trainable_policy='Frozen external DFlash Q4_K_M reference')
-  else:row['trainable_policy']='Frozen learned-small2048 B0 reference; no extra updates'
+   row.update(ffn_weights='Q4_K_M; full tensor map linked',gate_up_activation='Native Q4 kernel contract',down_activation='Native Q4 kernel contract',fusion_weights='See frozen tensor map',attention_qk_weights='See frozen tensor map',attention_vo_weights='See frozen tensor map',trainable_policy='Frozen external DFlash Q4_K_M reference',source_model_sha256=reference(model)['sha256'],data_manifest_sha256=None,B0_checkpoint_sha256=None,training_resolved_evidence=None,training_sequences=None)
+  else:row.update(trainable_policy='Frozen learned-small2048 B0 reference; no extra updates',training_resolved_evidence=str(B/'model-final.json'))
   rows.append(row)
  for row in rows:
   arm=row['arm'];final=max(x['updates'] for x in rows if x['arm']==arm)
@@ -34,6 +34,7 @@ def merge(rows):
    row.update({prefix+'_request_tok_s':entry['request_tok_s'],prefix+'_accepted':entry['accepted'],prefix+'_proposed':entry['proposed'],prefix+'_acceptance':entry['acceptance'],prefix+'_emitted_per_round':entry['emitted_per_round'],prefix+'_request_cohort':panel['cohort'],prefix+'_request_responses':entry['responses'],prefix+'_request_repetitions':entry['timing_repetitions'],prefix+'_request_evidence':panel['source']['path'],prefix+'_vs_q4':entry.get('vs_q4'),prefix+'_prefix_counts':entry['prefix_counts']})
    if prefix=='final':
     if entry['instrumented'] or entry['timing_repetitions']<5 or freeze['warmup_policy']['per_server_cell']<2:raise ValueError('formal final protocol not met')
+    row.update(final_native_host_library_sha256=freeze['runtime']['libllama.so.0.8.0']['sha256'],final_native_CUDA_library_sha256=freeze['runtime']['libggml-cuda.so.0.28.0']['sha256'])
    if prefix=='final' or row.get('allocation_evidence') is None:
     allocation=entry['allocations'][0]['allocation'];model=allocation['model_buffers'];cache=allocation['cache_buffers']
     row.update(actual_gpu_model_bytes=sum(v for k,v in model.items() if k.startswith('CUDA') and k!='CUDA_Host'),actual_cpu_model_bytes=sum(v for k,v in model.items() if k.startswith('CPU')),draft_cache_bytes=sum(x['total_reported_bytes'] for x in cache[1:]),draft_rotation_bytes=sum(x['reported_bytes'] for x in allocation['rotation_buffers']),sampled_combined_device_peak_bytes=entry['sampled_device_peak_bytes'],allocation_evidence=entry['allocations'][0]['cell'],allocation_rounding='Native logs0.01MiB; persistent tensor bytes exact. Peak includes target/desktop/workspace.')
