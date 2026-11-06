@@ -11,7 +11,7 @@ def main():
  directory=freeze(spec['name'])
  env=dict(os.environ,PYTHONPATH=str(directory)+':'+str(directory/'src'),COMPONENT_FROZEN_SOURCE=str(directory))
  if spec.get('embedding'):
-  subprocess.run([sys.executable,'-m','scripts.component_campaign.embedding_qualify'],cwd=directory,env=env,check=True)
+  subprocess.run([sys.executable,'-m','scripts.component_campaign.embedding_qualify','--format',spec['embedding']],cwd=directory,env=env,check=True)
  if any(x!='f16' for x in spec.get('kv',['f16','f16'])):
   subprocess.run([sys.executable,'-m','scripts.component_campaign.cache_read_qualify'],cwd=directory,env=env,check=True)
  os.chdir(directory)

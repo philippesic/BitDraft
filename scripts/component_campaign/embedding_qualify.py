@@ -1,12 +1,15 @@
 """Full-vocabulary native CPU/CUDA lookups on mask/special/common/rare IDs."""
-import json,os,subprocess
+import argparse,json,os,subprocess
 from collections import Counter
 import numpy as np
 from .common import *
 from scripts.dflash_baseline.model import GGUFReader,dequantize
 
 def main():
- out=R/'qualification/embedding-lookup'
+ ap=argparse.ArgumentParser();ap.add_argument('--format',choices=['Q6_K','Q4_K','Q3_K','Q5_K']);a=ap.parse_args()
+ extra=a.format if a.format not in (None,'Q6_K','Q4_K') else None
+ formats=[extra] if extra else ['Q6_K','Q4_K']
+ out=R/'qualification'/('embedding-lookup-'+extra if extra else 'embedding-lookup')
  if (out/'result.json').exists():return
  out.mkdir(exist_ok=False);source=P/'runs/w1a8-modern-packed-runtime-20261103-01/source';runtime=R/'runtime03';exe=out/'embedding-fixture'
  command=['c++','-O2','-std=c++17','-I'+str(source/'ggml/include'),'-I'+str(source/'ggml/src'),str(ROOT/'scripts/component_campaign/embedding_fixture.cpp'),'-L'+str(runtime/'bin'),'-lggml-cuda','-lggml-cpu','-lggml-base','-lggml','-Wl,-rpath,'+str(runtime/'bin'),'-o',str(exe)]
@@ -22,7 +25,7 @@ def main():
  ids=sorted(set([0,1,100001,200001,248319,*special,*[k for k,_ in counts.most_common(6)],*sorted([k for k,v in counts.items() if v==1])[:6]]));np.array(ids,dtype='<i4').tofile(out/'ids.i32')
  if any(x<0 or x>=248320 for x in ids):raise ValueError('invalid selected vocabulary ID')
  records=[]
- for format in ('Q6_K','Q4_K'):
+ for format in formats:
   basis=R/'bases'/(format+'.gguf');tensor=next(t for t in GGUFReader(basis).tensors if t.name=='output.weight');reference=dequantize(tensor.data[ids],tensor.tensor_type).reshape(len(ids),2560)
   if tuple(map(int,tensor.shape))!=(2560,248320):raise ValueError('vocabulary capacity changed')
   for backend in ('cpu','cuda'):
