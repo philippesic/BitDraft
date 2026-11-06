@@ -1,8 +1,8 @@
 # Current project status
 
-Current: the remaining-component campaign is active. Eleven physical4096-update
-windows are complete: H0/H4/H3/E4/tied HE4 and all six draft-cache pairs, plus exact
-private-Q6 controls reusing H0. The six scalar windows now run serially. All four
+Current: the remaining-component campaign is active. Thirteen physical4096-update
+windows are complete: H0/H4/H3/E4/tied HE4 and all six draft-cache pairs, plus row-scale/midpoint windows and exact
+private-Q6 controls reusing H0. Gain storage is running, then clip/norm/all-scalar. All four
 native recovery readouts are retained. Combinations, formal repeated comparisons,
 final heldout and final charts remain unfinished; no throughput promotion.
 

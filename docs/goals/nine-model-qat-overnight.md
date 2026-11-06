@@ -6212,3 +6212,9 @@ Component checkpoint17:25Pacific: all6draft-cache4096windows/native0/256/1024/40
 readouts complete, alongside the head/embedding windows. Eleven physical windows
 are complete; Sscale starts the six scalar windows. No heldout access or promotion.
 Actual counts/CE and stop/ownership details are in COMPONENT_CAMPAIGN.
+
+
+Component checkpoint18:11Pacific: row-scale and midpoint4096windows/native readouts
+complete; Sgain active. Thirteen physical primary windows complete. Current live
+state/stop guidance and pending scalar graph-import proof, combinations and formal
+comparisons are recorded in COMPONENT_CAMPAIGN. No new heldout or promotion.

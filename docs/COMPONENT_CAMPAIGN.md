@@ -467,3 +467,25 @@ selection and final data. V8 syntax and DOM-stub mode/filter checks pass after
 fixing tooltip newline escaping. This validates interaction code, not browser
 appearance or any unmeasured performance. Source/data/runtime hashes and actual
 unique/repeated exposure are in the full CSV/JSON. No external JS dependency.
+
+
+## Midpoint window complete —18:11Pacific
+
+Smidpoint completed4096and native0/256/1024/4096:57/259,55/263,52/267,50/272.
+Final consumed DEV CE7.45003; tensor payload172,236,800bytes, saving251,904bytes.
+No new midpoint underflow-to-zero was found. Sgain is now past halfway; Sclip,
+Snorm and Sall remain after it. Thirteen physical windows are complete.
+
+The native scalar importer audit now records actual F16 metadata source bytes
+and consumer types in diagnostic graph callbacks. Its C++ build passes; it has
+not run on GPU yet. After clip-storage/runtime04qualification, run
+`python -m scripts.component_campaign.scalar_import_audit` in the released GPU
+lane. This must verify all Sall half fields against actual exported bytes;
+clip fields have a separate required-logit/cache equivalence proof. Audit timing
+is excluded. It is preparation, not an admission/completion claim.
+
+Final retention verification supports the selected actual update count and saved
+GPU exp-then-half deployment values, authenticates full masters/Adam/RNG and
+requires exact recovered native bytes. `verify_frontier_recovery` remains pending.
+Optional extensions now preserve4096readouts rather than skipping directly to
+an extended endpoint; no extension or new training recipe has run.
