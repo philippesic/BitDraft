@@ -1,10 +1,11 @@
 # Current project status
 
-Current: the remaining-component campaign is active. Fifteen physical4096-update
-windows are complete: H0/H4/H3/E4/tied HE4 and all six draft-cache pairs, plus row-scale/midpoint/gain/clip windows and exact
-private-Q6 controls reusing H0. Norm storage is running, then all-scalar. All four
-native recovery readouts are retained. Combinations, formal repeated comparisons,
-final heldout and final charts remain unfinished; no throughput promotion.
+Current: the remaining-component campaign is active. All17 physical4096-update
+primary windows and19 logical arms (two private-Q6 controls reuse H0) are complete,
+with all four actual native readouts retained. Physical half-clip admission passed
+81 required-logit/cache comparisons. The sole owner is measuring larger consumed
+DEV request performance, clean GPU cost and physical allocation. Recovery decisions,
+combinations, formal final panels and final heldout remain; no throughput promotion.
 
 
 ## Active: remaining component precision and recovery

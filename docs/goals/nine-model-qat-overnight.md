@@ -2,8 +2,11 @@
 
 **Latest component checkpoint — November5:** the user authorized implementation,
 qualification, matched4096-update recovery and native component combinations.
-The sole implementation owner completed the H0/H44096-update training windows
-and is evaluating their native readouts from exact learned-small2048 B0; see [COMPONENT_CAMPAIGN](../COMPONENT_CAMPAIGN.md).
+The sole implementation owner completed all17 physical4096-update primary windows,
+including head, embedding, six cache pairs and six scalar-storage arms, with19
+logical arms and all four native readouts. Larger consumed-DEV selection and clean
+GPU/allocation measurements are running; combinations and final confirmation remain.
+See [COMPONENT_CAMPAIGN](../COMPONENT_CAMPAIGN.md) for live ownership.
 Prior planning-only limits below are historical and superseded for this campaign.
 No new goal, pushes, or target/verifier changes.
 

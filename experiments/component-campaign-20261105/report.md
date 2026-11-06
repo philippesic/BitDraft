@@ -28,12 +28,16 @@ embedding to a single CUDA output tensor. Prior qualified runtime files are unch
 
 ## Current recovery
 
-H0 is continuing to4096additional cumulative updates, resuming the exact32-update
-pilot state. At256updates, consumed-DEV CE is6.67338 versus6.89435 at zero;
-agreement14.07% versus11.11%. H4 follows from the same frozen B0 with matched
-example order/exposure and optimizer policy. Each primary recovery window retains
-0/256/1024/4096exports and native readouts. Embedding, KV, scalars, finite head
-probe, slow-starter reserves, combinations and locked confirmation remain pending.
+All17 physical4096-update primary windows and19 logical arms are complete,
+including the finite Q3_K head probe, tied embedding, six cache pairs and six
+scalar-storage arms. The exact private-Q6 head/embedding controls reuse H0's
+identical training history, with separate actual native evaluations/allocations.
+Every primary arm retains0/256/1024/4096exports and native readouts. Physical
+half-clip admission passed81 required-logit/cache comparisons under runtime04.
+Aggregate actual update compute is10,489.14seconds for69,632physical updates;
+setup, checkpoint and evaluation costs are separate. Larger consumed-DEV selection,
+clean GPU cost and physical allocation are being measured. Evidence-led recovery,
+combinations and locked formal confirmation remain pending.
 
 ## Data and storage limits
 
