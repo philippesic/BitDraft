@@ -17,12 +17,11 @@ def native_metrics(folder,arm):
 def collect():
  rows=[]
  for directory in sorted((R/'arms').glob('*')):
-  if directory.name=='H0-pilot':continue
+  if directory.name.endswith(('-pilot','-confirm')):continue
   path=directory/'readouts.json'
   if not path.exists():continue
   result=json.load(open(directory/'result.json')) if (directory/'result.json').exists() else {}
   spec=json.load(open(directory/'spec.json'));records=json.load(open(path))
-  if directory.name=='H0':records=json.load(open(R/'arms/H0-pilot/readouts.json'))[:1]+records
   logs=[directory/'updates.jsonl']
   if directory.name in ('H6','E6'):logs=[R/'arms/H0-pilot/updates.jsonl',R/'arms/H0/updates.jsonl']
   elif directory.name=='H0':logs=[R/'arms/H0-pilot/updates.jsonl',*logs]
@@ -32,6 +31,13 @@ def collect():
   if resolved_path.exists():
    resolved=json.load(open(resolved_path));lineage=resolved.get('lineage',{})
    logs=[*[Path(p)/'updates.jsonl' for p in lineage.get('resume_source_arms',[])],*logs]
+   # Resume pilots are physical work, not extra precision arms. Carry their
+   # actual standard readouts into the continued arm without inventing exports.
+   previous=[]
+   for parent in lineage.get('resume_source_arms',[]):
+    source=Path(parent)/'readouts.json'
+    if source.exists():previous += [p for p in json.load(open(source)) if p['update'] in (0,256,1024,4096)]
+   records=list({p['update']:p for p in previous+records}.values());records.sort(key=lambda p:p['update'])
   logs=list(dict.fromkeys(logs))
   events=sorted([json.loads(line) for log in logs if log.exists() for line in log.read_text().splitlines()],key=lambda x:x['update']);seen=set();cursor=0
   for point in records:

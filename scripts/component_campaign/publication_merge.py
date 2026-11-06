@@ -59,4 +59,6 @@ def merge(rows):
   row['matched_recovery_control']=control
   if c and row['ce'] is not None:row['ce_gap_matched_control']=row['ce']-c['ce']
   elif row['arm'] in controls:row['ce_gap_matched_control']=None
+  if c and row.get('acceptance') is not None and c.get('acceptance') is not None:row['native_acceptance_gap_matched_control']=row['acceptance']-c['acceptance']
+  elif row['arm'] in controls:row['native_acceptance_gap_matched_control']=None
  return rows

@@ -9,12 +9,14 @@ def main():
   path=folder/'result.json'
   if not path.exists():continue
   data=json.load(open(path));copy_control=data.get('reused_training') or data.get('training_reused') or folder.name in ('H6','E6')
-  rows.append(dict(arm=folder.name,updates=data['progress']['updates'],physical_updates=0 if copy_control else data.get('updates_this_process',data['progress']['updates']),actual_update_seconds=0 if copy_control else data['progress'].get('update_seconds',0),process_wall_seconds=data.get('process_wall_seconds'),unique_label_positions=data.get('unique_label_positions'),supervised_positions=data.get('supervised_positions'),full_state_retained=Path(data.get('recovery',{}).get('archive','/nonexistent')).exists(),result=pin(path)))
- # H0 resumed pilot; update_seconds is cumulative, while physical_updates is process-local.
+  resumed_seconds=0.;resolved=folder/'resolved.json'
+  if resolved.exists():
+   parents=json.load(open(resolved)).get('lineage',{}).get('resume_source_arms',[])
+   resumed_seconds=max([json.load(open(Path(p)/'result.json'))['progress'].get('update_seconds',0) for p in parents if (Path(p)/'result.json').exists()],default=0.)
+  rows.append(dict(arm=folder.name,updates=data['progress']['updates'],physical_updates=0 if copy_control else data.get('updates_this_process',data['progress']['updates']),actual_update_seconds=0 if copy_control else data['progress'].get('update_seconds',0)-resumed_seconds,resumed_update_seconds=resumed_seconds,process_wall_seconds=data.get('process_wall_seconds'),unique_label_positions=data.get('unique_label_positions'),supervised_positions=data.get('supervised_positions'),full_state_retained=Path(data.get('recovery',{}).get('archive','/nonexistent')).exists(),result=pin(path)))
+ # Cumulative checkpoint step time is split at authenticated resume boundaries.
  actual=sum(x['physical_updates'] for x in rows)
  seconds=sum(x['actual_update_seconds'] for x in rows)
- pilot=next((x for x in rows if x['arm']=='H0-pilot'),None)
- if pilot and any(x['arm']=='H0' for x in rows):seconds-=pilot['actual_update_seconds']
  checkpoints=[]
  for folder in (R/'arms').iterdir():
   path=folder/'recovery-cost.jsonl'
