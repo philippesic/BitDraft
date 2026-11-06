@@ -143,8 +143,15 @@ def main():
     assert len({x['cell'] for x in rows})==4
     training=json.load(open(OUT/'result.json'));resume=json.load(open(OUT/'final-recovery/result.json'))
     assert training['status']=='COMPLETE' and resume['status']=='FULL_FINAL_STATE_NATIVE_BYTE_IDENTITY_AND_GPU_RESUME_PASS'
+    assert resume['gpu_resume']['caller_optimizer_unchanged']
     failed=json.load(open(R/'candidate-attempt01/failure-summary.json'))
-    compact=dict(status='COMPLETE',rows=rows,training=training,final_resume=resume,failed_attempt=failed,
+    invalid=json.load(open(R/'candidate-attempt02-invalid-step/invalid-resume-step.json'))
+    invalid_training=json.load(open(R/'candidate-attempt02-invalid-step/result.json'))
+    invalid.update(actual_update_seconds=invalid_training['actual_update_seconds'],
+        additional_updates=invalid_training['additional_updates'],result=pin(R/'candidate-attempt02-invalid-step/result.json'))
+    failed_seconds=failed['actual_update_seconds']+invalid['actual_update_seconds']
+    compact=dict(status='COMPLETE',rows=rows,training=training,final_resume=resume,
+        failed_attempts=[failed,invalid],failed_invalid_update_seconds=failed_seconds,
         metadata=json.load(open(R/'release-audit/native-metadata.json')),
         no_9b_release=json.load(open(R/'release-audit/bounded-9b-search-summary.json')),
         scope='Consumed DEV smoke; two alternating process repetitions, no deployment promotion or statistical ranking. Methods/cells remain distinct. Before/after is additional training, not isolated precision attribution; no extra matched30-minute control.',
@@ -166,7 +173,7 @@ def main():
     document+='<svg'+(DEST/'comparison.svg').read_text().split('<svg',1)[1]
     document+='<p>DFlash2 uses the authenticated released five-layer conv/selector model, Q4_K_M draft with F16 KV. Csmallbroad is ordinary binary DFlash with its original recipe and Q4_0 Hadamard KV. HE4 remains unchanged. No compatible9B DFlash2 release was found in the queried inventories; no9B candidate weights exist.</p>'
     document+='<svg'+(DEST/'diagnostics.svg').read_text().split('<svg',1)[1]
-    document+=f'<p>Successful continuation: {training["actual_update_seconds"]:.3f}s synchronized updates, {training["additional_updates"]}updates; final full-state recovery and next GPU Adam update passed. An earlier failed readout spent {failed["actual_update_seconds"]:.3f}s and is excluded from the completed trajectory. Setup, readout and checkpoint costs are separate in JSON. Before/after does not isolate a precision or architecture benefit. HF/native graph parity remains an inherited unresolved limitation for QAT quality diagnostics.</p>'
+    document+=f'<p>Successful continuation: {training["actual_update_seconds"]:.3f}s synchronized updates, {training["additional_updates"]}updates; final full-state recovery and next GPU Adam update passed. Earlier failed/invalid attempts spent {failed_seconds:.3f}s and are excluded from the accepted trajectory. Setup, readout and checkpoint costs are separate in JSON. Before/after does not isolate a precision or architecture benefit. HF/native graph parity remains an inherited unresolved limitation for QAT quality diagnostics.</p>'
     document+='<label>Target cell <select id="cell"><option>All</option>'+''.join('<option>'+html.escape(c)+'</option>' for c in sorted({x['cell'] for x in rows}))+'</select></label><div style="overflow:auto;max-height:650px">'+table+'</div><script>document.querySelector("#cell").onchange=e=>{for(const r of document.querySelectorAll("tbody tr"))r.classList.toggle("hidden",e.target.value!=="All"&&r.firstChild.textContent!==e.target.value)}</script></html>'
     (DEST/'comparison.html').write_text(document)
     save(R/'published-results.json',dict(files=[pin(DEST/n) for n in ('results.json','comparison.csv','comparison.html','comparison.svg','comparison.png','diagnostics.svg','diagnostics.png')]))
