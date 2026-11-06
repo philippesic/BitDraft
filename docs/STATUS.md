@@ -29,22 +29,19 @@ The sole follow-up GPU operator is the tool-created worktree
 external message delivery after completion and GPU release. No external message
 has been sent by this worker.
 
-The first readout-failure attempt and the completed but invalid second trajectory
-are preserved separately. Final-state verification caught Adam counters14020 vs
-recorded14019: scratch qualification had aliased/mutated in-memory CPU step tensors
-before main restoration. The immutable disk parent is unchanged. The worker fixed
-scalar isolation, added a regression test, verifies caller Adam fingerprints remain
-unchanged, and now checks live Adam steps at every actual update.
+The corrected exact continuation completed1,800.072727s/9,998additional updates,
+4096→14094, with a live Adam-step identity check at every update. Native readouts
+and a full state are saved; trainer exited0 and released the GPU. The two earlier
+failed/invalid attempts remain preserved and excluded from this trajectory.
+[Continuation](../experiments/dflash2-smoke-20261106/continuation.json) ·
+[Attempt history](../experiments/dflash2-smoke-20261106/attempts.md).
 
-The corrected exact continuation restarted from the original4096parent under
-local tmux `dflash2-smoke-train-20261106-03`, canonical `remote_job.py`.
-[Supervisor](../runs/dflash2-smoke-train-20261106-03/state.json) ·
-[Live](../runs/dflash2-smoke-20261106-01/candidate/live.json) ·
+Final archive/native-byte/GPU-resume verification and the four-cell smoke now run
+under canonical `remote_job.py`, local tmux `dflash2-smoke-measure-20261106-02`.
+[Supervisor](../runs/dflash2-smoke-measure-20261106-02/state.json) ·
 [Smoke record](../experiments/dflash2-smoke-20261106/report.md).
-The previous1800-second trajectory is INVALID for the requested exact continuation;
-its full state and lossless native exports remain preserved. Earlier costs will be
-reported separately. Final recovery and all native performance measurements remain
-pending. One operator, one GPU lane; no external message sent.
+One operator, one GPU lane. No external message has been sent; parent owns that
+after completion, review and final release. No performance conclusion yet.
 
 A genuine Qwen3.5-4B DFlash2 release has been authenticated and converted;
 selector/convolution metadata and tensor coverage are present. No compatible9B
