@@ -1,0 +1,10 @@
+{
+  "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261009/dflash-w1a8-screen-20261009-01/initial-screen-packet-final/roundtrip-diagnostic-20261010-01/checkpoints/step-000000000001-e000000-b000000000002-direct-t0000000016047101.pt",
+  "bytes": 4877739313,
+  "sha256": "59f66919e6c2de47dd5586425986325c40b5291cff757febede94a39f5d0c931",
+  "inode": 25895697857396970,
+  "links": 1,
+  "reason": "User-authorized retirement of obsolete terminal one-update roundtrip diagnostic. Configs/results/native exports retained; this diagnostic is now unresumable. Current B0/frontiers/data and all component source/native states protected.",
+  "free_before": 4709908480,
+  "free_after": 9587650560
+}

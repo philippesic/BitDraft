@@ -1,4 +1,6 @@
-# Queued DFlash2 smoke comparison
+# DFlash2 smoke comparison
+
+Completed November 6: [results and full qualification](../experiments/dflash2-smoke-20261106/report.md). Both4B DFlash2 cells are measured with a declared F32 down fallback;9B is unsupported without a matched release. Exact candidate continuation and GPU release passed. Parent review/integration and external message delivery remain pending; the implementation worker sent no message. The following records the authorized scope.
 
 User authorized this follow-up on November 5, after the current component
 campaign finishes. This is a quick compatibility/performance screen, followed

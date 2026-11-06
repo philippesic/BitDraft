@@ -39,3 +39,13 @@ actually resume and reproduce evaluated native weights. Parent validated the
 formal packet and raw heldout totals. [Report](../experiments/component-campaign-20261105/report.md).
 DFlash2 matrix smoke and one 30-minute candidate continuation are authorized next;
 the shader-thread handoff waits until that follow-up finishes.
+
+## DFlash2 smoke and exact continuation (2026-11-06)
+
+[Full comparison](../experiments/dflash2-smoke-20261106/report.md): genuine4B
+DFlash2 required a declared F32 down fallback;9B had no matched release in the
+bounded search. Ordinary DFlash Q4 remained fastest in all four cells. Exact
+Csmallbroad+1800s continuation and final full-state GPU resume passed; native
+before/after throughput did not improve consistently. Two failed/invalid attempts
+and their additional compute are preserved. GPU ownership was released; parent
+review/message delivery is recorded separately from worker completion.

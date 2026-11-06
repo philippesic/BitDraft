@@ -1,0 +1,843 @@
+{
+  "status": "COMPLETE",
+  "parent": {
+    "path": "/mnt/c/binary-eagle-component-20261105-01/Csmallbroad-4096.pt.bsz",
+    "sha256": "7ec2b71aefc58ff17de06636c9e30f7ee24fdf19f31b9015b5cf75f7fc4f73e6",
+    "bytes": 4244125704
+  },
+  "starting_progress": {
+    "updates": 4096,
+    "cursor": 4096,
+    "update_seconds": 729.9636431940244,
+    "supervised_tokens": 61440
+  },
+  "final_progress": {
+    "updates": 14094,
+    "cursor": 14094,
+    "update_seconds": 2530.036370423969,
+    "supervised_tokens": 211410
+  },
+  "additional_updates": 9998,
+  "actual_update_seconds": 1800.0727272299446,
+  "budget_seconds": 1800,
+  "one_update_overshoot_seconds": 0.07272722994457581,
+  "last_update_seconds": 0.19233175599947572,
+  "supervised_positions": 149970,
+  "unique_positions_exposed": 3794,
+  "unique_windows": 3234,
+  "total_unique_label_positions": 3794,
+  "sequences": 40,
+  "setup_and_qualification_seconds": 169.6598013619987,
+  "final_checkpoint_seconds": 61.13130266100052,
+  "process_wall_seconds": 2169.9160325310004,
+  "peak_allocated_bytes": 10597126656,
+  "peak_reserved_bytes": 10777264128,
+  "peak_host_rss_bytes": 14361419776,
+  "readouts": [
+    {
+      "label": "0",
+      "progress": {
+        "updates": 4096,
+        "cursor": 4096,
+        "update_seconds": 729.9636431940244,
+        "supervised_tokens": 61440
+      },
+      "additional_update_seconds": 0.0,
+      "dev": {
+        "records": [
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+            "anchor": 168,
+            "positions": 15,
+            "ce": 8.127585411071777,
+            "agree": 4,
+            "rank_sum": 82976,
+            "margin_sum": -77.79759216308594
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+            "anchor": 200,
+            "positions": 15,
+            "ce": 8.434172630310059,
+            "agree": 0,
+            "rank_sum": 16002,
+            "margin_sum": -98.32350158691406
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+            "anchor": 231,
+            "positions": 15,
+            "ce": 7.165529251098633,
+            "agree": 1,
+            "rank_sum": 69183,
+            "margin_sum": -67.11439514160156
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+            "anchor": 38,
+            "positions": 15,
+            "ce": 7.850977897644043,
+            "agree": 0,
+            "rank_sum": 15610,
+            "margin_sum": -70.30612182617188
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+            "anchor": 70,
+            "positions": 15,
+            "ce": 8.570432662963867,
+            "agree": 1,
+            "rank_sum": 52123,
+            "margin_sum": -88.46263122558594
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+            "anchor": 101,
+            "positions": 15,
+            "ce": 8.777268409729004,
+            "agree": 0,
+            "rank_sum": 33114,
+            "margin_sum": -101.60968017578125
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+            "anchor": 72,
+            "positions": 15,
+            "ce": 5.9334635734558105,
+            "agree": 4,
+            "rank_sum": 4947,
+            "margin_sum": -64.94598388671875
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+            "anchor": 104,
+            "positions": 15,
+            "ce": 3.8942902088165283,
+            "agree": 4,
+            "rank_sum": 541,
+            "margin_sum": -17.74542236328125
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+            "anchor": 135,
+            "positions": 15,
+            "ce": 3.501818895339966,
+            "agree": 3,
+            "rank_sum": 300,
+            "margin_sum": -26.535198211669922
+          }
+        ],
+        "positions": 135,
+        "ce": 6.9172821044921875,
+        "agreement": 0.1259259259259259,
+        "mean_rank": 2035.525925925926,
+        "mean_margin": -4.539559456154152
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-0.gguf",
+        "sha256": "36a40befce8c6b9c64d49ae7074a14938bd0817687f49d40b3f8251ee2111156",
+        "bytes": 183225472
+      },
+      "evaluation_seconds": 1.2514531839988194,
+      "readout_seconds": 1.3544987969980866,
+      "elapsed_process_seconds": 169.64402865699958
+    },
+    {
+      "label": "300",
+      "progress": {
+        "updates": 5747,
+        "cursor": 5747,
+        "update_seconds": 1030.0373382640073,
+        "supervised_tokens": 86205
+      },
+      "additional_update_seconds": 300.07369506998293,
+      "dev": {
+        "records": [
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+            "anchor": 168,
+            "positions": 15,
+            "ce": 7.964232444763184,
+            "agree": 1,
+            "rank_sum": 50074,
+            "margin_sum": -63.2164192199707
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+            "anchor": 200,
+            "positions": 15,
+            "ce": 8.180496215820312,
+            "agree": 0,
+            "rank_sum": 32010,
+            "margin_sum": -82.62704467773438
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+            "anchor": 231,
+            "positions": 15,
+            "ce": 7.209463119506836,
+            "agree": 1,
+            "rank_sum": 22918,
+            "margin_sum": -65.76456451416016
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+            "anchor": 38,
+            "positions": 15,
+            "ce": 7.82977819442749,
+            "agree": 1,
+            "rank_sum": 20123,
+            "margin_sum": -73.58000946044922
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+            "anchor": 70,
+            "positions": 15,
+            "ce": 8.310920715332031,
+            "agree": 1,
+            "rank_sum": 75471,
+            "margin_sum": -80.88082885742188
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+            "anchor": 101,
+            "positions": 15,
+            "ce": 8.798834800720215,
+            "agree": 0,
+            "rank_sum": 44417,
+            "margin_sum": -105.93617248535156
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+            "anchor": 72,
+            "positions": 15,
+            "ce": 5.497199535369873,
+            "agree": 3,
+            "rank_sum": 2808,
+            "margin_sum": -48.685142517089844
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+            "anchor": 104,
+            "positions": 15,
+            "ce": 3.1878256797790527,
+            "agree": 4,
+            "rank_sum": 150,
+            "margin_sum": -6.250913143157959
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+            "anchor": 135,
+            "positions": 15,
+            "ce": 3.274698495864868,
+            "agree": 5,
+            "rank_sum": 448,
+            "margin_sum": -24.294788360595703
+          }
+        ],
+        "positions": 135,
+        "ce": 6.694827689064874,
+        "agreement": 0.11851851851851852,
+        "mean_rank": 1840.1407407407407,
+        "mean_margin": -4.083228764710603
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-300.gguf",
+        "sha256": "82b3e4f04b5cb8b56d1134e195e5a12c788f2fbd0f0ad8e8cac0ac6f31cfc256",
+        "bytes": 183225472
+      },
+      "evaluation_seconds": 0.7436960890008777,
+      "readout_seconds": 30.70577596699877,
+      "elapsed_process_seconds": 504.3315414280005,
+      "native_archive": {
+        "schema": "dflash.lossless_gguf_dictionary.v1",
+        "original": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-300.gguf",
+          "sha256": "82b3e4f04b5cb8b56d1134e195e5a12c788f2fbd0f0ad8e8cac0ac6f31cfc256",
+          "bytes": 183225472
+        },
+        "archive": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-300.gguf.native.zst",
+          "sha256": "eecb27262aef44d291934b6a924aefc9ffff20c8a463b9b156bbce4e40d1d66f",
+          "bytes": 46312278
+        },
+        "basis": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-0.gguf",
+          "sha256": "36a40befce8c6b9c64d49ae7074a14938bd0817687f49d40b3f8251ee2111156",
+          "bytes": 183225472
+        },
+        "verified_full_byte_roundtrip": true,
+        "semantics": "Storage container only; recover exact GGUF before native execution; timing excludes hydration; frozen source and original sidecar retained."
+      }
+    },
+    {
+      "label": "900",
+      "progress": {
+        "updates": 9077,
+        "cursor": 9077,
+        "update_seconds": 1630.0194651199972,
+        "supervised_tokens": 136155
+      },
+      "additional_update_seconds": 900.0558219259729,
+      "dev": {
+        "records": [
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+            "anchor": 168,
+            "positions": 15,
+            "ce": 8.129663467407227,
+            "agree": 4,
+            "rank_sum": 72637,
+            "margin_sum": -69.84075927734375
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+            "anchor": 200,
+            "positions": 15,
+            "ce": 8.216331481933594,
+            "agree": 1,
+            "rank_sum": 82749,
+            "margin_sum": -72.37181091308594
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+            "anchor": 231,
+            "positions": 15,
+            "ce": 7.410365581512451,
+            "agree": 1,
+            "rank_sum": 41590,
+            "margin_sum": -71.53621673583984
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+            "anchor": 38,
+            "positions": 15,
+            "ce": 8.657303810119629,
+            "agree": 0,
+            "rank_sum": 74661,
+            "margin_sum": -87.60003662109375
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+            "anchor": 70,
+            "positions": 15,
+            "ce": 7.971840858459473,
+            "agree": 1,
+            "rank_sum": 72157,
+            "margin_sum": -76.54566192626953
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+            "anchor": 101,
+            "positions": 15,
+            "ce": 9.708270072937012,
+            "agree": 0,
+            "rank_sum": 21523,
+            "margin_sum": -118.98509979248047
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+            "anchor": 72,
+            "positions": 15,
+            "ce": 4.488409519195557,
+            "agree": 5,
+            "rank_sum": 1617,
+            "margin_sum": -33.91357421875
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+            "anchor": 104,
+            "positions": 15,
+            "ce": 3.2994704246520996,
+            "agree": 6,
+            "rank_sum": 196,
+            "margin_sum": -3.1186327934265137
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+            "anchor": 135,
+            "positions": 15,
+            "ce": 5.477984428405762,
+            "agree": 3,
+            "rank_sum": 3226,
+            "margin_sum": -67.49205017089844
+          }
+        ],
+        "positions": 135,
+        "ce": 7.039959960513645,
+        "agreement": 0.15555555555555556,
+        "mean_rank": 2743.3777777777777,
+        "mean_margin": -4.454843277401395
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-900.gguf",
+        "sha256": "6ea58a1e9073d51d39d0372e3293bb12bb8431c22f11775d5335ba5c4bd12069",
+        "bytes": 183225472
+      },
+      "evaluation_seconds": 0.6964594720011519,
+      "readout_seconds": 29.189830208000785,
+      "elapsed_process_seconds": 1152.485480372001,
+      "native_archive": {
+        "schema": "dflash.lossless_gguf_dictionary.v1",
+        "original": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-900.gguf",
+          "sha256": "6ea58a1e9073d51d39d0372e3293bb12bb8431c22f11775d5335ba5c4bd12069",
+          "bytes": 183225472
+        },
+        "archive": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-900.gguf.native.zst",
+          "sha256": "4acd87bdc02ee3311bada30eec36aa74a9502cc6d0ba7cb805599a6ffd55ba7a",
+          "bytes": 53041953
+        },
+        "basis": {
+          "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-0.gguf",
+          "sha256": "36a40befce8c6b9c64d49ae7074a14938bd0817687f49d40b3f8251ee2111156",
+          "bytes": 183225472
+        },
+        "verified_full_byte_roundtrip": true,
+        "semantics": "Storage container only; recover exact GGUF before native execution; timing excludes hydration; frozen source and original sidecar retained."
+      }
+    },
+    {
+      "label": "1800",
+      "progress": {
+        "updates": 14094,
+        "cursor": 14094,
+        "update_seconds": 2530.036370423969,
+        "supervised_tokens": 211410
+      },
+      "additional_update_seconds": 1800.0727272299446,
+      "dev": {
+        "records": [
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+            "anchor": 168,
+            "positions": 15,
+            "ce": 8.423290252685547,
+            "agree": 4,
+            "rank_sum": 121476,
+            "margin_sum": -91.56584930419922
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+            "anchor": 200,
+            "positions": 15,
+            "ce": 8.271778106689453,
+            "agree": 1,
+            "rank_sum": 13310,
+            "margin_sum": -96.79660034179688
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+            "anchor": 231,
+            "positions": 15,
+            "ce": 7.590895652770996,
+            "agree": 1,
+            "rank_sum": 136970,
+            "margin_sum": -78.44337463378906
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+            "anchor": 38,
+            "positions": 15,
+            "ce": 8.109658241271973,
+            "agree": 1,
+            "rank_sum": 51104,
+            "margin_sum": -81.45127868652344
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+            "anchor": 70,
+            "positions": 15,
+            "ce": 8.487092971801758,
+            "agree": 1,
+            "rank_sum": 61745,
+            "margin_sum": -83.39090728759766
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+            "anchor": 101,
+            "positions": 15,
+            "ce": 10.23085880279541,
+            "agree": 0,
+            "rank_sum": 65932,
+            "margin_sum": -121.7752685546875
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+            "anchor": 72,
+            "positions": 15,
+            "ce": 4.849463939666748,
+            "agree": 4,
+            "rank_sum": 1151,
+            "margin_sum": -38.473358154296875
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+            "anchor": 104,
+            "positions": 15,
+            "ce": 4.4647722244262695,
+            "agree": 4,
+            "rank_sum": 257,
+            "margin_sum": -27.79230499267578
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+            "anchor": 135,
+            "positions": 15,
+            "ce": 3.8378210067749023,
+            "agree": 6,
+            "rank_sum": 1369,
+            "margin_sum": -39.041282653808594
+          }
+        ],
+        "positions": 135,
+        "ce": 7.140625688764784,
+        "agreement": 0.16296296296296298,
+        "mean_rank": 3357.8814814814814,
+        "mean_margin": -4.879483145254629
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-1800.gguf",
+        "sha256": "b498820f4c5a64ddf0c788fffedafcf1589ccd8494b0b6f0537f5e1a563120f5",
+        "bytes": 183225472
+      },
+      "evaluation_seconds": 0.7073206449967984,
+      "readout_seconds": 21.545567799999844,
+      "elapsed_process_seconds": 2108.6995407469985
+    }
+  ],
+  "recovery": {
+    "format": "dflash.byte_shuffle_zstd.stream.v1",
+    "archive": "/mnt/c/binary-eagle-dflash2-smoke-20261106-01/Csmallbroad-exact-plus1800-14094.pt.bsz",
+    "archive_sha256": "181ffb6d0d93fb911cf02102e6f67736336627e23dc89d06ee04eb5b0c726a13",
+    "archive_bytes": 4246079884,
+    "raw_sha256": "d0b2c1a7ae3a8ff805c258cc877cc0d6810b328ca49e5e27307eb4dc6ee4333d",
+    "raw_bytes": 5100698375,
+    "lossless_verified": true,
+    "raw_materialized": false
+  },
+  "source": {
+    "path": "/home/philip/.t3/worktrees/binary-eagle-decoding/t3-e6fc8d06/scripts/dflash2_smoke/train.py",
+    "sha256": "497dec9a8db641ad44c5d3515cd763333236e6a9b01d177afaf0f14df0b5089b",
+    "bytes": 11574
+  },
+  "qualification_status": "FULL_FINAL_STATE_NATIVE_BYTE_IDENTITY_AND_GPU_RESUME_PASS",
+  "failed_attempts": [
+    {
+      "status": "FAILED_READOUT",
+      "error": "Export state omitted version=2; failure at first300-second native export",
+      "actual_update_seconds": 300.00822123106263,
+      "updates": 1562,
+      "recoverable": false,
+      "parent_unchanged": true,
+      "policy": "Preserved logs; restart from original4096state. Failed attempt cost reported separately, never called a completed1800s continuation."
+    },
+    {
+      "status": "INVALID_EXACT_RESUME_TRAJECTORY",
+      "recorded_updates": 14019,
+      "actual_adam_steps": [
+        14020
+      ],
+      "full_state": {
+        "format": "dflash.byte_shuffle_zstd.stream.v1",
+        "archive": "/mnt/c/binary-eagle-dflash2-smoke-20261106-01/Csmallbroad-plus1800-14019.pt.bsz",
+        "archive_sha256": "7e6fa2ba484b4de305758af641d714303f6a3410ca34fb8083d8ef0f635c987f",
+        "archive_bytes": 4245373028,
+        "raw_sha256": "d5645e6a5c070544e7869995a9212b145beeba406a44a2c6ffd574f46ed5f027",
+        "raw_bytes": 5100698375,
+        "lossless_verified": true,
+        "raw_materialized": false
+      },
+      "diagnosis": "Scratch GPU resume qualification aliases CPU Adam step tensors through load_state_dict; qualification advanced the in-memory parent step4096\u21924097, then main continuation restored that mutated step with original moments and cursor4096. Final steps are one greater than actual trajectory updates. Preserve this paid invalid diagnostic; never decrement final counters and call it exact.",
+      "actual_update_seconds": 1800.0146279329783,
+      "additional_updates": 9923,
+      "result": {
+        "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate-attempt02-invalid-step/result.json",
+        "sha256": "9f02aeb4daa0bd25293283fc180bf01c6d36a0efc07d3d29a7df3f714d6bbc46",
+        "bytes": 18050
+      }
+    }
+  ],
+  "final_recovery": {
+    "status": "FULL_FINAL_STATE_NATIVE_BYTE_IDENTITY_AND_GPU_RESUME_PASS",
+    "recovery": {
+      "format": "dflash.byte_shuffle_zstd.stream.v1",
+      "archive": "/mnt/c/binary-eagle-dflash2-smoke-20261106-01/Csmallbroad-exact-plus1800-14094.pt.bsz",
+      "archive_sha256": "181ffb6d0d93fb911cf02102e6f67736336627e23dc89d06ee04eb5b0c726a13",
+      "archive_bytes": 4246079884,
+      "raw_sha256": "d0b2c1a7ae3a8ff805c258cc877cc0d6810b328ca49e5e27307eb4dc6ee4333d",
+      "raw_bytes": 5100698375,
+      "lossless_verified": true,
+      "raw_materialized": false
+    },
+    "native": {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-1800.gguf",
+      "sha256": "b498820f4c5a64ddf0c788fffedafcf1589ccd8494b0b6f0537f5e1a563120f5",
+      "bytes": 183225472
+    },
+    "optimizer_steps": [
+      14094
+    ],
+    "master_count": 104,
+    "optimizer_groups": [
+      {
+        "lr": 0.001,
+        "name": "sign",
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0,
+        "amsgrad": false,
+        "maximize": false,
+        "foreach": false,
+        "capturable": false,
+        "differentiable": false,
+        "fused": null,
+        "decoupled_weight_decay": true,
+        "parameter_count": 18
+      },
+      {
+        "lr": 1e-05,
+        "name": "scale",
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0,
+        "amsgrad": false,
+        "maximize": false,
+        "foreach": false,
+        "capturable": false,
+        "differentiable": false,
+        "fused": null,
+        "decoupled_weight_decay": true,
+        "parameter_count": 18
+      },
+      {
+        "lr": 1e-05,
+        "name": "midpoint",
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0,
+        "amsgrad": false,
+        "maximize": false,
+        "foreach": false,
+        "capturable": false,
+        "differentiable": false,
+        "fused": null,
+        "decoupled_weight_decay": true,
+        "parameter_count": 18
+      },
+      {
+        "lr": 1e-05,
+        "name": "gain",
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0,
+        "amsgrad": false,
+        "maximize": false,
+        "foreach": false,
+        "capturable": false,
+        "differentiable": false,
+        "fused": null,
+        "decoupled_weight_decay": true,
+        "parameter_count": 12
+      },
+      {
+        "lr": 1e-05,
+        "name": "clip",
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0,
+        "amsgrad": false,
+        "maximize": false,
+        "foreach": false,
+        "capturable": false,
+        "differentiable": false,
+        "fused": null,
+        "decoupled_weight_decay": true,
+        "parameter_count": 12
+      },
+      {
+        "lr": 1e-05,
+        "name": "norm",
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0,
+        "amsgrad": false,
+        "maximize": false,
+        "foreach": false,
+        "capturable": false,
+        "differentiable": false,
+        "fused": null,
+        "decoupled_weight_decay": true,
+        "parameter_count": 26
+      }
+    ],
+    "gpu_resume": {
+      "status": "ACTUAL_GPU_MASTER_ADAM_RNG_CURSOR_RESUME_UPDATE_PASS",
+      "owner": {
+        "pid": 65890,
+        "stat": "65890 (python) R 65872 65872 65872 0 -1 4194304 6754641 36 107077 0 7006 2881 0 0 20 0 23 0 2232665 70861762560 2680711 18446744073709551615 95563517034496 95563527790889 140730643128672 0 0 0 0 19927040 2 0 0 0 17 15 0 0 0 0 0 95563569987584 95563570041736 95563912450048 140730643129730 140730643129820 140730643129820 140730643132356 0\n",
+        "boot_id": "f263f22b-7779-45b6-8247-e702f692b44a\n",
+        "pgid": 65872
+      },
+      "arm": "Csmallbroad",
+      "saved_updates": 14094,
+      "retained_state_trainer": {
+        "path": "/home/philip/binary-eagle-decoding/runs/component-campaign-20261105-01/arms/Csmallbroad/result.json",
+        "sha256": "bf0d19b06a6c13eb2002e5226bc0f32fec9537a8c3a2bede7f50b7649ce6027c",
+        "bytes": 23087
+      },
+      "qualification_updates": 1,
+      "next_adam_steps": [
+        14095
+      ],
+      "next_cursor": 14095,
+      "next_capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/fit-prose-07/capture",
+      "next_anchor": 63,
+      "loss": 0.1767532378435135,
+      "gradient_norm": 2.720984935760498,
+      "update_seconds": 14.30940585099961,
+      "changed_master_names": [
+        "output_norm_enc",
+        "output_norm",
+        "layers.0.attn_norm",
+        "layers.0.attn_q_norm",
+        "layers.0.attn_k_norm",
+        "layers.0.ffn_norm",
+        "layers.0.ffn_gate.latent_sign",
+        "layers.0.ffn_gate.scale",
+        "layers.0.ffn_gate.midpoint",
+        "layers.0.ffn_gate.log_gain",
+        "layers.0.ffn_gate.log_clip",
+        "layers.0.ffn_up.latent_sign",
+        "layers.0.ffn_up.scale",
+        "layers.0.ffn_up.midpoint",
+        "layers.0.ffn_down.latent_sign",
+        "layers.0.ffn_down.scale",
+        "layers.0.ffn_down.midpoint",
+        "layers.0.ffn_down.log_gain",
+        "layers.0.ffn_down.log_clip",
+        "layers.1.attn_norm",
+        "layers.1.attn_q_norm",
+        "layers.1.attn_k_norm",
+        "layers.1.ffn_norm",
+        "layers.1.ffn_gate.latent_sign",
+        "layers.1.ffn_gate.scale",
+        "layers.1.ffn_gate.midpoint",
+        "layers.1.ffn_gate.log_gain",
+        "layers.1.ffn_gate.log_clip",
+        "layers.1.ffn_up.latent_sign",
+        "layers.1.ffn_up.scale",
+        "layers.1.ffn_up.midpoint",
+        "layers.1.ffn_down.latent_sign",
+        "layers.1.ffn_down.scale",
+        "layers.1.ffn_down.midpoint",
+        "layers.1.ffn_down.log_gain",
+        "layers.1.ffn_down.log_clip",
+        "layers.2.attn_norm",
+        "layers.2.attn_q_norm",
+        "layers.2.attn_k_norm",
+        "layers.2.ffn_norm",
+        "layers.2.ffn_gate.latent_sign",
+        "layers.2.ffn_gate.scale",
+        "layers.2.ffn_gate.midpoint",
+        "layers.2.ffn_gate.log_gain",
+        "layers.2.ffn_gate.log_clip",
+        "layers.2.ffn_up.latent_sign",
+        "layers.2.ffn_up.scale",
+        "layers.2.ffn_up.midpoint",
+        "layers.2.ffn_down.latent_sign",
+        "layers.2.ffn_down.scale",
+        "layers.2.ffn_down.midpoint",
+        "layers.2.ffn_down.log_gain",
+        "layers.2.ffn_down.log_clip",
+        "layers.3.attn_norm",
+        "layers.3.attn_q_norm",
+        "layers.3.attn_k_norm",
+        "layers.3.ffn_norm",
+        "layers.3.ffn_gate.latent_sign",
+        "layers.3.ffn_gate.scale",
+        "layers.3.ffn_gate.midpoint",
+        "layers.3.ffn_gate.log_gain",
+        "layers.3.ffn_gate.log_clip",
+        "layers.3.ffn_up.latent_sign",
+        "layers.3.ffn_up.scale",
+        "layers.3.ffn_up.midpoint",
+        "layers.3.ffn_down.latent_sign",
+        "layers.3.ffn_down.scale",
+        "layers.3.ffn_down.midpoint",
+        "layers.3.ffn_down.log_gain",
+        "layers.3.ffn_down.log_clip",
+        "layers.4.attn_norm",
+        "layers.4.attn_q_norm",
+        "layers.4.attn_k_norm",
+        "layers.4.ffn_norm",
+        "layers.4.ffn_gate.latent_sign",
+        "layers.4.ffn_gate.scale",
+        "layers.4.ffn_gate.midpoint",
+        "layers.4.ffn_gate.log_gain",
+        "layers.4.ffn_gate.log_clip",
+        "layers.4.ffn_up.latent_sign",
+        "layers.4.ffn_up.scale",
+        "layers.4.ffn_up.midpoint",
+        "layers.4.ffn_down.latent_sign",
+        "layers.4.ffn_down.scale",
+        "layers.4.ffn_down.midpoint",
+        "layers.4.ffn_down.log_gain",
+        "layers.4.ffn_down.log_clip",
+        "layers.5.attn_norm",
+        "layers.5.attn_q_norm",
+        "layers.5.attn_k_norm",
+        "layers.5.ffn_norm",
+        "layers.5.ffn_gate.latent_sign",
+        "layers.5.ffn_gate.scale",
+        "layers.5.ffn_gate.midpoint",
+        "layers.5.ffn_gate.log_gain",
+        "layers.5.ffn_gate.log_clip",
+        "layers.5.ffn_up.latent_sign",
+        "layers.5.ffn_up.scale",
+        "layers.5.ffn_up.midpoint",
+        "layers.5.ffn_down.latent_sign",
+        "layers.5.ffn_down.scale",
+        "layers.5.ffn_down.midpoint",
+        "layers.5.ffn_down.log_gain",
+        "layers.5.ffn_down.log_clip"
+      ],
+      "gpu_deployment_values_exact": true,
+      "caller_optimizer_unchanged": true,
+      "source": {
+        "path": "/home/philip/.t3/worktrees/binary-eagle-decoding/t3-e6fc8d06/scripts/component_campaign/gpu_resume.py",
+        "sha256": "56f036a183e17c4330753906197d0e862af34c6db8019708e2681d5adce23239",
+        "bytes": 7577
+      },
+      "peak_allocated_bytes": 10533487616,
+      "policy": "Actual next TRAIN window with saved Adam/RNG/order/cursor; one qualification update only. Retained4096 state and evaluated native bytes remain unchanged. This scratch update is not another recovery window, independent seed or reported finalist."
+    },
+    "source": {
+      "path": "/home/philip/.t3/worktrees/binary-eagle-decoding/t3-e6fc8d06/scripts/dflash2_smoke/verify_final.py",
+      "sha256": "ae63a37e460da0563331b1fedeffa2610de250d1f649360d9165a9b1b0e40226",
+      "bytes": 2282
+    },
+    "qualification_charged_to_budget": false
+  },
+  "failed_invalid_update_seconds": 2100.022849164041,
+  "qualification_probe_update_seconds": 57.97608250200574
+}

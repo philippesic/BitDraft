@@ -1,55 +1,49 @@
 # Current project status
 
-## Component campaign complete; DFlash2 follow-up next
+## Completed: precision campaign and DFlash2 follow-up
 
-The remaining head/embedding/drafter-KV/scalar campaign is complete on RTX 5080,
-Qwen3.5-4B Q4_K_M: 28 full 4,096-update windows, 118 readouts and 1,680 formal
-measured requests. Parent re-executed the formal packet validator, recomputed
-heldout totals and verified handoff file hashes. Actual retained-state GPU
-resume and exact native re-export passed. The worker released its GPU jobs.
+Both user-authorized investigations are complete. Source, compact findings,
+figures and reusable runners are integrated; paid models/captures/raw evidence
+remain outside Git. External DFlash Q4_K_M remains the throughput incumbent.
+No new binary-model GPU work is assigned.
 
-[Report](../experiments/component-campaign-20261105/report.md) ·
-[Compact results](../experiments/component-campaign-20261105/results.json) ·
-[Full charts](../runs/component-campaign-20261105-01/charts/comparison.html) ·
-[Completion receipt](../runs/component-campaign-20261105-01/campaign-complete.json) ·
-[Parent review](../runs/component-campaign-20261105-01/parent-review-20261106.json).
+[Component campaign](../experiments/component-campaign-20261105/report.md):
+28 full 4,096-update windows, 118 readouts, 1,680 formal measured requests and
+actual retained-state GPU resume/native recovery. HE4 is the faster-draft
+endpoint; Csmallbroad is the smaller-cache endpoint. Neither beats external Q4.
 
-HE4 has the faster draft: 0.995 ms clean GPU forward versus 1.179 ms external Q4;
-heldout request throughput is 167.06 versus 236.67 tokens/s. Csmallbroad is the
-smaller retained endpoint, saving 68.74 MiB of model/cache payload against its
-matched broader-data control and reaching 168.95 request tokens/s. External Q4
-remains the deployment incumbent. Controls, complete training recipes and
-cohorts remain distinct; full HF/native graph parity is still unresolved.
+[DFlash2 smoke and continuation](../experiments/dflash2-smoke-20261106/report.md):
+genuine DFlash2 measured for 4B Q4_K_M and NVFP4 with five FFN down matrices
+stored/executed F32. Original Q4 and F16 paths are invalid due to nonfinite logits.
+Both 9B target baselines ran; no matched DFlash2 release was found in the bounded
+search, and no 9B candidate weights exist. Those cases are explicitly unsupported
+or untested. Ordinary DFlash Q4 leads the consumed-DEV smoke in all four cells.
 
-## Authorized next action
+Csmallbroad's accepted continuation used 1,800.073 actual update seconds and
+9,998 updates, with exact resume from its original state. Actual next GPU update
+and native byte recovery pass. Before/after throughput has no consistent gain.
+Export failure and optimizer-state aliasing caused two rejected attempts costing
+another 2,100.023 update seconds, separately retained and excluded. The scalar
+aliasing regression is fixed. Parent recomputed all 120 measured native request
+rows and the accepted update log, verified seven handoff hashes, and passed eight
+regression checks. [Review receipt](../runs/dflash2-smoke-20261106-01/parent-review.json).
 
-Execute [DFlash2 smoke](DFLASH2_SMOKE.md): genuine DFlash2 across the frozen
-4B/9B × Q4_K_M/NVFP4 target matrix, ordinary DFlash Q4_K_M comparisons, plus
-one additional 1,800-second actual-update continuation of the best retained
-candidate. Select Csmallbroad for that continuation using the native request
-throughput criterion among retained binary candidates; preserve HE4 as the
-faster-draft comparison. This is artifact/recipe selection, not an isolated
-precision claim or proof of a significant win over HE4. Measure before/after
-on consumed DEV; the old fresh24 cohort is now consumed and cannot be relabeled
-sealed. Do not start another broad training sweep.
+## Handoff
 
-The previous campaign source checkout and pinned runtimes remain preserved.
-Component integration is pushed to `origin/main`. The
-[follow-up worker](<t3-thread://v2/92296584-2a2c-4998-8f7d-4ecb7d7f5ff2/thread:delegated-task:command%3Amcp%3Ac989a2e7-31b3-422d-9d92-027d545b4901%3Adelegate-task%3Adflash2-matrix-smoke-and-candidate-1800s-20261106-01>)
-is active, qualifying DFlash2 inputs and the Csmallbroad continuation. Fresh ownership,
-pause and storage checks precede launch; old running receipts from three WSL
-restarts are historical, not live authority. See [component record](COMPONENT_CAMPAIGN.md)
-and [operations](AGENT_OPERATIONS.md). All retained states/parents/data and
-unpublished source must remain recoverable. The explicitly retired earlier
-optimizer states are listed in the [retirement record](../experiments/precision-campaign-20261104/checkpoint-retirement-20261105.md).
+All owned GPU jobs and passive successors are released. The two component
+frontiers, original parents and new fully resumable continuation remain retained.
+See [preservation](../runs/dflash2-smoke-20261106-01/milestone-retention.json) and
+[GPU release](../runs/dflash2-smoke-20261106-01/gpu-release.json).
+Windows C and WSL have low free space; do not infer another training allocation
+from completion. Preserve paid states, source/dictionary dependencies and captures.
+Prior explicitly authorized retirements remain recorded in their campaign receipts.
 
-After the DFlash2/candidate follow-up finishes and is reviewed, release the GPU
-and send the exact queued shader benchmark message. The destination, message
-and deduplicated key are in the [pending handoff](../runs/component-campaign-20261105-01/pending-thread-message.json).
-The component campaign's completion alone does not trigger delivery. The worker
-must not send the message; parent delivers it once after follow-up review.
+The exact queued shader benchmark message is ready for parent delivery now that
+review/integration and GPU release are complete. Delivery status/identity lives in
+[handoff receipt](../runs/component-campaign-20261105-01/pending-thread-message.json).
+Do not resend if a successful delivery receipt is recorded.
 
-## Reference and history
+## References
 
-[Candidate protocol](CANDIDATE_BENCHMARKING.md) · [Stages](CANDIDATE_STAGES.md) ·
-[History](HISTORY.md) · [Decisions](DECISIONS.md) · [Git and artifacts](GIT_AND_ARTIFACTS.md).
+[Benchmark protocol](CANDIDATE_BENCHMARKING.md) · [Stages](CANDIDATE_STAGES.md) ·
+[History](HISTORY.md) · [Operations](AGENT_OPERATIONS.md) · [Git and artifacts](GIT_AND_ARTIFACTS.md).
