@@ -10,11 +10,12 @@ def summarize(result):
   native=lambda key:sum(x['native'].get(key,0) for x in v)
   rounds=native('rounds');proposed=native('proposed')
   summary[arm]=dict(responses=len(v),timing_repetitions=len({x['rep'] for x in v}),prompts=len({x['prompt'] for x in v}),output_tokens=tokens,request_wall_seconds=seconds,request_tok_s=tokens/seconds,accepted=native('accepted'),proposed=proposed,rounds=rounds,accepted_per_round=native('accepted')/rounds if rounds else None,emitted_per_round=tokens/rounds if rounds else None,acceptance=native('accepted')/proposed if proposed else None,correct=all(x['correct'] for x in v),instrumented=any(x['instrumented'] for x in v),full_draft_host_ms_per_round=sum(x.get('draft_full_ms',0) for x in v)/rounds if rounds and all('draft_full_ms' in x for x in v) else None)
-  summary[arm].update(draft_prefill_host_ms_per_request=sum(x.get('draft_prefill_ms',0) for x in v)/len(v) if all('draft_prefill_ms' in x for x in v) else None,full_draft_all_phases_host_ms_per_round=sum(x.get('draft_all_phases_ms',0) for x in v)/rounds if rounds and all('draft_all_phases_ms' in x for x in v) else None,host_scope='Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.')
+  profiled=any(x.get('profiled',False) for x in v)
+  summary[arm].update(profiled=profiled,instrumented=summary[arm]['instrumented'] or profiled,draft_prefill_host_ms_per_request=sum(x.get('draft_prefill_ms',0) for x in v)/len(v) if all('draft_prefill_ms' in x for x in v) else None,full_draft_all_phases_host_ms_per_round=sum(x.get('draft_all_phases_ms',0) for x in v)/rounds if rounds and all('draft_all_phases_ms' in x for x in v) else None,host_scope='Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing.')
  return summary
 
 def paired_ratio(result,numerator,denominator,draws=2000):
- rows=[x for x in json.load(open(result))['rows'] if not x.get('warmup') and not x.get('instrumented')]
+ rows=[x for x in json.load(open(result))['rows'] if not x.get('warmup') and not x.get('instrumented') and not x.get('profiled')]
  mapping={(x['arm'],x['rep'],x['prompt']):x for x in rows};reps=sorted({x['rep'] for x in rows});prompts=sorted({x['prompt'] for x in rows})
  source=json.load(open(Path(result).parent/'prompts.json'));domains={x['id']:x.get('domain','capture') for x in source};strata={}
  for prompt in prompts:strata.setdefault(domains.get(prompt,'capture'),[]).append(prompt)

@@ -14,7 +14,7 @@ def native_panel(directory):
    measurements.append(dict(cell=str(cell),allocation=allocations(cell),sampled_device_peak_bytes=max([x['MiB']*2**20 for x in memory],default=None),sampled_server_host_peak_rss_bytes=max([x.get('VmHWM',0) for x in memory],default=None)))
   entry['allocations']=measurements
   entry['sampled_device_peak_bytes']=max([x['sampled_device_peak_bytes'] for x in measurements if x['sampled_device_peak_bytes'] is not None],default=None)
-  if entry['instrumented'] and name!='target':
+  if entry['instrumented'] and name!='target' and entry['full_draft_host_ms_per_round'] is not None:
    entry['host_vs_q4']=paired_host_ratio(directory/'result.json',name,'q4')
    if 'H0' in result:entry['host_vs_H0']=paired_host_ratio(directory/'result.json',name,'H0')
   if not entry['instrumented']:

@@ -96,6 +96,7 @@ def main():
    save(cell/'command.json',dict(runtime=str(a.runtime),runtime_build=pin(a.runtime/'build.json'),argv=argv,environment={k:v for k,v in env.items() if k.startswith(('GGML_','CUDA_','LD_','OMP_','DECODE_')) or k in ('PATH','LANG')}))
    if a.profile and model:
     argv=['nsys','profile','--sample=none','--cpuctxsw=none','--trace=cuda,nvtx','--cuda-graph-trace=node','--force-overwrite=false','-o',str(cell/'profile')]+argv
+    save(cell/'profiler-command.json',dict(argv=argv,scope='Nsight instrumented format diagnostic; never an uninstrumented request timing'))
    created_native=hydrate(model) if model else False
    done=threading.Event();memory=[];server_pid=None
    def sample():
@@ -155,7 +156,7 @@ def main():
       if model and prefix and metrics:
        rates=[float(x) for x in prefix[-1].split(',')];n=metrics['rounds']
        metrics['prefix_survival_counts']=[round(x*n) for x in rates];metrics['prefix_count_method']='per-request rounded rate * exact rounds;rounding error<0.5 at<=256 rounds'
-      row=dict(instrumented=traced,bounds_ns=[start_ns,end_ns],rep=rep,warmup=item.get('_warmup',False),arm=label,prompt=item['id'],correct=correct,wall_seconds=elapsed,tokens=len(tokens),timings=response.get('timings'),native=metrics)
+      row=dict(instrumented=traced,profiled=bool(a.profile and model),bounds_ns=[start_ns,end_ns],rep=rep,warmup=item.get('_warmup',False),arm=label,prompt=item['id'],correct=correct,wall_seconds=elapsed,tokens=len(tokens),timings=response.get('timings'),native=metrics)
       rows.append(row);save(a.out/'progress.json',rows)
       if not correct:raise RuntimeError('target mismatch '+label+' '+item['id'])
     finally:
