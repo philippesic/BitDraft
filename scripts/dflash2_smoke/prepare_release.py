@@ -22,11 +22,15 @@ def main():
     save(R/'models/dflash2-4b/config.json', config)
     target = R/'models/target-tokenizer'
     target.mkdir(exist_ok=True)
-    api = json.load(urllib.request.urlopen('https://huggingface.co/api/models/Qwen/Qwen3.5-4B'))
-    save(target/'api.json', api)
+    if (target/'api.json').exists():
+        api=json.load(open(target/'api.json'))
+    else:
+        api = json.load(urllib.request.urlopen('https://huggingface.co/api/models/Qwen/Qwen3.5-4B'))
+        save(target/'api.json', api)
     for name in ('config.json','tokenizer.json','tokenizer_config.json'):
-        data=urllib.request.urlopen('https://huggingface.co/Qwen/Qwen3.5-4B/resolve/'+api['sha']+'/'+name).read()
-        (target/name).write_bytes(data)
+        if not (target/name).exists():
+            data=urllib.request.urlopen('https://huggingface.co/Qwen/Qwen3.5-4B/resolve/'+api['sha']+'/'+name).read()
+            (target/name).write_bytes(data)
     save(R/'release-audit/adaptation.json', dict(source=pin(R/'release-audit/config.json'),
         output=pin(R/'models/dflash2-4b/config.json'),script=pin(__file__),
         tokenizer_files=[pin(target/n) for n in ('config.json','tokenizer.json','tokenizer_config.json')],
