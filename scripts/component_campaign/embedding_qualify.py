@@ -34,7 +34,7 @@ def main():
    observed=np.fromfile(str(dest)+'.f32',dtype='<f4').reshape(reference.shape);error=float(np.abs(observed-reference).max())
    if error>2e-7 or not np.isfinite(observed).all():raise ValueError('native embedding lookup differs '+format+' '+backend)
    records.append(dict(format=format,backend=backend,max_absolute_error=error,allocation=json.load(open(str(dest)+'.json')),output=pin(str(dest)+'.f32')))
- save(out/'result.json',dict(status='FULL_VOCAB_CPU_CUDA_LOOKUP_PASS',selected_ids=ids,roles='mask/special/common TRAIN/rare TRAIN/unseen-high/final vocabulary row',target_immutable=True,Q6_exact_codes=True,records=records,source=pin(__file__),fixture=pin(ROOT/'scripts/component_campaign/embedding_fixture.cpp')))
+ save(out/'result.json',dict(status='FULL_VOCAB_CPU_CUDA_LOOKUP_PASS',selected_ids=ids,roles='mask/special/common TRAIN/rare TRAIN/unseen-high/final vocabulary row',target_immutable=True,Q6_exact_codes=True if 'Q6_K' in formats else None,records=records,source=pin(__file__),fixture=pin(ROOT/'scripts/component_campaign/embedding_fixture.cpp')))
  print('EMBEDDING_LOOKUP_QUALIFICATION_PASS',flush=True)
 
 if __name__=='__main__':main()
