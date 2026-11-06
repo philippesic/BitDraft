@@ -889,3 +889,26 @@ state qualifications, actual finalist allocation proof, common-runtime formal
 DEV/GPU/host/context/profiles and post-lock fresh24heldout. Full report, compact
 Git results, retention inventory and GPU release still follow; parent owns review
 and the delayed message. No push is authorized.
+
+### Retained native/GPU state and allocation proof passed —November6,01:42Pacific
+
+HE4's regeneration matches the original native files at0/256/1024/4096byte for
+byte. Only one regeneration was needed; total physical recovery/regeneration
+work is28windows,114,688updates and17,937.79update seconds. The original
+Csmallbroad paid state was protected and reused directly.
+
+Both retained4096states passed actual full masters/Adam/RNG/cursor restoration,
+exact native re-export, exact GPU deployment-rounding checks and an actual next
+TRAIN optimizer update. Adam advanced4096→4097on each saved next window, with
+finite gradients and changed masters. Those two qualification updates did not
+modify the retained states or measured native weights; accounting separately
+records them (114,690total actual optimizer updates). Evidence:
+`qualification/frontier-recovery/result.json` and its per-arm GPU receipts.
+
+The actual finalist allocation replay/audit also passed: HE4 head and embedding
+use the same tensor/data allocation in every exercised cell, with real native
+formats and buffer accounting. Evidence: `qualification/final-physical-allocation/verified.json`.
+Common runtime04 formal natural12DEV now runs2warmups and5alternating measured
+repetitions for target/Q4/B0/H0/H0broad/HE4/Csmallbroad. Host/GPU/context/profiles,
+post-lock fresh24heldout, publication, inventory and release remain. The same
+authenticated final supervisor owns the single GPU lane; preserve it.
