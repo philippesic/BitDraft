@@ -36,3 +36,28 @@ def allocations(cell):
  for device,size in re.findall(r'init_rotation:\s+(\S+) rotation buffer size =\s+([\d.]+) MiB',text):rot.append(dict(device=device,reported_bytes=float(size)*2**20))
  compute=[dict(device=m[0],reported_bytes=float(m[1])*2**20) for m in re.findall(r'sched_reserve:\s+(\S+) compute buffer size =\s+([\d.]+) MiB',text)]
  return dict(model_buffers=model,cache_buffers=caches,rotation_buffers=rot,compute_buffer_history=compute,precision='Allocation log sizes have0.01MiB display rounding; tensor bytes and quantization block sizes provide exact persistent accounting separately. Target cache is first; draft base/SWA caches follow. Conversion/graph workspace and sampled peak are separate.')
+
+def paired_host_ratio(result,numerator,denominator,draws=2000):
+ rows=[x for x in json.load(open(result))['rows'] if not x.get('warmup') and x.get('instrumented')]
+ mapping={(x['arm'],x['rep'],x['prompt']):x for x in rows};reps=sorted({x['rep'] for x in rows});prompts=sorted({x['prompt'] for x in rows})
+ if any((arm,r,p) not in mapping for arm in (numerator,denominator) for r in reps for p in prompts):raise ValueError('incomplete paired host panel')
+ def ratio(rs,ps):
+  values=[]
+  for arm in (numerator,denominator):
+   chosen=[mapping[arm,r,p] for r in rs for p in ps];rounds=sum(x['native'].get('rounds',0) for x in chosen)
+   if not rounds:raise ValueError('draft round count missing from host trace')
+   values.append(sum(x['draft_full_ms'] for x in chosen)/rounds)
+  return values[0]/values[1]
+ rng=np.random.default_rng(61105);values=[ratio(rng.choice(reps,len(reps)).tolist(),rng.choice(prompts,len(prompts)).tolist()) for _ in range(draws)]
+ return dict(ratio=ratio(reps,prompts),paired_95_interval=np.quantile(values,[.025,.975]).tolist(),draws=draws,scope='Complete instrumented prompt/process cells; disjoint full draft host milliseconds per native round. Timing uncertainty only, no independent training seed claim.')
+
+def paired_replay_ratio(data,numerator,denominator,draws=2000):
+ cells={}
+ for rec in data['records']:
+  values=[r['graph_event_ms'] for r in rec['result']['rows'] if not r['warmup']]
+  cells[rec['arm'],rec['rep'],rec['domain']]=float(np.mean(values))
+ reps=sorted({r for a,r,d in cells});domains=sorted({d for a,r,d in cells})
+ if any((arm,r,d) not in cells for arm in (numerator,denominator) for r in reps for d in domains):raise ValueError('incomplete paired GPU replay panel')
+ def ratio(rs,ds):return np.mean([cells[numerator,r,d] for r in rs for d in ds])/np.mean([cells[denominator,r,d] for r in rs for d in ds])
+ rng=np.random.default_rng(61105);values=[ratio(rng.choice(reps,len(reps)).tolist(),rng.choice(domains,len(domains)).tolist()) for _ in range(draws)]
+ return dict(ratio=float(ratio(reps,domains)),paired_95_interval=np.quantile(values,[.025,.975]).tolist(),draws=draws,scope='Paired process repetitions and whole captured-domain clusters;3neighboring contexts remain together. Fixed N3 GPU graph latency, not request throughput or training-seed uncertainty.')

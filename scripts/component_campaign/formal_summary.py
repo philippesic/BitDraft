@@ -2,7 +2,7 @@
 import argparse,json,statistics
 import numpy as np
 from .common import *
-from .metrics import summarize,paired_ratio,allocations
+from .metrics import summarize,paired_ratio,allocations,paired_host_ratio,paired_replay_ratio
 
 def native_panel(directory):
  data=json.load(open(directory/'result.json'));result=summarize(directory/'result.json')
@@ -14,6 +14,9 @@ def native_panel(directory):
    measurements.append(dict(cell=str(cell),allocation=allocations(cell),sampled_device_peak_bytes=max([x['MiB']*2**20 for x in memory],default=None),sampled_server_host_peak_rss_bytes=max([x.get('VmHWM',0) for x in memory],default=None)))
   entry['allocations']=measurements
   entry['sampled_device_peak_bytes']=max([x['sampled_device_peak_bytes'] for x in measurements if x['sampled_device_peak_bytes'] is not None],default=None)
+  if entry['instrumented'] and name!='target':
+   entry['host_vs_q4']=paired_host_ratio(directory/'result.json',name,'q4')
+   if 'H0' in result:entry['host_vs_H0']=paired_host_ratio(directory/'result.json',name,'H0')
   if not entry['instrumented']:
    entry['vs_q4']=paired_ratio(directory/'result.json',name,'q4')
    if 'H0' in result:entry['vs_H0']=paired_ratio(directory/'result.json',name,'H0')
@@ -32,6 +35,9 @@ def replay_panel(directory):
   # Each domain/context has the same weight; no timing rep acts as a new training seed.
   result[arm]=dict(clean_gpu_forward_ms=float(np.mean([x['graph_event_ms'] for x in rows])),fixed_replay_forward_host_ms=float(np.mean([x['forward_host_ms'] for x in rows])),fixed_replay_catchup_host_ms=float(np.mean([x['catchup_host_ms'] for x in rows])),timing_repetitions=len({x['rep'] for x in records}),cells=len(records),forwards=len(rows),source_models={x['model']['sha256'] for x in records})
   result[arm]['source_models']=sorted(result[arm]['source_models'])
+ for arm,entry in result.items():
+  if 'q4' in result:entry['GPU_vs_q4']=paired_replay_ratio(data,arm,'q4')
+  if 'H0' in result:entry['GPU_vs_H0']=paired_replay_ratio(data,arm,'H0')
  return dict(source=pin(directory/'result.json'),scope=data['scope'],arms=result)
 
 def main():
