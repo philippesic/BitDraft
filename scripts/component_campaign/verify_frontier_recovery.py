@@ -13,10 +13,11 @@ def main():
  retained=json.load(open(R/'frontier-retention.json'));out=R/'qualification/frontier-recovery';out.mkdir(exist_ok=True);records=[]
  for path,receipt in retained['states'].items():
   name=receipt['original_arm'];dest=out/name;dest.mkdir(exist_ok=True)
+  actual_checkpoint=pin(path)
+  if actual_checkpoint['sha256']!=receipt['archive_sha256'] or actual_checkpoint['bytes']!=receipt['archive_bytes']:raise ValueError('retained full frontier state changed or became unreadable')
   if (dest/'result.json').exists():
    previous=json.load(open(dest/'result.json'))
    if previous.get('gpu_resume',{}).get('status')=='ACTUAL_GPU_MASTER_ADAM_RNG_CURSOR_RESUME_UPDATE_PASS':records.append(previous);continue
-  if pin(path)['sha256']!=receipt['archive_sha256']:raise ValueError('retained full frontier state changed')
   state=load(path)
   completed=json.load(open(receipt['confirmed_result']['path']))
   if pin(receipt['confirmed_result']['path'])!=receipt['confirmed_result']:raise ValueError('retained state completion receipt changed')
