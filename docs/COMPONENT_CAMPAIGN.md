@@ -800,3 +800,33 @@ remain. The passive selection supervisor is
 `component-post-reclaim-selection-20261105-01`; its birth/boot and release
 dependency are in canonical `post-reclaim-selection-launch.json`. It cannot open
 heldout or tune finalists. Both supervisors must be terminal before handoff.
+
+### All four combinations and16native TRAIN captures —November6,00:24Pacific
+
+Csmall/Chead/CtieKV/Ctied each completed4096updates and all four actual native
+readouts. All requests preserve target tokens/content/stopping semantics under
+runtime04 with observed draft cache formats. The endpoint short accepted/proposed
+counts are55/262,53/265,61/249,59/254respectively. These consumed captureDEV
+diagnostics do not establish final request speed or unseen-prompt quality.
+Accounting now records25physical windows,102,400updates and16,099.12seconds
+of update compute. The complete trainer walls for these four windows are
+1093.65/1079.92/1078.46/1105.12seconds; native readouts are additional.
+
+All16broader native TRAIN captures completed and their full-vocabulary hard
+labels passed verification. Manifest publication initially rejected the
+unchanged frozen reference because it had only path/hash while `pin` also returns
+bytes. The comparison now authenticates every field actually frozen; original
+manifest hash is unchanged. No data was changed or recaptured. Failure and
+repair proof: `qualification/broader-manifest-reference-repair.json`.
+
+The first post-reclaim recovery/selection supervisors are terminal with exit1,
+not successful. Repair supervisor `component-broader-repair-20261106-01`
+finished0 and released before the new continuation. Sole recovery supervisor is
+now workspace `runs/component-broader-recovery-20261106-01`, with passive
+successor `component-recovered-selection-20261106-01`. The same named local
+tmux sessions use socket `binary-eagle-runtime`. Exact birth/boot/source and stop
+records are in canonical `broader-recovery-launch.json`; authenticate before
+SIGTERM and allow300seconds checkpoint grace. No stale predecessor wait or paid
+training rerun. H0broad/Csmallbroad each still receive4096updates from B0 under
+the separate matched broader manifest. Audits, selection/lock, retained actual
+GPU resume/export, formal comparisons, heldout and publication remain required.
