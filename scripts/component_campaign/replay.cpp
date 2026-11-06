@@ -17,12 +17,13 @@ struct Audit {json tensors=json::array();bool enabled=false;};
 static bool trace(ggml_tensor*t,bool ask,void*u){
  auto&a=*(Audit*)u;std::string name=ggml_get_name(t);
  bool vocabulary=t->src[0] && t->src[0]->ne[1]==248320 && (t->op==GGML_OP_GET_ROWS || t->op==GGML_OP_MUL_MAT);
- bool want=a.enabled && ggml_nbytes(t)<32*1024*1024 && (vocabulary || t->op==GGML_OP_W1AX_PACK || name.find("ffn")!=std::string::npos||name.find("l_out")!=std::string::npos||name=="result_norm"||name=="result_output");
+ bool want=a.enabled && ggml_nbytes(t)<32*1024*1024 && (vocabulary || t->op==GGML_OP_W1AX_PACK || t->op==GGML_OP_CPY||name.find("norm")!=std::string::npos||name.find("ffn")!=std::string::npos||name.find("l_out")!=std::string::npos||name=="result_norm"||name=="result_output");
  if(ask)return want;if(!want)return true;
+ for(auto*w:t->src){if(!w || w->type!=GGML_TYPE_F16 || ggml_nbytes(w)>1024*1024)continue;std::string wn=ggml_get_name(w);if(wn.find("norm")==std::string::npos && wn.find(".w1a1_scale")==std::string::npos && wn.find(".w1ax_midpoint")==std::string::npos && wn.find(".w1ax_gain")==std::string::npos)continue;std::vector<uint8_t>raw(ggml_nbytes(w));ggml_backend_tensor_get(w,raw.data(),0,raw.size());a.tensors.push_back({{"kind","half_metadata_read"},{"source_name",wn},{"source_type",ggml_type_name(w->type)},{"consumer_op",ggml_op_name(t->op)},{"consumer_output_type",ggml_type_name(t->type)},{"source_bytes",raw.size()},{"source_hash_fnv1a64",hash(raw.data(),raw.size())}});}
  if(vocabulary){auto*w=t->src[0];a.tensors.push_back({{"kind","vocabulary_allocation"},{"op",ggml_op_name(t->op)},{"name",name},{"weight_tensor_address",uint64_t(uintptr_t(w))},{"weight_data_address",uint64_t(uintptr_t(w->data))},{"weight_bytes",ggml_nbytes(w)},{"weight_type",ggml_type_name(w->type)},{"weight_buffer",w->buffer?ggml_backend_buft_name(ggml_backend_buffer_get_type(w->buffer)):"none"}});}
  if(t->src[0] && (vocabulary || t->op==GGML_OP_W1A1_MUL_MAT || (t->op==GGML_OP_MUL_MAT && ggml_is_quantized(t->src[0]->type)))){auto*w=t->src[0];if(w->buffer)a.tensors.push_back({{"kind","permanent_weight_buffer"},{"name",name},{"buffer_address",uint64_t(uintptr_t(w->buffer))},{"buffer_bytes",ggml_backend_buffer_get_size(w->buffer)},{"buffer_type",ggml_backend_buft_name(ggml_backend_buffer_get_type(w->buffer))},{"tensor_bytes",ggml_nbytes(w)}});}
  std::vector<uint8_t>bytes(ggml_nbytes(t));ggml_backend_tensor_get(t,bytes.data(),0,bytes.size());
- a.tensors.push_back({{"name",name},{"bytes",bytes.size()},{"hash_fnv1a64",hash(bytes.data(),bytes.size())},{"shape",{t->ne[0],t->ne[1],t->ne[2],t->ne[3]}}});return true;
+ a.tensors.push_back({{"name",name},{"op",ggml_op_name(t->op)},{"type",ggml_type_name(t->type)},{"bytes",bytes.size()},{"hash_fnv1a64",hash(bytes.data(),bytes.size())},{"shape",{t->ne[0],t->ne[1],t->ne[2],t->ne[3]}}});return true;
 }
 static double now(){return std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now().time_since_epoch()).count();}
 int main(int argc,char**argv){try{
