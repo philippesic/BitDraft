@@ -37,7 +37,7 @@ def native_panel(directory):
 
 def replay_panel(directory):
  data=json.load(open(directory/'result.json'))
- if data.get('audit'):raise ValueError('instrumented audit is not clean latency')
+ if data.get('audit') or data.get('profiled'):raise ValueError('instrumented audit/profile is not clean latency')
  result={}
  for arm in dict.fromkeys(x['arm'] for x in data['records']):
   records=[x for x in data['records'] if x['arm']==arm]
