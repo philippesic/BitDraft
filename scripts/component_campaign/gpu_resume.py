@@ -16,6 +16,13 @@ from scripts.dflash_baseline.pipeline import load_parameters, restore_rng, rng, 
 from scripts.dflash_baseline.prototype_model import install, optimizer
 
 
+def isolated_optimizer_state(saved):
+    """Adam retains CPU scalar tensors by reference even when moments move to CUDA."""
+    return dict(saved, state={key: {field: value.clone() if torch.is_tensor(value) and value.ndim == 0 else value
+                                    for field, value in fields.items()}
+                              for key, fields in saved['state'].items()})
+
+
 def qualify(state, original_arm, destination, training_directory=None):
     pause()
     spec, config, progress = state['component_spec'], state['config'], state['progress']
@@ -43,7 +50,11 @@ def qualify(state, original_arm, destination, training_directory=None):
     model.to('cuda')
     opt = head_optimizer(model) if spec.get('r2_vocab_scale') else optimizer(model)
     load_parameters(model, state['parameters'])
-    opt.load_state_dict(state['optimizer'])
+    saved_steps = {int(v['step']) for v in state['optimizer']['state'].values()}
+    saved_optimizer_fingerprint = fingerprint(state['optimizer'])
+    if saved_steps != {progress['updates']}:
+        raise ValueError('Saved Adam step differs from recorded updates before qualification')
+    opt.load_state_dict(isolated_optimizer_state(state['optimizer']))
     for name, parameter in model.named_parameters():
         if not torch.equal(parameter.detach().cpu(), state['parameters'][name]):
             raise ValueError('GPU master differs: ' + name)
@@ -94,6 +105,10 @@ def qualify(state, original_arm, destination, training_directory=None):
     next_steps = {int(v['step']) for v in opt.state.values()}
     if next_steps != {progress['updates'] + 1}:
         raise ValueError('Actual resumed Adam did not advance exactly one step')
+    if {int(v['step']) for v in state['optimizer']['state'].values()} != saved_steps:
+        raise ValueError('Scratch qualification mutated the caller recovery state')
+    if fingerprint(state['optimizer']) != saved_optimizer_fingerprint:
+        raise ValueError('Scratch qualification mutated caller Adam moments/groups')
     changed, nonfinite = [], []
     for name, parameter in model.named_parameters():
         current = parameter.detach().cpu()
@@ -110,7 +125,7 @@ def qualify(state, original_arm, destination, training_directory=None):
         next_cursor=progress['cursor'] + 1, next_capture=str(captures[index].path),
         next_anchor=anchor, loss=loss, gradient_norm=model.last_gradient_norm,
         update_seconds=seconds, changed_master_names=changed,
-        gpu_deployment_values_exact=True, source=pin(__file__),
+        gpu_deployment_values_exact=True, caller_optimizer_unchanged=True, source=pin(__file__),
         peak_allocated_bytes=torch.cuda.max_memory_allocated(),
         policy='Actual next TRAIN window with saved Adam/RNG/order/cursor; one qualification update only. Retained4096 state and evaluated native bytes remain unchanged. This scratch update is not another recovery window, independent seed or reported finalist.')
     save(destination / 'gpu-resume.json', result)

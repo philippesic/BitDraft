@@ -15,7 +15,7 @@ from scripts.component_campaign.tensor_checkpoint import load
 from scripts.component_campaign.checkpoint import save_state
 from scripts.component_campaign.deployment import values
 from scripts.component_campaign.export import rewrite
-from scripts.component_campaign.gpu_resume import qualify
+from scripts.component_campaign.gpu_resume import qualify, isolated_optimizer_state
 from scripts.component_campaign.qualify_tensor_checkpoint import fingerprint
 from scripts.component_campaign.simulation import install as install_component
 from scripts.component_campaign.train_impl import evaluation
@@ -56,6 +56,7 @@ def main():
     assert pin(OUT / 'model-0.gguf')['sha256'] == receipt['native']['sha256']
     base.unlink(); base.with_suffix('.json').unlink()
     qualification = qualify(state, 'Csmallbroad', OUT / 'qualification')
+    assert {int(v['step']) for v in state['optimizer']['state'].values()} == {4096}
     save(OUT / 'zero-resume-proof.json', dict(status='PASS', native_byte_identity=True,
         parent=actual, qualification=qualification, qualification_charged_to_budget=False))
     model = Model(config['source']['path'], config['evaluation']['target']['path'])
@@ -65,7 +66,8 @@ def main():
     model.to('cuda')
     opt = optimizer(model)
     load_parameters(model, state['parameters'])
-    opt.load_state_dict(state['optimizer'])
+    opt.load_state_dict(isolated_optimizer_state(state['optimizer']))
+    assert {int(v['step']) for v in opt.state.values()} == {4096}
     assert all(torch.equal(p.detach().cpu(), state['parameters'][n]) for n, p in model.named_parameters())
     restored = opt.state_dict()
     assert restored['param_groups'] == state['optimizer']['param_groups']
@@ -125,6 +127,10 @@ def main():
             additional_update_seconds=spent, dev=metrics, model=pin(OUT/f'model-{label}.gguf'),
             evaluation_seconds=evaluation_seconds, readout_seconds=time.perf_counter()-started,
             elapsed_process_seconds=time.perf_counter()-began))
+        if label in ('300','900'):
+            from scripts.dflash_baseline.native_archive import archive
+            readouts[-1]['native_archive'] = archive(OUT/f'model-{label}.gguf',OUT/'model-0.gguf')
+            readouts[-1]['readout_seconds'] = time.perf_counter()-started
         save(OUT/'readouts.json', readouts)
         print('READOUT', label, metrics['ce'], metrics['agreement'], flush=True)
     point('0', reuse=True)
@@ -153,6 +159,9 @@ def main():
         times.append(elapsed); spent += elapsed
         progress['update_seconds'] += elapsed; progress['updates'] += 1
         progress['cursor'] += 1; progress['supervised_tokens'] += 15
+        if {int(v['step']) for v in opt.state.values()} != {progress['updates']}:
+            recovery_snapshot('invalid-step')
+            raise ValueError('Live Adam steps differ from actual counted updates')
         exposed.update((str(train[i].path),anchor+j-1) for j in range(1,16))
         with (OUT/'updates.jsonl').open('a') as f:
             f.write(json.dumps(dict(update=progress['updates'],loss=loss,gradient_norm=model.last_gradient_norm,
@@ -168,17 +177,10 @@ def main():
                     additional_updates=len(times), recovery=recovery, progress=progress))
                 raise
             next_point = next(thresholds, float('inf'))
-    if stopped:
-        recovery_snapshot('paused')
-        point('paused')
-    torch.cuda.synchronize()
-    stored, _ = values(model,spec)
-    final_state = dict(version=2,config=config,config_hash=digest(config),parameters=parameters(model),
-        optimizer=opt.state_dict(),progress=copy.deepcopy(progress),rng=rng(),lineage=lineage,
-        component_spec=spec,resume_capable=True,deployment_exps=stored)
     save_started = time.perf_counter()
-    recovery = save_state(DEST / f'Csmallbroad-plus1800-{progress["updates"]}.pt', final_state)
-    save(OUT/'recovery.json', recovery)
+    recovery = recovery_snapshot('exact-plus1800' if not stopped else 'exact-paused')
+    checkpoint_seconds = time.perf_counter()-save_started
+    if stopped: point('paused')
     save(OUT/'result.json',dict(status='PAUSED' if stopped else 'COMPLETE',parent=actual,
         starting_progress={k:v for k,v in before_progress.items() if k!='order'},
         final_progress={k:v for k,v in progress.items() if k!='order'},
@@ -186,7 +188,7 @@ def main():
         one_update_overshoot_seconds=max(0,spent-1800),last_update_seconds=times[-1] if times else None,
         supervised_positions=len(times)*15,unique_positions_exposed=len(exposed),unique_windows=3234,
         total_unique_label_positions=3794,sequences=40,setup_and_qualification_seconds=setup_seconds,
-        final_checkpoint_seconds=time.perf_counter()-save_started,process_wall_seconds=time.perf_counter()-began,
+        final_checkpoint_seconds=checkpoint_seconds,process_wall_seconds=time.perf_counter()-began,
         peak_allocated_bytes=torch.cuda.max_memory_allocated(),peak_reserved_bytes=torch.cuda.max_memory_reserved(),
         peak_host_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*1024,
         readouts=readouts,recovery=recovery,source=pin(__file__)))
