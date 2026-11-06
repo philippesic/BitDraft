@@ -12,7 +12,6 @@ def wait_release(path):
    except ProcessLookupError:break
    raise RuntimeError('predecessor group remains after terminal state')
   time.sleep(5)
- save(R/'post-primary-owner.json',dict(owner=identity(),predecessor=pin(path),hardware=subprocess.check_output(['/usr/lib/wsl/lib/nvidia-smi'],text=True),scope='One GPU lane; qualified selection measurements then root makes evidence-led combination/rescue decision.'))
 
 def run(module,*args):
  print('POST_PRIMARY',module,*map(str,args),flush=True)
@@ -20,6 +19,7 @@ def run(module,*args):
 
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--after',type=Path,required=True);a=ap.parse_args();wait_release(a.after)
+ save(R/'post-primary-owner.json',dict(owner=identity(),predecessor=pin(a.after),hardware=subprocess.check_output(['/usr/lib/wsl/lib/nvidia-smi'],text=True),scope='One GPU lane; qualified selection measurements then root makes evidence-led combination/rescue decision.'))
  run('clip_storage_qualify')
  names=list(completed());selection=R/'measurements/selection-primary'
  if not (selection/'result.json').exists():run('measure','selection-primary','--reps','1','--cohort','natural12')
