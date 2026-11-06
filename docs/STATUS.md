@@ -1,11 +1,10 @@
 # Current project status
 
-Current: the remaining-component campaign is active. H0/H4/H3/E4/tied HE4
-completed full4096matched updates and native recovery readouts; exact private
-Q6 controls are also measured. The actual CUDA cache read gate passed after a
-fixture correction. Six draft-cache and six scalar recovery windows are running
-serially. Combinations, formal repeated comparisons and final charts remain
-unfinished; no throughput promotion is claimed.
+Current: the remaining-component campaign is active. Nine physical4096-update
+windows are complete: H0/H4/H3/E4/tied HE4 and four draft-cache pairs, plus exact
+private-Q6 controls reusing H0. K84 is training, followed by K44 and six scalar
+windows. Native recovery readouts and tensor audits are retained. Combinations,
+formal comparisons and final charts remain unfinished; no throughput promotion.
 
 
 ## Active: remaining component precision and recovery

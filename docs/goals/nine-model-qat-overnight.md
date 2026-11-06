@@ -6198,3 +6198,11 @@ controls and all four native readouts complete. Actual CUDA cache read conversio
 and CPU/CUDA full-vocab lookup gates pass. Cache/scalar recovery continues under
 `component-rest-recovery-20261105-01`; see COMPONENT_CAMPAIGN for identity/stop and
 remaining combinations/formal comparison obligations. Broader goal remains open.
+
+
+Component checkpoint16:58Pacific: nine physical4096-update windows complete,
+including K8F/KF8/K88/K48; K84 remains healthy, then K44/six scalar windows.
+Native4-point recovery readouts and stored-tensor audits remain retained. A
+supervisor grace-path fix is qualified for new jobs; existing old supervisors
+require worker-first graceful stopping as documented in COMPONENT_CAMPAIGN.
+No active GPU job was interrupted; no new goal, push or heldout access.
