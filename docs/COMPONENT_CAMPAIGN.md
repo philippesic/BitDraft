@@ -624,3 +624,39 @@ loading/running; it will save full state, native-evaluate0/32, then resume4096
 before the matched control. Do not interrupt healthy training. Both filesystems
 remain constrained; .NET drive inventory finds only Windows C (about5.27GBfree).
 No host configuration, disk compaction, old paid artifacts or target changes.
+
+## First targeted recovery and actual head-forward gate —20:02Pacific
+
+H4R2 completed4096, with final consumed DEV CE7.39061 and native readouts
+55/263,50/271,54/265,53/265at0/256/1024/4096. This is not a dense-loss recovery
+success; the equally trained R2 Q6 control has not completed yet. The32-update
+pilot actually resumed full masters/Adam/RNG/cursor. Its all2,483,200native
+block-scale gradients are finite/nonzero; Adam step32and native frozen-code/
+packed-grid checks pass. Pilot compute5.69965seconds, median.171798s/update,
+projecting729.56seconds/4096pure updates. Peak Torch allocated11,987,964,416B,
+reserved12,108,955,648B, host peak11,872,620,544B. Setup/checkpoint/native costs
+are separate in `r2-pilot-budget.json`; do not call this full dense-master QAT.
+
+Before H6R2 training, a bounded actual native full-head audit passed: q4/H0/H4/
+H3/HE4/H4R2, three captured DEV domains, two required columns each, all248,320
+vocabulary logits. Every36argmax matches the exact packed-weight F32 QAT head;
+worst absolute error.0242939, RMS.00429259, target CE delta.00463534. All upstream
+gradients are finite/nonzero. This bounds native activation/reduction drift;
+it is not full-graph bit equivalence. Native target labels remain immutable.
+Proof: `qualification/head-forward-initial/verified.json`, with actual normalized
+inputs/layouts, native output hashes and source/model/runtime pins. Only NEW full
+output scratch was retired after passing; no model/checkpoint/capture was removed.
+The audit is strictly serial between jobs and its timing is excluded. `train.py`
+has this explicit preflight before H6R2; it is a no-op once verified. H6R2 is now
+loading in the same sole GPU group; HE4R2/HE6R2, three combinations and two broader
+windows remain queued at their full4096allocations.
+
+Passive post-recovery supervisor is workspace
+`component-post-recovery-20261105-01`, supervisor571807/group571809. It waits for
+successful recovery-combinations `-02` terminal state and absent prior group,
+then audits actual exports and measures consumed natural12/clean GPU/host traces.
+Its loaded code predates the new head-forward helper: **run the default final
+`head_forward_qualify` manually after it releases**, to include all four final R2
+heads, before final lock/formal panels. It does not select finalists or finish
+the campaign. No fresh heldout is opened. WindowsC stillabout4.9GiB free outside
+rolling writes; WSLabout2.2GiB. Future source changes must preserve healthy jobs.
