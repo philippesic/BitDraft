@@ -115,7 +115,7 @@ def main():
         evaluation_seconds = time.perf_counter()-started
         stored, _ = values(model, spec)
         if not reuse:
-            export_state = dict(config=config, config_hash=digest(config), parameters=parameters(model),
+            export_state = dict(version=2, config=config, config_hash=digest(config), parameters=parameters(model),
                                 progress=copy.deepcopy(progress), deployment_exps=stored)
             base = OUT / f'base-{label}.gguf'
             export(None, base, state=export_state, checkpoint_pin=actual)
@@ -133,6 +133,15 @@ def main():
     setup_seconds = time.perf_counter()-began
     thresholds = iter([300,900,1800]); next_point = next(thresholds)
     times = []; exposed = set()
+    def recovery_snapshot(label):
+        torch.cuda.synchronize()
+        stored, _ = values(model, spec)
+        snapshot = dict(version=2,config=config,config_hash=digest(config),parameters=parameters(model),
+            optimizer=opt.state_dict(),progress=copy.deepcopy(progress),rng=rng(),lineage=lineage,
+            component_spec=spec,resume_capable=True,deployment_exps=stored)
+        receipt = save_state(DEST / f'Csmallbroad-{label}-{progress["updates"]}.pt', snapshot)
+        save(OUT/'recovery.json', receipt)
+        return receipt
     while spent < 1800:
         try: pause()
         except RuntimeError: stopped = True
@@ -151,7 +160,14 @@ def main():
         save(OUT/'live.json',dict(update=progress['updates'],additional_seconds=spent,last_loss=loss,owner=identity()))
         print('UPDATE', progress['updates'], spent, loss, flush=True)
         if spent >= next_point:
-            point(str(next_point)); next_point = next(thresholds, float('inf'))
+            try:
+                point(str(next_point))
+            except BaseException as error:
+                recovery = recovery_snapshot('readout-failed')
+                save(OUT/'readout-failure.json', dict(error=repr(error), actual_update_seconds=spent,
+                    additional_updates=len(times), recovery=recovery, progress=progress))
+                raise
+            next_point = next(thresholds, float('inf'))
     if stopped: point('paused')
     torch.cuda.synchronize()
     stored, _ = values(model,spec)
