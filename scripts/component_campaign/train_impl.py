@@ -41,6 +41,9 @@ def main():
  receipt=json.load(open(B/'checkpoint.pt.json'))
  if parent['config_hash']!=digest(parent['config']) or parent['progress']['updates']!=2048:raise ValueError('wrong full B0 recovery state')
  c=copy.deepcopy(parent['config']);c['parent']={k:parent_pin[k] for k in ('path','sha256')};c['budget_seconds']=86400
+ if spec.get('training_data'):
+  if pin(spec['training_data']['path'])!=spec['training_data']:raise ValueError('explicit matched-recipe training manifest changed')
+  c['data']=spec['training_data']
  manifest=json.load(open(c['data']['path']));trainrows=[r for r in manifest['records'] if r['split']=='TRAIN'];devrows=[r for r in manifest['records'] if r['split']=='consumed_DEV']
  # Every data artifact and source is authenticated before any exposure.
  for p in [c['source'],c['data'],c['evaluation']['target']]+[p for r in trainrows+devrows for p in [r['metadata'],*r['files']]]:
@@ -64,7 +67,12 @@ def main():
   if state['component_spec']!=spec or state['config_hash']!=digest(c):raise ValueError('resume spec/config mismatch')
   load_parameters(m,state['parameters']);opt.load_state_dict(state['optimizer']);progress=state['progress'];restore_rng(state['rng']);del state;gc.collect()
  train=[Capture(Path(r['metadata']['path']).parent) for r in trainrows];dev=[Capture(Path(r['metadata']['path']).parent) for r in devrows]
+ for cap,row in zip(train,trainrows,strict=True):
+  if 'training_last_input_position' in row:cap.anchors=[a for a in cap.anchors if a+15<=row['training_last_input_position']]
  windows=[(i,x) for i,cap in enumerate(train) for x in cap.anchors]
+ if spec.get('training_data') and not a.resume:
+  order=list(range(len(windows)));random.Random(8101).shuffle(order);progress['order']=order;progress['cursor']=0
+ if spec.get('training_data'):lineage['data_recipe']=dict(manifest=c['data'],original_B0_data=json.load(open(R/'freeze.json'))['B0_config']['data'],order_policy='Seed8101 explicit new-manifest order; cursor0; identical matched controls; original R1history unchanged',objective='Original15-position decay-weighted hard-target CE; no distillation change')
  if sorted(progress['order'])!=list(range(len(windows))):raise ValueError('parent TRAIN order changed')
  unique_labels={(str(cap.path),a+j-1) for cap in train for a in cap.anchors for j in range(1,16)}
  save(out/'resolved.json',dict(config=c,spec=spec,lineage=lineage,data_windows=len(windows),unique_label_positions=len(unique_labels),unique_sequences=len(train),coverage_note='Overlapping windows/repeated epochs are exposure, not fresh labels.',parameter_map={n:dict(shape=list(p.shape),numel=p.numel(),master_dtype=str(p.dtype),trainable=p.requires_grad) for n,p in m.named_parameters()},source_pins={str(p.relative_to(ROOT)):pin(p) for directory in (ROOT/'scripts/component_campaign',ROOT/'scripts/dflash_baseline') for p in directory.glob('*.py')}))

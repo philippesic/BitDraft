@@ -55,4 +55,5 @@ def merge(rows):
   control=controls.get(row['arm'],'H0');c=lookup.get((control,row['updates']))
   row['matched_recovery_control']=control
   if c and row['ce'] is not None:row['ce_gap_matched_control']=row['ce']-c['ce']
+  elif row['arm'] in controls:row['ce_gap_matched_control']=None
  return rows
