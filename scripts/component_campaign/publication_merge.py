@@ -6,6 +6,9 @@ def merge(rows):
  index_path=R/'publication-index.json'
  if not index_path.exists():return rows
  index=json.load(open(index_path));summary=json.load(open(index['summary']))
+ def panel_for(kind,key,arm):
+  names=[index.get(key,''),*index.get(key+'_fallbacks',[])]
+  return next((summary[kind][n] for n in names if arm in summary[kind].get(n,{}).get('arms',{})),{})
  from .archive import reference
  inventory=json.load(open(R/'reference-tensor-inventory.json'))
  base=next(r for r in rows if r['arm']=='H0' and r['updates']==0)
@@ -22,7 +25,7 @@ def merge(rows):
   row['status']=index.get('arm_status',{}).get(arm,row['status'])
   if row['updates']!=final:continue
   for key,prefix in [('dev_panel','dev'),('request_panel','final'),('selection_panel','selection')]:
-   panel=summary['native'].get(index.get(key,''),{});entry=panel.get('arms',{}).get(arm)
+   panel=panel_for('native',key,arm);entry=panel.get('arms',{}).get(arm)
    if not entry:continue
    freeze=json.load(open(panel['freeze']['path']));measured=freeze['arms'][arm]
    if measured['sha256']!=row['model']['sha256']:
@@ -42,11 +45,11 @@ def merge(rows):
     row['private_gpu_model_bytes']=row['actual_gpu_model_bytes']-sum(v for k,v in target.items() if k.startswith('CUDA') and k!='CUDA_Host')
     row['private_cpu_mapped_model_bytes']=row['actual_cpu_model_bytes']-sum(v for k,v in target.items() if k.startswith('CPU'))
   if row.get('draft_cache_bytes') is not None:row['model_cache_payload_bytes']=row['tensor_bytes']+row['draft_cache_bytes']+row.get('draft_rotation_bytes',0)
-  replay=summary['replay'].get(index.get('gpu_panel',''),{});entry=replay.get('arms',{}).get(arm)
+  replay=panel_for('replay','gpu_panel',arm);entry=replay.get('arms',{}).get(arm)
   if entry:
    prefix='' if entry['timing_repetitions']>=5 else 'selection_'
    row[prefix+'clean_gpu_forward_ms']=entry['clean_gpu_forward_ms'];row[prefix+'gpu_forward_evidence']=replay['source']['path'];row[prefix+'fixed_replay_forward_host_ms']=entry['fixed_replay_forward_host_ms'];row[prefix+'gpu_forward_repetitions']=entry['timing_repetitions']
-  trace=summary['native'].get(index.get('trace_panel',''),{});entry=trace.get('arms',{}).get(arm)
+  trace=panel_for('native','trace_panel',arm);entry=trace.get('arms',{}).get(arm)
   if entry:
    if not entry['instrumented']:raise ValueError('trace instrumentation absent')
    prefix='' if entry['timing_repetitions']>=5 else 'selection_'

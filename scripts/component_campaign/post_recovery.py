@@ -18,7 +18,7 @@ def main():
  if not (trace/'result.json').exists():run('measure',trace.name,'--arms',*names,'--reps','1','--cohort','capture3','--trace')
  summary=R/'selection-recovered-summary.json'
  run('formal_summary','--native',R/'measurements/selection-primary',R/'measurements/selection-primary-host',request,trace,'--replay',R/'measurements/replay-primary-selection',replay,'--out',summary)
- save(R/'publication-index.json',dict(status='IN_PROGRESS',summary=str(summary),selection_panel=request.name,gpu_panel=replay.name,trace_panel=trace.name,matched_controls={'H4R2':'H6R2','HE4R2':'HE6R2','H0broad':'H0broad','Csmallbroad':'H0broad'},arm_status={n:'Recovery and consumed-DEV selection complete; final confirmation pending' for n in names}))
+ save(R/'publication-index.json',dict(status='IN_PROGRESS',summary=str(summary),selection_panel=request.name,selection_panel_fallbacks=['selection-primary'],gpu_panel=replay.name,gpu_panel_fallbacks=['replay-primary-selection'],trace_panel=trace.name,trace_panel_fallbacks=['selection-primary-host'],matched_controls={'H4R2':'H6R2','HE4R2':'HE6R2','H0broad':'H0broad','Csmallbroad':'H0broad'},arm_status={n:'Recovery and consumed-DEV selection complete; final confirmation pending' for n in names}))
  run('publish');run('campaign_accounting')
  save(R/'post-recovery-result.json',dict(status='RECOVERED_SELECTION_COMPLETE_FINAL_LOCK_REQUIRED',owner=identity(),summary=pin(summary),source=pin(__file__)))
  print('POST_RECOVERY_SELECTION_COMPLETE_NOT_CAMPAIGN_COMPLETION',flush=True)
