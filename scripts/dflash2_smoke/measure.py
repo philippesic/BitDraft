@@ -40,10 +40,12 @@ def main():
         arms=dict(target=None,q4=row['draft_pin']['path'])
         cache={}
         if cell.startswith('4B'):
-            arms.update(before=str(OUT/'model-0.gguf'),after=final['readouts'][-1]['model']['path'],
+            arms.update(before=str(OUT/'model-0.gguf'),mid300=str(OUT/'model-300.gguf'),
+                        mid900=str(OUT/'model-900.gguf'),after=final['readouts'][-1]['model']['path'],
                         HE4=str(COMPONENT/'arms/HE4/model-4096.gguf'),
                         dflash2=str(R/'models/dflash2-4b-Q4_K_M.gguf'))
-            cache.update(before=['q4_0','q4_0'],after=['q4_0','q4_0'],HE4=['f16','f16'])
+            cache.update({name:['q4_0','q4_0'] for name in ('before','mid300','mid900','after')})
+            cache['HE4']=['f16','f16']
         save(dest/'arms.json',arms);save(dest/'cache.json',cache)
         save(dest/'plan.json',dict(registry=row,runtime=pin(RUNTIME/'build.json'),arms=arms,cache=cache,
             source=pin(__file__),repetitions=2,warmups=2,cohort='capture3 consumed DEV; no sealed heldout',

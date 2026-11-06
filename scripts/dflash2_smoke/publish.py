@@ -14,9 +14,10 @@ from scripts.component_campaign.metrics import allocations, summarize
 from scripts.dflash2_smoke.train import R, OUT
 
 DEST=ROOT/'experiments/dflash2-smoke-20261106'
-METHODS=['target','q4','dflash2','before','after','HE4']
+METHODS=['target','q4','dflash2','before','mid300','mid900','after','HE4']
 LABELS=dict(target='Target only',q4='DFlash Q4_K_M',dflash2='DFlash2 Q4_K_M',
-            before='Csmallbroad before',after='Csmallbroad +30min',HE4='HE4 unchanged')
+            before='Csmallbroad before',mid300='Csmallbroad +5min',mid900='Csmallbroad +15min',
+            after='Csmallbroad +30min',HE4='HE4 unchanged')
 
 
 def measured(directory):
@@ -80,7 +81,7 @@ def cell_rows(directory):
         row['clean_gpu_forward_ms']=statistics.mean(points) if points else None
         row['clean_gpu_forward_samples']=len(points)
         row['gpu_scope']='Full native draft graph, depth+1 slots, fresh native target taps/history; excludes host selector walk/catchup;2process reps×3domains×3neighbor contexts.'
-        row['precision']='F16 draft KV' if method in ('q4','dflash2','HE4') else 'Q4_0 Hadamard K128/V64 draft KV' if method in ('before','after') else None
+        row['precision']='F16 draft KV' if method in ('q4','dflash2','HE4') else 'Q4_0 Hadamard K128/V64 draft KV' if method in ('before','mid300','mid900','after') else None
         row['runtime_format_fallback']=False
         if method=='dflash2':
             proof=json.load(open(directory/'trace/00-dflash2-traced/selector-proof.json'))
@@ -95,9 +96,10 @@ def cell_rows(directory):
 
 def figures(rows,training):
     plt.rcParams.update({'font.size':9,'svg.fonttype':'none'})
-    colors=dict(target='#64748b',q4='#2563eb',dflash2='#8b5cf6',before='#f59e0b',after='#16a34a',HE4='#db2777')
+    colors=dict(target='#64748b',q4='#2563eb',dflash2='#8b5cf6',before='#f59e0b',
+                mid300='#d97706',mid900='#4d7c0f',after='#16a34a',HE4='#db2777')
     cells=list(dict.fromkeys(x['cell'] for x in rows))
-    fig,axs=plt.subplots(2,2,figsize=(12,8),layout='constrained')
+    fig,axs=plt.subplots(2,2,figsize=(12,9),layout='constrained')
     for ax,cell in zip(axs.flat,cells):
         group=[x for x in rows if x['cell']==cell and x['status']=='MEASURED']
         for i,r in enumerate(group):
