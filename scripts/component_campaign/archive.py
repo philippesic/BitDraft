@@ -15,7 +15,7 @@ def paths(path):
 
 def reference(path):
  p=Path(path);archive,receipt=paths(p)
- if not receipt.exists():return old.reference(p)
+ if not receipt.exists():return pin(p) if p.is_file() else old.reference(p)
  record=json.load(open(receipt));authenticate(record);return record['original']
 
 def authenticate(record):

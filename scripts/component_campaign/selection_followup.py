@@ -6,7 +6,8 @@ from .post_primary import wait_release,run
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--after',type=Path,required=True);a=ap.parse_args();wait_release(a.after)
  save(R/'selection-followup-owner.json',dict(owner=identity(),predecessor=pin(a.after),source=pin(__file__)))
- run('scalar_import_audit');run('audit','Sall')
+ run('scalar_import_audit')
+ if not (R/'arms/Sall/native-tensor-audit.json').exists():run('audit','Sall')
  trace=R/'measurements/selection-primary-host'
  if not (trace/'result.json').exists():run('measure',trace.name,'--reps','1','--cohort','capture3','--trace')
  primary=R/'measurements/selection-primary';replay=R/'measurements/replay-primary-selection'
