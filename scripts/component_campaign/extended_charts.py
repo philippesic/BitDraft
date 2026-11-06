@@ -118,7 +118,7 @@ def generate(summary, comparison, out):
     for i, (key, label) in enumerate([('training_peak_allocator_bytes', 'Torch allocated'), ('training_peak_reserved_bytes', 'Torch reserved'), ('training_peak_host_rss_bytes', 'Host RSS')]):
         axes[2].bar(positions + (i - 1) * .25, [latest[n][key] / 2**30 if latest[n].get(key) is not None else np.nan for n in selected], width=.25, label=label)
     axes[2].set_xticks(positions, selected)
-    axes[2].set(ylabel='GiB', title='Measured training peaks · references untrained')
+    axes[2].set(ylabel='GiB', title='Campaign training peaks · blanks unrecorded')
     axes[2].legend(fontsize=7)
     for ax in axes:
         ax.tick_params(axis='x', rotation=45)

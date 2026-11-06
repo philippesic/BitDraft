@@ -37,6 +37,15 @@ def main():
         row = max((r for r in rows if r['arm'] == name), key=lambda r: r['updates'])
         latest.append({key: row.get(key) for key in fields})
     accounting = json.loads((R / 'accounting.json').read_text())
+    retained_runs = []
+    for ref in json.loads((R / 'frontier-retention.json').read_text())['states'].values():
+        run = json.loads(__import__('pathlib').Path(ref['confirmed_result']['path']).read_text())
+        retained_runs.append(dict(arm=ref['original_arm'],trainer=ref['confirmed_result'],
+            regenerated=bool(ref.get('same_history_reproduction')),progress=run['progress'],
+            process_wall_seconds=run.get('process_wall_seconds'),
+            peak_training_bytes=run['peak_training_bytes'],
+            peak_training_reserved_bytes=run.get('peak_training_reserved_bytes'),
+            peak_host_rss_bytes=run.get('peak_host_rss_bytes')))
     destination = ROOT / 'experiments/component-campaign-20261105/results.json'
     save(destination, dict(
         status='COMPACT_MEASURED_FINDINGS', endpoints=latest,
@@ -44,6 +53,7 @@ def main():
         qualification_optimizer_updates=accounting['qualification_optimizer_updates'],
         cumulative_actual_update_seconds=accounting['cumulative_actual_update_seconds'],
         checkpoint_save_seconds=accounting['checkpoint_save_seconds'],
+        retained_state_training_runs=retained_runs,
         recipe_decision=json.loads((R / 'final-recipe-decision.json').read_text()),
         publication=pin(R / 'final-publication.json'),
         full_comparison=pin(R / 'charts/comparison.json'),
