@@ -29,26 +29,18 @@ The sole follow-up GPU operator is the tool-created worktree
 external message delivery after completion and GPU release. No external message
 has been sent by this worker.
 
-Csmallbroad exact full-state restoration, byte-identical zero-update native
-export and a scratch GPU Adam4096→4097 qualification passed. The single extra
-1,800-second synchronized-update continuation is running under local tmux
-`dflash2-smoke-train-20261106-02`, supervised by canonical `remote_job.py`.
-[Supervisor](../runs/dflash2-smoke-train-20261106-02/state.json) ·
-[Live progress](../runs/dflash2-smoke-20261106-01/candidate/live.json) ·
-[Smoke record](../experiments/dflash2-smoke-20261106/report.md).
-Raw outputs use canonical `runs/dflash2-smoke-20261106-01`; current full-state
-parents/frontiers, old sources/runtimes and charts remain protected. The explicitly
-authorized obsolete one-step roundtrip diagnostic was retired, freeing4.5GiB of
-Windows physical headroom; its configs/results/native exports remain and its
-retirement receipt is tracked with this experiment. The final continuation state
-will use a new Windows directory without replacing the parent.
+Csmallbroad completed1,800.014628seconds of synchronized updates (9,923additional
+updates,4096→14019); final native export and a new streamed full state are saved.
+The trainer exited0 and released its GPU context. The earlier failed300-second
+attempt remains separate in cost and ancestry. [Continuation receipt](../experiments/dflash2-smoke-20261106/continuation.json).
 
-The first attempt's300.008seconds/1562updates were lost when its first readout
-hit a missing export-state version field. Its logs/source/accounting are preserved
-under `candidate-attempt01`; parent remains unchanged. The adapter now preserves
-version/lineage and saves state on readout failure. Attempt02 restarted from the
-original qualified4096state; failed-attempt cost is separate from its1800-second
-trajectory.
+Final full-state GPU resume/native recovery and the frozen four-cell native
+comparison are now running under canonical `remote_job.py`, local tmux
+`dflash2-smoke-measure-20261106-01`. One operator, one GPU lane.
+[Supervisor](../runs/dflash2-smoke-measure-20261106-01/state.json) ·
+[Smoke record](../experiments/dflash2-smoke-20261106/report.md).
+Raw outputs use canonical `runs/dflash2-smoke-20261106-01`. No performance or
+complete-recovery conclusion is claimed before those checks finish.
 
 A genuine Qwen3.5-4B DFlash2 release has been authenticated and converted;
 selector/convolution metadata and tensor coverage are present. No compatible9B
@@ -56,7 +48,7 @@ release has yet been found. Runtime qualification and all four final cell status
 remain pending; prepared artifacts are not measurements. Continue the bounded
 smoke with target-only exact greedy references, two warmups and two alternating
 repetitions on consumed DEV. Preserve HE4 unmodified. Do not start any other GPU
-job while this continuation owns the lane.
+job while this measurement owner holds the lane.
 
 The exact queued shader message remains pending until this follow-up finishes,
 parent review completes and the GPU is released. Parent will deliver it once.

@@ -1,6 +1,6 @@
 # DFlash2 smoke and Csmallbroad continuation
 
-Execution in progress; no performance conclusion yet.
+Training is complete; final-state recovery/native performance measurement is in progress.
 
 The user authorized a quick native DFlash2 comparison across the frozen four
 Qwen3.5 target cells and one1,800-second actual-update continuation of retained
@@ -78,3 +78,21 @@ correctness path; every target cell still requires fresh runtime/output qualific
 No9B checkpoint was found in the bounded HF/model-owner inventories recorded in
 `release-audit/bounded-9b-search-summary.json`; this is an explicit no-matched-
 release blocker, not proof that every possible repository lacks one.
+
+## Completed continuation budget
+
+[Machine-readable receipt](continuation.json):9,923additional updates,1,800.014628s
+of synchronized forward/backward/optimizer update time,0.014628sone-update
+overshoot. Cursor/Adam advanced4096→14019. Exposure148,845supervised positions
+from the same3,794unique labels/3,234overlapping windows/40TRAIN sequences;
+there are no fresh labels. Original optimizer groups/learning rates, schedule,
+RNG and order/cursor were restored. Process wall2140.846s; setup/qualification
+155.947s and final streamed checkpoint60.659s, with readouts and loop/state
+construction overhead separate from update accounting. Earlier failed attempt:
+300.008s/1562lost updates; it does not contribute to the final trajectory.
+
+Native exports at0/300/900/1800actual-update seconds survive. The final4.2GB-class
+streamed full state is retained under the new Windows directory; its complete
+archive/raw hashes and exact bytes are in the receipt. Trainer exited0 and GPU
+returned to its1102MiBdesktop baseline before the measurement supervisor launched.
+Actual next-update/native byte recovery remains pending at this milestone.
