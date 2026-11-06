@@ -81,7 +81,8 @@ def main():
 
 
 def gpu_replay(dest, row, arms, cache, audit=False):
-    out=dest/('audit' if audit else 'gpu');out.mkdir(exist_ok=False);records=[]
+    out=dest/('audit' if audit else 'gpu');out.mkdir(exist_ok=True)
+    records=json.load(open(out/'progress.json')) if (out/'progress.json').exists() else []
     for rep in range(1 if audit else 2):
         order=list(arms) if rep%2==0 else list(reversed(arms))
         for name in order:
@@ -100,18 +101,25 @@ def gpu_replay(dest, row, arms, cache, audit=False):
                         COMPONENT_V=cache.get(name,['f16','f16'])[1])
                     command=[str(R/'replay'),row['target_pin']['path'],arms[name],str(capture),str(anchor),
                              '1',str(result),'1' if audit else '0',str(row['draft_depth'])]
-                    save(result.with_suffix('.command.json'),dict(argv=command,environment={k:v for k,v in env.items() if k.startswith(('GGML_','CUDA_','LD_','OMP_','EXEC_','COMPONENT_'))},
-                        runtime=pin(RUNTIME/'build.json'),source=pin(ROOT/'scripts/dflash2_smoke/replay.cpp')))
-                    with result.with_suffix('.log').open('w') as log:
-                        subprocess.run(command,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
+                    if result.exists():
+                        previous=json.load(open(result.with_suffix('.command.json')))
+                        assert previous['argv']==command and previous['runtime']==pin(RUNTIME/'build.json')
+                        assert previous['source']==pin(ROOT/'scripts/dflash2_smoke/replay.cpp')
+                    else:
+                        save(result.with_suffix('.command.json'),dict(argv=command,environment={k:v for k,v in env.items() if k.startswith(('GGML_','CUDA_','LD_','OMP_','EXEC_','COMPONENT_'))},
+                            runtime=pin(RUNTIME/'build.json'),source=pin(ROOT/'scripts/dflash2_smoke/replay.cpp')))
+                        with result.with_suffix('.log').open('w') as log:
+                            subprocess.run(command,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
                     data=json.load(open(result))
+                    assert len(data['rows'])==9 and len([x for x in data['rows'] if not x['warmup']])==3
                     if not audit:
-                        assert all(x['graph_count']==1 and x['graph_event_ms']>0 for x in data['rows'] if not x['warmup'])
+                        assert all(x['graph_count']>=1 and x['graph_event_ms']>0 for x in data['rows'] if not x['warmup'])
                     else:
                         for x in data['rows']:
                             assert any(t.get('kind')=='finite_full_vocabulary_logits' for t in x['audit'])
                             assert any(t.get('kind')=='selector_unary_candidate_identity' and t['pass'] for t in x['audit'])
-                    records.append(dict(rep=rep,arm=name,domain=domain,model=pin(arms[name]),result=data))
+                    if not any(x['rep']==rep and x['arm']==name and x['domain']==domain for x in records):
+                        records.append(dict(rep=rep,arm=name,domain=domain,model=pin(arms[name]),result=data))
                     save(out/'progress.json',records)
             finally:release(arms[name],created)
     save(out/'result.json',dict(status='COMPLETE' if records else 'UNSUPPORTED_NO_MATCHED_DFLASH2',records=records,
@@ -119,7 +127,7 @@ def gpu_replay(dest, row, arms, cache, audit=False):
         runtime=pin(RUNTIME/'build.json'),executable=pin(R/'replay'),
         timer_library=pin(P/'runs/execution-campaign-20261105-01/libgraph-timer.so'),
         source=pin(ROOT/'scripts/dflash2_smoke/replay.cpp'),target=row['target_pin'],cache_formats=cache,
-        scope='Two alternating process reps; two same-process warmup passes; three changing native target histories per domain. Target capture excluded. Draft graph includes selector/convolution for actual DFlash2; no host proposal selection.'))
+        scope='Two alternating process reps; two same-process warmup passes; three changing native target histories per domain. Target capture excluded. CUDA-event sum of captured graph regions per draft invocation; CPU/inter-region work and copies outside graph regions excluded. DFlash2 has multiple regions; host proposal selection separate. Existing complete, source/command-matched cells may resume without replay.'))
 
 
 if __name__=='__main__': main()

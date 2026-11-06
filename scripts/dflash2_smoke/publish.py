@@ -86,7 +86,8 @@ def cell_rows(directory):
         points=[x['graph_event_ms'] for rec in gpu['records'] if rec['arm']==method for x in rec['result']['rows'] if not x['warmup']]
         row['clean_gpu_forward_ms']=statistics.mean(points) if points else None
         row['clean_gpu_forward_samples']=len(points)
-        row['gpu_scope']='Full native draft graph, depth+1 slots, fresh native target taps/history; excludes host selector walk/catchup;2process reps×3domains×3neighbor contexts.'
+        row['gpu_graph_regions']=sorted({x['graph_count'] for rec in gpu['records'] if rec['arm']==method for x in rec['result']['rows'] if not x['warmup']})
+        row['gpu_scope']='CUDA-event sum of captured graph regions per draft invocation, depth+1 slots, fresh native target taps/history; excludes CPU/inter-region work, copies outside graph regions, host selector walk/catchup;2process reps×3domains×3neighbor contexts.'
         row['precision']='F16 draft KV' if method in ('q4','dflash2','HE4') else 'Q4_0 Hadamard K128/V64 draft KV' if method in ('before','mid300','mid900','after') else None
         row['runtime_format_fallback']=method=='dflash2' and plan.get('dflash2_variant',{}).get('f32_down_fallback',False)
         if row['runtime_format_fallback']:
@@ -137,7 +138,7 @@ def figures(rows,training):
             for ax,x,y in [(axs[0],r['acceptance'],r['request_tok_s']),(axs[1],r['clean_gpu_forward_ms'],r['full_draft_all_phases_host_ms_per_round'])]:
                 ax.annotate(cell+' '+r['method'],(x,y),xytext=(3,3),textcoords='offset points',fontsize=6)
     axs[0].set(xlabel='Accepted/proposed',ylabel='Request tokens/s',title='Distinct target cohorts')
-    axs[1].set(xlabel='Clean GPU full draft graph ms',ylabel='All-phase draft host ms/round',title='Separate GPU and instrumented host work')
+    axs[1].set(xlabel='Captured GPU graph time / forward · ms',ylabel='All-phase draft host ms/round',title='Separate captured GPU and host work')
     points=training['readouts'];xs=[x['additional_update_seconds']/60 for x in points]
     axs[2].plot(xs,[x['dev']['ce'] for x in points],'o-',color=colors['after'])
     axs[2].set(xlabel='Actual additional update minutes',ylabel='Consumed DEV cross entropy',title='Csmallbroad continuation · lower is better')
