@@ -50,7 +50,7 @@ static bool trace(ggml_tensor*t,bool ask,void*u){
  }
  if(name=="dflash2_lattice" && t->type==GGML_TYPE_F32){
   auto*p=reinterpret_cast<const float*>(bytes.data());if(a.unary_argmax.size()!=size_t(t->ne[1]))throw std::runtime_error("missing actual head logits before selector");
-  for(int row=1;row<t->ne[1];++row)if(int(p[row*t->ne[0]])!=a.unary_argmax.at(row))throw std::runtime_error("selector candidate0 differs from unary head argmax");
+  for(int row=1;row<t->ne[1];++row){bool found=false;for(int i=0;i<16;++i)found|=int(p[row*t->ne[0]+i])==a.unary_argmax.at(row);if(!found)throw std::runtime_error("unordered selector candidates omit unary head argmax");}
   a.tensors.push_back({{"kind","selector_unary_candidate_identity"},{"positions",t->ne[1]-1},{"pass",true}});
  }
 

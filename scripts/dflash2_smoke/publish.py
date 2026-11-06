@@ -40,6 +40,8 @@ def cell_rows(directory):
                  status='MEASURED' if method in stats else 'UNSUPPORTED_NO_MATCHED_9B_RELEASE' if method=='dflash2' else 'UNTESTED_NO_9B_CANDIDATE_WEIGHTS')
         if method not in stats:
             out.append(row);continue
+        if method=='dflash2' and plan.get('dflash2_variant',{}).get('f32_down_fallback'):
+            row['label']='DFlash2 Q4 + F32 down'
         row.update(stats[method]);selected=[x for x in native if x['arm']==method]
         assert row['timing_repetitions']==2 and row['prompts']==3 and row['responses']==6
         rates=[]
@@ -86,7 +88,9 @@ def cell_rows(directory):
         row['clean_gpu_forward_samples']=len(points)
         row['gpu_scope']='Full native draft graph, depth+1 slots, fresh native target taps/history; excludes host selector walk/catchup;2process reps×3domains×3neighbor contexts.'
         row['precision']='F16 draft KV' if method in ('q4','dflash2','HE4') else 'Q4_0 Hadamard K128/V64 draft KV' if method in ('before','mid300','mid900','after') else None
-        row['runtime_format_fallback']=False
+        row['runtime_format_fallback']=method=='dflash2' and plan.get('dflash2_variant',{}).get('f32_down_fallback',False)
+        if row['runtime_format_fallback']:
+            row['precision']='Mixed Q4_K_M weights with five original BF16 FFN-down matrices stored/executed F32; F16 draft KV; unchanged runtime04.'
         if method=='dflash2':
             proof=json.load(open(directory/'trace/00-dflash2-traced/selector-proof.json'))
             assert proof['status']=='ACTUAL_DFLASH2_SELECTOR_LATTICE_READ_PASS' and proof['calls']>0
@@ -95,7 +99,7 @@ def cell_rows(directory):
             assert audit['status']=='COMPLETE' and audit['diagnostic_audit']
             row['actual_head_selector_audit']=dict(status='PASS',
                 source=pin(directory/'audit/result.json'),
-                scope='All248320native head logits finite and selector candidate0 equals unary argmax at each draft position; diagnostic warmups+three neighboring consumed-code histories; timing excluded.')
+                scope='All248320native head logits finite and unordered selector candidate set contains unary argmax at each draft position; diagnostic warmups+three neighboring consumed-code histories; timing excluded.')
         out.append(row)
     target=next(x for x in out if x['method']=='target')
     for row in out:
