@@ -4,6 +4,7 @@ import hashlib
 import html
 import io
 import json
+import re
 import statistics
 from pathlib import Path
 import matplotlib
@@ -74,6 +75,9 @@ def cell_rows(directory):
         row['sampled_private_resident_bytes']=max((x.get('Private_Clean_bytes',0)+x.get('Private_Dirty_bytes',0) for x in residency),default=None)
         row['sampled_shared_resident_bytes']=max((x.get('Shared_Clean_bytes',0)+x.get('Shared_Dirty_bytes',0) for x in residency),default=None)
         row['target_cache_bytes']=sum(x[k] for x in alloc[0]['cache_buffers'][:1] for k in ('k_bytes','v_bytes'))
+        log=(directory/'native'/f'00-{method}'/'server.log').read_text(errors='replace')
+        row['target_recurrent_state_bytes']=sum(float(v)*2**20 for v in
+            re.findall(r'llama_memory_recurrent:\s+\S+ RS buffer size =\s+([\d.]+) MiB',log))
         row['draft_cache_bytes']=sum(x[k] for x in alloc[0]['cache_buffers'][1:] for k in ('k_bytes','v_bytes'))
         row['rotation_bytes']=sum(x['reported_bytes'] for x in alloc[0]['rotation_buffers'])
         row['combined_gpu_model_bytes']=sum(v for k,v in alloc[0]['model_buffers'].items() if k.startswith('CUDA') and 'Host' not in k)
@@ -95,7 +99,9 @@ def cell_rows(directory):
         out.append(row)
     target=next(x for x in out if x['method']=='target')
     for row in out:
-        if row['status']=='MEASURED':row['private_gpu_model_bytes']=row['combined_gpu_model_bytes']-target['combined_gpu_model_bytes']
+        if row['status']=='MEASURED':
+            row['private_gpu_model_bytes']=row['combined_gpu_model_bytes']-target['combined_gpu_model_bytes']
+            row['immutable_target_gpu_model_bytes']=target['combined_gpu_model_bytes']
     return out
 
 
@@ -159,7 +165,7 @@ def main():
         provenance=[pin(p) for p in (R/'release-audit/adaptation.json',R/'diagnostic-build.json',OUT/'zero-resume-proof.json')],
         source=pin(__file__))
     save(DEST/'results.json',compact)
-    fields=['cell','method','status','depth','request_tok_s','request_rep_min','request_rep_max','ratio_to_q4','mean_request_seconds','output_tokens','accepted','proposed','rounds','acceptance','accepted_per_round','emitted_per_round','clean_gpu_forward_ms','full_draft_host_ms_per_round','full_draft_all_phases_host_ms_per_round','private_gpu_model_bytes','draft_cache_bytes','rotation_bytes','sampled_peak_MiB','sampled_private_resident_bytes','sampled_shared_resident_bytes','sampled_peak_Pss_bytes','correct']
+    fields=['cell','method','status','depth','request_tok_s','request_rep_min','request_rep_max','ratio_to_q4','mean_request_seconds','output_tokens','accepted','proposed','rounds','acceptance','accepted_per_round','emitted_per_round','clean_gpu_forward_ms','full_draft_host_ms_per_round','full_draft_all_phases_host_ms_per_round','immutable_target_gpu_model_bytes','private_gpu_model_bytes','target_cache_bytes','target_recurrent_state_bytes','draft_cache_bytes','rotation_bytes','sampled_peak_MiB','sampled_private_resident_bytes','sampled_shared_resident_bytes','sampled_peak_Pss_bytes','correct']
     with (DEST/'comparison.csv').open('w',newline='') as f:
         writer=csv.DictWriter(f,fieldnames=fields,extrasaction='ignore');writer.writeheader();writer.writerows(rows)
     figures(rows,training)
