@@ -7,6 +7,7 @@ from .common import R, pin, save
 
 def main():
     decision = json.loads((R / 'final-recipe-decision.json').read_text())
+    frozen = json.loads((R / 'freeze.json').read_text())
     expected = {'target', 'q4', 'B0', *decision['controls'], *decision['candidates']}
     panels = {}
     common_runtime = None
@@ -25,6 +26,10 @@ def main():
             common_runtime = runtime
         if runtime != common_runtime:
             raise ValueError('Formal runtime changed: ' + name)
+        if (freeze['target']['sha256'] != frozen['target']['sha256']
+                or freeze['arms']['q4']['sha256'] != frozen['external_baseline']['sha256']
+                or freeze['arms']['B0']['sha256'] != frozen['B0_native']['original']['sha256']):
+            raise ValueError('Frozen target/external/B0 identity differs: ' + name)
         for arm, ref in decision['models'].items():
             if freeze['arms'][arm]['sha256'] != ref['sha256']:
                 raise ValueError('Formal weights differ from locked recipe: ' + name + '/' + arm)
