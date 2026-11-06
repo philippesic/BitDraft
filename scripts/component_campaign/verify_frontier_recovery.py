@@ -33,7 +33,7 @@ def main():
   actual=pin(native)
   if actual['sha256']!=model['sha256'] or actual['bytes']!=model['bytes']:raise ValueError('native byte stream from retained full state differs')
   from .gpu_resume import qualify
-  gpu_resume=qualify(state,name,dest)
+  gpu_resume=qualify(state,name,dest,Path(receipt['confirmed_result']['path']).parent)
   result=dict(status='FULL_FRONTIER_GPU_RESUME_AND_NATIVE_BYTE_RECOVERY_PASS',original_arm=name,full_state=receipt,native=model,optimizer_steps=sorted(steps),master_count=len(state['parameters']),deployment_half_values=sorted(state.get('deployment_exps',{})),gpu_resume=gpu_resume,source=pin(__file__))
   save(dest/'result.json',result);records.append(result)
   # These two exact byte streams survive as authenticated native exports and

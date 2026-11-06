@@ -16,10 +16,11 @@ from scripts.dflash_baseline.pipeline import load_parameters, restore_rng, rng, 
 from scripts.dflash_baseline.prototype_model import install, optimizer
 
 
-def qualify(state, original_arm, destination):
+def qualify(state, original_arm, destination, training_directory=None):
     pause()
     spec, config, progress = state['component_spec'], state['config'], state['progress']
-    resolved = json.loads((R / 'arms' / original_arm / 'resolved.json').read_text())
+    training_directory = Path(training_directory or R / 'arms' / original_arm)
+    resolved = json.loads((training_directory / 'resolved.json').read_text())
     numerical_sources = [
         'component_campaign/' + name + '.py' for name in ('simulation', 'quant', 'deployment')]
     if spec.get('r2_vocab_scale'):
@@ -104,6 +105,7 @@ def qualify(state, original_arm, destination):
         raise ValueError('Resumed update failed finite/change checks')
     result = dict(status='ACTUAL_GPU_MASTER_ADAM_RNG_CURSOR_RESUME_UPDATE_PASS',
         owner=identity(), arm=original_arm, saved_updates=progress['updates'],
+        retained_state_trainer=pin(training_directory / 'result.json'),
         qualification_updates=1, next_adam_steps=sorted(next_steps),
         next_cursor=progress['cursor'] + 1, next_capture=str(captures[index].path),
         next_anchor=anchor, loss=loss, gradient_norm=model.last_gradient_norm,
