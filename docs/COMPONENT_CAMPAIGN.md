@@ -534,3 +534,20 @@ Current supervisors remain `component-rest-recovery-20261105-01` and passive
 They still have pre-fix group-stop code loaded: use the authenticated worker-first
 stop procedure above if a user pause arrives. Healthy jobs stay alive through
 source edits/context rotation. The broader nine-model goal remains open.
+
+## Primary recovery complete —19:13Pacific
+
+All17 physical4096-update windows and19 logical arms (the two exact private-Q6
+controls reuse H0's identical training history) have completed all four native
+readouts. Actual physical exposure is69,632updates and1,044,480supervised
+positions, repeating the same1,762unique TRAIN label positions per recipe;
+aggregate update compute is10,489.14seconds, excluding setup/export/evaluation.
+Sall final consumed DEV CE is7.23740; native counts at0/256/1024/4096are
+57/259,52/269,47/279,55/261. No fresh heldout has been opened.
+
+The rest supervisor exited normally and released its process group. The existing
+post-primary supervisor now owns the GPU, starting physical half-clip admission,
+then all-arm natural12 selection, clean GPU replay and physical-tie allocation.
+Its launched code predates later publication/scalar-audit additions; run those
+manually after it releases. The campaign is still in progress: rescue decisions,
+combinations, full-state frontier retention and formal final panels remain.
