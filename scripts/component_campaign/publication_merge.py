@@ -50,6 +50,7 @@ def merge(rows):
    if not entry['instrumented']:raise ValueError('trace instrumentation absent')
    prefix='' if entry['timing_repetitions']>=5 else 'selection_'
    row[prefix+'full_draft_host_ms']=entry['full_draft_host_ms_per_round'];row[prefix+'full_draft_host_cohort']=trace['cohort'];row[prefix+'full_draft_host_evidence']=trace['source']['path'];row[prefix+'full_draft_host_repetitions']=entry['timing_repetitions']
+   row[prefix+'draft_prefill_host_ms_per_request']=entry.get('draft_prefill_host_ms_per_request');row[prefix+'full_draft_all_phases_host_ms_per_round']=entry.get('full_draft_all_phases_host_ms_per_round');row[prefix+'full_draft_host_scope']=entry['host_scope']
  controls=index.get('matched_controls',{})
  lookup={(r['arm'],r['updates']):r for r in rows}
  for row in rows:

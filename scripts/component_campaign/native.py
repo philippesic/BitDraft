@@ -180,6 +180,8 @@ def main():
      for x in roots:
       phase='prefill' if x['start_ns']<boundary else 'generation';v=costs[phase];v[x['name']]=v.get(x['name'],0)+(x['end_ns']-x['start_ns'])/1e6
      row['host_spans_ms']=costs;row['draft_full_ms']=sum(costs['generation'].get(n,0) for n in ('draft_generate','draft_catchup','draft_accept'));row['target_verify_and_sample_ms']=sum(costs['generation'].get(n,0) for n in ('target_process','target_sync','verifier_sample','target_sample'))
+     row['draft_prefill_ms']=sum(costs['prefill'].get(n,0) for n in ('draft_generate','draft_catchup','draft_accept'))
+     row['draft_all_phases_ms']=row['draft_prefill_ms']+row['draft_full_ms']
      row['trace_scope']='Disjoint host root spans; async GPU cost may be charged at later synchronization. Instrumented diagnostics, paired plain speed when present.'
    save(a.out/'progress.json',rows)
    print('Completed',rep,label,'traced' if traced else 'plain',flush=True)
