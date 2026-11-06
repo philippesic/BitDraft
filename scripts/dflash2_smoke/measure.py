@@ -21,7 +21,7 @@ def main():
     ap=argparse.ArgumentParser()
     ap.add_argument('--cells',nargs='*')
     ap.add_argument('--skip-recovery',action='store_true')
-    ap.add_argument('--phase',choices=['all','preflight','native','trace','gpu'],default='all')
+    ap.add_argument('--phase',choices=['all','preflight','native','trace','gpu','audit'],default='all')
     a=ap.parse_args()
     pause()
     if not a.skip_recovery and not (OUT/'final-recovery/result.json').exists():
@@ -54,12 +54,12 @@ def main():
         common=[sys.executable,'-m','scripts.component_campaign.native','--arms',dest/'arms.json',
             '--draft-cache-map',dest/'cache.json','--runtime',RUNTIME,'--target',row['target_pin']['path'],
             '--depth',str(row['draft_depth']),'--cohort','capture3','--cohort-label','consumed-DEV-smoke3']
-        for phase in (['preflight','native','trace','gpu'] if a.phase=='all' else [a.phase]):
+        for phase in (['preflight','native','trace','gpu','audit'] if a.phase=='all' else [a.phase]):
             pause()
             if (dest/phase/'result.json').exists():continue
             try:
-                if phase=='gpu':
-                    gpu_replay(dest, row, arms, cache)
+                if phase in ('gpu','audit'):
+                    gpu_replay(dest, row, arms, cache, audit=phase=='audit')
                 else:
                     command=common+['--out',dest/phase,'--reps','1' if phase in ('preflight','trace') else '2',
                         '--warmups','0' if phase=='preflight' else '2']
@@ -78,15 +78,15 @@ def main():
     print('MATRIX_PHASES_FINISHED',statuses,flush=True)
 
 
-def gpu_replay(dest, row, arms, cache):
-    out=dest/'gpu';out.mkdir(exist_ok=False);records=[]
-    for rep in range(2):
+def gpu_replay(dest, row, arms, cache, audit=False):
+    out=dest/('audit' if audit else 'gpu');out.mkdir(exist_ok=False);records=[]
+    for rep in range(1 if audit else 2):
         order=list(arms) if rep%2==0 else list(reversed(arms))
         for name in order:
-            if name=='target':continue
+            if name=='target' or (audit and name!='dflash2'):continue
             pause();created=hydrate(arms[name])
             try:
-                for domain in ('code','reasoning','prose'):
+                for domain in (('code',) if audit else ('code','reasoning','prose')):
                     capture=P/f'runs/dflash-modern-capture-20261104-04/data/development-{domain}-00/capture'
                     anchor=json.load(open(capture/'capture.json'))['prompt_tokens']+5
                     result=out/f'{rep:02d}-{name}-{domain}.json'
@@ -97,17 +97,23 @@ def gpu_replay(dest, row, arms, cache):
                         EXEC_REQUEST_MASKS='1',COMPONENT_K=cache.get(name,['f16','f16'])[0],
                         COMPONENT_V=cache.get(name,['f16','f16'])[1])
                     command=[str(R/'replay'),row['target_pin']['path'],arms[name],str(capture),str(anchor),
-                             '1',str(result),'0',str(row['draft_depth'])]
+                             '1',str(result),'1' if audit else '0',str(row['draft_depth'])]
                     save(result.with_suffix('.command.json'),dict(argv=command,environment={k:v for k,v in env.items() if k.startswith(('GGML_','CUDA_','LD_','OMP_','EXEC_','COMPONENT_'))},
                         runtime=pin(RUNTIME/'build.json'),source=pin(ROOT/'scripts/dflash2_smoke/replay.cpp')))
                     with result.with_suffix('.log').open('w') as log:
                         subprocess.run(command,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
                     data=json.load(open(result))
-                    assert all(x['graph_count']==1 and x['graph_event_ms']>0 for x in data['rows'] if not x['warmup'])
+                    if not audit:
+                        assert all(x['graph_count']==1 and x['graph_event_ms']>0 for x in data['rows'] if not x['warmup'])
+                    else:
+                        for x in data['rows']:
+                            assert any(t.get('kind')=='finite_full_vocabulary_logits' for t in x['audit'])
+                            assert any(t.get('kind')=='selector_unary_candidate_identity' and t['pass'] for t in x['audit'])
                     records.append(dict(rep=rep,arm=name,domain=domain,model=pin(arms[name]),result=data))
                     save(out/'progress.json',records)
             finally:release(arms[name],created)
-    save(out/'result.json',dict(status='COMPLETE',records=records,
+    save(out/'result.json',dict(status='COMPLETE' if records else 'UNSUPPORTED_NO_MATCHED_DFLASH2',records=records,
+        diagnostic_audit=audit,
         scope='Two alternating process reps; two same-process warmup passes; three changing native target histories per domain. Target capture excluded. Draft graph includes selector/convolution for actual DFlash2; no host proposal selection.'))
 
 

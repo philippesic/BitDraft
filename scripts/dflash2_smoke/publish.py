@@ -87,6 +87,11 @@ def cell_rows(directory):
             proof=json.load(open(directory/'trace/00-dflash2-traced/selector-proof.json'))
             assert proof['status']=='ACTUAL_DFLASH2_SELECTOR_LATTICE_READ_PASS' and proof['calls']>0
             row['selector_proof']=proof
+            audit=json.load(open(directory/'audit/result.json'))
+            assert audit['status']=='COMPLETE' and audit['diagnostic_audit']
+            row['actual_head_selector_audit']=dict(status='PASS',
+                source=pin(directory/'audit/result.json'),
+                scope='All248320native head logits finite and selector candidate0 equals unary argmax at each draft position; diagnostic warmups+three neighboring consumed-code histories; timing excluded.')
         out.append(row)
     target=next(x for x in out if x['method']=='target')
     for row in out:

@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cstdlib>
+#include <cmath>
 #include <dlfcn.h>
 #include <fstream>
 #include <vector>
@@ -20,11 +21,11 @@ void llama_set_embeddings_layer_inp(llama_context *,uint32_t,bool);
 float *llama_get_embeddings_layer_inp(llama_context *,uint32_t);
 static void check(bool ok,const char*m){if(!ok)throw std::runtime_error(m);}
 static uint64_t hash(const void*p,size_t n){auto*b=(const uint8_t*)p;uint64_t h=14695981039346656037ull;for(size_t i=0;i<n;++i)h=(h^b[i])*1099511628211ull;return h;}
-struct Audit {json tensors=json::array();bool enabled=false;int anchor=-1,head_captures=0;std::string head_prefix;};
+struct Audit {json tensors=json::array();bool enabled=false;int anchor=-1,head_captures=0;std::string head_prefix;std::vector<int>unary_argmax;};
 static bool trace(ggml_tensor*t,bool ask,void*u){
  auto&a=*(Audit*)u;std::string name=ggml_get_name(t);
  bool vocabulary=t->src[0] && t->src[0]->ne[1]==248320 && (t->op==GGML_OP_GET_ROWS || t->op==GGML_OP_MUL_MAT);
- bool want=a.enabled && ggml_nbytes(t)<32*1024*1024 && (vocabulary || t->op==GGML_OP_W1AX_PACK || t->op==GGML_OP_CPY||name.find("norm")!=std::string::npos||name.find("ffn")!=std::string::npos||name.find("l_out")!=std::string::npos||name=="result_norm"||name=="result_output"||name.find("dflash2")!=std::string::npos||name.find("selector")!=std::string::npos);
+ bool want=a.enabled && ggml_nbytes(t)<32*1024*1024 && (vocabulary || t->op==GGML_OP_W1AX_PACK || t->op==GGML_OP_CPY||name.find("norm")!=std::string::npos||name.find("ffn")!=std::string::npos||name.find("l_out")!=std::string::npos||name=="result_norm"||name=="result_output"||name.find("dflash2")!=std::string::npos||name.find("selector")!=std::string::npos||name.find("conv")!=std::string::npos);
  if(ask)return want;if(!want)return true;
  for(auto*w:t->src){if(!w || w->type!=GGML_TYPE_F16 || ggml_nbytes(w)>1024*1024)continue;std::string wn=ggml_get_name(w);if(wn.find("norm")==std::string::npos && wn.find(".w1a1_scale")==std::string::npos && wn.find(".w1ax_midpoint")==std::string::npos && wn.find(".w1ax_gain")==std::string::npos)continue;std::vector<uint8_t>raw(ggml_nbytes(w));ggml_backend_tensor_get(w,raw.data(),0,raw.size());a.tensors.push_back({{"kind","half_metadata_read"},{"source_name",wn},{"source_type",ggml_type_name(w->type)},{"consumer_op",ggml_op_name(t->op)},{"consumer_output_type",ggml_type_name(t->type)},{"source_bytes",raw.size()},{"source_hash_fnv1a64",hash(raw.data(),raw.size())}});}
  if(vocabulary){auto*w=t->src[0];a.tensors.push_back({{"kind","vocabulary_allocation"},{"op",ggml_op_name(t->op)},{"name",name},{"weight_tensor_address",uint64_t(uintptr_t(w))},{"weight_data_address",uint64_t(uintptr_t(w->data))},{"weight_bytes",ggml_nbytes(w)},{"weight_type",ggml_type_name(w->type)},{"weight_buffer",w->buffer?ggml_backend_buft_name(ggml_backend_buffer_get_type(w->buffer)):"none"}});}
@@ -35,6 +36,17 @@ static bool trace(ggml_tensor*t,bool ask,void*u){
  }
  if(t->src[0] && (vocabulary || t->op==GGML_OP_W1A1_MUL_MAT || (t->op==GGML_OP_MUL_MAT && ggml_is_quantized(t->src[0]->type)))){auto*w=t->src[0];if(w->buffer)a.tensors.push_back({{"kind","permanent_weight_buffer"},{"name",name},{"buffer_address",uint64_t(uintptr_t(w->buffer))},{"buffer_bytes",ggml_backend_buffer_get_size(w->buffer)},{"buffer_type",ggml_backend_buft_name(ggml_backend_buffer_get_type(w->buffer))},{"tensor_bytes",ggml_nbytes(w)}});}
  std::vector<uint8_t>bytes(ggml_nbytes(t));ggml_backend_tensor_get(t,bytes.data(),0,bytes.size());
+ if(name=="result_output" && t->type==GGML_TYPE_F32 && t->ne[0]==248320){
+  auto*p=reinterpret_cast<const float*>(bytes.data());a.unary_argmax.clear();
+  for(int row=0;row<t->ne[1];++row){auto*begin=p+row*t->ne[0];for(int i=0;i<t->ne[0];++i)if(!std::isfinite(begin[i]))throw std::runtime_error("nonfinite actual DFlash2 vocabulary logits");a.unary_argmax.push_back(int(std::max_element(begin,begin+t->ne[0])-begin));}
+  a.tensors.push_back({{"kind","finite_full_vocabulary_logits"},{"rows",t->ne[1]},{"vocabulary",t->ne[0]},{"argmax",a.unary_argmax}});
+ }
+ if(name=="dflash2_lattice" && t->type==GGML_TYPE_F32){
+  auto*p=reinterpret_cast<const float*>(bytes.data());if(a.unary_argmax.size()!=size_t(t->ne[1]))throw std::runtime_error("missing actual head logits before selector");
+  for(int row=1;row<t->ne[1];++row)if(int(p[row*t->ne[0]])!=a.unary_argmax.at(row))throw std::runtime_error("selector candidate0 differs from unary head argmax");
+  a.tensors.push_back({{"kind","selector_unary_candidate_identity"},{"positions",t->ne[1]-1},{"pass",true}});
+ }
+
  a.tensors.push_back({{"name",name},{"op",ggml_op_name(t->op)},{"type",ggml_type_name(t->type)},{"bytes",bytes.size()},{"hash_fnv1a64",hash(bytes.data(),bytes.size())},{"shape",{t->ne[0],t->ne[1],t->ne[2],t->ne[3]}}});return true;
 }
 static double now(){return std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now().time_since_epoch()).count();}
