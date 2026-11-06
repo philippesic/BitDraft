@@ -854,3 +854,38 @@ It is running the final full-head audit including all four R2 arms, then tensor
 audits, natural12selection, clean GPU replay and full host traces. Finalist lock,
 retained-state native/GPU qualification, formal alternating measurements, fresh24
 heldout, publication and release remain required. No heldout has been opened.
+
+### Two recipes locked before heldout —November6,01:21Pacific
+
+The final head audit passed27arm/domain cases and all54required-column argmax
+decisions. Worst absolute error0.024294and RMS0.004520bound native head drift;
+full-graph parity remains unresolved. Tensor audits, consumed natural12selection,
+clean GPU replay and complete host traces finished successfully. Current charts
+contain118actual readouts. Final5-repetition evidence is still pending.
+
+Locked shortlist in `final-recipe-decision.json`: HE4 (original-history tied
+privateQ4_K head/embedding, F16KV/F32scalars) and Csmallbroad (shared targetQ6_K
+vocabulary, Q4_0K/V, half gain/clip/norm, separate broader TRAIN recipe). Matched
+controls are H0 and H0broad, alongside immutable B0, externalQ4 and target-only.
+HE4 preserves the faster head-forward path with stronger native selection than
+head-onlyQ4; sub-percent head latency differences are not ranked from one rep.
+Csmallbroad preserves the compact cache/scalar layout with stronger selection
+than its original-data counterpart. No external-Q4 request promotion is claimed.
+All R2/combinations remain published; R2 is native block-scale QAT, not dense
+vocabulary-master QAT. No heldout payload has been opened or used to choose.
+
+Csmallbroad's final full rolling state is retained directly. HE4 needs one
+4096same-history regeneration because its earlier rolling state retired; exact
+native equality must pass before either state is treated as the measured recipe.
+Each retained state then gets actual GPU masters/Adam/RNG/cursor restoration and
+one next TRAIN update, separately counted without changing finalist weights.
+
+Current sole supervisor: workspace `runs/component-final-confirmation-20261106-01`,
+same tmux session on `binary-eagle-runtime`. Canonical
+`final-confirmation-launch.json` pins source/birth/boot/decision and stop procedure
+(authenticate, SIGTERM supervisor,300seconds grace, verify group/GPU release).
+Both earlier successful recovery/selection groups are absent. It runs retained
+state qualifications, actual finalist allocation proof, common-runtime formal
+DEV/GPU/host/context/profiles and post-lock fresh24heldout. Full report, compact
+Git results, retention inventory and GPU release still follow; parent owns review
+and the delayed message. No push is authorized.
