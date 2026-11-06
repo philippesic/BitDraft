@@ -22,6 +22,7 @@ def collect():
   if not path.exists():continue
   result=json.load(open(directory/'result.json')) if (directory/'result.json').exists() else {}
   spec=json.load(open(directory/'spec.json'));records=json.load(open(path))
+  if directory.name=='H0':records=json.load(open(R/'arms/H0-pilot/readouts.json'))[:1]+records
   logs=[directory/'updates.jsonl']
   if directory.name in ('H6','E6'):logs=[R/'arms/H0-pilot/updates.jsonl',R/'arms/H0/updates.jsonl']
   elif directory.name=='H0':logs=[R/'arms/H0-pilot/updates.jsonl',*logs]
