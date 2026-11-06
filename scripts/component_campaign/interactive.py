@@ -31,7 +31,7 @@ for(const n of names){let l=document.createElement('label'),c=document.createEle
 for(const [id,on] of [['all',true],['none',false]])document.querySelector('#'+id).onclick=()=>{document.querySelectorAll('#filters input').forEach(c=>{c.checked=on;on?selected.add(c.dataset.arm):selected.delete(c.dataset.arm)});draw()};
 document.querySelector('#latest').onchange=draw;
 function draw(){
- let xf=document.querySelector('#x').value,yf=document.querySelector('#y').value,scatter=!['updates','training_update_seconds','supervised_positions','unique_supervised_positions_exposed'].includes(xf),latest=scatter||document.querySelector('#latest').checked;
+ let xf=document.querySelector('#x').value,yf=document.querySelector('#y').value,scatter=!['updates','training_update_seconds','readout_elapsed_trainer_wall_seconds','supervised_positions','unique_supervised_positions_exposed'].includes(xf),latest=scatter||document.querySelector('#latest').checked;
  let all=data.filter(r=>selected.has(r.arm)&&(!latest||r.updates===maxUpdate[r.arm]));
  let rows=all.filter(r=>number(r,xf)!==null&&number(r,yf)!==null);plot.replaceChildren();
  let xs=rows.map(r=>number(r,xf)),ys=rows.map(r=>number(r,yf));
