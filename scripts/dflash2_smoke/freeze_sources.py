@@ -18,6 +18,11 @@ def main():
                 current=ROOT/relative;body=current.read_bytes() if current.is_file() else b''
                 origin='current source'
                 if hashlib.sha256(body).hexdigest()!=digest:
+                    for archived in (ROOT/'experiments/dflash2-smoke-20261106/source-recovery').glob('*.py'):
+                        candidate=archived.read_bytes()
+                        if hashlib.sha256(candidate).hexdigest()==digest:
+                            body=candidate;origin='Tracked historical source '+str(archived);break
+                if hashlib.sha256(body).hexdigest()!=digest:
                     commits=subprocess.check_output(['git','log','--all','--format=%H','--',relative],cwd=ROOT,text=True).splitlines()
                     for commit in commits:
                         candidate=subprocess.run(['git','show',commit+':'+relative],cwd=ROOT,capture_output=True)
