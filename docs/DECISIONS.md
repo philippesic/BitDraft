@@ -46,3 +46,29 @@ the target workload or if memory/context tradeoffs outweigh its latency advantag
 No new training, feature sweep, deployment change or artifact retirement is
 authorized by this prioritization alone. Preserve the qualified frontier states
 and their required parents/data/source dependencies.
+
+## 2026-11-06: revisit mixed FFN weight precision later
+
+User requested recording, then deferring, selective ternary/2-bit FFN weights.
+HE4 stays the primary candidate. Keep its A4 gate/up and A8 down activation
+settings, vocabulary, cache and essential features fixed while testing weight
+precision across the 18 individual FFN projections.
+
+Proposed future sequence: qualify packed W2 training/export/native execution;
+screen six individual down upgrades, then six paired gate/up upgrades; shortlist
+allocations at matched added bytes/native cost and give them matched short QAT
+against an unchanged HE4 continuation. Compare ternary at promising allocations
+and validate combinations rather than assuming isolated gains add together.
+Start with down for implementation isolation, not presumed higher sensitivity.
+
+Keep exact HE4 warm-start expansion and initialization from pinned original
+higher-precision source tensors as distinct recipes. Binary sign latents are not
+original dense weights; wider storage alone recovers no missing information.
+Define learned scale/midpoint and codebook semantics explicitly. Straightforward
+ternary packing also costs two bits; a zero code with a nonzero midpoint is not
+a zero weight. Measure actual bytes, packing-inclusive native draft/request cost
+and acceptance. Current native exporter admits only all-18 W1 FFN matrices;
+mixed-weight support still requires qualification. Bound training/native drift
+before attributing small recovery differences to precision.
+
+This entry authorizes no implementation, GPU run or training allocation.

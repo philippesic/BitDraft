@@ -142,7 +142,9 @@ aliased a caller CPU scalar step tensor. The corrected loader clones scalar
 state, checks the caller's complete optimizer fingerprint, and the accepted run
 asserts live Adam/progress equality at every update. These failed/invalid costs
 are not hidden inside the successful30-minute trajectory. Attempt02's paid full
-state and all attempts' source/raw/native evidence are preserved, labeled invalid.
+state was retained for parent review and then retired in the
+[user-authorized storage cleanup](../storage-cleanup-20261106/report.md).
+All attempts' source/raw/native evidence remains preserved and labeled invalid.
 
 Final archive authentication, exact native byte recovery and actual GPU next
 update14094→14095 all pass; caller optimizer remains unchanged. Final state is
@@ -170,7 +172,8 @@ The successful training source checkpoint is linked by its source-pin receipts.
 Raw root: `/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01`.
 New resumable archive:
 `/mnt/c/binary-eagle-dflash2-smoke-20261106-01/Csmallbroad-exact-plus1800-14094.pt.bsz`.
-The rejected step14019 archive is retained in that same new directory for review.
+The rejected step14019 optimizer archive was intentionally retired after review;
+the accepted step14094 archive remains protected. See the November 6 cleanup record.
 Original component frontiers, parents, captures, source/runtime04 and old charts
 remain intact. Intermediate/invalid native exports use lossless authenticated
 archives against retained zero dictionaries; do not remove those dependencies.

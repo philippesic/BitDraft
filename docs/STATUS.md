@@ -8,6 +8,8 @@ as the compact fallback, especially if memory or longer-context costs become
 limiting. [Decision and exact retained recipe](DECISIONS.md#2026-11-06-prioritize-he4-retain-csmallbroad-fallback).
 This selects the development direction; it grants no additional GPU run or
 training budget and does not promote HE4 over the external deployment incumbent.
+Deferred next precision idea: [selective ternary/2-bit FFN weights](DECISIONS.md#2026-11-06-revisit-mixed-ffn-weight-precision-later),
+with HE4's activation widths held fixed. Record only; no sweep launched.
 
 ## Completed: precision campaign and DFlash2 follow-up
 
@@ -43,9 +45,14 @@ All owned GPU jobs and passive successors are released. The two component
 frontiers, original parents and new fully resumable continuation remain retained.
 See [preservation](../runs/dflash2-smoke-20261106-01/milestone-retention.json) and
 [GPU release](../runs/dflash2-smoke-20261106-01/gpu-release.json).
-Windows C and WSL have low free space; do not infer another training allocation
-from completion. Preserve paid states, source/dictionary dependencies and captures.
-Prior explicitly authorized retirements remain recorded in their campaign receipts.
+User-authorized November 6 cleanup retired 34 superseded optimizer checkpoints:
+63.57 GiB in WSL and 61.59 GiB directly on Windows C. Observed free space is now
+about 66.20 GiB in WSL and 63.16 GiB on C. The five current full states/parents
+remain hash-verified and unchanged; selected native exports were reverified.
+[Retirement paths and preservation](../experiments/storage-cleanup-20261106/report.md).
+Historical checkpoint references to these explicitly retired files are not live
+resume claims. Preserve the retained states, source/dictionary dependencies and
+captures. This cleanup grants no new training allocation.
 
 The exact queued shader benchmark message was delivered to the
 [requested thread](<t3-thread://v2/de4b951c-7cc7-4d2d-bbb0-1f3e6d7f79f7/aba88598-10c1-4c3c-b760-9aa7a0353548>)

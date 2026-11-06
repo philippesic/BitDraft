@@ -1,5 +1,11 @@
 # DFlash precision frontier on RTX 5080
 
+Retention update, November 6: superseded optimizer states from this completed
+search were intentionally retired in the [authorized storage cleanup](../storage-cleanup-20261106/report.md).
+Measurements, source/configuration, native exports and their dictionary bases
+remain. B0 and the essential foundation are retained; old checkpoint references
+in historical receipts do not imply those exploratory states remain resumable.
+
 The initial campaign and one bounded clipping-control follow-up are complete:
 **258 measured panel/arm records**, with separate held-out cohorts. Open the
 [combined interactive chart](/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/charts-clip-control/comparison.html),

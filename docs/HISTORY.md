@@ -49,3 +49,11 @@ Csmallbroad+1800s continuation and final full-state GPU resume passed; native
 before/after throughput did not improve consistently. Two failed/invalid attempts
 and their additional compute are preserved. GPU ownership was released; parent
 review/message delivery is recorded separately from worker completion.
+
+## Storage retirement and deferred precision work (2026-11-06)
+
+Recorded selective ternary/2-bit HE4 FFN weights as a deferred experiment, with
+activation widths held fixed. No new training was launched. User-authorized cleanup
+retired 34 superseded optimizer states: 63.57 GiB inside WSL and 61.59 GiB directly
+on Windows. Current HE4/Csmallbroad states and required parents remain verified;
+native exports, source and measurements remain. [Exact scope and outcome](../experiments/storage-cleanup-20261106/report.md).
