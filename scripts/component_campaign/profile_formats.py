@@ -18,7 +18,16 @@ def main():
    with dest.open('w') as stream:subprocess.run(['nsys','stats','--report','cuda_gpu_kern_sum','--format','csv',str(report)],stdout=stream,stderr=subprocess.PIPE,text=True,check=True)
   text=dest.read_text();lines=text.splitlines();header=next((i for i,l in enumerate(lines) if 'Name' in l and 'Instances' in l),None)
   if header is None:raise ValueError('Nsight kernel CSV header missing')
-  rows=list(csv.DictReader(lines[header:]));records[cell.name]=dict(report=pin(report),kernel_csv=pin(dest),kernels=rows,command=pin(cell/'command.json'),model=registry.get(cell.name[3:],{}))
+  rows=[r for r in csv.DictReader(lines[header:]) if r.get('Name') and r.get('Instances','').replace(',','').isdigit()]
+  if not rows:raise ValueError('Nsight kernel CSV has no actual exercised instances')
+  records[cell.name]=dict(report=pin(report),kernel_csv=pin(dest),kernels=rows,command=pin(cell/'command.json'),model=registry.get(cell.name[3:],{}))
+  # Nsight's exported SQLite duplicates the retained trace. Keep the paid raw
+  # .nsys-rep and parsed CSV; retire only this derived, fully re-creatable file.
+  sql=report.with_suffix('.sqlite')
+  if sql.exists():
+   if sql.is_symlink() or sql.parent!=cell:raise ValueError('unexpected profile SQLite ownership')
+   save(cell/'sqlite-retirement.json',dict(retired=pin(sql),recoverable_from=pin(report),verified_kernel_csv=pin(dest),reason='Derived NEW campaign database; nsys stats re-exports it from retained trace; process reaped.'))
+   sql.unlink()
  save(out/'dispatch.json',dict(status='ACTUAL_NATIVE_CUDA_FORMAT_PROFILE_PASS',records=records,source=pin(__file__),scope='Instrumented first consumed-DEV request,64output cap. Actual kernel names/instances plus exact model/cache command and immutable CUDA binary/source pins. Nsight timing is diagnostic; clean GPU replay and uninstrumented request panels provide performance.'))
  print('FORMAT_PROFILES_COMPLETE',flush=True)
 
