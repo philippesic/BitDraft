@@ -18,6 +18,9 @@ def main():
    if previous.get('gpu_resume',{}).get('status')=='ACTUAL_GPU_MASTER_ADAM_RNG_CURSOR_RESUME_UPDATE_PASS':records.append(previous);continue
   if pin(path)['sha256']!=receipt['archive_sha256']:raise ValueError('retained full frontier state changed')
   state=load(path)
+  completed=json.load(open(receipt['confirmed_result']['path']))
+  if pin(receipt['confirmed_result']['path'])!=receipt['confirmed_result']:raise ValueError('retained state completion receipt changed')
+  if {k:v for k,v in state['progress'].items() if k!='order'}!=completed['progress'] or state['component_spec']!=completed['spec']:raise ValueError('retained state cursor/exposure/spec differs from its completed trainer')
   if not state['resume_capable'] or state['config_hash']!=digest(state['config']) or state['progress']['updates']!=receipt.get('updates',4096) or len(state['rng'])!=4 or state['rng'][3] is None:raise ValueError('frontier is not a full allocated resume state')
   steps={int(v['step']) for v in state['optimizer']['state'].values()}
   if steps!={state['progress']['updates']}:raise ValueError('frontier optimizer history incomplete')
