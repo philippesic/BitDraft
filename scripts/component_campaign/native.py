@@ -56,7 +56,7 @@ def stats(text):
  m=matches[-1];values=[int(m[i]) for i in range(1,8)]+[float(m[i]) for i in range(8,11)]
  return dict(zip(('begin_calls','rounds','accept_calls','drafts','accepted_rounds','proposed','accepted','begin_ms','draft_ms','accept_ms'),values))
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('--arms',type=Path,required=True);ap.add_argument('--runtime',type=Path,required=True);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--cohort',choices=['capture3','natural12','natural24'],default='capture3');ap.add_argument('--reps',type=int,default=1);ap.add_argument('--warmups',type=int,default=0);ap.add_argument('--prompts',type=Path);ap.add_argument('--cohort-label');ap.add_argument('--trace',action='store_true');ap.add_argument('--paired-trace',action='store_true');ap.add_argument('--profile',action='store_true');ap.add_argument('--limit',type=int);ap.add_argument('--output-cap',type=int);ap.add_argument('--runtime-map',type=Path);ap.add_argument('--draft-cache-map',type=Path);ap.add_argument('--stress-length',type=int);ap.add_argument('--target',type=Path,default=P/'runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf');ap.add_argument('--depth',type=int,default=2);a=ap.parse_args()
+ ap=argparse.ArgumentParser();ap.add_argument('--arms',type=Path,required=True);ap.add_argument('--runtime',type=Path,required=True);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--cohort',choices=['capture3','natural12','natural24'],default='capture3');ap.add_argument('--reps',type=int,default=1);ap.add_argument('--warmups',type=int,default=0);ap.add_argument('--prompts',type=Path);ap.add_argument('--cohort-label');ap.add_argument('--trace',action='store_true');ap.add_argument('--paired-trace',action='store_true');ap.add_argument('--profile',action='store_true');ap.add_argument('--limit',type=int);ap.add_argument('--output-cap',type=int);ap.add_argument('--runtime-map',type=Path);ap.add_argument('--draft-cache-map',type=Path);ap.add_argument('--stress-length',type=int);ap.add_argument('--selector-audit',type=Path);ap.add_argument('--target',type=Path,default=P/'runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf');ap.add_argument('--depth',type=int,default=2);a=ap.parse_args()
  arms=json.load(open(a.arms));prompts=heldout(a.prompts,arms,a.runtime) if a.prompts else cohort(a.cohort);a.out.mkdir(exist_ok=False);save(a.out/'prompts.json',prompts)
  if a.prompts and (a.depth!=2 or a.target!=P/'runs/spec-shortlist-20261030/models/Qwen3.5-4B-Q4_K_M.gguf'):raise ValueError('Frozen heldout contract is 4B Q4 depth2')
  if a.stress_length:
@@ -94,6 +94,9 @@ def main():
    argv=[str(a.runtime/'bin/llama-server'),'-m',str(a.target),'-ngl','99','-c','4096','-np','1','-b','512','-ub','512','-t','4','-fa','on','--cache-type-k','f16','--cache-type-v','f16','--host','127.0.0.1','--port',str(port),'--metrics','--no-webui','--no-warmup','--spec-type','draft-dflash' if model else 'none','-lv','4']
    if model:argv+=['-md',str(model),'-ngld','99','--cache-type-k-draft',draft_cache_map.get(label,['f16','f16'])[0],'--cache-type-v-draft',draft_cache_map.get(label,['f16','f16'])[1],'--spec-draft-n-max',str(a.depth),'--spec-draft-n-min','0','--spec-draft-p-min','0','--spec-draft-sampling','greedy']
    if traced:env.update(LD_PRELOAD=str(TRACE),DECODE_COST_TRACE=str(cell/'cost-trace.jsonl'),EXEC_PROPOSAL_TRACE=str(cell/'proposals.jsonl'))
+   if a.selector_audit:
+    if not traced:raise ValueError('Selector audit belongs outside clean latency')
+    env['LD_PRELOAD']+=':'+str(a.selector_audit);env['DFLASH2_SELECTOR_AUDIT']=str(cell/'selector-audit.jsonl')
    save(cell/'command.json',dict(runtime=str(a.runtime),runtime_build=pin(a.runtime/'build.json'),argv=argv,environment={k:v for k,v in env.items() if k.startswith(('GGML_','CUDA_','LD_','OMP_','DECODE_')) or k in ('PATH','LANG')}))
    if a.profile and model:
     argv=['nsys','profile','--sample=none','--cpuctxsw=none','--trace=cuda,nvtx','--cuda-graph-trace=node','--force-overwrite=false','-o',str(cell/'profile')]+argv
@@ -174,6 +177,10 @@ def main():
      except subprocess.TimeoutExpired:process.kill();process.wait()
      done.set();watcher.join(timeout=5);save(cell/'memory.json',memory);save(cell/'release.json',dict(reaped=True,returncode=process.returncode))
      if model:release(model,created_native)
+   if a.selector_audit and label=='dflash2':
+    observed=[json.loads(line) for line in (cell/'selector-audit.jsonl').read_text().splitlines()]
+    if not observed or any(x['selector_top_k']!=16 or x['finite_scores']!=256 or x['valid_candidate_ids']!=16 for x in observed):raise ValueError('DFlash2 selector lattice was not actually consumed or failed finite/vocabulary checks')
+    save(cell/'selector-proof.json',dict(status='ACTUAL_DFLASH2_SELECTOR_LATTICE_READ_PASS',calls=len(observed),source=pin(a.selector_audit),scope='Diagnostic interposition on the exact native lattice getter used by speculative.cpp; candidate IDs and pairwise scores checked on each call. Clean latency excludes this library.'))
    if model:
     corrections=reconcile(cell,[x for x in rows if x['rep']==rep and x['arm']==label and x['instrumented']==traced])
     if corrections:
