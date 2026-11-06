@@ -404,3 +404,26 @@ unused logit scratch. Original paid captures stay untouched. Native EOG IDs are
 read from the actual producer log, and new supervision stops at first EOG.
 The explicit new manifest/order must be identical across candidate and matched
 control. It cannot be treated as precision-only attribution against old R1data.
+
+
+## Graceful-stop correction —16:33Pacific
+
+A concrete supervisor audit found stop_group waited only for its direct queue
+leader, then killed remaining descendants immediately if that leader exited.
+The180second flag did not guarantee trainer checkpoint grace in that case.
+No active trainer was stopped during discovery. New remote_job supervisors now
+wait for all live group descendants until the real group deadline; a CPU fixture
+proves a child saves after its leader dies. Evidence:
+`qualification/graceful-group-stop/result.json`. Pre-fix source is retained under
+`supervisor-sources/remote_job-pre-group-grace.py`.
+
+**Current running rest-recovery and passive post-primary supervisors still have
+old code loaded.** For a requested pause while training, authenticate the live
+worker against the arm ownership boot/start identity and supervisor group, then
+SIGTERM that trainer worker first, leaving its queue parent alive while it saves.
+Wait for its recovery receipt/terminal result and group cleanup before stopping
+any remaining parent/waiter. Do not SIGTERM an old queue supervisor first while
+its trainer is saving. If only native evaluation is active, no unsaved optimizer
+state is at risk; terminate/reap the owned native cell and stop queued work.
+User pause still takes priority. Never report release until owned groups are gone.
+Earlier direct-supervisor stop shorthand is superseded by this correction.

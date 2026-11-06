@@ -34,15 +34,33 @@ def stop_receipt() -> dict | None:
 
 
 def stop_group(pgid: int, process: subprocess.Popen, grace_seconds: float = 10) -> None:
+    deadline = time.monotonic() + grace_seconds
     try:
         os.killpg(pgid, signal.SIGTERM)
     except ProcessLookupError:
         return
     try:
-        process.wait(timeout=grace_seconds)
+        process.wait(timeout=max(0, deadline - time.monotonic()))
     except subprocess.TimeoutExpired:
         pass
-    # The direct child may exit before children it started; clean the group too.
+    # A queue leader can exit immediately while its trainer handles SIGTERM and
+    # saves a checkpoint. Preserve the remaining grace for all live descendants.
+    while time.monotonic() < deadline:
+        live = False
+        for entry in Path('/proc').iterdir():
+            if not entry.name.isdecimal():
+                continue
+            try:
+                fields = (entry / 'stat').read_text().rsplit(')', 1)[1].split()
+                if int(fields[2]) == pgid and fields[0] not in ('Z', 'X'):
+                    live = True
+                    break
+            except (OSError, ValueError, IndexError):
+                continue
+        if not live:
+            return
+        time.sleep(min(0.1, max(0, deadline - time.monotonic())))
+    # Children still running at the actual group deadline must not leak.
     try:
         os.killpg(pgid, signal.SIGKILL)
     except ProcessLookupError:

@@ -1341,3 +1341,18 @@ completion or protocol claims from a prior worker's script.
   speedups. Whole-artifact wins do not isolate FFN arithmetic. Distinguish the
   earlier Q4_0 modern head screen from historical Q4_K and a prospective optimized
   G4 head-only comparison; extra private storage is distinct from compute cost.
+
+
+### 2026-11-05: Checkpoint grace must cover descendants after queue exit
+
+- Context: Component-campaign stop instructions assumed the supervisor's180second
+  grace applied to a training descendant. The agent had relied on the CLI flag.
+- Evidence: The old stop_group waited only for its direct child queue; when that
+  queue exited on SIGTERM, the supervisor immediately killed its still-saving
+  trainer. This source-path issue was found before any healthy trainer was stopped.
+- Repair: New supervisors wait for live descendants until the group deadline.
+  A CPU fixture lets the queue die first and verifies the child still saves.
+  Already running old supervisors require worker-first graceful termination;
+  their loaded Python code does not change when the source file changes.
+- Lesson: Verify the actual leader/descendant stop path before promising checkpoint
+  grace, and distinguish source edits from code already loaded in healthy jobs.
