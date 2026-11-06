@@ -40,9 +40,10 @@ def merge(rows):
    if prefix=='final':
     if entry['instrumented'] or entry['timing_repetitions']<5 or freeze['warmup_policy']['per_server_cell']<2:raise ValueError('formal final protocol not met')
     row.update(final_native_host_library_sha256=freeze['runtime']['libllama.so.0.8.0']['sha256'],final_native_CUDA_library_sha256=freeze['runtime']['libggml-cuda.so.0.28.0']['sha256'])
-   if prefix=='final' or row.get('allocation_evidence') is None:
+   if prefix=='final' or row.get('allocation_evidence') is None or row.get('allocation_scope')=='short_native_readout':
     allocation=entry['allocations'][0]['allocation'];model=allocation['model_buffers'];cache=allocation['cache_buffers']
     row.update(actual_gpu_model_bytes=sum(v for k,v in model.items() if k.startswith('CUDA') and k!='CUDA_Host'),actual_cpu_model_bytes=sum(v for k,v in model.items() if k.startswith('CPU')),draft_cache_bytes=sum(x['total_reported_bytes'] for x in cache[1:]),draft_rotation_bytes=sum(x['reported_bytes'] for x in allocation['rotation_buffers']),sampled_combined_device_peak_bytes=entry['sampled_device_peak_bytes'],allocation_evidence=entry['allocations'][0]['cell'],allocation_rounding='Native logs0.01MiB; persistent tensor bytes exact. Peak includes target/desktop/workspace.')
+    row.update(allocation_scope=prefix,runtime_compute_buffer_history=allocation['compute_buffer_history'])
     target=panel['arms']['target']['allocations'][0]['allocation']['model_buffers']
     row['private_gpu_model_bytes']=row['actual_gpu_model_bytes']-sum(v for k,v in target.items() if k.startswith('CUDA') and k!='CUDA_Host')
     row['private_cpu_mapped_model_bytes']=row['actual_cpu_model_bytes']-sum(v for k,v in target.items() if k.startswith('CPU'))

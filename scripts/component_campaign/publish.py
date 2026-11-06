@@ -1,5 +1,5 @@
 """Publish measured readouts, explicit missing fields and standalone interactive charts."""
-import csv,json,math,statistics
+import csv,json,math,re,statistics
 from pathlib import Path
 import numpy as np
 from .common import *
@@ -16,6 +16,8 @@ def native_metrics(folder,arm):
 
 def collect():
  rows=[]
+ from .metrics import allocations
+ retained=json.load(open(R/'frontier-retention.json')).get('states',{}) if (R/'frontier-retention.json').exists() else {}
  for directory in sorted((R/'arms').glob('*')):
   if directory.name.endswith(('-pilot','-confirm')):continue
   path=directory/'readouts.json'
@@ -55,10 +57,16 @@ def collect():
    native_freeze=R/f'smoke-{directory.name}-{step}'/'freeze.json'
    if native_freeze.exists():
     native_refs=json.load(open(native_freeze))['runtime'];row.update(readout_native_host_library_sha256=native_refs['libllama.so.0.8.0']['sha256'],readout_native_CUDA_library_sha256=native_refs['libggml-cuda.so.0.28.0']['sha256'])
+    cell=native_freeze.parent/('00-'+directory.name+'-'+str(step));a=allocations(cell);target=allocations(native_freeze.parent/'00-target')['model_buffers'];gpu=lambda d:sum(v for k,v in d.items() if k.startswith('CUDA') and k!='CUDA_Host');cpu=lambda d:sum(v for k,v in d.items() if k.startswith('CPU'));memory=json.load(open(cell/'memory.json'))
+    row.update(actual_gpu_model_bytes=gpu(a['model_buffers']),actual_cpu_model_bytes=cpu(a['model_buffers']),private_gpu_model_bytes=gpu(a['model_buffers'])-gpu(target),private_cpu_mapped_model_bytes=cpu(a['model_buffers'])-cpu(target),draft_cache_bytes=sum(x['total_reported_bytes'] for x in a['cache_buffers'][1:]),draft_rotation_bytes=sum(x['reported_bytes'] for x in a['rotation_buffers']),runtime_compute_buffer_history=a['compute_buffer_history'],sampled_combined_device_peak_bytes=max([x['MiB']*2**20 for x in memory],default=None),allocation_evidence=str(cell),allocation_scope='short_native_readout',allocation_rounding='Native logs0.01MiB; exact persistent tensor bytes separate. Sampled peak includes target/desktop/workspace.')
+    row['model_cache_payload_bytes']=row['tensor_bytes']+row['draft_cache_bytes']+row['draft_rotation_bytes']
    row.update({k:v for k,v in nm.items() if k not in ('prefix_counts',)})
    row.update(full_vocabulary_rows=248320,vocabulary_width=2560,additional_trainable_vocabulary_scalars=2483200 if spec.get('r2_vocab_scale') else 0,private_tying=bool(spec.get('tied')),vocabulary_tying='One identical private quantized matrix/device allocation' if spec.get('tied') else 'Frozen source-equivalent tables; target-sharing/private copies per head and embedding fields',ffn_weights='W1 all18',gate_up_activation='A4 learned clipping',down_activation='A8 learned clipping',fusion_weights='Q4_0',attention_qk_weights='Q4_0',attention_vo_weights='Q4_0',row_scale_storage='F16' if spec.get('scalar',{}).get('scale') else 'F32',midpoint_storage='F16' if spec.get('scalar',{}).get('midpoint') else 'F32',positive_gain_storage='F16' if spec.get('scalar',{}).get('gain') else 'F32',norm_gain_storage='F16' if spec.get('scalar',{}).get('norm') else 'F32',clip_storage='IEEE F16 bits in UINT16 GGUF metadata; F32 native parameter' if spec.get('scalar',{}).get('clip') and spec.get('clip_bits_storage') else 'F16-rounded value in F32 GGUF metadata' if spec.get('scalar',{}).get('clip') else 'F32',trainable_policy='R2 native vocabulary block scales plus R1 groups' if spec.get('r2_vocab_scale') else 'R1 FFN sign/scale/midpoint/shared gate-up gain/separate down gain/learned clip/norm',model_path=point['model']['path'],model_sha256=point['model']['sha256'])
    recovery=json.load(open(directory/'recovery.json')) if (directory/'recovery.json').exists() else result.get('recovery',{})
-   row['full_recovery_state_status']='retained' if recovery.get('archive') and Path(recovery['archive']).exists() else 'retired under NEW rolling policy; B0/native states retained'
+   archived=Path(recovery.get('archive','/nonexistent'));match=re.search(r'-(\d+)\.pt\.(?:bsz|cpt|zst)$',archived.name);saved_step=int(match[1]) if match else None
+   row['full_recovery_state_status']=('retained full state for this readout' if saved_step==step else 'latest full arm state retained at '+str(saved_step)+'; this readout has native export only') if archived.exists() else 'retired under NEW rolling policy; B0/native states retained'
+   for saved in retained.values():
+    if saved['original_arm']==directory.name and saved['native']['sha256']==point['model']['sha256'] and Path(saved['archive']).exists():row.update(full_recovery_state_status='retained authenticated frontier full state; recovery verification separate',frontier_full_state=saved['archive'],frontier_retention_evidence=str(R/'frontier-retention.json'))
    rows.append(row)
  controls={'H4R2':'H6R2','H6R2':'H6R2','HE4R2':'HE6R2','HE6R2':'HE6R2','H0broad':'H0broad','Csmallbroad':'H0broad'};lookup={(r['arm'],r['updates']):r for r in rows}
  for r in rows:
