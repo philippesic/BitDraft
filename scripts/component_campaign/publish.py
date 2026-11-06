@@ -81,7 +81,7 @@ def charts(rows,out):
  lines('ce_gap_matched_control','DEV cross entropy gap to matched continuation','Component recovery on consumed DEV; one training history per recipe','recovery-gap')
  lines('acceptance','Native accepted / proposed','Native recovery readouts; short DEV smokes until formal confirmation','native-acceptance')
  lines('ce','Dense DEV cross entropy','Dense full-vocabulary loss; repeated TRAIN exposure, not fresh labels','recovery-loss')
- groups={'Head':['H0','H6','H4','H3'],'Embedding and tying':['H0','E6','E4','HE4'],'Draft K/V':['H0',*[n for n in names if n.startswith('K')]],'Scalar storage':['H0',*[n for n in names if n.startswith('S')]]}
+ groups={'Head':['H0','H6','H4','H3',*[n for n in names if n.startswith('H') and 'R2' in n]],'Embedding and tying':['H0','E6','E4','HE4',*[n for n in names if n.startswith(('E','HE')) and 'R2' in n]],'Draft K/V':['H0',*[n for n in names if n.startswith('K')]],'Scalar storage':['H0',*[n for n in names if n.startswith('S')]]}
  for field,label,filename in [('ce_gap_matched_control','DEV cross entropy gap','component-recovery'),('acceptance','Native accepted / proposed','component-native-acceptance')]:
   fig,axes=plt.subplots(2,2,figsize=(13,8),sharex=True)
   for ax,(title,members) in zip(axes.flat,groups.items()):
@@ -97,11 +97,14 @@ def charts(rows,out):
  memory_includes_cache=any(r.get('draft_cache_bytes') is not None for r in final)
  for r in final:
   n=r['arm'];mem=(r['tensor_bytes']+r['draft_cache_bytes']+r.get('draft_rotation_bytes',0))/2**20 if memory_includes_cache and r.get('draft_cache_bytes') is not None else None if memory_includes_cache else r['tensor_bytes']/2**20
-  for ax,x,y in [(axes[0],mem,r.get(acceptance_field)),(axes[1],r.get('clean_gpu_forward_ms'),r.get(acceptance_field)),(axes[2],mem,r.get('final_request_tok_s'))]:
+  speed=r.get('final_vs_q4')
+  for ax,x,y in [(axes[0],mem,r.get(acceptance_field)),(axes[1],r.get('clean_gpu_forward_ms'),r.get(acceptance_field)),(axes[2],mem,speed.get('ratio') if speed else None)]:
    if x is not None and y is not None:ax.scatter(x,y,color=colors[n]);ax.annotate(n,(x,y),fontsize=7)
+  if mem is not None and speed:
+   lo,hi=speed['paired_95_interval'];value=speed['ratio'];axes[2].errorbar(mem,value,yerr=[[max(0,value-lo)],[max(0,hi-value)]],fmt='none',color=colors[n],capsize=2)
  axes[0].set(xlabel='Private model +4096cache/rotation payload MiB' if memory_includes_cache else 'Private model tensor MiB; cache not yet measured',ylabel='Native accepted / proposed',title='Storage / acceptance')
  axes[1].set(xlabel='Clean GPU forward ms',ylabel='Native accepted / proposed',title='Latency / acceptance')
- axes[2].set(xlabel='Private model +4096cache/rotation payload MiB' if memory_includes_cache else 'Private model tensor MiB',ylabel='Formal request tokens / second',title='Full-request frontier')
+ axes[2].set(xlabel='Private model +4096cache/rotation payload MiB' if memory_includes_cache else 'Private model tensor MiB',ylabel='Formal request speed / external Q4',title='Full-request frontier; paired95% interval');axes[2].axhline(1,color='gray',ls='--',lw=.8)
  for ax in axes:ax.grid(alpha=.2)
  fig.suptitle('Measured component tradeoffs; acceptance cohort: '+acceptance_scope+'; unmeasured fields blank');fig.tight_layout();fig.savefig(out/'tradeoffs.png');fig.savefig(out/'tradeoffs.svg');plt.close(fig)
 
