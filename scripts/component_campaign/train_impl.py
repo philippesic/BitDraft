@@ -35,10 +35,12 @@ def main():
  # Recover exact parent into RAM-backed scratch, avoiding a 5.1GB disk transient.
  import tempfile
  tempfile.tempdir='/dev/shm'
+ parent_pin=pin(B/'checkpoint.pt.bsz')
+ if parent_pin!=json.load(open(R/'freeze.json'))['B0_checkpoint']:raise ValueError('immutable B0 full checkpoint changed')
  parent=load(B/'checkpoint.pt.bsz')
  receipt=json.load(open(B/'checkpoint.pt.json'))
  if parent['config_hash']!=digest(parent['config']) or parent['progress']['updates']!=2048:raise ValueError('wrong full B0 recovery state')
- c=copy.deepcopy(parent['config']);c['parent']={k:pin(B/'checkpoint.pt.bsz')[k] for k in ('path','sha256')};c['budget_seconds']=86400
+ c=copy.deepcopy(parent['config']);c['parent']={k:parent_pin[k] for k in ('path','sha256')};c['budget_seconds']=86400
  manifest=json.load(open(c['data']['path']));trainrows=[r for r in manifest['records'] if r['split']=='TRAIN'];devrows=[r for r in manifest['records'] if r['split']=='consumed_DEV']
  # Every data artifact and source is authenticated before any exposure.
  for p in [c['source'],c['data'],c['evaluation']['target']]+[p for r in trainrows+devrows for p in [r['metadata'],*r['files']]]:
@@ -46,7 +48,7 @@ def main():
  m=Model(c['source']['path'],c['evaluation']['target']['path']);install(m,c,{})
  load_parameters(m,parent['parameters'])
  progress=dict(updates=0,cursor=parent['progress']['cursor'],order=parent['progress']['order'],update_seconds=0.,supervised_tokens=0)
- lineage=dict(parent=pin(B/'checkpoint.pt.bsz'),parent_native=pin(B/'model-final.json'),parent_progress={k:v for k,v in parent['progress'].items() if k!='order'},recipe='R1 existing signs/scale/midpoint/gain/learned clip/norm; frozen quantized vocabulary; Adam reset identically',spec=spec)
+ lineage=dict(parent=parent_pin,parent_native=pin(B/'model-final.json'),parent_progress={k:v for k,v in parent['progress'].items() if k!='order'},recipe='R1 existing signs/scale/midpoint/gain/learned clip/norm; frozen quantized vocabulary; Adam reset identically',spec=spec)
  del parent;gc.collect()
  install_components(m,c);install_component(m,spec)
  if spec.get('r2_vocab_scale'):
@@ -54,6 +56,10 @@ def main():
   lineage['head_qat']=install_head(m,spec);lineage['recipe']='R2 existing R1 groups plus one native half vocabulary block-scale/256weights; identical capacity/calibration policy in matched privateQ6 control'
  m.to('cuda');opt=head_optimizer(m) if spec.get('r2_vocab_scale') else optimizer(m)
  if a.resume:
+  resume_pin=pin(a.resume);resume_receipt=json.load(open(a.resume.with_suffix('.json')))
+  if resume_pin['sha256']!=resume_receipt['archive_sha256']:raise ValueError('resume archive differs from authenticated receipt')
+  lineage['resume_checkpoint']=resume_pin
+  lineage['resume_source_arms']=[str(p.parent) for p in (R/'arms').glob('*/recovery.json') if json.load(open(p)).get('archive')==str(a.resume)]
   state=load(a.resume)
   if state['component_spec']!=spec or state['config_hash']!=digest(c):raise ValueError('resume spec/config mismatch')
   load_parameters(m,state['parameters']);opt.load_state_dict(state['optimizer']);progress=state['progress'];restore_rng(state['rng']);del state;gc.collect()

@@ -23,10 +23,22 @@ def collect():
   result=json.load(open(directory/'result.json')) if (directory/'result.json').exists() else {}
   spec=json.load(open(directory/'spec.json'));records=json.load(open(path))
   if directory.name=='H0':records=json.load(open(R/'arms/H0-pilot/readouts.json'))[:1]+records
+  logs=[directory/'updates.jsonl']
+  if directory.name in ('H6','E6'):logs=[R/'arms/H0-pilot/updates.jsonl',R/'arms/H0/updates.jsonl']
+  elif directory.name=='H0':logs=[R/'arms/H0-pilot/updates.jsonl',*logs]
+  resolved_path=directory/'resolved.json'
+  if resolved_path.exists():
+   lineage=json.load(open(resolved_path)).get('lineage',{})
+   logs=[*[Path(p)/'updates.jsonl' for p in lineage.get('resume_source_arms',[])],*logs]
+  logs=list(dict.fromkeys(logs))
+  events=sorted([json.loads(line) for log in logs if log.exists() for line in log.read_text().splitlines()],key=lambda x:x['update']);seen=set();cursor=0
   for point in records:
+   while cursor<len(events) and events[cursor]['update']<=point['update']:
+    event=events[cursor];seen.update((event['sequence'],event['anchor']+j-1) for j in range(1,16));cursor+=1
    step=point['update'];sidecar=Path(point['model']['path']).with_suffix('.component.json')
    component=json.load(open(sidecar));nm=native_metrics(R/f'smoke-{directory.name}-{step}',directory.name+'-'+str(step))
    row=dict(arm=directory.name,updates=step,component_spec=spec,head=spec.get('head','target-shared Q6_K'),embedding=spec.get('embedding','target-shared Q6_K'),tied=bool(spec.get('tied')),k=spec.get('kv',['f16','f16'])[0],v=spec.get('kv',['f16','f16'])[1],scalar_f16_groups=','.join(spec.get('scalar',{})),ce=point['dev']['ce'],agreement=point['dev']['agreement'],mean_rank=point['dev']['mean_rank'],mean_margin=point['dev']['mean_margin'],tensor_bytes=component['tensor_bytes'],training_peak_allocator_bytes=point['peak_training_bytes'],training_update_seconds=point['progress']['update_seconds'],supervised_positions=point['progress']['supervised_tokens'],unique_label_positions=result.get('unique_label_positions'),native=nm,status='recovering' if result.get('status')!='COMPLETE' else 'window complete; frontier decision pending',source_readout=str(path),model=point['model'],clean_gpu_forward_ms=None,full_draft_host_ms=None,final_request_tok_s=None,final_accepted=None,final_proposed=None,actual_gpu_model_bytes=None,actual_cpu_model_bytes=None,draft_cache_bytes=None)
+   row.update(unique_supervised_positions_exposed=len(seen),repeated_supervised_positions=max(0,point['progress']['supervised_tokens']-len(seen)),admitted_train_label_pool=1762,unique_coverage_source=[str(p) for p in logs])
    row.update({k:v for k,v in nm.items() if k not in ('prefix_counts',)})
    row.update(full_vocabulary_rows=248320,vocabulary_width=2560,additional_trainable_vocabulary_scalars=2483200 if spec.get('r2_vocab_scale') else 0,private_tying=bool(spec.get('tied')),vocabulary_tying='One identical private quantized matrix/device allocation' if spec.get('tied') else 'Frozen source-equivalent tables; target-sharing/private copies per head and embedding fields',ffn_weights='W1 all18',gate_up_activation='A4 learned clipping',down_activation='A8 learned clipping',fusion_weights='Q4_0',attention_qk_weights='Q4_0',attention_vo_weights='Q4_0',row_scale_storage='F16' if spec.get('scalar',{}).get('scale') else 'F32',midpoint_storage='F16' if spec.get('scalar',{}).get('midpoint') else 'F32',positive_gain_storage='F16' if spec.get('scalar',{}).get('gain') else 'F32',norm_gain_storage='F16' if spec.get('scalar',{}).get('norm') else 'F32',clip_storage='F16-rounded value in F32 GGUF metadata' if spec.get('scalar',{}).get('clip') else 'F32',trainable_policy='R2 native vocabulary block scales plus R1 groups' if spec.get('r2_vocab_scale') else 'R1 FFN sign/scale/midpoint/shared gate-up gain/separate down gain/learned clip/norm',model_path=point['model']['path'],model_sha256=point['model']['sha256'])
    recovery=json.load(open(directory/'recovery.json')) if (directory/'recovery.json').exists() else result.get('recovery',{})
