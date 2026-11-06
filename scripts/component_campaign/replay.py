@@ -25,7 +25,7 @@ def main():
      with dest.with_suffix('.log').open('w') as log:subprocess.run(argv,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
      logtext=dest.with_suffix('.log').read_text();actual_cache=re.findall(r'llama_kv_cache: size =.*?K \(([^)]+)\):.*?V \(([^)]+)\):',logtext)
      expected=cache.get(name,['f16','f16'])
-     if len(actual_cache)<3 or any(list(x)!=expected for x in actual_cache[-2:]):raise ValueError('replay native draft cache allocation differs from requested formats '+name)
+     if len(actual_cache)<2 or any(list(x)!=expected for x in actual_cache[1:]):raise ValueError('replay native draft cache allocation differs from requested formats '+name)
      row=dict(rep=rep,arm=name,domain=domain,model=pin(model),cache=expected,actual_native_cache_types=actual_cache,result=json.load(open(dest)))
      if not a.audit and any(x['graph_count']!=1 or x['graph_event_ms']<=0 for x in row['result']['rows'] if not x['warmup']):raise ValueError('clean warmed CUDA graph region missing')
      records.append(row);save(a.out/'progress.json',records)
