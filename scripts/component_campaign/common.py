@@ -1,4 +1,4 @@
-import hashlib,json,os
+import hashlib,json,os,tempfile
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
@@ -16,7 +16,20 @@ def pin(path):
 
 def save(path,value):
  path=Path(path);path.parent.mkdir(parents=True,exist_ok=True)
- temp=path.with_suffix(path.suffix+'.tmp');temp.write_text(json.dumps(value,indent=2,default=str)+'\n');temp.replace(path)
+ # Recovery receipts must reach storage before callers retire their predecessor.
+ # Use this writer's own temporary; never truncate another publisher's partial.
+ fd,name=tempfile.mkstemp(prefix=path.name+'.',suffix='.tmp',dir=path.parent)
+ temp=Path(name)
+ try:
+  with os.fdopen(fd,'w') as stream:
+   stream.write(json.dumps(value,indent=2,default=str)+'\n');stream.flush();os.fsync(stream.fileno())
+  temp.replace(path);sync_directory(path.parent)
+ finally:temp.unlink(missing_ok=True)
+
+def sync_directory(path):
+ fd=os.open(path,os.O_RDONLY|os.O_DIRECTORY)
+ try:os.fsync(fd)
+ finally:os.close(fd)
 
 def pause():
  if json.load(open(Path.home()/'.config/binary-eagle-decoding/gpu-control.json'))['rtx5080']['pause_requested']:

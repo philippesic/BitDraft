@@ -7,7 +7,7 @@ checks the complete reconstructed digest before retiring a new raw export.
 import hashlib,json,os,shutil,time
 from pathlib import Path
 import zstandard as z
-from .common import R,pin,save
+from .common import R,pin,save,sync_directory
 from scripts.dflash_baseline import native_archive as old
 
 def paths(path):
@@ -64,7 +64,7 @@ def blob(coded):
   created_tmp=False
   try:
    with tmp.open('xb') as out:created_tmp=True;out.write(coded);out.flush();os.fsync(out.fileno())
-   try:p.hardlink_to(tmp)
+   try:p.hardlink_to(tmp);sync_directory(folder)
    except FileExistsError:pass
   finally:
    if created_tmp:tmp.unlink(missing_ok=True)
