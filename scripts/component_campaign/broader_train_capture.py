@@ -23,7 +23,7 @@ def main():
   if len(tokens)!=row['prompt_tokens']:raise ValueError('native input geometry changed')
   args=template['argv'].copy();i=args.index('--decode-tokens');del args[i:i+2]
   for key,value in [('--tokens',row['tokens']['path']),('--out',str(capture)),('--output-cap','129'),('--logit-positions',','.join(map(str,range(len(tokens)-1,len(tokens)+128)))),('--max-output-mib','256')]:args[args.index(key)+1]=value
-  args+=['--greedy-steps','128'];env=dict(os.environ,**template['environment'])
+  args+=['--greedy-steps','128'];env={k:v for k,v in os.environ.items() if not k.startswith(('GGML_','W1A8_','LLAMA_','CUDA_','LD_','OMP_'))};env.update(template['environment'])
   if not (capture/'capture.json').exists():
    save(cell/'command.json',dict(argv=args,environment=template['environment'],source=pin(args[0]),libraries={key:pin(args[args.index(key)+1]) for key in ('--cpu-library','--cuda-library')},template=pin(P/'runs/dflash-modern-capture-20261104-04/data/fit-code-00/command.json'),input=row,owner=identity()))
    with (cell/'capture.log').open('w') as log:subprocess.run(args,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
