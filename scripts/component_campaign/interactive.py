@@ -13,8 +13,8 @@ body{font:14px system-ui;margin:24px;color:#17243a;background:#f4f7fb}h1{font-si
 <div style="overflow:auto;max-height:650px"><table id="table"></table></div>
 <script>
 const data=__DATA__;
-const fields={updates:'Additional updates from B0',ce_gap_matched_control:'Consumed DEV CE gap to matched control',ce:'Consumed DEV cross entropy',acceptance:'Short DEV accepted / proposed',selection_acceptance:'Selection natural12 acceptance',selection_request_tok_s:'Selection request tok/s · one repetition',selection_clean_gpu_forward_ms:'Selection clean GPU ms · one repetition',final_acceptance:'Final heldout accepted / proposed',final_request_tok_s:'Final heldout request tok/s',clean_gpu_forward_ms:'Formal clean GPU forward ms',full_draft_host_ms:'Formal generation draft host ms / round',full_draft_all_phases_host_ms_per_round:'Formal all-phase draft host ms / round',tensor_bytes:'Private model tensor payload MiB',model_cache_payload_bytes:'Private model + cache/rotation payload MiB'};
-const xFields=['updates','model_cache_payload_bytes','tensor_bytes','clean_gpu_forward_ms','selection_clean_gpu_forward_ms','full_draft_host_ms','final_request_tok_s'];
+const fields={updates:'Additional updates from B0',training_update_seconds:'Measured trajectory update compute · seconds',supervised_positions:'Supervised positions · includes repeated exposure',unique_supervised_positions_exposed:'Unique TRAIN label positions exposed',ce_gap_matched_control:'Consumed DEV CE gap to matched control',ce:'Consumed DEV cross entropy',acceptance:'Short DEV accepted / proposed',selection_acceptance:'Selection natural12 acceptance',selection_acceptance_gap_matched_control:'Selection acceptance gap to matched control',selection_request_tok_s:'Selection request tok/s · one repetition',selection_clean_gpu_forward_ms:'Selection clean GPU ms · one repetition',final_acceptance:'Final heldout accepted / proposed',final_acceptance_gap_matched_control:'Final acceptance gap to matched control',final_request_tok_s:'Final heldout request tok/s',clean_gpu_forward_ms:'Formal clean GPU forward ms',full_draft_host_ms:'Formal generation draft host ms / round',full_draft_all_phases_host_ms_per_round:'Formal all-phase draft host ms / round',tensor_bytes:'Private model tensor payload MiB',model_cache_payload_bytes:'Private model + cache/rotation payload MiB'};
+const xFields=['updates','training_update_seconds','supervised_positions','unique_supervised_positions_exposed','model_cache_payload_bytes','tensor_bytes','clean_gpu_forward_ms','selection_clean_gpu_forward_ms','full_draft_host_ms','final_request_tok_s'];
 const yFields=Object.keys(fields).filter(k=>k!=='updates');
 for(const [selector,keys,initial] of [['#x',xFields,'updates'],['#y',yFields,'ce_gap_matched_control']]){let s=document.querySelector(selector);for(const k of keys){let o=document.createElement('option');o.value=k;o.textContent=fields[k];s.append(o)}s.value=initial;s.onchange=draw}
 const names=[...new Set(data.map(x=>x.arm))],selected=new Set(names),palette=['#2166ac','#b2182b','#1b7837','#762a83','#b35806','#008b8b','#d95f02','#7570b3','#e7298a','#66a61e','#a6761d','#65758b'];
@@ -27,15 +27,15 @@ for(const n of names){let l=document.createElement('label'),c=document.createEle
 for(const [id,on] of [['all',true],['none',false]])document.querySelector('#'+id).onclick=()=>{document.querySelectorAll('#filters input').forEach(c=>{c.checked=on;on?selected.add(c.dataset.arm):selected.delete(c.dataset.arm)});draw()};
 document.querySelector('#latest').onchange=draw;
 function draw(){
- let xf=document.querySelector('#x').value,yf=document.querySelector('#y').value,scatter=xf!=='updates',latest=scatter||document.querySelector('#latest').checked;
+ let xf=document.querySelector('#x').value,yf=document.querySelector('#y').value,scatter=!['updates','training_update_seconds','supervised_positions','unique_supervised_positions_exposed'].includes(xf),latest=scatter||document.querySelector('#latest').checked;
  let all=data.filter(r=>selected.has(r.arm)&&(!latest||r.updates===maxUpdate[r.arm]));
  let rows=all.filter(r=>number(r,xf)!==null&&number(r,yf)!==null);plot.replaceChildren();
  let xs=rows.map(r=>number(r,xf)),ys=rows.map(r=>number(r,yf));
- let xlo=scatter&&xs.length?Math.min(...xs)*.94:0,xhi=Math.max(...xs,scatter?1:4096),ylo=Math.min(...ys,0),yhi=Math.max(...ys,1e-6);
+ let xlo=scatter&&xs.length?Math.min(...xs)*.94:0,xhi=Math.max(...xs,xf==='updates'?4096:1),ylo=Math.min(...ys,0),yhi=Math.max(...ys,1e-6);
  if(xhi===xlo)xhi=xlo+1;if(yhi===ylo)yhi=ylo+1;yhi+=(yhi-ylo)*.06;if(scatter)xhi+=(xhi-xlo)*.06;
  let X=x=>85+(x-xlo)/(xhi-xlo)*1010,Y=y=>425-(y-ylo)/(yhi-ylo)*350;
  element('line',{x1:85,y1:425,x2:1095,y2:425,stroke:'#6c7d94'});element('line',{x1:85,y1:75,x2:85,y2:425,stroke:'#6c7d94'});
- let ticks=scatter?Array.from({length:6},(_,i)=>xlo+(xhi-xlo)*i/5):[...new Set([0,256,1024,4096,Math.max(4096,...xs)])];
+ let ticks=xf!=='updates'?Array.from({length:6},(_,i)=>xlo+(xhi-xlo)*i/5):[...new Set([0,256,1024,4096,Math.max(4096,...xs)])];
  for(const v of ticks)element('text',{x:X(v),y:450,'text-anchor':'middle','font-size':12},pretty(v));
  for(let i=0;i<=5;i++){let v=ylo+(yhi-ylo)*i/5; element('line',{x1:85,y1:Y(v),x2:1095,y2:Y(v),stroke:'#e5ebf3'});element('text',{x:77,y:Y(v)+4,'text-anchor':'end','font-size':12},pretty(v))}
  element('text',{x:590,y:484,'text-anchor':'middle','font-size':14},fields[xf]);element('text',{x:85,y:30,'font-size':14,fill:'#263750'},fields[yf]+(scatter?' · latest readouts':' · recovery history'));
