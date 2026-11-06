@@ -738,3 +738,11 @@ new supervisor with SIGTERM (300-second checkpoint grace); preserve other jobs.
 Final audits, consumed-DEV selection, retained-state qualification, locked formal
 panels, fresh heldout, charts/report and release remain required. This is a
 restart checkpoint, not completion. Parent owns integration and delayed message.
+
+Post-recovery successor is now the NEW workspace supervisor
+`component-restart-selection-20261105-01`, on the same local tmux socket/session
+name. `restart-selection-owner.json` pins its birth/boot and predecessor. It waits
+only for the new authenticated recovery supervisor's successful terminal state
+and group release, then runs the final full-head audit (all four R2 arms), native
+tensor audits and consumed natural12/GPU/host selection. It cannot lock finalists
+or open heldout. Both new supervisors must be terminal at completed handoff.

@@ -72,4 +72,12 @@ def merge(rows):
   elif row['arm'] in controls:row['ce_gap_matched_control']=None
   if c and row.get('acceptance') is not None and c.get('acceptance') is not None:row['native_acceptance_gap_matched_control']=row['acceptance']-c['acceptance']
   elif row['arm'] in controls:row['native_acceptance_gap_matched_control']=None
+ target_bytes=inventory['target']['tensor_bytes']
+ shared_vocab=sum(t['bytes'] for t in inventory['target']['tensors'] if t['name']=='token_embd.weight')
+ for row in rows:
+  spec=row.get('component_spec',{})
+  row.update(immutable_target_tensor_bytes=target_bytes,combined_model_tensor_bytes=target_bytes+row['tensor_bytes'],draft_reused_target_vocabulary_bytes=shared_vocab if not spec.get('head') or not spec.get('embedding') else 0)
+  if row.get('model_cache_payload_bytes') is not None:
+   row['combined_model_and_draft_cache_payload_bytes']=target_bytes+row['model_cache_payload_bytes']
+  row['combined_payload_scope']='Immutable target tensors plus private draft tensors and, when measured, draft cache/rotation. Target cache, compute workspace, duplicate device copies and mapped residency remain separate; this is not sampled device usage.'
  return rows
