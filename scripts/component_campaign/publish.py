@@ -57,6 +57,8 @@ def collect():
    if row['readout_elapsed_trainer_wall_seconds'] is not None:row['readout_elapsed_trainer_wall_seconds']+=parent_wall
    row['final_trainer_process_wall_seconds']=(result.get('process_wall_seconds') or 0)+parent_wall if step==result.get('progress',{}).get('updates') and result.get('process_wall_seconds') is not None else None
    row['trainer_wall_scope']='Measured trainer process including setup, DEV, exports, archive/checkpoint I/O and update compute; resumed pilot processes added where recorded. Native evaluation/capture/supervisor gaps separate. Historical intermediate elapsed wall unrecorded, left null.'
+   row['training_peak_reserved_bytes']=result.get('peak_training_reserved_bytes')
+   row['training_peak_host_rss_bytes']=result.get('peak_host_rss_bytes')
    vocabulary_bytes=sum(v['bytes'] for k,v in component['tensors'].items() if k in ('output.weight','token_embd.weight'))
    row.update(deployed_gguf_bytes=point['model']['bytes'],private_vocabulary_tensor_bytes=vocabulary_bytes,on_disk_duplicate_private_vocabulary_bytes=component['tensors'].get('token_embd.weight',{}).get('bytes',0) if spec.get('head') and spec.get('embedding') and not spec.get('tied') else 0,private_vocabulary_note='Target table remains loaded; private vocabulary bytes add to combined deployment. Tied variants contain one output tensor and no duplicate token_embd tensor.')
    config=resolved.get('config',{})

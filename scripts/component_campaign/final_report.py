@@ -58,6 +58,8 @@ def main():
   ax.bar(range(len(points)),[v[key] for n,v in points]);ax.set_xticks(range(len(points)),[n for n,v in points],rotation=55,ha='right');ax.set_ylabel(label);ax.grid(axis='y',alpha=.2)
  fig.suptitle('Fresh24 heldout · locked recipes · 2 warmups +5 alternating process repetitions · no post-heldout tuning')
  finish(fig,'formal-finalists')
+ from .extended_charts import generate
+ generate(summary,comparison,out)
  save(R/'final-publication.json',dict(status='MEASURED_PUBLICATION_READY_FOR_REVIEW',comparison=pin(out/'comparison.json'),panels=pin(out/'all-panels.json'),figures=[pin(p) for p in sorted(out.glob('*.png'))]+[pin(p) for p in sorted(out.glob('*.svg'))],interactive=pin(out/'comparison.html'),csv=[pin(out/'full-table.csv'),pin(out/'all-panels.csv')],source=pin(__file__),limits='Timing prompt/process resampling does not establish independent training-seed uncertainty. Native head numerical bounds are not full graph bit equivalence. Private vocabulary adds to the immutable target. Target cache/workspace and desktop are not private model payload.'))
  print('FINAL_PUBLICATION_READY',len(panels),'separate panel/arm rows',flush=True)
 

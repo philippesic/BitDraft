@@ -14,6 +14,7 @@ def merge(rows):
  base=next(r for r in rows if r['arm']=='H0' and r['updates']==0)
  for name,key,model in [('B0','B0',B/'model-final.gguf'),('q4','external-q4',Q4)]:
   row=copy.deepcopy(base);row.update(arm=name,updates=0,component_spec={'reference':name},model=reference(model),model_path=str(model),model_sha256=reference(model)['sha256'],deployed_gguf_bytes=reference(model)['bytes'],tensor_bytes=inventory[key]['tensor_bytes'],native={},status='Fixed immutable reference',training_peak_allocator_bytes=None,training_update_seconds=0.,supervised_positions=0,full_recovery_state_status='Original paid B0 retained' if name=='B0' else 'Frozen external reference',reference_tensor_map=str(R/'reference-tensor-inventory.json'))
+  row.update(training_peak_reserved_bytes=None,training_peak_host_rss_bytes=None,readout_elapsed_trainer_wall_seconds=None,final_trainer_process_wall_seconds=None)
   for field in ('accepted','proposed','rounds','output_tokens','request_seconds','request_tok_s','acceptance','accepted_per_round','emitted_per_round','target_identical','responses','native_acceptance_gap_matched_control'):row[field]=None
   if name=='q4':
    for field in ('ce','agreement','mean_rank','mean_margin','ce_gap_matched_control'):row[field]=None
