@@ -6206,3 +6206,9 @@ Native4-point recovery readouts and stored-tensor audits remain retained. A
 supervisor grace-path fix is qualified for new jobs; existing old supervisors
 require worker-first graceful stopping as documented in COMPONENT_CAMPAIGN.
 No active GPU job was interrupted; no new goal, push or heldout access.
+
+
+Component checkpoint17:25Pacific: all6draft-cache4096windows/native0/256/1024/4096
+readouts complete, alongside the head/embedding windows. Eleven physical windows
+are complete; Sscale starts the six scalar windows. No heldout access or promotion.
+Actual counts/CE and stop/ownership details are in COMPONENT_CAMPAIGN.

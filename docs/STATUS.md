@@ -1,10 +1,10 @@
 # Current project status
 
-Current: the remaining-component campaign is active. Nine physical4096-update
-windows are complete: H0/H4/H3/E4/tied HE4 and four draft-cache pairs, plus exact
-private-Q6 controls reusing H0. K84 is training, followed by K44 and six scalar
-windows. Native recovery readouts and tensor audits are retained. Combinations,
-formal comparisons and final charts remain unfinished; no throughput promotion.
+Current: the remaining-component campaign is active. Eleven physical4096-update
+windows are complete: H0/H4/H3/E4/tied HE4 and all six draft-cache pairs, plus exact
+private-Q6 controls reusing H0. The six scalar windows now run serially. All four
+native recovery readouts are retained. Combinations, formal repeated comparisons,
+final heldout and final charts remain unfinished; no throughput promotion.
 
 
 ## Active: remaining component precision and recovery

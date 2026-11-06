@@ -427,3 +427,24 @@ its trainer is saving. If only native evaluation is active, no unsaved optimizer
 state is at risk; terminate/reap the owned native cell and stop queued work.
 User pause still takes priority. Never report release until owned groups are gone.
 Earlier direct-supervisor stop shorthand is superseded by this correction.
+
+
+## All cache windows completed —17:25Pacific
+
+All6draft-cache primary arms completed4096, with all four actual native readouts:
+
+|Arm|Final consumed DEV CE|Native accepted/proposed at0 ·256 ·1024 ·4096|
+|---|---:|---|
+|K8F|7.18649|56/261 · 58/255 · 53/267 · 54/265|
+|KF8|7.47662|57/259 · 52/267 · 52/267 · 55/262|
+|K88|7.18675|56/261 · 51/271 · 51/269 · 61/249|
+|K48|7.22955|57/259 · 54/263 · 49/274 · 60/251|
+|K84|7.22531|57/259 · 51/269 · 50/273 · 57/258|
+|K44|7.14318|56/261 · 54/265 · 53/265 · 56/261|
+
+No new heldout payload has been opened. These are short3-prompt64-token native
+diagnostics, not formal comparisons or new training-seed samples. Final log/
+response reconciliation validates accepted/proposed and reconstructs exact prefix
+counts within its rounding bound. Sscale is starting, followed by the other five
+scalar windows. Current GPU owner and passive successor are unchanged; stopping
+old supervisors remains worker-first as described above.
