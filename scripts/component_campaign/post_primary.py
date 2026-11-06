@@ -6,6 +6,10 @@ from .measure import completed
 def wait_release(path):
  while True:
   pause();state=json.load(open(path))
+  if state['status'] in ('failed','interrupted'):
+   raise RuntimeError('predecessor terminated without success; investigate before next GPU work')
+  if state['status']=='running' and not Path('/proc',str(state['supervisor_pid'])).exists():
+   raise RuntimeError('predecessor supervisor is absent; stale receipt cannot release GPU ownership')
   if state['status']=='finished':
    if state['exit_code']!=0:raise RuntimeError('predecessor failed; investigate before next GPU work')
    try:os.killpg(state['pgid'],0)

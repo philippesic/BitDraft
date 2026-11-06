@@ -105,6 +105,7 @@ def main():
    basis.hardlink_to(model_path)
   elif not model_path.samefile(basis):archive(model_path,basis)
   record=dict(head_qat_diagnostics=qat_diagnostics,update=progress['updates'],progress={k:v for k,v in progress.items() if k!='order'},dev=metrics,seconds=time.perf_counter()-start,dev_seconds=dev_seconds,native_export_seconds=export_seconds,archive_seconds=time.perf_counter()-archive_start,peak_training_bytes=torch.cuda.max_memory_allocated(),model=model_pin,cpu_gpu_half_exp_rounding_differences=rounding_differences)
+  record['elapsed_process_wall_seconds']=time.perf_counter()-began
   readouts.append(record);save(out/'readouts.json',readouts);print('READOUT',spec['name'],record['update'],metrics['ce'],metrics['agreement'],flush=True)
  def recoverable():
   io_start=time.perf_counter()
