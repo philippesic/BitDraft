@@ -53,10 +53,13 @@ Keep external DFlash Q4_K_M, unchanged recovery controls, candidate frontier and
 deployment incumbent distinct. Current command routes are in
 [CANDIDATE_BENCHMARKING](CANDIDATE_BENCHMARKING.md).
 
-After completion, parent review and GPU release, send the user's exact benchmark
-instruction to the linked shader thread. The destination, message and deduplicated
-delivery key are in the [pending handoff](../runs/component-campaign-20261105-01/pending-thread-message.json).
-Do not send early or start overlapping RTX 5080 work; record delivery when sent.
+After this campaign finishes, execute the [DFlash2 smoke follow-up](DFLASH2_SMOKE.md):
+four frozen 4B/9B × Q4_K_M/NVFP4 baseline cells, plus the selected current
+candidate with one additional 30-minute QAT continuation and before/after native
+measurements. Then, after review and GPU release, send the user's exact benchmark
+instruction to the shader thread. The destination, unchanged message and delivery
+key are in the [pending handoff](../runs/component-campaign-20261105-01/pending-thread-message.json).
+Do not send after the component campaign alone; this follow-up now precedes it.
 
 ## Revisit previous work
 
