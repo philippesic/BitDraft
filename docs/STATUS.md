@@ -29,18 +29,22 @@ The sole follow-up GPU operator is the tool-created worktree
 external message delivery after completion and GPU release. No external message
 has been sent by this worker.
 
-Csmallbroad completed1,800.014628seconds of synchronized updates (9,923additional
-updates,4096→14019); final native export and a new streamed full state are saved.
-The trainer exited0 and released its GPU context. The earlier failed300-second
-attempt remains separate in cost and ancestry. [Continuation receipt](../experiments/dflash2-smoke-20261106/continuation.json).
+The first readout-failure attempt and the completed but invalid second trajectory
+are preserved separately. Final-state verification caught Adam counters14020 vs
+recorded14019: scratch qualification had aliased/mutated in-memory CPU step tensors
+before main restoration. The immutable disk parent is unchanged. The worker fixed
+scalar isolation, added a regression test, verifies caller Adam fingerprints remain
+unchanged, and now checks live Adam steps at every actual update.
 
-Final full-state GPU resume/native recovery and the frozen four-cell native
-comparison are now running under canonical `remote_job.py`, local tmux
-`dflash2-smoke-measure-20261106-01`. One operator, one GPU lane.
-[Supervisor](../runs/dflash2-smoke-measure-20261106-01/state.json) ·
+The corrected exact continuation restarted from the original4096parent under
+local tmux `dflash2-smoke-train-20261106-03`, canonical `remote_job.py`.
+[Supervisor](../runs/dflash2-smoke-train-20261106-03/state.json) ·
+[Live](../runs/dflash2-smoke-20261106-01/candidate/live.json) ·
 [Smoke record](../experiments/dflash2-smoke-20261106/report.md).
-Raw outputs use canonical `runs/dflash2-smoke-20261106-01`. No performance or
-complete-recovery conclusion is claimed before those checks finish.
+The previous1800-second trajectory is INVALID for the requested exact continuation;
+its full state and lossless native exports remain preserved. Earlier costs will be
+reported separately. Final recovery and all native performance measurements remain
+pending. One operator, one GPU lane; no external message sent.
 
 A genuine Qwen3.5-4B DFlash2 release has been authenticated and converted;
 selector/convolution metadata and tensor coverage are present. No compatible9B

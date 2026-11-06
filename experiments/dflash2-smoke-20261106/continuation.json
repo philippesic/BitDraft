@@ -1,5 +1,5 @@
 {
-  "status": "COMPLETE",
+  "status": "INVALID_EXACT_RESUME_TRAJECTORY",
   "parent": {
     "path": "/mnt/c/binary-eagle-component-20261105-01/Csmallbroad-4096.pt.bsz",
     "sha256": "7ec2b71aefc58ff17de06636c9e30f7ee24fdf19f31b9015b5cf75f7fc4f73e6",
@@ -482,7 +482,7 @@
     "sha256": "5c7a89476df8a6ef382c1d8dacf4295f97cae4697b4e1ed739d167e9439c6890",
     "bytes": 11267
   },
-  "qualification_status": "FINAL_GPU_RESUME_AND_NATIVE_RECOVERY_PENDING",
+  "qualification_status": "FAILED_ADAM_STEP_IDENTITY",
   "failed_attempt": {
     "status": "FAILED_READOUT",
     "error": "Export state omitted version=2; failure at first300-second native export",
@@ -491,5 +491,23 @@
     "recoverable": false,
     "parent_unchanged": true,
     "policy": "Preserved logs; restart from original4096state. Failed attempt cost reported separately, never called a completed1800s continuation."
+  },
+  "disposition": {
+    "status": "INVALID_EXACT_RESUME_TRAJECTORY",
+    "recorded_updates": 14019,
+    "actual_adam_steps": [
+      14020
+    ],
+    "full_state": {
+      "format": "dflash.byte_shuffle_zstd.stream.v1",
+      "archive": "/mnt/c/binary-eagle-dflash2-smoke-20261106-01/Csmallbroad-plus1800-14019.pt.bsz",
+      "archive_sha256": "7e6fa2ba484b4de305758af641d714303f6a3410ca34fb8083d8ef0f635c987f",
+      "archive_bytes": 4245373028,
+      "raw_sha256": "d5645e6a5c070544e7869995a9212b145beeba406a44a2c6ffd574f46ed5f027",
+      "raw_bytes": 5100698375,
+      "lossless_verified": true,
+      "raw_materialized": false
+    },
+    "diagnosis": "Scratch GPU resume qualification aliases CPU Adam step tensors through load_state_dict; qualification advanced the in-memory parent step4096\u21924097, then main continuation restored that mutated step with original moments and cursor4096. Final steps are one greater than actual trajectory updates. Preserve this paid invalid diagnostic; never decrement final counters and call it exact."
   }
 }

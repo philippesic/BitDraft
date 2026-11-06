@@ -1,6 +1,6 @@
 # DFlash2 smoke and Csmallbroad continuation
 
-Training is complete; final-state recovery/native performance measurement is in progress.
+Exact continuation retry is active after final-state verification rejected attempt02. No native performance conclusion yet.
 
 The user authorized a quick native DFlash2 comparison across the frozen four
 Qwen3.5 target cells and one1,800-second actual-update continuation of retained
@@ -96,3 +96,28 @@ streamed full state is retained under the new Windows directory; its complete
 archive/raw hashes and exact bytes are in the receipt. Trainer exited0 and GPU
 returned to its1102MiBdesktop baseline before the measurement supervisor launched.
 Actual next-update/native byte recovery remains pending at this milestone.
+
+## Attempt02 rejected by final recovery
+
+The above1800.014628-second trajectory is **INVALID for exact resume**. Final
+archive inspection found Adamstep14020, progress14019. PyTorch's non-capturable
+Adam loading preserves CPU scalar tensors by reference: scratch qualification
+advanced the caller's step4096→4097 before the main trainer loaded it. Moments
+and disk parent were unchanged, but the main trajectory used the wrong Adam
+bias-correction counter. Decrementing the final counter would not repair history.
+The worker rejected this trajectory and preserved its full4.245GBstate, raw logs,
+configs and all native byte streams. Owned redundant raw native exports were
+losslessly archived against their frozen zero export to keep headroom; complete
+roundtrip hashes were checked. `invalid-attempt-retention.json` records them.
+
+The fix clones CPU scalar optimizer tensors before scratch restore, checks the
+caller's complete Adam fingerprint remains unchanged, validates startingsteps4096,
+and verifies every live update's actual Adamsteps equal its progress count. A CPU
+Adam regression passed. Attempt03 restarts from the immutable original4096state;
+this is a corrective execution of the same selected continuation, not an extra
+control/architecture experiment. Attempt02's1800.014628s and attempt01's300.008221s
+are failed/invalid cost, separate from the accepted1800-second trajectory.
+
+Attempt03 stores only one final full state (or one paused state), keeping
+intermediate native exports in authenticated lossless archives against its zero
+export. No original paid frontier, parent, data or old runtime/source was removed.
