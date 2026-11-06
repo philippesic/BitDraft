@@ -386,3 +386,21 @@ positions. Future resumes record authenticated archive/source-arm ancestry; B0
 archive authentication is checked against the frozen receipt before hydration.
 Repeated identical hashing was removed without changing configuration, optimizer,
 examples, RNG or any precision semantics. Active frozen trainers are unchanged.
+
+
+## Both-Q8 cache completed —16:28Pacific
+
+K88 completed4096updates and all native readouts: 56/261, 51/271, 51/269, 61/249.
+Final dense DEV CE7.18675, agreement16/135. K48(Q4_0K/Q8_0V) is now training,
+then K84/K44, then six scalar windows. All target responses still match target-only.
+The recovery owner/passive successor remain unchanged; there is no second GPU job.
+
+Conditional broader-TRAIN preparation found16already-admitted source clusters,
+native tokenized without a context/GPU generation. Planned retained8-tap feature
+bytes267,468,800 plus one128MiB full-logit scratch. No new capture or training has
+run. If selected for a separately labeled R2recipe, native DFlash8-tap capture
+will verify each hard label against full native logits before retiring only NEW
+unused logit scratch. Original paid captures stay untouched. Native EOG IDs are
+read from the actual producer log, and new supervision stops at first EOG.
+The explicit new manifest/order must be identical across candidate and matched
+control. It cannot be treated as precision-only attribution against old R1data.

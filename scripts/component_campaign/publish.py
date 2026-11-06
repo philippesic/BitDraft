@@ -78,15 +78,16 @@ def charts(rows,out):
   fig.suptitle('Matched recovery on consumed DEV; native readouts are short diagnostics');fig.tight_layout();fig.savefig(out/(filename+'.png'));fig.savefig(out/(filename+'.svg'));plt.close(fig)
  fig,axes=plt.subplots(1,3,figsize=(14,4.4))
  final=[max([r for r in rows if r['arm']==n],key=lambda x:x['updates']) for n in names]
- acceptance_field='final_acceptance' if any(r.get('final_acceptance') is not None for r in final) else 'acceptance'
- acceptance_scope=next((r.get('final_request_cohort') for r in final if r.get('final_acceptance') is not None),'short consumed DEV smoke')
+ acceptance_field='final_acceptance' if any(r.get('final_acceptance') is not None for r in final) else 'selection_acceptance' if any(r.get('selection_acceptance') is not None for r in final) else 'acceptance'
+ acceptance_scope=next((r.get('final_request_cohort') for r in final if r.get('final_acceptance') is not None),next((r.get('selection_request_cohort') for r in final if r.get('selection_acceptance') is not None),'short consumed DEV smoke'))
+ memory_includes_cache=any(r.get('draft_cache_bytes') is not None for r in final)
  for r in final:
-  n=r['arm'];mem=r['tensor_bytes']/2**20
+  n=r['arm'];mem=(r['tensor_bytes']+r['draft_cache_bytes']+r.get('draft_rotation_bytes',0))/2**20 if memory_includes_cache and r.get('draft_cache_bytes') is not None else None if memory_includes_cache else r['tensor_bytes']/2**20
   for ax,x,y in [(axes[0],mem,r.get(acceptance_field)),(axes[1],r.get('clean_gpu_forward_ms'),r.get(acceptance_field)),(axes[2],mem,r.get('final_request_tok_s'))]:
    if x is not None and y is not None:ax.scatter(x,y,color=colors[n]);ax.annotate(n,(x,y),fontsize=7)
- axes[0].set(xlabel='Private drafter tensor MiB (shared target excluded)',ylabel='Native accepted / proposed',title='Storage / acceptance')
+ axes[0].set(xlabel='Private model +4096cache/rotation payload MiB' if memory_includes_cache else 'Private model tensor MiB; cache not yet measured',ylabel='Native accepted / proposed',title='Storage / acceptance')
  axes[1].set(xlabel='Clean GPU forward ms',ylabel='Native accepted / proposed',title='Latency / acceptance')
- axes[2].set(xlabel='Private drafter tensor MiB',ylabel='Formal request tokens / second',title='Full-request frontier')
+ axes[2].set(xlabel='Private model +4096cache/rotation payload MiB' if memory_includes_cache else 'Private model tensor MiB',ylabel='Formal request tokens / second',title='Full-request frontier')
  for ax in axes:ax.grid(alpha=.2)
  fig.suptitle('Measured component tradeoffs; acceptance cohort: '+acceptance_scope+'; unmeasured fields blank');fig.tight_layout();fig.savefig(out/'tradeoffs.png');fig.savefig(out/'tradeoffs.svg');plt.close(fig)
 
