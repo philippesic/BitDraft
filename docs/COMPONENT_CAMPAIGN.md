@@ -752,3 +752,32 @@ writer successfully opened it exclusively. Three isolated exclusive-open race
 fixtures preserve the other writer's sentinel; a real streamed CPU checkpoint
 roundtrip remains exact. Proof: `qualification/checkpoint-partial-ownership.json`.
 No paid checkpoint was changed. Future frozen trainer closures include the fix.
+
+## Storage reclaimed and serial recovery resumed —23:04Pacific
+
+The parent retired six explicitly authorized older exploratory optimizer states;
+the canonical retirement report records26,038,592,683bytes reclaimed. These
+states are intentionally retired, not missing active-campaign dependencies.
+Both filesystems now have about14GiB free. No host configuration changed.
+
+The affected Windows HE6R2 checkpoint now passes its full archive hash,
+decoded raw-stream hash and actual in-RAM masters/Adam/RNG/cursor checks.
+Evidence: canonical `qualification/HE6R2-post-reclaim-structure.json` and
+`post-reclaim-owner.json`. This restores the read gate, not a claim of actual
+GPU continuation or a completed final comparison. The prior I/O failure remains
+preserved. All21 completed physical windows are reused; no paid arm is rerun.
+
+Current sole recovery supervisor: workspace
+`runs/component-post-reclaim-recovery-20261105-01`, tmux socket
+`binary-eagle-runtime`, session matching the run. Canonical
+`post-reclaim-launch.json` records exact source/birth/boot identities and the
+stop procedure (authenticated supervisor SIGTERM,300seconds checkpoint grace,
+then verify group/GPU release). Earlier-boot supervisors are stale, not live
+predecessors. New CPU structure supervisor finished successfully and released.
+
+The serial queue is Csmall/Chead/CtieKV/Ctied, each4096updates from B0, then
+16native TRAIN captures and matched H0broad/Csmallbroad4096windows. Csmall's
+old setup remains preserved under the second-reboot audit; it had no durable
+optimizer cursor. Native audits, recovered DEV selection, retained-state actual
+GPU resume/export, final lock, formal panels, fresh heldout and full publication
+remain required. Parent owns canonical STATUS, integration and delayed message.
