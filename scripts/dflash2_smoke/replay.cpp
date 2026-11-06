@@ -72,7 +72,7 @@ int main(int argc,char**argv){try{
  for(int tap:taps)llama_set_embeddings_layer_inp(tc,tap,true);
  for(int start=0;start<maxanchor;start+=512){
   int n=std::min(512,maxanchor-start);auto tb=llama_batch_init(n,0,1);tb.n_tokens=n;
-  for(int j=0;j<n;++j){tb.token[j]=tokens.at(start+j);tb.pos[j]=start+j;tb.n_seq_id[j]=1;tb.seq_id[j][0]=0;tb.logits[j]=0;}
+  for(int j=0;j<n;++j){tb.token[j]=tokens.at(start+j);tb.pos[j]=start+j;tb.n_seq_id[j]=1;tb.seq_id[j][0]=0;tb.logits[j]=j==n-1;}
   check(llama_decode(tc,tb)==0,"ordinary target tap capture");llama_synchronize(tc);llama_batch_free(tb);
   for(size_t ti=0;ti<taps.size();++ti){auto*raw=llama_get_embeddings_layer_inp(tc,taps[ti]);check(raw,"native target tap missing");for(int row=0;row<n;++row)std::copy_n(raw+row*width,width,features.data()+size_t(start+row)*fused+ti*width);}
  }
