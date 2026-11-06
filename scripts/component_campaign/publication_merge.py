@@ -41,6 +41,7 @@ def merge(rows):
     target=panel['arms']['target']['allocations'][0]['allocation']['model_buffers']
     row['private_gpu_model_bytes']=row['actual_gpu_model_bytes']-sum(v for k,v in target.items() if k.startswith('CUDA') and k!='CUDA_Host')
     row['private_cpu_mapped_model_bytes']=row['actual_cpu_model_bytes']-sum(v for k,v in target.items() if k.startswith('CPU'))
+  if row.get('draft_cache_bytes') is not None:row['model_cache_payload_bytes']=row['tensor_bytes']+row['draft_cache_bytes']+row.get('draft_rotation_bytes',0)
   replay=summary['replay'].get(index.get('gpu_panel',''),{});entry=replay.get('arms',{}).get(arm)
   if entry:
    prefix='' if entry['timing_repetitions']>=5 else 'selection_'
