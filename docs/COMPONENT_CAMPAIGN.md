@@ -781,3 +781,22 @@ old setup remains preserved under the second-reboot audit; it had no durable
 optimizer cursor. Native audits, recovered DEV selection, retained-state actual
 GPU resume/export, final lock, formal panels, fresh heldout and full publication
 remain required. Parent owns canonical STATUS, integration and delayed message.
+
+### First post-reclaim combination complete —23:24Pacific
+
+Csmall completed the full4096updates,720.85seconds of update compute and
+1093.65seconds of actual trainer wall including setup/export/DEV/checkpoint I/O.
+Its four short native readouts passed target output semantics and observed
+Q4_0/Q4_0 draft caches, with accepted/proposed55/263,51/269,50/271,55/262.
+This is consumed captureDEV diagnostic evidence, not final timing or heldout.
+The final full state was hash/decoded-stream verified before the rolling1024
+predecessor retired. All native exports and source closures remain recoverable.
+
+Chead is now loading/training in the same authenticated recovery supervisor.
+Accounting records22completed physical windows and90,112updates; current-arm
+in-flight updates are not counted as completed. CtieKV/Ctied, broader capture/
+matched windows, final audits/selection, retained-state proof and formal panels
+remain. The passive selection supervisor is
+`component-post-reclaim-selection-20261105-01`; its birth/boot and release
+dependency are in canonical `post-reclaim-selection-launch.json`. It cannot open
+heldout or tune finalists. Both supervisors must be terminal before handoff.
