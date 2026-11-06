@@ -19,3 +19,12 @@ attempt. Append meaningful results to the relevant history; do not copy monitori
 updates into multiple documents. Preserve raw evidence outside Git.
 
 - [Retained precision charts, 2026-11-05](../experiments/precision-history-20261105/README.md): historical export with original source identities.
+
+## Retired Mac workspace (2026-11-05)
+
+Historical Mac source, native-runtime changes, worktree snapshots and compact
+reports are preserved on this machine at
+`/home/philip/project-archives/mac-retirement-20261105/binary-eagle-decoding/`.
+See its README and verification receipt. This is outside Git; it is not current
+campaign source. Large obsolete Mac artifacts were approved for retirement;
+this archive does not promise exact old training-state recovery.
