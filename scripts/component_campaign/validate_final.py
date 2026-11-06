@@ -42,10 +42,13 @@ def main():
             if row['arm'] == 'target':
                 continue
             native = row['native']
-            prefix = native['prefix_survival_counts']
-            if not (0 <= native['accepted'] <= native['proposed'] and native['rounds'] > 0
-                    and len(prefix) == 2 and 0 <= prefix[1] <= prefix[0] <= native['rounds']
-                    and sum(prefix) == native['accepted']):
+            accepted, proposed, rounds = (native.get(key, 0) for key in ('accepted', 'proposed', 'rounds'))
+            prefix = native.get('prefix_survival_counts', [0, 0])
+            if rounds == 0 and row['tokens'] > 1:
+                raise ValueError('Missing counters for a nontrivial speculative request: ' + name)
+            if not (0 <= accepted <= proposed and rounds >= 0
+                    and len(prefix) == 2 and 0 <= prefix[1] <= prefix[0] <= rounds
+                    and sum(prefix) == accepted and (rounds > 0 or proposed == 0)):
                 raise ValueError('Invalid actual acceptance/prefix accounting: ' + name)
         for arm, rep in expected_cells:
             cell = folder / (f'{rep:02d}-' + arm + ('-traced' if name == 'final-host' else ''))
@@ -66,7 +69,7 @@ def main():
         raise ValueError('Incomplete clean replay cells')
     for record in replay['records']:
         measured = [row for row in record['result']['rows'] if not row['warmup']]
-        if len(measured) != 3 or any(row['graph_count'] != 1 or row['graph_event_ms'] <= 0 for row in measured):
+        if len(measured) != 3 or sum(row['warmup'] for row in record['result']['rows']) < 2 or any(row['graph_count'] != 1 or row['graph_event_ms'] <= 0 for row in measured):
             raise ValueError('Clean replay region/context missing')
     trace_file = R / 'qualification/final-trace/result.json'
     if not json.loads(trace_file.read_text())['paired_trace_counters_equal']:
