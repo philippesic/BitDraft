@@ -36,9 +36,9 @@ class Head(torch.autograd.Function):
   dx=gradient@weight if ctx.needs_input_grad[0] else None
   dd=torch.empty_like(log_d) if ctx.needs_input_grad[1] else None
   if dd is not None:
-   for start in range(0,len(weight),1024):
-    gw=gradient[:,start:start+1024].T@x
-    dd[start:start+1024]=(gw*coefficients[start:start+1024].float()).reshape(-1,log_d.shape[1],256).sum(-1)*log_d[start:start+1024].exp()
+   for start in range(0,len(weight),4096):
+    gw=gradient[:,start:start+4096].T@x
+    dd[start:start+4096]=(gw*coefficients[start:start+4096].float()).reshape(-1,log_d.shape[1],256).sum(-1)*log_d[start:start+4096].exp()
   return dx,dd,None,None
 
 class CalibratedModel(ComponentModel):
@@ -46,10 +46,10 @@ class CalibratedModel(ComponentModel):
  def refresh_head(self):
   d=self.head_log_d.exp().half().float()
   if not torch.isfinite(d).all():raise ValueError('head scale overflow')
-  for start in range(0,len(self.head),1024):
-   value=self.head_coefficients[start:start+1024].float().reshape(-1,d.shape[1],8,32)*d[start:start+1024,:,None,None]
-   if self.head_offset is not None:value+=self.head_offset[start:start+1024,:,:,None]
-   self.head[start:start+1024].copy_(value.reshape(-1,self.head.shape[1]))
+  for start in range(0,len(self.head),4096):
+   value=self.head_coefficients[start:start+4096].float().reshape(-1,d.shape[1],8,32)*d[start:start+4096,:,None,None]
+   if self.head_offset is not None:value+=self.head_offset[start:start+4096,:,:,None]
+   self.head[start:start+4096].copy_(value.reshape(-1,self.head.shape[1]))
  def project_logits(self,hidden):
   if not self.component_spec.get('head'):return F.linear(hidden,self.head)
   self.refresh_head()

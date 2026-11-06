@@ -7,7 +7,9 @@ def main():
  ap=argparse.ArgumentParser();ap.add_argument('arms',type=Path);ap.add_argument('--cache-map',type=Path);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--reps',type=int,default=5);ap.add_argument('--runtime',type=Path,default=R/'runtime03');ap.add_argument('--audit',action='store_true');a=ap.parse_args()
  a.out.mkdir(exist_ok=False);source=P/'runs/w1a8-modern-packed-runtime-20261103-01/source';runtime=a.runtime;exe=R/'replay-binaries'/pin(ROOT/'scripts/component_campaign/replay.cpp')['sha256'][:12];exe.parent.mkdir(exist_ok=True)
  cmd=['c++','-O2','-std=c++17','-I'+str(source/'include'),'-I'+str(source/'ggml/include'),'-I'+str(source/'vendor/nlohmann'),str(ROOT/'scripts/component_campaign/replay.cpp'),'-L'+str(runtime/'bin'),'-lllama','-lggml-base','-lggml','-ldl','-Wl,-rpath,'+str(runtime/'bin'),'-o',str(exe)]
- if not exe.exists():subprocess.run(cmd,check=True)
+ if not exe.exists():
+  subprocess.run(cmd,check=True)
+  save(exe.with_suffix('.build.json'),dict(command=cmd,cpp=pin(ROOT/'scripts/component_campaign/replay.cpp'),executable=pin(exe),compile_runtime=pin(runtime/'build.json')))
  arms=json.load(open(a.arms));cache=json.load(open(a.cache_map)) if a.cache_map else {};records=[]
  for rep in range(a.reps):
   order=list(arms) if rep%2==0 else list(reversed(arms))
@@ -26,6 +28,6 @@ def main():
      records.append(row);save(a.out/'progress.json',records)
    finally:release(model,created)
    print('REPLAY_COMPLETE',rep,name,flush=True)
- save(a.out/'result.json',dict(status='COMPLETE',records=records,source=pin(__file__),cpp=pin(ROOT/'scripts/component_campaign/replay.cpp'),runtime=pin(runtime/'build.json'),audit=a.audit,scope=f'{a.reps} alternating process-cell repetitions; two same-process warmups per cell; three consumed DEV domains and3changing contexts each. '+('Diagnostic callback allocation/logit audit; timing excluded.' if a.audit else 'CUDA event graph region, no backend sampler. Host spans and catchup separate.')+' Cache formats explicit.'))
+ save(a.out/'result.json',dict(status='COMPLETE',records=records,source=pin(__file__),cpp=pin(ROOT/'scripts/component_campaign/replay.cpp'),runtime=pin(runtime/'build.json'),executable=pin(exe),timer_library=pin(P/'runs/execution-campaign-20261105-01/libgraph-timer.so'),audit=a.audit,scope=f'{a.reps} alternating process-cell repetitions; two same-process warmups per cell; three consumed DEV domains and3changing contexts each. '+('Diagnostic callback allocation/logit audit; timing excluded.' if a.audit else 'CUDA event graph region, no backend sampler. Host spans and catchup separate.')+' Cache formats explicit.'))
 
 if __name__=='__main__':main()
