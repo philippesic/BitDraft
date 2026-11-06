@@ -177,6 +177,19 @@ def main():
     fields=['cell','method','status','depth','request_tok_s','request_rep_min','request_rep_max','ratio_to_q4','mean_request_seconds','output_tokens','accepted','proposed','rounds','acceptance','accepted_per_round','emitted_per_round','clean_gpu_forward_ms','full_draft_host_ms_per_round','full_draft_all_phases_host_ms_per_round','immutable_target_gpu_model_bytes','private_gpu_model_bytes','target_cache_bytes','target_recurrent_state_bytes','draft_cache_bytes','rotation_bytes','sampled_peak_MiB','sampled_private_resident_bytes','sampled_shared_resident_bytes','sampled_peak_Pss_bytes','correct']
     with (DEST/'comparison.csv').open('w',newline='') as f:
         writer=csv.DictWriter(f,fieldnames=fields,extrasaction='ignore');writer.writeheader();writer.writerows(rows)
+    trajectory=[]
+    labels={'0':'before','300':'mid300','900':'mid900','1800':'after'}
+    for point in training['readouts']:
+        method=labels[point['label']]
+        record=dict(label=point['label'],actual_update_seconds=point['additional_update_seconds'],
+            additional_updates=point['progress']['updates']-4096,
+            q4_capture_dev_ce=point['dev']['ce'],q4_capture_dev_agreement=point['dev']['agreement'],
+            q4_capture_dev_mean_rank=point['dev']['mean_rank'],q4_capture_dev_mean_margin=point['dev']['mean_margin'])
+        for cell,key in [('4B-Q4_K_M','q4_request_tok_s'),('4B-NVFP4','nvfp4_request_tok_s')]:
+            record[key]=next(x['request_tok_s'] for x in rows if x['cell']==cell and x['method']==method)
+        trajectory.append(record)
+    with (DEST/'trajectory.csv').open('w',newline='') as f:
+        writer=csv.DictWriter(f,fieldnames=list(trajectory[0]));writer.writeheader();writer.writerows(trajectory)
     figures(rows,training)
     table='<table><thead><tr>'+''.join('<th>'+html.escape(k)+'</th>' for k in fields)+'</tr></thead><tbody>'
     for row in rows:
@@ -191,7 +204,7 @@ def main():
     document+=f'<p>Successful continuation: {training["actual_update_seconds"]:.3f}s synchronized updates, {training["additional_updates"]}updates; final full-state recovery and next GPU Adam update passed. Earlier failed/invalid attempts spent {failed_seconds:.3f}s and are excluded from the accepted trajectory. Setup, readout and checkpoint costs are separate in JSON. Before/after does not isolate a precision or architecture benefit. HF/native graph parity remains an inherited unresolved limitation for QAT quality diagnostics.</p>'
     document+='<label>Target cell <select id="cell"><option>All</option>'+''.join('<option>'+html.escape(c)+'</option>' for c in sorted({x['cell'] for x in rows}))+'</select></label><div style="overflow:auto;max-height:650px">'+table+'</div><script>document.querySelector("#cell").onchange=e=>{for(const r of document.querySelectorAll("tbody tr"))r.classList.toggle("hidden",e.target.value!=="All"&&r.firstChild.textContent!==e.target.value)}</script></html>'
     (DEST/'comparison.html').write_text(document)
-    save(R/'published-results.json',dict(files=[pin(DEST/n) for n in ('results.json','comparison.csv','comparison.html','comparison.svg','comparison.png','diagnostics.svg','diagnostics.png')]))
+    save(R/'published-results.json',dict(files=[pin(DEST/n) for n in ('results.json','comparison.csv','trajectory.csv','comparison.html','comparison.svg','comparison.png','diagnostics.svg','diagnostics.png')]))
     print('COMPACT_RESULTS_PUBLISHED',len(rows),flush=True)
 
 
