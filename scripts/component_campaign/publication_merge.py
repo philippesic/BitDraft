@@ -13,7 +13,7 @@ def merge(rows):
  inventory=json.load(open(R/'reference-tensor-inventory.json'))
  base=next(r for r in rows if r['arm']=='H0' and r['updates']==0)
  for name,key,model in [('B0','B0',B/'model-final.gguf'),('q4','external-q4',Q4)]:
-  row=copy.deepcopy(base);row.update(arm=name,updates=0,component_spec={'reference':name},model=reference(model),model_path=str(model),model_sha256=reference(model)['sha256'],tensor_bytes=inventory[key]['tensor_bytes'],native={},status='Fixed immutable reference',training_peak_allocator_bytes=None,training_update_seconds=0.,supervised_positions=0,full_recovery_state_status='Original paid B0 retained' if name=='B0' else 'Frozen external reference',reference_tensor_map=str(R/'reference-tensor-inventory.json'))
+  row=copy.deepcopy(base);row.update(arm=name,updates=0,component_spec={'reference':name},model=reference(model),model_path=str(model),model_sha256=reference(model)['sha256'],deployed_gguf_bytes=reference(model)['bytes'],tensor_bytes=inventory[key]['tensor_bytes'],native={},status='Fixed immutable reference',training_peak_allocator_bytes=None,training_update_seconds=0.,supervised_positions=0,full_recovery_state_status='Original paid B0 retained' if name=='B0' else 'Frozen external reference',reference_tensor_map=str(R/'reference-tensor-inventory.json'))
   for field in ('accepted','proposed','rounds','output_tokens','request_seconds','request_tok_s','acceptance','accepted_per_round','emitted_per_round','target_identical','responses','native_acceptance_gap_matched_control'):row[field]=None
   if name=='q4':
    for field in ('ce','agreement','mean_rank','mean_margin','ce_gap_matched_control'):row[field]=None
@@ -33,6 +33,7 @@ def merge(rows):
     variant=variants.get(arm,{})
     if variant.get('model',{}).get('sha256')!=measured['sha256'] or variant.get('parent',{}).get('sha256')!=row['model']['sha256']:raise ValueError('publication model/readout ancestry differs '+arm)
     row['measured_deployment_model']=measured
+    row['deployed_gguf_bytes']=measured['bytes']
     if variant['spec'].get('clip_bits_storage'):row['clip_storage']='IEEE F16 bits in UINT16 GGUF metadata; F32 runtime parameter'
    row.update({prefix+'_request_tok_s':entry['request_tok_s'],prefix+'_accepted':entry['accepted'],prefix+'_proposed':entry['proposed'],prefix+'_acceptance':entry['acceptance'],prefix+'_emitted_per_round':entry['emitted_per_round'],prefix+'_request_cohort':panel['cohort'],prefix+'_request_responses':entry['responses'],prefix+'_request_repetitions':entry['timing_repetitions'],prefix+'_request_evidence':panel['source']['path'],prefix+'_vs_q4':entry.get('vs_q4'),prefix+'_prefix_counts':entry['prefix_counts']})
    if prefix=='final':
@@ -48,13 +49,14 @@ def merge(rows):
   replay=panel_for('replay','gpu_panel',arm);entry=replay.get('arms',{}).get(arm)
   if entry:
    prefix='' if entry['timing_repetitions']>=5 else 'selection_'
-   row[prefix+'clean_gpu_forward_ms']=entry['clean_gpu_forward_ms'];row[prefix+'gpu_forward_evidence']=replay['source']['path'];row[prefix+'fixed_replay_forward_host_ms']=entry['fixed_replay_forward_host_ms'];row[prefix+'gpu_forward_repetitions']=entry['timing_repetitions']
+   row[prefix+'clean_gpu_forward_ms']=entry['clean_gpu_forward_ms'];row[prefix+'gpu_forward_evidence']=replay['source']['path'];row[prefix+'fixed_replay_forward_host_ms']=entry['fixed_replay_forward_host_ms'];row[prefix+'gpu_forward_repetitions']=entry['timing_repetitions'];row[prefix+'gpu_vs_q4']=entry.get('GPU_vs_q4');row[prefix+'gpu_vs_H0']=entry.get('GPU_vs_H0')
   trace=panel_for('native','trace_panel',arm);entry=trace.get('arms',{}).get(arm)
   if entry:
    if not entry['instrumented']:raise ValueError('trace instrumentation absent')
    prefix='' if entry['timing_repetitions']>=5 else 'selection_'
    row[prefix+'full_draft_host_ms']=entry['full_draft_host_ms_per_round'];row[prefix+'full_draft_host_cohort']=trace['cohort'];row[prefix+'full_draft_host_evidence']=trace['source']['path'];row[prefix+'full_draft_host_repetitions']=entry['timing_repetitions']
    row[prefix+'draft_prefill_host_ms_per_request']=entry.get('draft_prefill_host_ms_per_request');row[prefix+'full_draft_all_phases_host_ms_per_round']=entry.get('full_draft_all_phases_host_ms_per_round');row[prefix+'full_draft_host_scope']=entry['host_scope']
+   row[prefix+'full_draft_host_vs_q4']=entry.get('host_vs_q4');row[prefix+'full_draft_host_vs_H0']=entry.get('host_vs_H0')
  controls=index.get('matched_controls',{})
  lookup={(r['arm'],r['updates']):r for r in rows}
  for row in rows:
