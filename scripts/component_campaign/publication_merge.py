@@ -36,6 +36,7 @@ def merge(rows):
     row['deployed_gguf_bytes']=measured['bytes']
     if variant['spec'].get('clip_bits_storage'):row['clip_storage']='IEEE F16 bits in UINT16 GGUF metadata; F32 runtime parameter'
    row.update({prefix+'_request_tok_s':entry['request_tok_s'],prefix+'_accepted':entry['accepted'],prefix+'_proposed':entry['proposed'],prefix+'_acceptance':entry['acceptance'],prefix+'_emitted_per_round':entry['emitted_per_round'],prefix+'_request_cohort':panel['cohort'],prefix+'_request_responses':entry['responses'],prefix+'_request_repetitions':entry['timing_repetitions'],prefix+'_request_evidence':panel['source']['path'],prefix+'_vs_q4':entry.get('vs_q4'),prefix+'_prefix_counts':entry['prefix_counts']})
+   row.update({prefix+'_request_vs_matched_control':entry.get('vs_matched_control'),prefix+'_acceptance_gap_matched_control':entry.get('acceptance_gap_matched_control'),prefix+'_matched_control':entry.get('matched_control')})
    if prefix=='final':
     if entry['instrumented'] or entry['timing_repetitions']<5 or freeze['warmup_policy']['per_server_cell']<2:raise ValueError('formal final protocol not met')
     row.update(final_native_host_library_sha256=freeze['runtime']['libllama.so.0.8.0']['sha256'],final_native_CUDA_library_sha256=freeze['runtime']['libggml-cuda.so.0.28.0']['sha256'])
@@ -50,6 +51,7 @@ def merge(rows):
   if entry:
    prefix='' if entry['timing_repetitions']>=5 else 'selection_'
    row[prefix+'clean_gpu_forward_ms']=entry['clean_gpu_forward_ms'];row[prefix+'gpu_forward_evidence']=replay['source']['path'];row[prefix+'fixed_replay_forward_host_ms']=entry['fixed_replay_forward_host_ms'];row[prefix+'gpu_forward_repetitions']=entry['timing_repetitions'];row[prefix+'gpu_vs_q4']=entry.get('GPU_vs_q4');row[prefix+'gpu_vs_H0']=entry.get('GPU_vs_H0')
+   row[prefix+'gpu_vs_matched_control']=entry.get('GPU_vs_matched_control')
   trace=panel_for('native','trace_panel',arm);entry=trace.get('arms',{}).get(arm)
   if entry:
    if not entry['instrumented']:raise ValueError('trace instrumentation absent')
@@ -57,6 +59,7 @@ def merge(rows):
    row[prefix+'full_draft_host_ms']=entry['full_draft_host_ms_per_round'];row[prefix+'full_draft_host_cohort']=trace['cohort'];row[prefix+'full_draft_host_evidence']=trace['source']['path'];row[prefix+'full_draft_host_repetitions']=entry['timing_repetitions']
    row[prefix+'draft_prefill_host_ms_per_request']=entry.get('draft_prefill_host_ms_per_request');row[prefix+'full_draft_all_phases_host_ms_per_round']=entry.get('full_draft_all_phases_host_ms_per_round');row[prefix+'full_draft_host_scope']=entry['host_scope']
    row[prefix+'full_draft_host_vs_q4']=entry.get('host_vs_q4');row[prefix+'full_draft_host_vs_H0']=entry.get('host_vs_H0')
+   row[prefix+'full_draft_host_vs_matched_control']=entry.get('host_vs_matched_control')
  controls=index.get('matched_controls',{})
  lookup={(r['arm'],r['updates']):r for r in rows}
  for row in rows:

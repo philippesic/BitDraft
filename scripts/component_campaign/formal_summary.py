@@ -4,6 +4,11 @@ import numpy as np
 from .common import *
 from .metrics import summarize,paired_ratio,allocations,paired_host_ratio,paired_replay_ratio
 
+def control_for(name,arms):
+ if name in ('target','q4','B0'):return None
+ control={'H4R2':'H6R2','H6R2':'H6R2','HE4R2':'HE6R2','HE6R2':'HE6R2','Csmallbroad':'H0broad','H0broad':'H0broad'}.get(name,'H0')
+ return control if control in arms else None
+
 def native_panel(directory):
  data=json.load(open(directory/'result.json'));result=summarize(directory/'result.json')
  for name,entry in result.items():
@@ -20,6 +25,11 @@ def native_panel(directory):
   if not entry['instrumented']:
    entry['vs_q4']=paired_ratio(directory/'result.json',name,'q4')
    if 'H0' in result:entry['vs_H0']=paired_ratio(directory/'result.json',name,'H0')
+  control=control_for(name,result);entry['matched_control']=control
+  if control:
+   entry['acceptance_gap_matched_control']=entry['acceptance']-result[control]['acceptance']
+   if entry['instrumented'] and entry['full_draft_host_ms_per_round'] is not None:entry['host_vs_matched_control']=paired_host_ratio(directory/'result.json',name,control)
+   elif not entry['instrumented']:entry['vs_matched_control']=paired_ratio(directory/'result.json',name,control)
   # Repeated greedy outcomes are correlated, and are reported as actual totals.
   rows=[x for x in data['rows'] if x['arm']==name and not x.get('warmup')]
   entry['prefix_counts']=[sum(x['native'].get('prefix_survival_counts',[0,0])[i] for x in rows) for i in (0,1)]
@@ -38,6 +48,8 @@ def replay_panel(directory):
  for arm,entry in result.items():
   if 'q4' in result:entry['GPU_vs_q4']=paired_replay_ratio(data,arm,'q4')
   if 'H0' in result:entry['GPU_vs_H0']=paired_replay_ratio(data,arm,'H0')
+  control=control_for(arm,result);entry['matched_control']=control
+  if control:entry['GPU_vs_matched_control']=paired_replay_ratio(data,arm,control)
  return dict(source=pin(directory/'result.json'),scope=data['scope'],arms=result)
 
 def main():
