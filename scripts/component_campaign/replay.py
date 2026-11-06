@@ -1,5 +1,5 @@
 """Clean CUDA-event full forwards with model-specific cache history and declared formats."""
-import argparse,json,os,subprocess
+import argparse,json,os,re,subprocess
 from .common import *
 from .archive import hydrate,release,reference
 
@@ -23,7 +23,10 @@ def main():
      env.update(LD_LIBRARY_PATH=str(runtime/'bin'),LD_PRELOAD=str(P/'runs/execution-campaign-20261105-01/libgraph-timer.so'),GGML_CUDA_DECODE_CONSISTENT='32',CUDA_VISIBLE_DEVICES='0',OMP_NUM_THREADS='4',EXEC_REQUEST_MASKS='1',COMPONENT_K=cache.get(name,['f16','f16'])[0],COMPONENT_V=cache.get(name,['f16','f16'])[1])
      argv=[str(exe),str(TARGET),str(model),str(capture),str(anchor),'1',str(dest),str(int(a.audit))]
      with dest.with_suffix('.log').open('w') as log:subprocess.run(argv,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
-     row=dict(rep=rep,arm=name,domain=domain,model=pin(model),cache=cache.get(name,['f16','f16']),result=json.load(open(dest)))
+     logtext=dest.with_suffix('.log').read_text();actual_cache=re.findall(r'llama_kv_cache: size =.*?K \(([^)]+)\):.*?V \(([^)]+)\):',logtext)
+     expected=cache.get(name,['f16','f16'])
+     if len(actual_cache)<3 or any(list(x)!=expected for x in actual_cache[-2:]):raise ValueError('replay native draft cache allocation differs from requested formats '+name)
+     row=dict(rep=rep,arm=name,domain=domain,model=pin(model),cache=expected,actual_native_cache_types=actual_cache,result=json.load(open(dest)))
      if not a.audit and any(x['graph_count']!=1 or x['graph_event_ms']<=0 for x in row['result']['rows'] if not x['warmup']):raise ValueError('clean warmed CUDA graph region missing')
      records.append(row);save(a.out/'progress.json',records)
    finally:release(model,created)
