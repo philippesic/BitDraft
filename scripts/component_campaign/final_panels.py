@@ -15,6 +15,11 @@ def main():
  run('verify_frontier_recovery');run('head_forward_qualify')
  names=a.controls+a.candidates;registry=completed();models=dict(target=None,q4=str(Q4),B0=str(B/'model-final.gguf'),**{n:registry[n]['model'] for n in names});cache={n:registry[n]['spec'].get('kv',['f16','f16']) for n in names}
  save(R/'panels/final-common-arms.json',models);save(R/'panels/final-common-cache.json',cache)
+ physical=R/'qualification/final-physical-allocation'
+ if not (physical/'verified.json').exists():
+  save(R/'panels/final-physical-arms.json',{n:p for n,p in models.items() if p is not None})
+  if not (physical/'result.json').exists():run('replay',R/'panels/final-physical-arms.json','--cache-map',R/'panels/final-common-cache.json','--out',physical,'--runtime',R/'runtime04','--reps','1','--audit')
+  run('allocation_audit','--input',physical/'result.json')
  dev=R/'measurements/final-dev';trace=R/'measurements/final-host';replay=R/'measurements/final-replay'
  if not (dev/'result.json').exists():run('measure',dev.name,'--arms',*names,'--reps','5','--cohort','natural12','--runtime',R/'runtime04')
  save(R/'panels/final-replay-arms.json',{n:p for n,p in models.items() if p is not None})
