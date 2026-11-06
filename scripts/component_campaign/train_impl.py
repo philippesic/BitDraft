@@ -154,13 +154,13 @@ def main():
   torch.cuda.synchronize();start=time.perf_counter();loss=update(m,opt,lambda:train[i].loss(m,anchor)[0]);torch.cuda.synchronize();elapsed=time.perf_counter()-start
   progress['update_seconds']+=elapsed;progress['updates']+=1;progress['cursor']+=1;progress['supervised_tokens']+=15;times.append(elapsed)
   with (out/'updates.jsonl').open('a') as f:f.write(json.dumps(dict(update=progress['updates'],loss=loss,gradient_norm=m.last_gradient_norm,seconds=elapsed,sequence=str(train[i].path),anchor=anchor))+'\n')
-  if progress['updates'] in (256,1024,a.updates):
+  if progress['updates'] in {256,1024,4096,a.updates}:
    point(progress['updates'])
    if progress['updates']!=a.updates and progress['updates'] in a.checkpoint_points:recoverable()
   if progress['updates']%32==0:
    save(out/'live.json',dict(progress={k:v for k,v in progress.items() if k!='order'},last_loss=loss,seconds_per_update=float(np.median(times[-32:])),identity=identity()));print(spec['name'],progress['updates'],loss,flush=True)
  recovery=recoverable()
- save(out/'result.json',dict(status='INTERRUPTED' if stopped else 'COMPLETE',spec=spec,progress={k:v for k,v in progress.items() if k!='order'},updates_this_process=progress['updates']-start_update,unique_label_positions=len(unique_labels),unique_windows=len(windows),supervised_positions=progress['supervised_tokens'],median_update_seconds=float(np.median(times)) if times else None,peak_training_bytes=torch.cuda.max_memory_allocated(),peak_training_reserved_bytes=torch.cuda.max_memory_reserved(),peak_host_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*1024,recovery=recovery,readouts=readouts,setup_seconds=setup_seconds,process_wall_seconds=time.perf_counter()-began,checkpoint_points=a.checkpoint_points,native_points=[0,256,1024,a.updates]))
+ save(out/'result.json',dict(status='INTERRUPTED' if stopped else 'COMPLETE',spec=spec,progress={k:v for k,v in progress.items() if k!='order'},updates_this_process=progress['updates']-start_update,unique_label_positions=len(unique_labels),unique_windows=len(windows),supervised_positions=progress['supervised_tokens'],median_update_seconds=float(np.median(times)) if times else None,peak_training_bytes=torch.cuda.max_memory_allocated(),peak_training_reserved_bytes=torch.cuda.max_memory_reserved(),peak_host_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*1024,recovery=recovery,readouts=readouts,setup_seconds=setup_seconds,process_wall_seconds=time.perf_counter()-began,checkpoint_points=a.checkpoint_points,native_points=sorted({0,256,1024,4096,a.updates})))
  print('TRAINING_COMPLETE',spec['name'],progress['updates'],flush=True)
 
 if __name__=='__main__':
