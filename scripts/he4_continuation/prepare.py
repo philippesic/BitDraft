@@ -6,6 +6,7 @@ from pathlib import Path
 from scripts.component_campaign.common import P, ROOT, Q4, TARGET, identity, pin, save
 from scripts.he4_continuation.train import R, OUT, COMPONENT, BUDGET, POINTS
 from scripts.he4_continuation.workflow import RUNTIME
+from scripts.component_campaign.archive import reference
 
 
 def main():
@@ -25,9 +26,13 @@ def main():
     retained = json.load(open(COMPONENT / 'frontier-retention.json'))
     parent = retained['states']['/mnt/c/binary-eagle-component-20261105-01/HE4-confirm-4096.pt.bsz']
     refs = [pin(COMPONENT / 'frontier-retention.json'), pin(RUNTIME / 'build.json'), pin(Q4), pin(TARGET),
-            pin(parent['archive']), pin(parent['native']['path']), pin(parent['confirmed_result']['path'])]
-    assert refs[-3]['sha256'] == parent['archive_sha256'] and refs[-3]['bytes'] == parent['archive_bytes']
-    assert refs[-2] == parent['native'] and refs[-1] == parent['confirmed_result']
+            pin(parent['archive']), pin(parent['confirmed_result']['path'])]
+    assert refs[-2]['sha256'] == parent['archive_sha256'] and refs[-2]['bytes'] == parent['archive_bytes']
+    assert reference(parent['native']['path']) == parent['native']
+    assert refs[-1] == parent['confirmed_result']
+    native_receipt = Path(parent['native']['path']).with_suffix('.gguf.slices.json')
+    record = json.load(open(native_receipt))
+    refs += [pin(native_receipt), record['archive'], *record['dependencies']]
     plan = dict(schema='contender_plan_v1', budget_seconds=37800, candidate_budgets={'HE4':37800}, grace_seconds=900,
                 gpu=dict(control=str(Path.home()/'.config/binary-eagle-decoding/gpu-control.json'),
                          lock=str(P/'runs/contender-gpu.lock')),

@@ -55,7 +55,8 @@ def main():
     assert actual['sha256'] == receipt['archive_sha256'] and actual['bytes'] == receipt['archive_bytes']
     from scripts.component_campaign.checkpoint import validate
     validate(source, receipt['raw_sha256'], receipt['raw_bytes'])
-    assert pin(receipt['native']['path']) == receipt['native']
+    from scripts.component_campaign.archive import reference
+    assert reference(receipt['native']['path']) == receipt['native']
     assert pin(receipt['confirmed_result']['path']) == receipt['confirmed_result']
     state = load(source)
     assert state['resume_capable'] and state['config_hash'] == digest(state['config'])
