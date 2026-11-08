@@ -21,3 +21,7 @@ The raw HE4 parent GGUF is intentionally archived in the original campaign. Its 
 ## First continuation milestone
 
 At 00:19 PST on November 8, the 1,800-second checkpoint/readout was complete: 14,083 additional updates, 4,096 → 18,179 total updates, 1800.101063 synchronized update seconds. The measured update log reconciles exactly through this milestone. Both 300-second and 1,800-second full recovery archives are retained, and training continues toward the authorized 21,600-second bound. [Compact progress and checkpoint/native hashes](progress.json). No continuation native acceptance or throughput result exists yet.
+
+## One-hour continuation milestone
+
+At 00:51 PST, the 3,600-second checkpoint/readout was complete: 28,174 additional updates, 32,270 total updates and 3600.050516 synchronized update seconds. The update log reconciles through this boundary. Three new full recovery states and four native exports (including the parent) are retained. The main first update exactly matched the qualification probe in capture, anchor, loss and gradient norm. Training continues toward 21,600 seconds. [Fresh GPU ownership/resource receipt](../../runs/he4-continuation-20261107-01/gpu-ownership-hour01.json).
