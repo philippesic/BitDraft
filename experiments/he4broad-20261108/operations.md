@@ -99,3 +99,19 @@ The watchdog records the last good HE4broad checkpoint receipt and leaves an
 unmistakable `FAILURE_NO_AUTOMATIC_RESUME` status. It never loads B0, HE4-4096,
 the overnight continuation, or random tensors. No resume mechanism or training
 algorithm is added by this monitoring task.
+
+## Hourly T3 heartbeat
+
+The user-requested **HE4broad hourly heartbeat** is enabled with an interval of
+3,600,000 ms and bound to the current thread. Its exact task ID, initial next-run
+time and complete prompt are tracked in [hourly-heartbeat.json](hourly-heartbeat.json)
+and copied to `runs/he4broad-20261108-01/hourly-t3-schedule/schedule.json`.
+The first run is November 8, 2026 at 12:20:09 PM America/Los_Angeles.
+
+Each invocation reads host-visible process/lock evidence, current progress and
+detached-watchdog health. A healthy run posts one heartbeat line and stops. A
+failure writes a prominent report note and reports it in the bound thread; it
+performs no automatic resume and never starts a trainer. After clean completion
+or a terminal outcome from the existing completion hook, the task posts final
+status and disables/deletes itself using its saved exact ID. This hourly task
+does not replace or alter the independent 10-minute watchdog or completion hook.
