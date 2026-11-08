@@ -54,9 +54,10 @@ def main():
         policy='All HE4broad checkpoints, exports and update/native evidence retained; all older frontier states preserved. Only unused reservation files and reproducible export temporaries removed.'))
     # Stage only this owned report and its status section. Do not commit a user's
     # concurrent staged changes or unrelated edits in the shared STATUS file.
-    own = ['docs/STATUS.md',*[str(p.relative_to(P)) for p in REPORT.iterdir() if p.is_file()]]
+    own = ['docs/STATUS.md',*[str((REPORT/name).relative_to(P)) for name in ('report.md','results.json','audit.json')]]
     assert command('git','branch','--show-current') == 'main'
     assert command('git','remote','get-url','--push','origin') == 'git@github.com:philippesic/binary-eagle-decoding.git'
+    assert command('git','rev-list','--left-right','--count','HEAD...origin/main').split() == ['0','0'], 'Unpublished or diverged branch work; do not combine it with the automatic report push'
     assert not command('git','diff','--cached','--name-only'), 'Concurrent staged work; final report remains local'
     base = command('git','show','HEAD:docs/STATUS.md')+'\n'
     current = (P/'docs/STATUS.md').read_text()
