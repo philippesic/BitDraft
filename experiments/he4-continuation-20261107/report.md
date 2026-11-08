@@ -29,3 +29,7 @@ At 00:51 PST, the 3,600-second checkpoint/readout was complete: 28,174 additiona
 ## Two-hour continuation milestone
 
 At 01:54 PST, the 7,200-second checkpoint/readout was complete: 56,359 additional updates, 60,455 total updates and 7200.119015 synchronized update seconds. The complete update log reconciles through this boundary. Four new full recovery states and five native exports (including the parent) are retained; training continues toward the unchanged 21,600-second bound. [Fresh ownership/resource receipt](../../runs/he4-continuation-20261107-01/gpu-ownership-hour02.json). No native continuation acceptance/throughput result exists yet.
+
+## Halfway continuation milestone
+
+At 02:57 PST, the 10,800-second checkpoint/readout was complete: 84,549 additional updates, 88,645 total updates and 10800.035910 synchronized update seconds. The complete update log reconciles through this boundary. Five new full recovery states and six native exports (including the parent) are retained. Three additional update hours remain in the original allocation. [Fresh ownership/resource receipt](../../runs/he4-continuation-20261107-01/gpu-ownership-hour03.json). Native request evaluation remains queued after trainer exit.

@@ -1,9 +1,9 @@
 {
   "status": "RUNNING",
   "starting_updates": 4096,
-  "verified_milestone": 60455,
-  "additional_updates": 56359,
-  "actual_update_seconds": 7200.1190147519865,
+  "verified_milestone": 88645,
+  "additional_updates": 84549,
+  "actual_update_seconds": 10800.035910440802,
   "update_log_reconciled": true,
   "main_resume_crosscheck": {
     "first_update": 4097,
@@ -592,18 +592,136 @@
         "lossless_verified": true,
         "raw_materialized": false
       }
+    },
+    {
+      "label": "10800",
+      "progress": {
+        "updates": 88645,
+        "cursor": 106972,
+        "update_seconds": 11355.94649873073,
+        "supervised_tokens": 1329675
+      },
+      "additional_update_seconds": 10800.035910440802,
+      "dev": {
+        "records": [
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+            "anchor": 168,
+            "positions": 15,
+            "ce": 8.458806037902832,
+            "agree": 5,
+            "rank_sum": 171243,
+            "margin_sum": -83.43809509277344
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+            "anchor": 200,
+            "positions": 15,
+            "ce": 9.311774253845215,
+            "agree": 0,
+            "rank_sum": 137400,
+            "margin_sum": -110.76617431640625
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+            "anchor": 231,
+            "positions": 15,
+            "ce": 8.933707237243652,
+            "agree": 0,
+            "rank_sum": 134722,
+            "margin_sum": -101.70021057128906
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+            "anchor": 38,
+            "positions": 15,
+            "ce": 9.029987335205078,
+            "agree": 0,
+            "rank_sum": 24780,
+            "margin_sum": -94.16578674316406
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+            "anchor": 70,
+            "positions": 15,
+            "ce": 10.817110061645508,
+            "agree": 1,
+            "rank_sum": 158468,
+            "margin_sum": -133.5420379638672
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+            "anchor": 101,
+            "positions": 15,
+            "ce": 9.39018440246582,
+            "agree": 0,
+            "rank_sum": 60326,
+            "margin_sum": -108.26992797851562
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+            "anchor": 72,
+            "positions": 15,
+            "ce": 5.831412315368652,
+            "agree": 4,
+            "rank_sum": 2499,
+            "margin_sum": -44.98324203491211
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+            "anchor": 104,
+            "positions": 15,
+            "ce": 3.586348533630371,
+            "agree": 5,
+            "rank_sum": 164,
+            "margin_sum": -7.235910415649414
+          },
+          {
+            "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+            "anchor": 135,
+            "positions": 15,
+            "ce": 6.4561991691589355,
+            "agree": 3,
+            "rank_sum": 25930,
+            "margin_sum": -80.97151184082031
+          }
+        ],
+        "positions": 135,
+        "ce": 7.9795032607184515,
+        "agreement": 0.13333333333333333,
+        "mean_rank": 5300.237037037037,
+        "mean_margin": -5.66720664412887
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4-continuation-20261107-01/candidate/model-10800.gguf",
+        "sha256": "96ab2f193f4f60643895645a3a86789f476f10f929488e7f154ca77ac9000747",
+        "bytes": 541022144
+      },
+      "evaluation_seconds": 0.7263042169997789,
+      "readout_seconds": 29.089258902000438,
+      "elapsed_process_seconds": 11719.763179272,
+      "recovery": {
+        "format": "dflash.byte_shuffle_zstd.stream.v1",
+        "archive": "/home/philip/binary-eagle-decoding/runs/he4-continuation-20261107-01/checkpoints/HE4-plus10800-88645.pt.bsz",
+        "archive_sha256": "603d4b499f66cf05d0930424557b0de7384d842ee39f40ea567ac346c3da4cec",
+        "archive_bytes": 4291329204,
+        "raw_sha256": "31b02252e1cd202133f966c980a5dd72f35513369c8ce8ab1cb4494358f31e30",
+        "raw_bytes": 5100541851,
+        "lossless_verified": true,
+        "raw_materialized": false
+      }
     }
   ],
   "latest_recovery": {
     "format": "dflash.byte_shuffle_zstd.stream.v1",
-    "archive": "/home/philip/binary-eagle-decoding/runs/he4-continuation-20261107-01/checkpoints/HE4-plus7200-60455.pt.bsz",
-    "archive_sha256": "4a4b263936546735edf6c3e2352bbbee4aed2d2cc314221487ed764e3547dc7f",
-    "archive_bytes": 4285085471,
-    "raw_sha256": "51cb2a7f883a063ef3f083f7c64fbf1435c34d33e995433ce2daedc70b0a489e",
+    "archive": "/home/philip/binary-eagle-decoding/runs/he4-continuation-20261107-01/checkpoints/HE4-plus10800-88645.pt.bsz",
+    "archive_sha256": "603d4b499f66cf05d0930424557b0de7384d842ee39f40ea567ac346c3da4cec",
+    "archive_bytes": 4291329204,
+    "raw_sha256": "31b02252e1cd202133f966c980a5dd72f35513369c8ce8ab1cb4494358f31e30",
     "raw_bytes": 5100541851,
     "lossless_verified": true,
     "raw_materialized": false
   },
-  "free_GiB": 46.9047966003418,
+  "free_GiB": 42.39335632324219,
   "native_status": "QUEUED_AFTER_TRAINER_EXIT_NO_CONTINUATION_ACCEPTANCE_OR_THROUGHPUT_RESULT_YET"
 }
