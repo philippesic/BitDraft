@@ -1,5 +1,5 @@
 {
-  "status": "PREPARED",
+  "status": "RUNNING_PREFLIGHT",
   "run": "/home/philip/binary-eagle-decoding/runs/he4-continuation-20261107-01",
   "plan": {
     "path": "/home/philip/binary-eagle-decoding/runs/he4-continuation-20261107-01/plan.json",
@@ -55,5 +55,9 @@
     "stat": "2 (python) R 1 1 1 0 -1 4194304 79399 1773 0 2 455 378 1 1 20 0 16 0 230915 3928580096 130938 18446744073709551615 107607632379904 107607643136297 140732173934960 0 0 0 0 16781312 2 0 0 0 17 15 0 0 0 0 0 107607685332992 107607685387144 107608143462400 140732173940865 140732173940918 140732173940918 140732173942759 0\n",
     "boot_id": "5a9eb07e-68eb-482d-80f0-2f57acce767b\n",
     "pgid": 1
-  }
+  },
+  "launch_receipt": "runs/he4-continuation-20261107-01/launch.json",
+  "supervisor_state": "runs/he4-continuation-20261107-01-supervisor/state.json",
+  "pipeline_state": "runs/he4-continuation-20261107-01/pipeline/state.json",
+  "monitoring": "Current thread; no recurring scheduled monitor was installed."
 }

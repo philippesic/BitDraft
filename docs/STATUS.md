@@ -10,7 +10,7 @@ New outputs: `runs/he4-continuation-20261107-01/`. The existing contender GPU
 lock and local `remote_job.py` supervisor serialize exact GPU resume qualification,
 training, final recovery proof and native DEV request comparisons. Source is
 frozen under the new run. Launch/process receipts and safe stop instructions
-will be linked in the experiment record once startup is verified. No headroom
+are linked in the experiment record. The supervised workflow is in preflight. No headroom
 result exists yet. External DFlash Q4_K_M remains the deployment incumbent.
 
 ## Development priority: HE4; Csmallbroad fallback
