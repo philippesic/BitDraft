@@ -17,7 +17,10 @@ Completed updates: `candidate/updates.jsonl`. Readouts and recoveries:
 `runs/he4broad-20261108-01/train-*.log`. Native panels:
 `smoke-0`, `smoke-14400`, `smoke-28800`, `formal-0`, `formal-28800` in that run.
 The source closure and its hash manifest are frozen in the run's `source/` directory.
-Execution starts with that directory as cwd, so Python imports the frozen code.
+The existing supervisor sets canonical checkout cwd for its child. Actual imported
+canonical files are verified identical to the retained source closure in
+`runtime-source-pin-check.json`; preserve those source files during this run.
+Use a separate worktree for edits that would conflict with this pinned code.
 The first setup-only attempt was stopped before model construction or any update
 to replace slow WSL zero-fill allocation with verified native Windows allocation;
 `setup-abort01.json` records ownership, cleanup and zero optimizer exposure.

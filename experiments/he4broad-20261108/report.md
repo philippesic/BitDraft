@@ -1,6 +1,6 @@
 # HE4broad source-initialized QAT, November 8, 2026
 
-Status: **PREPARING**. Completed **0 updates** using **0.000 / 28,800 actual update seconds**. The last recoverable checkpoint covers 0 updates. Setup, evaluation, serialization and native panels are outside this budget.
+Status: **RUNNING**. Completed **211 updates** using **36.792 / 28,800 actual update seconds**. The last recoverable checkpoint covers 0 updates. Setup, evaluation, serialization and native panels are outside this budget.
 
 This new recipe starts from authenticated source BF16 DFlash tensors and target Qwen3.5-4B Q4_K_M tensors. No B0, HE4-4096 or overnight continuation parameters/Adam state are loaded. Exact source latent tensors, mean-absolute row scales, zero midpoints/log gains and HE4 initial clipping bounds are asserted before training. Existing saved JSON tensor digests establish distinct trainable scales from both B0 and HE4-4096. The private tied Q4_K vocabulary is installed from its authenticated target-derived matrix.
 
@@ -8,8 +8,25 @@ The architecture matches HE4: all 18 FFN projections W1; gate/up A4, down A8; Q4
 
 | Requested update seconds | Actual update seconds | Updates | DEV CE | DEV top-1 agreement |
 | ---: | ---: | ---: | ---: | ---: |
+| 0 | 0.000 | 0 | 7.825455 | 0.7407% |
 
 Native panels use runtime04, consumed DEV3, depth 2, greedy sampling, context 4096 and F16 target/draft KV. Formal panels use two excluded warmups per server cell, five alternating repetitions, and 256-token output reserve. Smoke panels use one repetition, no warmups and 64 tokens. Training exits before each native panel.
+
+### smoke-0
+
+| Arm | Acceptance | Complete-request tokens/s | Correct |
+| --- | ---: | ---: | --- |
+| target | — | 136.926 | True |
+| q4 | 59.6491% | 147.173 | True |
+| HE4broad | 2.2599% | 93.658 | True |
+
+### formal-0
+
+| Arm | Acceptance | Complete-request tokens/s | Correct |
+| --- | ---: | ---: | --- |
+| target | — | 183.516 | True |
+| q4 | 65.3257% | 248.523 | True |
+| HE4broad | 3.1858% | 127.358 | True |
 
 Full checkpoints (including zero and every hourly state) are retained under `/mnt/c/Users/philip/binary-eagle-decoding-artifacts/he4broad-20261108-01`; exports, immutable source closure, commands, process identity and update log are under `/home/philip/binary-eagle-decoding/runs/he4broad-20261108-01`. Storage is physically reserved before CUDA work; unused reservation files are released at shutdown. SIGTERM is honored between complete updates. An update exception preserves the last good checkpoint and is excluded from completed-update accounting.
 
