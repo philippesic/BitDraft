@@ -1,5 +1,18 @@
 # Current project status
 
+## Authorized: unchanged HE4 overnight continuation
+
+November 7–8, 2026 (America/Los_Angeles): this thread owns the bounded HE4
+continuation, capped at 21,600 additional synchronized optimizer-update seconds.
+Resume only the retained HE4-confirm archive at 4,096 updates; no recipe or
+mixed-weight changes. [Experiment and measurement plan](../experiments/he4-continuation-20261107/report.md).
+New outputs: `runs/he4-continuation-20261107-01/`. The existing contender GPU
+lock and local `remote_job.py` supervisor serialize exact GPU resume qualification,
+training, final recovery proof and native DEV request comparisons. Source is
+frozen under the new run. Launch/process receipts and safe stop instructions
+will be linked in the experiment record once startup is verified. No headroom
+result exists yet. External DFlash Q4_K_M remains the deployment incumbent.
+
 ## Development priority: HE4; Csmallbroad fallback
 
 User decision, November 6: prioritize **HE4** for future binary-drafter development
@@ -16,7 +29,8 @@ with HE4's activation widths held fixed. Record only; no sweep launched.
 Both user-authorized investigations are complete. Source, compact findings,
 figures and reusable runners are integrated; paid models/captures/raw evidence
 remain outside Git. External DFlash Q4_K_M remains the throughput incumbent.
-No new binary-model GPU work is assigned.
+Those investigations assign no further GPU work; the separate bounded HE4
+allocation above is the current task.
 
 [Component campaign](../experiments/component-campaign-20261105/report.md):
 28 full 4,096-update windows, 118 readouts, 1,680 formal measured requests and
@@ -60,7 +74,8 @@ after review/integration/push and fresh GPU release checks. Delivery started a n
 turn there. Delivery identity and the unchanged message are in the
 [handoff receipt](../runs/component-campaign-20261105-01/pending-thread-message.json).
 Do not resend. That separate shader investigation now owns its next actions;
-this binary-model thread has no new GPU allocation.
+that handoff does not assign this thread any shader work. The separate HE4
+allocation above is the current binary-model GPU task.
 
 ## References
 
