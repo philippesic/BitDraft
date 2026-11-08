@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "completed_updates": 0,
+  "actual_update_seconds": 0.0,
+  "checkpointed_updates": 0,
+  "checkpointed_update_seconds": 0.0,
+  "uncheckpointed_completed_updates": 0,
+  "supervised_positions": 0,
+  "unique_windows_exposed": 0,
+  "unique_labels_exposed": 0,
+  "update_log": null
+}

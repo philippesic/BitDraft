@@ -8,7 +8,7 @@
   },
   "frozen_source": {
     "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261108-01/source/source-manifest.json",
-    "sha256": "b65dda5b69e2430a5370f5b1c452dd65bf33f8ce9bfecb774e28d37307d830ce",
+    "sha256": "dcf21df426fc5119240c1a2c56192cf7ddba39b98291f56ee9ad20c96f950ad7",
     "bytes": 101965
   },
   "checkpoint_directory": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/he4broad-20261108-01",

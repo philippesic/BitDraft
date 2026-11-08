@@ -5,8 +5,8 @@ Authorized by Philip Pesic, November 8, 2026 at about 10:01 America/Los_Angeles:
 source BF16 tensors with the existing broader TRAIN manifest. This is a new recipe.
 
 The local tmux socket is `binary-eagle-runtime`, session `he4broad-20261108-01`.
-The supervisor is `scripts/remote_job.py`, run ID `he4broad-supervisor-20261108-01`,
-with 600 seconds of shutdown grace. Its `runs/he4broad-supervisor-20261108-01/state.json`
+The supervisor is `scripts/remote_job.py`, run ID `he4broad-supervisor-20261108-02`,
+with 600 seconds of shutdown grace. Its `runs/he4broad-supervisor-20261108-02/state.json`
 records the live supervisor/child process identities. The workflow owner and
 boot/birth identity are in `runs/he4broad-20261108-01/gpu-owner.json`.
 The workflow holds `runs/contender-gpu.lock` across all serial training/native work.
@@ -17,6 +17,10 @@ Completed updates: `candidate/updates.jsonl`. Readouts and recoveries:
 `runs/he4broad-20261108-01/train-*.log`. Native panels:
 `smoke-0`, `smoke-14400`, `smoke-28800`, `formal-0`, `formal-28800` in that run.
 The source closure and its hash manifest are frozen in the run's `source/` directory.
+Execution starts with that directory as cwd, so Python imports the frozen code.
+The first setup-only attempt was stopped before model construction or any update
+to replace slow WSL zero-fill allocation with verified native Windows allocation;
+`setup-abort01.json` records ownership, cleanup and zero optimizer exposure.
 
 Full checkpoints and physically preallocated slots live only in the new directory
 `/mnt/c/Users/philip/binary-eagle-decoding-artifacts/he4broad-20261108-01`. A slot is removed immediately before

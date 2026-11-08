@@ -34,15 +34,21 @@ def reserve():
     assert shutil.disk_usage(R).free > 10*2**30
     records = []
     for label in slots:
+        pause()
+        if stopped: raise InterruptedError('Stopped during storage setup')
         path = DEST/('reserve-'+label)
-        fd = os.open(path,os.O_CREAT|os.O_EXCL|os.O_RDWR,0o600)
+        assert not path.exists()
+        windows_path = 'C:\\'+str(path.relative_to('/mnt/c')).replace('/','\\')
+        quoted = windows_path.replace("'", "''")
+        script = ("$f=[System.IO.File]::Open('"+quoted+"',[System.IO.FileMode]::CreateNew,"
+                  "[System.IO.FileAccess]::ReadWrite,[System.IO.FileShare]::None);"
+                  "try {$f.SetLength("+str(SLOT_BYTES)+");$f.Flush($true)} finally {$f.Dispose()}")
         try:
-            os.posix_fallocate(fd,0,SLOT_BYTES)
-            os.fsync(fd)
+            subprocess.run(['/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe',
+                '-NoProfile','-NonInteractive','-Command',script],check=True)
         except BaseException:
-            path.unlink()
+            path.unlink(missing_ok=True)
             raise
-        finally: os.close(fd)
         stat = path.stat()
         assert stat.st_size == SLOT_BYTES and stat.st_blocks*512 >= SLOT_BYTES
         records.append(dict(path=str(path),bytes=stat.st_size,allocated_bytes=stat.st_blocks*512))

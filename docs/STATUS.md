@@ -1,5 +1,9 @@
 # Current project status
 
+## HE4broad source-initialized QAT
+
+November 8 user-authorized new recipe: **PREPARING**, 0 completed updates, 0.000 / 28,800 actual update seconds. Source BF16 initialization; broader authenticated 40/3234/3794 TRAIN set; fresh Adam at unchanged default rates. Hourly recoverable states and native exports retained. [Report](../experiments/he4broad-20261108/report.md) · [Live progress](../runs/he4broad-20261108-01/candidate/live.json) · [Ownership and stop procedure](../experiments/he4broad-20261108/operations.md). External DFlash Q4_K_M remains the deployment incumbent; no promotion.
+
 ## Completed: unchanged HE4 overnight continuation
 
 November 7–8: exact HE4-confirm resume advanced from 4,096 to **173,193 updates**
