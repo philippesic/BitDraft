@@ -57,3 +57,19 @@ activation widths held fixed. No new training was launched. User-authorized clea
 retired 34 superseded optimizer states: 63.57 GiB inside WSL and 61.59 GiB directly
 on Windows. Current HE4/Csmallbroad states and required parents remain verified;
 native exports, source and measurements remain. [Exact scope and outcome](../experiments/storage-cleanup-20261106/report.md).
+
+## Unchanged HE4 overnight continuation (2026-11-07–08)
+
+[Report and evidence](../experiments/he4-continuation-20261107/report.md): exact
+HE4-confirm resume, 4,096 → 173,193 updates in 21,600.017 additional update
+seconds, with the recipe and original 24-sequence TRAIN set unchanged. Consumed
+DEV3 native acceptance fell 22.61% → 17.85%; complete-request throughput fell
+170.56 → 160.51 tokens/s (0.9411×; paired timing interval 0.9338–0.9470).
+The external Q4 comparator reached 251.58 tokens/s and remains the deployment
+incumbent. Intermediate short smoke panels showed no convincing gain. This is a
+negative fixed-data continuation result, not a general HE4 capacity limit.
+Parent/final actual GPU resume and native-byte recovery pass; independent audit
+reconciled all updates, native counts and artifact hashes. Eight new full states
+and nine native exports remain retained, with the original parent/dependencies
+unchanged. All owned jobs and GPU ownership were released. No mixed-weight
+experiment, deployment promotion or additional training allocation followed.

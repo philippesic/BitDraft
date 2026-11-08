@@ -1,18 +1,25 @@
 # Current project status
 
-## Authorized: unchanged HE4 overnight continuation
+## Completed: unchanged HE4 overnight continuation
 
-November 7–8, 2026 (America/Los_Angeles): this thread owns the bounded HE4
-continuation, capped at 21,600 additional synchronized optimizer-update seconds.
-Resume only the retained HE4-confirm archive at 4,096 updates; no recipe or
-mixed-weight changes. [Experiment and measurement plan](../experiments/he4-continuation-20261107/report.md).
-New outputs: `runs/he4-continuation-20261107-01/`. The existing contender GPU
-lock and local `remote_job.py` supervisor serialize exact GPU resume qualification,
-training, final recovery proof and native DEV request comparisons. Source is
-frozen under the new run. Launch/process receipts and safe stop instructions
-are linked in the experiment record. Parent native-byte recovery and actual GPU resume passed; the bounded
-continuation is running. No headroom
-result exists yet. External DFlash Q4_K_M remains the deployment incumbent.
+November 7–8: exact HE4-confirm resume advanced from 4,096 to **173,193 updates**
+using **21,600.017 additional update seconds**. The recipe and data stayed frozen.
+On consumed DEV3, acceptance fell **22.61% → 17.85%** and complete-request
+throughput fell **170.56 → 160.51 tokens/s** (0.9411×; paired timing interval
+0.9338–0.9470). External DFlash Q4_K_M reached **251.58 tokens/s** and remains
+the deployment incumbent. This fixed-data continuation did not demonstrate useful
+native headroom; it does not establish a general HE4 capacity limit.
+[Report, intermediate readouts and limits](../experiments/he4-continuation-20261107/report.md).
+
+Actual parent/final GPU resume and native-byte recovery pass. Independent audit
+reconciles 169,097 updates and 87 measured native request rows; all 127 requests
+including warmups match target output. Eight new full states, nine native exports,
+the original parent and all required sources/captures remain retained.
+[Audit and hashes](../experiments/he4-continuation-20261107/audit.json) ·
+[Retention](../runs/he4-continuation-20261107-01/milestone-retention.json) ·
+[GPU release](../runs/he4-continuation-20261107-01/gpu-release.json).
+All owned jobs and the contender lock are released. No further GPU work is assigned.
+No mixed-weight work or deployment promotion was performed.
 
 ## Development priority: HE4; Csmallbroad fallback
 

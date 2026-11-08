@@ -1,5 +1,5 @@
 {
-  "status": "GPU_RESUME_QUALIFIED_RUNNING",
+  "status": "COMPLETE",
   "run": "/home/philip/binary-eagle-decoding/runs/he4-continuation-20261107-01",
   "plan": {
     "path": "/home/philip/binary-eagle-decoding/runs/he4-continuation-20261107-01/plan.json",
@@ -60,5 +60,39 @@
   "supervisor_state": "runs/he4-continuation-20261107-01-supervisor/state.json",
   "pipeline_state": "runs/he4-continuation-20261107-01/pipeline/state.json",
   "monitoring": "Current thread; no recurring scheduled monitor was installed.",
-  "resume_proof": "runs/he4-continuation-20261107-01/candidate/zero-resume-proof.json"
+  "resume_proof": "runs/he4-continuation-20261107-01/candidate/zero-resume-proof.json",
+  "actual_update_seconds": 21600.01716954859,
+  "additional_updates": 169097,
+  "ending_updates": 173193,
+  "recovery": {
+    "format": "dflash.byte_shuffle_zstd.stream.v1",
+    "archive": "/home/philip/binary-eagle-decoding/runs/he4-continuation-20261107-01/checkpoints/HE4-plus21600-173193.pt.bsz",
+    "archive_sha256": "f0080d8e5635a219c66e29bb4bc579f41c9d6262bef967ad186e61de478b1906",
+    "archive_bytes": 4315772076,
+    "raw_sha256": "c5de62c3e8273e881674d8f996fc4ac8e939e66e790fcb61b5db6ac47b110a7a",
+    "raw_bytes": 5100541851,
+    "lossless_verified": true,
+    "raw_materialized": false
+  },
+  "results": {
+    "path": "/home/philip/binary-eagle-decoding/experiments/he4-continuation-20261107/results.json",
+    "sha256": "db7f328b9cfdfa0b0d2fb62cf6208c5a65cff551d47341eeb1f54a69327905c9",
+    "bytes": 76728
+  },
+  "audit": {
+    "path": "/home/philip/binary-eagle-decoding/experiments/he4-continuation-20261107/audit.json",
+    "sha256": "d5c795411e683315042b4703c0b64e7350fb6163bca7d69bd80956d590064e97",
+    "bytes": 14137
+  },
+  "gpu_release": {
+    "path": "/home/philip/binary-eagle-decoding/runs/he4-continuation-20261107-01/gpu-release.json",
+    "sha256": "2c3ffb07667aa0116a01b472b1622f27ca5ab8b3ba0c190569fad4f5f3a44ba8",
+    "bytes": 8395
+  },
+  "retention": {
+    "path": "/home/philip/binary-eagle-decoding/runs/he4-continuation-20261107-01/milestone-retention.json",
+    "sha256": "991d1b5c399f2efdff7639ffb5f6e0a2e7418de5da8a3eafcd655867b2300a1e",
+    "bytes": 9941
+  },
+  "gpu_owner_released": true
 }
