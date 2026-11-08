@@ -1,6 +1,6 @@
 # HE4 overnight continuation, November 7–8, 2026
 
-The user-authorized unchanged HE4 continuation was launched through the existing contender pipeline at 23:41 PST on November 7. Preflight is running. No continuation result or headroom claim exists yet.
+The user-authorized unchanged HE4 continuation was launched through the existing contender pipeline at 23:41 PST on November 7. Parent archive/raw/native verification and actual next GPU update passed; the main continuation is starting. No continuation result or headroom claim exists yet.
 
 The only training allocation is 21,600 additional synchronized optimizer-update seconds from the exact retained HE4-confirm state at 4,096 updates. The HE4 recipe, Adam state, constant learning rates, captures, order/cursor and RNG remain unchanged. Source is frozen in the new run; the contender GPU lock and existing local supervisor serialize training, recovery qualification and native requests. All outputs use `runs/he4-continuation-20261107-01/`; the parent archive and retained frontier are preserved.
 
@@ -15,3 +15,5 @@ The final report will include acceptance, complete-request throughput, actual up
 For an authorized stop, authenticate current boot/start identity against the launch and pipeline receipts, send SIGTERM to the supervisor, and allow the recorded 960-second cleanup grace. The runner forwards SIGTERM to the authenticated trainer group; the trainer completes its current update and saves its full recovery state. Verify terminal supervisor/pipeline receipts, process-group absence and GPU release. Do not use a stale recorded PID. A GPU pause also stops the existing runner at a safe checkpoint boundary.
 
 The raw HE4 parent GGUF is intentionally archived in the original campaign. Its existing archive/dependencies are authenticated, and this run requires byte-identical regeneration in its own output directory; retained native artifacts are not replaced. Preparation used no GPU optimizer updates. A recurring follow-up monitor was rejected by automatic approval review, so no persistent schedule was installed; monitoring remains in this thread.
+
+[Exact parent native-byte and GPU resume proof](../../runs/he4-continuation-20261107-01/candidate/zero-resume-proof.json) passed before the update budget: saved Adam step 4096, scratch next step 4097, caller optimizer unchanged.
