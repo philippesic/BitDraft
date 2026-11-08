@@ -52,3 +52,12 @@ The initial qualification update is the first budgeted update and is retained in
 the trajectory. No scratch update is discarded or used as hidden extra training.
 Final verification restores GPU parameters, Adam and RNG and reproduces native
 bytes without an extra optimizer step beyond the authorized budget.
+
+After the GPU supervisor exits, an owned session hook starts the one-shot CPU
+`scripts/he4broad/finish.py` through `scripts/remote_job.py` with run ID
+`he4broad-finalize-20261108-01`. It inventories all retained artifacts, verifies
+completed-run evidence, records retention and commits/pushes only the HE4broad
+report files and status section. It refuses to stage concurrent user work or
+unrelated STATUS changes. `completion-callback.json` records success or a blocked
+finalization/push; blocked work stays local and is explicitly labeled. The hook
+then removes this run's dead tmux session. It performs no GPU updates or restart.
