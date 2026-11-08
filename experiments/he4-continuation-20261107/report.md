@@ -17,3 +17,7 @@ For an authorized stop, authenticate current boot/start identity against the lau
 The raw HE4 parent GGUF is intentionally archived in the original campaign. Its existing archive/dependencies are authenticated, and this run requires byte-identical regeneration in its own output directory; retained native artifacts are not replaced. Preparation used no GPU optimizer updates. A recurring follow-up monitor was rejected by automatic approval review, so no persistent schedule was installed; monitoring remains in this thread.
 
 [Exact parent native-byte and GPU resume proof](../../runs/he4-continuation-20261107-01/candidate/zero-resume-proof.json) passed before the update budget: saved Adam step 4096, scratch next step 4097, caller optimizer unchanged.
+
+## First continuation milestone
+
+At 00:19 PST on November 8, the 1,800-second checkpoint/readout was complete: 14,083 additional updates, 4,096 → 18,179 total updates, 1800.101063 synchronized update seconds. The measured update log reconciles exactly through this milestone. Both 300-second and 1,800-second full recovery archives are retained, and training continues toward the authorized 21,600-second bound. [Compact progress and checkpoint/native hashes](progress.json). No continuation native acceptance or throughput result exists yet.
