@@ -89,7 +89,13 @@ def main():
         panels[label] = checks
     audit = dict(status='INDEPENDENT_UPDATE_NATIVE_COUNTER_AND_ARTIFACT_AUDIT_PASS', source=pin(__file__),
         original_results=pin(REPORT / 'results.json'), workflow=pin(R / 'workflow-result.json'),
-        additional_updates=len(updates), actual_update_seconds=seconds, main_resume_crosscheck=crosscheck,
+        additional_updates=len(updates), actual_update_seconds=seconds,
+        exposure=dict(supervised_positions=15*len(updates), unique_label_positions=training['total_unique_label_positions'],
+            unique_positions_exposed=training['unique_positions_exposed'], windows=training['unique_windows'],
+            additional_window_passes=len(updates)/training['unique_windows'],
+            additional_supervised_position_passes=15*len(updates)/training['total_unique_label_positions'],
+            meaning='Window passes count updates per unique TRAIN anchor; position passes count supervised labels per unique capture-position. Overlapping 15-label windows make these different; neither is new data.'),
+        main_resume_crosscheck=crosscheck,
         unchanged_parent=parent, verified_new_recovery_archives=recoveries, panels=panels,
         limitations='Native device memory is sampled total usage including desktop and target; Torch allocator peak is separately in the training result. Server decode time excludes prompt processing; complete request wall includes it. Repeated greedy responses are correlated.')
     save(REPORT / 'audit.json', audit)
