@@ -1,0 +1,10 @@
+{
+  "free_bytes": 777217413120,
+  "feature_bytes_per_token": 81920,
+  "initial_pool_sequences": 4492,
+  "historical_prompt_tokens_mean": 270.915270018622,
+  "initial_pool_feature_estimate_bytes": 156753756160,
+  "ten_thousand_estimate_bytes": 353005789199.2551,
+  "reserve_bytes": 32212254720,
+  "note": "Old tokenizer counts are planning estimates only; actual native Qwen3.5 counts enforce per-sequence disk admission; F32 features for all prompt+continuation tokens at 8 taps; full logits one-sequence scratch deleted after proof"
+}

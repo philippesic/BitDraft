@@ -1,0 +1,117 @@
+{
+  "eligible_sequences": 4492,
+  "unused_modern": 176,
+  "historical": 4316,
+  "rejected": 5540,
+  "prior_modern_used": [
+    "train-bank-v1-code-014",
+    "train-bank-v1-code-022",
+    "train-bank-v1-code-024",
+    "train-bank-v1-code-032",
+    "train-bank-v1-code-043",
+    "train-bank-v1-code-052",
+    "train-bank-v1-prose-004",
+    "train-bank-v1-prose-012",
+    "train-bank-v1-prose-021",
+    "train-bank-v1-prose-054",
+    "train-bank-v1-prose-062",
+    "train-bank-v1-reasoning-013",
+    "train-bank-v1-reasoning-015",
+    "train-bank-v1-reasoning-018",
+    "train-bank-v1-reasoning-025",
+    "train-bank-v1-reasoning-062"
+  ],
+  "exclusion_identity_count": 21458,
+  "exclusion_sources": [
+    {
+      "path": "/home/philip/he4-capture-2080ti/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/fresh-quarter-confirmation01/pilot-exclusions.json",
+      "sha256": "373d17684fe28884c8d7c0de5fea92d4a026a79f478418c6472b619d015aeae7"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/fresh-quarter-confirmation01/development-exclusions.json",
+      "sha256": "5e723ab1da61da81c48d4a7f6b2f2f5dc0ee6bc2e2a1f7b59be9e83ddc4a3c54"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/home/philip/binary-eagle-decoding/runs/w1a8-modern-protected-20261103-01/fresh-quarter-confirmation01/old_matrix-exclusions.json",
+      "sha256": "9fea9bc86ade1cd41c9d0f7c6d61d92b95d0973da0b8a292bd405fad4b55c973"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/home/philip/binary-eagle-decoding/data/w1a-public-freeze-002/dev.index.jsonl",
+      "sha256": "b39937c1ef52abcc0fca8667d0a9fb680b551eb0c866abb1ecb2255c1c8e8edc"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/home/philip/binary-eagle-decoding/data/w1a-public-freeze-002/final.index.jsonl",
+      "sha256": "0856cb32ab9fbdb15e5150ca97e57d2d5390ad6c5d5d7be7609a9b38148242aa"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/home/philip/binary-eagle-decoding/data/continuous-w1ax/freeze-002/dev-00001.index.jsonl",
+      "sha256": "b68df914b384f1600bc612af69ee8ba3086a88567913f993345c89d5f060b3c2"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/home/philip/binary-eagle-decoding/data/continuous-w1ax/freeze-002/sealed_test-00000.index.jsonl",
+      "sha256": "8e2ff5686f2231238cfd0b9eaad90a83d9cdc17f80d544fa3cb907a826d8c1bb"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/home/philip/binary-eagle-decoding/data/continuous-w1ax/freeze-002/dev-00000.index.jsonl",
+      "sha256": "3b4925992ef85a51ff6c1756d1d149a97f6d970a8b44eb7e7f6f97dd7b67594e"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/home/philip/binary-eagle-decoding/data/continuous-w1ax/freeze-002/sealed_test-00001.index.jsonl",
+      "sha256": "d4ceb11f29a52ccf4b63fe767bb0e84ac59bd6941e6f48a6e3849f61a3f43b1e"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/home/philip/binary-eagle-decoding/data/continuous-w1ax/exclusions/9cf503fffe1003f609fedec9c314e2efb7c78b0034f073d46ddd4e25ec193fa6/sealed_test-00000.index.jsonl",
+      "sha256": "9cf503fffe1003f609fedec9c314e2efb7c78b0034f073d46ddd4e25ec193fa6"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/home/philip/binary-eagle-decoding/data/continuous-w1ax/exclusions/b39937c1ef52abcc0fca8667d0a9fb680b551eb0c866abb1ecb2255c1c8e8edc/dev.index.jsonl",
+      "sha256": "b39937c1ef52abcc0fca8667d0a9fb680b551eb0c866abb1ecb2255c1c8e8edc"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/home/philip/binary-eagle-decoding/data/continuous-w1ax/exclusions/0856cb32ab9fbdb15e5150ca97e57d2d5390ad6c5d5d7be7609a9b38148242aa/final.index.jsonl",
+      "sha256": "0856cb32ab9fbdb15e5150ca97e57d2d5390ad6c5d5d7be7609a9b38148242aa"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/home/philip/binary-eagle-decoding/data/continuous-w1ax/exclusions/cdbfc74bf4865a8c71dbb6385aa2ff76f7e052b75b5df51ee38e23dd71f9498c/dev-00000.index.jsonl",
+      "sha256": "cdbfc74bf4865a8c71dbb6385aa2ff76f7e052b75b5df51ee38e23dd71f9498c"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/home/philip/binary-eagle-decoding/data/continuous-w1ax/exclusions/b56f5eee3f54158444dd9f93a9e826d695f177b6e8ab034880dee12c35cb12a4/dev-00001.index.jsonl",
+      "sha256": "b56f5eee3f54158444dd9f93a9e826d695f177b6e8ab034880dee12c35cb12a4"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/home/philip/binary-eagle-decoding/data/continuous-w1ax/exclusions/12ec834c9d515198912e8ebfe3711813ff082aeef53b6137df8d94de51025eec/sealed_test-00001.index.jsonl",
+      "sha256": "12ec834c9d515198912e8ebfe3711813ff082aeef53b6137df8d94de51025eec"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/runs/precision-campaign-20261104-01/heldout24/consumption.json",
+      "sha256": "3785825ed93005fbf7ba2320853cf63af397327dcfb97012527a6d6fa2bb67cc"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/runs/precision-campaign-20261104-01/clip-control-followup/heldout24/consumption.json",
+      "sha256": "ec9f25f9cc8588ed992c609d93a7f133da9aa691d4c235767fcd66e72feb44cb"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/runs/component-campaign-20261105-01/heldout24/consumption.json",
+      "sha256": "ae62f7f073a5fbea6a48af510cbb01d201c4ac43807f163760f43d6b3f218c21"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/runs/data-cost-transfer-20261104-01/consumed-natural-inputs.json",
+      "sha256": "a210bd2aa87112df5ba3d0b31f406c1a21422ae32a8d42dcddea94d3e8f5bda6"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/runs/w1a8-modern-protected-20261103-01/fresh-quarter-confirmation01/inputs01/manifest.json",
+      "sha256": "8edafebb8c750a40136f6c1918b482697d8f6a50398e9974831e94fe468cd96f"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/runs/w1a8-modern-protected-20261103-01/natural-replay-confirmation01/inputs01/manifest.json",
+      "sha256": "63b237607f92a4c58ed138f18134af68989cb32ee8f81132ce2b79566f2fed68"
+    },
+    {
+      "path": "/home/philip/he4-capture-2080ti/exclusion-metadata/modern-development.json",
+      "sha256": "c92b74a1dba330d0ab2f90b5aab5f42afb9b5abdc3c55658abbd13837e77830d"
+    }
+  ],
+  "prompt_pool_sha256": "35370830fd5416a7779a3bd5e7d3015f07be41be58e066136bfb151edab2ec54",
+  "exclusions_sha256": "987919b0adabe1e94a4d63f43247c9645e84b97de99d9de7e132b93eb0c6cf15"
+}

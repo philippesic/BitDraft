@@ -1,0 +1,60 @@
+{
+  "status": "PASS",
+  "snapshot_updated_at": "2026-11-09T05:41:44.893681+00:00",
+  "counts": {
+    "sequences": 16,
+    "windows": 1824,
+    "unique_label_positions": 2048,
+    "unique_label_positions_in_windows": 2048
+  },
+  "samples": [
+    {
+      "id": "train-bank-v1-code-000",
+      "labels": 128,
+      "windows": 114,
+      "eog": false,
+      "taps": [
+        2,
+        6,
+        10,
+        14,
+        18,
+        22,
+        26,
+        30
+      ]
+    },
+    {
+      "id": "train-bank-v1-reasoning-000",
+      "labels": 128,
+      "windows": 114,
+      "eog": false,
+      "taps": [
+        2,
+        6,
+        10,
+        14,
+        18,
+        22,
+        26,
+        30
+      ]
+    },
+    {
+      "id": "train-bank-v1-reasoning-007",
+      "labels": 128,
+      "windows": 114,
+      "eog": false,
+      "taps": [
+        2,
+        6,
+        10,
+        14,
+        18,
+        22,
+        26,
+        30
+      ]
+    }
+  ]
+}
