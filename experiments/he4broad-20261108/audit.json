@@ -1,16 +1,16 @@
 {
   "status": "PASS",
-  "completed_updates": 211,
-  "actual_update_seconds": 36.791534411968314,
-  "checkpointed_updates": 0,
-  "checkpointed_update_seconds": 0.0,
-  "uncheckpointed_completed_updates": 211,
-  "supervised_positions": 3165,
-  "unique_windows_exposed": 211,
-  "unique_labels_exposed": 2103,
+  "completed_updates": 226853,
+  "actual_update_seconds": 28800.03836732542,
+  "checkpointed_updates": 226853,
+  "checkpointed_update_seconds": 28800.03836732542,
+  "uncheckpointed_completed_updates": 0,
+  "supervised_positions": 3402795,
+  "unique_windows_exposed": 3234,
+  "unique_labels_exposed": 3794,
   "update_log": {
     "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261108-01/candidate/updates.jsonl",
-    "sha256": "fac740458a0723dfbf9e6405ef86137f993bb98fdc631e4dd3d2ca262b58131b",
-    "bytes": 62449
+    "sha256": "91d2eccee0393592610679c49c0e1dad777488c0342adba0a483530f64cef495",
+    "bytes": 69187507
   }
 }

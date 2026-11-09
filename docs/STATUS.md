@@ -2,7 +2,7 @@
 
 ## HE4broad source-initialized QAT
 
-November 8 user-authorized new recipe: **RUNNING**, 211 completed updates, 36.792 / 28,800 actual update seconds. Source BF16 initialization; broader authenticated 40/3234/3794 TRAIN set; fresh Adam at unchanged default rates. Hourly recoverable states and native exports retained. [Report](../experiments/he4broad-20261108/report.md) · [Live progress](../runs/he4broad-20261108-01/candidate/live.json) · [Ownership and stop procedure](../experiments/he4broad-20261108/operations.md). External DFlash Q4_K_M remains the deployment incumbent; no promotion.
+November 8 user-authorized new recipe: **COMPLETE**, 226,853 completed updates, 28800.038 / 28,800 actual update seconds. Source BF16 initialization; broader authenticated 40/3234/3794 TRAIN set; fresh Adam at unchanged default rates. Hourly recoverable states and native exports retained. [Report](../experiments/he4broad-20261108/report.md) · [Live progress](../runs/he4broad-20261108-01/candidate/live.json) · [Ownership and stop procedure](../experiments/he4broad-20261108/operations.md). External DFlash Q4_K_M remains the deployment incumbent; no promotion.
 
 ## HE4broad watchdog
 
