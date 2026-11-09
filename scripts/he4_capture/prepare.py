@@ -1,7 +1,7 @@
 """Admit TRAIN texts with opaque identity exclusions; no historical features used."""
 import json,hashlib,re,sys,unicodedata
 from pathlib import Path
-P=Path(sys.argv[1]); sys.path.insert(0,str(P/'scripts/w1a8_generalization'))
+P=Path(sys.argv[1]); OUT=Path(sys.argv[2]) if len(sys.argv)>2 else P; OUT.mkdir(parents=True,exist_ok=True); sys.path.insert(0,str(P/'scripts/w1a8_generalization'))
 from modern_fresh import identities,render
 
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
@@ -26,7 +26,7 @@ for f in files:
  for d in docs:excluded.update(strings(d))
  pins.append(dict(path=str(f),sha256=sha(f)))
 assert len(excluded)>1000
-write(P/'exclusions.json',dict(policy='All dev/final/sealed opaque indexes; consumed evaluation identities including heldout24; never select by answer or output',sources=pins,identities=sorted(excluded)))
+write(OUT/'exclusions.json',dict(policy='All dev/final/sealed opaque indexes; consumed evaluation identities including heldout24; never select by answer or output',sources=pins,identities=sorted(excluded)))
 # Reserve all components/identities from non-optimizer roles.
 selector=read(P/'runs/dspark-a8-full-pool-20261006-01/plans/role-selector.json')['selection']
 for r in selector:
@@ -37,8 +37,9 @@ def add(row,pool):
  text=render(raw) if len(row['messages'])==1 else ''.join('<|im_start|>'+m['role']+'\n'+m['content']+'<|im_end|>\n' for m in row['messages'])+'<|im_start|>assistant\n<think>\n\n</think>\n\n'
  keys=set(identities(raw).values())|set(identities(text).values())|{row.get(k,'') for k in ('id','prompt_id','group_id','source_group','source_topic','content_sha256')}
  keys.discard('')
+ keys.discard(None)  # Missing topics carry no identity, just like empty topics.
  if keys&excluded or keys&seen:
-  rejected.append(dict(id=row['id'],pool=pool,reason='identity/component excluded or duplicate'));return
+  rejected.append(dict(id=row['id'],pool=pool,reason='excluded identity' if keys&excluded else 'duplicate identity',matched_identities=sorted(keys&(excluded if keys&excluded else seen))));return
  seen.update(keys)
  row.update(pool=pool,rendered_text=text,rendered_sha256=hashlib.sha256(text.encode()).hexdigest());records.append(row)
 bank=P/'runs/data-cost-transfer-20261104-01/bank-inputs'
@@ -65,5 +66,5 @@ for f in sorted((P/'data/continuous-w1ax/freeze-002').glob('train-*.jsonl')):
   r=by_source.get((shard,n))
   if r is None:continue
   row=json.loads(line);assert row['id']==r['prompt_id'];row.update(r);add(row,'historical_optimizer')
-write(P/'prompt-pool.json',dict(records=records,rejected=rejected,unused_modern=sum(r['pool']=='unused_modern_reserved' for r in records),historical=sum(r['pool']=='historical_optimizer' for r in records),prior_modern_used=sorted(used),selector_sha256=sha(P/'runs/dspark-a8-full-pool-20261006-01/plans/role-selector.json')))
+write(OUT/'prompt-pool.json',dict(records=records,rejected=rejected,unused_modern=sum(r['pool']=='unused_modern_reserved' for r in records),historical=sum(r['pool']=='historical_optimizer' for r in records),prior_modern_used=sorted(used),selector_sha256=sha(P/'runs/dspark-a8-full-pool-20261006-01/plans/role-selector.json')))
 print('admitted',len(records),'rejected',len(rejected))
