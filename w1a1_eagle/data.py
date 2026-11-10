@@ -87,6 +87,12 @@ class Ledger:
             raise ValueError("training count mismatch")
         if any(p.ancestry != "verified" for p in selected):
             raise ValueError("unverified training provenance")
+        identities: set[str] = set()
+        for prompt in selected:
+            names = {prompt.identity, *prompt.aliases}
+            if identities & names:
+                raise ValueError("duplicate training identity or alias")
+            identities.update(names)
         return selected
 
 
@@ -118,14 +124,18 @@ def windows(
         raise ValueError("invalid capture identity or prompt length")
     if len(positions) != len(labels) or positions != tuple(sorted(set(positions))):
         raise ValueError("capture positions are not unique and ordered")
-    if any(type(p) is not int or not 0 <= p < len(tokens) - 1 for p in positions):
+    if any(type(p) is not int or not 0 <= p < len(tokens) for p in positions):
         raise ValueError("capture position outside next-token range")
     if any(type(v) is not int or v < 0 for v in (*tokens, *labels)):
         raise ValueError("invalid token identity")
+    if eog is not None and eog in labels and labels.index(eog) != len(labels) - 1:
+        raise ValueError("post-EOG labels")
     stop = tokens.index(eog) if eog is not None and eog in tokens else len(tokens)
     mapping = dict(zip(positions, labels, strict=True))
     return tuple(
         Window(trajectory, anchor, tuple(mapping[anchor + j] for j in range(15)))
-        for anchor in range(prompt_tokens, stop - 15)
-        if all(anchor + j in mapping for j in range(15))
+        for anchor in positions
+        if prompt_tokens <= anchor < len(tokens)
+        and anchor + 14 < stop
+        and all(anchor + j in mapping for j in range(15))
     )

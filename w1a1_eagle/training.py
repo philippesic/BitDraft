@@ -14,7 +14,11 @@ class Budget:
     def __post_init__(self) -> None:
         if type(self.updates) is not int or self.updates < 1:
             raise ValueError("positive update budget required")
-        if not math.isfinite(self.wall_seconds) or self.wall_seconds <= 0:
+        if (
+            type(self.wall_seconds) not in (int, float)
+            or not math.isfinite(self.wall_seconds)
+            or self.wall_seconds <= 0
+        ):
             raise ValueError("positive wall budget required")
         if type(self.attempts) is not int or self.attempts < 1:
             raise ValueError("positive attempt budget required")
@@ -26,16 +30,21 @@ class Progress:
     cursor: int = 0
     attempts: int = 0
     failed: int = 0
+    discarded: int = 0
+    needs_recovery: bool = False
     wall_seconds: float = 0.0
     last_loss: float | None = None
 
     def validate(self) -> None:
         if any(
             type(v) is not int or v < 0
-            for v in (self.updates, self.cursor, self.attempts, self.failed)
+            for v in (self.updates, self.cursor, self.attempts, self.failed, self.discarded)
         ):
             raise ValueError("invalid progress counters")
-        if self.attempts != self.updates + self.failed or self.cursor != self.updates:
+        if (
+            self.attempts != self.updates + self.failed + self.discarded
+            or type(self.needs_recovery) is not bool
+        ):
             raise ValueError("inconsistent progress accounting")
         if not math.isfinite(self.wall_seconds) or self.wall_seconds < 0:
             raise ValueError("invalid cumulative wall time")
@@ -58,6 +67,8 @@ def train(
     while progress.updates < budget.updates:
         if progress.attempts >= budget.attempts:
             return "attempt-budget"
+        if progress.needs_recovery:
+            return "recovery-required"
         if progress.wall_seconds >= budget.wall_seconds:
             return "wall-budget"
         if stop():
@@ -70,6 +81,7 @@ def train(
                 raise ValueError("nonfinite training result")
         except BaseException:
             progress.failed += 1
+            progress.needs_recovery = True
             raise
         else:
             progress.last_loss = loss
@@ -78,6 +90,7 @@ def train(
         finally:
             elapsed = clock.now() - started
             if not math.isfinite(elapsed) or elapsed < 0:
+                progress.needs_recovery = True
                 raise ValueError("operational clock moved backwards or became nonfinite")
             progress.wall_seconds += elapsed
     return "update-budget"

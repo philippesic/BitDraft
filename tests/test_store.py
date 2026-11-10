@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Callable
+from typing import BinaryIO, Callable
 
 import pytest
 
@@ -32,5 +32,20 @@ def test_failed_publication_preserves_state(
     monkeypatch.setattr(store, "atomic", failing)
     with pytest.raises(OSError, match="publication"):
         store.commit(b"child", "recipe", 2)
+    assert store.latest("recipe") == parent
+    assert not list(tmp_path.glob(".pending-*"))
+
+
+def test_stream_budget_preserves_parent(tmp_path: Path) -> None:
+    store = Store(tmp_path)
+    parent = store.commit(b"parent", "recipe", 1)
+
+    def oversized(output: BinaryIO) -> None:
+        output.write(b"1234")
+        assert output.tell() == 4
+        output.write(b"5678")
+
+    with pytest.raises(ValueError, match="budget"):
+        store.commit_with(oversized, "recipe", 2, 6)
     assert store.latest("recipe") == parent
     assert not list(tmp_path.glob(".pending-*"))

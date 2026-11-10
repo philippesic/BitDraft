@@ -88,3 +88,16 @@ Evidence: [experiments/storage-cleanup-20261106/report.md](https://github.com/ph
 The provisional 2080 Ti observation is 10,150 sequences, 970,121 windows and
 1,111,811 labels (Philip supplied, not audited). The 5,505 versus approximately
 5,497 recovery difference remains open; no recovered prompt is admitted here.
+
+## F011
+
+A fresh-context readiness exercise at the worker-control checkpoint correctly
+refused an actual HE4 launch, reported 34 CPU tests and all 125 specimen pairs,
+and distinguished fake-worker/storage checks from numerical and native evidence.
+It also found stale capability prose that the link checker did not detect.
+
+Limits: one unaided readiness/no-change task, shared-host access, no complete dirty
+tree digest, no timing comparison or causal productivity conclusion. This does
+not qualify later source increments or actual training.
+
+Evidence: [readiness receipt](docs/evidence/agent-readiness.json).
