@@ -62,6 +62,10 @@ def main() -> int:
     report_parser.add_argument("output", type=Path)
     preflight = commands.add_parser("preflight")
     preflight.add_argument("intent", type=Path)
+    for command in (run, report_parser, preflight):
+        command.add_argument(
+            "--json", action="store_true", dest="as_json", default=argparse.SUPPRESS
+        )
     arguments = parser.parse_args(namespace=Arguments())
     try:
         if arguments.command == "preflight":

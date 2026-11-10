@@ -226,6 +226,25 @@ Resolve disk capacity before any phase needs a new large environment/build/artif
 
 For cutover, complete a selected-source disposition table: ported and verified, intentionally retired, historical evidence only, or blocked with a reason. Reconcile the older remaining-stage proposal, source docs and system map so new agents do not receive two competing plans. Before removing obsolete-looking modules, settings, overrides or keys, record their actual behavior, consumers and state/safety dependencies in that disposition. Controls share applicable correctness guards with candidates; do not silently port a broken baseline or alter treatment semantics to obtain parity. Keep historical measured evidence immutable; supersede conclusions by reference rather than rewriting the measurements. Retired records may remain accessible but must no longer function as active instructions; each current document has a responsible capability owner and explicit supersession links.
 
+## Implemented source boundary
+
+The authorized pre-benchmark increment has implemented foundation evolution, the CPU
+execution spine, selected modern metadata/capture intake, HE4 numerics and streaming
+GGUF export, own-schema fresh/resume/branch states and bounded durable CPU operations.
+[Execution](execution.md) owns the supported reader/runtime claims;
+[checks](checks.md) owns verification and fresh-agent exercise scope; and
+[findings](../FINDINGS.md) retains scoped results and failures. The source disposition
+is in [the inventory](evidence/source-inventory.json). The older remaining-stage and
+issue-analysis files are preserved input proposals, not competing execution authority.
+
+CPU end-to-end evidence does not close E/F: actual native build/load/parity and GPU
+cutover depend on their separate qualification and capacity/allocation gates. Benchmark
+methodology, evaluator/selection integration and scientific stopping policy remain
+with E; optional high-level operations and remote/hosted setup remain with G. No
+scientific thresholds, universal old-checkpoint compatibility or serving-performance
+claim was introduced to close the CPU stages. Retained originals and the old execution
+route remain protected until replacement acceptance.
+
 ## Decisions still needed before dependent work
 
 1. Artifact/environment placement, backing-volume reserve and retention scope. This audit authorizes no reclamation.

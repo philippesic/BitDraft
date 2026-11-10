@@ -13,7 +13,7 @@
 | W4 | active | w1a1_eagle/supervisor.py | execute | Scoped CPU run |
 | W5 | active | w1a1_eagle/numerical/worker.py | restore | Own schema-3 tensor resume/branch |
 | W6 | active | w1a1_eagle/numerical/export.py | export_he4 | Bounded CPU GGUF construction |
-| W7 | pending | w1a1_eagle/training/lifecycle.py | evaluate | Separate source gate |
+| W7 | pending | w1a1_eagle/evaluation.py | evaluate | Deferred benchmark evaluator adapter |
 | W8 | pending | benchmarks/__main__.py | qualify | Separate hardware gate |
 | W9 | pending | benchmarks/__main__.py | run | Separate benchmark gate |
 | W10 | active | w1a1_eagle/lifecycle.py | Journal | Exposure and attempt accounting |

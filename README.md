@@ -1,9 +1,10 @@
 # Binary Eagle source port
 
-CPU checks now cover domain/data admission, transactional byte storage, bounded worker
-control and the initial HE4 tensor/loader path. Tiny numerical fixtures exercise the
-model and the public CPU run path through admitted capture, update and publication.
-CPU GGUF export, exact own-state resume and bounded recovery are exercised.
+The pre-benchmark CPU source path covers retained metadata admission, HE4 numerical
+updates, transactional states, exact own-state resume/branch, bounded supervision
+and verified GGUF export. End-to-end fixtures use retained source/intent snapshots.
+Fresh-context readiness, routine repair and failure-diagnosis exercises are recorded
+in [findings](FINDINGS.md); they establish no causal productivity gain.
 Actual retained-artifact parity and native qualification remain pending. Benchmark redesign and high-level agent operations remain deferred.
 This is a local repository with no remote; preserve the separate active GPU job.
 

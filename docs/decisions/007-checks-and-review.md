@@ -101,3 +101,11 @@ remains required. Report validation now rejects ambiguous/negative attempt accou
 and nonfinite/duplicate JSON. Terminal prose names the actual stop and missing
 activation evidence. Journal headroom has an explicit recoverable stop and is included
 in prospective disk accounting; no long-run scaling or scientific-policy claim follows.
+
+The final diagnosis exercise froze its unaided outcome before the parent accepted
+--json in both common argument positions. A deterministic public-CLI check covers
+that change without repeating an agent trial. Explicit fresh retry is now permitted
+only before initialization/update admission in the same recipe/root; an integration
+fixture proves refused preflight cost remains in the successful retry's cumulative
+account. Initialized roots still require exact resume. No automatic retry or new
+allocation authority is introduced.

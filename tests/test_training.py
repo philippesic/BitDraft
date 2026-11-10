@@ -223,3 +223,23 @@ def test_report_refuses_ambiguous_or_negative_attempt_cost(tmp_path: Path) -> No
         )
     with pytest.raises(ValueError, match="ambiguous"):
         other.report()
+
+
+def test_report_json_flag_positions_and_failure_exit(tmp_path: Path) -> None:
+    journal = Journal(tmp_path)
+    journal.append({"kind": "started", "attempt": "fixture"})
+    journal.append(
+        {"kind": "terminal", "attempt": "fixture", "outcome": "failed", "wall_seconds": 6.25}
+    )
+    outputs = []
+    for arguments in (["--json", "report", str(tmp_path)], ["report", str(tmp_path), "--json"]):
+        result = subprocess.run(
+            [sys.executable, "-B", "-m", "w1a1_eagle", *arguments],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        assert result.returncode == 1
+        outputs.append(result.stdout)
+    assert outputs[0] == outputs[1]
+    assert '"cumulative_attempt_seconds": 6.25' in outputs[0]

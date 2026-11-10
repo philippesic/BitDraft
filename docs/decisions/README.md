@@ -10,5 +10,6 @@
 - [008: Verify and parity](008-verify-and-parity.md)
 
 Open: project license, finalized recovery reconciliation, independent artifact backup,
-remote/approval wiring and future stage/run allocations. Scope/default choices in the
-BUILD request are settled for foundation.
+remote/approval wiring and future stage/run allocations. The scoped implementation is recorded in [execution](../execution.md) and
+[findings](../../FINDINGS.md). Historical foundation wording is superseded there for
+implemented CPU capabilities; native/scientific gates remain separate.

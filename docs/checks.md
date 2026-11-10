@@ -42,8 +42,11 @@ or serving performance. Hosted CI and an optional container remain unexercised c
 
 [Decision 007](decisions/007-checks-and-review.md) records intentional policy changes and
 reference-semantic corrections. [Execution](execution.md) describes runtime refusal,
-reporting, identity and resource scope. [Agent exercise evidence](evidence/agent-readiness.json)
-is one fresh readiness/refusal task with explicit isolation and attribution limits.
+reporting, identity and resource scope. Fresh-agent evidence includes [readiness/refusal](evidence/agent-readiness.json),
+[routine repair](evidence/agent-window-exercise.json) and
+[failed-run diagnosis/refusal](evidence/agent-diagnosis-exercise.json). These capability-gated
+exercises retain unaided failures, hints, limitations and parent adjudication. They
+qualify their scoped tasks, not general agent productivity or causal improvement.
 
 CPU scratch, including checker/specimen/type-check temporaries, now uses an owned RAM
 root under /tmp. Reclaimed stale type-check cache and compiler-cache evidence is in

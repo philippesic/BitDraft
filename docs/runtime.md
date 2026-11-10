@@ -1,6 +1,7 @@
 # Runtime and verify requirements
 
-Foundation has no runtime, native build recipe, installed model or real verify command.
+The CPU source runtime is described in [execution](execution.md). No native runtime,
+reproduced native build closure or real hardware verify command is installed here.
 Runtime04 reproduction needs full source, ordered patches, compiler/ABI, loaded libraries
 and build closure: old receipts link objects across ignored execution trees. The submodule
 gitlink or an old binary alone is insufficient. Do not copy or execute those trees.

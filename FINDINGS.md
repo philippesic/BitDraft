@@ -153,3 +153,27 @@ Evidence: [complete intake](docs/evidence/modern-index-complete-intake.json),
 [snapshot refusal](docs/evidence/modern-index-snapshot-intake.json),
 [transport](docs/evidence/metadata-snapshot-transport.json),
 [retained initializer header](docs/evidence/he4-initializer-header.json).
+
+## F015
+
+The pre-benchmark source path now retains exact source and intent inputs for each
+CPU attempt and executes from the retained closure. Tensor reader 3 reconstructs
+frozen data from required initializer dependencies and verifies its fingerprint,
+while retaining learned parameters, Adam/RNG/counters and lineage. Exact CPU
+next-update recovery still passes. Ordinary frozen-buffer mutation refuses.
+A failed preflight can be explicitly retried before initialization in the same
+root; its wall cost remains charged. Once initialized, exact resume is required.
+
+A fresh agent correctly diagnosed a simulated input failure, refused corrupted
+journal evidence and declined unsupported scientific/performance conclusions or
+a real-training restart. Its one CLI flag-position error was retained before a
+small parent interface correction.
+
+Limits: CPU constructions, cooperative source isolation and one shared-host agent
+exercise; no hostile-process sandbox, power-loss proof, causal productivity gain,
+native/hardware qualification or benchmark selection. Real metadata intake was
+repeated at a pinned implementation commit; it is not a timing comparison.
+
+Evidence: [execution contract](docs/execution.md),
+[diagnosis exercise](docs/evidence/agent-diagnosis-exercise.json),
+[pinned intake](docs/evidence/modern-index-qualified-intake.json).

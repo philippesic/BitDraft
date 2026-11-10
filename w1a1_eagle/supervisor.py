@@ -81,11 +81,15 @@ def execute(
             }
             journal.append(terminal)
             terminals.append(terminal)
+        initialized = (root / "states/latest.json").exists() or any(
+            row.get("kind") == "update-attempt" for row in events
+        )
         if starts and (
-            intent.mode == "fresh" or any(row["recipe"] != intent.recipe for row in starts)
+            (intent.mode == "fresh" and initialized)
+            or any(row["recipe"] != intent.recipe for row in starts)
         ):
             raise ValueError(
-                "existing output root requires exact-recipe resume; branch uses a new root"
+                "initialized output root requires exact-recipe resume; branch uses a new root"
             )
         spent = sum(number(row["wall_seconds"]) for row in terminals)
         remaining = intent.budget.wall_seconds - spent
