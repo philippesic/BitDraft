@@ -68,7 +68,7 @@ testpaths = ["tests"]
 addopts = ""
 
 [tool.importlinter]
-root_packages = ["tools", "tests"]
+root_packages = ["tools", "tests", "w1a1_eagle"]
 include_external_packages = true
 
 [[tool.importlinter.contracts]]
@@ -88,4 +88,4 @@ exclude = ["^\\.git/", "^\\.venv/", "^\\.uv-cache/"]
 extend_exclude = []
 ignore = []
 per_rule_ignores = {}
-known_first_party = ["tools", "tests"]
+known_first_party = ["tools", "tests", "w1a1_eagle"]

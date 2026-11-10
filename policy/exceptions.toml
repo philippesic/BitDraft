@@ -110,3 +110,13 @@ reason = "Pinned Hypothesis given decorator exposes an Any callable in its exter
 decision_id = "006-comment-ban-and-exceptions"
 owner = "Philip"
 review_condition = "Review when the declaration, discovery mechanism or pinned tool changes"
+
+[[exception]]
+rule_id = "DEP004"
+path = "tests/test_data.py"
+symbol = "pytest"
+sha256 = "db7b0741c94798db5932296122312b7b87d6e5a9e2ee29833a9949d1f774f40b"
+reason = "Data rejection tests use the declared CPU check dependency; no product pytest import"
+decision_id = "007-checks-and-review"
+owner = "Philip"
+review_condition = "Review when test dependency or rejection checks change"
