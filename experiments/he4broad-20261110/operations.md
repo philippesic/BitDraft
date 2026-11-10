@@ -1,9 +1,21 @@
 # HE4broad fresh training on the November 9–10 captures
 
-State: **update-time continuation authorized; preparing local resume**. Philip authorized this run November 10 in
+State: **RUNNING; eight-hour cumulative update-time continuation**. Philip authorized this run November 10 in
 thread `6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6`. The prerequisite campaign is complete and its RTX 5080 release is verified. Stage 6 release was verified against its pushed release proof and the completion message.
 
 ## Current eight-hour update-time continuation
+
+Actual launch: local tmux socket `binary-eagle-runtime`, session
+`he4fresh-update8h-20261110-01`; supervisor
+`runs/he4fresh-update8h-supervisor-20261110-01/state.json`. Active source is
+`runs/he4broad-20261110-01/source-update8h-20261110-01/`, selected by
+`active-source.json`. Full parameters/Adam/RNG restore passed from the 20,671
+update parent; the cursor continued from 20,671 and completed new updates.
+All three locks belong to the authenticated workflow; storage is local.
+The existing health event is enabled at 30-minute intervals; next check at
+November 11 00:14 UTC / November 10 16:14 Pacific. Raw launch/process/source
+receipts are in `update8h-{preflight,resume-receipt}.json` under the run.
+The source and clock implementation were committed before freezing/launch.
 
 Philip subsequently authorized sustained resume to **28,800 TOTAL synchronized
 optimizer-update seconds**, including the saved 2,873.748 seconds. His explicit

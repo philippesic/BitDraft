@@ -1,5 +1,5 @@
 {
-  "status": "PAUSED",
+  "status": "RUNNING",
   "recipe": {
     "config": {
       "version": 1,
@@ -177,6 +177,26 @@
     "clock": "Training wall includes remote materialization and hashing plus updates; excludes model setup/checkpoint/export/native evaluation. GPU update seconds are synchronized and separately reported. Stop at either cap; one complete iteration may cross a boundary.",
     "order": "All 1568435 windows globally shuffled once with random.Random(8101); cursor preserved",
     "storage": "Read-only SSHFS teacher; separate writable SSHFS archive on pstack-2080; no bulk local copy"
+  },
+  "training_policy": {
+    "version": 1,
+    "authorization": "Philip November 10: resume to eight TOTAL hours of updates, including the existing 47.9 minutes",
+    "clock": "synchronized_update_seconds",
+    "total_update_seconds": 28800,
+    "training_wall_seconds_cap": null,
+    "readout_update_seconds": [
+      3600,
+      7200,
+      10800,
+      14400,
+      18000,
+      21600,
+      25200,
+      28800
+    ],
+    "existing_state": "Exact own-run parameters, Adam, RNG, shuffled order and cursor; no reset",
+    "accounting": "Completed and rejected update time charged cumulatively; setup/data/checkpoint/export/native time reported separately",
+    "historical_panels": "Original wall-clock panels retained with their original labels; update-hour panels use formal-update-*"
   },
   "training": {
     "status": "PAUSED",
@@ -1784,7 +1804,7 @@
     "sequences": 15647,
     "windows": 1568435,
     "unique_labels": 1786275,
-    "authentication": "Metadata/exclusions pinned; every materialized file hashed before exposure",
+    "authentication": "Complete local transfer authenticated once; no per-window hashing or full-feature rescans",
     "dev_sequences": 3,
     "consumed_dev_prompt_overlap": 0,
     "training_data": {

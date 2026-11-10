@@ -2,7 +2,7 @@
 
 ## Fresh HE4broad on the newest 2080 Ti data
 
-November 10: **resuming local HE4broad to eight TOTAL hours of synchronized
+November 10: **RUNNING locally toward eight TOTAL hours of synchronized
 optimizer-update time**, explicitly authorized by Philip after localization.
 The saved state already contains 2,873.748 update seconds (47.9 minutes), 20,671
 updates and 20,702.123 training-wall seconds. The remaining update allocation is
@@ -12,8 +12,9 @@ reported. The original recipe/config stays unchanged for exact state recovery;
 the [continuation policy](../experiments/he4broad-20261110/continuation-policy.json)
 supersedes its old clock/budget. New native panels are at every cumulative update
 hour through eight hours, with distinct `formal-update-*` labels. All earlier
-wall-hour panels remain intact. The existing 30-minute health/repair event is to
-be re-enabled at successful real launch; the hourly availability event stays off.
+wall-hour panels remain intact. The existing 30-minute health/repair event is enabled; the hourly availability
+event stays off. Exact state restore passed and post-restore updates are advancing.
+Next health check: November 10, 16:14 Pacific (November 11, 00:14 UTC).
 
 All 15,647 captures and current-run checkpoints are verified on local ext4.
 The local-loader diagnostic produced exactly equal final parameters/Adam/RNG:

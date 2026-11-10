@@ -1,11 +1,13 @@
 # Fresh HE4broad on the combined 2080 Ti captures
 
-Status: **PAUSED**. 20,671 recoverable updates; 2873.748 synchronized update seconds, 20702.123 training wall seconds (including 17826.771 data I/O seconds). Cap: 43,200 training wall seconds and 43,200 actual update seconds. Setup, checkpoints, export and native eval are separate.
+Status: **RUNNING**. 20,671 recoverable updates; 2873.748 synchronized update seconds, 20702.123 training wall seconds (including 17826.771 data I/O seconds). Philip's resumed allocation is **28,800 total synchronized update seconds (8 hours)**, including the existing 2873.748 seconds. Rejected update time also counts. There is no training-wall cap; data I/O, setup, checkpoints, export and native eval do not consume the update allocation and remain separately reported.
 
 Fresh base-drafter HE4 quantization, fresh Adam, combined 15,647 sequences and 1,568,435 windows. Global seeded window shuffle; exact own-state resume. All hourly native panels use depth 2, greedy, F16 KV, context 4096, two warmups and five repetitions per cell with 256-token output reserve. The extra 60-second diagnostic uses one repetition and 64 tokens. Network model transfer is excluded from native request timings.
 
-| Training wall point | Actual update seconds | Updates | DEV CE | DEV agreement |
-| ---: | ---: | ---: | ---: | ---: |
+Historical numeric points are training-wall seconds; new `update-*` points are cumulative synchronized update seconds. The original recipe/config is retained verbatim for exact state compatibility; the explicit continuation policy supersedes its old clock/budget.
+
+| Readout (clock in label) | Actual update seconds | Updates | DEV CE | DEV agreement |
+| --- | ---: | ---: | ---: | ---: |
 | 0 | 0.000 | 0 | 7.825455 | 0.7407% |
 | 60 | 17.736 | 56 | 7.029570 | 6.6667% |
 | 3600 | 511.046 | 3662 | 5.886574 | 14.0741% |
@@ -41,6 +43,4 @@ Fresh base-drafter HE4 quantization, fresh Adam, combined 15,647 sequences and 1
 
 Consumed DEV3, one training trajectory. Timing repetitions are not fresh prompts/seeds. No heldout opened. External Q4 remains deployment incumbent; no promotion.
 
-[Results and pins](results.json) · [Operations](operations.md).
-
-[Completed local-data migration and matched loader timing](localization.md): all current data/checkpoints are local; production remains paused.
+[Results and pins](results.json) · [Operations](operations.md) · [Local-data migration](localization.md).

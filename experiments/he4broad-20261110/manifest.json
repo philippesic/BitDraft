@@ -1,5 +1,5 @@
 {
-  "status": "RESUME_PREPARED_UPDATE_TIME",
+  "status": "TRAINING_UPDATE_TIME",
   "run": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01",
   "owner_thread": "6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6",
   "prerequisite_thread": "mcp:launch:5cc79481d4d97b44b4c6cf5f1de491084f7f89c30d5802c9dbc55da66ceb13b2",
@@ -27,30 +27,12 @@
   "health_interval_seconds": 1800,
   "gpu_availability_fallback_seconds": 3600,
   "gpu_training_launched": true,
-  "remaining_preparation": [
-    "Freeze committed continuation source, launch actual own-state resume and enable existing health event"
-  ],
+  "remaining_preparation": [],
   "events": {
-    "availability": {
-      "scheduledTaskId": "scheduled-task:command:mcp:a4024f98-8308-4bbd-9079-def8ceacdbbb:schedule-task:he4broad-20261110-gpu-fallback",
-      "enabled": false,
-      "schedule": {
-        "type": "interval",
-        "everyMs": 3600000
-      },
-      "boundThreadId": "6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6",
-      "nextRunAt": null
-    },
-    "health": {
-      "scheduledTaskId": "scheduled-task:command:mcp:a4024f98-8308-4bbd-9079-def8ceacdbbb:schedule-task:he4broad-20261110-health",
-      "enabled": true,
-      "schedule": {
-        "type": "interval",
-        "everyMs": 1800000
-      },
-      "boundThreadId": "6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6",
-      "nextRunAt": "2026-11-10T13:07:59.606Z"
-    }
+    "availability_enabled": false,
+    "health_enabled": true,
+    "health_next_run_at": "2026-11-11T00:14:54.233Z",
+    "receipts": "runs/he4broad-20261110-01/schedules.json"
   },
   "prerequisite_release_checkpoint": "04dba8f7f0a9b67b84430221adbdfc8d64d55446",
   "training_wall_seconds_cap": null,
@@ -58,7 +40,7 @@
   "checkpoint_remote_directory": "/home/philip/he4broad-training-20261110-01",
   "source_module": "scripts.he4fresh",
   "data_index_sha256": "d703d61f47eee8e695bbd09293c15bbae57184d078b98931ff4a2d5828bdbd73",
-  "supervisor": "runs/he4fresh-supervisor-20261110-01/state.json",
+  "supervisor": "/home/philip/binary-eagle-decoding/runs/he4fresh-update8h-supervisor-20261110-01/state.json",
   "frozen_source": "runs/he4broad-20261110-01/source/source-manifest.json",
   "qualifications": {
     "cpu_adapter_tests": {
@@ -158,5 +140,30 @@
     "existing_state": "Exact own-run parameters, Adam, RNG, shuffled order and cursor; no reset",
     "accounting": "Completed and rejected update time charged cumulatively; setup/data/checkpoint/export/native time reported separately",
     "historical_panels": "Original wall-clock panels retained with their original labels; update-hour panels use formal-update-*"
+  },
+  "active_frozen_source": {
+    "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/source-update8h-20261110-01/source-manifest.json",
+    "sha256": "dbdb132b7fa21854e80b6f625d2848cca2bb9a97f0eab03b96fc7d1e8c0dcf1c",
+    "bytes": 117652
+  },
+  "tmux_session": "he4fresh-update8h-20261110-01",
+  "continuation_launch": {
+    "source": {
+      "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/source-update8h-20261110-01/source-manifest.json",
+      "sha256": "dbdb132b7fa21854e80b6f625d2848cca2bb9a97f0eab03b96fc7d1e8c0dcf1c",
+      "bytes": 117652
+    },
+    "supervisor": "/home/philip/binary-eagle-decoding/runs/he4fresh-update8h-supervisor-20261110-01/state.json",
+    "tmux_socket": "binary-eagle-runtime",
+    "tmux_session": "he4fresh-update8h-20261110-01",
+    "resume_receipt": "runs/he4broad-20261110-01/update8h-resume-receipt.json",
+    "cpu_tests": 11,
+    "restored_parent_updates": 20671,
+    "restored_parent_update_seconds": 2873.7484793208714,
+    "full_parameter_adam_rng_identity": true,
+    "cursor_continued": true,
+    "completed_updates_observed": 21300,
+    "cumulative_update_seconds_observed": 2971.077096561028,
+    "observation_unix": 1794354364.6874843
   }
 }
