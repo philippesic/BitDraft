@@ -126,8 +126,9 @@ def component(rule: str, data: Record, files: dict[str, str]) -> list[Diagnostic
                     "id": name,
                     "validator": name.lower(),
                     "evidence": "audit",
-                    "bad": "bad",
-                    "control": "control",
+                    "bad": "tests/cases/" + name.lower() + ".bad.json",
+                    "control": "tests/cases/" + name.lower() + ".control.json",
+                    "exit": 1,
                     "diagnostic": name,
                 }
                 for name in REQUIRED_RULES
