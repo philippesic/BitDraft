@@ -11,10 +11,11 @@
     "child": {
       "exposure": 14,
       "seed": 7,
-      "cursor": 2,
+      "cursor": 3,
       "trajectory": "t"
     },
-    "added": 4
+    "added": 4,
+    "cursor_advance": 1
   },
   "files": {},
   "exit": 0,

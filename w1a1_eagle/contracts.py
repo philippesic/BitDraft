@@ -254,9 +254,13 @@ def validate_contract(rule: str, data: Record) -> list[Diagnostic]:
             )
         elif rule == "exposure_parent":
             parent, child = record(data["parent"]), record(data["child"])
-            valid = integer(child["exposure"]) == integer(parent["exposure"]) + integer(
-                data["added"]
-            ) and all(parent[k] == child[k] for k in ("seed", "cursor", "trajectory"))
+            valid = (
+                integer(child["exposure"]) == integer(parent["exposure"]) + integer(data["added"])
+                and all(parent[k] == child[k] for k in ("seed", "trajectory"))
+                and integer(data["cursor_advance"]) >= 0
+                and integer(child["cursor"])
+                == integer(parent["cursor"]) + integer(data["cursor_advance"])
+            )
         elif rule in {"disk_reserve", "disk_backing"}:
             observations = [record(v) for v in sequence(data["devices"])]
             valid = all(
@@ -297,7 +301,7 @@ def validate_contract(rule: str, data: Record) -> list[Diagnostic]:
             records = [record(v) for v in sequence(data["requests"])]
             valid = bool(records) and all(
                 v["tokens"] == v["reference_tokens"]
-                and integer(v["proposed"]) > 0
+                and integer(v["proposed"]) >= 0
                 and number(v["wall"]) > 0
                 for v in records
             )

@@ -21,7 +21,9 @@ def machine_line(text: str) -> bool:
     )
 
 
-def lexical_comments(text: str, native: bool = False, semicolon: bool = False) -> list[str]:
+def lexical_spans(
+    text: str, native: bool = False, semicolon: bool = False
+) -> list[tuple[str, int, int]]:
     pattern = (
         r'''(?:R"(?P<delim>[^ ()\\\t\n]{0,16})\([\s\S]*?\)(?P=delim)"|"""[\s\S]*?"""|\x27\x27\x27[\s\S]*?\x27\x27\x27|"(?:\\.|[^"\\])*"|\x27(?:\\.|[^\x27\\])*\x27)|(?P<comment>/\*[\s\S]*?\*/|//[^\n]*)'''
         if native
@@ -31,8 +33,14 @@ def lexical_comments(text: str, native: bool = False, semicolon: bool = False) -
     if semicolon:
         pattern = pattern.replace(r"\#[^\n]*", r"[\#;][^\n]*")
     return [
-        m.group("comment") for m in re.finditer(pattern, text) if m.group("comment") is not None
+        (m.group("comment"), m.start("comment"), m.end("comment"))
+        for m in re.finditer(pattern, text)
+        if m.group("comment") is not None
     ]
+
+
+def lexical_comments(text: str, native: bool = False, semicolon: bool = False) -> list[str]:
+    return [value for value, _, _ in lexical_spans(text, native, semicolon)]
 
 
 def mask_data(text: str, suffix: str) -> str:
@@ -63,6 +71,129 @@ def mask_data(text: str, suffix: str) -> str:
             if match:
                 terminator = match.group(1)
     return "".join(output)
+
+
+def scan_patch(
+    path: str, text: str, exceptions: list[Record], bases: dict[str, str]
+) -> list[Diagnostic]:
+    lines = text.splitlines()
+    index = 0
+    seen = False
+    try:
+        while index < len(lines):
+            if not lines[index].startswith("--- "):
+                index += 1
+                continue
+            old_name = lines[index][4:]
+            index += 1
+            if index >= len(lines) or not lines[index].startswith("+++ "):
+                raise ValueError("missing patch post-image")
+            new_name = lines[index][4:]
+            target = (
+                new_name.removeprefix("b/")
+                if new_name != "/dev/null"
+                else old_name.removeprefix("a/")
+            )
+            if PurePosixPath(target).is_absolute() or ".." in PurePosixPath(target).parts:
+                raise ValueError("patch path escape")
+            index += 1
+            hunks: list[tuple[int, int, int, int, list[str]]] = []
+            while index < len(lines) and not lines[index].startswith(("--- ", "diff --git ")):
+                match = re.match(r"@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@", lines[index])
+                if not match:
+                    raise ValueError("unsupported patch framing")
+                old_start, old_count, new_start, new_count = (
+                    int(match[1]),
+                    int(match[2] or "1"),
+                    int(match[3]),
+                    int(match[4] or "1"),
+                )
+                index += 1
+                body: list[str] = []
+                while index < len(lines) and not lines[index].startswith(
+                    ("@@", "--- ", "diff --git ")
+                ):
+                    if lines[index] == "\\ No newline at end of file":
+                        raise ValueError(
+                            "non-newline post-images need explicit byte reconstruction"
+                        )
+                    if not lines[index] or lines[index][0] not in " +-":
+                        raise ValueError("malformed patch body")
+                    body.append(lines[index])
+                    index += 1
+                if (
+                    sum(line[0] in " -" for line in body) != old_count
+                    or sum(line[0] in " +" for line in body) != new_count
+                ):
+                    raise ValueError("hunk counts disagree")
+                hunks.append((old_start, old_count, new_start, new_count, body))
+            if not hunks:
+                raise ValueError("empty file patch")
+            base = bases.get(target)
+            if base is None:
+                if len(hunks) != 1 or hunks[0][0] not in (0, 1) or hunks[0][2] not in (0, 1):
+                    raise ValueError("noninitial hunks require a pinned complete base")
+                base = "".join(line[1:] + "\n" for line in hunks[0][4] if line[0] in " -")
+            original = base.splitlines(keepends=True)
+            result: list[str] = []
+            added: set[int] = set()
+            cursor = 0
+            for old_start, old_count, new_start, new_count, body in hunks:
+                offset = old_start - 1 if old_count else old_start
+                if offset < cursor or offset > len(original):
+                    raise ValueError("overlapping or out-of-range hunk")
+                result.extend(original[cursor:offset])
+                cursor = offset
+                if new_count and new_start != len(result) + 1:
+                    raise ValueError("post-image hunk offset disagrees")
+                for line in body:
+                    if line[0] in " -":
+                        if cursor >= len(original) or original[cursor] != line[1:] + "\n":
+                            raise ValueError("pinned base disagrees with patch")
+                        cursor += 1
+                    if line[0] in " +":
+                        result.append(line[1:] + "\n")
+                        if line[0] == "+":
+                            added.add(len(result))
+            result.extend(original[cursor:])
+            post = "".join(result)
+            suffix = PurePosixPath(target).suffix
+            if suffix == ".py":
+                tree = ast.parse(post)
+                tokens = tokenize.generate_tokens(io.StringIO(post).readline)
+                if any(
+                    token.type == tokenize.COMMENT
+                    and added.intersection(range(token.start[0], token.end[0] + 1))
+                    for token in tokens
+                ):
+                    raise ValueError("added Python comment")
+                if any(
+                    isinstance(node, ast.Expr)
+                    and isinstance(node.value, ast.Constant)
+                    and isinstance(node.value.value, str)
+                    and added.intersection(range(node.lineno, (node.end_lineno or node.lineno) + 1))
+                    for node in ast.walk(tree)
+                ):
+                    raise ValueError("added Python documentation string")
+            elif suffix in NATIVE_SUFFIXES or suffix in HASH_SUFFIXES:
+                for comment, start, end in lexical_spans(
+                    post, native=suffix in NATIVE_SUFFIXES, semicolon=suffix in {".ini", ".cfg"}
+                ):
+                    first = post.count("\n", 0, start) + 1
+                    last = post.count("\n", 0, end) + 1
+                    if added.intersection(range(first, last + 1)):
+                        if not machine_line(comment) or scan_file(
+                            target, comment + "\n", exceptions
+                        ):
+                            raise ValueError("added comment or unregistered machine line")
+            else:
+                raise ValueError("unsupported patch language")
+            seen = True
+        if not seen:
+            raise ValueError("no patch files")
+    except (ValueError, SyntaxError, tokenize.TokenError, IndentationError):
+        return [Diagnostic("COMMENT_PATCH", path)]
+    return []
 
 
 def scan_file(path: str, text: str, exceptions: list[Record]) -> list[Diagnostic]:
@@ -107,22 +238,7 @@ def scan_file(path: str, text: str, exceptions: list[Record]) -> list[Diagnostic
             mask_data(text, suffix), semicolon=suffix in {".ini", ".cfg"} or name == ".editorconfig"
         )
     elif suffix in {".patch", ".diff"}:
-        diagnostics: list[Diagnostic] = []
-        target = ""
-        context: list[str] = []
-        for line in text.splitlines():
-            if line.startswith("+++ b/"):
-                target = line[6:]
-            elif line.startswith("@@"):
-                if not re.match(r"@@ -1(?:,\d+)? \+1(?:,\d+)? @@", line):
-                    return [Diagnostic("COMMENT_PATCH", path)]
-            elif line.startswith(("+", " ")):
-                context.append(line[1:])
-        if not target:
-            return [Diagnostic("COMMENT_PATCH", path)]
-        if scan_file(target, "\n".join(context) + "\n", exceptions):
-            diagnostics.append(Diagnostic("COMMENT_PATCH", path))
-        return diagnostics
+        return scan_patch(path, text, exceptions, {})
     elif suffix == ".md":
         diagnostics = []
         for match in re.finditer(r"(?m)^```([^\n]*)\n([\s\S]*?)^```", text):

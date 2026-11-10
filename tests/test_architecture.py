@@ -60,3 +60,17 @@ def test_reserved_writer_and_discovery() -> None:
         Diagnostic("OWNER_PATH", "model.py")
     ]
     assert inspect_tree({"a.py": "def f(adapter):\n    return adapter.run()\n"}) == []
+
+
+def test_owner_rule_uses_module_not_filename_words() -> None:
+    assert inspect_tree({"helper.py": "def f():\n    open('best_effort.log', 'w')\n"}) == []
+    for text in [
+        "import torch\ndef f(value, destination):\n    torch.save(value, destination)\n",
+        "import os\ndef f(a,b):\n    os.replace(a,b)\n",
+    ]:
+        assert Diagnostic("OWNER_PATH", "w1a1_eagle/model.py") in inspect_tree(
+            {"w1a1_eagle/model.py": text}
+        )
+    assert Diagnostic("ARCH_IMPORT_EFFECT", "a.py") in inspect_tree(
+        {"a.py": "import shutil\nshutil.rmtree('scratch')\n"}
+    )

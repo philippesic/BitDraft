@@ -84,7 +84,7 @@ def assess_outcome(
 def validate_roster(ids: list[str], cases: set[str]) -> list[Diagnostic]:
     if (
         tuple(ids) != REQUIRED_RULES
-        or len(cases) != 250
+        or len(cases) != 2 * len(REQUIRED_RULES)
         or cases
         != {
             stem.lower() + "." + kind + ".json"

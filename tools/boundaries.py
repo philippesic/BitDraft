@@ -2,6 +2,7 @@ import ast
 import sys
 from pathlib import PurePosixPath
 
+from tools.config import ENTRY_MODULES
 from tools.contracts import Diagnostic
 
 PURE_IMPORTS = {
@@ -22,9 +23,17 @@ FORBIDDEN = (
     ("w1a1_eagle.model", "w1a1_eagle.training"),
 )
 WRITERS = {
-    "result": "benchmarks.runner",
-    "role": "w1a1_eagle.data.ledger",
-    "best": "w1a1_eagle.checkpoints.store",
+    "benchmarks.runner",
+    "w1a1_eagle.data",
+    "w1a1_eagle.checkpoints.store",
+    "w1a1_eagle.lifecycle",
+}
+IO_FREE = {
+    "model",
+    "w1a1_eagle.model",
+    "w1a1_eagle.training",
+    "w1a1_eagle.contracts",
+    "tools.contracts",
 }
 
 
@@ -147,27 +156,19 @@ def inspect_tree(files: dict[str, str]) -> list[Diagnostic]:
                     diagnostics.add(Diagnostic("TIMING_OWNER", path))
                 if call.startswith("random.") and call != "random.Random":
                     diagnostics.add(Diagnostic("SEEDED_RANDOM", path))
-                if (
-                    call.endswith((".write_text", ".write_bytes", ".publish", ".save", ".open"))
-                    or call == "open"
+                if module in IO_FREE and (
+                    call
+                    in {"open", "torch.save", "os.replace", "os.rename", "os.remove", "os.unlink"}
+                    or call.endswith((".write_text", ".write_bytes", ".open", ".mkdir", ".unlink"))
                 ):
-                    for key, owner in WRITERS.items():
-                        if key in call or any(
-                            isinstance(a, ast.Constant)
-                            and isinstance(a.value, str)
-                            and key in a.value
-                            for a in node.args
-                        ):
-                            if module != owner and not module.startswith("tools."):
-                                diagnostics.add(Diagnostic("OWNER_PATH", path))
-                    if module == "tools.contracts":
-                        diagnostics.add(Diagnostic("ARCH_PURE", path))
-                if (
-                    any(
-                        part in call
-                        for part in ("sink.publish", "store.publish", "ledger.assign_role")
+                    diagnostics.add(
+                        Diagnostic(
+                            "ARCH_PURE" if module.endswith("contracts") else "OWNER_PATH", path
+                        )
                     )
-                    and module not in WRITERS.values()
+                if (
+                    call in {"sink.publish", "store.publish", "ledger.assign_role"}
+                    and module not in WRITERS
                 ):
                     diagnostics.add(Diagnostic("OWNER_CALL", path))
                 if any(
@@ -205,8 +206,7 @@ def inspect_tree(files: dict[str, str]) -> list[Diagnostic]:
                 isinstance(node, ast.If)
                 and isinstance(node.test, ast.Compare)
                 and any(isinstance(n, ast.Name) and n.id == "__name__" for n in ast.walk(node.test))
-                and path
-                not in {"tools/check.py", "w1a1_eagle/__main__.py", "benchmarks/__main__.py"}
+                and module not in ENTRY_MODULES
             ):
                 diagnostics.add(Diagnostic("PUBLIC_ENTRY", path))
         pending: list[ast.AST] = list(tree.body)
@@ -236,6 +236,8 @@ def inspect_tree(files: dict[str, str]) -> list[Diagnostic]:
                             ".run",
                             ".Popen",
                             ".synchronize",
+                            ".rmtree",
+                            ".makedirs",
                         )
                     )
                     or call == "open"

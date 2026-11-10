@@ -1,4 +1,3 @@
-import hashlib
 import json
 import shutil
 import tempfile
@@ -13,6 +12,7 @@ from dulwich.index import IndexEntry
 from dulwich.repo import Repo
 
 from tools.contracts import Record, sequence
+from tools.policy_review import content_digest as content_digest
 
 
 def read_toml(path: Path) -> Record:
@@ -56,13 +56,6 @@ def inventory(root: Path) -> tuple[dict[str, str], list[str]]:
         return files, sorted(set(escapes))
     finally:
         repo.close()
-
-
-def content_digest(files: dict[str, str]) -> str:
-    digest = hashlib.sha256()
-    for path, text in sorted(files.items()):
-        digest.update(path.encode() + b"\0" + text.encode() + b"\0")
-    return digest.hexdigest()
 
 
 @contextmanager

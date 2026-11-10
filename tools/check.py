@@ -120,7 +120,9 @@ def main() -> int:
             )
             for diagnostic in proof:
                 print(f"{diagnostic.code}: {diagnostic.path}")
-            print(f"125 rules; {bad}/125 bad rejected; {control}/125 controls passed")
+            print(
+                f"{len(REQUIRED_RULES)} rules; {bad}/{len(REQUIRED_RULES)} bad rejected; {control}/{len(REQUIRED_RULES)} controls passed"
+            )
             print("proof " + ("FAIL" if proof else "PASS") + "; runtime qualification unavailable")
             return int(bool(proof))
         all_diagnostics: list[Diagnostic] = []
@@ -176,8 +178,6 @@ def main() -> int:
                     root,
                 )
             ]
-            numerical_settings = dict(MYPY)
-            numerical_settings.update(disallow_any_expr=False, disallow_untyped_calls=False)
             profile = temporary / "numerical-types.ini"
             profile.write_text(
                 "[mypy]\n"
@@ -189,31 +189,28 @@ def main() -> int:
                         if isinstance(value, list)
                         else str(value)
                     )
-                    for key, value in numerical_settings.items()
+                    for key, value in MYPY.items()
                 )
-                + "\n"
+                + "\n[mypy-tests.numerical.*]\ndisallow_any_expr = false\ndisallow_untyped_calls = false\n"
             )
-            for selected, allowances in (
-                (model_paths, []),
-                (numerical_paths, ["--config-file", str(profile)]),
-            ):
-                if selected:
-                    mypy_results.append(
-                        self_test.run_command(
-                            [
-                                "mypy",
-                                *([] if allowances else ["--strict"]),
-                                "--no-incremental",
-                                "--cache-dir=/dev/null",
-                                "--python-executable",
-                                config.environment["BINARY_NUMERICAL_PYTHON"],
-                                "--show-error-codes",
-                                *allowances,
-                                *selected,
-                            ],
-                            root,
-                        )
+            selected = model_paths + numerical_paths
+            if selected:
+                mypy_results.append(
+                    self_test.run_command(
+                        [
+                            "mypy",
+                            "--no-incremental",
+                            "--cache-dir=/dev/null",
+                            "--python-executable",
+                            config.environment["BINARY_NUMERICAL_PYTHON"],
+                            "--show-error-codes",
+                            "--config-file",
+                            str(profile),
+                            *selected,
+                        ],
+                        root,
                     )
+                )
             for outcome in mypy_results:
                 if outcome.exit or "Warning: unused section(s)" in outcome.output:
                     print(outcome.output)
@@ -266,7 +263,9 @@ def main() -> int:
             proof, bad, control = self_test.run_corpus(
                 root, config.temporary, record(evidence["fixtures"])
             )
-            print(f"specimens: {bad}/125 bad rejected; {control}/125 controls passed")
+            print(
+                f"specimens: {bad}/{len(REQUIRED_RULES)} bad rejected; {control}/{len(REQUIRED_RULES)} controls passed"
+            )
             stage("proofs", proof)
         report: Record = policy_review.verification_report(files, passed)
         report["content_sha256"] = content_digest(files)
@@ -282,7 +281,7 @@ def main() -> int:
         print("foundation " + ("FAIL" if all_diagnostics else "PASS"))
         return int(bool(all_diagnostics))
     except (OSError, KeyError, ValueError) as error:
-        print(f"SETUP_ERROR: {type(error).__name__}")
+        print(f"SETUP_ERROR: {type(error).__name__}: {error}")
         return 2
 
 

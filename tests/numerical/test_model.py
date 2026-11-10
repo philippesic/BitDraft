@@ -14,15 +14,69 @@ from torch import nn
 
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.clock import Monotonic
+from w1a1_eagle.contracts import Record, record
 from w1a1_eagle.data import Artifact, Window
+from w1a1_eagle.identity import source_identity
 from w1a1_eagle.model import HE4, Geometry, Layer, Projection, hard_sign, rms, rope
 from w1a1_eagle.numerical.captures import Capture, CaptureCache, CaptureSpec, load_capture
+from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.weights import load_he4, shapes
 from w1a1_eagle.numerical.worker import TensorWorker
+from w1a1_eagle.records import canonical, reference
+from w1a1_eagle.supervisor import execute
 from w1a1_eagle.training import Budget
 
 
 class TestNumerical(unittest.TestCase):
+    def reference(self, path: Path) -> Artifact:
+        return Artifact(path, hashlib.sha256(path.read_bytes()).hexdigest(), path.stat().st_size)
+
+    def fixture_corpus(self, root: Path, hidden: int) -> Artifact:
+        files = []
+        for tap in (2, 6, 10, 14, 18, 22, 26, 30):
+            path = root / f"layer-{tap}.f32"
+            path.write_bytes(np.full((24, hidden), tap / 32, dtype="<f4").tobytes())
+            files.append(reference(self.reference(path)))
+        metadata = root / "capture.json"
+        metadata.write_bytes(
+            canonical(
+                {
+                    "taps": [2, 6, 10, 14, 18, 22, 26, 30],
+                    "feature_semantics": "zero_based_pre_block_input_all_tokens",
+                    "input_tokens": [0] * 24,
+                    "prompt_tokens": 8,
+                    "logit_positions": list(range(8, 24)),
+                    "greedy_ids": [1] * 15 + [19],
+                    "eog_ids": [19],
+                }
+            )
+        )
+        manifest = root / "corpus.json"
+        manifest.write_bytes(
+            canonical(
+                {
+                    "schema": 1,
+                    "target_sha256": "a" * 64,
+                    "protected": ["heldout24"],
+                    "expected_train": 1,
+                    "records": [
+                        {
+                            "id": "one",
+                            "source": "synthetic-fixture",
+                            "group": "one",
+                            "topic": None,
+                            "aliases": [],
+                            "role": "train",
+                            "ancestry": "verified",
+                            "metadata": reference(self.reference(metadata)),
+                            "files": files,
+                        }
+                    ],
+                }
+            )
+        )
+        return self.reference(manifest)
+
     def test_projection_scalar_oracle(self) -> None:
         policy = tomllib.loads(Path("policy/numerical.toml").read_text())
         for name in ("torch", "gguf", "numpy"):
@@ -145,6 +199,60 @@ class TestNumerical(unittest.TestCase):
             block = cast(Layer, model.blocks[0])
             self.assertTrue(torch.equal(block.gate.latent_sign, torch.ones((256, 256))))
             self.assertTrue(torch.equal(block.gate.scale, torch.ones(256)))
+            corpus_ref = self.fixture_corpus(root, 256)
+            corpus = Corpus(corpus_ref, 17, 64 * 1024 * 1024, 256)
+            self.assertEqual(corpus.count, 2)
+            self.assertEqual(corpus.unique_positions, 16)
+            expected = [corpus.locate(i)[1] for i in range(5)]
+            self.assertEqual(
+                expected,
+                [Corpus(corpus_ref, 17, 64 * 1024 * 1024, 256).locate(i)[1] for i in range(5)],
+            )
+            self.assertEqual(corpus.exposure(4)["mean_visits"], 60 / 16)
+            intent: Record = {
+                "schema": 1,
+                "objective": "exercise CPU source integration",
+                "hypothesis": "one finite update can be restored",
+                "decision": "CPU plumbing qualification only",
+                "risk": "synthetic source cannot establish native parity or learning usefulness",
+                "authority_scope": "disposable-CPU-test",
+                "source": reference(source_ref),
+                "vocabulary": reference(vocabulary_ref),
+                "corpus": reference(corpus_ref),
+                "parent": None,
+                "mode": "fresh",
+                "budget": {"updates": 1, "wall_seconds": 60, "attempts": 2, "retries": 0},
+                "memory_bytes": 64 * 1024 * 1024,
+                "state_bytes": 8 * 1024 * 1024,
+                "disk_reserve_bytes": 1,
+                "backing_available_bytes": 16 * 1024 * 1024,
+                "seed": 17,
+                "device": "cpu",
+                "science_policy": {
+                    "id": "synthetic-fixture-only",
+                    "min_unique_positions": 16,
+                    "max_mean_visits": 2,
+                },
+                "geometry": {
+                    "hidden": 256,
+                    "intermediate": 256,
+                    "heads": 4,
+                    "kv_heads": 1,
+                    "head_dim": 8,
+                    "layers": 1,
+                },
+                "code_sha256": source_identity(Path.cwd()),
+            }
+            intent_path = root / "intent.json"
+            intent_path.write_bytes(canonical(intent))
+            report = execute(intent_path, root / "attempt", "disposable-CPU-test")
+            self.assertEqual(record(report["latest"])["outcome"], "complete", report)
+            self.assertEqual(record(report["worker"])["updates"], 1)
+            self.assertIn("unknown", str(report["scientific"]))
+            latest = Store(root / "attempt/states").latest(
+                str(record(report["admission"])["recipe"])
+            )
+            self.assertEqual(latest.updates, 1)
 
     def test_capture_tail_budget_and_corruption(self) -> None:
         with tempfile.TemporaryDirectory(prefix="binary-capture-") as directory:

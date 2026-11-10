@@ -11,7 +11,7 @@ from tools.self_test import assess_outcome, run_case, run_command, run_corpus, v
 
 
 def test_rule_and_case_roster() -> None:
-    assert len(REQUIRED_RULES) == 125
+    assert REQUIRED_RULES and len(REQUIRED_RULES) == len(set(REQUIRED_RULES))
     cases = {p.name for p in Path("tests/cases").glob("*.json")}
     assert validate_roster(list(REQUIRED_RULES), cases) == []
     assert validate_roster(list(REQUIRED_RULES) + [REQUIRED_RULES[0]], cases)
@@ -44,7 +44,7 @@ def test_missing_specimen_is_rejected(tmp_path: Path) -> None:
     for source in Path("tests/cases").glob("*.json"):
         if source.name != "comment_python.bad.json":
             (tmp_path / "tests/cases" / source.name).write_bytes(source.read_bytes())
-    assert len(list((tmp_path / "tests/cases").glob("*.json"))) == 249
+    assert len(list((tmp_path / "tests/cases").glob("*.json"))) == 2 * len(REQUIRED_RULES) - 1
     diagnostics, bad, control = run_corpus(tmp_path, tmp_path, {})
     assert diagnostics == [Diagnostic("RULE_PAIR", "policy/rules.toml")]
     assert bad == control == 0

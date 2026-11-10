@@ -1,9 +1,10 @@
 import os
+import tomllib
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, TypeAlias
+from typing import Callable, TypeAlias, cast
 
-from tools.contracts import Record
+from tools.contracts import Record, record, sequence, string
 from w1a1_eagle.config import numerical_python
 
 
@@ -63,153 +64,22 @@ def needs_reexec(config: Settings) -> bool:
     )
 
 
-REQUIRED_RULES = (
-    "PIN_PYTHON",
-    "PIN_TOOL",
-    "PIN_LOCK",
-    "STAGE_GATE",
-    "CHECK_CONFIG",
-    "FORMAT",
-    "F401",
-    "F821",
-    "I001",
-    "B006",
-    "UP006",
-    "TYPE_CONFIG",
-    "TYPE_UNTYPED",
-    "TYPE_RETURN",
-    "TYPE_ANY",
-    "TYPE_ROLE",
-    "TYPE_IMPORT",
-    "TYPE_IGNORE",
-    "TYPE_UNUSED_CONFIG",
-    "TYPE_GENERICS",
-    "TYPE_SUBCLASS_ANY",
-    "TYPE_UNTYPED_CALL",
-    "TYPE_PARTIAL_DEF",
-    "TYPE_BODY",
-    "TYPE_DECORATOR",
-    "TYPE_CAST",
-    "TYPE_RETURN_ANY",
-    "TYPE_REEXPORT",
-    "TYPE_EQUALITY",
-    "TYPE_BYTES",
-    "TYPE_EXTRA",
-    "TYPE_UNREACHABLE",
-    "TYPE_EXPLICIT_ANY",
-    "TYPE_UNIMPORTED_ANY",
-    "TYPE_IGNORE_CODE",
-    "ARCH_DIRECT",
-    "ARCH_TRANSITIVE",
-    "ARCH_CYCLE",
-    "ARCH_PURE",
-    "ARCH_HISTORY",
-    "ARCH_DYNAMIC",
-    "ARCH_SYSPATH",
-    "ARCH_IMPORT_EFFECT",
-    "VERIFY_MISSING",
-    "VERIFY_TOKEN",
-    "VERIFY_LABEL",
-    "VERIFY_ACTIVATION",
-    "DISCOVERY_NAME",
-    "DISCOVERY_BRANCH",
-    "DISCOVERY_DUPLICATE",
-    "DISCOVERY_SCHEMA",
-    "OWNER_CALL",
-    "OWNER_PATH",
-    "OWNER_RECORD",
-    "DEAD_CODE",
-    "DEP001",
-    "DEP002",
-    "DEP003",
-    "DEP004",
-    "UNUSED_TOOL",
-    "NULL_TOPICS",
-    "TOPIC_NAMESPACE",
-    "TOPIC_TYPE",
-    "GROUP_PROPERTIES",
-    "HELDOUT_ROLE",
-    "UNKNOWN_ANCESTRY",
-    "COUNT_INTENT",
-    "COUNT_CONSERVATION",
-    "COUNT_UNIQUE",
-    "CAPTURE_OFFSET",
-    "CAPTURE_EOG",
-    "EXPOSURE_SCHEDULE",
-    "EXPOSURE_PARENT",
-    "DISK_RESERVE",
-    "DISK_BACKING",
-    "SELECTION_PEAK",
-    "SELECTION_TIE",
-    "SELECTION_PARTIAL",
-    "COMPARE_CLOCK",
-    "COMPARE_ERA",
-    "COMPARE_MACHINE",
-    "COMPARE_TARGET",
-    "COMPARE_WORKLOAD",
-    "COMPARE_LENGTH",
-    "COMPARE_ROLE",
-    "COMPARE_REPEATS",
-    "COMPARE_BINARY",
-    "COMPARE_INSTRUMENT",
-    "COMPARE_DEPTH",
-    "COMPARE_KV",
-    "COMPARE_GENERATION",
-    "COMPARE_CORRECTNESS",
-    "ENV_OWNER",
-    "TIMING_OWNER",
-    "SEEDED_RANDOM",
-    "PUBLIC_ENTRY",
-    "EXCEPTION_UNLISTED",
-    "EXCEPTION_BROAD",
-    "EXCEPTION_STALE",
-    "POLICY_REVIEW",
-    "COMMENT_PYTHON",
-    "COMMENT_DOCSTRING",
-    "COMMENT_SHELL",
-    "COMMENT_TOML",
-    "COMMENT_YAML",
-    "COMMENT_NATIVE",
-    "COMMENT_PATCH",
-    "COMMENT_OTHER",
-    "COMMENT_UNKNOWN",
-    "MAP_ENTRY",
-    "DOC_LINK",
-    "EVIDENCE_PIN",
-    "RULE_PAIR",
-    "PROOF_TOOL",
-    "PROOF_DIAGNOSTIC",
-    "PROOF_DISABLED",
-    "REQUIRED_TESTS",
-    "INSTRUCTIONS_ROOT",
-    "INSTRUCTIONS_BUDGET",
-    "CLAUDE_POINTER",
-    "REPO_OUTPUTS",
-    "REPO_LARGE",
-    "REPO_SECRET",
-    "REPO_IGNORED",
-    "REPO_DIARY",
-)
+def policy_data(name: str) -> Record:
+    return cast(
+        Record,
+        tomllib.loads((Path(__file__).resolve().parent.parent / "policy" / name).read_text()),
+    )
+
+
+RULES = tuple(record(value) for value in sequence(policy_data("rules.toml")["rule"]))
+REQUIRED_RULES = tuple(string(value["id"]) for value in RULES)
 GROUP_COUNTS = {
-    "B": 5,
-    "L": 6,
-    "T": 24,
-    "A": 8,
-    "G1": 4,
-    "G2": 4,
-    "G3": 3,
-    "G4": 6,
-    "G5a": 6,
-    "G5b": 5,
-    "G5c": 4,
-    "G5d": 3,
-    "G5e": 14,
-    "G6": 4,
-    "G7": 4,
-    "G8": 9,
-    "G9": 3,
-    "G10": 5,
-    "R": 8,
+    string(value["group"]): sum(item["group"] == value["group"] for item in RULES)
+    for value in RULES
+}
+COMMANDS = policy_data("commands.toml")
+ENTRY_MODULES = {
+    string(value) for key in ("public", "private", "deferred") for value in sequence(COMMANDS[key])
 }
 STAGES = (
     "bootstrap",
@@ -333,44 +203,7 @@ FOUNDATION_FILES = (
     "docs/decisions/008-verify-and-parity.md",
 )
 
-REQUIRED_CPU = (
-    "tests/test_architecture.py::test_actual_tool_graph",
-    "tests/test_architecture.py::test_transitive_and_cycle",
-    "tests/test_architecture.py::test_import_default_and_class_effects",
-    "tests/test_architecture.py::test_alias_and_relative_imports",
-    "tests/test_architecture.py::test_reserved_writer_and_discovery",
-    "tests/test_contracts.py::test_two_nulls_and_namespace",
-    "tests/test_contracts.py::test_group_permutations",
-    "tests/test_contracts.py::test_full_accounting",
-    "tests/test_contracts.py::test_unique_positions_and_overlap",
-    "tests/test_contracts.py::test_role_alias_and_ancestry",
-    "tests/test_contracts.py::test_example_limits_are_inputs",
-    "tests/test_contracts.py::test_label_offset_and_eog",
-    "tests/test_contracts.py::test_selection_peak_tie_and_invalid",
-    "tests/test_contracts.py::test_complete_request_aggregate",
-    "tests/test_contracts.py::test_verify_corruption",
-    "tests/test_data.py::test_null_topics_and_role_aliases",
-    "tests/test_data.py::test_admission_count_ancestry_and_relations",
-    "tests/test_data.py::test_window_boundaries_and_eog",
-    "tests/test_data.py::test_artifact_tampering",
-    "tests/test_numerical.py::test_numerical_profile",
-    "tests/test_policy.py::test_instruction_budget_and_pointer",
-    "tests/test_policy.py::test_python_tokens_and_strings",
-    "tests/test_policy.py::test_native_strings_and_patch_context",
-    "tests/test_policy.py::test_exact_machine_line",
-    "tests/test_policy.py::test_receipt_cannot_approve_policy",
-    "tests/test_self_test.py::test_rule_and_case_roster",
-    "tests/test_self_test.py::test_disabled_checker_is_rejected",
-    "tests/test_self_test.py::test_missing_tool_is_rejected",
-    "tests/test_self_test.py::test_missing_specimen_is_rejected",
-    "tests/test_self_test.py::test_wrong_and_additional_diagnostics_are_rejected",
-    "tests/test_self_test.py::test_required_test_cannot_disappear_or_skip",
-    "tests/test_store.py::test_committed_state_and_tamper",
-    "tests/test_store.py::test_failed_publication_preserves_state",
-    "tests/test_store.py::test_stream_budget_preserves_parent",
-    "tests/test_training.py::test_cpu_control_budget_and_cooperative_stop",
-    "tests/test_training.py::test_failed_attempt_cost_and_retry_limit",
-)
+REQUIRED_CPU = tuple(string(value) for value in sequence(policy_data("cpu-tests.toml")["required"]))
 
 OTHER_TOOL_CONFIG: Record = {
     "uv": {
@@ -414,12 +247,14 @@ OTHER_TOOL_CONFIG: Record = {
 }
 
 CONFIG_DIGESTS = {
+    "policy/rules.toml": "f54020182c172d32326adebd7c5e3ea96de376179eda283a96f2bf58dca7f5c2",
+    "policy/commands.toml": "dc961415f1385f30cd6ad576895aab2c4d89fea27dc988e67c9f10b99a8cce1d",
     ".pre-commit-config.yaml": "30f513d6c67238996c9f8496b2d32ae39c39f3909da15adcc220ca79fc5ae69d",
     ".github/workflows/checks.yml": "b77dd147c5047bf7fab676f08303ab264fda7b50f073241c6c0d5b52e85cdb56",
     "Dockerfile.checks": "c8f0ad1105d976a3f757b74727bf2aed9f4bbfb5030a193f1328ba6f5a9b5696",
     "policy/boundaries.toml": "57b58d9f00254c6d4caeae19e244d01b2b7091f8073099267e12b64a1465358e",
-    "policy/cases.toml": "354cec361ff60074ea8ce5de782b5e851ca1e2cd9663d72e3c3175cba3d1b75a",
-    "policy/cpu-tests.toml": "e829880bd62acf72cc52ce60d3fecdf96349855fae6236cb1847a4fbdbec9da9",
+    "policy/cases.toml": "d3094468c15e70cec936fb2b3b2eb6f99ee2900b39a507492f5b762b32ee6cfc",
+    "policy/cpu-tests.toml": "8a4a6ee2d7f190e9f97ca914685834968950bd2cf6307d991da3b29fbae5e59c",
     "policy/check-stages.toml": "b292836462fa970fb2330e93b913ea1a3ac8fe5eb8efde756b691184bf8165f1",
     "policy/validation.toml": "059cdf0120d2fc9c974512f6ec9943b79cceae47719d62ddc47c6a16392d7368",
 }

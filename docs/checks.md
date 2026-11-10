@@ -1,71 +1,46 @@
-# Checks
+# Development verification
 
-The exact public command is `uv run --locked --no-sync --offline python tools/check.py`.
-Setup is explicit: `uv sync --locked --only-group check --no-build` with authenticated
-CPython 3.11.15 and uv 0.11.32. The complete closure is [uv.lock](../uv.lock).
+The full commit gate is:
 
-Ten enforcing stages run in order, followed by qualification status. Bootstrap checks
-versions, offline lock freshness, fixed tool settings and mandatory rosters. A setup
-failure stops dependent checks. Later failures aggregate. Diagnostics carry a code and
-relative path, never a secret value. Check execution fixes locale C.UTF-8, timezone UTC,
-hash seed zero, UTF-8, no bytecode and no automatic pytest plugins by re-executing Python.
+```sh
+uv run --locked --no-sync --offline python tools/check.py
+```
 
-The rule contract is [rules](../policy/rules.toml); the exact specimen roster is
-[cases](../policy/cases.toml). There are 125 atomic rules across 19 groups. Every rule
-requires one intended rejection and one passing counterpart. Multi-syntax witnesses
-remain one atomic rule. A missing tool, timeout, crash or extra diagnostic fails proof.
-[CPU inventory](../policy/cpu-tests.toml) requires every named test to run and pass;
-empty collection, skip, xfail, deselection and missing nodes fail.
+It verifies the locked small environment, forbidden repository content, comments and
+exceptions, Ruff, strict core/numerical typing, dependency direction, Vulture/Deptry,
+document links and active map symbols, required CPU scenarios, and every bad/control
+specimen. It installs and downloads nothing and executes no GPU work. The numerical
+wrapper runs pinned CPU subprocesses and rejects missing cases, skips or failures.
+Current required names live in [CPU policy](../policy/cpu-tests.toml) and
+[numerical policy](../policy/numerical.toml). Rule IDs/group totals derive from
+[rules](../policy/rules.toml), not duplicated literal counts. Digest pins detect drift;
+changes to policy remain reviewable and do not grant approval.
 
-Ruff checks format and exactly F401/F821/I001/B006/UP006. mypy uses pinned strict mode
-plus all explicit settings in pyproject. Tests and tools are included. Import Linter
-and AST checks enforce dependency, side-effect, owner and future-boundary restrictions.
-Vulture uses confidence 60; Deptry enables DEP001–DEP004 with tests included. Exact
-necessary exceptions live only in [exceptions](../policy/exceptions.toml), including
-pytest discovery and legitimate check-only imports; broad/stale exceptions fail.
+A normal new authored file, test or document requires no file-allowlist/checker edit.
+Critical entries remain mandatory. Normal test discovery runs every collected test;
+the critical scenario roster additionally prevents removal, skipping and xfail from
+producing a green gate. There is one authored critical roster, with a pinned digest.
 
-The optional [CPU image](../Dockerfile.checks) pins the authenticated Python manifest.
-Its runtime needs a read-only mount of the checkout .git directory for Dulwich inventory.
-No image is built in this bounded local stage. [CI](../.github/workflows/checks.yml)
-uses pinned checkout, read-only credentials and a network-disabled check container.
-No remote, hosted execution or branch protection exists. A local verification receipt
-is fresh, external to tracked content and explicitly REVIEW_REQUIRED; it cannot approve
-its own policy change. Source, native, runtime verify and benchmark status is unavailable.
+For a focused diagnosis, use `ruff check PATH`, `ruff format --check PATH`, or a named
+CPU test through `.venv/bin/python -B -m pytest tests/test_training.py`. The numerical
+interpreter can run `-B -m unittest tests.numerical.test_model -v` with CUDA hidden and
+TMPDIR=/tmp. Focused checks issue no full verification receipt. `--self-test` runs the
+paired guardrail corpus with bootstrap prerequisites; it is not the full commit gate.
 
-Local CPU validation on 2026-11-09 passes all ten enforcing stages, 36 required CPU
-nodes, 125 intended bad rejections and 125 passing controls. The independent outer
-checks reject disabled comment scanning, a missing executable, one removed specimen,
-duplicated rule IDs, unrelated/additional diagnostics and missing/skipped/xfail tests.
-The ordinary-comment scratch proof returns COMMENT_PYTHON with exit 1; restoring the
-original file restores exit 0. Pre-commit uses its staged worktree plus an independent
-index/content comparison; a changed unstaged worktree cannot claim that index identity.
+Production core and numerical source retain all strict typing settings. Only numerical
+test modules permit Any expressions and untyped external calls. One numerical analysis
+checks both profiles. Mypy runs uncached without writing unused caches. No hardware
+measurements are cached. Exact exceptions are enumerated in
+[exceptions](../policy/exceptions.toml); ordinary comments/docstrings have no exemption.
 
-No atomic rule was removed or weakened. Pinned mypy 1.18.2 uses `misc` for unchecked Any
-and untyped-decorator diagnostics; fixtures preserve that actual code. It warns with
-exit 0 for unused config sections, so the wrapper promotes that exact warning to a
-failure. Focused external-call/decorator witnesses allow untyped definitions in their
-tiny external stub to isolate the intended call/decorator diagnostic. The full repository
-keeps all strict settings. All specimen output checks preserve real relative filenames.
+The full receipt binds authored source and policy content. Doctor reports it stale
+after either changes. It also checks the installed pre-commit interpreter path after
+a checkout relocation. The normal hook checks the staged worktree and independently
+compares index contents. A green receipt means the named CPU scenarios executed; it
+does not prove authority, scientific adequacy, actual model parity, native correctness
+or serving performance. Hosted CI and an optional container remain unexercised choices.
 
-There are eleven exact live exceptions: six legitimate checker/test dependency edges,
-four pytest discovery hooks and one Hypothesis decorator typing directive. No ordinary
-comment or docstring is exempt. Selected small old evidence objects were hashed from
-Git; external checkpoints/captures were neither copied nor freshly hashed.
-
-Early implementation pytest runs used the default /tmp/pytest-of-philip directory.
-Subsequent runs use the repository temporary root. External temporary directories were
-left untouched under the explicit outside-cleanup prohibition; details remain in the
-external acceptance evidence. Optional image and hosted CI execution are unrun.
-
-
-November 10 policy evolution: the required foundation entries remain mandatory,
-but additional authored source/tests/docs no longer require a file-allowlist edit.
-Output/model/capture/run-tree, secret, instruction and size checks remain active.
-This is an authorized semantic change for source porting, not a disabled gate.
-
-The numerical profile is executed by the full check through a separate interpreter.
-It runs the required named unittest cases, rejects skips and failures, and reports
-its own evidence scope. Core/product typing stays strict; only numerical test code
-allows Any expressions and untyped calls at the external tensor-library boundary.
-Mypy runs uncached without writing its otherwise-unused large cache. No hardware
-measurement or native qualification is memoized.
+[Decision 007](decisions/007-checks-and-review.md) records intentional policy changes and
+reference-semantic corrections. [Execution](execution.md) describes runtime refusal,
+reporting, identity and resource scope. [Agent exercise evidence](evidence/agent-readiness.json)
+is one fresh readiness/refusal task with explicit isolation and attribution limits.

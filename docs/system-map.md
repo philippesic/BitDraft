@@ -3,19 +3,20 @@
 | Flow | State | Path | Symbol | Trigger |
 | --- | --- | --- | --- | --- |
 | setup | active | pyproject.toml | check | Explicit wheel-only uv sync |
-| check | active | tools/check.py | main | Local, pre-commit and CI |
+| check | active | tools/check.py | main | Local and pre-commit; optional hosted runner |
+| doctor | active | tools/doctor.py | diagnose | Read-only environment and hook inspection |
 | selftest | active | tools/self_test.py | run_corpus | Stage 9 |
 | policy | active | tools/policy_review.py | verification_report | Full passing check |
-| W1 | pending | w1a1_eagle/data/ledger.py | import_sources | Separate source gate |
+| W1 | active | w1a1_eagle/data.py | Ledger | Manifest role admission |
 | W2 | pending | w1a1_eagle/native/teacher.py | capture | Separate hardware gate |
-| W3 | pending | w1a1_eagle/data/windows.py | windows | Separate source gate |
-| W4 | pending | w1a1_eagle/training/lifecycle.py | fresh | Separate source gate |
-| W5 | pending | w1a1_eagle/checkpoints/store.py | resume | Separate source gate |
+| W3 | active | w1a1_eagle/numerical/corpus.py | Corpus | Bounded CPU capture sampling |
+| W4 | active | w1a1_eagle/supervisor.py | execute | Scoped CPU run |
+| W5 | active | w1a1_eagle/numerical/worker.py | restore | Own schema-1 tensor resume/branch |
 | W6 | pending | w1a1_eagle/native/export.py | export | Separate source gate |
 | W7 | pending | w1a1_eagle/training/lifecycle.py | evaluate | Separate source gate |
 | W8 | pending | benchmarks/__main__.py | qualify | Separate hardware gate |
 | W9 | pending | benchmarks/__main__.py | run | Separate benchmark gate |
-| W10 | pending | w1a1_eagle/data/ledger.py | consume | Separate source gate |
+| W10 | active | w1a1_eagle/lifecycle.py | Journal | Exposure and attempt accounting |
 | W11 | pending | benchmarks/runner.py | execute | Separate benchmark gate |
 | W12 | pending | w1a1_eagle/native/build.py | build | Separate native gate |
 
