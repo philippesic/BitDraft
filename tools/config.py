@@ -370,7 +370,7 @@ OTHER_TOOL_CONFIG: Record = {
     },
     "pytest": {"ini_options": {"testpaths": ["tests"], "addopts": ""}},
     "importlinter": {
-        "root_packages": ["tools", "tests"],
+        "root_packages": ["tools", "tests", "w1a1_eagle"],
         "include_external_packages": True,
         "contracts": [
             {
@@ -397,7 +397,7 @@ OTHER_TOOL_CONFIG: Record = {
         "extend_exclude": [],
         "ignore": [],
         "per_rule_ignores": {},
-        "known_first_party": ["tools", "tests"],
+        "known_first_party": ["tools", "tests", "w1a1_eagle"],
     },
 }
 

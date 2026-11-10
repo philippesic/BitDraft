@@ -121,6 +121,10 @@ def test_example_limits_are_inputs() -> None:
 
 
 def test_label_offset_and_eog() -> None:
+    for position in (-2, -1, 2, 3):
+        assert validate_contract(
+            "capture_offset", {"tokens": [7, 8, 9], "labels": [{"position": position, "label": 7}]}
+        )
     assert (
         validate_contract(
             "capture_offset", {"tokens": [7, 8, 9], "labels": [{"position": 0, "label": 8}]}

@@ -91,9 +91,13 @@ def inspect_tree(files: dict[str, str]) -> list[Diagnostic]:
         for dep in graph[module]:
             if dep.split(".")[0] in {"runs", "research", "history", "checkouts", "outputs"}:
                 diagnostics.add(Diagnostic("ARCH_HISTORY", path))
-            if module == "tools.contracts" and (
-                dep.split(".")[0] not in PURE_IMPORTS
-                or dep.split(".")[0] not in sys.stdlib_module_names
+            if (
+                module in {"tools.contracts", "w1a1_eagle.contracts"}
+                and dep != "w1a1_eagle.contracts"
+                and (
+                    dep.split(".")[0] not in PURE_IMPORTS
+                    or dep.split(".")[0] not in sys.stdlib_module_names
+                )
             ):
                 diagnostics.add(Diagnostic("ARCH_PURE", path))
             for source, target in FORBIDDEN:
