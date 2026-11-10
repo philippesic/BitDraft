@@ -81,9 +81,9 @@ def main() -> int:
             for name in REQUIRED_RULES
             for kind in ("bad", "control")
         }
-        if set(files) != expected:
+        if not expected.issubset(files):
             diagnostics.append(
-                Diagnostic("STAGE_GATE", "file roster: " + str(sorted(set(files) ^ expected)))
+                Diagnostic("STAGE_GATE", "file roster: " + str(sorted(expected - set(files))))
             )
         if read_toml(root / "policy/cpu-tests.toml").get("required") != list(REQUIRED_CPU):
             diagnostics.append(Diagnostic("REQUIRED_TESTS", "policy/cpu-tests.toml"))

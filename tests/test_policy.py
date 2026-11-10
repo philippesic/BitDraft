@@ -12,6 +12,10 @@ def test_instruction_budget_and_pointer() -> None:
     ]
     assert validate_files({"CLAUDE.md": "@AGENTS.md\n"}) == []
     assert validate_files({"nested/AGENTS.md": "extra"})
+    assert validate_files({"w1a1_eagle/data/reader.py": "value = 1\n"}) == []
+    assert validate_files({"docs/new-design.md": "# Design\n"}) == []
+    assert validate_files({"native/owned.cu": "int value;\n"}) == []
+    assert validate_files({"runs/reader.py": "value = 1\n"})
 
 
 def test_python_tokens_and_strings() -> None:

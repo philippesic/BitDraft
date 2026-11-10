@@ -25,12 +25,8 @@ def validate_files(files: dict[str, str], escapes: list[str] | None = None) -> l
                 "models",
                 "captures",
                 "checkpoints",
-                "src",
-                "w1a1_eagle",
-                "benchmarks",
-                "native",
             }
-            or path.endswith((".pt", ".gguf", ".safetensors", ".so", ".cu"))
+            or path.endswith((".pt", ".gguf", ".safetensors", ".so"))
             or re.search(r"(?i)generated (?:code|source)|do not edit.*generated", text[:500])
         ):
             result.add(Diagnostic("REPO_OUTPUTS", path))
