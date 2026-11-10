@@ -1,13 +1,13 @@
 {
   "entries": [
     {
-      "disposition": "reader adapter pending; window semantics ported",
+      "disposition": "selected modern index reader ported; real metadata/source receipts reconciled; native qualification separate",
       "purpose": "modern metadata admission and final-label windows",
       "sha256": "8fd748ceda006cc061464af1f167b97d56a9c37e5b8c412fdce24ecb62420a22",
       "source": "scripts/he4fresh/index.py"
     },
     {
-      "disposition": "canonical reader ported; legacy index adapter pending",
+      "disposition": "bounded canonical and selected modern-index readers ported; original single permutation preserved",
       "purpose": "bounded authenticated materialization",
       "sha256": "fa608d32d38c3a3781ff5a94ea6d8457459c757b8bce730485c0b77a3322e183",
       "source": "scripts/he4fresh/data.py"

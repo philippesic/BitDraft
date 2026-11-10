@@ -1,0 +1,31 @@
+{
+  "catalog_coverage": "selected index only; earlier 10000-row catalog/recovery discrepancy is not retrospectively resolved",
+  "elapsed_seconds": 20.581192960002227,
+  "feature_integrity": "verified lazily on exposure, not exercised in this metadata intake",
+  "identity_and_role_admission": "PASS",
+  "input_sha256": "d703d61f47eee8e695bbd09293c15bbae57184d078b98931ff4a2d5828bdbd73",
+  "observed_sequences": 15647,
+  "observed_unique_positions": 1786275,
+  "observed_windows": 1568435,
+  "outcome": "METADATA_INTAKE_COMPLETE",
+  "peak_parser_buffer_bytes": 19851,
+  "peak_rss_kib": 262332,
+  "prior_use": {
+    "historical-training": 9813,
+    "unknown": 5658,
+    "unobserved": 176
+  },
+  "protected_identities": 21459,
+  "reader_source_sha256": {
+    "w1a1_eagle/data.py": "3453c4b8fa73284e37356c23a9a4abb9ffba760daf67adeaa4f4323890ea21c4",
+    "w1a1_eagle/index.py": "4e239f36cba0d69eb11c5ea7e3527fc03b3490f7f705562ac0be734a07651222",
+    "w1a1_eagle/json_stream.py": "75e2fdd3a2f6a7f6de9d4c0b50828c6c02c0ef0df02dfaad01270b57500ee490",
+    "w1a1_eagle/records.py": "aa95656dd727fa9416e78382528a043c4cebc8569a572831d3e2272a2ac1a5fe"
+  },
+  "retained_metadata_estimate": 373431072,
+  "schema": 1,
+  "scientific_adequacy": "unknown; prior-use classifications are not cumulative exposure counts or proof of unused data",
+  "scope": "Selected combined-index metadata/source identities and retained capture receipt conformance only; no feature bytes or fresh native proof",
+  "source_sequences": 15647,
+  "zero_window_sequences": 87
+}

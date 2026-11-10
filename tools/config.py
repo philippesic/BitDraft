@@ -251,13 +251,13 @@ OTHER_TOOL_CONFIG: Record = {
 
 CONFIG_DIGESTS = {
     "policy/rules.toml": "f54020182c172d32326adebd7c5e3ea96de376179eda283a96f2bf58dca7f5c2",
-    "policy/commands.toml": "dc961415f1385f30cd6ad576895aab2c4d89fea27dc988e67c9f10b99a8cce1d",
+    "policy/commands.toml": "d0b9093bb88ce5e8225cefad890f0507ae4e357fba4122255241b31bc4a9518c",
     ".pre-commit-config.yaml": "30f513d6c67238996c9f8496b2d32ae39c39f3909da15adcc220ca79fc5ae69d",
     ".github/workflows/checks.yml": "b77dd147c5047bf7fab676f08303ab264fda7b50f073241c6c0d5b52e85cdb56",
     "Dockerfile.checks": "c8f0ad1105d976a3f757b74727bf2aed9f4bbfb5030a193f1328ba6f5a9b5696",
     "policy/boundaries.toml": "2222fafd65a0c3d355483f9d0ff3354550f495faefa282b80a327e5365ca024a",
     "policy/cases.toml": "d3094468c15e70cec936fb2b3b2eb6f99ee2900b39a507492f5b762b32ee6cfc",
-    "policy/cpu-tests.toml": "8fffe0219977f60bfafcdbc8b063d6ab694cc2f9f0365c8fdf3d1d5fb3ccc884",
+    "policy/cpu-tests.toml": "688f91e4e3d8e3b4cf25fe42a9685243f510c71d54a4d5d9af95a82b84e696eb",
     "policy/check-stages.toml": "b292836462fa970fb2330e93b913ea1a3ac8fe5eb8efde756b691184bf8165f1",
     "policy/validation.toml": "059cdf0120d2fc9c974512f6ec9943b79cceae47719d62ddc47c6a16392d7368",
 }

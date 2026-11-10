@@ -15,7 +15,7 @@ from torch import nn
 
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.clock import Monotonic
-from w1a1_eagle.contracts import Record, number, record
+from w1a1_eagle.contracts import Record, number, record, sequence
 from w1a1_eagle.data import Artifact, Window
 from w1a1_eagle.identity import source_identity
 from w1a1_eagle.intent import Intent
@@ -27,7 +27,7 @@ from w1a1_eagle.numerical.entry import admission
 from w1a1_eagle.numerical.export import export_he4, packed_signs
 from w1a1_eagle.numerical.weights import load_he4, shapes
 from w1a1_eagle.numerical.worker import TensorWorker
-from w1a1_eagle.records import canonical, reference
+from w1a1_eagle.records import canonical, read, reference
 from w1a1_eagle.supervisor import execute
 from w1a1_eagle.training import Budget
 
@@ -56,6 +56,29 @@ class TestNumerical(unittest.TestCase):
                 }
             )
         )
+        for name, values in (
+            ("inputs.npy", [0] * 24),
+            ("label_positions.npy", list(range(8, 24))),
+            ("labels.npy", [1] * 15 + [19]),
+        ):
+            path = root / name
+            np.save(path, np.asarray(values, dtype="int32"), allow_pickle=False)
+            files.append(reference(self.reference(path)))
+        source = root / "source.json"
+        source.write_bytes(
+            canonical(
+                {
+                    "id": "one",
+                    "group_id": "one",
+                    "source": "synthetic-fixture",
+                    "role": "fit",
+                    "source_ancestry": {"fixture": "only"},
+                    "identities": {"rendered_sha256": "c" * 64},
+                    "pool": "unused_modern_reserved",
+                }
+            )
+        )
+        files.append(reference(self.reference(source)))
         manifest = root / "corpus.json"
         manifest.write_bytes(
             canonical(
@@ -73,6 +96,7 @@ class TestNumerical(unittest.TestCase):
                             "aliases": [],
                             "role": "train",
                             "ancestry": "verified",
+                            "prior_use": "unobserved",
                             "metadata": reference(self.reference(metadata)),
                             "files": files,
                         }
@@ -81,6 +105,75 @@ class TestNumerical(unittest.TestCase):
             )
         )
         return self.reference(manifest)
+
+    def fixture_index(self, root: Path, corpus: Artifact) -> tuple[Artifact, Record]:
+        row = record(sequence(read(corpus.path)["records"])[0])
+        metadata_ref = record(row["metadata"])
+        metadata = read(Path(str(metadata_ref["path"])))
+        exclusions = root / "exclusions.json"
+        exclusions.write_bytes(canonical({"identities": ["heldout24"]}))
+        receipt: Record = {
+            "status": "VERIFIED_NATIVE_HARD_LABEL_CAPTURE",
+            "id": "one",
+            "group_id": "one",
+            "metadata": metadata_ref,
+            "files": row["files"],
+            "greedy_vs_full_logits_argmax": True,
+            "no_post_eog_labels": True,
+            "taps": [2, 6, 10, 14, 18, 22, 26, 30],
+            "feature_semantics": "zero_based_pre_block_input_all_tokens",
+            "feature_shape": [24, 256],
+            "windows": 2,
+            "unique_label_positions_in_windows": 16,
+            "unique_label_positions": 16,
+            "verified_rows": 16,
+            "sequences": 1,
+        }
+        proof = root / "proof.json"
+        proof.write_bytes(canonical(receipt))
+        index = root / "index.json"
+        index.write_bytes(
+            canonical(
+                {
+                    "status": "ADMITTED_METADATA",
+                    "manifest_sha256": "b" * 64,
+                    "target_sha256": "a" * 64,
+                    "exclusions": reference(self.reference(exclusions)),
+                    "rows": [
+                        {
+                            "id": "one",
+                            "receipt_pin": reference(self.reference(proof)),
+                            "receipt": receipt,
+                            "metadata": metadata,
+                            "anchors": [8, 9],
+                        }
+                    ],
+                    "sequences": 1,
+                    "windows": 2,
+                    "unique_labels_in_windows": 16,
+                    "note": "synthetic producer contract, not native qualification",
+                }
+            )
+        )
+        adapter: Record = {
+            "kind": "he4fresh-index-v1",
+            "logical_root": str(root),
+            "metadata_root": str(root),
+            "data_root": str(root),
+            "manifest_sha256": "b" * 64,
+            "target_sha256": "a" * 64,
+            "exclusions": reference(self.reference(exclusions)),
+            "sequences": 1,
+            "windows": 2,
+            "unique_positions": 16,
+        }
+        return self.reference(index), adapter
+
+    def test_default_geometry_against_retained_header(self) -> None:
+        header = read(Path("docs/evidence/he4-initializer-header.json"))
+        expected = {name: list(shape) for name, shape in shapes(Geometry()).items()}
+        self.assertEqual(expected, header["tensor_shapes"])
+        self.assertEqual(header["target_layers"], [2, 6, 10, 14, 18, 22, 26, 30])
 
     def test_projection_scalar_oracle(self) -> None:
         policy = tomllib.loads(Path("policy/numerical.toml").read_text())
@@ -336,6 +429,7 @@ class TestNumerical(unittest.TestCase):
             self.assertEqual(corpus.count, 2)
             self.assertEqual(corpus.unique_positions, 16)
             expected = [corpus.locate(i)[1] for i in range(5)]
+            self.assertEqual(corpus.locate(0)[1], corpus.locate(corpus.count)[1])
             self.assertEqual(
                 expected,
                 [Corpus(corpus_ref, 17, 64 * 1024 * 1024, 256).locate(i)[1] for i in range(5)],
@@ -379,6 +473,10 @@ class TestNumerical(unittest.TestCase):
             }
             intent_path = root / "intent.json"
             intent_path.write_bytes(canonical(intent))
+            sealed = Intent.load(intent_path)
+            editable = sealed.raw
+            editable["authority_scope"] = "altered"
+            self.assertEqual(sealed.raw["authority_scope"], "disposable-CPU-test")
             with self.assertRaisesRegex(ValueError, "scope"):
                 execute(intent_path, root / "not-authorized", "unrelated-task")
             self.assertFalse((root / "not-authorized").exists())
@@ -429,6 +527,20 @@ class TestNumerical(unittest.TestCase):
                 number(resumed_report["cumulative_attempt_seconds"]),
                 number(report["cumulative_attempt_seconds"]),
             )
+            index_ref, adapter = self.fixture_index(root, corpus_ref)
+            intent.update(
+                mode="fresh",
+                parent=None,
+                corpus=reference(index_ref),
+                input_adapter=adapter,
+                budget={"updates": 1, "wall_seconds": 60, "attempts": 2, "retries": 0},
+            )
+            intent_path.write_bytes(canonical(intent))
+            indexed_report = execute(intent_path, root / "indexed-attempt", "disposable-CPU-test")
+            self.assertEqual(
+                record(indexed_report["latest"])["outcome"], "complete", indexed_report
+            )
+            self.assertEqual(record(indexed_report["worker"])["updates"], 1)
 
     def test_capture_tail_budget_and_corruption(self) -> None:
         with tempfile.TemporaryDirectory(prefix="binary-capture-") as directory:

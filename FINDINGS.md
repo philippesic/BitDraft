@@ -134,3 +134,22 @@ no matched comparison or causal efficiency claim. All unsuccessful check attempt
 in the receipt. This supplements F011, not a universal qualification of agent behavior.
 
 Evidence: [routine exercise receipt](docs/evidence/agent-window-exercise.json).
+
+## F014
+
+The selected retained modern index reconciles 15,647 records, 1,568,435 windows and
+1,786,275 unique supervised positions; 87 records have no windows. Metadata intake
+exposed and corrected first-anchor/EOG handling and original sampler-order parity.
+Prior use is historical training for 9,813 records, unknown for 5,658 and unobserved
+for 176. Admission reports these separately from additional planned exposure.
+
+Limits: retained metadata/source-chain reconciliation, not new raw-feature hashing,
+independent teacher replay, data adequacy or useful-training evidence. One observed
+local parse is not a causal speed comparison. The earlier recovery-count discrepancy
+remains open. This supersedes F012's pending large-index-intake statement only.
+
+Evidence: [complete intake](docs/evidence/modern-index-complete-intake.json),
+[earlier refusals](docs/evidence/modern-index-intake.json),
+[snapshot refusal](docs/evidence/modern-index-snapshot-intake.json),
+[transport](docs/evidence/metadata-snapshot-transport.json),
+[retained initializer header](docs/evidence/he4-initializer-header.json).
