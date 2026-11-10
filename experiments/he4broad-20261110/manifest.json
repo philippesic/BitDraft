@@ -1,0 +1,54 @@
+{
+  "status": "QUEUED_WAITING_FOR_OTHER_PROJECT_GPU_RELEASE",
+  "run": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01",
+  "owner_thread": "6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6",
+  "prerequisite_thread": "mcp:launch:5cc79481d4d97b44b4c6cf5f1de491084f7f89c30d5802c9dbc55da66ceb13b2",
+  "budget_actual_update_seconds": 43200,
+  "initialization": "fresh HE4 quantization of base BF16 DFlash drafter; zero trained updates; fresh Adam",
+  "source_sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521",
+  "target_sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630",
+  "training_data": {
+    "host_alias": "pstack-2080",
+    "path": "/home/philip/he4-capture-2080ti/supplemental/combined-manifest.json",
+    "sequences": 15647,
+    "windows": 1568435,
+    "unique_label_positions": 1787054,
+    "unique_label_positions_in_windows": 1786275,
+    "final_audit_status": "PASS",
+    "local_import_qualified": false,
+    "sha256": "d56b7ee0572fec4333ec9c271a69befe1b0fb51e6507ef878f37ad90f1901592",
+    "bytes": 5661287,
+    "metadata_copy_sha256_verified": true
+  },
+  "native_eval_interval_seconds": 3600,
+  "health_interval_seconds": 1800,
+  "gpu_availability_fallback_seconds": 3600,
+  "gpu_training_launched": false,
+  "remaining_preparation": [
+    "bounded authenticated data adapter",
+    "checkpoint storage",
+    "new campaign runner and recovery qualification"
+  ],
+  "events": {
+    "availability": {
+      "scheduledTaskId": "scheduled-task:command:mcp:a4024f98-8308-4bbd-9079-def8ceacdbbb:schedule-task:he4broad-20261110-gpu-fallback",
+      "enabled": true,
+      "schedule": {
+        "type": "interval",
+        "everyMs": 3600000
+      },
+      "boundThreadId": "6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6",
+      "nextRunAt": "2026-11-10T09:25:12.754Z"
+    },
+    "health": {
+      "scheduledTaskId": "scheduled-task:command:mcp:a4024f98-8308-4bbd-9079-def8ceacdbbb:schedule-task:he4broad-20261110-health",
+      "enabled": false,
+      "schedule": {
+        "type": "interval",
+        "everyMs": 1800000
+      },
+      "boundThreadId": "6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6",
+      "nextRunAt": null
+    }
+  }
+}

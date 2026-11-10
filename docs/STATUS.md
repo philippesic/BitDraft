@@ -1,5 +1,16 @@
 # Current project status
 
+## Queued: fresh HE4broad on the newest 2080 Ti data
+
+November 10: authorized up to 12 hours of actual updates from fresh base-drafter
+HE4 quantization, using the completed combined 15,647-sequence / 1,568,435-window
+Qwen3.5 4B captures. **Not launched**: wait for the other project's full Stage 6
+completion and verified 5080 release. Completion notification requested; hourly
+availability fallback enabled. Hourly acceptance/throughput readouts and a dedicated
+30-minute health/repair event are assigned. Bounded data loading, checkpoint
+storage and runner adaptation remain preparation. [Plan and operations](../experiments/he4broad-20261110/operations.md)
+· [Manifest](../experiments/he4broad-20261110/manifest.json).
+
 ## HE4broad source-initialized QAT
 
 November 8 user-authorized new recipe: **COMPLETE**, 226,853 completed updates, 28800.038 / 28,800 actual update seconds. Source BF16 initialization; broader authenticated 40/3234/3794 TRAIN set; fresh Adam at unchanged default rates. Hourly recoverable states and native exports retained. [Report](../experiments/he4broad-20261108/report.md) · [Live progress](../runs/he4broad-20261108-01/candidate/live.json) · [Ownership and stop procedure](../experiments/he4broad-20261108/operations.md). External DFlash Q4_K_M remains the deployment incumbent; no promotion.
