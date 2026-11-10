@@ -63,6 +63,31 @@ cohort with TRAIN-exclusion checks (the existing consumed `natural24` cohort is
 an available option) rather than opening a new held-out set. These are proposed
 follow-ups, not changes made to the live experiment during this investigation.
 
+## Loader stage measurement
+
+A subsequent bounded CPU replay separates the loader's combined timer. On 32
+window-weighted captures (668,933,742 bytes, 48.954 seconds of materialization),
+remote file reads account for 97.51%, feature-finiteness checks 1.22%, array
+parsing/copying 0.67%, SHA-256 hashing 0.55%, and metadata/other Python 0.047%.
+Removing hashing alone would have little effect in this sample. Repeated remote
+capture materialization and poor cache reuse are the priority mechanisms.
+
+The replay ran concurrently with the trainer, using two CPU threads, with no
+CUDA initialization, cache eviction or change to the active source/cache. It
+read and authenticated exactly the existing loader's files and reproduced its
+array/feature checks. Read time includes SSHFS/SSH, remote/local disk and page
+caches, and file-call latency; it does not isolate physical network transfer.
+Mean loader time was 1.53 seconds per replayed capture, slower than the historical
+training average, so the sample fractions must not be presented as directly
+measured historical fractions. The live 20,300-update receipt independently
+attributes 86.09% of its training clock to loading/preparation and 13.90% to model
+updates. The brief profiling reads may have added storage/CPU contention.
+
+[Stage timings and per-file evidence](loader-profile.json) ·
+[Category chart](loader-profile.html) ·
+[CPU replay command](../../scripts/he4fresh/profile_loader.py):
+`.venv/bin/python -m scripts.he4fresh.profile_loader --samples 32`.
+
 ## Evidence and reproduction
 
 - [Data, exposure, controls and timing audit](setup-audit.json), produced by
