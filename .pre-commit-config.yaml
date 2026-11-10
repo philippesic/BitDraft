@@ -1,0 +1,10 @@
+repos:
+  - repo: local
+    hooks:
+      - id: foundation
+        name: foundation
+        language: system
+        entry: uv run --locked --no-sync --offline python tools/check.py
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]

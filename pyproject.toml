@@ -1,0 +1,75 @@
+[project]
+name = "binary-eagle-foundation"
+version = "0.0.0"
+requires-python = "==3.11.15"
+dependencies = []
+
+[dependency-groups]
+check = [
+  "ruff==0.16.8",
+  "mypy==1.18.2",
+  "pytest==8.4.2",
+  "hypothesis==6.140.3",
+  "import-linter==2.7",
+  "vulture==2.14",
+  "deptry==0.24.0",
+  "pre-commit==4.3.0",
+  "PyYAML==6.0.3",
+  "types-PyYAML==6.0.12.20250915",
+  "dulwich==0.24.2",
+]
+
+[tool.uv]
+package = false
+python-downloads = "never"
+default-groups = ["check"]
+required-environments = ["sys_platform == 'linux' and platform_machine == 'x86_64'"]
+no-build = true
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+exclude = []
+
+[tool.ruff.lint]
+select = ["F401", "F821", "I001", "B006", "UP006"]
+ignore = []
+per-file-ignores = {}
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+disallow_any_expr = true
+disallow_any_explicit = true
+disallow_any_unimported = true
+warn_unreachable = true
+follow_imports = "normal"
+ignore_missing_imports = false
+enable_error_code = ["ignore-without-code"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ""
+
+[tool.importlinter]
+root_packages = ["tools", "tests"]
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "tools never import tests"
+type = "forbidden"
+source_modules = ["tools"]
+forbidden_modules = ["tests"]
+
+[[tool.importlinter.contracts]]
+name = "contracts stay pure"
+type = "forbidden"
+source_modules = ["tools.contracts"]
+forbidden_modules = ["tools.config", "tools.check", "tools.repo_files", "tools.self_test"]
+
+[tool.deptry]
+exclude = ["^\\.git/", "^\\.venv/", "^\\.uv-cache/"]
+extend_exclude = []
+ignore = []
+per_rule_ignores = {}
+known_first_party = ["tools", "tests"]
