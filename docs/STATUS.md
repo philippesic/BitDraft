@@ -1,14 +1,18 @@
 # Current project status
 
-## Queued: fresh HE4broad on the newest 2080 Ti data
+## Fresh HE4broad on the newest 2080 Ti data
 
-November 10: authorized up to 12 hours of actual updates from fresh base-drafter
-HE4 quantization, using the completed combined 15,647-sequence / 1,568,435-window
-Qwen3.5 4B captures. **Not launched**: wait for the other project's full Stage 6
-completion and verified 5080 release. Completion notification requested; hourly
-availability fallback enabled. Hourly acceptance/throughput readouts and a dedicated
-30-minute health/repair event are assigned. Bounded data loading, checkpoint
-storage and runner adaptation remain preparation. [Plan and operations](../experiments/he4broad-20261110/operations.md)
+November 10: **TRAINING** after Stage 6's pushed completion and
+verified release. Fresh base-drafter HE4 quantization; combined 15,647-sequence /
+1,568,435-window Qwen3.5 4B captures. Metadata/exclusion, window-boundary and remote
+checkpoint round-trip checks pass. The zero-update native panel passes all 75 requests, including warmups; the
+first real optimizer update and exact zero-state GPU restore pass. The trained
+56-update checkpoint also restored its parameters/Adam/RNG/cursor and completed
+the actual next update; training is advancing in the first hourly segment.
+Up to 12 hours of training wall time (including remote data I/O); synchronized
+update time is tracked separately. Formal hourly acceptance/throughput panels and
+the dedicated 30-minute health/repair event are enabled. [Report](../experiments/he4broad-20261110/report.md)
+· [Operations](../experiments/he4broad-20261110/operations.md)
 · [Manifest](../experiments/he4broad-20261110/manifest.json).
 
 ## HE4broad source-initialized QAT

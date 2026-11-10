@@ -1,5 +1,5 @@
 {
-  "status": "PREPARED_GPU_RELEASE_VERIFIED",
+  "status": "TRAINING",
   "run": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01",
   "owner_thread": "6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6",
   "prerequisite_thread": "mcp:launch:5cc79481d4d97b44b4c6cf5f1de491084f7f89c30d5802c9dbc55da66ceb13b2",
@@ -23,31 +23,28 @@
   "native_eval_interval_seconds": 3600,
   "health_interval_seconds": 1800,
   "gpu_availability_fallback_seconds": 3600,
-  "gpu_training_launched": false,
-  "remaining_preparation": [
-    "zero-update GPU export/native panel",
-    "real optimizer update and own-state resume"
-  ],
+  "gpu_training_launched": true,
+  "remaining_preparation": [],
   "events": {
     "availability": {
       "scheduledTaskId": "scheduled-task:command:mcp:a4024f98-8308-4bbd-9079-def8ceacdbbb:schedule-task:he4broad-20261110-gpu-fallback",
-      "enabled": true,
+      "enabled": false,
       "schedule": {
         "type": "interval",
         "everyMs": 3600000
       },
       "boundThreadId": "6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6",
-      "nextRunAt": "2026-11-10T09:25:12.754Z"
+      "nextRunAt": null
     },
     "health": {
       "scheduledTaskId": "scheduled-task:command:mcp:a4024f98-8308-4bbd-9079-def8ceacdbbb:schedule-task:he4broad-20261110-health",
-      "enabled": false,
+      "enabled": true,
       "schedule": {
         "type": "interval",
         "everyMs": 1800000
       },
       "boundThreadId": "6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6",
-      "nextRunAt": null
+      "nextRunAt": "2026-11-10T13:07:59.606Z"
     }
   },
   "prerequisite_release_checkpoint": "04dba8f7f0a9b67b84430221adbdfc8d64d55446",
@@ -55,5 +52,66 @@
   "checkpoint_host": "pstack-2080",
   "checkpoint_remote_directory": "/home/philip/he4broad-training-20261110-01",
   "source_module": "scripts.he4fresh",
-  "data_index_sha256": "d703d61f47eee8e695bbd09293c15bbae57184d078b98931ff4a2d5828bdbd73"
+  "data_index_sha256": "d703d61f47eee8e695bbd09293c15bbae57184d078b98931ff4a2d5828bdbd73",
+  "supervisor": "runs/he4fresh-supervisor-20261110-01/state.json",
+  "frozen_source": "runs/he4broad-20261110-01/source/source-manifest.json",
+  "qualifications": {
+    "cpu_adapter_tests": {
+      "passed": 4,
+      "source": "scripts/he4fresh/test_data.py"
+    },
+    "data": {
+      "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/data-qualification.json",
+      "sha256": "c22fce1ec9ea1ac723ba4a6a60e40c9ff1ec521d3927d15b8ff55d3e0b9c9784",
+      "bytes": 204
+    },
+    "remote_checkpoint_roundtrip": {
+      "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/storage-qualification.json",
+      "sha256": "6a97b39c631a809368d6497efa2c22590526ec7195fcbc831285b032deb603a0",
+      "bytes": 178
+    },
+    "fresh_initialization": {
+      "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/fresh-initialization-qualification.json",
+      "sha256": "b53ef4c8f9245aab1baa7ce4dfd70a14593e332bccc8dec3af60bc0d48f03cbc",
+      "bytes": 399
+    },
+    "trained_gpu_resume_and_next_update": {
+      "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/trained-resume-qualification.json",
+      "sha256": "9a4c5a32b1dc0740f478a71fa285990d18c38d15b129423425854c1b02a771d5",
+      "bytes": 909
+    },
+    "zero_native": {
+      "requests_including_warmups": 75,
+      "all_correct": true,
+      "result": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/formal-0/result.json",
+        "sha256": "74061ae8d0e65c1fa88a44a7e4a9a939a6042fa80ef3a5cdf8d3b9873a192b71",
+        "bytes": 80383
+      }
+    },
+    "early_native_smoke": {
+      "requests": 9,
+      "all_correct": true,
+      "result": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/smoke-60/result.json",
+        "sha256": "a73f96899bda88f3ec7e4f0e87c44edf5c8dbce13fc9495cacb66409c1dff12e",
+        "bytes": 9634
+      }
+    }
+  },
+  "recipe": {
+    "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/recipe.json",
+    "sha256": "df87c73157401940aae1dc67aa74c431098816bcd5948b0dd9e34cc3b76ba14c",
+    "bytes": 4533
+  },
+  "source_closure": {
+    "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/source/source-manifest.json",
+    "sha256": "57d2649957091766630583b8ce57050aedeb2eb0b9e1854d8932b2d8f9d07998",
+    "bytes": 104947
+  },
+  "launch": {
+    "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/launch-receipt.json",
+    "sha256": "32467214e5c1ea47d8948ad68f33f9a2a3e9219f4a0cb668dd925552487f7af5",
+    "bytes": 4574
+  }
 }

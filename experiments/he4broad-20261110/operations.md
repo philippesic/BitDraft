@@ -1,9 +1,7 @@
 # HE4broad fresh training on the November 9–10 captures
 
-State: **PREPARED, GPU RELEASE VERIFIED; GPU qualification pending**. Philip authorized this run November 10 in
-thread `6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6`. Wait for the other project's
-complete campaign and verified RTX 5080 release. Its idle assistant turn or
-an idle GPU between phases is insufficient. Stage 6 release was verified against its pushed release proof and the completion message.
+State: **TRAINING; trained-state GPU resume and actual next update passed**. Philip authorized this run November 10 in
+thread `6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6`. The prerequisite campaign is complete and its RTX 5080 release is verified. Stage 6 release was verified against its pushed release proof and the completion message.
 
 ## Prerequisite and events
 
@@ -11,16 +9,16 @@ The prerequisite is Stage 6 thread
 `mcp:launch:5cc79481d4d97b44b4c6cf5f1de491084f7f89c30d5802c9dbc55da66ceb13b2`.
 It has been asked to message this training thread after all remaining phases,
 audits and results are complete/pushed and its GPU processes are released.
-An hourly fallback is enabled in this training thread. Exact event receipts are
+The hourly availability fallback was disabled after real training started and the
+30-minute training health event was enabled. Exact event receipts are
 in `runs/he4broad-20261110-01/schedules.json`.
 
 On a completion message or hourly event, check the prerequisite's latest evidence
 under `/home/philip/vllm-semantic-cache-ext/evidence/stage6-5080-20261109/`,
 actual GPU processes, host process birth/boot identities, pause control and
 `runs/contender-gpu.lock`. Preserve the other campaign and its jobs.
-Enable the already-created 30-minute training health/repair event at launch;
-disable the hourly availability event only after that succeeds. Both events are
-bound to this thread. No new worker thread is needed.
+The 30-minute training health/repair event is now enabled; its first check is
+November 10 at 13:07:59 UTC. Both events are bound to this thread. No new worker thread is needed.
 
 ## Authorized recipe
 
@@ -120,3 +118,55 @@ candidate parameters and Adam are never read. Every hourly segment restores only
 this run's full checkpoint, checking parameters, moments, group steps and RNG.
 If a failed stage leaves uncheckpointed updates, recovery preserves their log and
 charges their time to the existing budget before rolling back to the last state.
+
+## Live run and stop/recovery procedure
+
+The tmux session is `he4fresh-20261110-01` on `binary-eagle-runtime`.
+Supervisor state is `runs/he4fresh-supervisor-20261110-01/state.json`;
+its stdout is `stdout.log` in that directory. Full initial process birth/boot
+identities, including both owned SSHFS processes, are in
+`runs/he4broad-20261110-01/launch-receipt.json`. Current workflow identity and
+three-lock ownership are in `gpu-owner.json`; current stage/command is in
+`stage.json`. `health/latest.json` preserves read-only observations. The snapshot
+helper is `.venv/bin/python -m scripts.he4fresh.health` in the canonical checkout.
+
+Live progress and recoverable state receipts are under
+`runs/he4broad-20261110-01/archive-mount/candidate/` (`live.json`, `result.json`,
+`recovery.json`, `readouts.json`, `updates.jsonl`). The physically remote directory
+remains available at the archive path on pstack-2080 if a local mount is lost.
+Native hourly evidence stays under the local run (`formal-0`, `formal-3600`, etc.),
+with an extra `smoke-60`. Stage logs/commands have unique attempt timestamps.
+
+For an authorized stop, first match the supervisor's current boot/start identity
+to its saved launch receipt, then SIGTERM that supervisor. It gives the complete
+owned child group 600 seconds to stop between updates and save a paused full state.
+Verify terminal supervisor/workflow receipts, original process-group absence and
+all three GPU locks released. A pause flag alone is not release. Never stop another
+project's owner or blindly signal a historical PID. Leave healthy work running.
+
+After a failure, preserve its logs/incident receipts. Revalidate mounts, pins,
+checkpoint/optimizer/RNG/cursor and budget, and ensure the old group is gone.
+Use a fresh supervisor run ID and a free tmux session with the canonical Python,
+`scripts/remote_job.py`, and
+`--stop-grace-seconds 600 -- .venv/bin/python scripts/he4fresh/launch.py`.
+The launcher enters the pinned source; completed readout/panel stages are skipped.
+A failed native attempt is renamed and preserved before retry. Do not modify the
+healthy pinned source. If a code repair becomes necessary after failure, preserve
+that exact old source closure and explicitly pin the repaired closure before resume.
+
+Repeated recovery before another complete checkpoint needs reconciliation of the
+already retained `recovery-incidents/*/accounting.json` receipts as well as the
+current uncheckpointed tail; the dedicated agent event must verify that rejected
+exposure and both clocks remain charged to the original allocation. No blind
+fresh initialization or budget reset is an authorized repair.
+
+## Verified launch outcome
+
+Four adapter regressions pass. All 75 zero-update formal native requests and
+all nine early trained smoke requests match target output. The first trained
+checkpoint retains 56 updates; actual GPU restoration verified parameters and
+all Adam groups/moments/steps, restored RNG/cursor/order and completed update 57.
+Later updates are advancing in the first hourly segment. Proofs are linked from
+the manifest; the failed pre-exposure index attempt remains separate evidence.
+The 30-minute event is enabled and the hourly availability fallback is disabled.
+Readiness is verified launch/resume, not completion of the 12-hour allocation.

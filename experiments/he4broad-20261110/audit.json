@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "checked_unix": 1794315856.2692163,
+  "completed_updates": 171,
+  "actual_update_seconds": 34.635433254006784,
+  "checkpointed_updates": 56,
+  "uncheckpointed_completed_updates": 115,
+  "training_wall_seconds": 171.28618424321758,
+  "distinct_sequences": 169,
+  "distinct_windows": 171,
+  "distinct_label_positions": 2551,
+  "supervised_positions": 2565,
+  "nominal_window_epochs": 0.00010902587611217552,
+  "total_training_sequences": 15647,
+  "total_training_windows": 1568435,
+  "note": "Distinct position identities within sequences; overlapping windows and repeated epochs are exposure, not fresh labels. Rejected rollback exposures remain separate in recovery-incidents."
+}
