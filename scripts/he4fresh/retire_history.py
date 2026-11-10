@@ -60,7 +60,7 @@ def candidate(path,root):
     if name.endswith(('.pt','.pth','.pt.bsz','.pt.zst','.pt.gz','.ckpt')):
         if any(('capture' in part.lower() or part.lower() in ('data','prepared-data','datasets','features')) for part in parts):return False
         if name.endswith(('.pt.bsz','.pt.zst','.pt.gz')):return True
-        return ('checkpoint' in name or name.startswith(('step-','model-')) or
+        return ('checkpoint' in name or name.startswith(('step-','model-','final','recovered')) or
                 any('checkpoint' in part.lower() for part in parts[:-1]))
     return False
 

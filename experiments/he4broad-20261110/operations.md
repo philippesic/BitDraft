@@ -42,7 +42,7 @@ is removed by this data-source retirement. The production recipe, global
 window order, target, objective, optimizer and original budget stay fixed.
 
 [Model retention policy and evidence](../storage-cleanup-20261110/report.md)
-records 441 retired local model artifacts and the protected HE4/Csmallbroad,
+records 443 retired local model artifacts and the protected HE4/Csmallbroad,
 foundation/B0 and W1A8/DSpark baselines. An initially attempted cold offload was
 canceled after Philip authorized retirement instead. All 60 displaced evidence
 files were restored and verified locally; its 12 obsolete model copies and

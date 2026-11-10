@@ -1,5 +1,5 @@
 {
-  "checked_unix": 1794344623.1524527,
+  "checked_unix": 1794346987.0135324,
   "campaigns": [
     {
       "campaign": "5080-broader-training-20261031",
@@ -7935,8 +7935,8 @@
     },
     {
       "campaign": "w1a8-campaign-20261023-root",
-      "files": 20,
-      "logical_bytes": 13184277344,
+      "files": 22,
+      "logical_bytes": 20958928966,
       "evidence": [
         {
           "source": {
@@ -8314,6 +8314,28 @@
               "active_upper_seconds": 1153.2465222929604
             },
             "within_execution_caps": true
+          }
+        },
+        {
+          "source": {
+            "path": "/home/philip/binary-eagle-decoding/runs/w1a8-campaign-20261023-root/closeout-prefix60-02/result.json",
+            "sha256": "fa4597c433f5f05a1da56e0f9babc00b4bc29f7b78090aa902ee2cfef99bce65",
+            "bytes": 2736
+          },
+          "summary": {
+            "status": "INCOMPLETE",
+            "request_admitted": false,
+            "native_admitted": false,
+            "error": "OSError(12, 'Cannot allocate memory')",
+            "traceback": "Traceback (most recent call last):\n  File \"/home/philip/binary-eagle-decoding/runs/w1a8-campaign-20261023-root/closeout-prefix60-source02/run.py\", line 56, in <module>\n    try:runner.run(['/usr/bin/env','OPENBLAS_NUM_THREADS=1','MKL_NUM_THREADS=1','PYTHONDONTWRITEBYTECODE=1','NUMEXPR_NUM_THREADS=1','VECLIB_MAXIMUM_THREADS=1','DSPARK_REQUIRE_AUTHOR_LAYOUT=1','GGML_W1AX_DP4A=1','GGML_W1AX_ASSERT_INT_DOT=1','GGML_W1A8_ALGORITHM=imma_mix','GGML_W1A8_TOKEN7=1','DSPARK_TARGET_WIDTH_MASK=3','GGML_W1AX_ADMISSION_TRACE=1',str(P/'.venv/bin/python'),'-B',str(S/'train.py'),'--Root-GPU-admitted'],directory=D/'child',stop_path=D/'STOP',wall_seconds=wall)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/philip/binary-eagle-decoding/runs/dspark-q4km-campaign-20261018/astra/operation/source/src/w1a1_eagle/nine_model_pipeline.py\", line 807, in run\n    self.authorization()\n  File \"/home/philip/binary-eagle-decoding/runs/w1a8-campaign-20261023-root/closeout-prefix60-source02/run.py\", line 43, in guard\n    for ref in b['paid_barriers']:checked(ref)\n                                  ^^^^^^^^^^^^\n  File \"/home/philip/binary-eagle-decoding/runs/w1a8-campaign-20261023-root/closeout-prefix60-source02/run.py\", line 9, in checked\n    def checked(r):assert sha(r['path'])==r['sha256'];return Path(r['path'])\n                          ^^^^^^^^^^^^^^\n  File \"/home/philip/binary-eagle-decoding/runs/w1a8-campaign-20261023-root/closeout-prefix60-source02/run.py\", line 7, in sha\n    with Path(p).open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/philip/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/hashlib.py\", line 295, in file_digest\n    size = fileobj.readinto(buf)\n           ^^^^^^^^^^^^^^^^^^^^^\nOSError: [Errno 12] Cannot allocate memory\n",
+            "release_passed": true,
+            "cost": {
+              "CPU_seconds": 574.459603708,
+              "whole_seconds": 2565.1385505199432,
+              "active_upper_seconds": 760.0360723499907
+            },
+            "within_execution_caps": true,
+            "source_engineering_CPU_unmetered": true
           }
         },
         {

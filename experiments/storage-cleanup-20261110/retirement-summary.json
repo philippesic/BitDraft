@@ -1,9 +1,9 @@
 {
   "status": "EXECUTED",
-  "files": 0,
+  "files": 2,
   "already_retired_files": 441,
-  "logical_bytes": 575648506822,
-  "allocated_bytes_before_hardlink_dedup": 0,
+  "logical_bytes": 583423158444,
+  "allocated_bytes_before_hardlink_dedup": 7774666752,
   "campaigns": [
     {
       "campaign": "5080-broader-training-20261031",
@@ -187,8 +187,8 @@
     },
     {
       "campaign": "w1a8-campaign-20261023-root",
-      "files": 20,
-      "logical_bytes": 13184277344
+      "files": 22,
+      "logical_bytes": 20958928966
     },
     {
       "campaign": "w1a8-expanded-ce-control3840-01",
@@ -274,16 +274,7 @@
     "w1a8-generalization-20261102"
   ],
   "raw_plan": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/pause-fix-20261110/checkpoint-retirement-plan.json",
-  "deleted_files": 441,
-  "raw_journal": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/pause-fix-20261110/checkpoint-retirement.jsonl",
-  "by_storage_logical_bytes": {
-    "WSL": 406650591520,
-    "WindowsC": 168997915302
-  },
-  "observed_free_bytes": {
-    "WSL": 329140633600,
-    "WindowsC": 145484529664
-  },
-  "observed_free_note": "Dataset transfer is in progress; these are observed free bytes, not physical savings computed by subtracting unrelated snapshots.",
-  "cuda_cache_retirement_bytes": 46678913024
+  "completed_unix": 1794346987.1630158,
+  "deleted_files": 443,
+  "note": "Logical totals can overstate physically freed hard links; measured filesystem space is reported separately."
 }

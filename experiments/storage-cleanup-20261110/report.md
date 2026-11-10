@@ -19,7 +19,7 @@ state; no sustained training restart is part of this cleanup.
 | Frozen modern W1A8 baseline and resume qualification; DSpark Q4 comparison and source model directories | Retain representative baselines and reproducible controls without retaining every historical one-off fork. [W1A8 protocol](../../docs/CANDIDATE_BENCHMARKING.md). |
 | Component/precision parent states, dictionary bases, source and compact findings | Recovery dependencies for retained native/model states must not be removed merely because a child result is preserved. |
 
-The completed retirement contains **441 model artifacts, 536.11 GiB logical
+The completed retirement contains **443 model artifacts, 543.36 GiB logical
 size** across Linux and Windows. The initial batch contained 61 large models;
 later batches cover smaller candidate exports, superseded HE4 intermediate
 states and obsolete compressed controls. Hard links make logical totals larger
