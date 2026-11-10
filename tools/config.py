@@ -347,6 +347,10 @@ REQUIRED_CPU = (
     "tests/test_contracts.py::test_selection_peak_tie_and_invalid",
     "tests/test_contracts.py::test_complete_request_aggregate",
     "tests/test_contracts.py::test_verify_corruption",
+    "tests/test_data.py::test_null_topics_and_role_aliases",
+    "tests/test_data.py::test_admission_count_ancestry_and_relations",
+    "tests/test_data.py::test_window_boundaries_and_eog",
+    "tests/test_data.py::test_artifact_tampering",
     "tests/test_policy.py::test_instruction_budget_and_pointer",
     "tests/test_policy.py::test_python_tokens_and_strings",
     "tests/test_policy.py::test_native_strings_and_patch_context",
@@ -358,6 +362,10 @@ REQUIRED_CPU = (
     "tests/test_self_test.py::test_missing_specimen_is_rejected",
     "tests/test_self_test.py::test_wrong_and_additional_diagnostics_are_rejected",
     "tests/test_self_test.py::test_required_test_cannot_disappear_or_skip",
+    "tests/test_store.py::test_committed_state_and_tamper",
+    "tests/test_store.py::test_failed_publication_preserves_state",
+    "tests/test_training.py::test_cpu_control_budget_and_cooperative_stop",
+    "tests/test_training.py::test_failed_attempt_cost_and_retry_limit",
 )
 
 OTHER_TOOL_CONFIG: Record = {
@@ -407,7 +415,7 @@ CONFIG_DIGESTS = {
     "Dockerfile.checks": "c8f0ad1105d976a3f757b74727bf2aed9f4bbfb5030a193f1328ba6f5a9b5696",
     "policy/boundaries.toml": "57b58d9f00254c6d4caeae19e244d01b2b7091f8073099267e12b64a1465358e",
     "policy/cases.toml": "354cec361ff60074ea8ce5de782b5e851ca1e2cd9663d72e3c3175cba3d1b75a",
-    "policy/cpu-tests.toml": "66c683ebc5d08d0ee765f0f51a708278ffd2f2740309bbdf32ab841731f313a4",
+    "policy/cpu-tests.toml": "6d97aa025db80d3e7667163999dd4b38b27841a494837135470fceb898c84322",
     "policy/check-stages.toml": "b292836462fa970fb2330e93b913ea1a3ac8fe5eb8efde756b691184bf8165f1",
     "policy/validation.toml": "059cdf0120d2fc9c974512f6ec9943b79cceae47719d62ddc47c6a16392d7368",
 }

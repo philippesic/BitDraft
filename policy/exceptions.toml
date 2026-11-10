@@ -120,3 +120,23 @@ reason = "Data rejection tests use the declared CPU check dependency; no product
 decision_id = "007-checks-and-review"
 owner = "Philip"
 review_condition = "Review when test dependency or rejection checks change"
+
+[[exception]]
+rule_id = "DEP004"
+path = "tests/test_store.py"
+symbol = "pytest"
+sha256 = "db7b0741c94798db5932296122312b7b87d6e5a9e2ee29833a9949d1f774f40b"
+reason = "Store failure tests use the declared CPU check dependency"
+decision_id = "007-checks-and-review"
+owner = "Philip"
+review_condition = "Review when test dependency or failure checks change"
+
+[[exception]]
+rule_id = "DEP004"
+path = "tests/test_training.py"
+symbol = "pytest"
+sha256 = "db7b0741c94798db5932296122312b7b87d6e5a9e2ee29833a9949d1f774f40b"
+reason = "CPU control failure tests use the declared check dependency"
+decision_id = "007-checks-and-review"
+owner = "Philip"
+review_condition = "Review when test dependency or failure checks change"

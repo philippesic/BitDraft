@@ -10,3 +10,13 @@ code imports no tools. Negative next-token positions now reject before indexing.
 The data core adds immutable prompt roles, alias/group separation, explicit training
 count/provenance admission, window boundaries and streamed artifact authentication.
 The exact pytest dependency exception covers only its new rejection-test module.
+
+The CPU store uses destination-filesystem temporary writes, data/directory fsync,
+content authentication and atomic latest-pointer replacement under a nonblocking
+writer lock. Injection before pointer publication preserves the parent; after a
+successful rename a crash may expose the complete parent or complete child.
+This is process/storage-protocol coverage, not proof of power-loss durability.
+The worker control loop has injected operational time and explicit update/wall/
+attempt caps; failed attempts consume cumulative cost. Its tests use a fake worker
+and qualify control behavior only, not HE4 numerical updates or source parity.
+All current named CPU scenarios are now in the mandatory roster.
