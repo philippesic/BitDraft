@@ -1,0 +1,834 @@
+{
+  "records": [
+    {
+      "status": "AUTHENTICATED_CPU_STORAGE_INSPECTION_PASS",
+      "archive": "/home/philip/he4broad-training-20261110-01/HE4broad-18000-18187.pt.bsz",
+      "archive_sha256": "b779e58c484644ca3218df30f61d7a4682a4706f2b05202e34aab728b64dc1c6",
+      "updates": 18187,
+      "config_hash": "8240089561a2d0adafb4090ae21894a80b247fe485ef1c03ec6686294eb47ff8",
+      "data": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/index.json",
+        "sha256": "d703d61f47eee8e695bbd09293c15bbae57184d078b98931ff4a2d5828bdbd73",
+        "bytes": 120130683
+      },
+      "optimizer_steps": [
+        18187.0
+      ],
+      "optimizer_groups": [
+        {
+          "name": "sign",
+          "lr": 0.001,
+          "weight_decay": 0
+        },
+        {
+          "name": "scale",
+          "lr": 1e-05,
+          "weight_decay": 0
+        },
+        {
+          "name": "midpoint",
+          "lr": 1e-05,
+          "weight_decay": 0
+        },
+        {
+          "name": "gain",
+          "lr": 1e-05,
+          "weight_decay": 0
+        },
+        {
+          "name": "clip",
+          "lr": 1e-05,
+          "weight_decay": 0
+        },
+        {
+          "name": "norm",
+          "lr": 1e-05,
+          "weight_decay": 0
+        }
+      ],
+      "cursor": 18187,
+      "window_order_entries": 1568435,
+      "latent_elements": 424673280,
+      "nonfinite_latents": 0,
+      "outside_sign_ste_support": 12760,
+      "fraction_outside_sign_ste_support": 3.004662784529321e-05,
+      "projections": {
+        "layers.0.ffn_gate.latent_sign": {
+          "elements": 23592960,
+          "nonfinite": 0,
+          "outside_sign_ste_support": 0,
+          "fraction_outside_sign_ste_support": 0.0,
+          "positive": 11820431,
+          "max_abs": 0.7742223739624023,
+          "mean_abs": 0.12152892964552975
+        },
+        "layers.0.ffn_up.latent_sign": {
+          "elements": 23592960,
+          "nonfinite": 0,
+          "outside_sign_ste_support": 0,
+          "fraction_outside_sign_ste_support": 0.0,
+          "positive": 11794899,
+          "max_abs": 0.7400578260421753,
+          "mean_abs": 0.11374019543826389
+        },
+        "layers.0.ffn_down.latent_sign": {
+          "elements": 23592960,
+          "nonfinite": 0,
+          "outside_sign_ste_support": 97,
+          "fraction_outside_sign_ste_support": 4.1113959418402776e-06,
+          "positive": 11798558,
+          "max_abs": 1.0092909336090088,
+          "mean_abs": 0.11191438916472196
+        },
+        "layers.1.ffn_gate.latent_sign": {
+          "elements": 23592960,
+          "nonfinite": 0,
+          "outside_sign_ste_support": 0,
+          "fraction_outside_sign_ste_support": 0.0,
+          "positive": 11809749,
+          "max_abs": 0.8027585744857788,
+          "mean_abs": 0.12309078487050346
+        },
+        "layers.1.ffn_up.latent_sign": {
+          "elements": 23592960,
+          "nonfinite": 0,
+          "outside_sign_ste_support": 0,
+          "fraction_outside_sign_ste_support": 0.0,
+          "positive": 11797838,
+          "max_abs": 0.7686749696731567,
+          "mean_abs": 0.12064992296266315
+        },
+        "layers.1.ffn_down.latent_sign": {
+          "elements": 23592960,
+          "nonfinite": 0,
+          "outside_sign_ste_support": 3,
+          "fraction_outside_sign_ste_support": 1.2715657552083333e-07,
+          "positive": 11793911,
+          "max_abs": 1.0040318965911865,
+          "mean_abs": 0.1175907018511678
+        },
+        "layers.2.ffn_gate.latent_sign": {
+          "elements": 23592960,
+          "nonfinite": 0,
+          "outside_sign_ste_support": 0,
+          "fraction_outside_sign_ste_support": 0.0,
+          "positive": 11785006,
+          "max_abs": 0.8147527575492859,
+          "mean_abs": 0.12280239052008689
+        },
+        "layers.2.ffn_up.latent_sign": {
+          "elements": 23592960,
+          "nonfinite": 0,
+          "outside_sign_ste_support": 0,
+          "fraction_outside_sign_ste_support": 0.0,
+          "positive": 11794195,
+          "max_abs": 0.8375134468078613,
+          "mean_abs": 0.12253783763468194
+        },
+        "layers.2.ffn_down.latent_sign": {
+          "elements": 23592960,
+          "nonfinite": 0,
+          "outside_sign_ste_support": 19,
+          "fraction_outside_sign_ste_support": 8.053249782986111e-07,
+          "positive": 11797366,
+          "max_abs": 1.0075613260269165,
+          "mean_abs": 0.12012078290889658
+        },
+        "layers.3.ffn_gate.latent_sign": {
+          "elements": 23592960,
+          "nonfinite": 0,
+          "outside_sign_ste_support": 0,
+          "fraction_outside_sign_ste_support": 0.0,
+          "positive": 11786980,
+          "max_abs": 0.8166772723197937,
+          "mean_abs": 0.12224291720354971
+        },
+        "layers.3.ffn_up.latent_sign": {
+          "elements": 23592960,
+          "nonfinite": 0,
+          "outside_sign_ste_support": 0,
+          "fraction_outside_sign_ste_support": 0.0,
+          "positive": 11795135,
+          "max_abs": 0.7660443186759949,
+          "mean_abs": 0.12309537685728687
+        },
+        "layers.3.ffn_down.latent_sign": {
+          "elements": 23592960,
+          "nonfinite": 0,
+          "outside_sign_ste_support": 505,
+          "fraction_outside_sign_ste_support": 2.140469021267361e-05,
+          "positive": 11800793,
+          "max_abs": 1.0096908807754517,
+          "mean_abs": 0.12250989079135967
+        },
+        "layers.4.ffn_gate.latent_sign": {
+          "elements": 23592960,
+          "nonfinite": 0,
+          "outside_sign_ste_support": 0,
+          "fraction_outside_sign_ste_support": 0.0,
+          "positive": 11799250,
+          "max_abs": 0.8058205246925354,
+          "mean_abs": 0.12147207251348915
+        },
+        "layers.4.ffn_up.latent_sign": {
+          "elements": 23592960,
+          "nonfinite": 0,
+          "outside_sign_ste_support": 0,
+          "fraction_outside_sign_ste_support": 0.0,
+          "positive": 11799551,
+          "max_abs": 0.7974818348884583,
+          "mean_abs": 0.12237876126531587
+        },
+        "layers.4.ffn_down.latent_sign": {
+          "elements": 23592960,
+          "nonfinite": 0,
+          "outside_sign_ste_support": 4062,
+          "fraction_outside_sign_ste_support": 0.00017217000325520833,
+          "positive": 11795763,
+          "max_abs": 1.01107919216156,
+          "mean_abs": 0.12366452996606839
+        },
+        "layers.5.ffn_gate.latent_sign": {
+          "elements": 23592960,
+          "nonfinite": 0,
+          "outside_sign_ste_support": 0,
+          "fraction_outside_sign_ste_support": 0.0,
+          "positive": 11796258,
+          "max_abs": 0.8030568361282349,
+          "mean_abs": 0.11853230719613225
+        },
+        "layers.5.ffn_up.latent_sign": {
+          "elements": 23592960,
+          "nonfinite": 0,
+          "outside_sign_ste_support": 0,
+          "fraction_outside_sign_ste_support": 0.0,
+          "positive": 11796353,
+          "max_abs": 0.8012665510177612,
+          "mean_abs": 0.11776987032355017
+        },
+        "layers.5.ffn_down.latent_sign": {
+          "elements": 23592960,
+          "nonfinite": 0,
+          "outside_sign_ste_support": 8074,
+          "fraction_outside_sign_ste_support": 0.0003422207302517361,
+          "positive": 11795948,
+          "max_abs": 1.0206730365753174,
+          "mean_abs": 0.1203316976148459
+        }
+      },
+      "scalar_elements": 359948,
+      "scalar_nonfinite": 0,
+      "scale_elements": 125952,
+      "zero_scales": 0,
+      "fraction_zero_scales": 0.0,
+      "scalar_ranges": {
+        "output_norm_enc": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9866731762886047,
+          "max": 1.0338865518569946
+        },
+        "output_norm": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9990097284317017,
+          "max": 1.0662716627120972
+        },
+        "layers.0.attn_norm": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9698960185050964,
+          "max": 1.0296993255615234
+        },
+        "layers.0.attn_q_norm": {
+          "elements": 128,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9688680768013,
+          "max": 1.0409843921661377
+        },
+        "layers.0.attn_k_norm": {
+          "elements": 128,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.968716561794281,
+          "max": 1.0409839153289795
+        },
+        "layers.0.ffn_norm": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9759078025817871,
+          "max": 1.0046894550323486
+        },
+        "layers.0.ffn_gate.scale": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.04739471524953842,
+          "max": 0.09103687107563019
+        },
+        "layers.0.ffn_gate.midpoint": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.0046449401415884495,
+          "max": 0.0052199293859303
+        },
+        "layers.0.ffn_gate.log_gain": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 2,
+          "min": -0.02406286634504795,
+          "max": 0.004692047368735075
+        },
+        "layers.0.ffn_gate.log_clip": {
+          "elements": 1,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.04354828968644142,
+          "max": -0.04354828968644142
+        },
+        "layers.0.ffn_up.scale": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.04637613520026207,
+          "max": 0.08609578758478165
+        },
+        "layers.0.ffn_up.midpoint": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.004732204135507345,
+          "max": 0.004386179614812136
+        },
+        "layers.0.ffn_down.scale": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.038512639701366425,
+          "max": 0.24031928181648254
+        },
+        "layers.0.ffn_down.midpoint": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.0032880259677767754,
+          "max": 0.005014694295823574
+        },
+        "layers.0.ffn_down.log_gain": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.009431562386453152,
+          "max": 0.005253918468952179
+        },
+        "layers.0.ffn_down.log_clip": {
+          "elements": 1,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.06717140227556229,
+          "max": -0.06717140227556229
+        },
+        "layers.1.attn_norm": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9941474795341492,
+          "max": 1.0135480165481567
+        },
+        "layers.1.attn_q_norm": {
+          "elements": 128,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9945676922798157,
+          "max": 1.0229778289794922
+        },
+        "layers.1.attn_k_norm": {
+          "elements": 128,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9944856762886047,
+          "max": 1.0289372205734253
+        },
+        "layers.1.ffn_norm": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9887504577636719,
+          "max": 1.0035737752914429
+        },
+        "layers.1.ffn_gate.scale": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.048476170748472214,
+          "max": 0.09970766305923462
+        },
+        "layers.1.ffn_gate.midpoint": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.005225628614425659,
+          "max": 0.005303337704390287
+        },
+        "layers.1.ffn_gate.log_gain": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 2,
+          "min": -0.011243155226111412,
+          "max": 0.003574463538825512
+        },
+        "layers.1.ffn_gate.log_clip": {
+          "elements": 1,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.0369282066822052,
+          "max": -0.0369282066822052
+        },
+        "layers.1.ffn_up.scale": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.0506538487970829,
+          "max": 0.0969632938504219
+        },
+        "layers.1.ffn_up.midpoint": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.004733865149319172,
+          "max": 0.004721224308013916
+        },
+        "layers.1.ffn_down.scale": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.04082441329956055,
+          "max": 0.177823007106781
+        },
+        "layers.1.ffn_down.midpoint": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.00406239228323102,
+          "max": 0.0034982715733349323
+        },
+        "layers.1.ffn_down.log_gain": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.008775533176958561,
+          "max": 0.004587172064930201
+        },
+        "layers.1.ffn_down.log_clip": {
+          "elements": 1,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.08559610694646835,
+          "max": -0.08559610694646835
+        },
+        "layers.2.attn_norm": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9946690797805786,
+          "max": 1.012413501739502
+        },
+        "layers.2.attn_q_norm": {
+          "elements": 128,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9960629940032959,
+          "max": 1.0210049152374268
+        },
+        "layers.2.attn_k_norm": {
+          "elements": 128,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.996123731136322,
+          "max": 1.0213643312454224
+        },
+        "layers.2.ffn_norm": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.99221271276474,
+          "max": 1.0045803785324097
+        },
+        "layers.2.ffn_gate.scale": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.04481354355812073,
+          "max": 0.08702851086854935
+        },
+        "layers.2.ffn_gate.midpoint": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.004690160043537617,
+          "max": 0.005683209281414747
+        },
+        "layers.2.ffn_gate.log_gain": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 2,
+          "min": -0.007782210595905781,
+          "max": 0.004585753194987774
+        },
+        "layers.2.ffn_gate.log_clip": {
+          "elements": 1,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.02830718271434307,
+          "max": -0.02830718271434307
+        },
+        "layers.2.ffn_up.scale": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.05029541254043579,
+          "max": 0.10143238306045532
+        },
+        "layers.2.ffn_up.midpoint": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.004658367019146681,
+          "max": 0.005070629995316267
+        },
+        "layers.2.ffn_down.scale": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.03702550381422043,
+          "max": 0.15064726769924164
+        },
+        "layers.2.ffn_down.midpoint": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.0039035382214933634,
+          "max": 0.003813228104263544
+        },
+        "layers.2.ffn_down.log_gain": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.005869442131370306,
+          "max": 0.006093473639339209
+        },
+        "layers.2.ffn_down.log_clip": {
+          "elements": 1,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.06344559788703918,
+          "max": -0.06344559788703918
+        },
+        "layers.3.attn_norm": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9940645098686218,
+          "max": 1.0117650032043457
+        },
+        "layers.3.attn_q_norm": {
+          "elements": 128,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9960437417030334,
+          "max": 1.016379475593567
+        },
+        "layers.3.attn_k_norm": {
+          "elements": 128,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.996032178401947,
+          "max": 1.0163987874984741
+        },
+        "layers.3.ffn_norm": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9929114580154419,
+          "max": 1.0041977167129517
+        },
+        "layers.3.ffn_gate.scale": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.04201538488268852,
+          "max": 0.08606274425983429
+        },
+        "layers.3.ffn_gate.midpoint": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.004946490284055471,
+          "max": 0.00517410458996892
+        },
+        "layers.3.ffn_gate.log_gain": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 2,
+          "min": -0.0070841629058122635,
+          "max": 0.004203438758850098
+        },
+        "layers.3.ffn_gate.log_clip": {
+          "elements": 1,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.02010108157992363,
+          "max": -0.02010108157992363
+        },
+        "layers.3.ffn_up.scale": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.050937555730342865,
+          "max": 0.09881074726581573
+        },
+        "layers.3.ffn_up.midpoint": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.00487895542755723,
+          "max": 0.0043718586675822735
+        },
+        "layers.3.ffn_down.scale": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.03529609739780426,
+          "max": 0.18143726885318756
+        },
+        "layers.3.ffn_down.midpoint": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.0044689965434372425,
+          "max": 0.004257841035723686
+        },
+        "layers.3.ffn_down.log_gain": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.006233171094208956,
+          "max": 0.0055513749830424786
+        },
+        "layers.3.ffn_down.log_clip": {
+          "elements": 1,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.013244463130831718,
+          "max": -0.013244463130831718
+        },
+        "layers.4.attn_norm": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9937728047370911,
+          "max": 1.007285714149475
+        },
+        "layers.4.attn_q_norm": {
+          "elements": 128,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9960113763809204,
+          "max": 1.0142241716384888
+        },
+        "layers.4.attn_k_norm": {
+          "elements": 128,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9960219264030457,
+          "max": 1.0169293880462646
+        },
+        "layers.4.ffn_norm": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9912360310554504,
+          "max": 1.0039695501327515
+        },
+        "layers.4.ffn_gate.scale": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.03221062943339348,
+          "max": 0.09067081660032272
+        },
+        "layers.4.ffn_gate.midpoint": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.005669527221471071,
+          "max": 0.0055461460724473
+        },
+        "layers.4.ffn_gate.log_gain": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 2,
+          "min": -0.00875619426369667,
+          "max": 0.003970108460634947
+        },
+        "layers.4.ffn_gate.log_clip": {
+          "elements": 1,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.027539236471056938,
+          "max": -0.027539236471056938
+        },
+        "layers.4.ffn_up.scale": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.042886413633823395,
+          "max": 0.10084622353315353
+        },
+        "layers.4.ffn_up.midpoint": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.004839875735342503,
+          "max": 0.004657119046896696
+        },
+        "layers.4.ffn_down.scale": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.018767856061458588,
+          "max": 0.20270270109176636
+        },
+        "layers.4.ffn_down.midpoint": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.01628090813755989,
+          "max": 0.014151312410831451
+        },
+        "layers.4.ffn_down.log_gain": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.006043938919901848,
+          "max": 0.006562000140547752
+        },
+        "layers.4.ffn_down.log_clip": {
+          "elements": 1,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.015126371756196022,
+          "max": 0.015126371756196022
+        },
+        "layers.5.attn_norm": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9909550547599792,
+          "max": 1.010750651359558
+        },
+        "layers.5.attn_q_norm": {
+          "elements": 128,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.992630660533905,
+          "max": 1.0177568197250366
+        },
+        "layers.5.attn_k_norm": {
+          "elements": 128,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9924169778823853,
+          "max": 1.0177570581436157
+        },
+        "layers.5.ffn_norm": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.9911225438117981,
+          "max": 1.0048116445541382
+        },
+        "layers.5.ffn_gate.scale": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.03474022448062897,
+          "max": 0.09430335462093353
+        },
+        "layers.5.ffn_gate.midpoint": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.005376437678933144,
+          "max": 0.005661773029714823
+        },
+        "layers.5.ffn_gate.log_gain": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.00888029858469963,
+          "max": 0.004809633828699589
+        },
+        "layers.5.ffn_gate.log_clip": {
+          "elements": 1,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.021995259448885918,
+          "max": -0.021995259448885918
+        },
+        "layers.5.ffn_up.scale": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.04034198820590973,
+          "max": 0.09808261692523956
+        },
+        "layers.5.ffn_up.midpoint": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.004496629815548658,
+          "max": 0.00496702129021287
+        },
+        "layers.5.ffn_down.scale": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.028970669955015182,
+          "max": 0.13459597527980804
+        },
+        "layers.5.ffn_down.midpoint": {
+          "elements": 2560,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.006905947811901569,
+          "max": 0.005783758591860533
+        },
+        "layers.5.ffn_down.log_gain": {
+          "elements": 9216,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": -0.006262616720050573,
+          "max": 0.007502877153456211
+        },
+        "layers.5.ffn_down.log_clip": {
+          "elements": 1,
+          "nonfinite": 0,
+          "zeros": 0,
+          "min": 0.014424191787838936,
+          "max": 0.014424191787838936
+        }
+      },
+      "raw_sha_verified": true,
+      "compressed_sha_verified": true,
+      "no_torch_import": true,
+      "no_cuda_import": true
+    }
+  ]
+}

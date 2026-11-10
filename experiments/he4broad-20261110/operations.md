@@ -170,3 +170,11 @@ Later updates are advancing in the first hourly segment. Proofs are linked from
 the manifest; the failed pre-exposure index attempt remains separate evidence.
 The 30-minute event is enabled and the hourly availability fallback is disabled.
 Readiness is verified launch/resume, not completion of the 12-hour allocation.
+
+## Early learning-curve investigation
+
+The [read-only setup audit](setup-audit.md) checks dataset exposure, immutable
+optimizer state, binary-gradient support and saved native responses/counters.
+It identifies input materialization as the dominant training-wall cost and the
+three-prompt development panel as too narrow for broad saturation claims. It
+does not change the active recipe, pinned source, clock allocation or schedule.
