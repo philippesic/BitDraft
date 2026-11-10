@@ -12,7 +12,7 @@ from w1a1_eagle.capacity import backing_available
 from w1a1_eagle.clock import Monotonic
 from w1a1_eagle.config import cpu_environment, numerical_python
 from w1a1_eagle.contracts import Record, integer, number, record, string
-from w1a1_eagle.identity import source_identity
+from w1a1_eagle.identity import freeze_source, source_identity
 from w1a1_eagle.intent import Intent
 from w1a1_eagle.lifecycle import Journal, Ownership
 from w1a1_eagle.processes import ProcessIdentity
@@ -38,7 +38,16 @@ def execute(
     try:
         if any(
             path.name
-            not in {".controller", "events.jsonl", "control.json", "states", "exports", "incidents"}
+            not in {
+                ".controller",
+                "events.jsonl",
+                "control.json",
+                "states",
+                "exports",
+                "incidents",
+                "sources",
+                "intents",
+            }
             for path in root.iterdir()
         ):
             raise ValueError("output root contains foreign state; choose an isolated task root")
@@ -82,6 +91,10 @@ def execute(
         remaining = intent.budget.wall_seconds - spent
         if remaining <= 0:
             raise ValueError("cumulative wall budget exhausted, including failed attempts")
+        frozen_root = freeze_source(
+            code_root, root / "sources", str(intent.raw["code_sha256"]), intent.disk_reserve_bytes
+        )
+        sealed_intent = intent.seal(root / "intents")
         attempt = uuid.uuid4().hex
         controller = ProcessIdentity.read(os.getpid())
         journal.append(
@@ -91,6 +104,8 @@ def execute(
                 "recipe": intent.recipe,
                 "intent": intent.sha256,
                 "source": intent.raw["code_sha256"],
+                "source_snapshot": str(frozen_root),
+                "intent_receipt": str(sealed_intent),
                 "controller": cast(Record, asdict(controller)),
                 "wall_budget": remaining,
             }
@@ -98,7 +113,7 @@ def execute(
         clock = Monotonic()
         began = clock.now()
         environment = cpu_environment()
-        environment["PYTHONPATH"] = str(code_root)
+        environment["PYTHONPATH"] = str(frozen_root)
         process: subprocess.Popen[bytes] | None = None
         owner: ProcessIdentity | None = None
         outcome = "failed"
@@ -111,10 +126,10 @@ def execute(
                     "-m",
                     "w1a1_eagle.bootstrap",
                     str(remaining),
-                    "--preflight",
-                    str(intent_path.resolve()),
+                    "--sealed-preflight",
+                    str(sealed_intent),
                 ],
-                cwd=code_root,
+                cwd=frozen_root,
                 env=environment,
                 stdin=subprocess.DEVNULL,
                 stdout=subprocess.PIPE,
@@ -148,12 +163,12 @@ def execute(
                             "-m",
                             "w1a1_eagle.bootstrap",
                             str(runtime_remaining),
-                            str(intent_path.resolve()),
+                            str(sealed_intent),
                             str(root.resolve()),
                             attempt,
                             str(runtime_remaining),
                         ],
-                        cwd=code_root,
+                        cwd=frozen_root,
                         env=environment,
                         stdin=subprocess.DEVNULL,
                         stdout=subprocess.DEVNULL,

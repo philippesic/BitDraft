@@ -66,11 +66,11 @@ Process-crash recovery is distinct from power-loss durability. Native, hardware,
 scientific adequacy and serving performance remain unqualified by CPU fixtures.
 
 
-Supported readers: intent 2, canonical corpus 1, tensor payload 2, store manifest 1,
-event envelope 1, and the emitted native-format GGUF W1Ax version 2. The earlier CPU
-prototype tensor/intent schema 1 has no implicit reader or migration. Preserve its
+Supported readers: intent 2, canonical corpus 1, tensor payload 3, store manifest 1,
+event envelope 1, and the emitted native-format GGUF W1Ax version 2. Earlier CPU
+tensor schemas 1/2 and intent schema 1 have no implicit reader or migration. Preserve its
 originals; migration needs an explicit new artifact and verified source lineage.
-Tensor payload 2 binds source/vocabulary identities and validates exact Adam moment
+Tensor payload 3 binds source/vocabulary identities and validates exact Adam moment
 coverage, types and shapes before restoration. Artifact relocation does not change
 content identity; exact recipe identity additionally binds executable source.
 
@@ -104,3 +104,29 @@ forms refuse; canonical corpus 1 remains supported. Intent payloads are internal
 immutable: reading raw returns a copy rather than a mutable admission record.
 Admission names prior-use counts explicitly. Exposure estimates describe additional
 visits, never unknown lifetime consumption or an assertion of scientific adequacy.
+
+Each admitted run retains a bounded source closure under sources/<identity> and an
+exact schema-1 intent receipt under intents/<identity>. Workers and their preflight
+execute from that closure, with bytecode reuse disabled, rather than a mutable
+checkout. Relative input references retain their original containing directory.
+Changing the caller's intent after admission cannot change its child. Snapshot files
+are read-only and checked by content; this is cooperative worktree isolation, not
+protection against an owner who deliberately rewrites retained files or dependencies.
+Actual loaded dependency identities are still checked separately.
+
+Tensor payload 3 retains learned parameters, Adam/RNG/counters and the streamed
+fingerprint of every frozen buffer. The authenticated initializer and vocabulary
+remain required dependencies; they reconstruct frozen data before restore. A mismatch
+refuses. Runtime buffer object/version guards detect ordinary in-place/replacement
+mutations before publication. They are not a hostile Python memory sandbox.
+The exact next-update CPU witness covers this format; old payloads are preserved
+without implicit acceptance.
+
+The supported event journal is bounded to 64 MiB. CPU execution stops at 56 MiB to
+retain room for complete state/export/terminal evidence; it never deletes events to
+continue. This is a declared storage stop, not goal completion. The prospective disk
+upper bound includes the journal, source/intent snapshots and torn-tail receipt in
+addition to states/exports. Longer execution needs an explicitly qualified journal
+migration or larger supported format. No OS-reserved disk capacity is claimed.
+Human terminal output names controller outcome, worker stop, confirmed activation,
+starting state and risk; missing evidence remains unknown.

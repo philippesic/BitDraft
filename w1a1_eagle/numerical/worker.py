@@ -1,8 +1,10 @@
+import hashlib
 import threading
 import zipfile
 from dataclasses import asdict
 from typing import BinaryIO, Callable, Literal, Protocol, cast
 
+import numpy as np
 import torch
 from torch import Tensor
 
@@ -12,6 +14,7 @@ from w1a1_eagle.contracts import integer, number, record, sequence, string
 from w1a1_eagle.data import Window
 from w1a1_eagle.model import HE4, Projection
 from w1a1_eagle.numerical.captures import Capture
+from w1a1_eagle.records import canonical
 from w1a1_eagle.training import Budget, Progress, train
 
 
@@ -62,13 +65,38 @@ class TensorWorker:
             foreach=False,
         )
         self.last_gradient_norm = 0.0
+        self.frozen = {name: (value, value._version) for name, value in model.named_buffers()}
+        digest = hashlib.sha256()
+        for name, (value, _) in self.frozen.items():
+            if value.dtype != torch.float32:
+                raise ValueError("frozen HE4 execution operands must be F32")
+            digest.update(canonical([name, str(value.dtype), list(value.shape)]))
+            array = cast(
+                np.ndarray[tuple[int, ...], np.dtype[np.float32]],
+                value.detach().cpu().contiguous().numpy(),
+            )
+            data = array.data.cast("B")
+            for offset in range(0, len(data), 1024 * 1024):
+                digest.update(data[offset : offset + 1024 * 1024])
+        self.frozen_sha256 = digest.hexdigest()
+
+    def verify_frozen(self) -> None:
+        current = dict(self.model.named_buffers())
+        if set(current) != set(self.frozen) or any(
+            current[name] is not value or value._version != version
+            for name, (value, version) in self.frozen.items()
+        ):
+            self.ready = False
+            raise ValueError("frozen source or vocabulary changed after construction")
 
     def step(self, cursor: int) -> float:
         with self.lock:
             if not self.ready or cursor != self.cursor:
                 raise ValueError("worker requires exact cursor or durable recovery")
+            self.verify_frozen()
             self.ready = False
             capture, window = self.samples.sample(cursor)
+            feature_version = capture.features._version
             self.optimizer.zero_grad(set_to_none=True)
             logits = self.model.forward(capture.features, capture.tokens, window.anchor)[1:]
             labels = torch.tensor(window.labels, dtype=torch.int64, device=logits.device)
@@ -91,6 +119,9 @@ class TensorWorker:
                 not bool(torch.isfinite(parameter).all()) for parameter in self.model.parameters()
             ):
                 raise ValueError("nonfinite post-update state")
+            self.verify_frozen()
+            if capture.features._version != feature_version:
+                raise ValueError("teacher features changed during an update")
             self.optimizer_updates += 1
             self.updates += 1
             self.cursor += 1
@@ -116,9 +147,10 @@ class TensorWorker:
                 or self.progress.cursor != self.cursor
             ):
                 raise ValueError("cannot publish an incomplete update or budget record")
+            self.verify_frozen()
             self.progress.validate()
             state: dict[str, object] = {
-                "schema": 2,
+                "schema": 3,
                 "config": self.identity,
                 "updates": self.updates,
                 "cursor": self.cursor,
@@ -127,7 +159,11 @@ class TensorWorker:
                 "progress": cast(dict[str, object], asdict(self.progress)),
                 "geometry": cast(dict[str, object], asdict(self.model.geometry)),
                 "mask": self.model.mask,
-                "model": cast(dict[str, Tensor], self.model.state_dict()),
+                "model": {
+                    name: value.detach()
+                    for name, value in self.model.named_parameters(remove_duplicate=False)
+                },
+                "frozen_sha256": self.frozen_sha256,
                 "optimizer": cast(dict[str, object], self.optimizer.state_dict()),
                 "rng": torch.get_rng_state(),
                 "device": self.model.vocabulary.device.type,
@@ -176,8 +212,9 @@ class TensorWorker:
                 "cuda_rng",
                 "lineage",
                 "origin",
+                "frozen_sha256",
             }
-            if set(state) != required or type(state["schema"]) is not int or state["schema"] != 2:
+            if set(state) != required or type(state["schema"]) is not int or state["schema"] != 3:
                 raise ValueError("unsupported tensor state schema")
             if (
                 state["geometry"] != cast(dict[str, object], asdict(self.model.geometry))
@@ -199,8 +236,11 @@ class TensorWorker:
             updates, cursor = integer(state["updates"]), integer(state["cursor"])
             if updates != reference.updates or updates < 0 or cursor < 0:
                 raise ValueError("state accounting mismatch")
+            self.verify_frozen()
+            if state["frozen_sha256"] != self.frozen_sha256:
+                raise ValueError("frozen initialization fingerprint mismatch")
             saved = record(state["model"])
-            expected = cast(dict[str, Tensor], self.model.state_dict())
+            expected = dict(self.model.named_parameters(remove_duplicate=False))
             if set(saved) != set(expected):
                 raise ValueError("state tensor coverage mismatch")
             tensors: dict[str, Tensor] = {}
@@ -213,9 +253,6 @@ class TensorWorker:
                 ):
                     raise ValueError("state tensor shape, dtype or finiteness mismatch")
                 tensors[name] = value
-            for name, value in self.model.named_buffers():
-                if not torch.equal(value.detach().cpu(), tensors[name]):
-                    raise ValueError("frozen source or vocabulary changed")
             aliases: dict[int, str] = {}
             for name, parameter in self.model.named_parameters(remove_duplicate=False):
                 previous = aliases.setdefault(id(parameter), name)
@@ -308,7 +345,9 @@ class TensorWorker:
                 progress.attempts = progress.updates + progress.failed + progress.discarded
                 progress.wall_seconds = max(progress.wall_seconds, self.progress.wall_seconds)
                 progress.validate()
-            self.model.load_state_dict(tensors, strict=True)
+            with torch.no_grad():
+                for name, parameter in expected.items():
+                    parameter.copy_(tensors[name])
             lineage = tuple(string(v) for v in sequence(state["lineage"]))
             if mode == "resume":
                 self.optimizer.load_state_dict(optimizer_state)

@@ -8,8 +8,10 @@ from typing import cast
 
 import pytest
 
+from w1a1_eagle.__main__ import human
 from w1a1_eagle.clock import Monotonic
 from w1a1_eagle.contracts import Record
+from w1a1_eagle.identity import freeze_source, source_identity
 from w1a1_eagle.lifecycle import Journal, Ownership, control
 from w1a1_eagle.processes import ProcessIdentity
 from w1a1_eagle.records import canonical, read
@@ -76,6 +78,10 @@ def test_journal_integrity_and_truthful_health(tmp_path: Path) -> None:
     assert report["cumulative_attempt_seconds"] == 3
     assert str(report["scientific"]).startswith("unknown")
     assert str(report["objective"]).startswith("unknown")
+    rendered = human(report)
+    assert "controller outcome failed" in rendered
+    assert "worker stop unknown" in rendered
+    assert "no completed worker evidence" in rendered
     path = tmp_path / "events.jsonl"
     original = path.read_bytes()
     path.write_bytes(original.replace(b'"wall_seconds":3.0', b'"wall_seconds":0.0'))
@@ -126,6 +132,9 @@ def test_records_reject_duplicate_keys_and_optimized_guards(tmp_path: Path) -> N
     path.write_text('{"schema":1,"schema":2}')
     with pytest.raises(ValueError, match="duplicate"):
         read(path)
+    path.write_text('{"value":NaN}')
+    with pytest.raises(ValueError, match="nonfinite"):
+        read(path)
     result = subprocess.run(
         [
             sys.executable,
@@ -162,3 +171,55 @@ def test_independent_wall_timer_and_invalid_clock() -> None:
     with pytest.raises(ValueError, match="before update"):
         train(FakeWorker(clock), clock, Budget(1, 1, 1), progress, lambda: False)
     assert progress.attempts == progress.updates == 0
+
+
+def test_runtime_snapshot_survives_checkout_changes(tmp_path: Path) -> None:
+    checkout = tmp_path / "checkout"
+    (checkout / "w1a1_eagle").mkdir(parents=True)
+    (checkout / "policy").mkdir()
+    for name, data in {
+        "w1a1_eagle/__init__.py": b"",
+        "w1a1_eagle/value.py": b"VALUE = 17\n",
+        "uv.lock": b"lock",
+        "pyproject.toml": b"project",
+        "policy/numerical.toml": b"schema = 1",
+    }.items():
+        (checkout / name).write_bytes(data)
+    expected = source_identity(checkout)
+    frozen = freeze_source(checkout, tmp_path / "sources", expected, 0)
+    (checkout / "w1a1_eagle/value.py").write_text("VALUE = 99\n")
+    assert source_identity(frozen) == expected != source_identity(checkout)
+    result = subprocess.run(
+        [sys.executable, "-B", "-c", "from w1a1_eagle.value import VALUE; print(VALUE)"],
+        cwd=frozen,
+        env={**os.environ, "PYTHONPATH": str(frozen), "PYTHONDONTWRITEBYTECODE": "1"},
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.stdout.strip() == "17"
+    with pytest.raises(ValueError, match="changed before"):
+        freeze_source(checkout, tmp_path / "sources", expected, 0)
+    (frozen / "w1a1_eagle/value.py").chmod(0o644)
+    (frozen / "w1a1_eagle/value.py").write_text("VALUE = 0\n")
+    (checkout / "w1a1_eagle/value.py").write_text("VALUE = 17\n")
+    with pytest.raises(ValueError, match="snapshot differs"):
+        freeze_source(checkout, tmp_path / "sources", expected, 0)
+
+
+def test_report_refuses_ambiguous_or_negative_attempt_cost(tmp_path: Path) -> None:
+    journal = Journal(tmp_path)
+    journal.append({"kind": "started", "attempt": "one"})
+    journal.append(
+        {"kind": "terminal", "attempt": "one", "outcome": "complete", "wall_seconds": -1}
+    )
+    with pytest.raises(ValueError, match="terminal outcome or cost"):
+        journal.report()
+    other = Journal(tmp_path / "duplicate")
+    other.append({"kind": "started", "attempt": "one"})
+    for _ in range(2):
+        other.append(
+            {"kind": "terminal", "attempt": "one", "outcome": "complete", "wall_seconds": 1}
+        )
+    with pytest.raises(ValueError, match="ambiguous"):
+        other.report()
