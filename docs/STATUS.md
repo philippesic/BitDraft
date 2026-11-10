@@ -8,7 +8,9 @@ verified release. Fresh base-drafter HE4 quantization; combined 15,647-sequence 
 checkpoint round-trip checks pass. The zero-update native panel passes all 75 requests, including warmups; the
 first real optimizer update and exact zero-state GPU restore pass. The trained
 56-update checkpoint also restored its parameters/Adam/RNG/cursor and completed
-the actual next update; training is advancing in the first hourly segment.
+the actual next update. The first hourly formal panel is complete with all 75
+requests correct; its 3,662-update checkpoint restored successfully and training
+is advancing in the second hourly segment.
 Up to 12 hours of training wall time (including remote data I/O); synchronized
 update time is tracked separately. Formal hourly acceptance/throughput panels and
 the dedicated 30-minute health/repair event are enabled. [Report](../experiments/he4broad-20261110/report.md)
