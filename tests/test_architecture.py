@@ -25,6 +25,14 @@ def test_import_default_and_class_effects() -> None:
         "from pathlib import Path\nclass A:\n    x = Path('x').mkdir()\n",
     ]:
         assert inspect_tree({"a.py": text}) == [Diagnostic("ARCH_IMPORT_EFFECT", "a.py")]
+    assert Diagnostic("ARCH_IMPORT_EFFECT", "a.py") in inspect_tree(
+        {"a.py": "import torch\nvalue=torch.tensor([1],device='cuda')\n"}
+    )
+    for text in [
+        "import numpy as np\ndef f():\n    return np.random.rand(1)\n",
+        "import torch\ndef f():\n    return torch.randn(1)\n",
+    ]:
+        assert inspect_tree({"a.py": text}) == [Diagnostic("SEEDED_RANDOM", "a.py")]
 
 
 def test_alias_and_relative_imports() -> None:

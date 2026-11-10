@@ -44,3 +44,7 @@ or serving performance. Hosted CI and an optional container remain unexercised c
 reference-semantic corrections. [Execution](execution.md) describes runtime refusal,
 reporting, identity and resource scope. [Agent exercise evidence](evidence/agent-readiness.json)
 is one fresh readiness/refusal task with explicit isolation and attribution limits.
+
+CPU scratch, including checker/specimen/type-check temporaries, now uses an owned RAM
+root under /tmp. Reclaimed stale type-check cache and compiler-cache evidence is in
+[disk receipt](evidence/disk-reclaim.json). No real weights or run evidence were deleted.

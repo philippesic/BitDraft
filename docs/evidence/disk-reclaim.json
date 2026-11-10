@@ -1,0 +1,31 @@
+{
+  "after_available_bytes": {
+    "/": 3526230016,
+    "/mnt/c": 3088281600
+  },
+  "before_available_bytes": {
+    "/": 1369014272,
+    "/mnt/c": 3088281600
+  },
+  "deleted_count": 1554,
+  "full_receipt": "/home/philip/.local/share/p-stack/repairs/20261110-binary-port-disk-reclaim/receipt.json",
+  "full_receipt_sha256": "6e80615b6868be4f3ded8dc0a5bd3f01d11f25e825897c6330a298bfa1f60331",
+  "limits": "No actual full compiler rebuild performed. No source/archive caches removed. WSL unlink does not guarantee host VHD shrink; Windows backing capacity measured separately.",
+  "own_cache_reclaim": {
+    "active_handles_found": 0,
+    "class": "unused reproducible mypy cache",
+    "files": 9410,
+    "free_after": 3486326784,
+    "free_before": 3208044544,
+    "logical_bytes": 256633034,
+    "recoverability": "source and pinned type checker/dependencies retained; all current checks explicitly use no incremental cache",
+    "root": "/home/philip/binary-eagle-decoding-next/.mypy_cache",
+    "schema": 1
+  },
+  "preserved": "All executables, .d, fingerprints/build outputs, missing-source entries, scientific artifacts, environments, downloaded dependency closure",
+  "purpose": "Restore Binary Eagle port capacity using exact stale compiler intermediates only",
+  "reclaimed_allocated_bytes": 2157527040,
+  "schema": 1,
+  "source_evidence": "Per-artifact dep-info inputs verified present, Cargo.lock, custom toolchain and registry source retained",
+  "target_lock": "Exclusive nonblocking old Cargo target lock held"
+}

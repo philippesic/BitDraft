@@ -1,3 +1,4 @@
+import hashlib
 import os
 import tomllib
 from dataclasses import dataclass
@@ -26,6 +27,9 @@ class Settings:
 
 
 def settings(root: Path) -> Settings:
+    temporary = Path("/tmp") / (
+        "binary-check-" + hashlib.sha256(str(root.resolve()).encode()).hexdigest()[:16]
+    )
     environment = dict(os.environ)
     environment.update(
         {
@@ -37,17 +41,15 @@ def settings(root: Path) -> Settings:
             "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
             "PYTHONUTF8": "1",
             "PYTHONPATH": str(root),
-            "TMPDIR": str(root / ".venv/check-temp"),
-            "PYTEST_DEBUG_TEMPROOT": str(root / ".venv/check-temp"),
+            "TMPDIR": str(temporary),
+            "PYTEST_DEBUG_TEMPROOT": str(temporary),
             "PRE_COMMIT_HOME": str(root / ".venv/check-cache/pre-commit"),
             "BINARY_NUMERICAL_PYTHON": numerical_python(root),
             "UV_PYTHON_DOWNLOADS": "never",
             "UV_CACHE_DIR": str(root / ".venv/check-cache"),
         }
     )
-    return Settings(
-        root, root / ".venv/check-temp", environment, os.environ.get("PRE_COMMIT") == "1"
-    )
+    return Settings(root, temporary, environment, os.environ.get("PRE_COMMIT") == "1")
 
 
 def needs_reexec(config: Settings) -> bool:
@@ -78,6 +80,7 @@ GROUP_COUNTS = {
     for value in RULES
 }
 COMMANDS = policy_data("commands.toml")
+BOUNDARIES = policy_data("boundaries.toml")
 ENTRY_MODULES = {
     string(value) for key in ("public", "private", "deferred") for value in sequence(COMMANDS[key])
 }
@@ -252,9 +255,9 @@ CONFIG_DIGESTS = {
     ".pre-commit-config.yaml": "30f513d6c67238996c9f8496b2d32ae39c39f3909da15adcc220ca79fc5ae69d",
     ".github/workflows/checks.yml": "b77dd147c5047bf7fab676f08303ab264fda7b50f073241c6c0d5b52e85cdb56",
     "Dockerfile.checks": "c8f0ad1105d976a3f757b74727bf2aed9f4bbfb5030a193f1328ba6f5a9b5696",
-    "policy/boundaries.toml": "57b58d9f00254c6d4caeae19e244d01b2b7091f8073099267e12b64a1465358e",
+    "policy/boundaries.toml": "2222fafd65a0c3d355483f9d0ff3354550f495faefa282b80a327e5365ca024a",
     "policy/cases.toml": "d3094468c15e70cec936fb2b3b2eb6f99ee2900b39a507492f5b762b32ee6cfc",
-    "policy/cpu-tests.toml": "8a4a6ee2d7f190e9f97ca914685834968950bd2cf6307d991da3b29fbae5e59c",
+    "policy/cpu-tests.toml": "f1e519e66fdfe58d8abfd1d94d966ac9ded8e9cb048f5be92bf4b1a0cf37c126",
     "policy/check-stages.toml": "b292836462fa970fb2330e93b913ea1a3ac8fe5eb8efde756b691184bf8165f1",
     "policy/validation.toml": "059cdf0120d2fc9c974512f6ec9943b79cceae47719d62ddc47c6a16392d7368",
 }

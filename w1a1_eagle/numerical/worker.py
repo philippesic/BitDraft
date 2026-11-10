@@ -111,13 +111,14 @@ class TensorWorker:
         with self.lock:
             if (
                 not self.ready
+                or self.progress.needs_recovery
                 or self.progress.updates != self.updates
                 or self.progress.cursor != self.cursor
             ):
                 raise ValueError("cannot publish an incomplete update or budget record")
             self.progress.validate()
             state: dict[str, object] = {
-                "schema": 1,
+                "schema": 2,
                 "config": self.identity,
                 "updates": self.updates,
                 "cursor": self.cursor,
@@ -134,6 +135,7 @@ class TensorWorker:
                 if self.model.vocabulary.device.type == "cuda"
                 else None,
                 "lineage": list(self.lineage),
+                "origin": list(self.model.origin) if self.model.origin else None,
             }
             torch.save(state, output)
 
@@ -173,14 +175,17 @@ class TensorWorker:
                 "device",
                 "cuda_rng",
                 "lineage",
+                "origin",
             }
-            if set(state) != required or type(state["schema"]) is not int or state["schema"] != 1:
+            if set(state) != required or type(state["schema"]) is not int or state["schema"] != 2:
                 raise ValueError("unsupported tensor state schema")
             if (
                 state["geometry"] != cast(dict[str, object], asdict(self.model.geometry))
                 or state["mask"] != self.model.mask
             ):
                 raise ValueError("state model semantics mismatch")
+            if state["origin"] != (list(self.model.origin) if self.model.origin else None):
+                raise ValueError("source/vocabulary origin mismatch")
             if string(state["config"]) != reference.config:
                 raise ValueError("state manifest and payload identity disagree")
             if state["device"] not in {"cpu", "cuda"}:
@@ -234,11 +239,35 @@ class TensorWorker:
             )
             if len(states) != (expected_count if optimizer_updates else 0):
                 raise ValueError("optimizer state coverage mismatch")
-            for value in states.values():
+            identifiers = [
+                integer(value)
+                for group in saved_groups
+                for value in sequence(record(group)["params"])
+            ]
+            groups = cast(list[dict[str, object]], self.optimizer.param_groups)
+            parameters = [item for group in groups for item in cast(list[Tensor], group["params"])]
+            if any(type(key) is not int for key in states) or set(states) != (
+                set(identifiers) if optimizer_updates else set()
+            ):
+                raise ValueError("optimizer parameter identity mismatch")
+            for identifier, optimizer_parameter in zip(identifiers, parameters, strict=True):
+                if not optimizer_updates:
+                    continue
+                value = states[identifier]
                 fields = record(value)
+                if set(fields) != {"step", "exp_avg", "exp_avg_sq"}:
+                    raise ValueError("optimizer field coverage mismatch")
                 step = fields["step"]
                 if not torch.is_tensor(step) or step.ndim != 0 or float(step) != optimizer_updates:
                     raise ValueError("optimizer step mismatch")
+                for key in ("exp_avg", "exp_avg_sq"):
+                    field = fields[key]
+                    if (
+                        not torch.is_tensor(field)
+                        or field.shape != optimizer_parameter.shape
+                        or field.dtype != optimizer_parameter.dtype
+                    ):
+                        raise ValueError("optimizer moment geometry mismatch")
                 for field in fields.values():
                     if torch.is_tensor(field) and not bool(torch.isfinite(field).all()):
                         raise ValueError("nonfinite optimizer state")

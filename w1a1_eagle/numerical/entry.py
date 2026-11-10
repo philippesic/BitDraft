@@ -3,7 +3,9 @@ import os
 import shutil
 import signal
 import sys
+from dataclasses import asdict
 from pathlib import Path
+from typing import cast
 
 import torch
 
@@ -18,6 +20,7 @@ from w1a1_eagle.lifecycle import Journal, control
 from w1a1_eagle.model import Geometry
 from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.numerical.corpus import Corpus
+from w1a1_eagle.numerical.export import export_he4
 from w1a1_eagle.numerical.weights import load_he4
 from w1a1_eagle.numerical.worker import TensorWorker
 from w1a1_eagle.processes import ProcessIdentity
@@ -46,6 +49,9 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
         "mechanism": "HE4 W1A4/A8/Q4_K fifteen-label weighted-CE updates",
         "exposure": exposure,
         "budget": intent.raw["budget"],
+        "peak_new_bytes_upper_bound": intent.peak_new_bytes,
+        "checkpoint_updates": intent.checkpoint_updates,
+        "checkpoint_seconds": intent.checkpoint_seconds,
         "authority": "caller-provided scope; not established by this readiness report",
         "readiness": "CPU data-policy checks passed; model allocation and runtime still pending",
         "scientific": "only supplied data-admission policy checked; learning and usefulness unknown",
@@ -94,9 +100,19 @@ def run(intent_path: Path, root: Path, attempt: str) -> None:
         ).alive()
     ):
         raise ValueError("controller process ownership mismatch")
+    own_identity = ProcessIdentity.read(os.getpid())
+    owners = [
+        record(row["owner"])
+        for row in journal.events()
+        if row.get("kind") == "process" and row.get("attempt") == attempt
+    ]
+    if owners != [cast(Record, asdict(own_identity))]:
+        raise ValueError("worker requires its durable controller-bound process identity")
     journal.append({**admission(intent, corpus), "attempt": attempt})
     model = load_he4(intent.source, intent.vocabulary, intent.memory_bytes, cfg)
-    journal.append({"kind": "loaded", "attempt": attempt, "identity": loaded_identity()})
+    loaded_cache: dict[tuple[int, int, int, int, int], str] = {}
+    initial_loaded = loaded_identity(loaded_cache)
+    journal.append({"kind": "loaded", "attempt": attempt, "identity": initial_loaded})
     worker = TensorWorker(model, corpus, intent.recipe)
     states = Store(root / "states", intent.disk_reserve_bytes)
     if intent.parent:
@@ -104,11 +120,19 @@ def run(intent_path: Path, root: Path, attempt: str) -> None:
         worker.restore(
             parent, intent.memory_bytes, "resume" if intent.mode == "resume" else "branch"
         )
-    exposures = [row for row in journal.events() if row.get("kind") == "exposure"]
-    if exposures and intent.mode == "resume":
-        attempted = max(integer(row["attempts"]) for row in exposures)
+    attempted_updates = [row for row in journal.events() if row.get("kind") == "update-attempt"]
+    if attempted_updates and intent.mode == "resume":
+        attempted = max(integer(row["attempts"]) for row in attempted_updates)
         extra = max(0, attempted - worker.progress.attempts)
-        worker.progress.discarded += extra
+        failures = [
+            integer(record(row["progress"])["failed"])
+            for row in journal.events()
+            if row.get("kind") == "worker-failure"
+        ]
+        failed = max([worker.progress.failed, *failures])
+        added_failed = min(extra, max(0, failed - worker.progress.failed))
+        worker.progress.failed += added_failed
+        worker.progress.discarded += extra - added_failed
         worker.progress.attempts += extra
     stopped = False
 
@@ -119,16 +143,45 @@ def run(intent_path: Path, root: Path, attempt: str) -> None:
     signal.signal(signal.SIGTERM, stop_signal)
     signal.signal(signal.SIGINT, stop_signal)
     owner = ProcessIdentity.read(os.getpid())
+    clock = Monotonic()
+    last_checkpoint_updates = worker.updates
+    last_checkpoint_seconds = clock.now()
 
     def stop() -> bool:
+        nonlocal last_checkpoint_updates, last_checkpoint_seconds
         if shutil.disk_usage(root).free - intent.state_bytes < intent.disk_reserve_bytes:
             return True
         if backing_available() - intent.state_bytes < intent.disk_reserve_bytes:
             return True
-        return stopped or control(root, attempt, owner, 1)
+        if stopped or control(root, attempt, owner, 1):
+            return True
+        if (
+            worker.updates - last_checkpoint_updates >= intent.checkpoint_updates
+            or clock.now() - last_checkpoint_seconds >= intent.checkpoint_seconds
+        ):
+            saved = worker.checkpoint(states, intent.state_bytes)
+            journal.append(
+                {
+                    "kind": "checkpoint",
+                    "attempt": attempt,
+                    "updates": worker.updates,
+                    "artifact": saved.artifact.sha256,
+                }
+            )
+            last_checkpoint_updates = worker.updates
+            last_checkpoint_seconds = clock.now()
+        return False
 
     class RecordedSamples:
         def sample(self, cursor: int) -> tuple[Capture, Window]:
+            journal.append(
+                {
+                    "kind": "update-attempt",
+                    "attempt": attempt,
+                    "attempts": worker.progress.attempts,
+                    "cursor": cursor,
+                }
+            )
             capture, window = corpus.sample(cursor)
             journal.append(
                 {
@@ -144,8 +197,46 @@ def run(intent_path: Path, root: Path, attempt: str) -> None:
 
     worker.samples = RecordedSamples()
     worker.checkpoint(states, intent.state_bytes)
-    result = worker.run(Monotonic(), intent.budget, stop)
+    try:
+        result = worker.run(clock, intent.budget, stop)
+    except BaseException:
+        journal.append(
+            {
+                "kind": "worker-failure",
+                "attempt": attempt,
+                "progress": cast(Record, asdict(worker.progress)),
+            }
+        )
+        raise
     reference = worker.checkpoint(states, intent.state_bytes)
+    exported = export_he4(
+        worker,
+        intent.source,
+        intent.vocabulary,
+        Store(root / "exports", intent.disk_reserve_bytes),
+        intent.state_bytes,
+        intent.memory_bytes,
+    )
+    journal.append(
+        {
+            "kind": "export",
+            "attempt": attempt,
+            "artifact": exported.artifact.sha256,
+            "source": intent.source.sha256,
+            "vocabulary": intent.vocabulary.sha256,
+            "scope": "GGUF producer/reader conformance; native loading unqualified",
+        }
+    )
+    if source_identity(code_root) != intent.raw["code_sha256"]:
+        raise ValueError("executable source drifted during this attempt; qualification refused")
+    final_loaded = loaded_identity(loaded_cache)
+    final_files = record(final_loaded["loaded_code_files"])
+    if any(
+        final_files.get(path) != digest
+        for path, digest in record(initial_loaded["loaded_code_files"]).items()
+    ):
+        raise ValueError("loaded dependency files drifted during this attempt")
+    journal.append({"kind": "loaded-terminal", "attempt": attempt, "identity": final_loaded})
     journal.append(
         {
             "kind": "worker",
@@ -155,6 +246,7 @@ def run(intent_path: Path, root: Path, attempt: str) -> None:
             "cursor": worker.cursor,
             "attempts": worker.progress.attempts,
             "state": reference.artifact.sha256,
+            "export": exported.artifact.sha256,
             "activation": {
                 "actual_optimizer_updates": worker.optimizer_updates,
                 "training_device": "cpu",

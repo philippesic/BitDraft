@@ -23,6 +23,8 @@ class Intent:
     disk_reserve_bytes: int
     backing_available_bytes: int
     seed: int
+    checkpoint_updates: int
+    checkpoint_seconds: float
 
     @classmethod
     def load(cls, path: Path) -> "Intent":
@@ -49,9 +51,15 @@ class Intent:
             "science_policy",
             "code_sha256",
             "geometry",
+            "checkpoint_updates",
+            "checkpoint_seconds",
         }
-        if set(raw) != required or type(raw["schema"]) is not int or raw["schema"] != 1:
-            raise ValueError("supported intent schema is 1 with exact fields")
+        if set(raw) != required or type(raw["schema"]) is not int or raw["schema"] != 2:
+            raise ValueError(
+                "supported intent schema is 2 with exact fields; preserve older intents"
+            )
+        if integer(raw["checkpoint_updates"]) < 1 or number(raw["checkpoint_seconds"]) <= 0:
+            raise ValueError("positive explicit checkpoint cadence required")
         for key in (
             "objective",
             "hypothesis",
@@ -125,20 +133,31 @@ class Intent:
             sizes[2],
             sizes[3],
             integer(raw["seed"]),
+            integer(raw["checkpoint_updates"]),
+            number(raw["checkpoint_seconds"]),
         )
 
     @property
     def recipe(self) -> str:
         return identity(
             {
-                key: self.raw[key]
-                for key in (
-                    "source",
-                    "vocabulary",
-                    "corpus",
-                    "seed",
-                    "device",
-                    "geometry",
-                )
+                "source": {"sha256": self.source.sha256, "bytes": self.source.size},
+                "vocabulary": {"sha256": self.vocabulary.sha256, "bytes": self.vocabulary.size},
+                "corpus": {"sha256": self.corpus.sha256, "bytes": self.corpus.size},
+                "seed": self.seed,
+                "device": self.raw["device"],
+                "geometry": self.raw["geometry"],
+                "code": self.raw["code_sha256"],
             }
         )
+
+    @property
+    def peak_new_bytes(self) -> int:
+        import math
+
+        intermediate = min(
+            self.budget.updates - 1,
+            math.ceil(self.budget.updates / self.checkpoint_updates)
+            + math.ceil(self.budget.wall_seconds / self.checkpoint_seconds),
+        )
+        return (intermediate + 3) * self.state_bytes + 8 * 1024 * 1024

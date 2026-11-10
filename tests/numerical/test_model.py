@@ -1,6 +1,7 @@
 import hashlib
 import importlib.metadata
 import json
+import struct
 import tempfile
 import tomllib
 import unittest
@@ -14,12 +15,16 @@ from torch import nn
 
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.clock import Monotonic
-from w1a1_eagle.contracts import Record, record
+from w1a1_eagle.contracts import Record, number, record
 from w1a1_eagle.data import Artifact, Window
 from w1a1_eagle.identity import source_identity
+from w1a1_eagle.intent import Intent
+from w1a1_eagle.lifecycle import Journal
 from w1a1_eagle.model import HE4, Geometry, Layer, Projection, hard_sign, rms, rope
 from w1a1_eagle.numerical.captures import Capture, CaptureCache, CaptureSpec, load_capture
 from w1a1_eagle.numerical.corpus import Corpus
+from w1a1_eagle.numerical.entry import admission
+from w1a1_eagle.numerical.export import export_he4, packed_signs
 from w1a1_eagle.numerical.weights import load_he4, shapes
 from w1a1_eagle.numerical.worker import TensorWorker
 from w1a1_eagle.records import canonical, reference
@@ -106,6 +111,108 @@ class TestNumerical(unittest.TestCase):
         self.assertTrue(torch.equal(rope(value, torch.tensor([0]), 1e7), value))
         expected = value / (12.5 + 1e-6) ** 0.5
         self.assertTrue(torch.allclose(rms(value, torch.ones(2), 1e-6), expected))
+
+    def test_sign_packing_independent_words(self) -> None:
+        value = torch.full((1, 33), -1.0, dtype=torch.float32)
+        value[0, 0] = -0.0
+        value[0, 31] = 1
+        value[0, 32] = 1
+        actual = packed_signs(value).tobytes()
+        self.assertEqual(actual, struct.pack("<II", 0x80000001, 1))
+        self.assertEqual(struct.unpack("<ii", actual), (-2147483647, 1))
+
+    def test_historical_arithmetic_characterization(self) -> None:
+        captured = record(
+            cast(object, json.loads(Path("docs/evidence/arithmetic-reference.json").read_text()))
+        )
+        expected_projection = record(captured["projection"])
+        weight = torch.tensor([[0.2, -0.4, -1.0], [1.0, 1.4, -0.0]])
+        value = torch.tensor([[0.1, 0.7, -0.2], [-0.3, 0.5, 1.2]], requires_grad=True)
+        projection = Projection(
+            weight,
+            4,
+            nn.Parameter(torch.tensor([0.1, -0.2, 0.3])),
+            nn.Parameter(torch.tensor(0.7).log()),
+        )
+        with torch.no_grad():
+            projection.midpoint.copy_(torch.tensor([0.05, -0.03]))
+        output = projection.forward(value)
+        output.sum().backward()
+        self.assertTrue(
+            torch.allclose(
+                output, torch.tensor(expected_projection["output"]), atol=1e-7, rtol=1e-6
+            )
+        )
+        assert value.grad is not None
+        self.assertTrue(
+            torch.allclose(
+                value.grad, torch.tensor(expected_projection["input_grad"]), atol=1e-7, rtol=1e-6
+            )
+        )
+        gradients = record(expected_projection["gradients"])
+        for name, parameter in projection.named_parameters():
+            assert parameter.grad is not None
+            self.assertTrue(
+                torch.allclose(parameter.grad, torch.tensor(gradients[name]), atol=1e-7, rtol=1e-6),
+                name,
+            )
+        optimizer = torch.optim.AdamW(
+            projection.parameters(), lr=1e-4, weight_decay=0, foreach=False
+        )
+        optimizer.step()
+        updated = record(expected_projection["updated"])
+        for name, parameter in projection.named_parameters():
+            self.assertTrue(
+                torch.allclose(parameter, torch.tensor(updated[name]), atol=1e-7, rtol=1e-6), name
+            )
+        cfg = Geometry(hidden=4, intermediate=8, heads=2, kv_heads=1, head_dim=2)
+        tensor_shapes = {
+            "attn_norm": (4,),
+            "attn_q_norm": (2,),
+            "attn_k_norm": (2,),
+            "ffn_norm": (4,),
+            "attn_q": (4, 4),
+            "attn_k": (2, 4),
+            "attn_v": (2, 4),
+            "attn_output": (4, 4),
+            "ffn_gate": (8, 4),
+            "ffn_up": (8, 4),
+            "ffn_down": (4, 8),
+        }
+        tensors = {
+            "blk.0." + name + ".weight": torch.ones(shape)
+            if len(shape) == 1
+            else torch.sin(torch.arange(int(np.prod(shape)), dtype=torch.float32) * 0.37).reshape(
+                shape
+            )
+            * 0.1
+            for name, shape in tensor_shapes.items()
+        }
+        layer = Layer(tensors, "blk.0.", cfg)
+        encoded = (
+            torch.cos(torch.arange(12, dtype=torch.float32) * 0.23).reshape(3, 4) * 0.1
+        ).requires_grad_()
+        state = (
+            torch.sin(torch.arange(64, dtype=torch.float32) * 0.13).reshape(16, 4) * 0.1
+        ).requires_grad_()
+        result = layer.forward(
+            state,
+            layer.context(encoded, torch.arange(3)),
+            torch.arange(3, 19),
+            torch.ones((16, 19), dtype=torch.bool),
+        )
+        result.sum().backward()
+        expected_layer = record(captured["layer"])
+        assert state.grad is not None and encoded.grad is not None
+        for name, actual in (
+            ("output", result),
+            ("state_grad", state.grad),
+            ("encoded_grad", encoded.grad),
+        ):
+            self.assertTrue(
+                torch.allclose(actual, torch.tensor(expected_layer[name]), atol=1e-7, rtol=1e-6),
+                name,
+            )
 
     def tiny_model(self) -> tuple[HE4, torch.Tensor]:
         torch.set_num_threads(1)
@@ -201,6 +308,31 @@ class TestNumerical(unittest.TestCase):
             self.assertTrue(torch.equal(block.gate.scale, torch.ones(256)))
             corpus_ref = self.fixture_corpus(root, 256)
             corpus = Corpus(corpus_ref, 17, 64 * 1024 * 1024, 256)
+            export_store = Store(root / "exports")
+            exporter = TensorWorker(model, corpus, "export-fixture")
+            exported = export_he4(
+                exporter,
+                source_ref,
+                vocabulary_ref,
+                export_store,
+                8 * 1024 * 1024,
+                32 * 1024 * 1024,
+            )
+            tensors = {
+                tensor.name: tensor
+                for tensor in gguf.GGUFReader(str(exported.artifact.path)).tensors
+            }
+            self.assertEqual(
+                tensors["blk.0.ffn_gate.w1a1_packed"].data.tobytes(), b"\xff" * (256 * 256 // 8)
+            )
+            self.assertEqual(tensors["output.weight"].tensor_type.name, "Q4_K")
+            self.assertEqual(tensors["output.weight"].data.tobytes(), b"\0" * (20 * 144))
+            self.assertNotIn("token_embd.weight", tensors)
+            with self.assertRaisesRegex(ValueError, "byte budget"):
+                export_he4(
+                    exporter, source_ref, vocabulary_ref, export_store, 100, 32 * 1024 * 1024
+                )
+            self.assertEqual(export_store.latest("export-fixture"), exported)
             self.assertEqual(corpus.count, 2)
             self.assertEqual(corpus.unique_positions, 16)
             expected = [corpus.locate(i)[1] for i in range(5)]
@@ -210,8 +342,10 @@ class TestNumerical(unittest.TestCase):
             )
             self.assertEqual(corpus.exposure(4)["mean_visits"], 60 / 16)
             intent: Record = {
-                "schema": 1,
+                "schema": 2,
                 "objective": "exercise CPU source integration",
+                "checkpoint_updates": 1,
+                "checkpoint_seconds": 30,
                 "hypothesis": "one finite update can be restored",
                 "decision": "CPU plumbing qualification only",
                 "risk": "synthetic source cannot establish native parity or learning usefulness",
@@ -225,7 +359,7 @@ class TestNumerical(unittest.TestCase):
                 "memory_bytes": 64 * 1024 * 1024,
                 "state_bytes": 8 * 1024 * 1024,
                 "disk_reserve_bytes": 1,
-                "backing_available_bytes": 16 * 1024 * 1024,
+                "backing_available_bytes": 64 * 1024 * 1024,
                 "seed": 17,
                 "device": "cpu",
                 "science_policy": {
@@ -245,6 +379,23 @@ class TestNumerical(unittest.TestCase):
             }
             intent_path = root / "intent.json"
             intent_path.write_bytes(canonical(intent))
+            with self.assertRaisesRegex(ValueError, "scope"):
+                execute(intent_path, root / "not-authorized", "unrelated-task")
+            self.assertFalse((root / "not-authorized").exists())
+            invalid_policy = dict(intent)
+            invalid_policy["science_policy"] = {
+                "id": "deliberate-refusal",
+                "min_unique_positions": 17,
+                "max_mean_visits": 2,
+            }
+            intent_path.write_bytes(canonical(invalid_policy))
+            with self.assertRaisesRegex(ValueError, "distinct-data"):
+                admission(Intent.load(intent_path), corpus)
+            invalid_policy["schema"] = 1
+            intent_path.write_bytes(canonical(invalid_policy))
+            with self.assertRaisesRegex(ValueError, "schema is 2"):
+                Intent.load(intent_path)
+            intent_path.write_bytes(canonical(intent))
             report = execute(intent_path, root / "attempt", "disposable-CPU-test")
             self.assertEqual(record(report["latest"])["outcome"], "complete", report)
             self.assertEqual(record(report["worker"])["updates"], 1)
@@ -253,6 +404,31 @@ class TestNumerical(unittest.TestCase):
                 str(record(report["admission"])["recipe"])
             )
             self.assertEqual(latest.updates, 1)
+            intent["mode"] = "resume"
+            intent["parent"] = reference(latest.artifact)
+            intent["budget"] = {"updates": 3, "wall_seconds": 60, "attempts": 4, "retries": 0}
+            intent["science_policy"] = {
+                "id": "synthetic-fixture-only",
+                "min_unique_positions": 16,
+                "max_mean_visits": 5,
+            }
+            intent_path.write_bytes(canonical(intent))
+            resumed_report = execute(intent_path, root / "attempt", "disposable-CPU-test")
+            self.assertEqual(
+                record(resumed_report["latest"])["outcome"], "complete", resumed_report
+            )
+            self.assertEqual(record(resumed_report["worker"])["updates"], 3)
+            self.assertEqual(resumed_report["attempts"], 2)
+            self.assertTrue(
+                any(
+                    row.get("kind") == "checkpoint" and row.get("updates") == 2
+                    for row in Journal(root / "attempt").events()
+                )
+            )
+            self.assertGreater(
+                number(resumed_report["cumulative_attempt_seconds"]),
+                number(report["cumulative_attempt_seconds"]),
+            )
 
     def test_capture_tail_budget_and_corruption(self) -> None:
         with tempfile.TemporaryDirectory(prefix="binary-capture-") as directory:
@@ -366,3 +542,15 @@ class TestNumerical(unittest.TestCase):
             branch.run(Monotonic(), Budget(2, 60, 2), lambda: False)
             self.assertEqual((branch.updates, branch.cursor, branch.optimizer_updates), (2, 1, 1))
             self.assertIn(parent.artifact.sha256, branch.lineage)
+            broken = self.fixture_worker("recipe")
+            broken.progress.needs_recovery = True
+            with self.assertRaisesRegex(ValueError, "incomplete"):
+                broken.checkpoint(Store(Path(directory) / "invalid"), 4 * 1024 * 1024)
+            state = torch.load(parent.artifact.path, map_location="cpu", weights_only=True)
+            first_state = next(iter(state["optimizer"]["state"].values()))
+            first_state["exp_avg"] = torch.zeros((1,))
+            malformed = Store(Path(directory) / "malformed").commit_with(
+                lambda output: torch.save(state, output), "recipe", 1, 4 * 1024 * 1024
+            )
+            with self.assertRaisesRegex(ValueError, "moment geometry"):
+                self.fixture_worker("recipe").restore(malformed, 8 * 1024 * 1024)

@@ -33,6 +33,8 @@ class Store:
         self.root.mkdir(parents=True, exist_ok=True)
 
     def atomic(self, path: Path, payload: bytes) -> None:
+        if path.parent.resolve() != self.root:
+            raise ValueError("store publication escaped its owned root")
         require(self.root, len(payload), self.reserve_bytes)
         descriptor, temporary = tempfile.mkstemp(prefix=".pending-", dir=self.root)
         try:
@@ -56,7 +58,12 @@ class Store:
         return self.commit_with(write, config, updates, max(1, len(payload)))
 
     def commit_with(
-        self, writer: Callable[[BinaryIO], None], config: str, updates: int, max_bytes: int
+        self,
+        writer: Callable[[BinaryIO], None],
+        config: str,
+        updates: int,
+        max_bytes: int,
+        validator: Callable[[Artifact], None] | None = None,
     ) -> StateRef:
         if not isinstance(config, str) or not config or type(updates) is not int or updates < 0:
             raise ValueError("invalid state identity")
@@ -64,25 +71,26 @@ class Store:
             raise ValueError("positive state byte budget required")
         with (self.root / ".writer").open("ab") as lock:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            if (self.root / "latest.json").exists():
+                self.latest(config)
             descriptor, temporary = tempfile.mkstemp(prefix=".pending-", dir=self.root)
             path = Path(temporary)
             try:
                 with os.fdopen(descriptor, "wb") as output:
-                    writer(
-                        cast(
-                            BinaryIO,
-                            BoundedSink(
-                                output,
-                                max_bytes,
-                                lambda count: require(self.root, count, self.reserve_bytes),
-                            ),
-                        )
+                    sink = BoundedSink(
+                        output,
+                        max_bytes,
+                        lambda count: require(self.root, count, self.reserve_bytes),
                     )
+                    writer(cast(BinaryIO, sink))
                     output.flush()
                     os.fsync(output.fileno())
-                with path.open("rb") as source:
-                    digest = hashlib.file_digest(source, "sha256").hexdigest()
+                digest = sink.digest.hexdigest()
                 size = path.stat().st_size
+                if size != sink.count:
+                    raise ValueError("state stream size mismatch")
+                if validator is not None:
+                    validator(Artifact(path, digest, size))
                 reference = StateRef(
                     Artifact(self.root / (digest + ".bin"), digest, size), config, updates
                 )
@@ -144,6 +152,7 @@ class BoundedSink(io.BufferedIOBase):
         self.output = output
         self.limit = limit
         self.count = 0
+        self.digest = hashlib.sha256()
         self.before_write = before_write
 
     def write(self, data: object) -> int:
@@ -153,6 +162,9 @@ class BoundedSink(io.BufferedIOBase):
             raise ValueError("state byte budget exceeded")
         self.before_write(memoryview(data).nbytes)
         written = self.output.write(data)
+        if written != memoryview(data).nbytes:
+            raise OSError("short state write")
+        self.digest.update(data)
         self.count += written
         return written
 

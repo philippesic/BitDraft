@@ -29,16 +29,21 @@ def execute(
     code_root = Path(__file__).resolve().parent.parent
     if source_identity(code_root) != intent.raw["code_sha256"]:
         raise ValueError("dirty/generated source identity differs from the admitted intent")
-    if shutil.disk_usage(root.parent).free - intent.state_bytes < intent.disk_reserve_bytes:
+    peak = intent.peak_new_bytes
+    if shutil.disk_usage(root.parent).free - peak < intent.disk_reserve_bytes:
         raise ValueError("observed disk headroom cannot cover state plus reserve")
-    if (
-        min(backing_available(), intent.backing_available_bytes)
-        < intent.state_bytes + intent.disk_reserve_bytes
-    ):
+    if min(backing_available(), intent.backing_available_bytes) < peak + intent.disk_reserve_bytes:
         raise ValueError("declared backing-volume capacity cannot cover state plus reserve")
     ownership = Ownership(root)
     try:
+        if any(
+            path.name
+            not in {".controller", "events.jsonl", "control.json", "states", "exports", "incidents"}
+            for path in root.iterdir()
+        ):
+            raise ValueError("output root contains foreign state; choose an isolated task root")
         journal = Journal(root)
+        journal.recover_tail()
         events = journal.events()
         starts = [row for row in events if row.get("kind") == "started"]
         terminals = [row for row in events if row.get("kind") == "terminal"]

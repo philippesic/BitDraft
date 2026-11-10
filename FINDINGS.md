@@ -101,3 +101,20 @@ tree digest, no timing comparison or causal productivity conclusion. This does
 not qualify later source increments or actual training.
 
 Evidence: [readiness receipt](docs/evidence/agent-readiness.json).
+
+## F012
+
+The CPU source path now composes admitted synthetic captures, the numerical worker,
+periodic full states, exact own-state resume and checked GGUF export. Real process-kill
+and file-size-limit failures preserve the prior committed state. A source audit caught
+and fixed recovery-needed state publication after a clock error.
+
+Limits: reduced CPU constructions and selected historical arithmetic characterization;
+no full-size retained-state parity, native load, scientific adequacy or hardware result.
+The controller fixture's zero vocabulary tests construction and accounting, while a
+separate six-layer fixture verifies a nonzero parameter update. Large-index intake is
+still pending. Full commit evidence includes the required numerical cases and 125 bad/
+control pairs; a green gate grants no execution authority or serving qualification.
+
+Evidence: [execution contract](docs/execution.md), [arithmetic characterization](docs/evidence/arithmetic-reference.json),
+[selected source inventory](docs/evidence/source-inventory.json), [decision 007](docs/decisions/007-checks-and-review.md).

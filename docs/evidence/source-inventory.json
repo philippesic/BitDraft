@@ -1,0 +1,84 @@
+{
+  "entries": [
+    {
+      "disposition": "reader adapter pending; window semantics ported",
+      "purpose": "modern metadata admission and final-label windows",
+      "sha256": "8fd748ceda006cc061464af1f167b97d56a9c37e5b8c412fdce24ecb62420a22",
+      "source": "scripts/he4fresh/index.py"
+    },
+    {
+      "disposition": "canonical reader ported; legacy index adapter pending",
+      "purpose": "bounded authenticated materialization",
+      "sha256": "fa608d32d38c3a3781ff5a94ea6d8457459c757b8bce730485c0b77a3322e183",
+      "source": "scripts/he4fresh/data.py"
+    },
+    {
+      "disposition": "one CPU worker replaces campaign globals; GPU/science policy deferred",
+      "purpose": "fresh/resume/update provenance and control",
+      "sha256": "6aff55c4b96edf7ada8807fbda17ccffe3e81c3ff50abb948916e60f8384b2bb",
+      "source": "scripts/he4fresh/train.py"
+    },
+    {
+      "disposition": "ported typed model/loss; full-size/native parity unqualified",
+      "purpose": "six-layer graph and fifteen-label loss",
+      "sha256": "48a75dcc0db7a2d2f6490565091cd6e7309c772b15630dd94955d96e3e338132",
+      "source": "scripts/dflash_baseline/model.py"
+    },
+    {
+      "disposition": "retained CPU characterization and independent scalar/sign witnesses",
+      "purpose": "learned W1A4/A8 arithmetic",
+      "sha256": "afcea5f7b1785c507a172a8cf7fbad19d085d6d3f7d20db079aa802a5c4bd3c7",
+      "source": "scripts/dflash_baseline/prototype.py"
+    },
+    {
+      "disposition": "typed worker groups and aliases ported",
+      "purpose": "parameter sharing and grouped AdamW",
+      "sha256": "5c2e588a131a1f845cb845bad86a5e47b3f9390ef0be794827aee0e05fe5af45",
+      "source": "scripts/dflash_baseline/prototype_model.py"
+    },
+    {
+      "disposition": "bounded streaming export ported; native loading deferred",
+      "purpose": "native-v2 FFN packing/export metadata",
+      "sha256": "21aad58fe73fc9adf0129f31a3d0adc728d7d39b6a147b26e176eab7e4aca6d2",
+      "source": "scripts/dflash_baseline/export_precision.py"
+    },
+    {
+      "disposition": "original vocabulary codes preserved; other precision variants intentionally unsupported",
+      "purpose": "Q4_K tied vocabulary and frozen precision",
+      "sha256": "3dcd5ec9fd63d212f78775d9d5a8ea89eb042118f9c6b70dd5e1c2eb7dc57ff1",
+      "source": "scripts/component_campaign/export.py"
+    },
+    {
+      "disposition": "typed layer ported with retained CPU characterization",
+      "purpose": "grouped attention, RoPE and F16 cache boundaries",
+      "sha256": "d97cd1c54079469ed368e9b2f7442d932ed2c03a2c77594dc4099adeeb9f2df8",
+      "source": "src/w1a1_eagle/block_qat.py"
+    },
+    {
+      "disposition": "selected semantics ported with manual negative/zero/tail witnesses",
+      "purpose": "inclusive sign surrogate and packing",
+      "sha256": "7624fa4486bcb130440cbc6b84c2463af01f0750e0145236063a125ab8b3de06",
+      "source": "src/w1a1_eagle/recurrent_binary.py"
+    },
+    {
+      "disposition": "historical artifacts protected; no implicit legacy reader",
+      "purpose": "historical compressed archives",
+      "sha256": "7cd75e33259dfa6ef0e6917fbd65b38a90a277a483b30db0c6e99ec8154261b0",
+      "source": "scripts/component_campaign/checkpoint.py"
+    }
+  ],
+  "excluded": [
+    "legacy model families and campaign trainers",
+    "benchmark methodology, native build/performance entry and hardware qualification",
+    "optional skills, notifications, remote and hosted CI"
+  ],
+  "preserved_external_dependencies": [
+    "active training source snapshot, processes and mounts",
+    "retained original states and compression dependencies",
+    "existing numerical environment site-packages reused read-only; owned GGUF wheel is isolated"
+  ],
+  "reference_checkout": "/home/philip/binary-eagle-decoding",
+  "reference_head": "350aac247f0916106045018e7b8b173daf93e150",
+  "schema": 1,
+  "scope": "selected observed source inventory, not exhaustive historical port or native qualification"
+}

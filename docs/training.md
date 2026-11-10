@@ -5,7 +5,7 @@ The CPU worker implements explicit fresh, resume and branch modes. See the
 history. Resume requires exact parameters, optimizer counters/moments, RNG/sampler,
 exposure and lineage; branch retains parent cost/exposure and records changed intent.
 Tiny tensor alias and next-update recovery tests pass; actual retained-artifact and
-native parity remain separate gates. Export is still pending.
+native parity remain separate gates. GGUF export has CPU producer/reader conformance coverage.
 
 The following selection requirements are historical design inputs to the deferred
 benchmark redesign; no selection implementation or accepted methodology exists here.

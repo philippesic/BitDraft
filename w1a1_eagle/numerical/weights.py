@@ -31,6 +31,8 @@ class TensorRecord(Protocol):
 
 
 class Field(Protocol):
+    @property
+    def types(self) -> Sequence[object]: ...
     def contents(self) -> object: ...
 
 
@@ -149,4 +151,6 @@ def load_he4(
     )
     if not bool(torch.isfinite(head).all()):
         raise ValueError("nonfinite vocabulary")
-    return HE4(tensors, head, mask, geometry)
+    model = HE4(tensors, head, mask, geometry)
+    model.origin = (source.sha256, vocabulary.sha256)
+    return model

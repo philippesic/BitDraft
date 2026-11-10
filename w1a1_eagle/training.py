@@ -46,9 +46,15 @@ class Progress:
             or type(self.needs_recovery) is not bool
         ):
             raise ValueError("inconsistent progress accounting")
-        if not math.isfinite(self.wall_seconds) or self.wall_seconds < 0:
+        if (
+            type(self.wall_seconds) not in (int, float)
+            or not math.isfinite(self.wall_seconds)
+            or self.wall_seconds < 0
+        ):
             raise ValueError("invalid cumulative wall time")
-        if self.last_loss is not None and not math.isfinite(self.last_loss):
+        if self.last_loss is not None and (
+            type(self.last_loss) not in (int, float) or not math.isfinite(self.last_loss)
+        ):
             raise ValueError("nonfinite loss")
 
 
@@ -74,6 +80,8 @@ def train(
         if stop():
             return "stopped"
         started = clock.now()
+        if not math.isfinite(started):
+            raise ValueError("operational clock is nonfinite before update")
         progress.attempts += 1
         try:
             loss = worker.step(progress.cursor)

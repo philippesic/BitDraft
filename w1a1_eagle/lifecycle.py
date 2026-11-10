@@ -1,9 +1,11 @@
 import fcntl
+import hashlib
 import os
 from dataclasses import asdict
 from pathlib import Path
 from typing import cast
 
+from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, number, record, string
 from w1a1_eagle.processes import ProcessIdentity
 from w1a1_eagle.records import canonical, identity, read
@@ -24,11 +26,19 @@ class Journal:
             return list(self.cache)
         if self.path.stat().st_size > 64 * 1024 * 1024:
             raise ValueError("journal exceeds supported size; preserve and migrate")
+        result, previous = self.decode(self.path.read_bytes())
+        self.cache = result
+        self.length = self.path.stat().st_size
+        self.previous = previous
+        return list(result)
+
+    @staticmethod
+    def decode(data: bytes) -> tuple[list[Record], str]:
         import json
 
         result: list[Record] = []
         previous = "root"
-        for line in self.path.read_bytes().splitlines(keepends=True):
+        for line in data.splitlines(keepends=True):
             if not line.endswith(b"\n"):
                 raise ValueError("partial journal tail requires explicit preserved recovery")
             raw = record(cast(object, json.loads(line)))
@@ -53,10 +63,51 @@ class Journal:
                 raise ValueError("journal chain mismatch")
             result.append(payload)
             previous = string(raw["sha256"])
-        self.cache = result
-        self.length = self.path.stat().st_size
-        self.previous = previous
-        return list(result)
+        return result, previous
+
+    def recover_tail(self) -> None:
+        if not self.path.exists():
+            return
+        if self.path.is_symlink() or self.path.stat().st_size > 64 * 1024 * 1024:
+            raise ValueError("unsupported journal ownership or size")
+        raw = self.path.read_bytes()
+        if not raw or raw.endswith(b"\n"):
+            return
+        cut = raw.rfind(b"\n") + 1
+        prefix, tail = raw[:cut], raw[cut:]
+        if len(tail) > 4 * 1024 * 1024:
+            raise ValueError(
+                "partial event exceeds supported size; preserve for explicit migration"
+            )
+        events, _ = self.decode(prefix)
+        terminal = {string(row["attempt"]) for row in events if row.get("kind") == "terminal"}
+        for row in events:
+            if row.get("kind") not in {"started", "process"} or row.get("attempt") in terminal:
+                continue
+            value = record(row["controller"] if row["kind"] == "started" else row["owner"])
+            if ProcessIdentity(
+                integer(value["pid"]), string(value["boot"]), string(value["birth"])
+            ).alive():
+                raise ValueError("cannot reconcile a live owner's journal tail")
+        digest = hashlib.sha256(raw).hexdigest()
+        incident = Store(self.root / "incidents")
+        incident.atomic(
+            incident.root / (digest + ".json"),
+            canonical(
+                {
+                    "schema": 1,
+                    "original_sha256": digest,
+                    "original_bytes": len(raw),
+                    "intact_prefix_bytes": cut,
+                    "tail_hex": tail.hex(),
+                    "reason": "torn final append; intact records validated; no complete record discarded",
+                }
+            ),
+        )
+        Store(self.root).atomic(self.path, prefix)
+        self.length = -1
+        self.events()
+        self.append({"kind": "tail-recovered", "incident": digest, "discarded_complete_records": 0})
 
     def append(self, payload: Record) -> None:
         self.root.mkdir(parents=True, exist_ok=True)
@@ -71,6 +122,8 @@ class Journal:
                 "payload": payload,
             }
             data = canonical({**envelope, "sha256": identity(envelope)}) + b"\n"
+            if len(data) > 4 * 1024 * 1024:
+                raise ValueError("event exceeds supported record size")
             if self.path.stat().st_size + len(data) > 64 * 1024 * 1024:
                 raise ValueError("journal capacity exhausted; preserve and migrate")
             if cast(int, output.write(data)) != len(data):
