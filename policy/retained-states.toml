@@ -1,0 +1,43 @@
+schema = 1
+status = "protected external locators; no fresh hashing, hydration or independent backup"
+retired = 34
+
+[[state]]
+"name" = "Csmallbroad"
+"path" = "/mnt/c/binary-eagle-component-20261105-01/Csmallbroad-4096.pt.bsz"
+"observed_exists" = "True"
+"observed_size_bytes" = "4244125704"
+"sha256_from_old_receipt" = "7ec2b71aefc58ff17de06636c9e30f7ee24fdf19f31b9015b5cf75f7fc4f73e6"
+"verification_scope" = "metadata only now; historical digest not freshly recomputed"
+
+[[state]]
+"name" = "HE4"
+"path" = "/mnt/c/binary-eagle-component-20261105-01/HE4-confirm-4096.pt.bsz"
+"observed_exists" = "True"
+"observed_size_bytes" = "4250228027"
+"sha256_from_old_receipt" = "0a33150b21316d0bfa4392309ab670a3fcb4e21d5264909cd4b0421651a4dad4"
+"verification_scope" = "metadata only now; historical digest not freshly recomputed"
+
+[[state]]
+"name" = "Csmallbroad accepted continuation"
+"path" = "/mnt/c/binary-eagle-dflash2-smoke-20261106-01/Csmallbroad-exact-plus1800-14094.pt.bsz"
+"observed_exists" = "True"
+"observed_size_bytes" = "4246079884"
+"sha256_from_old_receipt" = "181ffb6d0d93fb911cf02102e6f67736336627e23dc89d06ee04eb5b0c726a13"
+"verification_scope" = "metadata only now; historical digest not freshly recomputed"
+
+[[state]]
+"name" = "B0"
+"path" = "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/finalists/G4D8-learned-small/checkpoint.pt.bsz"
+"observed_exists" = "True"
+"observed_size_bytes" = "4207188154"
+"sha256_from_old_receipt" = "f0a1bb0fd8a30549ca197c17d79fd9d250eb854c1c93a9222a62db7232c3b9f9"
+"verification_scope" = "metadata only now; historical digest not freshly recomputed"
+
+[[state]]
+"name" = "foundation"
+"path" = "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst"
+"observed_exists" = "True"
+"observed_size_bytes" = "4736661975"
+"sha256_from_old_receipt" = "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328"
+"verification_scope" = "metadata only now; historical digest not freshly recomputed"

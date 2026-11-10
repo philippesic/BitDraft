@@ -1,0 +1,65 @@
+schema = 1
+python = "3.11.15"
+uv = "0.11.32"
+platform = "linux-x86_64"
+checkout = "11bd71901bbe5b1630ceea73d27597364c9af683"
+image = "python@sha256:77923445c077d8eb971b14b2b114a1d9cd4a87edb4c75654820ca4832ee8cb15"
+lock_sha256 = "78a675b2b0ada37b76a6ba28cf557e15bd35fe0a0d066f299f4cee4ed320ece3"
+
+[[bootstrap]]
+name = "uv-x86_64-unknown-linux-gnu.tar.gz"
+url = "https://github.com/astral-sh/uv/releases/download/0.11.32/uv-x86_64-unknown-linux-gnu.tar.gz"
+size = 26296576
+sha256 = "aab924fd522efd06f1c5f3b93a243864fc453132c94b2dc49f1371b528a4b967"
+executable_sha256 = "da15297d6879b2cfbe5ea3cb03725c1613d51ba72892cc996468d871f0a532fb"
+
+[[bootstrap]]
+name = "cpython-3.11.15+20260718-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz"
+url = "https://github.com/astral-sh/python-build-standalone/releases/download/20260718/cpython-3.11.15%2B20260718-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz"
+size = 30930344
+sha256 = "23ccae6f1ff73e8aa8378436f869da003b8eb7d6c95f2bc706f494115ba1447d"
+executable_sha256 = "8deffe5dd9ebcf98a062917a4e73bb8fbb7d5846f83dec01fb7506fd5d41c54e"
+
+[uses."ruff"]
+path = "tools/check.py"
+needle = "\"ruff\""
+
+[uses."mypy"]
+path = "tools/check.py"
+needle = "\"mypy\""
+
+[uses."pytest"]
+path = "tools/check.py"
+needle = "\"pytest\""
+
+[uses."hypothesis"]
+path = "tests/test_contracts.py"
+needle = "from hypothesis import"
+
+[uses."import-linter"]
+path = "tools/check.py"
+needle = "\"lint-imports\""
+
+[uses."vulture"]
+path = "tools/dependencies.py"
+needle = "\"vulture\""
+
+[uses."deptry"]
+path = "tools/dependencies.py"
+needle = "\"deptry\""
+
+[uses."pre-commit"]
+path = ".pre-commit-config.yaml"
+needle = "language: system"
+
+[uses."PyYAML"]
+path = "tools/repo_files.py"
+needle = "yaml.SafeLoader"
+
+[uses."types-PyYAML"]
+path = "tools/repo_files.py"
+needle = "import yaml"
+
+[uses."dulwich"]
+path = "tools/repo_files.py"
+needle = "from dulwich.repo import Repo"
