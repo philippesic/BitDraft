@@ -1,10 +1,12 @@
-# Binary Eagle foundation
+# Binary Eagle source port
 
-Stage 0 contains CPU policy checks, synthetic contracts and historical evidence.
-It contains no model, trainer, capture loader, ledger importer, native build or benchmark.
-No GPU work or real-data validation is authorized. This is a local temporary repo with no remote.
+CPU checks now cover domain/data admission, transactional byte storage, bounded worker
+control and the initial HE4 tensor/loader path. Tiny numerical fixtures exercise the
+model; actual artifact-specific training/resume/export and native qualification are
+still pending. Benchmark redesign and high-level agent operations remain deferred.
+This is a local repository with no remote; preserve the separate active GPU job.
 
-[Agent first port overhaul](docs/port-overhaul.md) is the new audited proposal; implementation remains pending.
+[Agent first port overhaul](docs/port-overhaul.md) describes the authorized implementation and its remaining gates.
 
 HE4 means W1A4 with A8 down projection and Q4K head. W1A8 is historical DSpark W1A8.
 DSpark Q4KM is the historical baseline. Baseline means current external DFlash Q4KM drafter.
@@ -19,6 +21,12 @@ in [toolchain](policy/toolchain.toml). Check disk first. This stage has a hard c
 ```sh
 uv sync --locked --only-group check --no-build
 ```
+
+The numerical profile uses a separate interpreter selected by `BINARY_NUMERICAL_PYTHON`,
+local `.host.toml`, or `.venv/numerical/bin/python`. It requires the exact top-level
+versions in [numerical policy](policy/numerical.toml). This host reuses existing Torch
+libraries and an isolated pinned GGUF wheel; this is not a fresh hermetic environment
+or native qualification. CPU numerical subprocesses mask CUDA devices.
 
 Run from this repository root:
 

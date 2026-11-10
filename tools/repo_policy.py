@@ -53,6 +53,7 @@ def validate_files(files: dict[str, str], escapes: list[str] | None = None) -> l
             ".hypothesis/",
             ".uv-cache/",
             ".env",
+            ".host.toml",
             "*.pem",
             "*.key",
             "artifacts/",

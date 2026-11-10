@@ -32,7 +32,7 @@ No remote, hosted execution or branch protection exists. A local verification re
 is fresh, external to tracked content and explicitly REVIEW_REQUIRED; it cannot approve
 its own policy change. Source, native, runtime verify and benchmark status is unavailable.
 
-Local CPU validation on 2026-11-09 passes all ten enforcing stages, 26 required CPU
+Local CPU validation on 2026-11-09 passes all ten enforcing stages, 36 required CPU
 nodes, 125 intended bad rejections and 125 passing controls. The independent outer
 checks reject disabled comment scanning, a missing executable, one removed specimen,
 duplicated rule IDs, unrelated/additional diagnostics and missing/skipped/xfail tests.
@@ -62,3 +62,10 @@ November 10 policy evolution: the required foundation entries remain mandatory,
 but additional authored source/tests/docs no longer require a file-allowlist edit.
 Output/model/capture/run-tree, secret, instruction and size checks remain active.
 This is an authorized semantic change for source porting, not a disabled gate.
+
+The numerical profile is executed by the full check through a separate interpreter.
+It runs the required named unittest cases, rejects skips and failures, and reports
+its own evidence scope. Core/product typing stays strict; only numerical test code
+allows Any expressions and untyped calls at the external tensor-library boundary.
+Mypy runs uncached without writing its otherwise-unused large cache. No hardware
+measurement or native qualification is memoized.

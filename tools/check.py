@@ -13,6 +13,7 @@ from tools.config import (
     CONFIG_DIGESTS,
     FOUNDATION_FILES,
     GROUP_COUNTS,
+    MYPY,
     REQUIRED_CPU,
     REQUIRED_RULES,
     STAGES,
@@ -155,15 +156,74 @@ def main() -> int:
                 if ruff_format.exit == ruff_lint.exit == 0
                 else [Diagnostic("LINT", "owned Python")],
             )
-            mypy = self_test.run_command(
-                ["mypy", "--strict", "--no-incremental", "--show-error-codes", *paths], root
+            numerical_paths = [p for p in paths if p.startswith("tests/numerical/")]
+            model_paths = [
+                p
+                for p in paths
+                if p == "w1a1_eagle/model.py" or p.startswith("w1a1_eagle/numerical/")
+            ]
+            core_paths = [p for p in paths if p not in numerical_paths + model_paths]
+            mypy_results = [
+                self_test.run_command(
+                    [
+                        "mypy",
+                        "--strict",
+                        "--no-incremental",
+                        "--cache-dir=/dev/null",
+                        "--show-error-codes",
+                        *core_paths,
+                    ],
+                    root,
+                )
+            ]
+            numerical_settings = dict(MYPY)
+            numerical_settings.update(disallow_any_expr=False, disallow_untyped_calls=False)
+            profile = temporary / "numerical-types.ini"
+            profile.write_text(
+                "[mypy]\n"
+                + "\n".join(
+                    key
+                    + " = "
+                    + (
+                        ",".join(str(v) for v in sequence(value))
+                        if isinstance(value, list)
+                        else str(value)
+                    )
+                    for key, value in numerical_settings.items()
+                )
+                + "\n"
             )
-            if mypy.exit or "Warning: unused section(s)" in mypy.output:
-                print(mypy.output)
+            for selected, allowances in (
+                (model_paths, []),
+                (numerical_paths, ["--config-file", str(profile)]),
+            ):
+                if selected:
+                    mypy_results.append(
+                        self_test.run_command(
+                            [
+                                "mypy",
+                                *([] if allowances else ["--strict"]),
+                                "--no-incremental",
+                                "--cache-dir=/dev/null",
+                                "--python-executable",
+                                config.environment["BINARY_NUMERICAL_PYTHON"],
+                                "--show-error-codes",
+                                *allowances,
+                                *selected,
+                            ],
+                            root,
+                        )
+                    )
+            for outcome in mypy_results:
+                if outcome.exit or "Warning: unused section(s)" in outcome.output:
+                    print(outcome.output)
             stage(
                 "mypy",
                 []
-                if mypy.exit == 0 and "Warning: unused section(s)" not in mypy.output
+                if all(
+                    outcome.exit == 0 and "Warning: unused section(s)" not in outcome.output
+                    for outcome in mypy_results
+                )
                 else [Diagnostic("TYPES", "owned Python")],
             )
             imports = self_test.run_command(
@@ -196,6 +256,7 @@ def main() -> int:
                     "error",
                     "-o",
                     "addopts=",
+                    "--ignore=tests/numerical",
                     "tests",
                 ],
                 root,

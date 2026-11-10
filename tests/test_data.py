@@ -36,7 +36,14 @@ def test_window_boundaries_and_eog() -> None:
     assert [w.anchor for w in actual] == list(range(4, 17))
     assert actual[0].labels == tuple(range(5, 20))
     assert actual[0].positions() == tuple(("t", p) for p in range(4, 19))
-    assert windows("t", tokens, 4, positions, tokens[1:], eog=10) == ()
+    assert windows("t", tokens, 4, tuple(range(10)), tuple(range(1, 11)), eog=10) == ()
+    with pytest.raises(ValueError, match="EOG"):
+        windows("t", tokens, 4, positions, tokens[1:], eog=10)
+    tail = windows(
+        "t", tuple(range(24)), 8, tuple(range(8, 24)), tuple(range(100, 115)) + (999,), eog=999
+    )
+    assert [window.anchor for window in tail] == [8, 9]
+    assert tail[-1].labels[-1] == 999
     with pytest.raises(ValueError, match="position"):
         windows("t", tokens, 4, (-1,), (0,))
 

@@ -4,6 +4,9 @@ version = "0.0.0"
 requires-python = "==3.11.15"
 dependencies = []
 
+[project.optional-dependencies]
+numerical = ["torch==2.14.0", "gguf==0.19.0", "numpy==2.4.6"]
+
 [dependency-groups]
 check = [
   "ruff==0.16.8",
