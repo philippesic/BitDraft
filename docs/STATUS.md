@@ -1,6 +1,6 @@
 # Current project status
 
-**Active capture:** [HE4 historical supplement](goals/he4-historical-supplement.md). Recover 5,497 historical TRAIN rows excluded by null-topic identity keys, preserving the overnight baseline. Capture only; no training.
+**Completed capture:** [HE4 historical supplement](goals/he4-historical-supplement.md). All 5,497 recovered historical TRAIN rows captured; combined totals 15,647 sequences, 1,568,435 windows, 1,787,054 unique label positions. Audits passed, original captures preserved, GPU free. Terminal webhook rejected six POSTs with HTTP 401. Capture only; no training.
 
 **Active goal:** [benchmark the RTX 2080 Ti quantization suite](goals/rtx2080ti-quantization-suite.md).
 The prior [W1A1 EAGLE research goal](goals/full-w1a1-eagle-project.md) is

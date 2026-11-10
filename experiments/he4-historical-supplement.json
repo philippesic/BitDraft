@@ -1,0 +1,81 @@
+{
+  "status": "PASS",
+  "counts": {
+    "sequences": 5497,
+    "windows": 598314,
+    "unique_label_positions": 675243,
+    "unique_label_positions_in_windows": 675146
+  },
+  "source_breakdown": {
+    "unused_modern_reserved": {
+      "sequences": 176,
+      "windows": 19283,
+      "unique_label_positions": 21744,
+      "unique_label_positions_in_windows": 21733
+    },
+    "historical_optimizer": {
+      "sequences": 9813,
+      "windows": 1029982,
+      "unique_label_positions": 1166928,
+      "unique_label_positions_in_windows": 1166160
+    },
+    "authored_broader_domains": {
+      "sequences": 5658,
+      "windows": 519170,
+      "unique_label_positions": 598382,
+      "unique_label_positions_in_windows": 598382
+    }
+  },
+  "combined_totals": {
+    "sequences": 15647,
+    "windows": 1568435,
+    "unique_label_positions": 1787054,
+    "unique_label_positions_in_windows": 1786275
+  },
+  "prompt_ids_unique": true,
+  "baseline_manifest_unchanged": true,
+  "full_logit_scratch_remaining": 0,
+  "length_or_tokenizer_failures": [],
+  "token_array_audit": {
+    "status": "PASS",
+    "all_supplemental_token_arrays_checked": 5497,
+    "stopped_at_first_eog": 722,
+    "reached_128_token_cap": 4775,
+    "no_post_eog_inputs_or_labels": true,
+    "no_supplemental_full_logits": true,
+    "baseline_manifest_identical": true,
+    "manifest_sha256": {
+      "manifest.json": "0ce404c302c76f1f7eeaece071840f31e031899c2ea59e62701c7007edcd2b0a",
+      "combined-manifest.json": "d56b7ee0572fec4333ec9c271a69befe1b0fb51e6507ef878f37ad90f1901592"
+    }
+  },
+  "admission_audit": {
+    "status": "PASS",
+    "baseline_sequences": 10150,
+    "supplemental_sequences": 5497,
+    "baseline_id_overlap": 0,
+    "baseline_rendered_prompt_overlap": 0,
+    "fixed_historical_admitted": 9813,
+    "exclusion_counts": {
+      "excluded identity": 12,
+      "duplicate identity": 31,
+      "already in original prompt pool": 4492,
+      "non-TRAIN role": 144,
+      "modern captured in earlier campaign": 16
+    }
+  },
+  "webhook": {
+    "attempt": 6,
+    "error": "HTTP Error 401: Unauthorized"
+  },
+  "output_paths": [
+    "/home/philip/he4-capture-2080ti/supplemental/captures",
+    "/home/philip/he4-capture-2080ti/supplemental/manifest.json",
+    "/home/philip/he4-capture-2080ti/supplemental/combined-manifest.json",
+    "/home/philip/he4-capture-2080ti/supplemental/status.json"
+  ],
+  "teacher_sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630",
+  "hardware": "DESKTOP-T4JKGJB RTX 2080 Ti SM75",
+  "capture_status": "complete",
+  "webhook_delivered": false
+}
