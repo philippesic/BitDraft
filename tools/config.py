@@ -319,6 +319,7 @@ FOUNDATION_FILES = (
     "docs/training.md",
     "docs/runtime.md",
     "docs/benchmarking.md",
+    "docs/port-overhaul.md",
     "docs/decisions/README.md",
     "docs/decisions/001-scope-and-names.md",
     "docs/decisions/002-boundaries-and-owners.md",
