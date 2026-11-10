@@ -1,5 +1,5 @@
 {
-  "status": "QUEUED_WAITING_FOR_OTHER_PROJECT_GPU_RELEASE",
+  "status": "PREPARED_GPU_RELEASE_VERIFIED",
   "run": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01",
   "owner_thread": "6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6",
   "prerequisite_thread": "mcp:launch:5cc79481d4d97b44b4c6cf5f1de491084f7f89c30d5802c9dbc55da66ceb13b2",
@@ -15,7 +15,7 @@
     "unique_label_positions": 1787054,
     "unique_label_positions_in_windows": 1786275,
     "final_audit_status": "PASS",
-    "local_import_qualified": false,
+    "local_import_qualified": true,
     "sha256": "d56b7ee0572fec4333ec9c271a69befe1b0fb51e6507ef878f37ad90f1901592",
     "bytes": 5661287,
     "metadata_copy_sha256_verified": true
@@ -25,9 +25,8 @@
   "gpu_availability_fallback_seconds": 3600,
   "gpu_training_launched": false,
   "remaining_preparation": [
-    "bounded authenticated data adapter",
-    "checkpoint storage",
-    "new campaign runner and recovery qualification"
+    "zero-update GPU export/native panel",
+    "real optimizer update and own-state resume"
   ],
   "events": {
     "availability": {
@@ -50,5 +49,11 @@
       "boundThreadId": "6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6",
       "nextRunAt": null
     }
-  }
+  },
+  "prerequisite_release_checkpoint": "04dba8f7f0a9b67b84430221adbdfc8d64d55446",
+  "training_wall_seconds_cap": 43200,
+  "checkpoint_host": "pstack-2080",
+  "checkpoint_remote_directory": "/home/philip/he4broad-training-20261110-01",
+  "source_module": "scripts.he4fresh",
+  "data_index_sha256": "d703d61f47eee8e695bbd09293c15bbae57184d078b98931ff4a2d5828bdbd73"
 }

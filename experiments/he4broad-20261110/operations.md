@@ -1,9 +1,9 @@
 # HE4broad fresh training on the November 9–10 captures
 
-State: **QUEUED, NOT TRAINING**. Philip authorized this run November 10 in
+State: **PREPARED, GPU RELEASE VERIFIED; GPU qualification pending**. Philip authorized this run November 10 in
 thread `6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6`. Wait for the other project's
 complete campaign and verified RTX 5080 release. Its idle assistant turn or
-an idle GPU between phases is insufficient. No Binary Eagle GPU job was launched.
+an idle GPU between phases is insufficient. Stage 6 release was verified against its pushed release proof and the completion message.
 
 ## Prerequisite and events
 
@@ -63,23 +63,40 @@ Metadata copies belong under the run's ignored `input-metadata/`; compact input
 pins belong in the tracked manifest. The old 40-sequence dataset is not eligible
 as a silent fallback.
 
-## Preparation still required
+## Qualified preparation and clock
 
-The old `scripts/he4broad` runner is pinned to the November 8 paths, 40 sequences,
-eight hours, and its old readout cadence. Do not execute it unchanged. Adapt in
-a new campaign module or explicit configuration without modifying frozen runs.
-The new metadata references verification receipts and arrays, requiring an
-authenticated adapter; the old eager Capture list would load the whole dataset
-into RAM. Use bounded loading/cache/streaming while preserving the selected
-window order and exact feature/label semantics.
+The new runner is `scripts/he4fresh`; the November 8 runner and its frozen runs
+remain unchanged. Metadata admission on the data host verified all receipt,
+metadata/source hashes and identity exclusions. The new bounded adapter uses the
+verified native label positions, including both boundary windows omitted by the
+older Capture range. Four CPU regressions cover final EOG-window alignment,
+corruption rejection, metadata/array disagreement and bounded materialization.
+First/last real captures and consumed-DEV prompt disjointness pass.
 
-Storage is currently tight: approximately 2.4 GiB free on WSL root and 12 GiB on
-Windows when inspected. The original capture tree alone is 215 GiB, with the
-supplemental tree additional. Do not bulk-copy it here or reuse the old physical
-reservation scheme, which needs many GiB per hourly checkpoint. Qualify a bounded
-remote data/cache and recoverable checkpoint storage plan before GPU launch;
-the configured Tailscale SSH alias works. Keep useful existing artifacts intact.
-Storage setup is preparation, not measured training or an excuse to change data.
+The read-only `teacher-mount` SSHFS mount exposes the existing remote captures.
+The writable `archive-mount` exposes `/home/philip/he4broad-training-20261110-01`
+on `pstack-2080`, with about 426 GiB free at setup. Compressed full states and
+exports stay there. Write/fsync/rename and a lossless state round trip passed.
+The current native model alone is copied into a bounded local cache for timed
+serving, then removed after its panel. Never bulk-copy the capture trees here.
+SSHFS was unpacked from the configured Ubuntu package under this run's tools/;
+no personal settings or system packages were changed. Both mounts require the
+existing private-key/verified-host SSH alias. Reconnect uses 15-second keepalives.
+
+Training is bounded by **43,200 training wall seconds**, including feature I/O
+and hashing, and also by 43,200 synchronized update seconds. Setup/checkpoint/
+export/native evaluation are reported separately. This realizes the requested
+up-to-12-hour training allocation without silently extending it for remote I/O.
+Readouts occur at zero, an extra 60-second qualification, and every training wall
+hour. All windows have a globally shuffled seed-8101 order; no sequence grouping
+or smaller data fallback is used. Actual update time/exposure is reported so
+remote I/O is never called model training throughput. Formal native panels run
+at zero and every hour; the extra 60-second panel is labeled smoke.
+
+The first metadata-index attempt had an anchor offset caught by the EOG-window
+regression before any GPU exposure; it is retained as
+`archive-mount/index-rejected-anchor-offset.json`. The corrected index hash and
+source closure are pinned in the recipe/prepared receipts.
 
 ## Launch, monitoring and repair
 
@@ -96,3 +113,10 @@ never reset to the old trained candidates. Preserve healthy jobs and failed
 attempt evidence. At completion, verify actual full-state GPU restore/native
 recovery, all requested hourly panels and correctness, record retention, stop
 owned jobs, verify GPU release, publish/push compact results and disable events.
+
+The training module loads source BF16 tensors and immediately applies the HE4
+quantization/simulation. Fresh Adam and zero cursor are asserted; previous trained
+candidate parameters and Adam are never read. Every hourly segment restores only
+this run's full checkpoint, checking parameters, moments, group steps and RNG.
+If a failed stage leaves uncheckpointed updates, recovery preserves their log and
+charges their time to the existing budget before rolling back to the last state.
