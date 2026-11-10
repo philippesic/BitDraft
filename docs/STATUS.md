@@ -2,18 +2,23 @@
 
 ## Fresh HE4broad on the newest 2080 Ti data
 
-November 10: **TRAINING** after Stage 6's pushed completion and
-verified release. Fresh base-drafter HE4 quantization; combined 15,647-sequence /
+November 10: **PAUSED at Philip's request for local-data migration and historical
+model cleanup**. Full state saved at 20,671 updates; GPU and all three locks
+released; the dedicated health event is disabled during this explicit pause.
+No sustained restart is authorized by the requested short smoke test.
+[Retention policy and evidence](../experiments/storage-cleanup-20261110/report.md).
+Fresh base-drafter HE4 quantization; combined 15,647-sequence /
 1,568,435-window Qwen3.5 4B captures. Metadata/exclusion, window-boundary and remote
 checkpoint round-trip checks pass. The zero-update native panel passes all 75 requests, including warmups; the
 first real optimizer update and exact zero-state GPU restore pass. The trained
 56-update checkpoint also restored its parameters/Adam/RNG/cursor and completed
 the actual next update. The first five hourly formal panels are complete with all 375
 requests correct; the latest 18,187-update checkpoint restored successfully and
-training is advancing in the sixth hourly segment.
+the sixth hourly segment is paused with its completed update tail saved.
 Up to 12 hours of training wall time (including remote data I/O); synchronized
 update time is tracked separately. Formal hourly acceptance/throughput panels and
-the dedicated 30-minute health/repair event are enabled. [Report](../experiments/he4broad-20261110/report.md)
+the dedicated 30-minute health/repair event will require re-enabling on an authorized
+sustained resume. [Report](../experiments/he4broad-20261110/report.md)
 · [Operations](../experiments/he4broad-20261110/operations.md)
 · [Manifest](../experiments/he4broad-20261110/manifest.json).
 

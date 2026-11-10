@@ -1,6 +1,6 @@
 # Fresh HE4broad on the combined 2080 Ti captures
 
-Status: **RUNNING**. 18,187 recoverable updates; 2521.241 synchronized update seconds, 18000.115 training wall seconds (including 15477.447 data I/O seconds). Cap: 43,200 training wall seconds and 43,200 actual update seconds. Setup, checkpoints, export and native eval are separate.
+Status: **PAUSED**. 20,671 recoverable updates; 2873.748 synchronized update seconds, 20702.123 training wall seconds (including 17826.771 data I/O seconds). Cap: 43,200 training wall seconds and 43,200 actual update seconds. Setup, checkpoints, export and native eval are separate.
 
 Fresh base-drafter HE4 quantization, fresh Adam, combined 15,647 sequences and 1,568,435 windows. Global seeded window shuffle; exact own-state resume. All hourly native panels use depth 2, greedy, F16 KV, context 4096, two warmups and five repetitions per cell with 256-token output reserve. The extra 60-second diagnostic uses one repetition and 64 tokens. Network model transfer is excluded from native request timings.
 
@@ -13,6 +13,7 @@ Fresh base-drafter HE4 quantization, fresh Adam, combined 15,647 sequences and 1
 | 10800 | 1508.975 | 10934 | 5.819820 | 17.7778% |
 | 14400 | 2012.362 | 14556 | 5.524400 | 19.2593% |
 | 18000 | 2521.241 | 18187 | 5.553204 | 20.0000% |
+| paused-20671 | 2873.748 | 20671 | 5.429714 | 19.2593% |
 
 | Panel | Arm | Draft acceptance | Request tokens/s | Correct |
 | --- | --- | ---: | ---: | --- |
