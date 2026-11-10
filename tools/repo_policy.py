@@ -88,6 +88,16 @@ def validate_policy(project: Record, stages: Record, rules: Record) -> list[Diag
         ]:
             diagnostics.append(Diagnostic("STAGE_GATE", "policy/check-stages.toml"))
         roster = [record(v) for v in sequence(rules["rule"])]
+        if any(
+            r.get("validator") != str(r.get("id", "")).lower()
+            or r.get("diagnostic") != r.get("id")
+            or r.get("exit") != 1
+            or r.get("bad") != "tests/cases/" + str(r.get("id", "")).lower() + ".bad.json"
+            or r.get("control") != "tests/cases/" + str(r.get("id", "")).lower() + ".control.json"
+            for r in roster
+        ):
+            diagnostics.append(Diagnostic("RULE_PAIR", "policy/rules.toml"))
+
         if tuple(r["id"] for r in roster) != REQUIRED_RULES or any(
             not all(r.get(k) for k in ("validator", "evidence", "bad", "control", "diagnostic"))
             for r in roster

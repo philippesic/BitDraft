@@ -404,4 +404,9 @@ CONFIG_DIGESTS = {
     ".pre-commit-config.yaml": "30f513d6c67238996c9f8496b2d32ae39c39f3909da15adcc220ca79fc5ae69d",
     ".github/workflows/checks.yml": "b77dd147c5047bf7fab676f08303ab264fda7b50f073241c6c0d5b52e85cdb56",
     "Dockerfile.checks": "c8f0ad1105d976a3f757b74727bf2aed9f4bbfb5030a193f1328ba6f5a9b5696",
+    "policy/boundaries.toml": "57b58d9f00254c6d4caeae19e244d01b2b7091f8073099267e12b64a1465358e",
+    "policy/cases.toml": "354cec361ff60074ea8ce5de782b5e851ca1e2cd9663d72e3c3175cba3d1b75a",
+    "policy/cpu-tests.toml": "66c683ebc5d08d0ee765f0f51a708278ffd2f2740309bbdf32ab841731f313a4",
+    "policy/check-stages.toml": "b292836462fa970fb2330e93b913ea1a3ac8fe5eb8efde756b691184bf8165f1",
+    "policy/validation.toml": "059cdf0120d2fc9c974512f6ec9943b79cceae47719d62ddc47c6a16392d7368",
 }
