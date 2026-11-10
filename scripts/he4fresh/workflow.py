@@ -9,6 +9,7 @@ import subprocess
 import sys
 import time
 from .common import *
+from .clock import UPDATE_POINTS, POLICY, label as update_label, panel_label
 
 stopped = False
 
@@ -29,9 +30,9 @@ def run(module,args,label):
         subprocess.run(command,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT,check=True)
 
 
-def panel(point):
-    formal = point != 60
-    label = ('formal-' if formal else 'smoke-')+str(point)
+def panel(point, update_clock=False):
+    formal = update_clock or point != 60
+    label = panel_label(point) if update_clock else ('formal-' if formal else 'smoke-')+str(point)
     out = R/label
     if (out/'result.json').exists():
         data = json.load(open(out/'result.json'))
@@ -41,7 +42,7 @@ def panel(point):
     # request timing are local, so network latency is outside measured serving.
     cache = R/'native-cache'; cache.mkdir(exist_ok=True)
     model = cache/'model.gguf'
-    source = OUT/f'model-{point}.gguf'
+    source = OUT/f'model-{update_label(point) if update_clock else point}.gguf'
     if model.exists(): model.unlink()
     assert shutil.disk_usage(cache).free > source.stat().st_size + 512*2**20
     shutil.copyfile(source,model)
@@ -66,9 +67,11 @@ def main():
     # Reserve the remaining checkpoints/exports plus recovery/export scratch.
     readouts=json.load(open(OUT/'readouts.json'))
     complete={row['label'] for row in readouts}
-    remaining=sum(str(point) not in complete for point in POINTS)
+    remaining=sum(update_label(point) not in complete for point in UPDATE_POINTS)
     state_bytes=json.load(open(OUT/'recovery.json'))['archive_bytes']
-    required=remaining*(state_bytes+1024*2**20)+8*2**30
+    native_bytes=max(row['model']['bytes'] for row in readouts)
+    required=remaining*(state_bytes+native_bytes+64*2**20)+8*2**30
+    save(R/'headroom.json',dict(remaining_checkpoints=remaining,required_bytes=required,free_bytes=shutil.disk_usage(DEST).free))
     assert shutil.disk_usage(DEST).free>required, 'Insufficient local checkpoint headroom'
     locks = []
     try:
@@ -82,16 +85,20 @@ def main():
         supervisor_state=P/'runs'/parent_args[supervisor_index+1]/'state.json'
         save(R/'gpu-owner.json',dict(owner=identity(),locks=[str(x.name) for x in locks],
             tmux_socket='binary-eagle-runtime',tmux_session=os.environ.get('HE4_TMUX_SESSION','he4fresh-20261110-01'),
-            source=pin(ROOT/'source-manifest.json'),supervisor_state=str(supervisor_state)))
-        for point in POINTS:
+            source=pin(ROOT/'source-manifest.json'),supervisor_state=str(supervisor_state),training_policy=POLICY))
+        save(R/'workflow-result.json',dict(status='RUNNING',owner=identity(),training_policy=POLICY))
+        # Preserve/complete already-earned historical wall-hour panels before new update-hour panels.
+        for row in readouts:
+            if str(row['label']).isdecimal(): panel(int(row['label']))
+        for point in UPDATE_POINTS:
             readouts = json.load(open(OUT/'readouts.json')) if (OUT/'readouts.json').exists() else []
-            new_stage=str(point) not in {row['label'] for row in readouts}
+            new_stage=update_label(point) not in {row['label'] for row in readouts}
             if new_stage:
-                run('scripts.he4fresh.train',['--until',point],'train-'+str(point))
+                run('scripts.he4fresh.train',['--until',point],'train-'+update_label(point))
             result = json.load(open(OUT/'result.json'))
             if stopped or (new_stage and result['status']=='PAUSED'): break
-            panel(point)
-            run('scripts.he4fresh.publish',[],'publish-'+str(point))
+            panel(point, update_clock=True)
+            run('scripts.he4fresh.publish',[],'publish-'+update_label(point))
         result = json.load(open(OUT/'result.json'))
         if not stopped and result['status']=='COMPLETE' and not (R/'final-recovery.json').exists():
             run('scripts.he4fresh.verify',[],'final-recovery')

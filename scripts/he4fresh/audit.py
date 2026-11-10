@@ -3,6 +3,7 @@ import json
 import math
 import time
 from .common import *
+from .clock import UPDATE_BUDGET
 
 
 def audit():
@@ -22,11 +23,13 @@ def audit():
                 key=(row['sequence'],row['anchor']);windows.add(key);sequences.add(row['sequence'])
                 labels.update((row['sequence'],row['anchor']+j) for j in range(15))
     seconds=math.fsum(times)
+    rejected=math.fsum(json.loads(p.read_text())['update_seconds'] for p in (R/'recovery-incidents').glob('*/accounting.json'))
     if last: assert abs(seconds-last['cumulative_seconds'])<1e-5
     result_path=OUT/'result.json'
     checkpointed=json.load(open(result_path)).get('updates',0) if result_path.exists() else 0
     result=dict(status='PASS',checked_unix=time.time(),completed_updates=len(times),
         actual_update_seconds=seconds,checkpointed_updates=checkpointed,
+        rejected_update_seconds=rejected, charged_update_seconds=seconds+rejected, update_budget_seconds=UPDATE_BUDGET,
         uncheckpointed_completed_updates=max(0,len(times)-checkpointed),
         training_wall_seconds=last['training_seconds'] if last else 0,
         distinct_sequences=len(sequences),distinct_windows=len(windows),distinct_label_positions=len(labels),

@@ -1,9 +1,49 @@
 # HE4broad fresh training on the November 9–10 captures
 
-State: **PAUSED; local data and loader qualified**. Philip authorized this run November 10 in
+State: **update-time continuation authorized; preparing local resume**. Philip authorized this run November 10 in
 thread `6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6`. The prerequisite campaign is complete and its RTX 5080 release is verified. Stage 6 release was verified against its pushed release proof and the completion message.
 
-## Current pause and completed localization
+## Current eight-hour update-time continuation
+
+Philip subsequently authorized sustained resume to **28,800 TOTAL synchronized
+optimizer-update seconds**, including the saved 2,873.748 seconds. His explicit
+resume ends the migration pause. The original training-wall cap is removed:
+input I/O, setup, checkpoint/export and native evaluation do not consume this
+update allocation. Rejected update time remains charged, including repeated
+rollback before another checkpoint. Stop after the complete update crossing the
+cap; report any one-update overshoot.
+
+Resume only the complete saved 20,671-update state, preserving parameters, all
+Adam moments/group steps, RNG, order and cursor. The original recipe/config hash
+stays unchanged. The source-pinned `scripts.he4fresh.clock.POLICY` and
+[continuation policy](continuation-policy.json) explicitly override the original
+execution clock; do not interpret the historical recipe's 43,200 wall seconds
+as today's stop condition. No learning-rate/objective/model change is made.
+
+New checkpoint/model labels are `update-3600` through `update-28800`; native
+panels are `formal-update-*`. They cannot overwrite old wall-hour results or
+resume receipts. The fixed target, external Q4 comparator, target-only
+correctness, 2 warmups / 5 alternating reps / 256 tokens remain unchanged.
+Historical zero, 60-second smoke and five wall-hour panels are preserved.
+
+Use the source selected by `active-source.json`, and the exact supervisor state
+and tmux session recorded by `gpu-owner.json`. The new source closure preserves
+the already-qualified local loader and the mathematical update path. CPU checks
+cover a wall clock far beyond the former cap, update-time stopping, distinct
+panel names and cumulative repeated-rollback charges. Authenticate exact process
+boot/birth and three locks before recovery. Preserve a healthy pinned source;
+never create duplicate trainers. Check disk/headroom and local storage each time.
+Re-enable the existing bound 30-minute health/repair event at real launch; keep
+the old availability event disabled. A future explicit pause still takes
+precedence. On completion, verify all new hourly panels plus historical results,
+full-state GPU restore/native-byte recovery, durable exposure/time accounting,
+artifact inventory, GPU/lock release, compact results and scoped commit/push.
+
+## Earlier pause and completed localization (historical)
+
+The following records describe the completed migration pause, before the above
+explicit resume authorization. Their statements about keeping training paused
+and health disabled describe that earlier phase.
 
 Philip requested a safe pause, full local data transfer, lighter per-window
 validation, a short old/new loading smoke, and retirement of old one-off models.

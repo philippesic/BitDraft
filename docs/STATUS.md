@@ -2,29 +2,30 @@
 
 ## Fresh HE4broad on the newest 2080 Ti data
 
-November 10: **PAUSED at Philip's request for local-data migration and historical
-model cleanup**. All 15,647 captures and all current-run checkpoints are now
-verified on local ext4. The matched 32-update loader diagnostic passes with exact
-final parameters/Adam/RNG equality: loader 55.06× faster, steps 2–32 loader + update
-6.69× faster. [Migration and measured comparison](../experiments/he4broad-20261110/localization.md).
-Full state saved at 20,671 updates; GPU and all three locks
-released; the dedicated health event is disabled during this explicit pause.
-No sustained restart is authorized by the requested short smoke test.
-[Retention policy and evidence](../experiments/storage-cleanup-20261110/report.md).
-Fresh base-drafter HE4 quantization; combined 15,647-sequence /
-1,568,435-window Qwen3.5 4B captures. Metadata/exclusion, window-boundary and remote
-checkpoint round-trip checks pass. The zero-update native panel passes all 75 requests, including warmups; the
-first real optimizer update and exact zero-state GPU restore pass. The trained
-56-update checkpoint also restored its parameters/Adam/RNG/cursor and completed
-the actual next update. The first five hourly formal panels are complete with all 375
-requests correct; the latest 18,187-update checkpoint restored successfully and
-the sixth hourly segment is paused with its completed update tail saved.
-Up to 12 hours of training wall time (including remote data I/O); synchronized
-update time is tracked separately. Formal hourly acceptance/throughput panels and
-the dedicated 30-minute health/repair event will require re-enabling on an authorized
-sustained resume. [Report](../experiments/he4broad-20261110/report.md)
-· [Operations](../experiments/he4broad-20261110/operations.md)
-· [Manifest](../experiments/he4broad-20261110/manifest.json).
+November 10: **resuming local HE4broad to eight TOTAL hours of synchronized
+optimizer-update time**, explicitly authorized by Philip after localization.
+The saved state already contains 2,873.748 update seconds (47.9 minutes), 20,671
+updates and 20,702.123 training-wall seconds. The remaining update allocation is
+25,926.252 seconds (about 7 hours 12 minutes). There is no training-wall cap;
+data loading, setup, checkpoints/export and native evaluation remain separately
+reported. The original recipe/config stays unchanged for exact state recovery;
+the [continuation policy](../experiments/he4broad-20261110/continuation-policy.json)
+supersedes its old clock/budget. New native panels are at every cumulative update
+hour through eight hours, with distinct `formal-update-*` labels. All earlier
+wall-hour panels remain intact. The existing 30-minute health/repair event is to
+be re-enabled at successful real launch; the hourly availability event stays off.
+
+All 15,647 captures and current-run checkpoints are verified on local ext4.
+The local-loader diagnostic produced exactly equal final parameters/Adam/RNG:
+loader 55.06× faster; steps 2–32 loader + update 6.69× faster.
+[Migration](../experiments/he4broad-20261110/localization.md) ·
+[Model retention](../experiments/storage-cleanup-20261110/report.md).
+The first five historical wall-hour formal panels and zero panel are complete;
+all their requests are correct. No new inference result is claimed by the loader
+smoke or resume preparation.
+[Report](../experiments/he4broad-20261110/report.md) ·
+[Operations](../experiments/he4broad-20261110/operations.md) ·
+[Manifest](../experiments/he4broad-20261110/manifest.json).
 
 ## HE4broad source-initialized QAT
 

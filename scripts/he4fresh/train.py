@@ -17,6 +17,7 @@ from .common import *
 from scripts.component_campaign.checkpoint import save_state
 from scripts.component_campaign.tensor_checkpoint import memory_load
 from scripts.component_campaign.gpu_resume import isolated_optimizer_state
+from scripts.component_campaign.qualify_tensor_checkpoint import fingerprint
 from scripts.component_campaign.simulation import install as install_component
 from scripts.component_campaign.train_impl import evaluation
 from scripts.component_campaign.export import rewrite
@@ -32,35 +33,8 @@ def tensor_hash(tensor):
     return hashlib.sha256(tensor.detach().cpu().contiguous().numpy().tobytes()).hexdigest()
 
 
-def reconcile_log(progress):
-    path = OUT/'updates.jsonl'
-    if not path.exists():
-        assert progress['updates'] == 0
-        return
-    raw = path.read_bytes()
-    lines = raw.splitlines(keepends=True)
-    assert len(lines) >= progress['updates'], 'Durable checkpoint update log is incomplete'
-    durable = lines[:progress['updates']]
-    assert [json.loads(line)['update'] for line in durable] == list(range(1,progress['updates']+1))
-    extra = lines[progress['updates']:]
-    if not extra: return
-    # Preserve all rejected exposure and charge its time to the original budget.
-    incident = R/'recovery-incidents'/str(time.time_ns())
-    incident.mkdir(parents=True)
-    (incident/'uncheckpointed-updates.jsonl').write_bytes(b''.join(extra))
-    rows=[]
-    for line in extra:
-        try: rows.append(json.loads(line))
-        except json.JSONDecodeError: pass
-    lost_wall = max((x.get('training_seconds',0.) for x in rows),default=progress['training_seconds'])-progress['training_seconds']
-    lost_update = math.fsum(x['seconds'] for x in rows)
-    progress['training_seconds'] += max(0,lost_wall)
-    progress['discarded_update_seconds'] = progress.get('discarded_update_seconds',0.)+lost_update
-    progress['discarded_updates'] = progress.get('discarded_updates',0)+len(rows)
-    save(incident/'accounting.json',dict(discarded_updates=len(rows),update_seconds=lost_update,training_seconds=lost_wall,
-        reason='Exact checkpoint rollback; rejected exposures preserved and charged'))
-    with path.open('wb') as out:
-        out.write(b''.join(durable));out.flush();__import__('os').fsync(out.fileno())
+from .accounting import reconcile_log
+from .clock import UPDATE_BUDGET, UPDATE_POINTS, POLICY, charged_seconds, pending, label as update_label
 
 
 from .data import data
@@ -129,12 +103,13 @@ def source_model(config, spec, prove=False):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--until', type=int, required=True, choices=POINTS)
+    ap.add_argument('--until', type=int, required=True, choices=UPDATE_POINTS)
     args = ap.parse_args()
     began = time.perf_counter()
     torch.set_num_threads(2)
     torch.manual_seed(8101); random.seed(8101); np.random.seed(8101)
     torch.backends.cuda.matmul.allow_tf32 = False
+    assert (OUT/'recovery.json').is_file(), 'Continuation requires a complete own-run state'
     resolved = json.load(open(R/'recipe.json'))
     config, spec = resolved['config'], resolved['spec']
     train, dev, windows = data(config)
@@ -163,6 +138,7 @@ def main():
         opt.load_state_dict(isolated_optimizer_state(state['optimizer']))
         progress = copy.deepcopy(state['progress']); lineage = state['lineage']
         restore_rng(state['rng'])
+        assert fingerprint(rng()) == fingerprint(state['rng'])
         assert all(torch.equal(p.detach().cpu(), state['parameters'][n]) for n,p in model.named_parameters())
         assert {int(v['step']) for v in opt.state.values()} == ({progress['updates']} if progress['updates'] else set())
         restored = opt.state_dict()
@@ -171,8 +147,10 @@ def main():
             for field, expected in fields.items():
                 actual = restored['state'][key][field]
                 assert torch.equal(actual.cpu(),expected.cpu()) if torch.is_tensor(expected) else actual == expected
-        save(OUT/f'resume-{args.until}.json', dict(status='PASS', parent=receipt, updates=progress['updates'],
-             parameter_identity=True, optimizer_groups=opt.state_dict()['param_groups']))
+        save(OUT/f'resume-{update_label(args.until)}.json', dict(status='PASS', parent=receipt, updates=progress['updates'],
+             parameter_identity=True, optimizer_state_identity=True, rng_identity=True,
+             cursor=progress['cursor'], update_seconds=progress['update_seconds'],
+             optimizer_groups=opt.state_dict()['param_groups'], training_policy=POLICY))
         del state, restored; gc.collect()
     else:
         assert not opt.state and progress['updates'] == 0 and progress['cursor'] == 0
@@ -184,7 +162,7 @@ def main():
     last_loss = None
     start_updates = progress['updates']
     with (OUT/'updates.jsonl').open('a', buffering=1) as log:
-        while progress['training_seconds'] < args.until and progress['update_seconds'] + progress.get('discarded_update_seconds',0) < BUDGET:
+        while pending(progress, args.until):
             try: pause()
             except RuntimeError: stopped = True
             if stopped: break
@@ -202,7 +180,7 @@ def main():
                     recovery=json.load(open(OUT/'recovery.json'))))
                 raise
             elapsed = time.perf_counter()-started
-            assert math.isfinite(loss)
+            assert math.isfinite(loss) and math.isfinite(model.last_gradient_norm)
             progress['updates'] += 1; progress['cursor'] += 1
             progress['update_seconds'] += elapsed; progress['supervised_tokens'] += 15
             progress['training_seconds'] += time.perf_counter() - iteration_started
@@ -222,15 +200,16 @@ def main():
                         nonzero_first_moments=sum(int(torch.count_nonzero(opt.state[p]['exp_avg'])) for p in g['params'])) for g in opt.param_groups}))
             if progress['updates'] % 100 == 0 or progress['updates'] == 1:
                 save(OUT/'live.json',dict(status='TRAINING', updates=progress['updates'],
+                    charged_update_seconds=charged_seconds(progress), update_budget_seconds=UPDATE_BUDGET,
                     additional_update_seconds=progress['update_seconds'], training_seconds=progress['training_seconds'], data_io_seconds=progress['data_io_seconds'], last_loss=loss,
                     last_dev=previous[-1]['dev'] if previous else None, owner=identity()))
                 print('UPDATE',progress['updates'],progress['update_seconds'],loss,flush=True)
     if train.cache: train.cache.clear()
     gc.collect()
-    label = 'paused-'+str(progress['updates']) if stopped else str(args.until)
+    label = 'paused-'+str(progress['updates']) if stopped else update_label(args.until)
     snapshot = dict(version=2, config=config, config_hash=digest(config), parameters=parameters(model),
         optimizer=opt.state_dict(), progress=copy.deepcopy(progress), rng=rng(), lineage=lineage,
-        component_spec=spec, resume_capable=True, deployment_exps={})
+        component_spec=spec, resume_capable=True, deployment_exps={}, training_policy=POLICY)
     checkpoint = DEST/f'HE4broad-{label}-{progress["updates"]}.pt'
     if checkpoint.with_suffix('.pt.bsz').exists():
         recovery = json.load(open(checkpoint.with_suffix('.pt.json')))
@@ -247,17 +226,20 @@ def main():
     native = OUT/f'model-{label}.gguf'
     if not native.exists(): rewrite(base,native,spec,deployment_exps={})
     base.unlink(); base.with_suffix('.json').unlink()
-    point = dict(label=label, requested_update_seconds=args.until,
+    point = dict(label=label, requested_update_seconds=args.until, clock=POLICY['clock'],
+        charged_update_seconds=charged_seconds(progress),
         additional_update_seconds=progress['update_seconds'], training_seconds=progress['training_seconds'], data_io_seconds=progress['data_io_seconds'], updates=progress['updates'],
         dev=metrics, recovery=recovery, model=pin(native), evaluation_seconds=eval_seconds,
         segment_wall_seconds=time.perf_counter()-began, segment_updates=progress['updates']-start_updates)
     previous.append(point); save(OUT/'readouts.json',previous)
-    result = dict(status='PAUSED' if stopped else ('COMPLETE' if args.until == BUDGET else 'RUNNING'),
-        budget_seconds=BUDGET, training_wall_budget_seconds=BUDGET, actual_update_seconds=progress['update_seconds'], training_seconds=progress['training_seconds'], data_io_seconds=progress['data_io_seconds'], updates=progress['updates'],
+    result = dict(status='PAUSED' if stopped else ('COMPLETE' if charged_seconds(progress) >= UPDATE_BUDGET else 'RUNNING'),
+        budget_seconds=UPDATE_BUDGET, training_wall_budget_seconds=None, training_policy=POLICY,
+        charged_update_seconds=charged_seconds(progress), discarded_update_seconds=progress.get('discarded_update_seconds',0.), actual_update_seconds=progress['update_seconds'], training_seconds=progress['training_seconds'], data_io_seconds=progress['data_io_seconds'], updates=progress['updates'],
         last_loss=last_loss, readouts=previous, recovery=recovery,
         peak_allocated_bytes=torch.cuda.max_memory_allocated(), peak_reserved_bytes=torch.cuda.max_memory_reserved())
     save(OUT/'result.json',result)
     save(OUT/'live.json',dict(status=result['status'], updates=progress['updates'],
+         charged_update_seconds=charged_seconds(progress), update_budget_seconds=UPDATE_BUDGET,
          additional_update_seconds=progress['update_seconds'],training_seconds=progress['training_seconds'],last_loss=last_loss,last_dev=metrics,owner=identity()))
     print('READOUT',label,progress['updates'],metrics['ce'],metrics['agreement'],flush=True)
 

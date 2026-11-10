@@ -1,9 +1,9 @@
 {
-  "status": "PAUSED_LOCAL_LOADER_QUALIFIED",
+  "status": "RESUME_PREPARED_UPDATE_TIME",
   "run": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01",
   "owner_thread": "6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6",
   "prerequisite_thread": "mcp:launch:5cc79481d4d97b44b4c6cf5f1de491084f7f89c30d5802c9dbc55da66ceb13b2",
-  "budget_actual_update_seconds": 43200,
+  "budget_actual_update_seconds": 28800,
   "initialization": "fresh HE4 quantization of base BF16 DFlash drafter; zero trained updates; fresh Adam",
   "source_sha256": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521",
   "target_sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630",
@@ -27,7 +27,9 @@
   "health_interval_seconds": 1800,
   "gpu_availability_fallback_seconds": 3600,
   "gpu_training_launched": true,
-  "remaining_preparation": [],
+  "remaining_preparation": [
+    "Freeze committed continuation source, launch actual own-state resume and enable existing health event"
+  ],
   "events": {
     "availability": {
       "scheduledTaskId": "scheduled-task:command:mcp:a4024f98-8308-4bbd-9079-def8ceacdbbb:schedule-task:he4broad-20261110-gpu-fallback",
@@ -51,8 +53,8 @@
     }
   },
   "prerequisite_release_checkpoint": "04dba8f7f0a9b67b84430221adbdfc8d64d55446",
-  "training_wall_seconds_cap": 43200,
-  "checkpoint_host": "pstack-2080",
+  "training_wall_seconds_cap": null,
+  "checkpoint_host": "RTX 5080 local ext4",
   "checkpoint_remote_directory": "/home/philip/he4broad-training-20261110-01",
   "source_module": "scripts.he4fresh",
   "data_index_sha256": "d703d61f47eee8e695bbd09293c15bbae57184d078b98931ff4a2d5828bdbd73",
@@ -124,7 +126,7 @@
     "checkpoint_directory": "runs/he4broad-20261110-01/archive-mount",
     "directories_are_local_ext4_not_mounts": true,
     "matched_smoke": "runs/he4broad-20261110-01/local-smoke-20261110-01",
-    "sustained_training_paused": true,
+    "sustained_training_paused": false,
     "original_recipe_and_budget_unchanged": true,
     "comparison": "experiments/he4broad-20261110/local-loader-comparison.json",
     "active_source_selector": "runs/he4broad-20261110-01/active-source.json",
@@ -136,5 +138,25 @@
     "remote_dataset_removed": true,
     "remote_checkpoint_backup_preserved": true,
     "retirement_receipt": "runs/he4broad-20261110-01/pause-fix-20261110/remote-teacher-retirement.json"
+  },
+  "continuation_policy": {
+    "version": 1,
+    "authorization": "Philip November 10: resume to eight TOTAL hours of updates, including the existing 47.9 minutes",
+    "clock": "synchronized_update_seconds",
+    "total_update_seconds": 28800,
+    "training_wall_seconds_cap": null,
+    "readout_update_seconds": [
+      3600,
+      7200,
+      10800,
+      14400,
+      18000,
+      21600,
+      25200,
+      28800
+    ],
+    "existing_state": "Exact own-run parameters, Adam, RNG, shuffled order and cursor; no reset",
+    "accounting": "Completed and rejected update time charged cumulatively; setup/data/checkpoint/export/native time reported separately",
+    "historical_panels": "Original wall-clock panels retained with their original labels; update-hour panels use formal-update-*"
   }
 }

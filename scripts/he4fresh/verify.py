@@ -3,6 +3,7 @@ import gc
 import json
 import torch
 from .common import *
+from .clock import UPDATE_BUDGET, POLICY, charged_seconds
 from .train import source_model
 from scripts.component_campaign.tensor_checkpoint import memory_load
 from scripts.component_campaign.gpu_resume import isolated_optimizer_state
@@ -20,6 +21,12 @@ def main():
     assert pin(receipt['archive'])['sha256'] == receipt['archive_sha256']
     state = memory_load(receipt['archive'])
     assert state['progress']['updates'] == result['updates']
+    assert state['training_policy']==POLICY and result['training_policy']==POLICY
+    assert charged_seconds(state['progress'])>=UPDATE_BUDGET
+    from .audit import audit
+    exposure=audit()
+    assert exposure['completed_updates']==result['updates'] and exposure['uncheckpointed_completed_updates']==0
+    assert abs(exposure['actual_update_seconds']-state['progress']['update_seconds'])<1e-5
     assert {int(v['step']) for v in state['optimizer']['state'].values()} == {result['updates']}
     model = source_model(state['config'],state['component_spec']).to('cuda')
     opt = optimizer(model)
