@@ -3,7 +3,11 @@
 ## Fresh HE4broad on the newest 2080 Ti data
 
 November 10: **PAUSED at Philip's request for local-data migration and historical
-model cleanup**. Full state saved at 20,671 updates; GPU and all three locks
+model cleanup**. All 15,647 captures and all current-run checkpoints are now
+verified on local ext4. The matched 32-update loader diagnostic passes with exact
+final parameters/Adam/RNG equality: loader 55.06× faster, steps 2–32 loader + update
+6.69× faster. [Migration and measured comparison](../experiments/he4broad-20261110/localization.md).
+Full state saved at 20,671 updates; GPU and all three locks
 released; the dedicated health event is disabled during this explicit pause.
 No sustained restart is authorized by the requested short smoke test.
 [Retention policy and evidence](../experiments/storage-cleanup-20261110/report.md).
@@ -24,7 +28,8 @@ sustained resume. [Report](../experiments/he4broad-20261110/report.md)
 
 ## HE4broad source-initialized QAT
 
-November 8 user-authorized new recipe: **COMPLETE**, 226,853 completed updates, 28800.038 / 28,800 actual update seconds. Source BF16 initialization; broader authenticated 40/3234/3794 TRAIN set; fresh Adam at unchanged default rates. Hourly recoverable states and native exports retained. [Report](../experiments/he4broad-20261108/report.md) · [Live progress](../runs/he4broad-20261108-01/candidate/live.json) · [Ownership and stop procedure](../experiments/he4broad-20261108/operations.md). External DFlash Q4_K_M remains the deployment incumbent; no promotion.
+November 8 user-authorized new recipe: **COMPLETE**, 226,853 completed updates, 28800.038 / 28,800 actual update seconds. Source BF16 initialization; broader authenticated 40/3234/3794 TRAIN set; fresh Adam at unchanged default rates. Zero/final recoverable states and native exports retained; superseded intermediate
+optimizer states were retired under the November 10 cleanup policy. [Report](../experiments/he4broad-20261108/report.md) · [Live progress](../runs/he4broad-20261108-01/candidate/live.json) · [Ownership and stop procedure](../experiments/he4broad-20261108/operations.md). External DFlash Q4_K_M remains the deployment incumbent; no promotion.
 
 ## HE4broad watchdog
 
@@ -49,8 +54,9 @@ native headroom; it does not establish a general HE4 capacity limit.
 
 Actual parent/final GPU resume and native-byte recovery pass. Independent audit
 reconciles 169,097 updates and 87 measured native request rows; all 127 requests
-including warmups match target output. Eight new full states, nine native exports,
-the original parent and all required sources/captures remain retained.
+including warmups match target output. The original parent, final full state/native export and all required
+sources/captures remain retained. Superseded intermediate states/exports were
+retired November 10; their measured results and audit evidence remain.
 [Audit and hashes](../experiments/he4-continuation-20261107/audit.json) ·
 [Retention](../runs/he4-continuation-20261107-01/milestone-retention.json) ·
 [GPU release](../runs/he4-continuation-20261107-01/gpu-release.json).

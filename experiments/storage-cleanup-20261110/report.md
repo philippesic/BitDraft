@@ -53,8 +53,11 @@ backup claim.
 
 Before Philip clarified the retirement policy, 43.47 GiB of inactive reproducible
 CUDA caches was cleared and a bulk historical offload was started. The bulk
-offload and retirement worker were then stopped. Completed verified cold copies
-and their local symlinks remain inventoried; incomplete copies are disposable.
-The newest training dataset is being copied to local ext4 and will be admitted
-once in full before removing its 2080 Ti source. Its runtime loader will not
-rehash or rescan full feature arrays on every window.
+offload and retirement worker were then stopped. All 60 displaced evidence files were restored and verified locally. The 12
+obsolete model copies and the temporary remote tree were removed; the private
+cold mount is unmounted. No retained artifact depends on that offload.
+The newest training dataset and all current checkpoints are now verified on local
+ext4. The old 2080 Ti dataset source was removed after the matched GPU loader
+smoke passed; its current-run checkpoint backup remains. The runtime loader no
+longer rehashes or rescans full feature arrays on every window.
+[Migration and timing evidence](../he4broad-20261110/localization.md).

@@ -1,6 +1,5 @@
 {
   "status": "EXECUTED",
-  "files": 2,
   "already_retired_files": 441,
   "logical_bytes": 583423158444,
   "allocated_bytes_before_hardlink_dedup": 7774666752,
@@ -276,5 +275,7 @@
   "raw_plan": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/pause-fix-20261110/checkpoint-retirement-plan.json",
   "completed_unix": 1794346987.1630158,
   "deleted_files": 443,
-  "note": "Logical totals can overstate physically freed hard links; measured filesystem space is reported separately."
+  "note": "Logical totals can overstate physically freed hard links; measured filesystem space is reported separately.",
+  "files_deleted_in_last_batch": 2,
+  "files": 443
 }

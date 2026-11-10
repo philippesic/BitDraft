@@ -42,3 +42,5 @@ Fresh base-drafter HE4 quantization, fresh Adam, combined 15,647 sequences and 1
 Consumed DEV3, one training trajectory. Timing repetitions are not fresh prompts/seeds. No heldout opened. External Q4 remains deployment incumbent; no promotion.
 
 [Results and pins](results.json) · [Operations](operations.md).
+
+[Completed local-data migration and matched loader timing](localization.md): all current data/checkpoints are local; production remains paused.

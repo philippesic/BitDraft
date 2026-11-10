@@ -1,0 +1,114 @@
+{
+  "checked_unix": 1794342244.3901951,
+  "scope": "WSL Linux allocated storage; approximate project totals from du. Remote mounts excluded. Hard links counted once within inventory.",
+  "projects": [
+    [
+      "Binary decoding",
+      914,
+      [
+        [
+          "Saved training states / weights",
+          340.91
+        ],
+        [
+          "Captured arrays + prepared data",
+          257.02
+        ],
+        [
+          "Native model exports",
+          141.73
+        ],
+        [
+          "CUDA compilation caches",
+          43.38
+        ],
+        [
+          "Run software / builds",
+          17.45
+        ],
+        [
+          "Run archives",
+          17.28
+        ],
+        [
+          "Evidence / logs / other run files",
+          23.36
+        ],
+        [
+          "Models, environments, source, other project files",
+          72.88322067260742
+        ]
+      ]
+    ],
+    [
+      "vLLM semantic cache",
+      3.6,
+      [
+        [
+          "Stage 6 / runtime output",
+          3.26
+        ],
+        [
+          "Source, evidence and other",
+          0.34
+        ]
+      ]
+    ],
+    [
+      "Kuramoto LLM",
+      7.4,
+      []
+    ],
+    [
+      "Shared tools / user state",
+      59,
+      [
+        [
+          "Shared caches (deduplicated scan)",
+          19
+        ],
+        [
+          "User-installed tools / packages",
+          22
+        ],
+        [
+          "T3 runtime / worktrees / scratch",
+          15
+        ],
+        [
+          "Codex and other tools",
+          3
+        ]
+      ]
+    ]
+  ],
+  "run_categories_GiB": {
+    "Evidence / logs / other": 22.27930450439453,
+    "Other archives": 17.2779541015625,
+    "CUDA compilation caches / CUDA directories": 43.38217544555664,
+    "Software / builds / dependencies": 17.44559097290039,
+    "Captures / numeric arrays": 189.55517196655273,
+    "Native model exports": 141.72948455810547,
+    "Training states / weights": 340.90750885009766,
+    "Other runtime caches / downloaded assets": 1.07891845703125,
+    "Prepared numeric training data": 67.4606704711914
+  },
+  "largest_campaigns_GiB": {
+    "Unattended training preparation Oct 28": 145.30819702148438,
+    "W1A8 algorithms Oct 20": 127.9489631652832,
+    "Unattended runtime Oct 16": 67.4891357421875,
+    "HE4 continuation Nov 7": 36.545494079589844,
+    "W1A8 campaign Oct 23": 35.30410385131836
+  },
+  "windows_known_GiB": {
+    "Shader LOD": 30.333213806152344,
+    "Stage 6 downloaded model cache": 27.69011688232422,
+    "Binary component archive": 7.9109954833984375,
+    "DFlash2 archive": 3.9544715881347656
+  },
+  "limits": [
+    "Project totals rounded; shared hard-linked package attribution depends on traversal order.",
+    "Windows user artifact scan is still running; Windows list is incomplete.",
+    "WSL virtual disk is on Windows C; do not count it twice."
+  ]
+}
