@@ -9,7 +9,9 @@
   "exit": 0,
   "path": "case.py",
   "native": [],
-  "flags": [],
+  "flags": [
+    "--allow-untyped-defs"
+  ],
   "focused": {
     "disallow_any_expr": false
   }
