@@ -12,7 +12,9 @@
   "native": [
     "no-untyped-call"
   ],
-  "flags": [],
+  "flags": [
+    "--allow-untyped-defs"
+  ],
   "focused": {
     "disallow_any_expr": false
   }

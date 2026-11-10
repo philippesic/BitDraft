@@ -32,4 +32,28 @@ No remote, hosted execution or branch protection exists. A local verification re
 is fresh, external to tracked content and explicitly REVIEW_REQUIRED; it cannot approve
 its own policy change. Source, native, runtime verify and benchmark status is unavailable.
 
-Acceptance results and exact limitations will be recorded after actual verification.
+Local CPU validation on 2026-11-09 passes all ten enforcing stages, 26 required CPU
+nodes, 125 intended bad rejections and 125 passing controls. The independent outer
+checks reject disabled comment scanning, a missing executable, one removed specimen,
+duplicated rule IDs, unrelated/additional diagnostics and missing/skipped/xfail tests.
+The ordinary-comment scratch proof returns COMMENT_PYTHON with exit 1; restoring the
+original file restores exit 0. Pre-commit uses its staged worktree plus an independent
+index/content comparison; a changed unstaged worktree cannot claim that index identity.
+
+No atomic rule was removed or weakened. Pinned mypy 1.18.2 uses `misc` for unchecked Any
+and untyped-decorator diagnostics; fixtures preserve that actual code. It warns with
+exit 0 for unused config sections, so the wrapper promotes that exact warning to a
+failure. Focused external-call/decorator witnesses allow untyped definitions in their
+tiny external stub to isolate the intended call/decorator diagnostic. The full repository
+keeps all strict settings. All specimen output checks preserve real relative filenames.
+
+There are eleven exact live exceptions: six legitimate checker/test dependency edges,
+four pytest discovery hooks and one Hypothesis decorator typing directive. No ordinary
+comment or docstring is exempt. Selected small old evidence objects were hashed from
+Git; external checkpoints/captures were neither copied nor freshly hashed.
+
+Early implementation pytest runs used the default /tmp/pytest-of-philip directory.
+Subsequent runs use the repository temporary root. External temporary directories were
+left untouched under the explicit outside-cleanup prohibition; details remain in the
+external acceptance evidence. Optional image and hosted CI execution are unrun.
+

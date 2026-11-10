@@ -33,6 +33,7 @@ from tools.repo_files import (
 def main() -> int:
     root = Path.cwd().resolve()
     config = settings(root)
+    config.temporary.mkdir(parents=True, exist_ok=True)
     if needs_reexec(config):
         os.execve(
             sys.executable, [sys.executable, "-m", "tools.check", *sys.argv[1:]], config.environment
