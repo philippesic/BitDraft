@@ -1,0 +1,14 @@
+{
+  "rule": "dep001",
+  "command": "deptry",
+  "input": {},
+  "files": {
+    "case.py": "import not_a_foundation_package\n",
+    "pyproject.toml": "[project]\nname = \"case\"\nversion = \"0.0.0\"\ndependencies = []\n[tool.deptry]\nexclude = []\n"
+  },
+  "exit": 1,
+  "path": "case.py",
+  "native": [
+    "DEP001"
+  ]
+}

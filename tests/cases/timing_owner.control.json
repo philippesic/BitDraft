@@ -1,0 +1,11 @@
+{
+  "rule": "timing_owner",
+  "command": "component",
+  "input": {},
+  "files": {
+    "benchmarks/measurement.py": "import time\ndef f():\n    return time.perf_counter()\n"
+  },
+  "exit": 0,
+  "path": "model.py",
+  "native": []
+}

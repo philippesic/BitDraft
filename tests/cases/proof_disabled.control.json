@@ -1,0 +1,17 @@
+{
+  "rule": "proof_disabled",
+  "command": "component",
+  "input": {
+    "exit": 1,
+    "actual": [
+      {
+        "code": "COMMENT_PYTHON",
+        "path": "case.py"
+      }
+    ]
+  },
+  "files": {},
+  "exit": 0,
+  "path": "proof",
+  "native": []
+}

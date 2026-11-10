@@ -1,0 +1,26 @@
+{
+  "rule": "pin_tool",
+  "command": "component",
+  "input": {
+    "python": "3.11.15",
+    "tools": {
+      "ruff": "0.16.8",
+      "mypy": "1.18.2",
+      "pytest": "8.4.2",
+      "hypothesis": "6.140.3",
+      "import-linter": "2.7",
+      "vulture": "2.14",
+      "deptry": "0.24.0",
+      "pre-commit": "4.3.0",
+      "PyYAML": "6.0.3",
+      "types-PyYAML": "6.0.12.20250915",
+      "dulwich": "0.24.2",
+      "uv": "missing"
+    },
+    "lock_valid": true
+  },
+  "files": {},
+  "exit": 1,
+  "path": "environment",
+  "native": []
+}

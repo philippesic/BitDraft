@@ -1,0 +1,13 @@
+{
+  "rule": "claude_pointer",
+  "command": "component",
+  "input": {},
+  "files": {
+    "AGENTS.md": "# Instructions\n",
+    "CLAUDE.md": "@AGENTS.md\nextra\n",
+    "tools/a.py": "x = 1\n"
+  },
+  "exit": 1,
+  "path": "CLAUDE.md",
+  "native": []
+}

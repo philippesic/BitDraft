@@ -1,0 +1,11 @@
+{
+  "rule": "comment_patch",
+  "command": "component",
+  "input": {},
+  "files": {
+    "case.patch": "--- a/a.py\n+++ b/a.py\n@@ -1 +1 @@\n-x = 1\n+x = 2\n"
+  },
+  "exit": 0,
+  "path": "case.patch",
+  "native": []
+}

@@ -1,0 +1,9 @@
+{
+  "rule": "stage_gate",
+  "command": "component",
+  "input": {},
+  "files": {},
+  "exit": 0,
+  "path": "policy/check-stages.toml",
+  "native": []
+}

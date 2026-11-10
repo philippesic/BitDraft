@@ -1,0 +1,47 @@
+{
+  "rule": "group_properties",
+  "command": "component",
+  "input": {
+    "rows": [
+      {
+        "id": "a",
+        "source": "s",
+        "group": "ga",
+        "topic": null
+      },
+      {
+        "id": "b",
+        "source": "s",
+        "group": "gb",
+        "topic": null
+      }
+    ],
+    "expected": [
+      [
+        "a"
+      ],
+      [
+        "b"
+      ]
+    ],
+    "unrelated": {
+      "id": "c",
+      "source": "s",
+      "group": "gc",
+      "topic": null
+    },
+    "extended": [
+      [
+        "a",
+        "c"
+      ],
+      [
+        "b"
+      ]
+    ]
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}

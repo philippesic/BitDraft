@@ -1,0 +1,12 @@
+{
+  "rule": "comment_yaml",
+  "command": "component",
+  "input": {},
+  "files": {
+    "case.yaml": "x: \"# data\"\n",
+    "multiline.yaml": "x: |\n  # data in a scalar\n"
+  },
+  "exit": 0,
+  "path": "case.yaml",
+  "native": []
+}

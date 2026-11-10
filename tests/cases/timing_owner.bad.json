@@ -1,0 +1,17 @@
+{
+  "rule": "timing_owner",
+  "command": "component",
+  "input": {},
+  "files": {
+    "model.py": "import time\ndef f():\n    return time.perf_counter()\n"
+  },
+  "exit": 1,
+  "path": "model.py",
+  "native": [],
+  "diagnostics": [
+    {
+      "code": "TIMING_OWNER",
+      "path": "model.py"
+    }
+  ]
+}

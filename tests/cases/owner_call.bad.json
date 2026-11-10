@@ -1,0 +1,17 @@
+{
+  "rule": "owner_call",
+  "command": "component",
+  "input": {},
+  "files": {
+    "model.py": "def f(sink):\n    sink.publish(1)\n"
+  },
+  "exit": 1,
+  "path": "model.py",
+  "native": [],
+  "diagnostics": [
+    {
+      "code": "OWNER_CALL",
+      "path": "model.py"
+    }
+  ]
+}

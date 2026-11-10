@@ -1,0 +1,23 @@
+{
+  "rule": "type_config",
+  "command": "component",
+  "input": {
+    "mypy": {
+      "python_version": "3.11",
+      "strict": false,
+      "disallow_any_expr": true,
+      "disallow_any_explicit": true,
+      "disallow_any_unimported": true,
+      "warn_unreachable": true,
+      "follow_imports": "normal",
+      "ignore_missing_imports": false,
+      "enable_error_code": [
+        "ignore-without-code"
+      ]
+    }
+  },
+  "files": {},
+  "exit": 1,
+  "path": "pyproject.toml",
+  "native": []
+}

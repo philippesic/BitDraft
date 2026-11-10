@@ -1,0 +1,65 @@
+{
+  "rule": "verify_activation",
+  "command": "component",
+  "input": {
+    "proposed": 0,
+    "loader": "he4",
+    "expected_loader": "he4",
+    "taps": [
+      2,
+      6,
+      10,
+      14,
+      18,
+      22,
+      26,
+      30
+    ],
+    "semantics": "zero_based_pre_block_input_all_tokens",
+    "logits": [
+      1,
+      2
+    ],
+    "teacher": "teacher-digest",
+    "expected_teacher": "teacher-digest",
+    "token_count": 1,
+    "shapes": [
+      [
+        1,
+        2560
+      ],
+      [
+        1,
+        2560
+      ],
+      [
+        1,
+        2560
+      ],
+      [
+        1,
+        2560
+      ],
+      [
+        1,
+        2560
+      ],
+      [
+        1,
+        2560
+      ],
+      [
+        1,
+        2560
+      ],
+      [
+        1,
+        2560
+      ]
+    ]
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}

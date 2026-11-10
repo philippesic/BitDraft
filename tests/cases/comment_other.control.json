@@ -1,0 +1,18 @@
+{
+  "rule": "comment_other",
+  "command": "component",
+  "input": {},
+  "files": {
+    "Dockerfile": "RUN echo \"# data\"\n",
+    "CMakeLists.txt": "set(x \"# data\")\n",
+    "x.ini": "x = \"# data\"\n",
+    ".gitignore": ".venv/\n",
+    ".editorconfig": "root = true\n",
+    "brackets.cmake": "set(x [=[# data]=])\n",
+    "semicolon.ini": "x = \"; data\"\n",
+    "nested/.gitignore": "\\#data\n"
+  },
+  "exit": 0,
+  "path": "Dockerfile",
+  "native": []
+}

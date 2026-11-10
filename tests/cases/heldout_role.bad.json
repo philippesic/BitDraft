@@ -1,0 +1,23 @@
+{
+  "rule": "heldout_role",
+  "command": "component",
+  "input": {
+    "protected": [
+      "heldout24",
+      "alias-h"
+    ],
+    "rows": [
+      {
+        "id": "t",
+        "role": "train",
+        "aliases": [
+          "alias-h"
+        ]
+      }
+    ]
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}

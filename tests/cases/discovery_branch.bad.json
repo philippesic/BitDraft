@@ -1,0 +1,17 @@
+{
+  "rule": "discovery_branch",
+  "command": "component",
+  "input": {},
+  "files": {
+    "a.py": "def f(adapter_id):\n    if adapter_id == \"he4\":\n        return 1\n    return 0\n"
+  },
+  "exit": 1,
+  "path": "a.py",
+  "native": [],
+  "diagnostics": [
+    {
+      "code": "DISCOVERY_BRANCH",
+      "path": "a.py"
+    }
+  ]
+}

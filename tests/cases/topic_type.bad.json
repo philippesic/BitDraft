@@ -1,0 +1,24 @@
+{
+  "rule": "topic_type",
+  "command": "component",
+  "input": {
+    "rows": [
+      {
+        "id": "a",
+        "source": "s",
+        "group": "ga",
+        "topic": 7
+      },
+      {
+        "id": "b",
+        "source": "s",
+        "group": "gb",
+        "topic": null
+      }
+    ]
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}

@@ -1,0 +1,17 @@
+{
+  "rule": "owner_path",
+  "command": "component",
+  "input": {},
+  "files": {
+    "model.py": "def f():\n    open(\"best.json\", \"w\")\n"
+  },
+  "exit": 1,
+  "path": "model.py",
+  "native": [],
+  "diagnostics": [
+    {
+      "code": "OWNER_PATH",
+      "path": "model.py"
+    }
+  ]
+}

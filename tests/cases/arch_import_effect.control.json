@@ -1,0 +1,11 @@
+{
+  "rule": "arch_import_effect",
+  "command": "component",
+  "input": {},
+  "files": {
+    "a.py": "from pathlib import Path\ndef f():\n    Path(\"x\").mkdir()\n"
+  },
+  "exit": 0,
+  "path": "a.py",
+  "native": []
+}

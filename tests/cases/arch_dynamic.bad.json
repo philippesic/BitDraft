@@ -1,0 +1,17 @@
+{
+  "rule": "arch_dynamic",
+  "command": "component",
+  "input": {},
+  "files": {
+    "a.py": "def f(x):\n    return eval(x)\n"
+  },
+  "exit": 1,
+  "path": "a.py",
+  "native": [],
+  "diagnostics": [
+    {
+      "code": "ARCH_DYNAMIC",
+      "path": "a.py"
+    }
+  ]
+}

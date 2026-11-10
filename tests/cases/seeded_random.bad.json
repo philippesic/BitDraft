@@ -1,0 +1,17 @@
+{
+  "rule": "seeded_random",
+  "command": "component",
+  "input": {},
+  "files": {
+    "sampler.py": "import random\ndef f():\n    return random.random()\n"
+  },
+  "exit": 1,
+  "path": "sampler.py",
+  "native": [],
+  "diagnostics": [
+    {
+      "code": "SEEDED_RANDOM",
+      "path": "sampler.py"
+    }
+  ]
+}

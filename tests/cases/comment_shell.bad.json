@@ -1,0 +1,11 @@
+{
+  "rule": "comment_shell",
+  "command": "component",
+  "input": {},
+  "files": {
+    "case.sh": "printf x # explanation\n"
+  },
+  "exit": 1,
+  "path": "case.sh",
+  "native": []
+}

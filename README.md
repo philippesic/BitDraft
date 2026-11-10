@@ -25,7 +25,7 @@ uv run --locked --no-sync --offline python tools/check.py
 ```
 
 The command installs nothing, downloads nothing, formats nothing and uses no GPU.
-Its ordinary run includes all specimens. `--self-test` is the same proof with prerequisites;
+Its ordinary run includes all specimens. `--self-test` shows stage 9 with bootstrap prerequisites;
 it is an inspection convenience, never a reduced CI gate.
 
 See [checks](docs/checks.md), [system map](docs/system-map.md), [findings](FINDINGS.md),

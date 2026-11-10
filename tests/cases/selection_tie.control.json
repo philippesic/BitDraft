@@ -1,0 +1,27 @@
+{
+  "rule": "selection_tie",
+  "command": "component",
+  "input": {
+    "scores": [
+      {
+        "id": "early",
+        "score": 2,
+        "kind": "serving",
+        "complete": true,
+        "durable": true
+      },
+      {
+        "id": "late",
+        "score": 2,
+        "kind": "serving",
+        "complete": true,
+        "durable": true
+      }
+    ],
+    "selected": "early"
+  },
+  "files": {},
+  "exit": 0,
+  "path": "input.json",
+  "native": []
+}

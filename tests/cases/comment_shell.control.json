@@ -1,0 +1,12 @@
+{
+  "rule": "comment_shell",
+  "command": "component",
+  "input": {},
+  "files": {
+    "case.sh": "printf \"%s\" \"# data\"\n",
+    "heredoc.sh": "cat <<'DATA'\n# data in heredoc\nDATA\n"
+  },
+  "exit": 0,
+  "path": "case.sh",
+  "native": []
+}

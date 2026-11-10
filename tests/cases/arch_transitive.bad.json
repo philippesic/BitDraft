@@ -1,0 +1,18 @@
+{
+  "rule": "arch_transitive",
+  "command": "component",
+  "input": {},
+  "files": {
+    "tools/a.py": "import shim\n",
+    "shim.py": "import tests\n"
+  },
+  "exit": 1,
+  "path": "tools/a.py",
+  "native": [],
+  "diagnostics": [
+    {
+      "code": "ARCH_TRANSITIVE",
+      "path": "tools/a.py"
+    }
+  ]
+}

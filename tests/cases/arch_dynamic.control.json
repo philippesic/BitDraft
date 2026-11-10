@@ -1,0 +1,11 @@
+{
+  "rule": "arch_dynamic",
+  "command": "component",
+  "input": {},
+  "files": {
+    "a.py": "def f(x):\n    return x\n"
+  },
+  "exit": 0,
+  "path": "a.py",
+  "native": []
+}

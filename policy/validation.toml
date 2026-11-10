@@ -1,0 +1,6 @@
+schema = 1
+review = "Philip review required; no remote approval mechanism"
+proposal = "/home/philip/.t3/scratch/2026-11-10-read-only-binary-eagle-foundation-c04593ea/FOUNDATION_PROPOSAL.md"
+rule_count = 125
+decision = "007-checks-and-review"
+tests = ["tests/test_contracts.py", "tests/test_architecture.py", "tests/test_policy.py", "tests/test_self_test.py"]

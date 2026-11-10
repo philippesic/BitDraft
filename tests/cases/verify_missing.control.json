@@ -1,0 +1,15 @@
+{
+  "rule": "verify_missing",
+  "command": "component",
+  "input": {
+    "scope": "synthetic-schema",
+    "qualified": false,
+    "raw": [
+      1
+    ]
+  },
+  "files": {},
+  "exit": 0,
+  "path": "input.json",
+  "native": []
+}

@@ -1,0 +1,12 @@
+{
+  "rule": "arch_cycle",
+  "command": "component",
+  "input": {},
+  "files": {
+    "a.py": "import b\n",
+    "b.py": "x = 1\n"
+  },
+  "exit": 0,
+  "path": "a.py",
+  "native": []
+}

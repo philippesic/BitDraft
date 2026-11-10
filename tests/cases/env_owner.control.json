@@ -1,0 +1,11 @@
+{
+  "rule": "env_owner",
+  "command": "component",
+  "input": {},
+  "files": {
+    "w1a1_eagle/config.py": "import os\ndef f():\n    return os.getenv(\"VALUE\")\n"
+  },
+  "exit": 0,
+  "path": "model.py",
+  "native": []
+}

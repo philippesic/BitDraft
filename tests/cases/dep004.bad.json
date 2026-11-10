@@ -1,0 +1,14 @@
+{
+  "rule": "dep004",
+  "command": "deptry",
+  "input": {},
+  "files": {
+    "case.py": "import pytest\n",
+    "pyproject.toml": "[project]\nname = \"case\"\nversion = \"0.0.0\"\ndependencies = []\n[dependency-groups]\ncheck = [\"pytest\"]\n[tool.deptry]\nexclude = []"
+  },
+  "exit": 1,
+  "path": "case.py",
+  "native": [
+    "DEP004"
+  ]
+}

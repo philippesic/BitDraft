@@ -1,0 +1,9 @@
+schema = 1
+pure = ["tools.contracts"]
+forbidden = ["tools -> tests", "w1a1_eagle -> tools", "w1a1_eagle -> tests", "w1a1_eagle -> benchmarks", "w1a1_eagle.model -> w1a1_eagle.training"]
+entry = ["tools/check.py:main"]
+future_entry = ["w1a1_eagle.__main__:main", "benchmarks.__main__:main"]
+future_writer = ["w1a1_eagle.data.ledger", "w1a1_eagle.checkpoints.store", "w1a1_eagle.training.lifecycle", "benchmarks.runner"]
+future_environment = "w1a1_eagle.config"
+future_measurement = "benchmarks.measurement"
+discovery = ["*_adapter.py", "*_workload.py", "*_dataset.py"]

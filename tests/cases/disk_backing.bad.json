@@ -1,0 +1,20 @@
+{
+  "rule": "disk_backing",
+  "command": "component",
+  "input": {
+    "devices": [
+      {
+        "kind": "wsl",
+        "provider": "statvfs",
+        "free": 39,
+        "peak": 6,
+        "reserve": 8
+      }
+    ],
+    "combined": false
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}

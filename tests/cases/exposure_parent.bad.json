@@ -1,0 +1,23 @@
+{
+  "rule": "exposure_parent",
+  "command": "component",
+  "input": {
+    "parent": {
+      "exposure": 10,
+      "seed": 7,
+      "cursor": 2,
+      "trajectory": "t"
+    },
+    "child": {
+      "exposure": 4,
+      "seed": 7,
+      "cursor": 2,
+      "trajectory": "t"
+    },
+    "added": 4
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}

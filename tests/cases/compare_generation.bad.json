@@ -1,0 +1,119 @@
+{
+  "rule": "compare_generation",
+  "command": "component",
+  "input": {
+    "left": {
+      "clock": "complete_request_http_wall",
+      "aggregation": "sum_tokens/sum_http_wall",
+      "warmups": 2,
+      "era": "modern_dflash_runtime04",
+      "machine": "rtx5080-host",
+      "software": "software-closure-1",
+      "target": "target-digest",
+      "tokenizer": "tokenizer-digest",
+      "template": "template-digest",
+      "family": "HE4",
+      "workload": "synthetic-workload-digest",
+      "prompts": [
+        "synthetic-a",
+        "synthetic-b"
+      ],
+      "cap": 256,
+      "input_lengths": [
+        32,
+        48
+      ],
+      "role": "dev",
+      "consumption": "consumed-dev",
+      "processes": [
+        0,
+        1
+      ],
+      "attempts": [
+        0,
+        1
+      ],
+      "planned_processes": [
+        0,
+        1
+      ],
+      "order": [
+        "candidate-baseline",
+        "baseline-candidate"
+      ],
+      "binary": "binary-digest",
+      "runtime": "runtime-digest",
+      "instrumentation": "clean",
+      "depth": 2,
+      "kv": "f16",
+      "cache": "consistent32",
+      "seed": 7,
+      "greedy": true,
+      "eog": [
+        151645
+      ],
+      "context": 4096,
+      "batch": 1,
+      "concurrency": 1
+    },
+    "right": {
+      "clock": "complete_request_http_wall",
+      "aggregation": "sum_tokens/sum_http_wall",
+      "warmups": 2,
+      "era": "modern_dflash_runtime04",
+      "machine": "rtx5080-host",
+      "software": "software-closure-1",
+      "target": "target-digest",
+      "tokenizer": "tokenizer-digest",
+      "template": "template-digest",
+      "family": "HE4",
+      "workload": "synthetic-workload-digest",
+      "prompts": [
+        "synthetic-a",
+        "synthetic-b"
+      ],
+      "cap": 256,
+      "input_lengths": [
+        32,
+        48
+      ],
+      "role": "dev",
+      "consumption": "consumed-dev",
+      "processes": [
+        0,
+        1
+      ],
+      "attempts": [
+        0,
+        1
+      ],
+      "planned_processes": [
+        0,
+        1
+      ],
+      "order": [
+        "candidate-baseline",
+        "baseline-candidate"
+      ],
+      "binary": "binary-digest",
+      "runtime": "runtime-digest",
+      "instrumentation": "clean",
+      "depth": 2,
+      "kv": "f16",
+      "cache": "consistent32",
+      "seed": "different",
+      "greedy": true,
+      "eog": [
+        151645
+      ],
+      "context": 4096,
+      "batch": 1,
+      "concurrency": 1
+    },
+    "allowed_differences": {}
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}

@@ -1,0 +1,25 @@
+{
+  "rule": "capture_offset",
+  "command": "component",
+  "input": {
+    "tokens": [
+      10,
+      11,
+      12
+    ],
+    "labels": [
+      {
+        "position": 0,
+        "label": 10
+      },
+      {
+        "position": 1,
+        "label": 11
+      }
+    ]
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}

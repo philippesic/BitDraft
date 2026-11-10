@@ -1,0 +1,25 @@
+{
+  "rule": "count_unique",
+  "command": "component",
+  "input": {
+    "labels": [
+      {
+        "trajectory": "t",
+        "position": 1
+      },
+      {
+        "trajectory": "t",
+        "position": 1
+      },
+      {
+        "trajectory": "t",
+        "position": 2
+      }
+    ],
+    "claimed": 3
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}

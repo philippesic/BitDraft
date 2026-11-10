@@ -1,0 +1,12 @@
+{
+  "rule": "arch_transitive",
+  "command": "component",
+  "input": {},
+  "files": {
+    "tools/a.py": "import shim\n",
+    "shim.py": "import math\n"
+  },
+  "exit": 0,
+  "path": "tools/a.py",
+  "native": []
+}

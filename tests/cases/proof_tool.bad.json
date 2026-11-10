@@ -1,0 +1,17 @@
+{
+  "rule": "proof_tool",
+  "command": "component",
+  "input": {
+    "exit": 127,
+    "actual": [
+      {
+        "code": "SETUP_ERROR",
+        "path": "command"
+      }
+    ]
+  },
+  "files": {},
+  "exit": 1,
+  "path": "proof",
+  "native": []
+}

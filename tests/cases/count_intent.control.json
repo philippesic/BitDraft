@@ -1,0 +1,13 @@
+{
+  "rule": "count_intent",
+  "command": "component",
+  "input": {
+    "minimum": 9980,
+    "maximum": 10000,
+    "actual": 9990
+  },
+  "files": {},
+  "exit": 0,
+  "path": "input.json",
+  "native": []
+}

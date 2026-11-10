@@ -1,0 +1,11 @@
+{
+  "rule": "owner_call",
+  "command": "component",
+  "input": {},
+  "files": {
+    "model.py": "def f(reader):\n    return reader.read()\n"
+  },
+  "exit": 0,
+  "path": "model.py",
+  "native": []
+}
