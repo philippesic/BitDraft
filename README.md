@@ -4,6 +4,8 @@ Stage 0 contains CPU policy checks, synthetic contracts and historical evidence.
 It contains no model, trainer, capture loader, ledger importer, native build or benchmark.
 No GPU work or real-data validation is authorized. This is a local temporary repo with no remote.
 
+[Agent first port overhaul](docs/port-overhaul.md) is the new audited proposal; implementation remains pending.
+
 HE4 means W1A4 with A8 down projection and Q4K head. W1A8 is historical DSpark W1A8.
 DSpark Q4KM is the historical baseline. Baseline means current external DFlash Q4KM drafter.
 These identities are separate; the evidence does not establish HE4 beating Baseline.
