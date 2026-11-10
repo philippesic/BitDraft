@@ -106,7 +106,14 @@ class Window:
     labels: tuple[int, ...]
 
     def __post_init__(self) -> None:
-        if not self.trajectory or self.anchor < 0 or len(self.labels) != 15:
+        if (
+            not isinstance(self.trajectory, str)
+            or not self.trajectory.strip()
+            or type(self.anchor) is not int
+            or self.anchor < 0
+            or not isinstance(self.labels, tuple)
+            or len(self.labels) != 15
+        ):
             raise ValueError("invalid training window")
         if any(type(v) is not int or v < 0 for v in self.labels):
             raise ValueError("invalid label")

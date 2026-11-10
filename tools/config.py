@@ -257,7 +257,7 @@ CONFIG_DIGESTS = {
     "Dockerfile.checks": "c8f0ad1105d976a3f757b74727bf2aed9f4bbfb5030a193f1328ba6f5a9b5696",
     "policy/boundaries.toml": "2222fafd65a0c3d355483f9d0ff3354550f495faefa282b80a327e5365ca024a",
     "policy/cases.toml": "d3094468c15e70cec936fb2b3b2eb6f99ee2900b39a507492f5b762b32ee6cfc",
-    "policy/cpu-tests.toml": "f1e519e66fdfe58d8abfd1d94d966ac9ded8e9cb048f5be92bf4b1a0cf37c126",
+    "policy/cpu-tests.toml": "8fffe0219977f60bfafcdbc8b063d6ab694cc2f9f0365c8fdf3d1d5fb3ccc884",
     "policy/check-stages.toml": "b292836462fa970fb2330e93b913ea1a3ac8fe5eb8efde756b691184bf8165f1",
     "policy/validation.toml": "059cdf0120d2fc9c974512f6ec9943b79cceae47719d62ddc47c6a16392d7368",
 }

@@ -118,3 +118,19 @@ control pairs; a green gate grants no execution authority or serving qualificati
 
 Evidence: [execution contract](docs/execution.md), [arithmetic characterization](docs/evidence/arithmetic-reference.json),
 [selected source inventory](docs/evidence/source-inventory.json), [decision 007](docs/decisions/007-checks-and-review.md).
+
+
+## F013
+
+A fresh agent repaired a scoped immutable-window contract using normal docs and checks,
+without hints or checker/policy changes. It reproduced failures, corrected two typing
+errors in its test expressions, and passed the full gate. Parent probes independently
+confirmed the requested type/immutability/position behavior. An extra whitespace-only
+probe over-specified the supplied task; the discrepancy was adjudicated before a separate
+parent correction made identity handling consistent with neighboring records.
+
+Limits: one shared-host routine task, instruction-based scope isolation, warm caches,
+no matched comparison or causal efficiency claim. All unsuccessful check attempts remain
+in the receipt. This supplements F011, not a universal qualification of agent behavior.
+
+Evidence: [routine exercise receipt](docs/evidence/agent-window-exercise.json).
