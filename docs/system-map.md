@@ -11,7 +11,7 @@
 | W2 | pending | w1a1_eagle/native/teacher.py | capture | Separate hardware gate |
 | W3 | active | w1a1_eagle/numerical/corpus.py | Corpus | Bounded CPU capture sampling |
 | W4 | active | w1a1_eagle/supervisor.py | execute | Scoped CPU run |
-| W5 | active | w1a1_eagle/numerical/worker.py | restore | Own schema-2 tensor resume/branch |
+| W5 | active | w1a1_eagle/numerical/worker.py | restore | Own schema-3 tensor resume/branch |
 | W6 | active | w1a1_eagle/numerical/export.py | export_he4 | Bounded CPU GGUF construction |
 | W7 | pending | w1a1_eagle/training/lifecycle.py | evaluate | Separate source gate |
 | W8 | pending | benchmarks/__main__.py | qualify | Separate hardware gate |

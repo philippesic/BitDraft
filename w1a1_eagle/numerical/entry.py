@@ -68,8 +68,8 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
     }
 
 
-def preflight(path: Path) -> Record:
-    intent = Intent.load(path)
+def preflight(path: Path, sealed: bool = False) -> Record:
+    intent = Intent.load_sealed(path) if sealed else Intent.load(path)
     if source_identity(Path(__file__).resolve().parents[2]) != intent.raw["code_sha256"]:
         raise ValueError("source identity differs from intent")
     cfg = record(intent.raw["geometry"])
@@ -89,7 +89,7 @@ def read_corpus(intent: Intent, hidden: int) -> Corpus:
 
 
 def run(intent_path: Path, root: Path, attempt: str) -> None:
-    intent = Intent.load(intent_path)
+    intent = Intent.load_sealed(intent_path)
     code_root = Path(__file__).resolve().parents[2]
     if source_identity(code_root) != intent.raw["code_sha256"]:
         raise ValueError("source changed between controller admission and worker load")
@@ -151,6 +151,7 @@ def run(intent_path: Path, root: Path, attempt: str) -> None:
         worker.progress.discarded += extra - added_failed
         worker.progress.attempts += extra
     stopped = False
+    stop_reason = ""
 
     def stop_signal(_signum: int, _frame: object) -> None:
         nonlocal stopped
@@ -164,12 +165,21 @@ def run(intent_path: Path, root: Path, attempt: str) -> None:
     last_checkpoint_seconds = clock.now()
 
     def stop() -> bool:
-        nonlocal last_checkpoint_updates, last_checkpoint_seconds
+        nonlocal last_checkpoint_updates, last_checkpoint_seconds, stop_reason
+        if journal.path.stat().st_size >= 56 * 1024 * 1024:
+            stop_reason = "journal-capacity"
+            return True
         if shutil.disk_usage(root).free - intent.state_bytes < intent.disk_reserve_bytes:
+            stop_reason = "disk-reserve"
             return True
         if backing_available() - intent.state_bytes < intent.disk_reserve_bytes:
+            stop_reason = "backing-reserve"
             return True
-        if stopped or control(root, attempt, owner, 1):
+        if stopped:
+            stop_reason = "signal-stop"
+            return True
+        if control(root, attempt, owner, 1):
+            stop_reason = "owned-control-stop"
             return True
         if (
             worker.updates - last_checkpoint_updates >= intent.checkpoint_updates
@@ -215,6 +225,8 @@ def run(intent_path: Path, root: Path, attempt: str) -> None:
     worker.checkpoint(states, intent.state_bytes)
     try:
         result = worker.run(clock, intent.budget, stop)
+        if result == "stopped" and stop_reason:
+            result = stop_reason
     except BaseException:
         journal.append(
             {
@@ -274,9 +286,14 @@ def run(intent_path: Path, root: Path, attempt: str) -> None:
 
 
 def main() -> int:
-    if len(sys.argv) == 3 and sys.argv[1] == "--preflight":
+    if len(sys.argv) == 3 and sys.argv[1] in {"--preflight", "--sealed-preflight"}:
         try:
-            print(json.dumps(preflight(Path(sys.argv[2])), sort_keys=True))
+            print(
+                json.dumps(
+                    preflight(Path(sys.argv[2]), sys.argv[1] == "--sealed-preflight"),
+                    sort_keys=True,
+                )
+            )
             return 0
         except (ValueError, OSError, KeyError) as error:
             refusal: Record = {

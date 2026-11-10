@@ -1,25 +1,81 @@
 import hashlib
 import importlib.metadata
 import os
+import shutil
 import sys
+import tempfile
 from pathlib import Path
 
+from w1a1_eagle.capacity import require
 from w1a1_eagle.contracts import Record
 from w1a1_eagle.records import identity
 
 
+def source_files(root: Path) -> dict[str, bytes]:
+    values: dict[str, bytes] = {}
+    paths = sorted((root / "w1a1_eagle").rglob("*"))
+    paths.extend(root / name for name in ("uv.lock", "policy/numerical.toml", "pyproject.toml"))
+    total = 0
+    for path in paths:
+        if path.is_symlink():
+            raise ValueError("source identity refuses symlinked executable inputs")
+        if path.is_file() and (
+            path.suffix == ".py" or path.parent == root or path.name == "numerical.toml"
+        ):
+            total += path.stat().st_size
+            if total > 2 * 1024 * 1024:
+                raise ValueError("runtime source snapshot exceeds its explicit 2 MiB bound")
+            values[path.relative_to(root).as_posix()] = path.read_bytes()
+    if not values or not all(
+        name in values
+        for name in ("w1a1_eagle/__init__.py", "uv.lock", "policy/numerical.toml", "pyproject.toml")
+    ):
+        raise ValueError("runtime source closure is incomplete")
+    return values
+
+
 def source_identity(root: Path) -> str:
-    values: dict[str, str] = {}
-    for path in sorted((root / "w1a1_eagle").rglob("*")):
-        if path.suffix == ".py":
-            if path.is_symlink():
-                raise ValueError("source identity refuses symlinked executable inputs")
-            values[path.relative_to(root).as_posix()] = hashlib.sha256(
-                path.read_bytes()
-            ).hexdigest()
-    for name in ("uv.lock", "policy/numerical.toml", "pyproject.toml"):
-        values[name] = hashlib.sha256((root / name).read_bytes()).hexdigest()
-    return identity(values)
+    return identity(
+        {name: hashlib.sha256(data).hexdigest() for name, data in source_files(root).items()}
+    )
+
+
+def freeze_source(root: Path, destination: Path, expected: str, reserve: int) -> Path:
+    values = source_files(root)
+    if (
+        identity({name: hashlib.sha256(data).hexdigest() for name, data in values.items()})
+        != expected
+    ):
+        raise ValueError("source changed before runtime snapshot")
+    destination.mkdir(parents=True, exist_ok=True)
+    target = destination / expected
+    if target.exists():
+        if target.is_symlink() or source_identity(target) != expected:
+            raise ValueError("existing source snapshot differs from admitted identity")
+        return target
+    require(destination, 2 * 1024 * 1024, reserve)
+    temporary = Path(tempfile.mkdtemp(prefix=".pending-source-", dir=destination))
+    try:
+        for name, data in values.items():
+            path = temporary / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with path.open("xb") as output:
+                output.write(data)
+                output.flush()
+                os.fsync(output.fileno())
+            path.chmod(0o444)
+        if source_identity(temporary) != expected:
+            raise ValueError("runtime snapshot verification failed")
+        os.rename(temporary, target)
+        descriptor = os.open(destination, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+    finally:
+        if temporary.exists():
+            shutil.rmtree(temporary)
+    return target
 
 
 def loaded_identity(cache: dict[tuple[int, int, int, int, int], str] | None = None) -> Record:

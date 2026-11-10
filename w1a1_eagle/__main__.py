@@ -25,9 +25,17 @@ def human(report: Record) -> str:
     if "latest" in report:
         failure = report.get("failure")
         cause = f"Confirmed failure record: {record(failure)}.\n" if failure is not None else ""
+        latest = record(report["latest"]) if report.get("latest") is not None else {}
+        worker = record(report["worker"]) if report.get("worker") is not None else {}
+        admission = record(report["admission"]) if report.get("admission") is not None else {}
         return (
-            cause + f"Operational: {report['operational']}; {report['attempts']} attempts, "
-            f"{report['cumulative_attempt_seconds']} cumulative seconds.\n"
+            cause
+            + f"Operational: {report['operational']}; controller outcome {latest.get('outcome', 'unknown')}; "
+            f"worker stop {worker.get('outcome', 'unknown')}.\n"
+            f"Activation: {worker.get('activation', 'unknown; no completed worker evidence')}.\n"
+            f"Starting state: {admission.get('starting_name', 'unknown')}; mechanism {admission.get('mechanism', 'unknown')}.\n"
+            f"Limiting risk: {admission.get('limiting_risk', 'unknown; admission absent')}.\n"
+            f"Cost: {report['attempts']} attempts, {report['cumulative_attempt_seconds']} cumulative seconds.\n"
             f"Scientific: {report['scientific']}.\nObjective: {report['objective']}.\n"
             f"Selection: {report['selection']}."
         )

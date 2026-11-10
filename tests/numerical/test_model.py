@@ -453,7 +453,7 @@ class TestNumerical(unittest.TestCase):
                 "memory_bytes": 64 * 1024 * 1024,
                 "state_bytes": 8 * 1024 * 1024,
                 "disk_reserve_bytes": 1,
-                "backing_available_bytes": 64 * 1024 * 1024,
+                "backing_available_bytes": 256 * 1024 * 1024,
                 "seed": 17,
                 "device": "cpu",
                 "science_policy": {
@@ -494,7 +494,23 @@ class TestNumerical(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "schema is 2"):
                 Intent.load(intent_path)
             intent_path.write_bytes(canonical(intent))
-            report = execute(intent_path, root / "attempt", "disposable-CPU-test")
+
+            def mutate_caller_intent(_admission: Record) -> None:
+                changed = dict(intent)
+                changed["authority_scope"] = "caller-changed-after-preflight"
+                intent_path.write_bytes(canonical(changed))
+
+            report = execute(
+                intent_path, root / "attempt", "disposable-CPU-test", mutate_caller_intent
+            )
+            sealed_path = next((root / "attempt/intents").glob("*.json"))
+            self.assertEqual(
+                Intent.load_sealed(sealed_path).raw["authority_scope"], "disposable-CPU-test"
+            )
+            self.assertEqual(Intent.load_sealed(sealed_path).base, intent_path.parent)
+            snapshot = next((root / "attempt/sources").iterdir())
+            self.assertEqual(source_identity(snapshot), intent["code_sha256"])
+            intent_path.write_bytes(canonical(intent))
             self.assertEqual(record(report["latest"])["outcome"], "complete", report)
             self.assertEqual(record(report["worker"])["updates"], 1)
             self.assertIn("unknown", str(report["scientific"]))
@@ -659,6 +675,10 @@ class TestNumerical(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "incomplete"):
                 broken.checkpoint(Store(Path(directory) / "invalid"), 4 * 1024 * 1024)
             state = torch.load(parent.artifact.path, map_location="cpu", weights_only=True)
+            self.assertEqual(state["schema"], 3)
+            self.assertNotIn("vocabulary", state["model"])
+            self.assertNotIn("fusion.operand", state["model"])
+            self.assertEqual(state["frozen_sha256"], original.frozen_sha256)
             first_state = next(iter(state["optimizer"]["state"].values()))
             first_state["exp_avg"] = torch.zeros((1,))
             malformed = Store(Path(directory) / "malformed").commit_with(
@@ -666,3 +686,28 @@ class TestNumerical(unittest.TestCase):
             )
             with self.assertRaisesRegex(ValueError, "moment geometry"):
                 self.fixture_worker("recipe").restore(malformed, 8 * 1024 * 1024)
+
+    def test_frozen_state_guards_and_schema_refusal(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="binary-frozen-") as directory:
+            root = Path(directory)
+            worker = self.fixture_worker("recipe")
+            parent = worker.checkpoint(Store(root / "states"), 4 * 1024 * 1024)
+            changed = self.fixture_worker("recipe")
+            with torch.no_grad():
+                changed.model.vocabulary[0, 0] += 1
+            with self.assertRaisesRegex(ValueError, "frozen source"):
+                changed.checkpoint(Store(root / "changed"), 4 * 1024 * 1024)
+            self.assertFalse(changed.ready)
+            other = self.fixture_worker("recipe")
+            with torch.no_grad():
+                other.model.vocabulary[0, 0] += 1
+            replacement = TensorWorker(other.model, other.samples, "recipe")
+            with self.assertRaisesRegex(ValueError, "fingerprint"):
+                replacement.restore(parent, 8 * 1024 * 1024)
+            state = torch.load(parent.artifact.path, map_location="cpu", weights_only=True)
+            state["schema"] = 2
+            old = Store(root / "old").commit_with(
+                lambda output: torch.save(state, output), "recipe", 0, 4 * 1024 * 1024
+            )
+            with self.assertRaisesRegex(ValueError, "unsupported tensor state"):
+                self.fixture_worker("recipe").restore(old, 8 * 1024 * 1024)

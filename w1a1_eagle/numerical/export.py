@@ -86,6 +86,7 @@ def packed_signs(value: Tensor) -> NativeArray:
 def prepare(
     worker: TensorWorker, source: Artifact, vocabulary: Artifact
 ) -> tuple[Writer, list[ExportTensor]]:
+    worker.verify_frozen()
     model = worker.model
     worker.progress.validate()
     if (

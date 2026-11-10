@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, cast
 
+from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, number, record, string
 from w1a1_eagle.data import Artifact
 from w1a1_eagle.index import IndexSpec, Mount
@@ -27,6 +28,7 @@ class Intent:
     seed: int
     checkpoint_updates: int
     checkpoint_seconds: float
+    base: Path
     index_spec: IndexSpec | None = None
 
     @property
@@ -35,7 +37,45 @@ class Intent:
 
     @classmethod
     def load(cls, path: Path) -> "Intent":
+        return cls.parse(read(path, 1024 * 1024), path.resolve().parent)
+
+    @classmethod
+    def load_sealed(cls, path: Path) -> "Intent":
         raw = read(path)
+        if (
+            set(raw) != {"schema", "payload", "base", "sha256"}
+            or type(raw["schema"]) is not int
+            or raw["schema"] != 1
+        ):
+            raise ValueError("unsupported sealed intent receipt")
+        payload = record(raw["payload"])
+        base = Path(string(raw["base"]))
+        if (
+            not base.is_absolute()
+            or identity(payload) != raw["sha256"]
+            or path.name != str(raw["sha256"]) + ".json"
+        ):
+            raise ValueError("sealed intent identity mismatch")
+        return cls.parse(payload, base)
+
+    def seal(self, directory: Path) -> Path:
+        store = Store(directory, self.disk_reserve_bytes)
+        path = store.root / (self.sha256 + ".json")
+        data = canonical(
+            {"schema": 1, "payload": self.raw, "base": str(self.base), "sha256": self.sha256}
+        )
+        if path.exists():
+            if path.is_symlink() or path.read_bytes() != data:
+                raise ValueError("existing intent receipt disagrees with admitted input")
+        else:
+            store.atomic(path, data)
+            path.chmod(0o444)
+        return path
+
+    @classmethod
+    def parse(cls, raw: Record, root: Path) -> "Intent":
+        if len(canonical(raw)) > 1024 * 1024:
+            raise ValueError("intent exceeds its explicit 1 MiB bound")
         required = {
             "schema",
             "objective",
@@ -125,7 +165,6 @@ class Intent:
             or number(policy["max_mean_visits"]) <= 0
         ):
             raise ValueError("explicit positive scientific admission policy required")
-        root = path.resolve().parent
         adapter: IndexSpec | None = None
         if raw.get("input_adapter") is not None:
             values = record(raw["input_adapter"])
@@ -180,6 +219,7 @@ class Intent:
             integer(raw["seed"]),
             integer(raw["checkpoint_updates"]),
             number(raw["checkpoint_seconds"]),
+            root,
             adapter,
         )
 
@@ -217,4 +257,4 @@ class Intent:
             math.ceil(self.budget.updates / self.checkpoint_updates)
             + math.ceil(self.budget.wall_seconds / self.checkpoint_seconds),
         )
-        return (intermediate + 3) * self.state_bytes + 8 * 1024 * 1024
+        return (intermediate + 3) * self.state_bytes + 80 * 1024 * 1024

@@ -5,6 +5,7 @@ from typing import cast
 
 from w1a1_eagle.contracts import Record, integer, record, string
 from w1a1_eagle.data import Artifact
+from w1a1_eagle.json_stream import invalid_constant, unique
 
 
 def canonical(value: object) -> bytes:
@@ -19,15 +20,14 @@ def read(path: Path, limit: int = 16 * 1024 * 1024) -> Record:
     if path.stat().st_size > limit:
         raise ValueError("record byte limit exceeded")
 
-    def unique(pairs: list[tuple[str, object]]) -> Record:
-        result: Record = {}
-        for key, value in pairs:
-            if key in result:
-                raise ValueError("duplicate record key: " + key)
-            result[key] = value
-        return result
-
-    return record(cast(object, json.loads(path.read_bytes(), object_pairs_hook=unique)))
+    return record(
+        cast(
+            object,
+            json.loads(
+                path.read_bytes(), object_pairs_hook=unique, parse_constant=invalid_constant
+            ),
+        )
+    )
 
 
 def artifact(value: object, root: Path, resolve: bool = True) -> Artifact:

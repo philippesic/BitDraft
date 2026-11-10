@@ -7,6 +7,7 @@ from typing import cast
 
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, number, record, string
+from w1a1_eagle.json_stream import invalid_constant, unique
 from w1a1_eagle.processes import ProcessIdentity
 from w1a1_eagle.records import canonical, identity, read
 
@@ -41,7 +42,12 @@ class Journal:
         for line in data.splitlines(keepends=True):
             if not line.endswith(b"\n"):
                 raise ValueError("partial journal tail requires explicit preserved recovery")
-            raw = record(cast(object, json.loads(line)))
+            raw = record(
+                cast(
+                    object,
+                    json.loads(line, object_pairs_hook=unique, parse_constant=invalid_constant),
+                )
+            )
             if (
                 set(raw) != {"schema", "sequence", "previous", "payload", "sha256"}
                 or type(raw["schema"]) is not int
@@ -56,7 +62,7 @@ class Journal:
                 "payload": payload,
             }
             if (
-                raw["sequence"] != len(result)
+                integer(raw["sequence"]) != len(result)
                 or raw["previous"] != previous
                 or raw["sha256"] != identity(envelope)
             ):
@@ -139,6 +145,21 @@ class Journal:
         started = [row for row in events if row.get("kind") == "started"]
         attempts = len(started)
         cost = sum(number(row["wall_seconds"]) for row in terminal)
+        names = [string(row["attempt"]) for row in started]
+        ended = [string(row["attempt"]) for row in terminal]
+        if (
+            len(set(names)) != len(names)
+            or len(set(ended)) != len(ended)
+            or set(ended) - set(names)
+        ):
+            raise ValueError("ambiguous attempt/terminal accounting")
+        if any(
+            number(row["wall_seconds"]) < 0
+            or row.get("outcome")
+            not in {"complete", "failed", "interrupted", "wall-budget", "refused"}
+            for row in terminal
+        ):
+            raise ValueError("invalid terminal outcome or cost")
         current = started[-1].get("attempt") if started else None
         current_events = [row for row in events if row.get("attempt") == current]
         admissions = [row for row in current_events if row.get("kind") == "admission"]
@@ -183,7 +204,8 @@ def control(root: Path, attempt: str, owner: ProcessIdentity, sequence_number: i
     if set(raw) != {"schema", "attempt", "owner", "sequence", "action"}:
         raise ValueError("malformed control message")
     if (
-        raw["schema"] != 1
+        type(raw["schema"]) is not int
+        or raw["schema"] != 1
         or raw["attempt"] != attempt
         or raw["owner"] != cast(Record, asdict(owner))
     ):

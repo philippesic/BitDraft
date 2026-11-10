@@ -90,3 +90,14 @@ selecting new science policy. Synthetic modern-index end-to-end execution and th
 retained default initializer header are additional checks. One manually invoked test
 run lacked CUDA masking and failed its isolation assertion; ordinary checks use the
 CPU environment wrapper. No GPU allocation or real training was launched.
+
+The run-isolation increment retains source and intent snapshots before subprocess
+execution. Tests change an external checkout and caller intent and prove the admitted
+inputs remain used. Loaded third-party dependencies remain authenticated independently.
+Tensor reader 3 removes redundant frozen buffers from archives, retaining their
+streamed identity and required initializer dependencies. Wrong frozen state, ordinary
+buffer mutation and unsupported payload versions refuse; next-update equivalence
+remains required. Report validation now rejects ambiguous/negative attempt accounting
+and nonfinite/duplicate JSON. Terminal prose names the actual stop and missing
+activation evidence. Journal headroom has an explicit recoverable stop and is included
+in prospective disk accounting; no long-run scaling or scientific-policy claim follows.
