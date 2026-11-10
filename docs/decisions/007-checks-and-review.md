@@ -89,7 +89,10 @@ sampler-order divergence; correcting these restores source behavior rather than
 selecting new science policy. Synthetic modern-index end-to-end execution and the
 retained default initializer header are additional checks. One manually invoked test
 run lacked CUDA masking and failed its isolation assertion; ordinary checks use the
-CPU environment wrapper. No GPU allocation or real training was launched.
+CPU environment wrapper. That process did initialize CUDA despite using CPU model
+tensors and has exited. Incidental driver/context allocation was not measured; no
+GPU training workload was launched. The required wrapper masks devices and passes
+the isolation assertion.
 
 The run-isolation increment retains source and intent snapshots before subprocess
 execution. Tests change an external checkout and caller intent and prove the admitted
