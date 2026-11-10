@@ -3,7 +3,8 @@
 CPU checks now cover domain/data admission, transactional byte storage, bounded worker
 control and the initial HE4 tensor/loader path. Tiny numerical fixtures exercise the
 model and the public CPU run path through admitted capture, update and publication.
-Actual retained-artifact parity, export and native qualification remain pending. Benchmark redesign and high-level agent operations remain deferred.
+CPU GGUF export, exact own-state resume and bounded recovery are exercised.
+Actual retained-artifact parity and native qualification remain pending. Benchmark redesign and high-level agent operations remain deferred.
 This is a local repository with no remote; preserve the separate active GPU job.
 
 [Agent first port overhaul](docs/port-overhaul.md) describes the authorized implementation and its remaining gates.

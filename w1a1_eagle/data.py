@@ -16,7 +16,10 @@ class Artifact:
 
     def __post_init__(self) -> None:
         if (
-            self.size < 0
+            not isinstance(self.path, Path)
+            or type(self.size) is not int
+            or self.size < 0
+            or not isinstance(self.sha256, str)
             or len(self.sha256) != 64
             or any(c not in "0123456789abcdef" for c in self.sha256)
         ):

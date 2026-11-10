@@ -8,12 +8,12 @@ Human output describes the same records. Reporting reads existing records only.
 The bootstrap and numerical worker are private controller entries declared in
 [commands](../policy/commands.toml). The benchmark command remains deferred.
 
-An intent has exact schema 1, validated by [Intent](../w1a1_eagle/intent.py).
+An intent has exact schema 2, validated by [Intent](../w1a1_eagle/intent.py).
 It names its objective, hypothesis, decision, risk and externally authorized scope;
 source, Q4_K vocabulary and corpus artifact references; explicit fresh/resume/branch
 mode and parent; geometry, seed and CPU device; update, attempt and cumulative wall
 limits; memory, maximum state bytes and disk reserve; a backing-capacity upper bound;
-code identity; and a supplied minimum-distinct-data/maximum-reuse policy. These policy
+code identity; explicit update/time checkpoint cadence; and a supplied minimum-distinct-data/maximum-reuse policy. These policy
 values are inputs, not recommended scientific thresholds. The complete current field
 set is executable in Intent.load and exercised by the numerical integration fixture.
 Unknown fields or schema versions refuse. No legacy checkpoint reader is implied.
@@ -59,6 +59,40 @@ Training records an exposure before its update. Complete states are published th
 checksummed atomic manifests. A resume restores tensors, shared aliases, AdamW state,
 CPU RNG, sampler cursor and counters. A branch resets optimizer/cursor while retaining
 parent lineage and cumulative work. Neither mode silently loads an old trained state
-for a fresh run. Unknown/partial journal evidence refuses instead of becoming selected.
+for a fresh run. Unknown or corrupt complete journal evidence refuses. A torn final append can be
+reconciled only after live ownership checks: preserve its bytes in an incident receipt,
+validate the intact prefix, and discard no complete event. It cannot become selected.
 Process-crash recovery is distinct from power-loss durability. Native, hardware,
 scientific adequacy and serving performance remain unqualified by CPU fixtures.
+
+
+Supported readers: intent 2, canonical corpus 1, tensor payload 2, store manifest 1,
+event envelope 1, and the emitted native-format GGUF W1Ax version 2. The earlier CPU
+prototype tensor/intent schema 1 has no implicit reader or migration. Preserve its
+originals; migration needs an explicit new artifact and verified source lineage.
+Tensor payload 2 binds source/vocabulary identities and validates exact Adam moment
+coverage, types and shapes before restoration. Artifact relocation does not change
+content identity; exact recipe identity additionally binds executable source.
+
+A CPU run now also exports its final complete state. The pinned GGUF adapter streams
+headers and bounded tensor chunks through the store rather than letting NumPy bypass
+the byte budget. It preserves original Q4_K vocabulary codes, checks frozen execution
+operands against their export operands, and verifies every tensor through the GGUF
+reader before publication. Sign bits use little-endian 32-bit words, nonnegative zero
+is one, and unused tail bits are zero. This is format conformance, not native loading.
+
+Checkpoint cadence is explicit. The prospective byte bound includes retained intermediate
+states, initial/final state, export and a bounded torn-journal incident. The store never
+automatically deletes historical states to fit. Every entered update is journaled before
+sampling; actual exposure is a separate event. Recovery charges uncommitted attempts,
+including failed reads and updates. Whole-attempt wall cost includes preflight, loading,
+serialization and failure in the controller; the tensor's operational update timer is
+separate. A new task/root does not grant a new allocation merely by changing fields.
+Parent lineage remains explicit; full parent allocation reports must be retained rather
+than inferred from tensor update time.
+
+Loaded identity records actual mapped executables and imported package code files.
+Bytecode caches are bypassed in CPU subprocesses. Terminal identity adds late imports
+and rejects drift in previously loaded files. File hashes may be reused within that same
+attempt only when device/inode/size/mtime/ctime remain equal; the report labels reuse.
+This caches file identity work, never execution proof or hardware measurements.

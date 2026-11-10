@@ -63,3 +63,21 @@ CPU construction and lifecycle composition, not HE4 artifact parity, useful trai
 correct native loading, throughput or hardware qualification. Runtime guards are also
 checked under optimized Python. No automatic retries, GPU ownership service, benchmark
 methodology, notifications or high-level agent operations are implemented here.
+
+
+The export/recovery increment makes checkpoint cadence explicit and advances the intent
+and tensor payload readers to version 2, without silently accepting prototype schemas.
+The store hashes bounded writes while streaming, rejects short writes, validates optional
+consumer conformance before publication, and refuses foreign recipe/root publication.
+Exports preserve Q4_K codes and validate frozen operands; native loading is not claimed.
+A hand-derived packing witness is independent. The retained old projection/attention
+forward, gradient and update fixture is characterization, explicitly not an independent
+oracle or hardware parity. A negative Adam moment-shape case rejects before restoration.
+
+A disposable child is killed during a real state write, and a separate child encounters
+an OS file-size limit; prior committed bytes remain unchanged. A bootstrap OS wall timer
+fires before numerical imports. Runtime recovery-needed states cannot be checkpointed
+or exported. Torn journal tails preserve incident bytes before reconciliation; complete
+corruption refuses. All entered updates, not just successfully materialized exposures,
+are durable attempt records. Reporting retains failed attempts and unknown science.
+Checker scratch moved to RAM to avoid repeated persistent type-check/specimen writes.

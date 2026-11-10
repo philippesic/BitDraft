@@ -1,4 +1,5 @@
 import os
+import signal
 import subprocess
 import sys
 from dataclasses import asdict, dataclass
@@ -83,6 +84,12 @@ def test_journal_integrity_and_truthful_health(tmp_path: Path) -> None:
     path.write_bytes(original + b'{"partial":')
     with pytest.raises(ValueError, match="partial"):
         Journal(tmp_path).events()
+    Journal(tmp_path).recover_tail()
+    recovered = Journal(tmp_path).events()
+    assert recovered[:2] == Journal.decode(original)[0]
+    assert recovered[-1]["kind"] == "tail-recovered"
+    receipt = read(next((tmp_path / "incidents").glob("*.json")))
+    assert bytes.fromhex(str(receipt["tail_hex"])) == b'{"partial":'
     missing = tmp_path / "missing"
     assert Journal(missing).report()["operational"] == "incomplete"
     assert not missing.exists()
@@ -132,3 +139,26 @@ def test_records_reject_duplicate_keys_and_optimized_guards(tmp_path: Path) -> N
         check=False,
     )
     assert result.returncode != 0 and "positive update budget" in result.stderr
+
+
+def test_independent_wall_timer_and_invalid_clock() -> None:
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-B",
+            "-m",
+            "w1a1_eagle.bootstrap",
+            "0.001",
+            "--preflight",
+            "/missing-disposable-fixture",
+        ],
+        capture_output=True,
+        check=False,
+        timeout=5,
+    )
+    assert result.returncode == -signal.SIGALRM
+    clock = FakeClock(float("nan"))
+    progress = Progress()
+    with pytest.raises(ValueError, match="before update"):
+        train(FakeWorker(clock), clock, Budget(1, 1, 1), progress, lambda: False)
+    assert progress.attempts == progress.updates == 0

@@ -29,6 +29,7 @@ from tools.repo_files import (
     temporary_root,
     validate_yaml,
 )
+from w1a1_eagle.clock import Monotonic
 
 
 def main() -> int:
@@ -127,11 +128,18 @@ def main() -> int:
             return int(bool(proof))
         all_diagnostics: list[Diagnostic] = []
         passed = ["bootstrap"]
+        clock = Monotonic()
+        last_stage = clock.now()
         paths = sorted(p for p in files if p.endswith(".py"))
 
         def stage(name: str, diagnostics: list[Diagnostic]) -> None:
+            nonlocal last_stage
             all_diagnostics.extend(diagnostics)
-            print(f"{STAGES.index(name)} {name} {'FAIL' if diagnostics else 'PASS'}")
+            now = clock.now()
+            print(
+                f"{STAGES.index(name)} {name} {'FAIL' if diagnostics else 'PASS'} ({now - last_stage:.2f}s)"
+            )
+            last_stage = now
             for diagnostic in diagnostics:
                 print(f"  {diagnostic.code}: {diagnostic.path}")
             if not diagnostics:
@@ -269,6 +277,17 @@ def main() -> int:
             stage("proofs", proof)
         report: Record = policy_review.verification_report(files, passed)
         report["content_sha256"] = content_digest(files)
+        current, current_escapes = inventory(root)
+        if (
+            content_digest(current) != content_digest(files)
+            or current_escapes != escapes
+            or config.staged
+            and not index_matches(root, current)
+        ):
+            all_diagnostics.append(
+                Diagnostic("CHECK_CONFIG", "authored content or index changed during verification")
+            )
+            print("CHECK_CONFIG: authored content or index changed during verification")
         if not all_diagnostics:
             import json
 

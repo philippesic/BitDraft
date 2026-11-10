@@ -2,8 +2,8 @@ import ast
 import sys
 from pathlib import PurePosixPath
 
-from tools.config import ENTRY_MODULES
-from tools.contracts import Diagnostic
+from tools.config import BOUNDARIES, ENTRY_MODULES
+from tools.contracts import Diagnostic, sequence, string
 
 PURE_IMPORTS = {
     "math",
@@ -15,26 +15,12 @@ PURE_IMPORTS = {
     "functools",
     "statistics",
 }
-FORBIDDEN = (
-    ("tools", "tests"),
-    ("w1a1_eagle", "tools"),
-    ("w1a1_eagle", "tests"),
-    ("w1a1_eagle", "benchmarks"),
-    ("w1a1_eagle.model", "w1a1_eagle.training"),
+FORBIDDEN = tuple(
+    (string(value).split(" -> ")[0], string(value).split(" -> ")[1])
+    for value in sequence(BOUNDARIES["forbidden"])
 )
-WRITERS = {
-    "benchmarks.runner",
-    "w1a1_eagle.data",
-    "w1a1_eagle.checkpoints.store",
-    "w1a1_eagle.lifecycle",
-}
-IO_FREE = {
-    "model",
-    "w1a1_eagle.model",
-    "w1a1_eagle.training",
-    "w1a1_eagle.contracts",
-    "tools.contracts",
-}
+WRITERS = {string(value) for value in sequence(BOUNDARIES["writers"])}
+IO_FREE = {string(value) for value in sequence(BOUNDARIES["io_free"])}
 
 
 def module_name(path: str) -> str:
@@ -146,6 +132,9 @@ def inspect_tree(files: dict[str, str]) -> list[Diagnostic]:
                     "time.monotonic_ns",
                     "time.perf_counter_ns",
                     "time.time_ns",
+                    "datetime.datetime.now",
+                    "datetime.datetime.utcnow",
+                    "datetime.date.today",
                     "torch.cuda.synchronize",
                     "torch.cuda.Event",
                 } and module not in {
@@ -155,6 +144,19 @@ def inspect_tree(files: dict[str, str]) -> list[Diagnostic]:
                 }:
                     diagnostics.add(Diagnostic("TIMING_OWNER", path))
                 if call.startswith("random.") and call != "random.Random":
+                    diagnostics.add(Diagnostic("SEEDED_RANDOM", path))
+                if call == "random.Random" and (
+                    not node.args
+                    or isinstance(node.args[0], ast.Constant)
+                    and node.args[0].value is None
+                ):
+                    diagnostics.add(Diagnostic("SEEDED_RANDOM", path))
+                if (call.startswith("numpy.random.") and call != "numpy.random.default_rng") or (
+                    call in {"torch.rand", "torch.randn", "torch.randint", "torch.randperm"}
+                    and not any(keyword.arg == "generator" for keyword in node.keywords)
+                ):
+                    diagnostics.add(Diagnostic("SEEDED_RANDOM", path))
+                if call == "numpy.random.default_rng" and not node.args and not node.keywords:
                     diagnostics.add(Diagnostic("SEEDED_RANDOM", path))
                 if module in IO_FREE and (
                     call
@@ -241,6 +243,18 @@ def inspect_tree(files: dict[str, str]) -> list[Diagnostic]:
                         )
                     )
                     or call == "open"
+                    or call
+                    in {
+                        "torch.tensor",
+                        "torch.zeros",
+                        "torch.ones",
+                        "torch.randn",
+                        "torch.rand",
+                        "torch.empty",
+                        "torch.cuda.init",
+                        "torch.cuda.set_device",
+                    }
+                    or call.endswith(".cuda")
                 ):
                     diagnostics.add(Diagnostic("ARCH_IMPORT_EFFECT", path))
             pending.extend(ast.iter_child_nodes(node))

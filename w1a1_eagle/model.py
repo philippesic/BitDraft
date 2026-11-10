@@ -184,6 +184,15 @@ class HE4(nn.Module):
         super().__init__()
         self.geometry = geometry
         self.mask = mask
+        self.origin: tuple[str, str] | None = None
+        if (
+            vocabulary.ndim != 2
+            or vocabulary.shape[1] != geometry.hidden
+            or type(mask) is not int
+            or not 0 <= mask < vocabulary.shape[0]
+            or not bool(torch.isfinite(vocabulary).all())
+        ):
+            raise ValueError("invalid frozen vocabulary geometry or mask")
         self.register_buffer("vocabulary", vocabulary.detach().float().clone())
         self.fusion = FrozenLinear(tensors["fc.weight"])
         self.encoder_norm = nn.Parameter(tensors["enc.output_norm.weight"].clone())
@@ -194,7 +203,16 @@ class HE4(nn.Module):
 
     def forward(self, features: Tensor, tokens: tuple[int, ...], anchor: int) -> Tensor:
         cfg = self.geometry
-        if not 0 <= anchor < len(tokens) or features.shape[1] != cfg.taps * cfg.hidden:
+        if (
+            type(anchor) is not int
+            or not 0 <= anchor < len(tokens)
+            or features.ndim != 2
+            or features.shape != (len(tokens), cfg.taps * cfg.hidden)
+            or any(
+                type(token) is not int or not 0 <= token < self.vocabulary.shape[0]
+                for token in tokens
+            )
+        ):
             raise ValueError("invalid model inputs")
         device = self.vocabulary.device
         positions = torch.arange(anchor, anchor + cfg.slots, device=device)

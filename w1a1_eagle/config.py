@@ -1,6 +1,7 @@
 import os
 import sys
 import tomllib
+import uuid
 from pathlib import Path
 from typing import cast
 
@@ -25,4 +26,5 @@ def cpu_environment() -> dict[str, str]:
     environment["CUDA_VISIBLE_DEVICES"] = ""
     environment["PYTHONDONTWRITEBYTECODE"] = "1"
     environment["TMPDIR"] = "/tmp"
+    environment["PYTHONPYCACHEPREFIX"] = "/tmp/binary-no-bytecode-" + uuid.uuid4().hex
     return environment
