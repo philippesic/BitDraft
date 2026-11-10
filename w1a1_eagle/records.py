@@ -1,0 +1,42 @@
+import hashlib
+import json
+from pathlib import Path
+from typing import cast
+
+from w1a1_eagle.contracts import Record, integer, record, string
+from w1a1_eagle.data import Artifact
+
+
+def canonical(value: object) -> bytes:
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+
+
+def identity(value: object) -> str:
+    return hashlib.sha256(canonical(value)).hexdigest()
+
+
+def read(path: Path, limit: int = 16 * 1024 * 1024) -> Record:
+    if path.stat().st_size > limit:
+        raise ValueError("record byte limit exceeded")
+
+    def unique(pairs: list[tuple[str, object]]) -> Record:
+        result: Record = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("duplicate record key: " + key)
+            result[key] = value
+        return result
+
+    return record(cast(object, json.loads(path.read_bytes(), object_pairs_hook=unique)))
+
+
+def artifact(value: object, root: Path) -> Artifact:
+    raw = record(value)
+    if set(raw) != {"path", "sha256", "bytes"}:
+        raise ValueError("unsupported artifact record")
+    path = Path(string(raw["path"]))
+    return Artifact((root / path).resolve(), string(raw["sha256"]), integer(raw["bytes"]))
+
+
+def reference(value: Artifact) -> Record:
+    return {"path": str(value.path), "sha256": value.sha256, "bytes": value.size}

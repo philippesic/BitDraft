@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import BinaryIO, Callable, cast
 
+from w1a1_eagle.capacity import require
 from w1a1_eagle.contracts import record
 from w1a1_eagle.data import Artifact
 
@@ -24,11 +25,15 @@ class StateRef:
 
 
 class Store:
-    def __init__(self, root: Path) -> None:
+    def __init__(self, root: Path, reserve_bytes: int = 0) -> None:
         self.root = root.resolve()
+        if type(reserve_bytes) is not int or reserve_bytes < 0:
+            raise ValueError("invalid store disk reserve")
+        self.reserve_bytes = reserve_bytes
         self.root.mkdir(parents=True, exist_ok=True)
 
     def atomic(self, path: Path, payload: bytes) -> None:
+        require(self.root, len(payload), self.reserve_bytes)
         descriptor, temporary = tempfile.mkstemp(prefix=".pending-", dir=self.root)
         try:
             with os.fdopen(descriptor, "wb") as output:
@@ -63,7 +68,16 @@ class Store:
             path = Path(temporary)
             try:
                 with os.fdopen(descriptor, "wb") as output:
-                    writer(cast(BinaryIO, BoundedSink(output, max_bytes)))
+                    writer(
+                        cast(
+                            BinaryIO,
+                            BoundedSink(
+                                output,
+                                max_bytes,
+                                lambda count: require(self.root, count, self.reserve_bytes),
+                            ),
+                        )
+                    )
                     output.flush()
                     os.fsync(output.fileno())
                 with path.open("rb") as source:
@@ -82,6 +96,9 @@ class Store:
                     "updates": updates,
                 }
                 self.atomic(
+                    self.root / (digest + ".json"), json.dumps(manifest, sort_keys=True).encode()
+                )
+                self.atomic(
                     self.root / "latest.json", json.dumps(manifest, sort_keys=True).encode()
                 )
             finally:
@@ -90,6 +107,19 @@ class Store:
 
     def latest(self, config: str) -> StateRef:
         raw = record(cast(object, json.loads((self.root / "latest.json").read_text())))
+        return self.parse(raw, config)
+
+    def describe(self, artifact: Artifact) -> StateRef:
+        raw = record(cast(object, json.loads(artifact.path.with_suffix(".json").read_text())))
+        config = raw.get("config")
+        if not isinstance(config, str):
+            raise ValueError("missing parent configuration")
+        reference = self.parse(raw, config)
+        if reference.artifact != artifact:
+            raise ValueError("parent manifest disagrees with explicit artifact")
+        return reference
+
+    def parse(self, raw: dict[str, object], config: str) -> StateRef:
         if set(raw) != {
             "schema",
             "sha256",
@@ -109,17 +139,19 @@ class Store:
 
 
 class BoundedSink(io.BufferedIOBase):
-    def __init__(self, output: BinaryIO, limit: int) -> None:
+    def __init__(self, output: BinaryIO, limit: int, before_write: Callable[[int], None]) -> None:
         super().__init__()
         self.output = output
         self.limit = limit
         self.count = 0
+        self.before_write = before_write
 
     def write(self, data: object) -> int:
         if not isinstance(data, (bytes, bytearray, memoryview)):
             raise TypeError("state writer requires a byte buffer")
         if self.count + memoryview(data).nbytes > self.limit:
             raise ValueError("state byte budget exceeded")
+        self.before_write(memoryview(data).nbytes)
         written = self.output.write(data)
         self.count += written
         return written

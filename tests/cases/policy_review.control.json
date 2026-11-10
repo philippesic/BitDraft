@@ -17,7 +17,8 @@
         "proofs"
       ],
       "approval": "REVIEW_REQUIRED",
-      "scope": "local CPU foundation verification only"
+      "scope": "local CPU infrastructure and source fixtures; no native or scientific qualification",
+      "content_sha256": "38aac374e3b71b9bafb5fc1212e8ff460db905fb8539548a3f0ec918cf5769f8"
     }
   },
   "files": {

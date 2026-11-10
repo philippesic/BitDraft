@@ -2,8 +2,8 @@
 
 CPU checks now cover domain/data admission, transactional byte storage, bounded worker
 control and the initial HE4 tensor/loader path. Tiny numerical fixtures exercise the
-model; actual artifact-specific training/resume/export and native qualification are
-still pending. Benchmark redesign and high-level agent operations remain deferred.
+model and the public CPU run path through admitted capture, update and publication.
+Actual retained-artifact parity, export and native qualification remain pending. Benchmark redesign and high-level agent operations remain deferred.
 This is a local repository with no remote; preserve the separate active GPU job.
 
 [Agent first port overhaul](docs/port-overhaul.md) describes the authorized implementation and its remaining gates.
@@ -37,6 +37,8 @@ uv run --locked --no-sync --offline python tools/check.py
 The command installs nothing, downloads nothing, formats nothing and uses no GPU.
 Its ordinary run includes all specimens. `--self-test` shows stage 9 with bootstrap prerequisites;
 it is an inspection convenience, never a reduced CI gate.
+
+Use [CPU execution](docs/execution.md) for the public run/intent contract and doctor.
 
 See [checks](docs/checks.md), [system map](docs/system-map.md), [findings](FINDINGS.md),
 and [decisions](docs/decisions/README.md). License remains undecided. Hosted CI, the

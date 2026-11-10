@@ -1,6 +1,6 @@
 import hashlib
 
-from tools.comments import scan_file, validate_exceptions
+from tools.comments import scan_file, scan_patch, validate_exceptions
 from tools.contracts import Diagnostic, Record
 from tools.policy_review import validate_report, verification_report
 from tools.repo_policy import validate_files
@@ -72,3 +72,16 @@ def test_receipt_cannot_approve_policy() -> None:
     assert validate_report({"policy/a.toml": "x = 2\n"}, receipt)
     receipt["approval"] = "approved"
     assert validate_report(files, receipt)
+
+
+def test_pinned_noninitial_multifile_patch() -> None:
+    base = "// unchanged upstream\nint x;\nint y;\n"
+    patch = "--- a/a.cpp\n+++ b/a.cpp\n@@ -2,2 +2,2 @@\n int x;\n-int y;\n+int z;\n--- /dev/null\n+++ b/b.cpp\n@@ -0,0 +1 @@\n+int b;\n"
+    assert scan_patch("native.patch", patch, [], {"a.cpp": base}) == []
+    assert scan_patch(
+        "native.patch", patch.replace("+int z;", "+int z; // added"), [], {"a.cpp": base}
+    )
+    assert scan_patch("native.patch", patch, [], {"a.cpp": base.replace("int y", "int q")})
+    assert (
+        scan_file("new.patch", "--- /dev/null\n+++ b/new.cpp\n@@ -0,0 +1 @@\n+int n;\n", []) == []
+    )

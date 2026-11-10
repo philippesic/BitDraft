@@ -1,7 +1,8 @@
 # Data contracts
 
-Foundation validates fabricated metadata only. No ledger, importer, capture reader or
-real prompt is present. heldout24 and every alias remain permanently evaluation-only;
+The source port has a typed ledger, schema-1 capture reader and deterministic bounded
+CPU corpus sampler. Synthetic authenticated files exercise these paths; no real corpus
+has been newly admitted. See [execution](execution.md). heldout24 and every alias remain permanently evaluation-only;
 exclude them from train, calibration, selection, sampling and conversion. Consumed DEV
 is selection data, not fresh confirmation. Unknown prior training ancestry excludes a
 prompt from new protected evaluation.
@@ -17,14 +18,16 @@ Count conservation requires exactly one terminal disposition for every input ID.
 supplied partition is 10,000 = 96 cal-fit + 48 cal-val + 9,856 candidates; 9,856 = 12 DEV
 + 23 real collisions + 5,505 wrong rejections + 4,316 admitted. Identical genuine exclusions
 would admit 9,821. The approximately 5,497 recovery count differs by eight and is open.
-Philip's gross 10,150 sequences / 970,121 windows / 1,111,811 labels are provisional,
-not an admitted corpus. No recovery, transfer or manifest intake is authorized here.
+The earlier gross 10,150 sequences / 970,121 windows / 1,111,811 labels were provisional,
+not an admitted corpus. These are historical investigation counts. CPU reader work does
+not authorize transfer, scientific allocation or reinterpretation of exclusions.
 
 Capture schemas require eight taps [2,6,10,14,18,22,26,30], zero-based pre-block input
 semantics, authenticated teacher/tokenizer/template, hard labels matching finite full-logit
 argmax, logit p predicting token p+1, first-EOG supervision stop and complete 15-label
 window coverage. Zero-window outcomes stay zero. Historical DSpark captures cannot be
-silently renamed as modern HE4 teacher data. Real shape/byte/hash checks wait for source.
+silently renamed as modern HE4 teacher data. Shape/byte/hash rejection is exercised on synthetic files. Actual teacher parity still
+requires retained source receipts and the separate native gate.
 
 Exposure sums visits across overlapping windows into each unique position; window passes
 and mean/max position visits are distinct denominators. Parent exposure, seed, cursor

@@ -39,3 +39,27 @@ resume and preserve the parent archive. An explicit branch resets Adam/cursor wh
 retaining parent updates/cost and lineage. Same-process rollback charges discarded
 updates; abrupt-process accounting still needs the durable run journal integration.
 CUDA state handling is implemented but not qualified by these CPU witnesses.
+
+
+The CPU source-spine increment replaces writer filename substrings with effects denied
+in IO-free modules and exact owner API checks. This is a bounded syntax check, not a
+Python sandbox or proof that every possible writer is detected. Rule IDs and totals
+now derive from rules.toml; CPU names derive from cpu-tests.toml. Their digest pins
+still expose policy drift. The unused duplicate case roster was removed. New active
+map flows no longer require a checker edit. A relocated hook is diagnosed explicitly.
+
+Policy receipts bind all authored content as well as policy. Fixtures were deliberately
+re-derived: parent exposure advances by an explicit cursor delta; target-only generic
+correctness accepts zero drafter proposals; policy review fixtures include content
+identity. Activation qualification remains separate. The native patch parser validates
+hunk counts and complete supplied bases for noninitial/multifile patches and scans only
+added comment spans in reconstructed post-images. Foundation whole-file specimens
+remain synthetic; registering actual native patch bases belongs to native closure.
+
+The executable CPU fixture runs preflight, loading, one real update, a tensor state and
+a terminal journal through an isolated subprocess. It is a reduced geometry with a
+synthetic Q4_K basis and supplies its own deliberately tiny data policy. It establishes
+CPU construction and lifecycle composition, not HE4 artifact parity, useful training,
+correct native loading, throughput or hardware qualification. Runtime guards are also
+checked under optimized Python. No automatic retries, GPU ownership service, benchmark
+methodology, notifications or high-level agent operations are implemented here.

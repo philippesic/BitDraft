@@ -71,6 +71,8 @@ def validate_docs(files: dict[str, str], evidence: Record) -> list[Diagnostic]:
             }
             if symbol not in names:
                 diagnostics.add(Diagnostic("MAP_ENTRY", "docs/system-map.md"))
-    if sorted(mapped) != ["check", "policy", "selftest", "setup"]:
+    if len(mapped) != len(set(mapped)) or not {"check", "policy", "selftest", "setup"}.issubset(
+        mapped
+    ):
         diagnostics.add(Diagnostic("MAP_ENTRY", "docs/system-map.md"))
     return sorted(diagnostics)
