@@ -1,0 +1,11 @@
+{
+  "rule": "arch_pure",
+  "command": "component",
+  "input": {},
+  "files": {
+    "tools/contracts.py": "import math\n"
+  },
+  "exit": 0,
+  "path": "tools/contracts.py",
+  "native": []
+}

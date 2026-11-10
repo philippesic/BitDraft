@@ -1,0 +1,14 @@
+{
+  "rule": "repo_outputs",
+  "command": "component",
+  "input": {},
+  "files": {
+    "AGENTS.md": "# Instructions\n",
+    "CLAUDE.md": "@AGENTS.md\n",
+    "tools/a.py": "x = 1\n",
+    "runs/model.py": "x = 1\n"
+  },
+  "exit": 1,
+  "path": "runs/model.py",
+  "native": []
+}

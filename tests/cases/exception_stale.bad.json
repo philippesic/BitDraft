@@ -1,0 +1,24 @@
+{
+  "rule": "exception_stale",
+  "command": "component",
+  "input": {
+    "exception": [
+      {
+        "rule_id": "COMMENT_SHELL",
+        "path": "case.sh",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "reason": "Executable interpreter selection",
+        "decision_id": "006-comment-ban-and-exceptions",
+        "owner": "Philip",
+        "review_condition": "Review interpreter change"
+      }
+    ],
+    "review_date": "2026-11-09"
+  },
+  "files": {
+    "case.sh": "#!/bin/sh\n"
+  },
+  "exit": 1,
+  "path": "policy/exceptions.toml",
+  "native": []
+}

@@ -1,0 +1,23 @@
+{
+  "rule": "exception_unlisted",
+  "command": "component",
+  "input": {
+    "exception": [
+      {
+        "rule_id": "COMMENT_SHELL",
+        "path": "case.sh",
+        "sha256": "3af71adb278ad4af33c144b78fa1ae708da03b773d98324ae991a7daedb53ca2",
+        "reason": "Executable interpreter selection",
+        "decision_id": "006-comment-ban-and-exceptions",
+        "owner": "Philip",
+        "review_condition": "Review interpreter change"
+      }
+    ]
+  },
+  "files": {
+    "case.sh": "#!/bin/sh\nprintf x\n"
+  },
+  "exit": 0,
+  "path": "case.sh",
+  "native": []
+}

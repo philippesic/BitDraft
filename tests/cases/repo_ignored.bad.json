@@ -1,0 +1,14 @@
+{
+  "rule": "repo_ignored",
+  "command": "component",
+  "input": {},
+  "files": {
+    "AGENTS.md": "# Instructions\n",
+    "CLAUDE.md": "@AGENTS.md\n",
+    "tools/a.py": "x = 1\n",
+    ".gitignore": "tools/\n"
+  },
+  "exit": 1,
+  "path": ".gitignore",
+  "native": []
+}

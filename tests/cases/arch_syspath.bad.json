@@ -1,0 +1,17 @@
+{
+  "rule": "arch_syspath",
+  "command": "component",
+  "input": {},
+  "files": {
+    "a.py": "import sys\ndef f():\n    sys.path.append(\"x\")\n"
+  },
+  "exit": 1,
+  "path": "a.py",
+  "native": [],
+  "diagnostics": [
+    {
+      "code": "ARCH_SYSPATH",
+      "path": "a.py"
+    }
+  ]
+}

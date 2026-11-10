@@ -1,0 +1,30 @@
+{
+  "rule": "topic_namespace",
+  "command": "component",
+  "input": {
+    "rows": [
+      {
+        "id": "a",
+        "source": "s",
+        "group": "same",
+        "topic": "other"
+      },
+      {
+        "id": "b",
+        "source": "s",
+        "group": "b",
+        "topic": "same"
+      }
+    ],
+    "expected": [
+      [
+        "a",
+        "b"
+      ]
+    ]
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}

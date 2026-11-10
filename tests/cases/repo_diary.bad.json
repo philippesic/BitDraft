@@ -1,0 +1,14 @@
+{
+  "rule": "repo_diary",
+  "command": "component",
+  "input": {},
+  "files": {
+    "AGENTS.md": "# Instructions\n",
+    "CLAUDE.md": "@AGENTS.md\n",
+    "tools/a.py": "x = 1\n",
+    "STATUS.md": "# Second index\n"
+  },
+  "exit": 1,
+  "path": "STATUS.md",
+  "native": []
+}

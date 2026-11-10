@@ -1,0 +1,11 @@
+{
+  "rule": "comment_unknown",
+  "command": "component",
+  "input": {},
+  "files": {
+    "case.rs": "fn main() {}\n"
+  },
+  "exit": 1,
+  "path": "case.rs",
+  "native": []
+}

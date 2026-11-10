@@ -1,0 +1,11 @@
+{
+  "rule": "arch_syspath",
+  "command": "component",
+  "input": {},
+  "files": {
+    "a.py": "import sys\ndef f():\n    return sys.version\n"
+  },
+  "exit": 0,
+  "path": "a.py",
+  "native": []
+}

@@ -1,0 +1,11 @@
+{
+  "rule": "discovery_branch",
+  "command": "component",
+  "input": {},
+  "files": {
+    "a.py": "def f(adapter):\n    return adapter.run()\n"
+  },
+  "exit": 0,
+  "path": "a.py",
+  "native": []
+}

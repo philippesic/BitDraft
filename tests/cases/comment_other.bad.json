@@ -1,0 +1,42 @@
+{
+  "rule": "comment_other",
+  "command": "component",
+  "input": {},
+  "files": {
+    "Dockerfile": "RUN echo \"# data\"\n# explanation\n",
+    "CMakeLists.txt": "set(x \"# data\")\n# explanation\n",
+    "x.ini": "x = \"# data\"\n# explanation\n",
+    ".gitignore": ".venv/\n# explanation\n",
+    ".editorconfig": "root = true\n# explanation\n",
+    "semicolon.ini": "x = \"data\" ; explanation\n"
+  },
+  "exit": 1,
+  "path": "Dockerfile",
+  "native": [],
+  "diagnostics": [
+    {
+      "code": "COMMENT_OTHER",
+      "path": "Dockerfile"
+    },
+    {
+      "code": "COMMENT_OTHER",
+      "path": "CMakeLists.txt"
+    },
+    {
+      "code": "COMMENT_OTHER",
+      "path": "x.ini"
+    },
+    {
+      "code": "COMMENT_OTHER",
+      "path": ".gitignore"
+    },
+    {
+      "code": "COMMENT_OTHER",
+      "path": ".editorconfig"
+    },
+    {
+      "code": "COMMENT_OTHER",
+      "path": "semicolon.ini"
+    }
+  ]
+}

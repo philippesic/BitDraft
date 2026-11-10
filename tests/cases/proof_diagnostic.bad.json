@@ -1,0 +1,17 @@
+{
+  "rule": "proof_diagnostic",
+  "command": "component",
+  "input": {
+    "exit": 1,
+    "actual": [
+      {
+        "code": "F821",
+        "path": "case.py"
+      }
+    ]
+  },
+  "files": {},
+  "exit": 1,
+  "path": "proof",
+  "native": []
+}

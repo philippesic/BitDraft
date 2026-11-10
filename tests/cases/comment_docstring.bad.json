@@ -1,0 +1,11 @@
+{
+  "rule": "comment_docstring",
+  "command": "component",
+  "input": {},
+  "files": {
+    "case.py": "\"explanation\"\n"
+  },
+  "exit": 1,
+  "path": "case.py",
+  "native": []
+}

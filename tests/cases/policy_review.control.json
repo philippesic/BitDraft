@@ -1,0 +1,29 @@
+{
+  "rule": "policy_review",
+  "command": "component",
+  "input": {
+    "report": {
+      "policy_sha256": "38aac374e3b71b9bafb5fc1212e8ff460db905fb8539548a3f0ec918cf5769f8",
+      "stages": [
+        "bootstrap",
+        "repository",
+        "comments",
+        "ruff",
+        "mypy",
+        "architecture",
+        "dependencies",
+        "documentation",
+        "cpu",
+        "proofs"
+      ],
+      "approval": "REVIEW_REQUIRED",
+      "scope": "local CPU foundation verification only"
+    }
+  },
+  "files": {
+    "policy/x.toml": "x = 1\n"
+  },
+  "exit": 0,
+  "path": "policy/validation.toml",
+  "native": []
+}

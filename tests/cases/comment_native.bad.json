@@ -1,0 +1,11 @@
+{
+  "rule": "comment_native",
+  "command": "component",
+  "input": {},
+  "files": {
+    "case.cpp": "int x; /* explanation */\n"
+  },
+  "exit": 1,
+  "path": "case.cpp",
+  "native": []
+}

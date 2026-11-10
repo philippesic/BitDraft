@@ -1,0 +1,17 @@
+{
+  "rule": "arch_history",
+  "command": "component",
+  "input": {},
+  "files": {
+    "a.py": "import runs.old\n"
+  },
+  "exit": 1,
+  "path": "a.py",
+  "native": [],
+  "diagnostics": [
+    {
+      "code": "ARCH_HISTORY",
+      "path": "a.py"
+    }
+  ]
+}

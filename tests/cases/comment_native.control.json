@@ -1,0 +1,11 @@
+{
+  "rule": "comment_native",
+  "command": "component",
+  "input": {},
+  "files": {
+    "case.cpp": "const char *s = R\"(// data)\";\n"
+  },
+  "exit": 0,
+  "path": "case.cpp",
+  "native": []
+}

@@ -1,0 +1,11 @@
+{
+  "rule": "dead_code",
+  "command": "vulture",
+  "input": {},
+  "files": {
+    "case.py": "def helper():\n    return 1\nprint(helper())\n"
+  },
+  "exit": 0,
+  "path": "case.py",
+  "native": []
+}

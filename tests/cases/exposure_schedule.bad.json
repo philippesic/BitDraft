@@ -1,0 +1,28 @@
+{
+  "rule": "exposure_schedule",
+  "command": "component",
+  "input": {
+    "windows": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "b",
+        "c"
+      ]
+    ],
+    "visits": [
+      3,
+      3
+    ],
+    "total": 4,
+    "mean_limit": 2,
+    "max_limit": 2,
+    "pass_limit": 2
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}

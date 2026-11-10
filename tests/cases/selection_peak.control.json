@@ -1,0 +1,41 @@
+{
+  "rule": "selection_peak",
+  "command": "component",
+  "input": {
+    "scores": [
+      {
+        "id": "zero",
+        "score": 1,
+        "kind": "serving",
+        "complete": true,
+        "durable": true
+      },
+      {
+        "id": "peak",
+        "score": 2,
+        "kind": "serving",
+        "complete": true,
+        "durable": true
+      },
+      {
+        "id": "final",
+        "score": 1.5,
+        "kind": "serving",
+        "complete": true,
+        "durable": true
+      },
+      {
+        "id": "dev",
+        "score": 3,
+        "kind": "dev",
+        "complete": true,
+        "durable": true
+      }
+    ],
+    "selected": "peak"
+  },
+  "files": {},
+  "exit": 0,
+  "path": "input.json",
+  "native": []
+}

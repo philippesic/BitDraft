@@ -1,0 +1,34 @@
+{
+  "rule": "selection_partial",
+  "command": "component",
+  "input": {
+    "scores": [
+      {
+        "id": "good",
+        "score": 1,
+        "kind": "serving",
+        "complete": true,
+        "durable": true
+      },
+      {
+        "id": "partial",
+        "score": 2,
+        "kind": "serving",
+        "complete": false,
+        "durable": true
+      },
+      {
+        "id": "undurable",
+        "score": 3,
+        "kind": "serving",
+        "complete": true,
+        "durable": false
+      }
+    ],
+    "selected": "good"
+  },
+  "files": {},
+  "exit": 0,
+  "path": "input.json",
+  "native": []
+}

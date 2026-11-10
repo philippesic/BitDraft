@@ -1,0 +1,11 @@
+{
+  "rule": "comment_toml",
+  "command": "component",
+  "input": {},
+  "files": {
+    "case.toml": "x = \"# data\"\n"
+  },
+  "exit": 0,
+  "path": "case.toml",
+  "native": []
+}

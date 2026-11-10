@@ -1,0 +1,13 @@
+{
+  "rule": "stage_gate",
+  "command": "component",
+  "input": {
+    "status": [
+      "runtime qualified"
+    ]
+  },
+  "files": {},
+  "exit": 1,
+  "path": "policy/check-stages.toml",
+  "native": []
+}

@@ -1,0 +1,11 @@
+{
+  "rule": "comment_python",
+  "command": "component",
+  "input": {},
+  "files": {
+    "case.py": "x = \"# data\"\n"
+  },
+  "exit": 0,
+  "path": "case.py",
+  "native": []
+}

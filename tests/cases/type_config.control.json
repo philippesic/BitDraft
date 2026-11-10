@@ -1,0 +1,9 @@
+{
+  "rule": "type_config",
+  "command": "component",
+  "input": {},
+  "files": {},
+  "exit": 0,
+  "path": "pyproject.toml",
+  "native": []
+}

@@ -1,0 +1,11 @@
+{
+  "rule": "comment_unknown",
+  "command": "component",
+  "input": {},
+  "files": {
+    "case.json": "{\"x\":1}\n"
+  },
+  "exit": 0,
+  "path": "case.rs",
+  "native": []
+}

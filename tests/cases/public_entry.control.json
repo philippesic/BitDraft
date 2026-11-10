@@ -1,0 +1,11 @@
+{
+  "rule": "public_entry",
+  "command": "component",
+  "input": {},
+  "files": {
+    "tools/check.py": "if __name__ == \"__main__\":\n    print(1)\n"
+  },
+  "exit": 0,
+  "path": "extra.py",
+  "native": []
+}

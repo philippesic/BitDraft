@@ -1,0 +1,12 @@
+{
+  "rule": "proof_disabled",
+  "command": "component",
+  "input": {
+    "exit": 0,
+    "actual": []
+  },
+  "files": {},
+  "exit": 1,
+  "path": "proof",
+  "native": []
+}

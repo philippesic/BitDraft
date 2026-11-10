@@ -1,0 +1,26 @@
+{
+  "rule": "verify_token",
+  "command": "component",
+  "input": {
+    "target": {
+      "tokens": [
+        1,
+        2
+      ],
+      "text": "a",
+      "finish": "length"
+    },
+    "candidate": {
+      "tokens": [
+        1,
+        3
+      ],
+      "text": "a",
+      "finish": "length"
+    }
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}

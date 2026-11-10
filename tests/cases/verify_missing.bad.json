@@ -1,0 +1,13 @@
+{
+  "rule": "verify_missing",
+  "command": "component",
+  "input": {
+    "scope": "runtime",
+    "qualified": true,
+    "raw": []
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}

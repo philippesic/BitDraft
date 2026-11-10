@@ -1,0 +1,26 @@
+{
+  "rule": "discovery_schema",
+  "command": "component",
+  "input": {
+    "extensions": [
+      {
+        "path": "he4_adapter.py",
+        "id": "he4",
+        "protocol": "1",
+        "schema": "adapter-v1",
+        "digest": ""
+      },
+      {
+        "path": "baseline_adapter.py",
+        "id": "baseline",
+        "protocol": "1",
+        "schema": "adapter-v1",
+        "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    ]
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}

@@ -1,0 +1,17 @@
+{
+  "rule": "arch_direct",
+  "command": "component",
+  "input": {},
+  "files": {
+    "tools/a.py": "import tests\n"
+  },
+  "exit": 1,
+  "path": "tools/a.py",
+  "native": [],
+  "diagnostics": [
+    {
+      "code": "ARCH_DIRECT",
+      "path": "tools/a.py"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "rule": "null_topics",
+  "command": "component",
+  "input": {
+    "rows": [
+      {
+        "id": "a",
+        "source": "s",
+        "group": "ga",
+        "topic": null
+      },
+      {
+        "id": "b",
+        "source": "s",
+        "group": "gb",
+        "topic": null
+      }
+    ],
+    "expected": [
+      [
+        "a",
+        "b"
+      ]
+    ]
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}

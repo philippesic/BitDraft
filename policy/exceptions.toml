@@ -1,0 +1,112 @@
+schema = 1
+review_date = "2026-11-09"
+
+[[exception]]
+rule_id = "DEP004"
+path = "tests/test_contracts.py"
+symbol = "hypothesis"
+sha256 = "69552d25f28677f122416e94b70e7ce426460b6c3a92ab658f9768379c267b28"
+reason = "Foundation checker/test imports its declared check dependency; no product import is authorized"
+decision_id = "007-checks-and-review"
+owner = "Philip"
+review_condition = "Review when the declaration, discovery mechanism or pinned tool changes"
+
+[[exception]]
+rule_id = "DEP004"
+path = "tests/test_self_test.py"
+symbol = "pytest"
+sha256 = "db7b0741c94798db5932296122312b7b87d6e5a9e2ee29833a9949d1f774f40b"
+reason = "Foundation checker/test imports its declared check dependency; no product import is authorized"
+decision_id = "007-checks-and-review"
+owner = "Philip"
+review_condition = "Review when the declaration, discovery mechanism or pinned tool changes"
+
+[[exception]]
+rule_id = "DEP004"
+path = "tools/pytest_gate.py"
+symbol = "pytest"
+sha256 = "db7b0741c94798db5932296122312b7b87d6e5a9e2ee29833a9949d1f774f40b"
+reason = "Foundation checker/test imports its declared check dependency; no product import is authorized"
+decision_id = "007-checks-and-review"
+owner = "Philip"
+review_condition = "Review when the declaration, discovery mechanism or pinned tool changes"
+
+[[exception]]
+rule_id = "DEP004"
+path = "tools/repo_files.py"
+symbol = "dulwich"
+sha256 = "5d3c73e256a7bce316ffefc9eae945b48935f0bcb5cb83213ecb452f89f1151a"
+reason = "Foundation checker/test imports its declared check dependency; no product import is authorized"
+decision_id = "007-checks-and-review"
+owner = "Philip"
+review_condition = "Review when the declaration, discovery mechanism or pinned tool changes"
+
+[[exception]]
+rule_id = "DEP004"
+path = "tools/repo_files.py"
+symbol = "yaml"
+sha256 = "1ba25a0ad00c4511b591046805e6342b82d740583998a6e7a79a83be33fa67bf"
+reason = "Foundation checker/test imports its declared check dependency; no product import is authorized"
+decision_id = "007-checks-and-review"
+owner = "Philip"
+review_condition = "Review when the declaration, discovery mechanism or pinned tool changes"
+
+[[exception]]
+rule_id = "DEP004"
+path = "tools/self_test.py"
+symbol = "dulwich"
+sha256 = "256a6ba46456497fdfcc3770187336518b3db128783a03aaa5c4234feb87086b"
+reason = "Foundation checker/test imports its declared check dependency; no product import is authorized"
+decision_id = "007-checks-and-review"
+owner = "Philip"
+review_condition = "Review when the declaration, discovery mechanism or pinned tool changes"
+
+[[exception]]
+rule_id = "VULTURE"
+path = "tools/pytest_gate.py"
+symbol = "pytest_collection_finish"
+sha256 = "4e10a100419b47b8bb579113b0c639c7131ea8c6c6adf85b468a524405404e91"
+reason = "Pytest discovers this hook by its exact protocol name through -p tools.pytest_gate"
+decision_id = "007-checks-and-review"
+owner = "Philip"
+review_condition = "Review when the declaration, discovery mechanism or pinned tool changes"
+
+[[exception]]
+rule_id = "VULTURE"
+path = "tools/pytest_gate.py"
+symbol = "pytest_runtest_logreport"
+sha256 = "940bdbb6f01adfbb9c4d872e2d02a262cb1fa80fc3be82764d433c231983314e"
+reason = "Pytest discovers this hook by its exact protocol name through -p tools.pytest_gate"
+decision_id = "007-checks-and-review"
+owner = "Philip"
+review_condition = "Review when the declaration, discovery mechanism or pinned tool changes"
+
+[[exception]]
+rule_id = "VULTURE"
+path = "tools/pytest_gate.py"
+symbol = "pytest_sessionfinish"
+sha256 = "201d77c26027574bcf38d336d1a78ebb0a3f912ae5504e241976244662babfc8"
+reason = "Pytest discovers this hook by its exact protocol name through -p tools.pytest_gate"
+decision_id = "007-checks-and-review"
+owner = "Philip"
+review_condition = "Review when the declaration, discovery mechanism or pinned tool changes"
+
+[[exception]]
+rule_id = "VULTURE"
+path = "tools/pytest_gate.py"
+symbol = "pytest_configure"
+sha256 = "1a17011742cdf0dc7d7ea62dd4a5cee94c4205a33aef45f738feff3c8a785d42"
+reason = "Pytest discovers this hook by its exact protocol name through -p tools.pytest_gate"
+decision_id = "007-checks-and-review"
+owner = "Philip"
+review_condition = "Review when the declaration, discovery mechanism or pinned tool changes"
+
+[[exception]]
+rule_id = "TYPE_DIRECTIVE"
+path = "tests/test_contracts.py"
+symbol = "test_group_permutations"
+sha256 = "4a94b358e1ca848d65ab8bde34b4e15864ca3b0fae79f702f35f3bebec6ceb03"
+reason = "Pinned Hypothesis given decorator exposes an Any callable in its external typing; the strategy and test body remain strictly typed"
+decision_id = "006-comment-ban-and-exceptions"
+owner = "Philip"
+review_condition = "Review when the declaration, discovery mechanism or pinned tool changes"

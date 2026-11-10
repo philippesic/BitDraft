@@ -1,0 +1,16 @@
+{
+  "rule": "unknown_ancestry",
+  "command": "component",
+  "input": {
+    "rows": [
+      {
+        "role": "fresh-eval",
+        "ancestry": "unknown"
+      }
+    ]
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}

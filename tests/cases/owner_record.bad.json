@@ -1,0 +1,23 @@
+{
+  "rule": "owner_record",
+  "command": "component",
+  "input": {
+    "owner": "runner",
+    "records": [
+      {
+        "owner": "runner",
+        "run": "r",
+        "sequence": 0
+      },
+      {
+        "owner": "runner",
+        "run": "r",
+        "sequence": 0
+      }
+    ]
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}

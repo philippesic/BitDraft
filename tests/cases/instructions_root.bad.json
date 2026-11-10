@@ -1,0 +1,14 @@
+{
+  "rule": "instructions_root",
+  "command": "component",
+  "input": {},
+  "files": {
+    "AGENTS.md": "# Instructions\n",
+    "CLAUDE.md": "@AGENTS.md\n",
+    "tools/a.py": "x = 1\n",
+    "nested/AGENTS.md": "extra\n"
+  },
+  "exit": 1,
+  "path": "nested/AGENTS.md",
+  "native": []
+}

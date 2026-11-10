@@ -1,0 +1,13 @@
+{
+  "rule": "exception_unlisted",
+  "command": "component",
+  "input": {
+    "exception": []
+  },
+  "files": {
+    "case.sh": "#!/bin/sh\nprintf x\n"
+  },
+  "exit": 1,
+  "path": "case.sh",
+  "native": []
+}

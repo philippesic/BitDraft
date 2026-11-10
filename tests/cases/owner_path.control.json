@@ -1,0 +1,11 @@
+{
+  "rule": "owner_path",
+  "command": "component",
+  "input": {},
+  "files": {
+    "w1a1_eagle/checkpoints/store.py": "def f():\n    open(\"best.json\", \"w\")\n"
+  },
+  "exit": 0,
+  "path": "model.py",
+  "native": []
+}

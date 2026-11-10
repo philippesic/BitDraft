@@ -1,0 +1,21 @@
+{
+  "rule": "check_config",
+  "command": "component",
+  "input": {
+    "active": [
+      "bootstrap",
+      "repository",
+      "comments",
+      "ruff",
+      "mypy",
+      "architecture",
+      "dependencies",
+      "documentation",
+      "cpu"
+    ]
+  },
+  "files": {},
+  "exit": 1,
+  "path": "policy/check-stages.toml",
+  "native": []
+}

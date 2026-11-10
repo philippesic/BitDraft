@@ -1,0 +1,17 @@
+{
+  "rule": "public_entry",
+  "command": "component",
+  "input": {},
+  "files": {
+    "extra.py": "if __name__ == \"__main__\":\n    print(1)\n"
+  },
+  "exit": 1,
+  "path": "extra.py",
+  "native": [],
+  "diagnostics": [
+    {
+      "code": "PUBLIC_ENTRY",
+      "path": "extra.py"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "rule": "required_tests",
+  "command": "component",
+  "input": {
+    "required": [
+      "tests/test_a.py::test_a"
+    ],
+    "collected": [
+      "tests/test_a.py::test_a"
+    ],
+    "outcomes": {
+      "tests/test_a.py::test_a": "passed"
+    }
+  },
+  "files": {},
+  "exit": 0,
+  "path": "tests",
+  "native": []
+}

@@ -1,0 +1,17 @@
+{
+  "rule": "env_owner",
+  "command": "component",
+  "input": {},
+  "files": {
+    "model.py": "import os\ndef f():\n    return os.getenv(\"VALUE\")\n"
+  },
+  "exit": 1,
+  "path": "model.py",
+  "native": [],
+  "diagnostics": [
+    {
+      "code": "ENV_OWNER",
+      "path": "model.py"
+    }
+  ]
+}

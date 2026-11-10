@@ -1,0 +1,35 @@
+{
+  "rule": "compare_correctness",
+  "command": "component",
+  "input": {
+    "requests": [
+      {
+        "tokens": [
+          1,
+          2
+        ],
+        "reference_tokens": [
+          1,
+          2
+        ],
+        "proposed": 2,
+        "wall": 2
+      },
+      {
+        "tokens": [
+          3
+        ],
+        "reference_tokens": [
+          3
+        ],
+        "proposed": 1,
+        "wall": 1
+      }
+    ],
+    "throughput": 1.5
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}

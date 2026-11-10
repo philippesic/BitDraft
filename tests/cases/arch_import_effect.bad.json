@@ -1,0 +1,17 @@
+{
+  "rule": "arch_import_effect",
+  "command": "component",
+  "input": {},
+  "files": {
+    "a.py": "from pathlib import Path\ndef f(x=Path(\"x\").mkdir()):\n    pass\n"
+  },
+  "exit": 1,
+  "path": "a.py",
+  "native": [],
+  "diagnostics": [
+    {
+      "code": "ARCH_IMPORT_EFFECT",
+      "path": "a.py"
+    }
+  ]
+}

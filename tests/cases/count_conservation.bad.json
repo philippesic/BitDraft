@@ -1,0 +1,34 @@
+{
+  "rule": "count_conservation",
+  "command": "component",
+  "input": {
+    "inputs": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ],
+    "terminal": [
+      {
+        "id": "a",
+        "reason": "dev"
+      },
+      {
+        "id": "a",
+        "reason": "admitted"
+      },
+      {
+        "id": "c",
+        "reason": "bug"
+      },
+      {
+        "id": "d",
+        "reason": "admitted"
+      }
+    ]
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}

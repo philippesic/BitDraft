@@ -1,0 +1,17 @@
+{
+  "rule": "disk_reserve",
+  "command": "component",
+  "input": {
+    "devices": [
+      {
+        "free": 10,
+        "peak": 6,
+        "reserve": 8
+      }
+    ]
+  },
+  "files": {},
+  "exit": 1,
+  "path": "input.json",
+  "native": []
+}
