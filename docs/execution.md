@@ -1,7 +1,7 @@
 # CPU execution contract
 
 The public source entry is `python -m w1a1_eagle`, with `preflight INTENT`,
-`run INTENT OUTPUT --scope TASK`, and `report OUTPUT`. `--json` emits JSON records;
+`run INTENT OUTPUT --scope TASK`, and `report OUTPUT`. `--json` before or after the subcommand emits JSON records;
 a run emits its admission before allocation and a terminal report afterward.
 Human output describes the same records. Reporting reads existing records only.
 `python -m tools.doctor` belongs to development tooling, alongside the full check.
@@ -53,7 +53,9 @@ bounds the subprocess and targets an isolated process group with exact boot/proc
 birth identity. A failed attempt retains its cost. A lost controller refuses live owned
 work; once its owner is gone, recovery conservatively charges its entire remaining
 wall budget rather than inventing elapsed time. Automatic retry is unsupported; an
-explicit exact-recipe resume remains subject to cumulative bounds.
+explicit recovery remains subject to cumulative bounds. Before any state or update
+attempt exists, an exact-recipe fresh retry can reuse the same root and retain failed
+preflight cost. After initialization, recovery requires an explicit parent and resume.
 
 Training records an exposure before its update. Complete states are published through
 checksummed atomic manifests. A resume restores tensors, shared aliases, AdamW state,

@@ -489,6 +489,18 @@ class TestNumerical(unittest.TestCase):
             intent_path.write_bytes(canonical(invalid_policy))
             with self.assertRaisesRegex(ValueError, "distinct-data"):
                 admission(Intent.load(intent_path), corpus)
+            refused = execute(intent_path, root / "refused-retry", "disposable-CPU-test")
+            self.assertEqual(record(refused["latest"])["outcome"], "refused")
+            self.assertIsNone(refused["worker"])
+            self.assertFalse((root / "refused-retry/states/latest.json").exists())
+            intent_path.write_bytes(canonical(intent))
+            recovered = execute(intent_path, root / "refused-retry", "disposable-CPU-test")
+            self.assertEqual(recovered["attempts"], 2)
+            self.assertEqual(record(recovered["latest"])["outcome"], "complete", recovered)
+            self.assertGreater(
+                number(recovered["cumulative_attempt_seconds"]),
+                number(refused["cumulative_attempt_seconds"]),
+            )
             invalid_policy["schema"] = 1
             intent_path.write_bytes(canonical(invalid_policy))
             with self.assertRaisesRegex(ValueError, "schema is 2"):

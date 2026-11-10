@@ -1,0 +1,21 @@
+{
+  "elapsed_seconds": 23.587921965983696,
+  "index_sha256": "d703d61f47eee8e695bbd09293c15bbae57184d078b98931ff4a2d5828bdbd73",
+  "outcome": "PASS",
+  "peak_rss_kib": 253576,
+  "prior_use": {
+    "historical-training": 9813,
+    "unknown": 5658,
+    "unobserved": 176
+  },
+  "records": 15647,
+  "repeat_scope": "stable-commit repetition of earlier intake, not a causal performance comparison",
+  "schema": 1,
+  "scientific_adequacy": "unknown; not inferred from data size or prior-use labels",
+  "scope": "retained metadata/source-chain reconciliation only; no raw tensors, Torch, GPU, new teacher execution or scientific allocation",
+  "source_git": "329009b1bc64099a397d53285ad7b54a82c89a9b",
+  "source_identity": "fa78877d7f5ba817729492b943d1ba81adaf0311bd640251c97cf19cf41e5970",
+  "unique_positions": 1786275,
+  "windows": 1568435,
+  "zero_window_records": 87
+}
