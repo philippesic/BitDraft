@@ -57,3 +57,8 @@ Subsequent runs use the repository temporary root. External temporary directorie
 left untouched under the explicit outside-cleanup prohibition; details remain in the
 external acceptance evidence. Optional image and hosted CI execution are unrun.
 
+
+November 10 policy evolution: the required foundation entries remain mandatory,
+but additional authored source/tests/docs no longer require a file-allowlist edit.
+Output/model/capture/run-tree, secret, instruction and size checks remain active.
+This is an authorized semantic change for source porting, not a disabled gate.

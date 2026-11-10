@@ -28,6 +28,21 @@ def test_import_default_and_class_effects() -> None:
 
 
 def test_alias_and_relative_imports() -> None:
+    assert Diagnostic("ARCH_SYSPATH", "a.py") in inspect_tree(
+        {"a.py": "import sys\nsys.path[:0] = ['external']\n"}
+    )
+    assert Diagnostic("ARCH_DYNAMIC", "a.py") in inspect_tree(
+        {"a.py": "import importlib.util\nimportlib.util.spec_from_file_location('x', 'x.py')\n"}
+    )
+    assert (
+        inspect_tree(
+            {"w1a1_eagle/clock.py": "import time\ndef now():\n    return time.monotonic_ns()\n"}
+        )
+        == []
+    )
+    assert Diagnostic("TIMING_OWNER", "a.py") in inspect_tree(
+        {"a.py": "import time\ndef now():\n    return time.monotonic_ns()\n"}
+    )
     assert inspect_tree(
         {"a.py": "import os as system\ndef f():\n    return system.getenv('X')\n"}
     ) == [Diagnostic("ENV_OWNER", "a.py")]

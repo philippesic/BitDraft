@@ -82,6 +82,8 @@ def inspect_tree(files: dict[str, str]) -> list[Diagnostic]:
         def name(node: ast.AST) -> str:
             if isinstance(node, ast.Name):
                 return aliases.get(node.id, node.id)
+            if isinstance(node, ast.Subscript):
+                return name(node.value)
             if isinstance(node, ast.Attribute):
                 return name(node.value) + "." + node.attr
             return ""
@@ -100,7 +102,15 @@ def inspect_tree(files: dict[str, str]) -> list[Diagnostic]:
         for node in ast.walk(tree):
             if isinstance(node, ast.Call):
                 call = name(node.func)
-                if call in {"exec", "eval", "compile", "__import__", "importlib.import_module"}:
+                if call in {
+                    "exec",
+                    "eval",
+                    "compile",
+                    "__import__",
+                    "importlib.import_module",
+                    "importlib.util.spec_from_file_location",
+                    "runpy.run_path",
+                } or call.endswith(".exec_module"):
                     diagnostics.add(Diagnostic("ARCH_DYNAMIC", path))
                 if (
                     call.startswith("sys.path.")
@@ -116,17 +126,20 @@ def inspect_tree(files: dict[str, str]) -> list[Diagnostic]:
                     and module != "w1a1_eagle.config"
                 ):
                     diagnostics.add(Diagnostic("ENV_OWNER", path))
-                if (
-                    call
-                    in {
-                        "time.time",
-                        "time.perf_counter",
-                        "time.monotonic",
-                        "torch.cuda.synchronize",
-                        "torch.cuda.Event",
-                    }
-                    and module != "benchmarks.measurement"
-                ):
+                if call in {
+                    "time.time",
+                    "time.perf_counter",
+                    "time.monotonic",
+                    "time.monotonic_ns",
+                    "time.perf_counter_ns",
+                    "time.time_ns",
+                    "torch.cuda.synchronize",
+                    "torch.cuda.Event",
+                } and module not in {
+                    "benchmarks.measurement",
+                    "w1a1_eagle.clock",
+                    "w1a1_eagle.device",
+                }:
                     diagnostics.add(Diagnostic("TIMING_OWNER", path))
                 if call.startswith("random.") and call != "random.Random":
                     diagnostics.add(Diagnostic("SEEDED_RANDOM", path))
@@ -188,7 +201,8 @@ def inspect_tree(files: dict[str, str]) -> list[Diagnostic]:
                 isinstance(node, ast.If)
                 and isinstance(node.test, ast.Compare)
                 and any(isinstance(n, ast.Name) and n.id == "__name__" for n in ast.walk(node.test))
-                and path != "tools/check.py"
+                and path
+                not in {"tools/check.py", "w1a1_eagle/__main__.py", "benchmarks/__main__.py"}
             ):
                 diagnostics.add(Diagnostic("PUBLIC_ENTRY", path))
         pending: list[ast.AST] = list(tree.body)

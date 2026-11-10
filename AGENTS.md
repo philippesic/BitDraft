@@ -1,20 +1,24 @@
-# Binary Eagle foundation
+# Binary Eagle port
 
-Only foundation checks, pure synthetic validators, evidence and docs are authorized.
-Source, model, trainer, capture, native runtime and benchmarks need a new stage approval.
-The frozen binary-eagle-decoding checkout and vllm-semantic-cache-ext are read only.
-No GPU work, GPU locks, real data I/O, remote, push, captures or checkpoint copies.
-Keep small coherent local commits. Keep the tree clean at handoff.
-Use the one check in README. Never disable a gate to obtain a pass.
+Philip authorized the infrastructure and source port through end-to-end CPU verification,
+including a lightweight fresh-agent exercise. Benchmark redesign and high-level agent
+operations remain deferred. Complete included phases autonomously through their checks.
+The original binary-eagle-decoding and vllm-semantic-cache-ext stay read only.
+Preserve healthy jobs, source pins, mounts, checkpoints and retained dependencies.
+No competing GPU jobs, training allocations, publication or remote creation.
+Keep coherent local commits. Preserve unrelated uncommitted work at handoff.
+Use the full check in README at commits; never disable a gate to obtain a pass.
+Disclose scoped safeguard changes and semantic corrections in the policy diff.
+Out-of-scope weakening or changed scientific semantics needs a decision.
 No ordinary code comments or docstrings. Exact necessary machine lines require
-policy/exceptions.toml entries. Move meaningful explanations into decisions.
-Maintain one FINDINGS index, immutable evidence and explicit negative results.
+policy/exceptions.toml entries. Put derivations and meaningful explanations in decisions.
+Keep one root AGENTS, CLAUDE pointer and FINDINGS index with explicit negative results.
 heldout24 and aliases never enter training, calibration or selection.
-HE4 means W1A4, A8 down projection, Q4K head. W1A8 and DSpark Q4KM are historical.
-Baseline means current external DFlash Q4KM drafter. Do not mix clocks or eras.
-Preserve retained state dependencies. Local existence is not independent backup.
-License is undecided; no publication or licensed source copying is authorized.
-The 1 GiB stage write cap includes repo, environment, caches and scratch growth.
-Stop if WSL free space would fall below 2.5 GiB; delete nothing outside owned roots.
-Clean owned disposable processes and files; preserve useful results and shared work.
-Review safeguard changes with Philip. A generated receipt cannot approve itself.
+HE4 means W1A4, A8 down projection, Q4K head. Baseline is external DFlash Q4KM.
+Do not mix clocks or eras. CPU proof does not qualify native execution or performance.
+Reuse existing environments; keep aggregate port writes within the current 1 GiB cap.
+Stop before WSL free space falls below 2.5 GiB; use bounded RAM scratch for CPU tests.
+Delete only authorized owned disposables after active-use and recoverability checks.
+License remains undecided; source port permission grants no publication rights.
+Report operational, scientific and objective health separately, including unknowns.
+A hash, generated receipt or editable approval field does not grant authority.
