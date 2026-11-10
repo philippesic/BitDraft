@@ -81,3 +81,12 @@ or exported. Torn journal tails preserve incident bytes before reconciliation; c
 corruption refuses. All entered updates, not just successfully materialized exposures,
 are durable attempt records. Reporting retains failed attempts and unknown science.
 Checker scratch moved to RAM to avoid repeated persistent type-check/specimen writes.
+
+The metadata increment adds a bounded JSON-only snapshot tool to the declared command
+surface. Modern source-record formats are explicit, with prior consumption separate
+from retained receipt integrity. Actual metadata caught first-prompt-anchor/EOG and
+sampler-order divergence; correcting these restores source behavior rather than
+selecting new science policy. Synthetic modern-index end-to-end execution and the
+retained default initializer header are additional checks. One manually invoked test
+run lacked CUDA masking and failed its isolation assertion; ordinary checks use the
+CPU environment wrapper. No GPU allocation or real training was launched.

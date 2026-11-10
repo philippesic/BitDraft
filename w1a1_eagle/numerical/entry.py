@@ -15,6 +15,7 @@ from w1a1_eagle.clock import Monotonic
 from w1a1_eagle.contracts import Record, integer, number, record
 from w1a1_eagle.data import Window
 from w1a1_eagle.identity import loaded_identity, source_identity
+from w1a1_eagle.index import IndexReader
 from w1a1_eagle.intent import Intent
 from w1a1_eagle.lifecycle import Journal, control
 from w1a1_eagle.model import Geometry
@@ -45,9 +46,15 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
         "decision": intent.raw["decision"],
         "limiting_risk": intent.raw["risk"],
         "starting_identity": intent.parent.sha256 if intent.parent else intent.source.sha256,
+        "starting_name": intent.parent.path.name if intent.parent else intent.source.path.name,
         "mode": intent.mode,
         "mechanism": "HE4 W1A4/A8/Q4_K fifteen-label weighted-CE updates",
         "exposure": exposure,
+        "prior_use_warning": "Prior training is marked for "
+        + str(exposure["historical_training_sequences"])
+        + " sequences; prior use is unknown for "
+        + str(exposure["unknown_prior_use_sequences"])
+        + ". Visit estimates are additional to this run, not lifetime counts. Fresh initialization does not mean unused data.",
         "budget": intent.raw["budget"],
         "peak_new_bytes_upper_bound": intent.peak_new_bytes,
         "checkpoint_updates": intent.checkpoint_updates,
@@ -66,10 +73,19 @@ def preflight(path: Path) -> Record:
     if source_identity(Path(__file__).resolve().parents[2]) != intent.raw["code_sha256"]:
         raise ValueError("source identity differs from intent")
     cfg = record(intent.raw["geometry"])
-    corpus = Corpus(intent.corpus, intent.seed, intent.memory_bytes, integer(cfg["hidden"]))
+    corpus = read_corpus(intent, integer(cfg["hidden"]))
     intent.source.verify()
     intent.vocabulary.verify()
     return admission(intent, corpus)
+
+
+def read_corpus(intent: Intent, hidden: int) -> Corpus:
+    source = (
+        IndexReader(intent.corpus, intent.index_spec, intent.memory_bytes).load()
+        if intent.index_spec is not None
+        else intent.corpus
+    )
+    return Corpus(source, intent.seed, intent.memory_bytes, hidden)
 
 
 def run(intent_path: Path, root: Path, attempt: str) -> None:
@@ -81,7 +97,7 @@ def run(intent_path: Path, root: Path, attempt: str) -> None:
     torch.manual_seed(intent.seed)
     geometry = record(intent.raw["geometry"])
     cfg = Geometry(**{key: integer(value) for key, value in geometry.items()})
-    corpus = Corpus(intent.corpus, intent.seed, intent.memory_bytes, cfg.hidden)
+    corpus = read_corpus(intent, cfg.hidden)
     journal = Journal(root)
     starts = [
         row

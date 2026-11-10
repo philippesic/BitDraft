@@ -1,0 +1,23 @@
+{
+  "cause": "ValueError",
+  "detail": "unsupported or non-training source role: authored-broad-0000000",
+  "elapsed_seconds": 4.865591453999514,
+  "feature_integrity": "deferred until bounded materialization",
+  "input_sha256": "d703d61f47eee8e695bbd09293c15bbae57184d078b98931ff4a2d5828bdbd73",
+  "native_validity": "historical producer receipts checked, not freshly reproduced",
+  "observed_sequences": 4492,
+  "observed_unique_positions": 512747,
+  "observed_windows": 450951,
+  "outcome": "REFUSED",
+  "peak_parser_buffer_bytes": 0,
+  "peak_rss_kib": 99356,
+  "reader_source_sha256": {
+    "w1a1_eagle/data.py": "3453c4b8fa73284e37356c23a9a4abb9ffba760daf67adeaa4f4323890ea21c4",
+    "w1a1_eagle/index.py": "f5a8ae4901e3689399dbc3665db7931410968d568f5e0fcc156ec87ccea88d12",
+    "w1a1_eagle/json_stream.py": "75e2fdd3a2f6a7f6de9d4c0b50828c6c02c0ef0df02dfaad01270b57500ee490",
+    "w1a1_eagle/records.py": "aa95656dd727fa9416e78382528a043c4cebc8569a572831d3e2272a2ac1a5fe"
+  },
+  "schema": 1,
+  "scientific_adequacy": "unknown; prior-use labels are not cumulative exposure counts",
+  "scope": "Metadata/source identities, exclusions and retained capture receipt conformance; no feature bytes read and no new native proof"
+}

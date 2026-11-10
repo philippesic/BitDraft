@@ -30,12 +30,15 @@ def read(path: Path, limit: int = 16 * 1024 * 1024) -> Record:
     return record(cast(object, json.loads(path.read_bytes(), object_pairs_hook=unique)))
 
 
-def artifact(value: object, root: Path) -> Artifact:
+def artifact(value: object, root: Path, resolve: bool = True) -> Artifact:
     raw = record(value)
     if set(raw) != {"path", "sha256", "bytes"}:
         raise ValueError("unsupported artifact record")
     path = Path(string(raw["path"]))
-    return Artifact((root / path).resolve(), string(raw["sha256"]), integer(raw["bytes"]))
+    selected = root / path
+    return Artifact(
+        selected.resolve() if resolve else selected, string(raw["sha256"]), integer(raw["bytes"])
+    )
 
 
 def reference(value: Artifact) -> Record:

@@ -1,8 +1,9 @@
 # Data contracts
 
-The source port has a typed ledger, schema-1 capture reader and deterministic bounded
-CPU corpus sampler. Synthetic authenticated files exercise these paths; no real corpus
-has been newly admitted. See [execution](execution.md). heldout24 and every alias remain permanently evaluation-only;
+The source port has a typed ledger, canonical schema-1 capture reader, selected modern
+index adapter and deterministic bounded CPU sampler. The selected real index has been
+reconciled against retained metadata and source receipts; raw tensor bytes and native
+teacher execution remain separate gates. See [execution](execution.md). heldout24 and every alias remain permanently evaluation-only;
 exclude them from train, calibration, selection, sampling and conversion. Consumed DEV
 is selection data, not fresh confirmation. Unknown prior training ancestry excludes a
 prompt from new protected evaluation.
@@ -33,3 +34,26 @@ Exposure sums visits across overlapping windows into each unique position; windo
 and mean/max position visits are distinct denominators. Parent exposure, seed, cursor
 and trajectory identity survive resume and branch. Threshold examples are tests only,
 not an approved allocation or optimum. See [decision 003](decisions/003-data-and-exposure.md).
+
+The modern adapter accepts the three observed source-record forms explicitly: rich
+role/ancestry records, retained training-catalog locators, and authored broader-domain
+records. Unknown forms refuse. Verified metadata ancestry means the retained identity
+and receipt chain agrees; it does not establish that data is unused or scientifically
+adequate. Prior-use classification remains a separate field. The selected index has
+9,813 historical-training, 5,658 unknown-use and 176 unobserved-use records. Earlier
+recovery discrepancies remain unresolved and are not reinterpreted by this intake.
+
+The final prompt token is a valid first anchor: logit position prompt_tokens - 1 predicts
+the first generated token. Prompt-internal EOG token IDs do not truncate generation.
+The first generated EOG remains the terminal supervised label. The sampler preserves
+index row order and the original single seeded permutation, repeated across passes.
+Compact anchors avoid constructing every fifteen-label Window at admission. All
+zero-window records remain accounted for without entering sampling.
+
+For slow metadata mounts, `python -m tools.snapshot_metadata` packs or unpacks only
+authenticated JSON metadata under explicit byte/time bounds. Its help lists exact
+arguments. It never transports raw features or grants admission. Unpack refuses
+traversal, duplicate members and nonregular files; the ordinary index reader must
+still reconcile the result. Metadata and raw-data mounts can be relocated separately.
+See [complete intake](evidence/modern-index-complete-intake.json) and
+[transport receipt](evidence/metadata-snapshot-transport.json).

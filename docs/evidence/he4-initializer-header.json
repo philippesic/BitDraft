@@ -1,0 +1,341 @@
+{
+  "mask": 248077,
+  "peak_rss_kib": 859508,
+  "schema": 1,
+  "scope": "Observed selected initializer GGUF header only; no tensor decoding, no fresh whole-file hash or native loading",
+  "source_bytes_observed": 1279872704,
+  "source_sha256_from_retained_recipe": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521",
+  "target_layers": [
+    2,
+    6,
+    10,
+    14,
+    18,
+    22,
+    26,
+    30
+  ],
+  "tensor_shapes": {
+    "blk.0.attn_k.weight": [
+      1024,
+      2560
+    ],
+    "blk.0.attn_k_norm.weight": [
+      128
+    ],
+    "blk.0.attn_norm.weight": [
+      2560
+    ],
+    "blk.0.attn_output.weight": [
+      2560,
+      4096
+    ],
+    "blk.0.attn_q.weight": [
+      4096,
+      2560
+    ],
+    "blk.0.attn_q_norm.weight": [
+      128
+    ],
+    "blk.0.attn_v.weight": [
+      1024,
+      2560
+    ],
+    "blk.0.ffn_down.weight": [
+      2560,
+      9216
+    ],
+    "blk.0.ffn_gate.weight": [
+      9216,
+      2560
+    ],
+    "blk.0.ffn_norm.weight": [
+      2560
+    ],
+    "blk.0.ffn_up.weight": [
+      9216,
+      2560
+    ],
+    "blk.1.attn_k.weight": [
+      1024,
+      2560
+    ],
+    "blk.1.attn_k_norm.weight": [
+      128
+    ],
+    "blk.1.attn_norm.weight": [
+      2560
+    ],
+    "blk.1.attn_output.weight": [
+      2560,
+      4096
+    ],
+    "blk.1.attn_q.weight": [
+      4096,
+      2560
+    ],
+    "blk.1.attn_q_norm.weight": [
+      128
+    ],
+    "blk.1.attn_v.weight": [
+      1024,
+      2560
+    ],
+    "blk.1.ffn_down.weight": [
+      2560,
+      9216
+    ],
+    "blk.1.ffn_gate.weight": [
+      9216,
+      2560
+    ],
+    "blk.1.ffn_norm.weight": [
+      2560
+    ],
+    "blk.1.ffn_up.weight": [
+      9216,
+      2560
+    ],
+    "blk.2.attn_k.weight": [
+      1024,
+      2560
+    ],
+    "blk.2.attn_k_norm.weight": [
+      128
+    ],
+    "blk.2.attn_norm.weight": [
+      2560
+    ],
+    "blk.2.attn_output.weight": [
+      2560,
+      4096
+    ],
+    "blk.2.attn_q.weight": [
+      4096,
+      2560
+    ],
+    "blk.2.attn_q_norm.weight": [
+      128
+    ],
+    "blk.2.attn_v.weight": [
+      1024,
+      2560
+    ],
+    "blk.2.ffn_down.weight": [
+      2560,
+      9216
+    ],
+    "blk.2.ffn_gate.weight": [
+      9216,
+      2560
+    ],
+    "blk.2.ffn_norm.weight": [
+      2560
+    ],
+    "blk.2.ffn_up.weight": [
+      9216,
+      2560
+    ],
+    "blk.3.attn_k.weight": [
+      1024,
+      2560
+    ],
+    "blk.3.attn_k_norm.weight": [
+      128
+    ],
+    "blk.3.attn_norm.weight": [
+      2560
+    ],
+    "blk.3.attn_output.weight": [
+      2560,
+      4096
+    ],
+    "blk.3.attn_q.weight": [
+      4096,
+      2560
+    ],
+    "blk.3.attn_q_norm.weight": [
+      128
+    ],
+    "blk.3.attn_v.weight": [
+      1024,
+      2560
+    ],
+    "blk.3.ffn_down.weight": [
+      2560,
+      9216
+    ],
+    "blk.3.ffn_gate.weight": [
+      9216,
+      2560
+    ],
+    "blk.3.ffn_norm.weight": [
+      2560
+    ],
+    "blk.3.ffn_up.weight": [
+      9216,
+      2560
+    ],
+    "blk.4.attn_k.weight": [
+      1024,
+      2560
+    ],
+    "blk.4.attn_k_norm.weight": [
+      128
+    ],
+    "blk.4.attn_norm.weight": [
+      2560
+    ],
+    "blk.4.attn_output.weight": [
+      2560,
+      4096
+    ],
+    "blk.4.attn_q.weight": [
+      4096,
+      2560
+    ],
+    "blk.4.attn_q_norm.weight": [
+      128
+    ],
+    "blk.4.attn_v.weight": [
+      1024,
+      2560
+    ],
+    "blk.4.ffn_down.weight": [
+      2560,
+      9216
+    ],
+    "blk.4.ffn_gate.weight": [
+      9216,
+      2560
+    ],
+    "blk.4.ffn_norm.weight": [
+      2560
+    ],
+    "blk.4.ffn_up.weight": [
+      9216,
+      2560
+    ],
+    "blk.5.attn_k.weight": [
+      1024,
+      2560
+    ],
+    "blk.5.attn_k_norm.weight": [
+      128
+    ],
+    "blk.5.attn_norm.weight": [
+      2560
+    ],
+    "blk.5.attn_output.weight": [
+      2560,
+      4096
+    ],
+    "blk.5.attn_q.weight": [
+      4096,
+      2560
+    ],
+    "blk.5.attn_q_norm.weight": [
+      128
+    ],
+    "blk.5.attn_v.weight": [
+      1024,
+      2560
+    ],
+    "blk.5.ffn_down.weight": [
+      2560,
+      9216
+    ],
+    "blk.5.ffn_gate.weight": [
+      9216,
+      2560
+    ],
+    "blk.5.ffn_norm.weight": [
+      2560
+    ],
+    "blk.5.ffn_up.weight": [
+      9216,
+      2560
+    ],
+    "enc.output_norm.weight": [
+      2560
+    ],
+    "fc.weight": [
+      2560,
+      20480
+    ],
+    "output_norm.weight": [
+      2560
+    ]
+  },
+  "tensor_types": {
+    "blk.0.attn_k.weight": "BF16",
+    "blk.0.attn_k_norm.weight": "F32",
+    "blk.0.attn_norm.weight": "F32",
+    "blk.0.attn_output.weight": "BF16",
+    "blk.0.attn_q.weight": "BF16",
+    "blk.0.attn_q_norm.weight": "F32",
+    "blk.0.attn_v.weight": "BF16",
+    "blk.0.ffn_down.weight": "BF16",
+    "blk.0.ffn_gate.weight": "BF16",
+    "blk.0.ffn_norm.weight": "F32",
+    "blk.0.ffn_up.weight": "BF16",
+    "blk.1.attn_k.weight": "BF16",
+    "blk.1.attn_k_norm.weight": "F32",
+    "blk.1.attn_norm.weight": "F32",
+    "blk.1.attn_output.weight": "BF16",
+    "blk.1.attn_q.weight": "BF16",
+    "blk.1.attn_q_norm.weight": "F32",
+    "blk.1.attn_v.weight": "BF16",
+    "blk.1.ffn_down.weight": "BF16",
+    "blk.1.ffn_gate.weight": "BF16",
+    "blk.1.ffn_norm.weight": "F32",
+    "blk.1.ffn_up.weight": "BF16",
+    "blk.2.attn_k.weight": "BF16",
+    "blk.2.attn_k_norm.weight": "F32",
+    "blk.2.attn_norm.weight": "F32",
+    "blk.2.attn_output.weight": "BF16",
+    "blk.2.attn_q.weight": "BF16",
+    "blk.2.attn_q_norm.weight": "F32",
+    "blk.2.attn_v.weight": "BF16",
+    "blk.2.ffn_down.weight": "BF16",
+    "blk.2.ffn_gate.weight": "BF16",
+    "blk.2.ffn_norm.weight": "F32",
+    "blk.2.ffn_up.weight": "BF16",
+    "blk.3.attn_k.weight": "BF16",
+    "blk.3.attn_k_norm.weight": "F32",
+    "blk.3.attn_norm.weight": "F32",
+    "blk.3.attn_output.weight": "BF16",
+    "blk.3.attn_q.weight": "BF16",
+    "blk.3.attn_q_norm.weight": "F32",
+    "blk.3.attn_v.weight": "BF16",
+    "blk.3.ffn_down.weight": "BF16",
+    "blk.3.ffn_gate.weight": "BF16",
+    "blk.3.ffn_norm.weight": "F32",
+    "blk.3.ffn_up.weight": "BF16",
+    "blk.4.attn_k.weight": "BF16",
+    "blk.4.attn_k_norm.weight": "F32",
+    "blk.4.attn_norm.weight": "F32",
+    "blk.4.attn_output.weight": "BF16",
+    "blk.4.attn_q.weight": "BF16",
+    "blk.4.attn_q_norm.weight": "F32",
+    "blk.4.attn_v.weight": "BF16",
+    "blk.4.ffn_down.weight": "BF16",
+    "blk.4.ffn_gate.weight": "BF16",
+    "blk.4.ffn_norm.weight": "F32",
+    "blk.4.ffn_up.weight": "BF16",
+    "blk.5.attn_k.weight": "BF16",
+    "blk.5.attn_k_norm.weight": "F32",
+    "blk.5.attn_norm.weight": "F32",
+    "blk.5.attn_output.weight": "BF16",
+    "blk.5.attn_q.weight": "BF16",
+    "blk.5.attn_q_norm.weight": "F32",
+    "blk.5.attn_v.weight": "BF16",
+    "blk.5.ffn_down.weight": "BF16",
+    "blk.5.ffn_gate.weight": "BF16",
+    "blk.5.ffn_norm.weight": "F32",
+    "blk.5.ffn_up.weight": "BF16",
+    "enc.output_norm.weight": "F32",
+    "fc.weight": "BF16",
+    "output_norm.weight": "F32"
+  }
+}

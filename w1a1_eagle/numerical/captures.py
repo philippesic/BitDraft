@@ -8,19 +8,13 @@ import torch
 from torch import Tensor
 
 from w1a1_eagle.contracts import integer, record, sequence
-from w1a1_eagle.data import Artifact, Window, windows
+from w1a1_eagle.data import CaptureSpec as CaptureSpec
+from w1a1_eagle.data import Window, windows
 
 FloatArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.float32]]"
 IntArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.int32]]"
 
 TAPS = (2, 6, 10, 14, 18, 22, 26, 30)
-
-
-@dataclass(frozen=True)
-class CaptureSpec:
-    identity: str
-    metadata: Artifact
-    files: tuple[Artifact, ...]
 
 
 @dataclass(frozen=True)

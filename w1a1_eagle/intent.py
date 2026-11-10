@@ -1,16 +1,18 @@
+import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal
+from typing import Literal, cast
 
 from w1a1_eagle.contracts import Record, integer, number, record, string
 from w1a1_eagle.data import Artifact
-from w1a1_eagle.records import artifact, identity, read
+from w1a1_eagle.index import IndexSpec, Mount
+from w1a1_eagle.records import artifact, canonical, identity, read
 from w1a1_eagle.training import Budget
 
 
 @dataclass(frozen=True)
 class Intent:
-    raw: Record
+    encoded: bytes
     sha256: str
     source: Artifact
     vocabulary: Artifact
@@ -25,6 +27,11 @@ class Intent:
     seed: int
     checkpoint_updates: int
     checkpoint_seconds: float
+    index_spec: IndexSpec | None = None
+
+    @property
+    def raw(self) -> Record:
+        return record(cast(object, json.loads(self.encoded)))
 
     @classmethod
     def load(cls, path: Path) -> "Intent":
@@ -54,7 +61,11 @@ class Intent:
             "checkpoint_updates",
             "checkpoint_seconds",
         }
-        if set(raw) != required or type(raw["schema"]) is not int or raw["schema"] != 2:
+        if (
+            set(raw) - {"input_adapter"} != required
+            or type(raw["schema"]) is not int
+            or raw["schema"] != 2
+        ):
             raise ValueError(
                 "supported intent schema is 2 with exact fields; preserve older intents"
             )
@@ -115,8 +126,42 @@ class Intent:
         ):
             raise ValueError("explicit positive scientific admission policy required")
         root = path.resolve().parent
+        adapter: IndexSpec | None = None
+        if raw.get("input_adapter") is not None:
+            values = record(raw["input_adapter"])
+            fields = {
+                "kind",
+                "logical_root",
+                "metadata_root",
+                "manifest_sha256",
+                "target_sha256",
+                "sequences",
+                "windows",
+                "unique_positions",
+                "exclusions",
+            }
+            if set(values) - {"data_root"} != fields or values["kind"] != "he4fresh-index-v1":
+                raise ValueError("unsupported input adapter")
+            logical = Path(string(values["logical_root"]))
+            if not logical.is_absolute():
+                raise ValueError("index logical root must be absolute")
+            mount = Mount(logical, (root / string(values["metadata_root"])).resolve())
+            data_mount = Mount(
+                logical, (root / string(values.get("data_root", values["metadata_root"]))).resolve()
+            )
+            adapter = IndexSpec(
+                string(values["manifest_sha256"]),
+                string(values["target_sha256"]),
+                integer(values["sequences"]),
+                integer(values["windows"]),
+                integer(values["unique_positions"]),
+                integer(geometry["hidden"]),
+                mount,
+                mount.map(values["exclusions"]),
+                data_mount,
+            )
         return cls(
-            raw,
+            canonical(raw),
             identity(raw),
             artifact(raw["source"], root),
             artifact(raw["vocabulary"], root),
@@ -135,6 +180,7 @@ class Intent:
             integer(raw["seed"]),
             integer(raw["checkpoint_updates"]),
             number(raw["checkpoint_seconds"]),
+            adapter,
         )
 
     @property
@@ -148,6 +194,17 @@ class Intent:
                 "device": self.raw["device"],
                 "geometry": self.raw["geometry"],
                 "code": self.raw["code_sha256"],
+                "input_adapter": None
+                if self.index_spec is None
+                else {
+                    "kind": "he4fresh-index-v1",
+                    "manifest_sha256": self.index_spec.manifest_sha256,
+                    "target_sha256": self.index_spec.target_sha256,
+                    "sequences": self.index_spec.sequences,
+                    "windows": self.index_spec.windows,
+                    "unique_positions": self.index_spec.unique_positions,
+                    "exclusions_sha256": self.index_spec.exclusions.sha256,
+                },
             }
         )
 

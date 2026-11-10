@@ -25,13 +25,13 @@ aliases, role, ancestry, metadata and files. Roles and aliases are reconciled be
 opening training metadata. heldout24 is always protected. The ancestry field records
 upstream admission provenance; an editable manifest cannot independently establish
 that provenance or authorize a run. A real corpus must be produced and checked against
-its retained source/role receipts before a scientific run. The present fixture is a
-synthetic schema/conformance proof, not that real-corpus qualification.
+its retained source/role receipts before a scientific run. The modern index adapter now reconciles the selected retained metadata/source chain;
+this remains distinct from raw tensor authentication on exposure and native qualification.
 
 The reader supports the selected modern eight-tap F32 capture contract and optional
 pinned int32 NPY copies. It authenticates files before exposure, rejects disagreement,
-keeps bounded feature materialization, and reconstructs a seeded epoch permutation
-from the saved cursor. The final native label can lie at the last input position;
+keeps bounded feature materialization, and reconstructs the original single seeded
+permutation from the saved cursor, repeating it across passes. The final native label can lie at the last input position;
 future mask slots require labels, not observed future inputs. Exposure counts identify
 trajectory/native-logit positions. Admission reports planned successful exposure and
 the worst allowed exposure including failed attempts. Parent consumption is retained
@@ -96,3 +96,11 @@ Bytecode caches are bypassed in CPU subprocesses. Terminal identity adds late im
 and rejects drift in previously loaded files. File hashes may be reused within that same
 attempt only when device/inode/size/mtime/ctime remain equal; the report labels reuse.
 This caches file identity work, never execution proof or hardware measurements.
+
+An optional `input_adapter` selects `he4fresh-index-v1` with exact manifest/target
+identities, expected sequence/window/position counts, exclusions, logical root and
+physical metadata root. Optional data_root maps tensor files separately. Unsupported
+forms refuse; canonical corpus 1 remains supported. Intent payloads are internally
+immutable: reading raw returns a copy rather than a mutable admission record.
+Admission names prior-use counts explicitly. Exposure estimates describe additional
+visits, never unknown lifetime consumption or an assertion of scientific adequacy.

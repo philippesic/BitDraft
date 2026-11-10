@@ -1,0 +1,20 @@
+{
+  "compressed_bytes": 61026737,
+  "elapsed_seconds": 56.53048730798764,
+  "input_sha256": "d703d61f47eee8e695bbd09293c15bbae57184d078b98931ff4a2d5828bdbd73",
+  "outcome": "PASS",
+  "remote_memory_cap_bytes": 1610612736,
+  "remote_report": "{\"bytes\": 267867967, \"files\": 46943, \"index_sha256\": \"d703d61f47eee8e695bbd09293c15bbae57184d078b98931ff4a2d5828bdbd73\", \"schema\": 1, \"scope\": \"pinned index and JSON receipts/source identities only; no tensor files\"}\n",
+  "remote_wall_seconds": 180,
+  "root": "/tmp/binary-modern-metadata-7p4z4kmx",
+  "schema": 1,
+  "scope": "JSON metadata only; no tensor transfer or remote writes",
+  "transport": "configured Tailscale SSH; private-key auth and host-key verification retained",
+  "unpacked": {
+    "bytes": 267867967,
+    "files": 46943,
+    "index_sha256": "d703d61f47eee8e695bbd09293c15bbae57184d078b98931ff4a2d5828bdbd73",
+    "schema": 1,
+    "scope": "transport integrity only; run metadata admission separately"
+  }
+}

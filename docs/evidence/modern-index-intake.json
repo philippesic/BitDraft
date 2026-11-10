@@ -1,0 +1,20 @@
+{
+  "cause": "ValueError",
+  "detail": "selected modern index requires matching training source role",
+  "elapsed_seconds": 241.9428471760184,
+  "input_sha256": "d703d61f47eee8e695bbd09293c15bbae57184d078b98931ff4a2d5828bdbd73",
+  "observed_sequences": 176,
+  "observed_unique_positions": 21733,
+  "observed_windows": 19283,
+  "outcome": "REFUSED",
+  "peak_parser_buffer_bytes": 0,
+  "peak_rss_kib": 27172,
+  "reader_source_sha256": {
+    "w1a1_eagle/data.py": "feceb18465d1a3355e1361feb525308beef795ad3ab62d87186a7b05d3bf304c",
+    "w1a1_eagle/index.py": "7c558ce62a91626e46c3e8d662da3178807af5320088e5de99cf6a16d45d0dee",
+    "w1a1_eagle/json_stream.py": "75e2fdd3a2f6a7f6de9d4c0b50828c6c02c0ef0df02dfaad01270b57500ee490",
+    "w1a1_eagle/records.py": "9374c3d33aca65f4e728ed6d7970de0a08d2399ae339ef4fc21b1a381efb137d"
+  },
+  "schema": 1,
+  "scope": "Current modern index metadata, source identities/exclusions and retained receipt conformance only; no feature-file reads, tensor materialization, training or fresh native label proof"
+}
