@@ -1,7 +1,57 @@
 # HE4broad fresh training on the November 9–10 captures
 
-State: **TRAINING; trained-state GPU resume and actual next update passed**. Philip authorized this run November 10 in
+State: **PAUSED; local-data migration in progress**. Philip authorized this run November 10 in
 thread `6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6`. The prerequisite campaign is complete and its RTX 5080 release is verified. Stage 6 release was verified against its pushed release proof and the completion message.
+
+## Current pause and localization
+
+Philip requested a safe pause, full local data transfer, lighter per-window
+validation, a short old/new loading smoke, and retirement of old one-off models.
+The complete paused state has 20,671 updates, 20,702.123 training-wall seconds
+and 2,873.748 synchronized update seconds. All three GPU locks and the GPU are
+released. The existing 30-minute health event is disabled for this explicit
+pause; sustained training remains paused after the requested diagnostic.
+
+The dataset download is supervised in `runs/he4-localize-download-20261110/`.
+Its staging directory is this run's `local-teacher-transfer/`. The CPU admission
+worker is supervised in `runs/he4-localize-admit-20261110/`; it verifies each
+completed capture once while transfer proceeds, then copies **all current
+checkpoints/exports/accounting** to `local-archive-transfer/`. On success it
+unmounts only this run's two original SSHFS mounts and atomically adopts the
+staging directories under the same `teacher-mount/` and `archive-mount/` names.
+Those names then denote ordinary local ext4 directories, preserving the exact
+recipe/index paths and checkpoint configuration hash. Do not start a second
+adopter. Progress and raw verification/deletion receipts are in
+`pause-fix-20261110/`; completed local admission is `local-data.json`.
+
+Canonical local-loader code passes six CPU checks, including exact old/new
+feature/label identity, no repeated hashing and truncated-file rejection. It
+is not GPU-qualified until the matched smoke completes. Preserve the original
+`source/` closure unchanged. Freeze the revised closure separately, write
+`candidate-source.json` with status `CPU_TESTED_LOCAL_SOURCE`, and launch the
+diagnostic through `scripts/remote_job.py` plus
+`scripts/he4fresh/launch.py --loader-smoke --out RUN --steps 32`. Both scratch
+arms restore the same complete paused state; the original production recovery
+receipt remains unchanged. The source selector becomes `active-source.json`
+with status `QUALIFIED_LOCAL_SOURCE` only after successful qualification.
+
+The old remote dataset is retained until the local copy and old/new diagnostic
+are complete. Then check remaining consumers and remove that exact source tree
+under Philip's explicit migration authorization. No remote checkpoint backup
+is removed by this data-source retirement. The production recipe, global
+window order, target, objective, optimizer and original budget stay fixed.
+
+[Model retention policy and evidence](../storage-cleanup-20261110/report.md)
+records 441 retired local model artifacts and the protected HE4/Csmallbroad,
+foundation/B0 and W1A8/DSpark baselines. An initially attempted cold offload was
+canceled after Philip authorized retirement instead. All 60 displaced evidence
+files were restored and verified locally; its 12 obsolete model copies and
+private remote temporary tree were then removed. Its private SSHFS mount is
+unmounted; no legacy artifact depends on it.
+
+The remaining sections preserve the original launch history and recovery
+contract. Their SSHFS descriptions concern the original phase, not the intended
+post-migration training input path.
 
 ## Prerequisite and events
 

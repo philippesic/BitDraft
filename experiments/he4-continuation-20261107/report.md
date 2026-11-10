@@ -1,5 +1,9 @@
 # HE4 overnight continuation, November 7–8, 2026
 
+November 10 retention update: the original parent and final full state remain;
+intermediate optimizer states were retired. All measurements remain.
+[Retention record](../storage-cleanup-20261110/report.md).
+
 This continuation does not demonstrate useful native headroom on this consumed-DEV panel.
 
 The unchanged HE4 trajectory used **21600.017 synchronized update seconds**, advancing from **4096 to 173193 updates** (169097 additional updates). Acceptance changed by **-4.76 percentage points**; complete-request throughput relative to HE4-4096 was **0.9411×**, with paired timing interval **[0.9338, 0.9470]**. Relative to external DFlash Q4_K_M it was **0.6380×**. These are preliminary consumed-DEV measurements.

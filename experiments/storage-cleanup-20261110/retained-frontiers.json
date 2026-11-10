@@ -1,0 +1,35 @@
+{
+  "status": "CHECKPOINT_HASH_AND_NATIVE_RECOVERY_DEPENDENCIES_PASS",
+  "records": [
+    {
+      "candidate": "Csmallbroad",
+      "checkpoint": {
+        "path": "/mnt/c/binary-eagle-component-20261105-01/Csmallbroad-4096.pt.bsz",
+        "sha256": "7ec2b71aefc58ff17de06636c9e30f7ee24fdf19f31b9015b5cf75f7fc4f73e6",
+        "bytes": 4244125704
+      },
+      "native": {
+        "path": "/home/philip/binary-eagle-decoding/runs/component-campaign-20261105-01/arms/Csmallbroad/model-4096.gguf",
+        "sha256": "36a40befce8c6b9c64d49ae7074a14938bd0817687f49d40b3f8251ee2111156",
+        "bytes": 183225472
+      },
+      "role": "compact fallback",
+      "evidence": "experiments/component-campaign-20261105/report.md"
+    },
+    {
+      "candidate": "HE4",
+      "checkpoint": {
+        "path": "/mnt/c/binary-eagle-component-20261105-01/HE4-confirm-4096.pt.bsz",
+        "sha256": "0a33150b21316d0bfa4392309ab670a3fcb4e21d5264909cd4b0421651a4dad4",
+        "bytes": 4250228027
+      },
+      "native": {
+        "path": "/home/philip/binary-eagle-decoding/runs/component-campaign-20261105-01/arms/HE4/model-4096.gguf",
+        "sha256": "d24a366aac5c1c3a8757b0533ad03bc87facd386b91350c42831b054ca72a17b",
+        "bytes": 541022144
+      },
+      "role": "original faster-draft endpoint",
+      "evidence": "experiments/component-campaign-20261105/report.md"
+    }
+  ]
+}

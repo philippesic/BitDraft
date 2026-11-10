@@ -33,8 +33,12 @@ def main():
             except (OSError,ValueError,UnicodeError): pass
     result=dict(checked_unix=time.time(),owner_alive=alive(owner['owner']) if owner else False,
         mounts=dict(teacher=TEACHER.is_mount(),archive=DEST.is_mount()),
+        storage=dict(mode='local' if (R/'local-data.json').exists() else 'original-remote',
+            teacher_exists=TEACHER.is_dir(),archive_exists=DEST.is_dir(),
+            local_device=(TEACHER.stat().st_dev==DEST.stat().st_dev==P.stat().st_dev)
+                if TEACHER.exists() and DEST.exists() else False),
         stage=stage,live=live,workflow=read(R/'workflow-result.json'),
-        supervisor=read(P/'runs/he4fresh-supervisor-20261110-01/state.json'),
+        supervisor=read(Path(owner['supervisor_state'])) if owner and owner.get('supervisor_state') else read(P/'runs/he4fresh-supervisor-20261110-01/state.json'),
         gpu=subprocess.check_output(['/usr/lib/wsl/lib/nvidia-smi'],text=True),
         proc_locks=Path('/proc/locks').read_text(),
         disk=subprocess.check_output(['df','-h',str(P),'/mnt/c',str(DEST)],text=True),

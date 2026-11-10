@@ -1,5 +1,9 @@
 # HE4broad source-initialized QAT, November 8, 2026
 
+November 10 retention update: zero and final full states remain; the seven
+superseded hourly optimizer states were retired. All measurements and native
+readouts remain. [Retention record](../storage-cleanup-20261110/report.md).
+
 Status: **COMPLETE**. Completed **226,853 updates** using **28800.038 / 28,800 actual update seconds**. The last recoverable checkpoint covers 226,853 updates. Setup, evaluation, serialization and native panels are outside this budget.
 
 This new recipe starts from authenticated source BF16 DFlash tensors and target Qwen3.5-4B Q4_K_M tensors. No B0, HE4-4096 or overnight continuation parameters/Adam state are loaded. Exact source latent tensors, mean-absolute row scales, zero midpoints/log gains and HE4 initial clipping bounds are asserted before training. Existing saved JSON tensor digests establish distinct trainable scales from both B0 and HE4-4096. The private tied Q4_K vocabulary is installed from its authenticated target-derived matrix.

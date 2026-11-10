@@ -1,0 +1,289 @@
+{
+  "status": "EXECUTED",
+  "files": 0,
+  "already_retired_files": 441,
+  "logical_bytes": 575648506822,
+  "allocated_bytes_before_hardlink_dedup": 0,
+  "campaigns": [
+    {
+      "campaign": "5080-broader-training-20261031",
+      "files": 16,
+      "logical_bytes": 23424691340
+    },
+    {
+      "campaign": "5080-resume-20261010",
+      "files": 5,
+      "logical_bytes": 12597845499
+    },
+    {
+      "campaign": "5080-training-20261009",
+      "files": 9,
+      "logical_bytes": 16846148116
+    },
+    {
+      "campaign": "5080-training-20261013",
+      "files": 4,
+      "logical_bytes": 7326956020
+    },
+    {
+      "campaign": "binary-rescue-head-5080-artifacts-20260928",
+      "files": 13,
+      "logical_bytes": 1774426912
+    },
+    {
+      "campaign": "binary-scale-fitting-5080-artifacts-20260927",
+      "files": 5,
+      "logical_bytes": 181991840
+    },
+    {
+      "campaign": "contender-infra-20261104-01",
+      "files": 6,
+      "logical_bytes": 244813056
+    },
+    {
+      "campaign": "data-cost-transfer-20261104-01",
+      "files": 10,
+      "logical_bytes": 408021760
+    },
+    {
+      "campaign": "design-readiness-20261104-01",
+      "files": 14,
+      "logical_bytes": 571230464
+    },
+    {
+      "campaign": "dspark-a8-full-pool-20261006-01",
+      "files": 2,
+      "logical_bytes": 9759996322
+    },
+    {
+      "campaign": "dspark-freeze-untraced-repro-20261008-03",
+      "files": 1,
+      "logical_bytes": 4878716209
+    },
+    {
+      "campaign": "dspark-same-family-20261018-01",
+      "files": 1,
+      "logical_bytes": 904158880
+    },
+    {
+      "campaign": "he4-continuation-20261107-01",
+      "files": 15,
+      "logical_bytes": 34311043033
+    },
+    {
+      "campaign": "he4broad-20261108-01",
+      "files": 7,
+      "logical_bytes": 29828083571
+    },
+    {
+      "campaign": "lowbit-next-developments-20261018",
+      "files": 4,
+      "logical_bytes": 2900497344
+    },
+    {
+      "campaign": "luna-continuous-a8-a1-20260929",
+      "files": 2,
+      "logical_bytes": 67549824
+    },
+    {
+      "campaign": "luna-continuous-a8-a1-native-order-20260930",
+      "files": 2,
+      "logical_bytes": 67549824
+    },
+    {
+      "campaign": "overnight-quality-20261027",
+      "files": 9,
+      "logical_bytes": 15599247881
+    },
+    {
+      "campaign": "precision-campaign-20261104-01-control-archives",
+      "files": 1,
+      "logical_bytes": 4736173473
+    },
+    {
+      "campaign": "precision-campaign-20261104-01-pilot-archives",
+      "files": 1,
+      "logical_bytes": 4208904228
+    },
+    {
+      "campaign": "precision-prefix-20261020",
+      "files": 11,
+      "logical_bytes": 8178698912
+    },
+    {
+      "campaign": "precision-vanilla-eval-20261104-01",
+      "files": 3,
+      "logical_bytes": 1452348192
+    },
+    {
+      "campaign": "qat-optimization-readiness",
+      "files": 2,
+      "logical_bytes": 67549824
+    },
+    {
+      "campaign": "qat-prepared-final-development-a8-a1-20261003-01",
+      "files": 2,
+      "logical_bytes": 67549824
+    },
+    {
+      "campaign": "qat-prepared-reference-a8-a1-20261003-01",
+      "files": 3,
+      "logical_bytes": 15720523929
+    },
+    {
+      "campaign": "recovery-20261030",
+      "files": 13,
+      "logical_bytes": 47005211362
+    },
+    {
+      "campaign": "residual30-20261023",
+      "files": 4,
+      "logical_bytes": 2635203840
+    },
+    {
+      "campaign": "shortlist-pilots-20261027",
+      "files": 2,
+      "logical_bytes": 1220302944
+    },
+    {
+      "campaign": "training-system-and-pipeline-20261027",
+      "files": 9,
+      "logical_bytes": 15599255129
+    },
+    {
+      "campaign": "unattended-runtime-20261017-13",
+      "files": 1,
+      "logical_bytes": 1629619962
+    },
+    {
+      "campaign": "unattended-training-preparation-20261028",
+      "files": 103,
+      "logical_bytes": 183979426829
+    },
+    {
+      "campaign": "w1-row-a16-checkpoint-zero-export-20260929",
+      "files": 1,
+      "logical_bytes": 33774912
+    },
+    {
+      "campaign": "w1-row-a4-checkpoint-zero-export-20260929",
+      "files": 1,
+      "logical_bytes": 33774912
+    },
+    {
+      "campaign": "w1a8-added-replay-pair-20261103-01",
+      "files": 1,
+      "logical_bytes": 40802176
+    },
+    {
+      "campaign": "w1a8-algorithms-20261020",
+      "files": 105,
+      "logical_bytes": 112465540674
+    },
+    {
+      "campaign": "w1a8-bounded-old5760-20261104-02",
+      "files": 1,
+      "logical_bytes": 40802176
+    },
+    {
+      "campaign": "w1a8-campaign-20261023-root",
+      "files": 20,
+      "logical_bytes": 13184277344
+    },
+    {
+      "campaign": "w1a8-expanded-ce-control3840-01",
+      "files": 1,
+      "logical_bytes": 40802176
+    },
+    {
+      "campaign": "w1a8-expanded-ce-resident-new24-3840-01",
+      "files": 1,
+      "logical_bytes": 40802176
+    },
+    {
+      "campaign": "w1a8-head-pair-20261103-01",
+      "files": 2,
+      "logical_bytes": 81604352
+    },
+    {
+      "campaign": "w1a8-modern-compact-qualification-20261103-01",
+      "files": 2,
+      "logical_bytes": 81604352
+    },
+    {
+      "campaign": "w1a8-modern-gpu-training-qualification-20261103-01",
+      "files": 1,
+      "logical_bytes": 40802176
+    },
+    {
+      "campaign": "w1a8-modern-packed-init-20261103-01",
+      "files": 1,
+      "logical_bytes": 40802176
+    },
+    {
+      "campaign": "w1a8-modern-protected-20261103-01",
+      "files": 10,
+      "logical_bytes": 408021760
+    },
+    {
+      "campaign": "w1a8-selected-head-real-qualification-20261103-01",
+      "files": 1,
+      "logical_bytes": 40802176
+    },
+    {
+      "campaign": "w1a8-selected-sign-control3840-01",
+      "files": 1,
+      "logical_bytes": 40802176
+    },
+    {
+      "campaign": "w1a8-selected-sign-learn3840-01",
+      "files": 4,
+      "logical_bytes": 318850708
+    },
+    {
+      "campaign": "w1a8-selected-sign-lr-control4320-01",
+      "files": 1,
+      "logical_bytes": 79712997
+    },
+    {
+      "campaign": "w1a8-selected-sign-lr1e3-4320-01",
+      "files": 1,
+      "logical_bytes": 79788773
+    },
+    {
+      "campaign": "w1a8-selected-sign-lr3e3-4320-01",
+      "files": 1,
+      "logical_bytes": 79788773
+    },
+    {
+      "campaign": "w1a8-selected-sign-qualification-20261103-01",
+      "files": 5,
+      "logical_bytes": 281613514
+    }
+  ],
+  "keep_policy": [
+    "component-campaign-20261105-01",
+    "dflash-modern-resume-20261104-12",
+    "dflash-modern-train-20261104-14",
+    "dflash2-smoke-20261106-01",
+    "dspark-q4km-campaign-20261018",
+    "he4broad-20261108-01",
+    "he4broad-20261110-01",
+    "precision-campaign-20261104-01",
+    "spec-shortlist-20261030",
+    "w1a8-generalization-20261102"
+  ],
+  "raw_plan": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/pause-fix-20261110/checkpoint-retirement-plan.json",
+  "deleted_files": 441,
+  "raw_journal": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/pause-fix-20261110/checkpoint-retirement.jsonl",
+  "by_storage_logical_bytes": {
+    "WSL": 406650591520,
+    "WindowsC": 168997915302
+  },
+  "observed_free_bytes": {
+    "WSL": 329140633600,
+    "WindowsC": 145484529664
+  },
+  "observed_free_note": "Dataset transfer is in progress; these are observed free bytes, not physical savings computed by subtracting unrelated snapshots.",
+  "cuda_cache_retirement_bytes": 46678913024
+}

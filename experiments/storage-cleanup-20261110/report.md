@@ -19,10 +19,12 @@ state; no sustained training restart is part of this cleanup.
 | Frozen modern W1A8 baseline and resume qualification; DSpark Q4 comparison and source model directories | Retain representative baselines and reproducible controls without retaining every historical one-off fork. [W1A8 protocol](../../docs/CANDIDATE_BENCHMARKING.md). |
 | Component/precision parent states, dictionary bases, source and compact findings | Recovery dependencies for retained native/model states must not be removed merely because a child result is preserved. |
 
-The initial reviewed batch contains 61 large superseded model artifacts, about
-227 GiB logical size. A broader per-file inventory includes smaller candidate
-exports and Windows-side intermediate states. [Initial batch](large-model-plan-summary.json)
-and [retirement summary](retirement-summary.json) record scope and outcomes.
+The completed retirement contains **441 model artifacts, 536.11 GiB logical
+size** across Linux and Windows. The initial batch contained 61 large models;
+later batches cover smaller candidate exports, superseded HE4 intermediate
+states and obsolete compressed controls. Hard links make logical totals larger
+than actual physical reclaim. [Initial batch](large-model-plan-summary.json) and
+[retirement summary](retirement-summary.json) record scope and outcomes.
 Raw per-file plans and deletion receipts are under
 `runs/he4broad-20261110-01/pause-fix-20261110/`.
 
@@ -31,8 +33,15 @@ Raw per-file plans and deletion receipts are under
 All original non-model result/config/chart/log files remain in their historical
 run folders. Existing Git-visible campaign reports, figures and machine-readable
 results remain. [Selected retired-campaign summaries](retired-campaign-evidence.json)
-preserve bounded result/config excerpts with their source hashes when the full
-inventory completes. Retirement does not claim deleted states are resumable.
+preserve bounded result/config excerpts for 51 campaigns with their source
+hashes. Retirement does not claim deleted states are resumable.
+
+The old precision foundation-pilot and matched-vanilla **optimizer** archives
+were retired; their result/config records and recoverable evaluated native models
+remain. Their obsolete local checkpoint aliases are explicitly marked retired.
+The actual essential foundation, B0 and frozen modern W1A8 references remain.
+[HE4/Csmallbroad checkpoint and native-dependency verification](retained-frontiers.json)
+records the retained decision endpoints.
 
 The maintained [retention command](../../scripts/he4fresh/retire_history.py)
 protects the current run, selected baselines/frontiers, source trees, input data,

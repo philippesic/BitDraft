@@ -6,6 +6,21 @@ import subprocess
 from .common import *
 
 
+def freeze_source(destination):
+    destination=Path(destination)
+    assert not destination.exists(), 'Preserve every existing source closure'
+    paths = list((ROOT/'src').rglob('*.py')) + list((ROOT/'scripts').glob('*.py'))
+    for directory in ('component_campaign','dflash_baseline','execution_campaign','he4fresh','he4broad'):
+        paths += list((ROOT/'scripts'/directory).glob('*.py'))
+    paths.append(ROOT/'experiments/w1a8-standing-20261102/baseline.json')
+    for path in paths:
+        target=destination/path.relative_to(ROOT);target.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copyfile(path,target)
+    save(destination/'source-manifest.json',dict(head=subprocess.check_output(
+        ['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),files=[pin(destination/p.relative_to(ROOT)) for p in paths]))
+    return pin(destination/'source-manifest.json')
+
+
 def main():
     assert not (R/'gpu-owner.json').exists(), 'Do not replace a launched recipe'
     assert DEST.is_mount() and TEACHER.is_mount()
@@ -28,16 +43,7 @@ def main():
     oldproof = json.load(open(P/'runs/he4broad-20261108-01/q4-matrix-proof.json'))
     authenticate(oldproof['basis']); authenticate(oldproof['original']['source'])
     save(R/'q4-matrix-proof.json',oldproof)
-    paths = list((ROOT/'src').rglob('*.py')) + list((ROOT/'scripts').glob('*.py'))
-    for directory in ('component_campaign','dflash_baseline','execution_campaign','he4fresh','he4broad'):
-        paths += list((ROOT/'scripts'/directory).glob('*.py'))
-    paths.append(ROOT/'experiments/w1a8-standing-20261102/baseline.json')
-    for path in paths:
-        destination = R/'source'/path.relative_to(ROOT)
-        destination.parent.mkdir(parents=True,exist_ok=True)
-        shutil.copyfile(path,destination)
-    save(R/'source/source-manifest.json',dict(head=subprocess.check_output(
-        ['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),files=[pin(R/'source'/p.relative_to(ROOT)) for p in paths]))
+    freeze_source(R/'source')
     save(R/'prepared.json',dict(status='PREPARED',recipe=pin(R/'recipe.json'),
         source=pin(R/'source/source-manifest.json'),archive_free_bytes=shutil.disk_usage(DEST).free))
     print('PREPARED',flush=True)

@@ -9,7 +9,7 @@ import json
 import os
 import stat
 import time
-from pathlib import Path
+from pathlib import Path,PureWindowsPath
 
 from .common import P,R,REPORT,save,pin
 
@@ -24,7 +24,26 @@ PROTECTED_RUNS={
 }
 
 
+def registry_paths():
+    paths=set()
+    def walk(value):
+        if isinstance(value,dict):
+            for item in value.values():walk(item)
+        elif isinstance(value,list):
+            for item in value:walk(item)
+        elif isinstance(value,str) and value.startswith(('/home/philip/','/mnt/c/')):paths.add(value)
+    for path in (P/'experiments/dflash-w1a8-baseline-20261104/manifest.json',
+                 P/'experiments/w1a8-standing-20261102/baseline.json',
+                 R/'q4-matrix-proof.json',P/'scripts/dspark_screen/released_inventory.json'):
+        walk(json.load(open(path)))
+    return paths
+
+
+REGISTRY_PATHS=registry_paths()
+
+
 def candidate(path,root):
+    if str(path) in REGISTRY_PATHS:return False
     parts=path.relative_to(root).parts;name=path.name.lower()
     if not parts:return False
     if any(part in ('source','src','scripts','checkouts','vendor','third_party','.git') or part.startswith('source-') for part in parts):return False
@@ -40,6 +59,7 @@ def candidate(path,root):
         return True
     if name.endswith(('.pt','.pth','.pt.bsz','.pt.zst','.pt.gz','.ckpt')):
         if any(('capture' in part.lower() or part.lower() in ('data','prepared-data','datasets','features')) for part in parts):return False
+        if name.endswith(('.pt.bsz','.pt.zst','.pt.gz')):return True
         return ('checkpoint' in name or name.startswith(('step-','model-')) or
                 any('checkpoint' in part.lower() for part in parts[:-1]))
     return False
@@ -47,26 +67,44 @@ def candidate(path,root):
 
 def plan():
     rows=[];evidence=collections.defaultdict(list);by_campaign=collections.defaultdict(lambda:collections.Counter())
+    journal=WORK/'checkpoint-retirement.jsonl'
+    retired=[json.loads(line) for line in journal.read_text().splitlines()] if journal.exists() else []
+    for row in retired:
+        by_campaign[row['campaign']]['files']+=1;by_campaign[row['campaign']]['logical_bytes']+=row['bytes']
     roots=[P/'runs',Path('/mnt/c/Users/philip/binary-eagle-decoding-artifacts')]
     for root in roots:
-        for base,dirs,names in os.walk(root,followlinks=False):
-            first=Path(base)==root
-            dirs[:]=[d for d in dirs if not Path(base,d).is_symlink() and not Path(base,d).is_mount()
-                     and d not in ('.git','node_modules','__pycache__','.venv','venv','vendor','third_party',
-                                   'checkouts','source','src','scripts','site-packages','data','prepared-data','features','datasets')
-                     and not d.startswith('source-') and 'capture' not in d.lower()
-                     and not (first and d in PROTECTED_RUNS)]
-            for name in names:
+        if root==P/'runs':
+            paths=[P/line for line in (WORK/'linux-model-inventory.txt').read_text().splitlines()]
+        else:
+            raw=json.loads((WORK/'windows-model-inventory.json').read_text(encoding='utf-8-sig'))
+            paths=[Path('/mnt/c').joinpath(*PureWindowsPath(row['FullName']).parts[1:]) for row in raw]
+        retired_paths={Path(row['path']) for row in retired if row['root']==str(root)}
+        paths=list(dict.fromkeys([*paths,*retired_paths]))
+        neighbors=set()
+        for path in paths:
+            if not candidate(path,root) and path not in retired_paths:continue
+            for parent in list(path.parents)[:5]:
+                if not parent.is_relative_to(root):break
+                for name in ('result.json','results.json','summary.json','report.md','manifest.json','accounting.json'):
+                    neighbors.add(parent/name)
+        paths+=sorted(neighbors)
+        # Native inventories avoid one WSL/NTFS metadata round trip per unrelated
+        # source/cache file. Missing/inaccessible entries remain protected.
+        for path in paths:
+                base=path.parent;name=path.name
                 path=Path(base,name);relative=path.relative_to(root);campaign=relative.parts[0]
+                selected=candidate(path,root)
+                small_evidence=name in ('result.json','results.json','summary.json','report.md','manifest.json','accounting.json')
+                if not selected and not small_evidence:continue
                 try:info=path.lstat()
                 except OSError:continue
                 if not stat.S_ISREG(info.st_mode):continue
-                if candidate(path,root) and info.st_size>32*2**20:
+                if selected and info.st_size>32*2**20:
                     row=dict(path=str(path),root=str(root),campaign=campaign,bytes=info.st_size,
                         allocated_bytes=info.st_blocks*512,device=info.st_dev,inode=info.st_ino,
                         mtime_ns=info.st_mtime_ns,links=info.st_nlink)
                     rows.append(row);by_campaign[campaign]['files']+=1;by_campaign[campaign]['logical_bytes']+=info.st_size
-                elif name in ('result.json','results.json','summary.json','report.md','manifest.json','accounting.json') and len(relative.parts)<=4 and info.st_size<256*1024:
+                elif small_evidence and info.st_size<256*1024:
                     evidence[campaign].append(path)
     # Windows HE4broad predecessor: preserve zero and final; retire intermediate
     # optimizer states only, with every original result/readout retained.
@@ -95,7 +133,7 @@ def plan():
         summaries.append(dict(campaign=campaign,**counts,evidence=samples,
             evidence_policy='All original non-model raw result/config/chart/log files retained in place; selected compact summaries preserved here.'))
     save(CATALOG/'retired-campaign-evidence.json',dict(checked_unix=time.time(),campaigns=summaries))
-    summary=dict(status='PLANNED',files=len(rows),logical_bytes=sum(x['bytes'] for x in rows),
+    summary=dict(status='PLANNED',files=len(rows),already_retired_files=len(retired),logical_bytes=sum(x['bytes'] for x in rows),
         allocated_bytes_before_hardlink_dedup=sum(x['allocated_bytes'] for x in rows),
         campaigns=[dict(campaign=k,**v) for k,v in sorted(by_campaign.items())],
         keep_policy=sorted(PROTECTED_RUNS),raw_plan=str(WORK/'checkpoint-retirement-plan.json'))

@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 import numpy as np
-from .data import TeacherCapture, LazyTeachers
+from .data import TeacherCapture, LocalTeacherCapture, LazyTeachers
 from .common import REMOTE_TEACHER
 
 
@@ -49,6 +49,20 @@ class DataTests(unittest.TestCase):
         teachers=LazyTeachers([self.row]*5)
         for i in range(5): teachers[i]
         self.assertEqual(list(teachers.cache),[3,4])
+
+    def test_local_loader_preserves_exact_features_and_eog_labels(self):
+        old=TeacherCapture(self.row);new=LocalTeacherCapture(self.row)
+        np.testing.assert_array_equal(old.features.numpy(),new.features.numpy())
+        self.assertEqual(old.tokens,new.tokens)
+        self.assertEqual(old.labels,new.labels)
+        self.assertEqual(old.anchors,new.anchors)
+
+    def test_local_loader_does_not_rehash_and_rejects_truncation(self):
+        with patch('scripts.he4fresh.data.hashlib.sha256',side_effect=AssertionError('Repeated hash')):
+            LocalTeacherCapture(self.row)
+        path=self.root/'layer-2.f32';path.write_bytes(path.read_bytes()[:-4])
+        with self.assertRaisesRegex(ValueError,'Truncated local feature'):
+            LocalTeacherCapture(self.row)
 
 
 if __name__=='__main__': unittest.main()

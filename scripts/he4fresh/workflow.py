@@ -61,8 +61,15 @@ def panel(point):
 def main():
     signal.signal(signal.SIGTERM,stop); signal.signal(signal.SIGINT,stop)
     pause()
-    assert TEACHER.is_mount() and DEST.is_mount()
-    assert shutil.disk_usage(DEST).free > 80*2**30
+    from .data import local_admission
+    local_admission(json.load(open(R/'recipe.json'))['config'])
+    # Reserve the remaining checkpoints/exports plus recovery/export scratch.
+    readouts=json.load(open(OUT/'readouts.json'))
+    complete={row['label'] for row in readouts}
+    remaining=sum(str(point) not in complete for point in POINTS)
+    state_bytes=json.load(open(OUT/'recovery.json'))['archive_bytes']
+    required=remaining*(state_bytes+1024*2**20)+8*2**30
+    assert shutil.disk_usage(DEST).free>required, 'Insufficient local checkpoint headroom'
     locks = []
     try:
         for path in (P/'runs/contender-gpu.lock',Path('/home/philip/.cache/semantic-offload/gpu-0.lock'),Path('/tmp/vllm-semantic-cache-gpu.lock')):
@@ -70,14 +77,19 @@ def main():
             fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
         gpu = subprocess.check_output(['/usr/lib/wsl/lib/nvidia-smi','--query-compute-apps=pid,process_name','--format=csv,noheader'],text=True).strip()
         assert not gpu, 'Other GPU job: '+gpu
+        parent_args=Path(f'/proc/{os.getppid()}/cmdline').read_bytes().decode().split('\0')
+        supervisor_index=next(i for i,x in enumerate(parent_args) if Path(x).name=='remote_job.py')
+        supervisor_state=P/'runs'/parent_args[supervisor_index+1]/'state.json'
         save(R/'gpu-owner.json',dict(owner=identity(),locks=[str(x.name) for x in locks],
-            tmux_socket='binary-eagle-runtime',tmux_session='he4fresh-20261110-01',source=pin(R/'source/source-manifest.json')))
+            tmux_socket='binary-eagle-runtime',tmux_session=os.environ.get('HE4_TMUX_SESSION','he4fresh-20261110-01'),
+            source=pin(ROOT/'source-manifest.json'),supervisor_state=str(supervisor_state)))
         for point in POINTS:
             readouts = json.load(open(OUT/'readouts.json')) if (OUT/'readouts.json').exists() else []
-            if str(point) not in {row['label'] for row in readouts}:
+            new_stage=str(point) not in {row['label'] for row in readouts}
+            if new_stage:
                 run('scripts.he4fresh.train',['--until',point],'train-'+str(point))
             result = json.load(open(OUT/'result.json'))
-            if stopped or result['status']=='PAUSED': break
+            if stopped or (new_stage and result['status']=='PAUSED'): break
             panel(point)
             run('scripts.he4fresh.publish',[],'publish-'+str(point))
         result = json.load(open(OUT/'result.json'))

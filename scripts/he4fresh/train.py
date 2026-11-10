@@ -190,7 +190,7 @@ def main():
             if stopped: break
             iteration_started = time.perf_counter()
             index, anchor = windows[order[progress['cursor'] % len(windows)]]
-            capture = train[index]  # Remote I/O and hashing are outside GPU update timing.
+            capture = train[index]  # Local materialization is outside model-update timing.
             data_elapsed = time.perf_counter() - iteration_started
             torch.cuda.synchronize(); started = time.perf_counter()
             try:
