@@ -31,10 +31,11 @@ with zero-based pre-block input semantics and an authenticated teacher, tokenize
 template. Hard labels must match the argmax of finite full logits. Logit `p` predicts
 token `p + 1`. The final prompt token is a valid first anchor: logit `prompt_tokens - 1`
 predicts the first generated token. End-of-generation tokens inside the prompt do not
-stop generation; the first generated one is the last supervised label. Each window
-covers fifteen labels.
+stop generation; the first generated one is the last supervised label. The original `full15` policy requires fifteen labels. Explicit `up-to-15` metadata
+also admits shorter terminal windows, normalizing the same decay weights over available
+labels. It retains short answers and EOS without inventing padding or post-EOS labels.
 
-The reader handles the modern eight-tap F32 format and optional pinned int32 NPY copies.
+The reader handles modern eight-tap F32 and explicitly declared FP16 storage and optional pinned int32 NPY copies.
 It authenticates files before use, bounds how many features it materializes, and
 reconstructs the original seeded permutation from the saved cursor, repeating it each
 pass. Historical DSpark captures are not modern HE4 teacher data.
@@ -54,7 +55,8 @@ Admission estimates position visits for the current corpus and supplied run budg
 accounting for overlapping windows. These are not measured lifetime per-position counts.
 Same-recipe resume restores the sampler cursor and aggregate exposure counters. Branching
 keeps aggregate counters and parent lineage but resets the cursor and optimizer; its
-recipe, seed or corpus may change. No per-position lifetime exposure ledger is retained
+recipe, seed or corpus may change. Payload 4 preserves exact observed label totals and dataset identity/origin for the
+new pipeline. No per-position lifetime exposure ledger is retained
 across those changes. Exposure limits and minimum-data policies are caller inputs; test
 values are examples, not approved scientific thresholds.
 
@@ -64,3 +66,17 @@ values are examples, not approved scientific thresholds.
 under explicit byte and time limits; `--help` lists its arguments. It never moves raw
 features and grants no admission. Unpacking refuses path traversal, duplicate members
 and non-regular files, and the index reader must still reconcile the result.
+
+## Capture and format conversion
+
+[Benchmark commands](benchmarks.md) prepare/admit prompt banks and capture pinned native
+teacher trajectories. TRAIN and DEV acquisitions keep their roles. A DEV capture corpus
+is diagnostic input and cannot pass training admission as an empty TRAIN corpus.
+Opaque heldout identity metadata protects heldout24 without reading its prompts/answers.
+
+`python -m w1a1_eagle.numerical.conversion SPEC OUTPUT` converts a schema-1 F32 corpus to
+F16 in a new external root. The spec binds `corpus`, `maximum_relative_l2` and
+`capture_limit_bytes` under schema 1. It checks all finite values and overflow, streams
+bounded chunks through atomic assets, preserves labels/roles and supporting metadata,
+and records per-array errors. It never deletes the original. Conversion success is a
+numerical/storage result; production suitability requires matched learning/native checks.

@@ -9,7 +9,7 @@ from torch import Tensor
 
 from w1a1_eagle.contracts import integer, record, sequence
 from w1a1_eagle.data import CaptureSpec as CaptureSpec
-from w1a1_eagle.data import Window, windows
+from w1a1_eagle.data import Supervision, supervision
 
 HalfArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.float16]]"
 FloatArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.float32]]"
@@ -22,7 +22,7 @@ TAPS = (2, 6, 10, 14, 18, 22, 26, 30)
 class Capture:
     tokens: tuple[int, ...]
     features: Tensor
-    windows: tuple[Window, ...]
+    windows: tuple[Supervision, ...]
 
     @property
     def bytes(self) -> int:
@@ -48,13 +48,14 @@ def load_capture(spec: CaptureSpec, byte_budget: int, hidden: int = 2560) -> Cap
     eog = tuple(integer(v) for v in sequence(metadata["eog_ids"]))
     if any(value in eog for value in labels[:-1]):
         raise ValueError("post-EOG label exposure")
-    selected = windows(
+    selected = supervision(
         spec.identity,
         tokens,
         prompt_tokens,
         positions,
         labels,
         labels[-1] if labels and labels[-1] in eog else None,
+        str(metadata.get("window_policy", "full15")),
     )
     feature_dtype = metadata.get("feature_dtype", "float32")
     if feature_dtype not in ("float32", "float16"):

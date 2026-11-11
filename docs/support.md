@@ -25,11 +25,11 @@ The full gate uses the configured interpreter; this does not qualify other hosts
 | --- | --- |
 | Training device | CPU and CUDA intents are implemented; CUDA obtains an exclusive host lease and refuses existing compute jobs. |
 | Historical checkpoints | Authenticated legacy BSZ import is implemented; the final HE4broad state reproduces its next original-data update exactly. |
-| Native runtime | A complete runtime was freshly rebuilt on RTX 5080; source/build receipts remain external. A maintained rebuild entry and broader compatibility qualification remain pending. |
+| Native runtime | Complete rebuild and maintained native-build/native-helpers commands were exercised on RTX 5080; build receipts remain external. Broader host compatibility is unqualified. |
 | Serving correctness | No exported model from this repository has completed native target-only/speculative output, stopping and finite-logit qualification. |
-| New data capture | The authored resident capture helper passed F32/F16, long-context, serving-trajectory and cache-reset pilots; a resumable production capture command remains pending. |
-| Scientific selection | Workload selection, comparison statistics and serving-based checkpoint selection are not implemented. |
-| End-to-end path | A real capture/import → train → stop/resume → export → native verification workflow is not qualified. |
+| New data capture | Resumable capture and bounded format-conversion commands are implemented; diverse TRAIN/DEV qualification captures have run. Production format adoption remains under matched qualification. |
+| Scientific selection | Category/length selection, opaque identity admission and paired request statistics are implemented. Serving-based checkpoint selection and live workflow integration remain pending. |
+| End-to-end path | Public FP16 capture → optimizer-preserving CUDA continuation → export completed; schema-4 GPU resume and complete serving-based periodic workflow qualification remain pending. |
 | Exposure across branches | Aggregate counters and lineage survive; a per-position lifetime ledger across changed recipes/corpora is not implemented. |
 | Data recovery | The historical eight-prompt discrepancy remains unresolved; see the deduplication result. |
 

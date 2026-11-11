@@ -27,12 +27,13 @@ class Comparison:
     depth: int
     role: str
     tier: str
+    protected: frozenset[str]
 
     @classmethod
     def load(cls, path: Path) -> "Comparison":
         raw = read(path)
         if (
-            set(raw)
+            set(raw) - {"exclusions"}
             != {
                 "schema",
                 "source",
@@ -52,6 +53,13 @@ class Comparison:
         ):
             raise ValueError("unsupported comparison specification")
         root = path.resolve().parent
+        protected = {"heldout24"}
+        if "exclusions" in raw:
+            exclusion = artifact(raw["exclusions"], root)
+            exclusion.verify()
+            protected.update(
+                string(value) for value in sequence(read(exclusion.path)["identities"])
+            )
         arms = []
         for value in sequence(raw["arms"]):
             row = record(value)
@@ -96,6 +104,15 @@ class Comparison:
             seen.add(identity)
             if task["role"] != role or integer(task["output_cap"]) < 1:
                 raise ValueError("workload role or output cap mismatch")
+            ancestry = record(task.get("ancestry", {}))
+            names = {
+                identity,
+                string(task["group"]),
+                string(ancestry.get("source_key", identity)),
+                *(string(v) for v in sequence(ancestry.get("aliases", []))),
+            }
+            if names & protected:
+                raise ValueError("protected heldout identity in evaluation workload")
             string(task["group"])
             string(task["category"])
             messages = sequence(task["messages"])
@@ -129,6 +146,7 @@ class Comparison:
             depth,
             role,
             tier,
+            frozenset(protected),
         )
 
     def verify(self) -> None:

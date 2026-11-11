@@ -1,16 +1,14 @@
+import hashlib
 import json
 import subprocess
 from pathlib import Path
 from typing import Iterator, Protocol, cast
 
-import gguf
-import jinja2.sandbox
 import pyarrow.parquet
 
 from w1a1_eagle.config import native_environment
 from w1a1_eagle.contracts import Record, integer, record, sequence, string
-from w1a1_eagle.numerical.weights import GGUF
-from w1a1_eagle.records import canonical, identity
+from w1a1_eagle.records import canonical
 
 
 class Table(Protocol):
@@ -33,14 +31,14 @@ def json_rows(path: Path) -> Iterator[Record]:
             yield record(cast(object, json.loads(line)))
 
 
+class TemplateRefused(ValueError):
+    pass
+
+
 class Tokenizer:
     def __init__(self, binary: Path, target: Path, log: Path) -> None:
-        reader = cast(GGUF, gguf).GGUFReader(str(target))
-        template = string(reader.fields["tokenizer.chat_template"].contents())
-        self.template_sha256 = identity({"template": template})
-        environment = jinja2.sandbox.SandboxedEnvironment(trim_blocks=True, lstrip_blocks=True)
-        environment.globals["raise_exception"] = self.refuse
-        self.template = environment.from_string(template)
+        self.last_prompt: str | None = None
+        self.last_tokens: tuple[int, ...] = ()
         self.log = log.open("w")
         self.process = subprocess.Popen(
             [str(binary), str(target)],
@@ -50,40 +48,60 @@ class Tokenizer:
             text=True,
             env=native_environment(binary.parent) | {"CUDA_VISIBLE_DEVICES": ""},
         )
-        if self.process.stdout is None or not record(
-            cast(object, json.loads(self.process.stdout.readline()))
-        ).get("ready"):
+        if self.process.stdout is None:
             self.close()
-            raise ValueError("native vocabulary helper did not initialize")
+            raise ValueError("native vocabulary helper has no response pipe")
+        ready = record(cast(object, json.loads(self.process.stdout.readline())))
+        if ready.get("ready") is not True or ready.get("native_chat_template") is not True:
+            self.close()
+            raise ValueError(
+                "rebuild the tokenizer helper with the authoritative native chat renderer"
+            )
+        self.template_sha256 = hashlib.sha256(string(ready["template"]).encode()).hexdigest()
 
-    @staticmethod
-    def refuse(message: str) -> str:
-        raise ValueError(message)
-
-    def render(self, messages: list[Record], tools: list[Record]) -> str:
-        return self.template.render(
-            messages=messages,
-            tools=tools,
-            add_generation_prompt=True,
-            enable_thinking=False,
-            bos_token="",
-            eos_token="<|im_end|>",
-        )
-
-    def tokenize(self, rendered: str) -> tuple[int, ...]:
+    def query(self, payload: Record) -> Record:
         if self.process.stdin is None or self.process.stdout is None:
             raise ValueError("tokenizer pipes unavailable")
-        self.process.stdin.write(canonical({"text": rendered}).decode() + "\n")
+        encoded = canonical(payload)
+        if len(encoded) > 2 * 1024 * 1024:
+            raise TemplateRefused("prompt exceeds bounded native request protocol")
+        self.process.stdin.write(encoded.decode() + "\n")
         self.process.stdin.flush()
-        reply = record(cast(object, json.loads(self.process.stdout.readline())))
+        line = self.process.stdout.readline()
+        if not line:
+            raise ValueError("native prompt helper exited; inspect tokenizer.log")
+        reply = record(cast(object, json.loads(line)))
+        if "error" in reply:
+            raise TemplateRefused(string(reply["error"]))
+        return reply
+
+    def render(self, messages: list[Record], tools: list[Record]) -> str:
+        payload = record(
+            cast(object, json.loads(canonical({"messages": messages, "tools": tools})))
+        )
+        reply = self.query(payload)
+        self.last_prompt = string(reply["prompt"])
+        self.last_tokens = self.identifiers(reply)
+        return self.last_prompt
+
+    @staticmethod
+    def identifiers(reply: Record) -> tuple[int, ...]:
         tokens = tuple(integer(v) for v in sequence(reply["tokens"]))
         if len(tokens) != integer(reply["n_tokens"]):
             raise ValueError("native tokenizer count disagreement")
         return tokens
 
+    def tokenize(self, rendered: str) -> tuple[int, ...]:
+        if rendered == self.last_prompt:
+            return self.last_tokens
+        return self.identifiers(self.query({"text": rendered}))
+
     def close(self) -> None:
         if self.process.stdin is not None:
-            self.process.stdin.close()
+            try:
+                self.process.stdin.close()
+            except BrokenPipeError:
+                pass
         try:
             self.process.wait(timeout=15)
         except subprocess.TimeoutExpired:

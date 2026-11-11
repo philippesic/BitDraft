@@ -16,7 +16,7 @@ from torch import nn
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.clock import Monotonic
 from w1a1_eagle.contracts import Record, number, record, sequence
-from w1a1_eagle.data import Artifact, Window
+from w1a1_eagle.data import Artifact, Supervision, Window
 from w1a1_eagle.identity import source_identity
 from w1a1_eagle.intent import Intent
 from w1a1_eagle.lifecycle import Journal
@@ -33,6 +33,37 @@ from w1a1_eagle.training import Budget
 
 
 class TestNumerical(unittest.TestCase):
+    def test_short_capture_uses_explicit_partial_objective(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            corpus = Corpus(self.fixture_corpus(root, 4), 1, 32 * 1024 * 1024, 4)
+            original = corpus.rows[0].capture
+            metadata = read(original.metadata.path)
+            metadata.update(
+                {"prompt_tokens": 22, "logit_positions": [22, 23], "greedy_ids": [1, 19]}
+            )
+            original.metadata.path.write_bytes(canonical(metadata))
+            files = tuple(ref for ref in original.files if ref.path.suffix == ".f32")
+            spec = CaptureSpec("short", self.reference(original.metadata.path), files)
+            self.assertEqual(load_capture(spec, 32 * 1024 * 1024, 4).windows, ())
+            metadata["window_policy"] = "up-to-15"
+            original.metadata.path.write_bytes(canonical(metadata))
+            spec = CaptureSpec("short", self.reference(original.metadata.path), files)
+            capture = load_capture(spec, 32 * 1024 * 1024, 4)
+            self.assertEqual(tuple(len(window.labels) for window in capture.windows), (2, 1))
+
+            class Samples:
+                def sample(self, cursor: int) -> tuple[Capture, Supervision]:
+                    return capture, capture.windows[cursor % len(capture.windows)]
+
+            model, _ = self.tiny_model()
+            worker = TensorWorker(model, Samples(), "explicit-partial-objective")
+            self.assertEqual(
+                worker.run(Monotonic(), Budget(1, 30, 1), lambda: False), "update-budget"
+            )
+            self.assertEqual(worker.updates, 1)
+            self.assertIsNotNone(worker.progress.last_loss)
+
     def test_cache_storage_rounds_values_preserves_gradients(self) -> None:
         values = torch.tensor([0.1234567, -1.234567], requires_grad=True)
         upstream = torch.tensor([0.9876543, -0.456789])
@@ -483,7 +514,7 @@ class TestNumerical(unittest.TestCase):
                 expected,
                 [Corpus(corpus_ref, 17, 64 * 1024 * 1024, 256).locate(i)[1] for i in range(5)],
             )
-            self.assertEqual(corpus.exposure(4)["mean_visits"], 60 / 16)
+            self.assertEqual(corpus.exposure(4)["mean_visits_upper_bound"], 60 / 16)
             intent: Record = {
                 "schema": 2,
                 "objective": "exercise CPU source integration",
@@ -736,10 +767,21 @@ class TestNumerical(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "incomplete"):
                 broken.checkpoint(Store(Path(directory) / "invalid"), 4 * 1024 * 1024)
             state = torch.load(parent.artifact.path, map_location="cpu", weights_only=True)
-            self.assertEqual(state["schema"], 3)
+            self.assertEqual(state["schema"], 4)
             self.assertNotIn("vocabulary", state["model"])
             self.assertNotIn("fusion.operand", state["model"])
             self.assertEqual(state["frozen_sha256"], original.frozen_sha256)
+            legacy_state = dict(state)
+            legacy_state.pop("accounting")
+            legacy_state["schema"] = 3
+            legacy_reference = Store(Path(directory) / "schema-three").commit_with(
+                lambda output: torch.save(legacy_state, output), "recipe", 1, 4 * 1024 * 1024
+            )
+            legacy_worker = self.fixture_worker("recipe")
+            legacy_worker.restore(legacy_reference, 8 * 1024 * 1024)
+            legacy_worker.run(Monotonic(), Budget(2, 60, 2), lambda: False)
+            for name, value in legacy_worker.model.named_parameters():
+                self.assertTrue(torch.equal(value, expected[name]), name)
             first_state = next(iter(state["optimizer"]["state"].values()))
             first_state["exp_avg"] = torch.zeros((1,))
             malformed = Store(Path(directory) / "malformed").commit_with(
@@ -747,6 +789,34 @@ class TestNumerical(unittest.TestCase):
             )
             with self.assertRaisesRegex(ValueError, "moment geometry"):
                 self.fixture_worker("recipe").restore(malformed, 8 * 1024 * 1024)
+
+    def test_continuation_keeps_optimizer_and_dataset_exposure_origin(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            original = self.fixture_worker("old-recipe")
+            original.accounting.dataset = "a" * 64
+            original.run(Monotonic(), Budget(1, 60, 1), lambda: False)
+            parent = original.checkpoint(Store(root / "old"), 4 * 1024 * 1024)
+            changed = self.fixture_worker("new-recipe")
+            changed.accounting.dataset = "b" * 64
+            changed.restore(parent, 8 * 1024 * 1024, mode="continue")
+            self.assertEqual(changed.optimizer_updates, 1)
+            self.assertEqual(changed.accounting.dataset_start_updates, 1)
+            self.assertEqual(changed.accounting.dataset_labels, 0)
+            self.assertEqual(changed.accounting.observed_labels, 15)
+            changed.run(Monotonic(), Budget(2, 60, 2), lambda: False)
+            saved = changed.checkpoint(Store(root / "new"), 4 * 1024 * 1024)
+            resumed = self.fixture_worker("new-recipe")
+            resumed.accounting.dataset = "b" * 64
+            resumed.restore(saved, 8 * 1024 * 1024)
+            self.assertEqual(resumed.accounting.dataset_labels, 15)
+            self.assertEqual(resumed.accounting.dataset_start_updates, 1)
+            self.assertEqual(resumed.accounting.observed_labels, 30)
+            self.assertEqual(resumed.accounting.encode(), changed.accounting.encode())
+            wrong = self.fixture_worker("new-recipe")
+            wrong.accounting.dataset = "c" * 64
+            with self.assertRaisesRegex(ValueError, "dataset identity"):
+                wrong.restore(saved, 8 * 1024 * 1024)
 
     def test_frozen_state_guards_and_schema_refusal(self) -> None:
         with tempfile.TemporaryDirectory(prefix="binary-frozen-") as directory:

@@ -41,7 +41,7 @@ def candidate(
 
 
 def legacy(root: Path) -> Iterator[Record]:
-    for path in sorted(root.glob("train-*.jsonl")):
+    for path in sorted((*root.glob("train-*.jsonl"), *root.glob("dev-*.jsonl"))):
         if ".index." in path.name:
             continue
         index = {string(row["id"]): row for row in json_rows(path.with_suffix(".index.jsonl"))}
@@ -66,8 +66,15 @@ def legacy(root: Path) -> Iterator[Record]:
                 subtype,
                 [record(v) for v in sequence(row["messages"])],
             )
-            result["prior_use"] = "historical_train"
-            result["inherited_role"] = "train"
+            result["prior_use"] = (
+                "historical_train" if path.name.startswith("train-") else "consumed_dev"
+            )
+            result["inherited_role"] = "train" if path.name.startswith("train-") else "dev"
+            result["aliases"] = [
+                key,
+                meta["group"],
+                *([meta["topic"]] if meta.get("topic") else []),
+            ]
             yield result
 
 
@@ -200,8 +207,16 @@ def glaive(path: Path) -> Iterator[Record]:
 
 
 def qasper(path: Path) -> Iterator[Record]:
+    yield from qasper_member(path, "qasper-train-v0.3.json", None)
+
+
+def qasper_development(path: Path) -> Iterator[Record]:
+    yield from qasper_member(path, "qasper-dev-v0.3.json", "dev")
+
+
+def qasper_member(path: Path, member_name: str, inherited: str | None) -> Iterator[Record]:
     with tarfile.open(path, "r:gz") as archive:
-        member = archive.getmember("qasper-train-v0.3.json")
+        member = archive.getmember(member_name)
         source = archive.extractfile(member)
         if source is None:
             raise ValueError("missing QASPER training member")
@@ -223,25 +238,44 @@ def qasper(path: Path) -> Iterator[Record]:
         content = (
             "Read the paper and answer the question using its evidence. State when the paper does not supply an answer.\n\n"
             + title
+            + "\n\nAbstract:\n"
+            + text_field(paper.get("abstract"))
             + "\n\n"
             + text
             + "\n\nQuestion: "
             + question
         )
-        yield candidate(
+        result = candidate(
             "qasper", key, key, "documents", "paper_qa", [{"role": "user", "content": content}]
         )
+        if inherited is not None:
+            result["inherited_role"] = inherited
+        yield result
 
 
 def commitpack(path: Path) -> Iterator[Record]:
-    for row in json_rows(path):
+    rows = list(json_rows(path))
+    parents: dict[str, str] = {}
+
+    def find(name: str) -> str:
+        parents.setdefault(name, name)
+        if parents[name] != name:
+            parents[name] = find(parents[name])
+        return parents[name]
+
+    for row in rows:
+        repositories = sorted(set(string(row["repos"]).split(",")))
+        for name in repositories:
+            left, right = find(repositories[0]), find(name)
+            parents[max(left, right)] = min(left, right)
+    for row in rows:
         old = text_field(row["old_contents"])
         if not old.strip():
             continue
         key = string(row["commit"])
         filename = string(row["old_file"])
-        repositories = row["repos"]
-        group = identity({"repositories": repositories, "file": filename})
+        repositories = string(row["repos"]).split(",")
+        group = find(repositories[0])
         content = (
             "Edit the existing Python file to implement the following change. Return the updated code.\n\nChange:\n"
             + string(row["message"])

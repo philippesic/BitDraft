@@ -51,6 +51,35 @@ class Store:
         finally:
             Path(temporary).unlink(missing_ok=True)
 
+    def stream(self, name: str, writer: Callable[[BinaryIO], None], max_bytes: int) -> Artifact:
+        if Path(name).name != name or name in {"", ".", ".."} or max_bytes < 1:
+            raise ValueError("explicit bounded asset filename required")
+        destination = self.root / name
+        if destination.exists() or destination.is_symlink():
+            raise ValueError("streamed asset must be new")
+        descriptor, temporary = tempfile.mkstemp(prefix=".pending-", dir=self.root)
+        try:
+            with os.fdopen(descriptor, "wb") as output:
+                sink = BoundedSink(
+                    output, max_bytes, lambda count: require(self.root, count, self.reserve_bytes)
+                )
+                writer(cast(BinaryIO, sink))
+                output.flush()
+                os.fsync(output.fileno())
+            if Path(temporary).stat().st_size != sink.count:
+                raise ValueError("streamed asset size differs")
+            os.link(temporary, destination)
+            artifact = Artifact(destination, sink.digest.hexdigest(), sink.count)
+            artifact.verify()
+            directory = os.open(self.root, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                os.fsync(directory)
+            finally:
+                os.close(directory)
+            return artifact
+        finally:
+            Path(temporary).unlink(missing_ok=True)
+
     def commit(self, payload: bytes, config: str, updates: int) -> StateRef:
         def write(output: BinaryIO) -> None:
             output.write(payload)
@@ -116,6 +145,66 @@ class Store:
     def latest(self, config: str) -> StateRef:
         raw = record(cast(object, json.loads((self.root / "latest.json").read_text())))
         return self.parse(raw, config)
+
+    def prune(self, keep: int, pinned: tuple[str, ...] = ()) -> tuple[str, ...]:
+        if type(keep) is not int or keep < 1:
+            raise ValueError("positive retained-state count required")
+        with (self.root / ".writer").open("ab") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            latest = record(cast(object, json.loads((self.root / "latest.json").read_text())))
+            protected = {str(latest["sha256"]), *pinned}
+            available: list[tuple[int, str, dict[str, object]]] = []
+            for path in self.root.glob("*.json"):
+                digest = path.stem
+                if len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
+                    continue
+                payload = self.root / (digest + ".bin")
+                if not payload.exists():
+                    continue
+                metadata = record(cast(object, json.loads(path.read_text())))
+                if (
+                    metadata.get("sha256") != digest
+                    or metadata.get("config") != latest["config"]
+                    or type(metadata.get("updates")) is not int
+                ):
+                    raise ValueError("retention refuses foreign or malformed state metadata")
+                available.append((cast(int, metadata["updates"]), digest, metadata))
+            present = {digest for _, digest, _ in available}
+            if str(latest["sha256"]) not in present:
+                raise ValueError("retention cannot proceed without its latest payload")
+            retained = protected & present
+            if len(retained) > keep:
+                raise ValueError("retention bound cannot preserve all pinned states")
+            for _, digest, _ in sorted(available, reverse=True):
+                if len(retained) < keep:
+                    retained.add(digest)
+            retired: list[dict[str, object]] = []
+            for _, digest, metadata in available:
+                if digest in retained:
+                    continue
+                path = self.root / (digest + ".bin")
+                status = path.lstat()
+                if (
+                    path.is_symlink()
+                    or status.st_uid != os.getuid()
+                    or status.st_nlink != 1
+                    or status.st_size != metadata["bytes"]
+                ):
+                    raise ValueError("retention refuses changed, shared or foreign payload")
+                path.unlink()
+                retired.append(metadata)
+            if retired:
+                receipt: dict[str, object] = {
+                    "keep": keep,
+                    "pinned": list(pinned),
+                    "retained": sorted(retained),
+                    "retired": retired,
+                }
+                self.atomic(
+                    self.root / ("retired-" + str(latest["sha256"]) + ".json"),
+                    json.dumps(receipt, sort_keys=True).encode(),
+                )
+            return tuple(str(row["sha256"]) for row in retired)
 
     def describe(self, artifact: Artifact) -> StateRef:
         raw = record(cast(object, json.loads(artifact.path.with_suffix(".json").read_text())))

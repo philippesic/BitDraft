@@ -39,6 +39,28 @@ accepted draft tokens. A fallback-only trace reports acceptance unavailable. Thi
 structural reconciliation, not independent proof that verifier decisions were correct.
 The future runtime adapter must validate actual verification and EOS/cap accounting.
 
+## Native build and capture
+
+In the check environment, `python -m benchmarks native-build SPEC NEW_OUTPUT` reconstructs
+an authenticated source/header bundle and performs a fresh CUDA build. The spec binds
+`bundle`, `cuda_compiler`, `architecture`, `jobs` and `unpacked_bytes` under schema 1.
+`native-helpers` takes `{schema: 1, runtime: ARTIFACT}` and rebuilds project helpers against
+the pinned runtime. Helpers use native chat rendering and vocabulary-only tokenization;
+a separate Python template renderer is not an authoritative input source.
+
+In the numerical environment, `python -m benchmarks capture SPEC OUTPUT` acquires native
+hard-label features. Its schema is `native-hard-capture-v1`; exact fields are in
+`benchmarks/capture.py`. It binds runtime/model/bank artifacts, selected IDs, dtype,
+context, payload limit, opaque exclusions and explicit window policy. Optional `role`
+keeps TRAIN/DEV separate; heldout identity metadata can protect both. Reusing the same
+spec/output resumes verified completed records and preserves partial attempts.
+
+`curate` creates a provisional pool and panels from authenticated sources. `admit-bank`
+rechecks selected native token identities and known protected aliases before publishing
+the 6K TRAIN, 600 DEV and nested 120-request panels. It requires pinned pool/source-result
+and exclusion artifacts; optional heldout exclusions apply to every role. Source and
+content checks are bounded safeguards, not semantic deduplication proofs.
+
 ## Native request comparison
 
 `compare` requires an authenticated source manifest, server binary, runtime libraries,

@@ -34,29 +34,47 @@ explicit. Delete this task when implementation and scoped closeout are complete.
 
 ## State
 
-Owner: root. Implementation and GPU qualification are in progress on the released RTX
-5080. The original HE4broad run completed 220,095 updates. Its authenticated full-state
-import reproduces the original next update exactly, including parameters and every Adam
-tensor; see [migration result](../results/he4-checkpoint-migration/result.md). Corrected
-attention-cache storage preserves full-precision gradients while rounding cached values.
+Owner: root. Implementation continues on RTX 5080; the predecessor finished and its final
+220,095-update state remains the production parent. No production 2K dataset or hybrid
+training has launched. Do not mistake qualification training for the requested continuation.
 
-CUDA intents, GPU ownership leases, explicit optimizer-preserving continuation, legacy
-BSZ import, a native request comparison runner, and pinned source adapters/curation are
-implemented. The runtime was rebuilt entirely from frozen source and overlays, without
-legacy object reuse. A three-request target/baseline/HE4 pilot reconciled counters and
-matched greedy tokens/stopping. Native capture tests include an 8,394-token document,
-exact F32-to-F16 rounding, unchanged labels, serving-token/EOS agreement and byte-identical
-cold-context replay. Detailed raw evidence is outside Git under
-`/home/philip/binary-eagle-artifacts/`; compact qualification results are being adopted.
+Implemented/exercised: complete source-only native rebuild plus maintained rebuild/helper
+commands; authoritative native chat rendering/tokenization; provisional bank curation and
+opaque-identity admission; resumable TRAIN/DEV capture; streamed F32-to-F16 conversion;
+explicit partial supervision; CUDA supervision, legacy import and optimizer-preserving
+continuation; schema-4 dataset/clock accounting; task/position sampling with locality;
+bounded checkpoint/export retention; greedy request comparison and paired group statistics.
+The original checkpoint still reproduces its next update exactly after accounting changes.
+See [migration](../results/he4-checkpoint-migration/result.md) and
+[precision qualification](../results/fp16-capture-qualification/result.md).
 
-A 72-update-per-arm F32/F16 matched continuation and real exported-model qualification
-are underway. The 6K bank still needs completed curation, coverage/ancestry audit and
-frozen selections; no production 2K captures have been generated. Remaining implementation
-includes live workflows, harness sensitivity, sampled verification, comparison statistics,
-periodic evaluation/selection, practical retention and hybrid continuation/supervision.
-The complete plan below remains the acceptance checklist. Full CPU gate currently passes
-67 tests and 92 rejection/control proof pairs; this does not establish those remaining
-runtime/scientific capabilities. No Git remote is configured; checkpoints are local.
+Canonical acquisition inputs/results are external under `/home/philip/binary-eagle-artifacts/`.
+`native/runtime-v2` is the complete rebuild; `native/runtime-v4-helpers` supplies the native
+renderer and capture helper. `bank/curation-06` and admitted `bank/v3` contain 6K TRAIN,
+600 DEV and nested 120-request panels with exact category/length quotas. Earlier provisional
+banks are superseded acquisition attempts, not production inputs. Native request identity
+checks exposed Python/native tool-template differences; the shared native renderer fixed
+these, and a 12-request/six-category pilot passed all three arms. Heldout24 protection uses
+469 opaque aliases from three consumption receipts; no prompt/answer bodies were read.
+
+A public three-capture FP16 continuation completed three CUDA updates/export. The broader
+format qualification has 64 TRAIN and 32 DEV captures; all 512 TRAIN arrays converted to
+F16 within the frozen rounding margin. Public F32 control completed 1,024 updates with
+real retention/export; matched F16 is running from the same frozen source and parent.
+Its receipts are `qualification/broad-training-location.json` and the two training roots.
+Next: finish the frozen precision policy, DEV loss and native short panel; independently
+exercise schema-4 GPU resume and longest-context memory. Native NVFP4 target input has
+been adopted but still needs serving/capture qualification.
+
+Still incomplete: live workflow executor/fixtures, harness panel, sampled verification,
+complete short/full qualification, periodic native evaluation/selection coordinator,
+hybrid corpus assembly, production 2K generation and the requested continuing HE4broad
+job with hourly monitoring. Evidence adoption, final source/entry-point documentation and
+owned-artifact closeout remain. Latest full CPU gate: 73 tests and 92 rejection/control
+pairs, before subsequent documentation-only state updates. No remote is configured;
+committed checkpoints remain local. Legacy retirements reclaimed about 157 GiB while
+preserving current data, final/best/recent predecessor states and compact receipts under
+`/home/philip/binary-eagle-evidence/retirement-20261111/`.
 
 ### Research basis and what it does not establish
 

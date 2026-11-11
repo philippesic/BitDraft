@@ -13,7 +13,7 @@ from w1a1_eagle.capacity import backing_available
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.clock import Monotonic
 from w1a1_eagle.contracts import Record, integer, number, record
-from w1a1_eagle.data import Window
+from w1a1_eagle.data import Supervision
 from w1a1_eagle.device import device_lease
 from w1a1_eagle.identity import loaded_identity, source_identity
 from w1a1_eagle.index import IndexReader
@@ -24,19 +24,37 @@ from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.export import export_he4
 from w1a1_eagle.numerical.weights import load_he4
-from w1a1_eagle.numerical.worker import TensorWorker
+from w1a1_eagle.numerical.worker import TensorWorker, checkpoint_accounting
 from w1a1_eagle.processes import ProcessIdentity
 
 
 def admission(intent: Intent, corpus: Corpus) -> Record:
     if intent.raw.get("target_sha256") is not None and corpus.target != intent.raw["target_sha256"]:
         raise ValueError("candidate intent and capture target identity differ")
-    exposure = corpus.exposure(intent.budget.updates)
+    starting_updates = 0
+    prior_labels = 0
+    known_prior = False
+    if intent.parent is not None:
+        parent = Store(intent.parent.path.parent).describe(intent.parent)
+        starting_updates = parent.updates
+        accounting = checkpoint_accounting(parent, intent.memory_bytes)
+        if accounting is not None and accounting.dataset == intent.corpus.sha256:
+            prior_labels = accounting.dataset_labels
+            known_prior = True
+        elif intent.mode == "resume":
+            prior_labels = starting_updates * 15
+    planned_updates = max(0, intent.budget.updates - starting_updates)
+    planned_attempts = max(0, intent.budget.attempts - starting_updates)
+    exposure = corpus.exposure(planned_updates)
+    exposure["starting_updates"] = starting_updates
+    exposure["known_prior_dataset_labels"] = prior_labels
+    exposure["prior_dataset_exposure_known"] = int(known_prior)
+    exposure["dataset_label_exposures_upper_bound"] = prior_labels + planned_updates * 15
     policy = record(intent.raw["science_policy"])
     if integer(exposure["distinct_positions"]) < integer(policy["min_unique_positions"]):
         raise ValueError("supplied minimum distinct-data policy refuses launch")
-    worst_mean = intent.budget.attempts * 15 / corpus.unique_positions
-    exposure["maximum_attempt_label_exposures"] = intent.budget.attempts * 15
+    worst_mean = (prior_labels + planned_attempts * 15) / corpus.unique_positions
+    exposure["maximum_attempt_label_exposures"] = prior_labels + planned_attempts * 15
     exposure["maximum_attempt_mean_visits"] = worst_mean
     if worst_mean > number(policy["max_mean_visits"]):
         raise ValueError("supplied maximum data-reuse policy refuses launch")
@@ -51,7 +69,7 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
         "starting_identity": intent.parent.sha256 if intent.parent else intent.source.sha256,
         "starting_name": intent.parent.path.name if intent.parent else intent.source.path.name,
         "mode": intent.mode,
-        "mechanism": "HE4 W1A4/A8/Q4_K fifteen-label weighted-CE updates",
+        "mechanism": "HE4 W1A4/A8/Q4_K weighted CE using each capture’s declared supervision policy",
         "exposure": exposure,
         "prior_use_warning": "Prior training is marked for "
         + str(exposure["historical_training_sequences"])
@@ -88,7 +106,7 @@ def read_corpus(intent: Intent, hidden: int) -> Corpus:
         if intent.index_spec is not None
         else intent.corpus
     )
-    return Corpus(source, intent.seed, intent.memory_bytes, hidden)
+    return Corpus(source, intent.seed, intent.memory_bytes, hidden, intent.sampling)
 
 
 def run(intent_path: Path, root: Path, attempt: str) -> None:
@@ -139,7 +157,7 @@ def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
     loaded_cache: dict[tuple[int, int, int, int, int], str] = {}
     initial_loaded = loaded_identity(loaded_cache)
     journal.append({"kind": "loaded", "attempt": attempt, "identity": initial_loaded})
-    worker = TensorWorker(model, corpus, intent.recipe)
+    worker = TensorWorker(model, corpus, intent.recipe, intent.corpus.sha256)
     states = Store(root / "states", intent.disk_reserve_bytes)
     if intent.parent:
         parent = Store(intent.parent.path.parent).describe(intent.parent)
@@ -177,6 +195,16 @@ def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
     signal.signal(signal.SIGINT, stop_signal)
     owner = ProcessIdentity.read(os.getpid())
     clock = Monotonic()
+
+    def retain_states() -> None:
+        if "retention" in intent.raw:
+            keep = integer(record(intent.raw["retention"])["states"])
+            retired = states.prune(keep, (intent.parent.sha256,) if intent.parent else ())
+            if retired:
+                journal.append(
+                    {"kind": "retention", "attempt": attempt, "retired_states": list(retired)}
+                )
+
     last_checkpoint_updates = worker.updates
     last_checkpoint_seconds = clock.now()
 
@@ -210,12 +238,13 @@ def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
                     "artifact": saved.artifact.sha256,
                 }
             )
+            retain_states()
             last_checkpoint_updates = worker.updates
             last_checkpoint_seconds = clock.now()
         return False
 
     class RecordedSamples:
-        def sample(self, cursor: int) -> tuple[Capture, Window]:
+        def sample(self, cursor: int) -> tuple[Capture, Supervision]:
             journal.append(
                 {
                     "kind": "update-attempt",
@@ -253,14 +282,22 @@ def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
         )
         raise
     reference = worker.checkpoint(states, intent.state_bytes)
+    retain_states()
+    export_store = Store(root / "exports", intent.disk_reserve_bytes)
     exported = export_he4(
         worker,
         intent.source,
         intent.vocabulary,
-        Store(root / "exports", intent.disk_reserve_bytes),
+        export_store,
         intent.state_bytes,
         intent.memory_bytes,
     )
+    if "retention" in intent.raw:
+        retired_exports = export_store.prune(integer(record(intent.raw["retention"])["exports"]))
+        if retired_exports:
+            journal.append(
+                {"kind": "retention", "attempt": attempt, "retired_exports": list(retired_exports)}
+            )
     journal.append(
         {
             "kind": "export",
