@@ -24,6 +24,11 @@ restored exact parameters/Adam/RNG/cursor and continued real updates. GPU
 ownership and local storage pass. Durable checks are under the run's `health/`
 directory.
 
+The [five-to-six-hour plateau audit](../experiments/he4broad-20261110/update-plateau-audit.md)
+finds no observed data/resume/evaluation discontinuity. The small speed change is
+unresolved amid timing variation and mixed per-prompt quality changes. Audit recommendation: finish
+the existing eight-hour allocation; no extension is supported by DEV3 alone.
+
 All 15,647 captures and current-run checkpoints are verified on local ext4.
 The local-loader diagnostic produced exactly equal final parameters/Adam/RNG:
 loader 55.06× faster; steps 2–32 loader + update 6.69× faster.

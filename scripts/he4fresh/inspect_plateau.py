@@ -1,5 +1,6 @@
 """CPU-only audit of data exposure, resume controls and existing native panels."""
 import collections
+import argparse
 import copy
 import hashlib
 import json
@@ -18,7 +19,16 @@ def digest(value):
     return hashlib.sha256(json.dumps(value,sort_keys=True,separators=(',',':')).encode()).hexdigest()
 
 
-def main():
+def pin_identities(value):
+    """Source may be re-rooted in a new frozen closure without changing bytes."""
+    if isinstance(value,dict):
+        return {key:pin_identities(item) for key,item in value.items()
+                if key!='path' or not {'sha256','bytes'}.issubset(value)}
+    if isinstance(value,list): return [pin_identities(item) for item in value]
+    return value
+
+
+def main(output='setup-audit'):
     recipe=json.load(open(R/'recipe.json'));index=json.load(open(recipe['config']['data']['path']))
     assert pin(recipe['config']['data']['path'])==recipe['config']['data']
     rows=index['rows'];windows=[(i,a) for i,row in enumerate(rows) for a in row['anchors']]
@@ -85,7 +95,8 @@ def main():
         if not path.exists():continue
         raw=json.load(open(path));freeze=json.load(open(panel/'freeze.json'));prompts=json.load(open(panel/'prompts.json'))
         assert raw['status']=='COMPLETE' and len(raw['rows'])==75
-        immutable={k:freeze[k] for k in immutable_keys};immutable['q4']=freeze['arms']['q4']
+        immutable=pin_identities({k:freeze[k] for k in immutable_keys})
+        immutable['q4']=pin_identities(freeze['arms']['q4'])
         if baseline is None:baseline=immutable;prompt_source=prompts
         assert immutable==baseline and prompts==prompt_source
         assert freeze['arms']['HE4broad']['sha256']==point['model']['sha256']
@@ -149,9 +160,14 @@ def main():
             'Different shuffled training examples at each step: training-loss medians are not a paired overfitting test.',
             'Verified target/label/causal index identities are not a fresh full QAT-versus-native numerical parity replay.',
             '15-token teacher-forced objective and depth-two autoregressive acceptance are different measurements.'])
-    save(REPORT/'setup-audit.json',result)
+    save(REPORT/(output+'.json'),result)
     print(json.dumps(dict(status=result['status'],dataset=result['dataset'],exposure=result['exposure'],
         curve=result['learning_curve'],cells_checked=cells_checked,responses_checked=responses_checked),indent=2))
 
 
-if __name__=='__main__': main()
+if __name__=='__main__':
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--output',default='setup-audit')
+    args=parser.parse_args()
+    assert args.output and all(c.isalnum() or c=='-' for c in args.output)
+    main(args.output)
