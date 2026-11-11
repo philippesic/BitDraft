@@ -16,8 +16,8 @@ lock acquire/release checks confirm GPU release. The final-recovery duplicate,
 base/native-cache scratch and partials are absent. Keep teacher/archive local
 ext4 directories, all sixteen complete checkpoints/native exports, their parents,
 three source closures and raw evidence. No new training or evaluation is assigned
-by the historical launch instructions below. Monitoring shutdown follows the
-final publication/push; use only the exact receipt in `schedules.json`.
+by the historical launch instructions below. Health and availability events are disabled after the final publication/push;
+full event receipts remain in `schedules.json`.
 
 The following sections preserve execution history and recovery mechanics, not
 an active-job assignment.

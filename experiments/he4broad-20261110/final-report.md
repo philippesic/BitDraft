@@ -73,8 +73,8 @@ The owned tmux session is gone. Actual GPU compute-client and utilization checks
 plus acquire/release of all three GPU locks, confirm release. Teacher/archive
 names are plain local ext4 directories; there are no run SSHFS mounts to unmount.
 Recovery/export/native-cache scratch is gone. Useful source, evidence, compiled
-cache and retained model states remain. Monitoring is closed after final
-publication/push, using the exact stored event receipt.
+cache and retained model states remain. Health and availability monitoring are disabled after final publication/push,
+using the exact stored event receipt.
 
 ## Time accounting
 

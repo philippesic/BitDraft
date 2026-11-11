@@ -17,8 +17,7 @@ overfitting diagnosis or further training allocation is made.
 All 16 full states/native exports, newest 15,647-sequence data, parents, frozen
 source and evidence remain local. Owned jobs exited; GPU and all three locks
 are released; no teacher/archive mounts or disposable recovery scratch remain.
-Health-event shutdown follows final publication/push; the availability event
-stays disabled. [Final report](../experiments/he4broad-20261110/final-report.md) ·
+Health and availability events are disabled after final publication/push. [Final report](../experiments/he4broad-20261110/final-report.md) ·
 [Throughput curve](../experiments/he4broad-20261110/throughput-progress.html) ·
 [Validation](../experiments/he4broad-20261110/final-audit.json) ·
 [Retention](../experiments/he4broad-20261110/final-retention.json) ·

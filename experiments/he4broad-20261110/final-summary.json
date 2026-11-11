@@ -276,5 +276,14 @@
     "deployment": "External DFlash Q4 remains incumbent; no promotion or further training authorized."
   },
   "retention": "final-retention.json",
-  "monitoring": "Disable the existing event after final publication/push."
+  "monitoring": {
+    "scheduledTaskId": "scheduled-task:command:mcp:a4024f98-8308-4bbd-9079-def8ceacdbbb:schedule-task:he4broad-20261110-health",
+    "enabled": false,
+    "nextRunAt": null,
+    "schedule": {
+      "type": "interval",
+      "everyMs": 5400000
+    },
+    "disabled_after": "Final checks/cleanup/report and final milestone push"
+  }
 }

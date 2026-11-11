@@ -30,8 +30,8 @@
   "remaining_preparation": [],
   "events": {
     "availability_enabled": false,
-    "health_enabled": true,
-    "health_next_run_at": "2026-11-11T04:50:29.387Z",
+    "health_enabled": false,
+    "health_next_run_at": null,
     "receipts": "runs/he4broad-20261110-01/schedules.json"
   },
   "prerequisite_release_checkpoint": "04dba8f7f0a9b67b84430221adbdfc8d64d55446",
@@ -168,7 +168,7 @@
   },
   "latest_health": {
     "status": "COMPLETE_VALIDATED_GPU_RELEASED",
-    "checked_unix": 1794383448.270328,
+    "checked_unix": 1794389921.8238847,
     "updates": 220095,
     "charged_update_seconds": 28800.104648497247,
     "checkpointed_updates": 220095,
@@ -202,5 +202,5 @@
   "final_report": "experiments/he4broad-20261110/final-report.md",
   "final_audit": "experiments/he4broad-20261110/final-audit.json",
   "final_retention": "experiments/he4broad-20261110/final-retention.json",
-  "monitoring_shutdown": "pending final publication/push"
+  "monitoring_shutdown": "COMPLETE"
 }
