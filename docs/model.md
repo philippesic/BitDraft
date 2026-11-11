@@ -50,3 +50,7 @@ and [source inventory](../evidence/source-inventory.json) record their ancestry.
 Actual retained-artifact equivalence, native rounding/loading, useful learning and
 end-to-end serving performance require separate evidence. An old campaign's GPU
 qualification does not qualify this implementation.
+
+Attention-cache values round through FP16 with a straight-through gradient. A direct
+FP16 cast has a different derivative and failed the original-checkpoint next-update
+comparison; see [migration evidence](../results/he4-checkpoint-migration/result.md).

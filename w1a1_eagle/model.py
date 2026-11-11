@@ -70,6 +70,13 @@ def hard_sign(value: Tensor) -> Tensor:
     return signs.detach() + (surrogate - surrogate.detach())
 
 
+def cache_storage(value: Tensor) -> Tensor:
+    rounded = value.half().float()
+    if not bool(torch.isfinite(rounded).all()):
+        raise ValueError("F16 cache storage overflow")
+    return value + (rounded - value).detach()
+
+
 class FrozenLinear(nn.Module):
     operand: Tensor
 
@@ -146,7 +153,7 @@ class Layer(nn.Module):
         key = self.key.forward(encoded).view(-1, cfg.kv_heads, cfg.head_dim)
         value = self.value.forward(encoded).view(-1, cfg.kv_heads, cfg.head_dim)
         key = rope(rms(key, self.k_norm, cfg.epsilon), positions, cfg.theta)
-        return key.half().float(), value.half().float()
+        return cache_storage(key), cache_storage(value)
 
     def forward(
         self, state: Tensor, context: tuple[Tensor, Tensor], positions: Tensor, allowed: Tensor
@@ -158,8 +165,8 @@ class Layer(nn.Module):
         value = self.value.forward(norm).view(-1, cfg.kv_heads, cfg.head_dim)
         query = rope(rms(query, self.q_norm, cfg.epsilon), positions, cfg.theta)
         key = rope(rms(key, self.k_norm, cfg.epsilon), positions, cfg.theta)
-        key = torch.cat((context[0], key.half().float()), 0)
-        value = torch.cat((context[1], value.half().float()), 0)
+        key = torch.cat((context[0], cache_storage(key)), 0)
+        value = torch.cat((context[1], cache_storage(value)), 0)
         query = query.view(cfg.slots, cfg.kv_heads, cfg.heads // cfg.kv_heads, cfg.head_dim)
         scores = torch.einsum("qhgd,khd->hgqk", query, key) / math.sqrt(cfg.head_dim)
         scores = scores.masked_fill(~allowed[None, None], -torch.inf)

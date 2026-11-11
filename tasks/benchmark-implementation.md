@@ -7,15 +7,22 @@ requests over released DFlash Q4KM, preserving the selected target's behavior.
 Implement one supervised training/intermittent-evaluation path and one comparison
 runner with development and confirmation datasets. Reuse the prompt bank across
 compatible targets without confusing prompts, teacher captures or model identities.
-This is a proposed implementation plan, not an implemented capability or run receipt.
+This task tracks implementation and observable qualification; individual capabilities
+are described as implemented only after their acceptance evidence exists.
 
 ## Authorized
 
-Philip authorized implementation and validation of this plan, including bounded GPU
-experiments on the 2080 Ti. Preserve the active RTX 5080 training job. No production
-prompt/capture batch is to be generated now. Bounded reuse/transfer of existing captures
-and test setup are within this assignment. Reassess the 6K design before future production
-acquisition. No hosted CI, new remote or historical artifact deletion.
+Philip authorized completing the entire plan on the RTX 5080 after the existing run
+finishes, validating FP16, preparing the prompt bank and generating roughly 2K supplemental
+captures focused on missing workloads/lengths. Combine those with the current authenticated
+HE4broad corpus and continue its final checkpoint in the new pipeline, preserving optimizer
+state and recording the changed dataset/sampling lineage. Leave it running with hourly
+health checks/repair. Do not interrupt the predecessor run. The 2080 Ti is available for
+additional testing. The 6K design remains the general bank; the legacy hybrid continuation
+retains its existing 15,647 sequences plus the supplement rather than silently reducing it.
+Philip also authorizes reclaiming old high-volume legacy artifacts when needed. Verify
+ownership, live dependencies and evidence retention before retirement. No hosted CI,
+new remote or deletion of the active migration parent/data.
 
 ## Done when
 
@@ -24,32 +31,32 @@ including a real capture-to-resume-to-native-comparison path. CPU tests alone do
 close this task. Current documentation, command registry, agent navigation and
 result closeout must describe the implemented behavior; missing capabilities stay
 explicit. Delete this task when implementation and scoped closeout are complete.
-The current planning deliverable is complete after research, Sol review, corrections
-and local validation. Its completion does not authorize the implementation phases.
 
 ## State
 
-Owner: root. Implementation in progress. Implemented read-only benchmark plan/input
-verification and structural acceptance trace reduction, explicit F16 feature loading into
-F32 tensors, and a bounded precision-screen command. Current docs and command registry
-are linked. CPU tests exercise mismatch/leakage/accounting; numerical tests exercise F16
-round-trip loading and corruption refusal. On the idle 2080 Ti, screened 24 real arrays
-from three short existing captures and the initializer fusion projection: no overflow;
-training/native suitability remains unresolved. See [result](../results/fp16-feature-screen/result.md).
-Torch 2.11.0+cu128 on that host supports sm_75; default Python has no Torch. The GPU is
-idle again. A later full-model matched storage attempt was refused first for a Q6_K target
-embedding used as a Q4_K head, then (with the retained Q4_K head selected) for the loader
-host-memory budget on the 16 GB WSL host. No updates ran and no guard was relaxed.
-Compatible modern target/initializer/head artifacts are now present in the isolated
-remote qualification directory. Target identity must remain separate from head identity. Qualification raw source/inputs live outside the repo on the 2080 Ti.
-No production prompts/captures were generated. Full native runner, intermittent evaluation,
-live tasks, harness sensitivity and end-to-end GPU training remain unimplemented.
- Existing code provides
-CPU training, authenticated inputs, transactional schema-3 state, resume/branch and
-GGUF export/readback. GPU training, fresh capture, a source-complete native runtime,
-serving qualification and benchmark selection remain unqualified or absent. See
-[support](../docs/support.md), [architecture](../docs/architecture.md),
-[data](../docs/data.md) and [domain](../docs/domain.md).
+Owner: root. Implementation and GPU qualification are in progress on the released RTX
+5080. The original HE4broad run completed 220,095 updates. Its authenticated full-state
+import reproduces the original next update exactly, including parameters and every Adam
+tensor; see [migration result](../results/he4-checkpoint-migration/result.md). Corrected
+attention-cache storage preserves full-precision gradients while rounding cached values.
+
+CUDA intents, GPU ownership leases, explicit optimizer-preserving continuation, legacy
+BSZ import, a native request comparison runner, and pinned source adapters/curation are
+implemented. The runtime was rebuilt entirely from frozen source and overlays, without
+legacy object reuse. A three-request target/baseline/HE4 pilot reconciled counters and
+matched greedy tokens/stopping. Native capture tests include an 8,394-token document,
+exact F32-to-F16 rounding, unchanged labels, serving-token/EOS agreement and byte-identical
+cold-context replay. Detailed raw evidence is outside Git under
+`/home/philip/binary-eagle-artifacts/`; compact qualification results are being adopted.
+
+A 72-update-per-arm F32/F16 matched continuation and real exported-model qualification
+are underway. The 6K bank still needs completed curation, coverage/ancestry audit and
+frozen selections; no production 2K captures have been generated. Remaining implementation
+includes live workflows, harness sensitivity, sampled verification, comparison statistics,
+periodic evaluation/selection, practical retention and hybrid continuation/supervision.
+The complete plan below remains the acceptance checklist. Full CPU gate currently passes
+67 tests and 92 rejection/control proof pairs; this does not establish those remaining
+runtime/scientific capabilities. No Git remote is configured; checkpoints are local.
 
 ### Research basis and what it does not establish
 

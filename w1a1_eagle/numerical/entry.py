@@ -14,6 +14,7 @@ from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.clock import Monotonic
 from w1a1_eagle.contracts import Record, integer, number, record
 from w1a1_eagle.data import Window
+from w1a1_eagle.device import device_lease
 from w1a1_eagle.identity import loaded_identity, source_identity
 from w1a1_eagle.index import IndexReader
 from w1a1_eagle.intent import Intent
@@ -28,6 +29,8 @@ from w1a1_eagle.processes import ProcessIdentity
 
 
 def admission(intent: Intent, corpus: Corpus) -> Record:
+    if intent.raw.get("target_sha256") is not None and corpus.target != intent.raw["target_sha256"]:
+        raise ValueError("candidate intent and capture target identity differ")
     exposure = corpus.exposure(intent.budget.updates)
     policy = record(intent.raw["science_policy"])
     if integer(exposure["distinct_positions"]) < integer(policy["min_unique_positions"]):
@@ -89,6 +92,12 @@ def read_corpus(intent: Intent, hidden: int) -> Corpus:
 
 
 def run(intent_path: Path, root: Path, attempt: str) -> None:
+    device = str(Intent.load_sealed(intent_path).raw["device"])
+    with device_lease(device):
+        run_leased(intent_path, root, attempt)
+
+
+def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
     intent = Intent.load_sealed(intent_path)
     code_root = Path(__file__).resolve().parents[2]
     if source_identity(code_root) != intent.raw["code_sha256"]:
@@ -126,6 +135,7 @@ def run(intent_path: Path, root: Path, attempt: str) -> None:
         raise ValueError("worker requires its durable controller-bound process identity")
     journal.append({**admission(intent, corpus), "attempt": attempt})
     model = load_he4(intent.source, intent.vocabulary, intent.memory_bytes, cfg)
+    model.to(str(intent.raw["device"]))
     loaded_cache: dict[tuple[int, int, int, int, int], str] = {}
     initial_loaded = loaded_identity(loaded_cache)
     journal.append({"kind": "loaded", "attempt": attempt, "identity": initial_loaded})
@@ -134,7 +144,13 @@ def run(intent_path: Path, root: Path, attempt: str) -> None:
     if intent.parent:
         parent = Store(intent.parent.path.parent).describe(intent.parent)
         worker.restore(
-            parent, intent.memory_bytes, "resume" if intent.mode == "resume" else "branch"
+            parent,
+            intent.memory_bytes,
+            "resume"
+            if intent.mode == "resume"
+            else "continue"
+            if intent.mode == "continue"
+            else "branch",
         )
     attempted_updates = [row for row in journal.events() if row.get("kind") == "update-attempt"]
     if attempted_updates and intent.mode == "resume":
@@ -277,7 +293,7 @@ def run(intent_path: Path, root: Path, attempt: str) -> None:
             "export": exported.artifact.sha256,
             "activation": {
                 "actual_optimizer_updates": worker.optimizer_updates,
-                "training_device": "cpu",
+                "training_device": model.vocabulary.device.type,
             },
             "scientific": "unknown: no development evaluation supplied",
             "objective": "unknown: no benchmark",

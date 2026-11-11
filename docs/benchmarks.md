@@ -2,12 +2,14 @@
 
 The [implementation task](../tasks/benchmark-implementation.md) owns the remaining
 training, native comparison, live workflow and harness qualification work. The commands
-below are implemented metadata/trace tools. They do not yet launch native evaluations.
+below include implemented metadata/trace tools and native request comparisons.
+The live workflow, sampled verification and periodic selection paths remain in progress.
 
 ```sh
 uv run --locked --no-sync --offline python -m benchmarks plan SPEC.json
 uv run --locked --no-sync --offline python -m benchmarks verify-inputs SPEC.json
 uv run --locked --no-sync --offline python -m benchmarks reduce-trace TRACE.json
+uv run --locked --no-sync --offline python -m benchmarks compare COMPARISON.json NEW_OUTPUT
 ```
 
 Try `python -m benchmarks plan tests/fixtures/benchmark-plan.json` for a synthetic
@@ -36,6 +38,33 @@ or bonus). It reconciles emitted tokens with the prefix and separates target tok
 accepted draft tokens. A fallback-only trace reports acceptance unavailable. This is
 structural reconciliation, not independent proof that verifier decisions were correct.
 The future runtime adapter must validate actual verification and EOS/cap accounting.
+
+## Native request comparison
+
+`compare` requires an authenticated source manifest, server binary, runtime libraries,
+target, workload and at least two arms: `target` first, then named speculative drafters.
+The schema is `native-comparison-v1`; see `benchmarks/comparison.py` for exact fields.
+Short/full/harness request counts are 120/600/90; smaller pilots are explicit.
+Comparisons use greedy generation, thinking disabled, F16 caches, equal context/depth,
+serial arms, configured warmups and rotated repeat order. Every arm must match the
+target's token IDs, text and stopping fields. Draft counts reconcile against independent
+native final log counters. Fallback-only speculative arms are refused.
+
+The output must be new. It preserves specification, workload, source snapshot, process
+ownership, loaded libraries, server logs, request/response bodies and partial failures.
+Totals use total tokens divided by total wall time and accepted/proposed token totals.
+These request measurements alone do not establish live-task transfer or model quality.
+The runtime must expose its final counters at ordinary info verbosity; trace logging is
+not part of clean timing. CUDA launch checks active processes and obtains a host lease.
+
+`python -m benchmarks curate SOURCES.json NEW_OUTPUT` runs in the numerical environment.
+It authenticates downloaded source artifacts and the original TRAIN manifest, renders
+complete histories with the target template and thinking disabled, and obtains actual
+native token counts. It never reads sealed-test prompt bodies. Selection solves category,
+subtype and length quotas from real available records; insufficient coverage is refused.
+Related source groups and identical tokenized prompts cannot cross roles. Public source
+exposure remains unknown. Curation outputs need semantic and ancestry review before capture;
+quota compliance alone does not establish representative or sufficient data.
 
 ## FP16 capture storage
 

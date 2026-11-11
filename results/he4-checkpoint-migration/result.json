@@ -1,0 +1,15 @@
+{
+  "source_sha256": "6f255fe909ba8aa6657ef04d9849da57a4dac3a124e74031fb2a2bf3ee9d0112",
+  "loss": 0.12160855531692505,
+  "legacy_loss": 0.12160855531692505,
+  "gradient_norm": 0.7907398343086243,
+  "legacy_gradient_norm": 0.7907398343086243,
+  "cursor": 220095,
+  "anchor": 158,
+  "sequence": "gsm8k:train-003372",
+  "legacy_sequence": "/home/philip/he4-capture-2080ti/supplemental/captures/shard-0041/004182/capture",
+  "parameter_mismatches": [],
+  "optimizer_mismatches": [],
+  "updates": 220096,
+  "torch": "2.14.0+cu130"
+}

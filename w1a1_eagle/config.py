@@ -28,3 +28,28 @@ def cpu_environment() -> dict[str, str]:
     environment["TMPDIR"] = "/tmp"
     environment["PYTHONPYCACHEPREFIX"] = "/tmp/binary-no-bytecode-" + uuid.uuid4().hex
     return environment
+
+
+def execution_environment(device: str) -> dict[str, str]:
+    if device == "cpu":
+        return cpu_environment()
+    if device != "cuda":
+        raise ValueError("unsupported execution device")
+    environment = dict(os.environ)
+    environment["PYTHONDONTWRITEBYTECODE"] = "1"
+    return environment
+
+
+def native_environment(libraries: Path) -> dict[str, str]:
+    environment = {
+        key: value
+        for key, value in os.environ.items()
+        if not key.startswith(("GGML_", "W1A8_", "LLAMA_", "CUDA_", "LD_", "OMP_"))
+    }
+    environment.update(
+        LD_LIBRARY_PATH=str(libraries),
+        GGML_CUDA_DECODE_CONSISTENT="32",
+        CUDA_VISIBLE_DEVICES="0",
+        OMP_NUM_THREADS="4",
+    )
+    return environment

@@ -4,7 +4,7 @@
 
 | Path | Holds |
 | --- | --- |
-| `w1a1_eagle/` | Product: data admission, intent, supervision, lifecycle, CPU training |
+| `w1a1_eagle/` | Product: data admission, intent, supervision, lifecycle, CPU/CUDA training |
 | `w1a1_eagle/numerical/` | Torch and GGUF code: captures, corpus, worker, weights, export |
 | `w1a1_eagle/checkpoints/` | The state store |
 | `tools/` | Checks, doctor and the metadata snapshot tool |
@@ -14,6 +14,8 @@
 | `results/` | Durable conclusions and small supporting data |
 | `evidence/` | Existing immutable execution and provenance receipts |
 | `skills/close-results/` | Reusable investigation closeout procedure |
+| `native/` | Authored tokenizer and capture helpers for the pinned runtime |
+| `typings/` | Minimal typed interfaces for untyped external APIs |
 | `tasks/` | Open multi-session work; context, resumed only when asked |
 
 The [model](model.md) describes the current numerical graph and trainable state.
@@ -37,7 +39,8 @@ From [boundaries](../policy/boundaries.toml), enforced by the architecture stage
 | `w1a1_eagle.lifecycle` | Event journal and controller identity |
 
 Environment variables are read only in `w1a1_eagle/config.py` and `tools/config.py`.
-Operational time comes from `w1a1_eagle/clock.py`.
+Operational time comes from `w1a1_eagle/clock.py`; benchmark request timing is owned
+by `benchmarks/measurement.py`.
 
 ## Entries and flows
 
@@ -65,11 +68,13 @@ Public commands are declared in [commands](../policy/commands.toml).
 
 The `benchmarks` package implements read-only planning, artifact authentication and
 structural trace reduction; see [benchmark tools](benchmarks.md). It depends on product
-contracts; product code never imports it. Native runners remain unimplemented.
+contracts; product code never imports it. The request runner launches a pinned native server under an exclusive GPU lease, authenticates
+its inputs and preserves every request/response. Live workflow and sampled verification
+qualification remain tracked in the implementation task.
 
 ## Reserved benchmark interfaces
 
-No native benchmark or plug-in runtime is implemented here yet. Some validators nevertheless
+The request runner is implemented; a model plug-in registry is not. Some validators
 reserve future software interfaces: extension filenames ending in `_adapter.py`,
 `_workload.py` or `_dataset.py`, unique extension IDs and declared protocol/schema/digest
 metadata. The source checker also rejects conditional or lookup-table dispatch on

@@ -20,7 +20,7 @@ from w1a1_eagle.data import Artifact, Window
 from w1a1_eagle.identity import source_identity
 from w1a1_eagle.intent import Intent
 from w1a1_eagle.lifecycle import Journal
-from w1a1_eagle.model import HE4, Geometry, Layer, Projection, hard_sign, rms, rope
+from w1a1_eagle.model import HE4, Geometry, Layer, Projection, cache_storage, hard_sign, rms, rope
 from w1a1_eagle.numerical.captures import Capture, CaptureCache, CaptureSpec, load_capture
 from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.entry import admission
@@ -33,6 +33,18 @@ from w1a1_eagle.training import Budget
 
 
 class TestNumerical(unittest.TestCase):
+    def test_cache_storage_rounds_values_preserves_gradients(self) -> None:
+        values = torch.tensor([0.1234567, -1.234567], requires_grad=True)
+        upstream = torch.tensor([0.9876543, -0.456789])
+        rounded = cache_storage(values)
+        self.assertTrue(torch.equal(rounded, values.detach().half().float()))
+        (rounded * upstream).sum().backward()
+        self.assertIsNotNone(values.grad)
+        self.assertTrue(torch.equal(cast(torch.Tensor, values.grad), upstream))
+        self.assertFalse(torch.equal(upstream, upstream.half().float()))
+        with self.assertRaises(ValueError):
+            cache_storage(torch.tensor([70000.0]))
+
     def test_fp16_feature_loading_matches_explicit_roundtrip(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -330,7 +342,9 @@ class TestNumerical(unittest.TestCase):
             torch.ones((16, 19), dtype=torch.bool),
         )
         result.sum().backward()
-        expected_layer = record(captured["layer"])
+        expected_layer = record(
+            read(Path("results/he4-checkpoint-migration/cache-layer-reference.json"))["layer"]
+        )
         assert state.grad is not None and encoded.grad is not None
         for name, actual in (
             ("output", result),

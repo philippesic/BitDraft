@@ -10,7 +10,7 @@ from typing import Callable, cast
 
 from w1a1_eagle.capacity import backing_available
 from w1a1_eagle.clock import Monotonic
-from w1a1_eagle.config import cpu_environment, numerical_python
+from w1a1_eagle.config import execution_environment, numerical_python
 from w1a1_eagle.contracts import Record, integer, number, record, string
 from w1a1_eagle.identity import freeze_source, source_identity
 from w1a1_eagle.intent import Intent
@@ -116,7 +116,7 @@ def execute(
         )
         clock = Monotonic()
         began = clock.now()
-        environment = cpu_environment()
+        environment = execution_environment(str(intent.raw["device"]))
         environment["PYTHONPATH"] = str(frozen_root)
         process: subprocess.Popen[bytes] | None = None
         owner: ProcessIdentity | None = None

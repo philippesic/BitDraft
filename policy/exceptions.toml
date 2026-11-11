@@ -64,16 +64,6 @@ review_condition = "GGUF protocol or export boundary changes"
 [[exception]]
 rule_id = "VULTURE"
 path = "w1a1_eagle/numerical/export.py"
-symbol = "subtype"
-sha256 = "23242b5f01b79cd6d8f2fe9a52364fd1d6196c95ad28f1a64fbc2f1b3bee292a"
-reason = "Pinned GGUF external protocol member consumed by the dependency; exercised by the bounded export conformance test"
-decision_id = "007-checks-and-review"
-owner = "Philip"
-review_condition = "GGUF protocol or export boundary changes"
-
-[[exception]]
-rule_id = "VULTURE"
-path = "w1a1_eagle/numerical/export.py"
 symbol = "raw_dtype"
 sha256 = "6a0db4d62cd6d8b4a827b71c0f19d66201547b612bca5b20ebace3527c28990e"
 reason = "Pinned GGUF external protocol member consumed by the dependency; exercised by the bounded export conformance test"
