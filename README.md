@@ -32,21 +32,26 @@ The second line enables the pre-commit hook, which runs the full check. Run
 is configured and executable. The check-only install does not provide the numerical
 interpreter required by the full gate.
 
-Numerical code runs in a separate interpreter with versions declared by the
-`numerical` extra in [pyproject.toml](pyproject.toml); its fixture scope and retained
-GGUF build identity are in [numerical policy](policy/numerical.toml). Point to it with `BINARY_NUMERICAL_PYTHON`,
-`numerical_python` in an untracked `.host.toml`, or a `.venv/numerical` environment.
-For a host-provided interpreter, the configuration is:
+Numerical code runs in a separate environment installed from the same lock. Use a fresh
+path so an old environment's `.pth` files cannot import packages from another checkout:
 
-```toml
-numerical_python = "/absolute/path/to/numerical/bin/python"
+```sh
+UV_PROJECT_ENVIRONMENT=.venv/numerical-clean uv sync --locked --no-default-groups --extra numerical
 ```
 
-The file contains host paths only; do not put credentials in it. The numerical lane
-runs with GPU visibility disabled. Check it independently with the command in
-[checks](docs/checks.md#commands). A successful check-only install is not a complete
-numerical setup; rebuilding the numerical environment from scratch has not been
-verified from scratch here.
+Set `BINARY_NUMERICAL_PYTHON`, or set the host-only `.host.toml` to its absolute interpreter:
+
+```toml
+numerical_python = "/absolute/path/to/this/repository/.venv/numerical-clean/bin/python"
+```
+
+The full gate uses that interpreter with GPU visibility disabled. A fresh locked-wheel
+install and the numerical suite passed on the current Linux host; Torch, NumPy and GGUF
+resolve inside this environment, independently of the old checkout. This qualifies the
+CPU fixtures, not GPU execution or another host. Dependency versions live in
+[pyproject.toml](pyproject.toml) and the lock; retained arithmetic-source provenance and
+fixture coverage live in [numerical policy](policy/numerical.toml). Keep credentials out
+of `.host.toml`. [Checks](docs/checks.md#commands) gives the standalone numerical command.
 
 ## Commands
 

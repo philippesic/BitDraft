@@ -12,9 +12,10 @@ export. The retained modern metadata index reconciles its records and window cou
 These checks do not establish full-size equivalence to a historical trained state,
 CUDA execution, native token parity or a serving-speed improvement.
 
-The check environment installs from the lock. The full gate uses the configured
-numerical interpreter; a clean rebuild of that numerical environment has not been
-qualified. [Checks](checks.md) describes actual lane coverage and unavailable stages.
+Both check and numerical environments install from the lock. A fresh numerical wheel
+install passed the CPU suite on the current host without importing from the old checkout.
+The full gate uses the configured interpreter; this does not qualify other hosts or CUDA.
+[Checks](checks.md) describes actual lane coverage and unavailable stages.
 
 ## Unsupported or unqualified paths
 
@@ -27,6 +28,7 @@ qualified. [Checks](checks.md) describes actual lane coverage and unavailable st
 | New data capture | Existing captures can be authenticated and read; no public fresh-capture workflow is implemented. |
 | Scientific selection | Workload selection, comparison statistics and serving-based checkpoint selection are not implemented. |
 | End-to-end path | A real capture/import → train → stop/resume → export → native verification workflow is not qualified. |
+| Exposure across branches | Aggregate counters and lineage survive; a per-position lifetime ledger across changed recipes/corpora is not implemented. |
 | Data recovery | The historical eight-prompt discrepancy remains unresolved; see the deduplication result. |
 
 These are present capability limits, not an active task list or a scientific allocation.

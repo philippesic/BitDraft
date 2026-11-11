@@ -66,8 +66,10 @@ complete parent or a complete child. This covers process crashes, not power loss
 
 - Fresh: proves the original authenticated initialization and no optimizer history.
 - Resume: restores parameters, shared aliases, AdamW counters and moments, CPU RNG,
-  sampler cursor, exposure and lineage, and must reproduce the next update exactly.
-- Branch: resets optimizer and cursor but keeps parent lineage, cost and exposure.
+  sampler cursor, aggregate exposure counters and lineage, and must reproduce the next
+  update exactly.
+- Branch: resets optimizer and cursor but keeps parent lineage, cost and aggregate
+  exposure counters. A changed recipe does not preserve per-position lifetime exposure.
 
 No mode silently loads an old trained state. The store never deletes historical states
 to make room. Each state write rechecks free space; this does not reserve capacity.
