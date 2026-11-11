@@ -1,10 +1,12 @@
 import json
+import signal
 import socket
 import time
 import urllib.error
 import urllib.request
+from contextlib import contextmanager
 from http.client import HTTPResponse
-from typing import cast
+from typing import Iterator, cast
 
 from w1a1_eagle.contracts import Record, record
 from w1a1_eagle.records import canonical
@@ -16,6 +18,27 @@ def now() -> float:
 
 def pause(seconds: float) -> None:
     time.sleep(seconds)
+
+
+@contextmanager
+def deadline(seconds: float | None) -> Iterator[None]:
+    if seconds is None:
+        yield
+        return
+    if signal.getitimer(signal.ITIMER_REAL)[0]:
+        raise ValueError("screen cannot replace an existing process deadline")
+    previous = signal.getsignal(signal.SIGALRM)
+
+    def expired(_signal: int, _frame: object) -> None:
+        raise ValueError("training screen exceeded120 seconds; incomplete attempt retained")
+
+    signal.signal(signal.SIGALRM, expired)
+    signal.setitimer(signal.ITIMER_REAL, seconds)
+    try:
+        yield
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous)
 
 
 def port_number() -> int:

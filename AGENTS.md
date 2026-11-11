@@ -10,7 +10,7 @@ never enter training, calibration or selection. Names and metrics: [domain](docs
 - `w1a1_eagle/`: product. [Data](docs/data.md), [execution](docs/execution.md).
 - `tools/`, `policy/`, `tests/cases/`: checks and their rules. [Checks](docs/checks.md).
 - [FINDINGS](FINDINGS.md): result index. [Development](docs/development.md): workflow.
-- [Benchmarks](docs/benchmarks.md): commands. `tasks/`: open work.
+- [Benchmarks](docs/benchmarks.md): commands, saved controls and training checks.
 
 ## Code
 
@@ -25,7 +25,7 @@ never enter training, calibration or selection. Names and metrics: [domain](docs
 - While working: `uv run --locked --no-sync --offline python tools/check.py` (about 3 s
   warm). It is partial: no numerical test, required-test roster or rule proofs.
 - Commit gate: the same command with `--full` (about 70 s). Enable the `.githooks/` hook with `git config core.hooksPath .githooks`.
-- There is no hosted CI; the hook and agents' own runs are the verification. Do not add CI.
+- No hosted CI; the local hook and agents verify. Do not add CI.
 - Fix the cause. Never weaken a check, update a digest or add an exception only to pass;
   if a pin or gate blocks legitimate work, stop and report it with the proposed change.
 

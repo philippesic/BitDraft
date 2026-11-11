@@ -1,4 +1,6 @@
 import hashlib
+import os
+import threading
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
@@ -7,6 +9,33 @@ from w1a1_eagle.contracts import components
 
 Role = Literal["train", "dev", "calibration", "heldout"]
 PriorUse = Literal["unobserved", "historical-training", "unknown"]
+FileIdentity = tuple[int, int, int, int, int]
+_HASHES: dict[tuple[Path, FileIdentity], str] = {}
+_HASH_LOCK = threading.Lock()
+
+
+def file_identity(status: os.stat_result) -> FileIdentity:
+    return status.st_dev, status.st_ino, status.st_size, status.st_mtime_ns, status.st_ctime_ns
+
+
+def file_digest(path: Path, expected: FileIdentity) -> str:
+    key = path, expected
+    with _HASH_LOCK:
+        cached = _HASHES.pop(key, None)
+        if cached is not None:
+            _HASHES[key] = cached
+            return cached
+    with path.open("rb") as source:
+        if file_identity(os.fstat(source.fileno())) != expected:
+            raise ValueError("artifact changed before authentication")
+        digest = hashlib.file_digest(source, "sha256").hexdigest()
+        if file_identity(os.fstat(source.fileno())) != expected:
+            raise ValueError("artifact changed during authentication")
+    with _HASH_LOCK:
+        if len(_HASHES) >= 1024:
+            del _HASHES[next(iter(_HASHES))]
+        _HASHES[key] = digest
+    return digest
 
 
 def prior_use(value: object) -> PriorUse:
@@ -35,6 +64,17 @@ class Artifact:
     size: int
     boundary: Path | None = field(default=None, compare=False, repr=False)
 
+    @classmethod
+    def capture(cls, path: Path) -> "Artifact":
+        path = path.resolve()
+        if not path.is_file():
+            raise ValueError("artifact must be a regular file")
+        before = file_identity(path.stat())
+        digest = file_digest(path, before)
+        if file_identity(path.stat()) != before:
+            raise ValueError("artifact changed during reference construction")
+        return cls(path, digest, before[2])
+
     def __post_init__(self) -> None:
         if (
             not isinstance(self.path, Path)
@@ -53,11 +93,11 @@ class Artifact:
             raise ValueError("artifact escaped its declared input boundary")
         if not self.path.is_file() or self.path.stat().st_size != self.size:
             raise ValueError("artifact size or existence mismatch")
-        digest = hashlib.sha256()
-        with self.path.open("rb") as source:
-            for chunk in iter(lambda: source.read(1024 * 1024), b""):
-                digest.update(chunk)
-        if digest.hexdigest() != self.sha256:
+        before = file_identity(self.path.stat())
+        digest = file_digest(self.path, before)
+        if file_identity(self.path.stat()) != before:
+            raise ValueError("artifact changed during authentication")
+        if digest != self.sha256:
             raise ValueError("artifact content mismatch")
 
 

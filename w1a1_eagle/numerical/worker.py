@@ -95,12 +95,17 @@ class TensorWorker:
             for offset in range(0, len(data), 1024 * 1024):
                 digest.update(data[offset : offset + 1024 * 1024])
         self.frozen_sha256 = digest.hexdigest()
+        self.native_codes = model.native_codes
 
     def verify_frozen(self) -> None:
         current = dict(self.model.named_buffers())
-        if set(current) != set(self.frozen) or any(
-            current[name] is not value or value._version != version
-            for name, (value, version) in self.frozen.items()
+        if (
+            self.model.native_codes is not self.native_codes
+            or set(current) != set(self.frozen)
+            or any(
+                current[name] is not value or value._version != version
+                for name, (value, version) in self.frozen.items()
+            )
         ):
             self.ready = False
             raise ValueError("frozen source or vocabulary changed after construction")

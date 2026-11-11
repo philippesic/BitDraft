@@ -59,8 +59,6 @@ def validate_files(files: dict[str, str], escapes: list[str] | None = None) -> l
             )
         ):
             result.add(Diagnostic("REPO_TASK", path))
-    if sum(len(t.encode()) for p, t in files.items() if p != "uv.lock") > 2097152:
-        result.add(Diagnostic("REPO_LARGE", "."))
     for path in escapes or []:
         result.add(Diagnostic("REPO_IGNORED", path))
     for line in files.get(".gitignore", "").splitlines():

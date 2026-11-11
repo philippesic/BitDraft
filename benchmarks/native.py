@@ -1,4 +1,3 @@
-import hashlib
 import shutil
 import subprocess
 import tarfile
@@ -7,14 +6,13 @@ from pathlib import Path
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.config import native_environment
 from w1a1_eagle.contracts import Record, integer, sequence, string
+from w1a1_eagle.data import Artifact
 from w1a1_eagle.identity import freeze_source, source_identity
 from w1a1_eagle.records import artifact, canonical, read, reference
 
 
 def file_reference(path: Path) -> Record:
-    with path.open("rb") as source:
-        digest = hashlib.file_digest(source, "sha256").hexdigest()
-    return {"path": str(path.resolve()), "sha256": digest, "bytes": path.stat().st_size}
+    return reference(Artifact.capture(path))
 
 
 def repair_sampling(source: Path) -> None:

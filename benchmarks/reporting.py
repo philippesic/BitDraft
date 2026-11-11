@@ -69,6 +69,7 @@ def report(root: Path) -> Record:
         "progress": progress,
         "development": diagnostics,
         "native_evaluations": evaluations,
+        "interruptions": interruptions(root),
         "exposure": {
             "selected_window_attempts": sum(visits.values()),
             "distinct_tasks": len(visits),
@@ -93,3 +94,40 @@ def controller_record() -> Record:
     import os
 
     return cast(Record, asdict(ProcessIdentity.read(os.getpid())))
+
+
+def interruptions(root: Path) -> list[Record]:
+    previous: Record | None = None
+    values: list[Record] = []
+    for path in sorted(root.glob("[0-9][0-9][0-9][0-9]-training")):
+        events = Journal(path).events()
+        controllers = {
+            string(row["attempt"]): row["controller"]
+            for row in events
+            if row.get("kind") == "started"
+        }
+        ready = next((row for row in events if row.get("kind") == "training-ready"), None)
+        if ready is not None and previous is not None:
+            same_boot = ready["boot"] == previous["boot"] and controllers.get(
+                string(ready["attempt"])
+            ) == previous.get("controller")
+            elapsed = (
+                number(ready["monotonic"]) - number(previous["monotonic"]) if same_boot else None
+            )
+            if elapsed is not None and elapsed < 0:
+                raise ValueError("training interruption clock moved backwards")
+            values.append(
+                {
+                    "resumed_segment": path.name,
+                    "seconds": elapsed,
+                    "scope": "last update through checkpoint/export/evaluation and next sample readiness"
+                    if same_boot
+                    else "unavailable across reboot/controller recovery; not continuous benchmark overhead",
+                }
+            )
+        previous = next(
+            (row for row in reversed(events) if row.get("kind") == "training-boundary"), None
+        )
+        if previous is not None:
+            previous = {**previous, "controller": controllers.get(string(previous["attempt"]))}
+    return values

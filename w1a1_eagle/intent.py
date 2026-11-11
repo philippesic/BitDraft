@@ -112,6 +112,7 @@ class Intent:
                 "development",
                 "model_update_seconds",
                 "development_cadence_updates",
+                "initialization",
             }
             != required
             or type(raw["schema"]) is not int
@@ -267,6 +268,14 @@ class Intent:
         )
 
     @property
+    def initialization(self) -> Artifact | None:
+        return (
+            artifact(self.raw["initialization"], self.base)
+            if "initialization" in self.raw
+            else None
+        )
+
+    @property
     def sampling(self) -> Artifact | None:
         return artifact(self.raw["sampling"], self.base) if "sampling" in self.raw else None
 
@@ -294,6 +303,9 @@ class Intent:
                 ),
                 "seed": self.seed,
                 "device": self.raw["device"],
+                "initialization": None
+                if self.initialization is None
+                else self.initialization.sha256,
                 "sampling": None
                 if self.sampling is None
                 else {"sha256": self.sampling.sha256, "bytes": self.sampling.size},

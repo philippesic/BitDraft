@@ -1,6 +1,7 @@
 import hashlib
 import io
 import json
+import os
 import tarfile
 from dataclasses import FrozenInstanceError
 from pathlib import Path
@@ -14,6 +15,29 @@ from w1a1_eagle.data import Artifact, Ledger, Prompt, Window, windows
 from w1a1_eagle.index import IndexReader, IndexSpec, Mount
 from w1a1_eagle.json_stream import ArrayRows
 from w1a1_eagle.records import canonical
+
+
+def test_artifact_hash_reuse_detects_same_size_edits_restored_mtime_and_replacement(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "input"
+    path.write_bytes(b"original")
+    captured = Artifact.capture(path)
+    captured.verify()
+    original = path.stat()
+    path.write_bytes(b"changed!")
+    os.utime(path, ns=(original.st_atime_ns, original.st_mtime_ns))
+    with pytest.raises(ValueError, match="mismatch"):
+        captured.verify()
+    replacement = tmp_path / "replacement"
+    replacement.write_bytes(b"changed!")
+    os.utime(replacement, ns=(original.st_atime_ns, original.st_mtime_ns))
+    replacement.replace(path)
+    with pytest.raises(ValueError, match="mismatch"):
+        captured.verify()
+    path.write_bytes(b"original")
+    captured.verify()
+    assert captured == Artifact.capture(path)
 
 
 def test_null_topics_and_role_aliases() -> None:

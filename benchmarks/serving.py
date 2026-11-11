@@ -6,6 +6,7 @@ from typing import Iterator, cast
 
 from benchmarks.comparison import Arm, Comparison
 from benchmarks.measurement import now, pause, port_number, ready
+from benchmarks.runtime_policy import arguments
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.config import native_environment
 from w1a1_eagle.contracts import Record
@@ -14,63 +15,14 @@ from w1a1_eagle.records import canonical, reference
 
 
 def server_arguments(spec: Comparison, arm: Arm, port: int) -> list[str]:
-    argv = [
-        str(spec.binary.path),
-        "-m",
-        str(spec.target.path),
-        "-ngl",
-        "99",
-        "-c",
-        str(spec.context),
-        "-np",
-        "1",
-        "-b",
-        "512",
-        "-ub",
-        "512",
-        "-t",
-        "4",
-        "-fa",
-        "on",
-        "--cache-type-k",
-        "f16",
-        "--cache-type-v",
-        "f16",
-        "--host",
-        "127.0.0.1",
-        "--port",
-        str(port),
-        "--metrics",
-        "--jinja",
-        "--reasoning",
-        "off",
-        "--no-webui",
-        "--no-warmup",
-        "--spec-type",
-        "draft-dflash" if arm.drafter else "none",
-        "-lv",
-        "3",
-    ]
-    if arm.drafter:
-        argv += [
-            "-md",
-            str(arm.drafter.path),
-            "-ngld",
-            "99",
-            "--cache-type-k-draft",
-            "f16",
-            "--cache-type-v-draft",
-            "f16",
-            "--spec-draft-n-max",
-            str(spec.depth),
-            "--spec-draft-n-min",
-            "0",
-            "--spec-draft-p-min",
-            "0",
-            "--spec-draft-sampling",
-            "greedy",
-        ]
-    return argv
+    return arguments(
+        spec.binary.path,
+        spec.target.path,
+        arm.drafter.path if arm.drafter else None,
+        spec.context,
+        spec.depth,
+        port,
+    )
 
 
 @contextmanager

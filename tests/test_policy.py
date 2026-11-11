@@ -22,6 +22,10 @@ def test_instruction_budget_and_pointer() -> None:
     assert validate_files({"results/example/model.pt": "weights"})
     assert validate_files({"results/example/source.py": "value = 1\n"})
     assert validate_files({"results/example/result.md": "# Conclusion\n"}) == []
+    assert validate_files({f"docs/page-{i}.md": "x" * 262144 for i in range(9)}) == []
+    assert validate_files({"docs/large.md": "x" * 262145}) == [
+        Diagnostic("REPO_LARGE", "docs/large.md")
+    ]
 
 
 def test_python_tokens_and_strings() -> None:

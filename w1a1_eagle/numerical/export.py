@@ -10,6 +10,8 @@ from torch import Tensor
 from w1a1_eagle.checkpoints.store import StateRef, Store
 from w1a1_eagle.data import Artifact
 from w1a1_eagle.model import Layer
+from w1a1_eagle.numerical.gguf_readback import Expected, metadata
+from w1a1_eagle.numerical.gguf_readback import verify as verify_gguf
 from w1a1_eagle.numerical.weights import GGUF
 from w1a1_eagle.numerical.worker import TensorWorker
 
@@ -57,6 +59,7 @@ class ExportAPI(GGUF, Protocol):
     @property
     def WriterState(self) -> WriterStates: ...
     def GGUFWriter(self, path: None, architecture: str) -> Writer: ...
+    def GGUFValueType(self, value: int) -> object: ...
 
 
 @dataclass(frozen=True)
@@ -76,11 +79,11 @@ def f32(value: Tensor) -> NativeArray:
 def packed_signs(value: Tensor) -> NativeArray:
     if value.dtype != torch.float32 or value.ndim != 2 or not bool(torch.isfinite(value).all()):
         raise ValueError("finite F32 sign matrix required")
-    signs = (value.detach().cpu() >= 0).to(torch.int64)
+    signs = value.detach().cpu() >= 0
     signs = torch.nn.functional.pad(signs, (0, (-value.shape[1]) % 32))
-    powers = torch.bitwise_left_shift(torch.ones(32, dtype=torch.int64), torch.arange(32))
-    result = (signs.reshape(value.shape[0], -1, 32) * powers).sum(-1).to(torch.int32)
-    return cast(NativeArray, result.contiguous().numpy())
+    array = cast("np.ndarray[tuple[int, ...], np.dtype[np.bool_]]", signs.numpy())
+    packed = cast(NativeArray, np.packbits(array, axis=-1, bitorder="little"))
+    return cast(NativeArray, packed.view(np.int32))
 
 
 def prepare(
@@ -103,21 +106,34 @@ def prepare(
     vocabulary.verify()
     api = cast(ExportAPI, gguf)
     kinds = api.GGMLQuantizationType
-    reader = api.GGUFReader(str(source.path))
+    reader = api.GGUFReader(str(source.path)) if not model.native_codes else None
     writer = api.GGUFWriter(None, "dflash")
-    for key, field in reader.fields.items():
-        if (
-            not key.startswith(("GGUF.", "dflash.w1ax.", "dflash.component."))
-            and key != "general.architecture"
-        ):
-            if not field.types:
-                raise ValueError("source metadata has no declared type")
-            writer.add_key_value(
-                key,
-                field.contents(),
-                field.types[0],
-                field.types[-1] if len(field.types) > 1 else None,
-            )
+    if reader is None:
+        for key, value, kind, subtype in metadata(source.path):
+            if (
+                not key.startswith(("GGUF.", "dflash.w1ax.", "dflash.component."))
+                and key != "general.architecture"
+            ):
+                writer.add_key_value(
+                    key,
+                    value,
+                    api.GGUFValueType(kind),
+                    api.GGUFValueType(subtype) if subtype is not None else None,
+                )
+    else:
+        for key, field in reader.fields.items():
+            if (
+                not key.startswith(("GGUF.", "dflash.w1ax.", "dflash.component."))
+                and key != "general.architecture"
+            ):
+                if not field.types:
+                    raise ValueError("source metadata has no declared type")
+                writer.add_key_value(
+                    key,
+                    field.contents(),
+                    field.types[0],
+                    field.types[-1] if len(field.types) > 1 else None,
+                )
     writer.add_uint32("dflash.w1ax.version", 2)
     writer.add_uint32("dflash.w1ax.activation_bits", 8)
     for key, config_value in {
@@ -180,40 +196,60 @@ def prepare(
             add(base + ".w1ax_midpoint", projection.midpoint)
             if name != "up":
                 add(base + ".w1ax_gain", projection.log_gain.detach().float().cpu().exp())
-    for tensor in reader.tensors:
-        if tensor.name in selected or "norm.weight" in tensor.name:
-            continue
-        decoded = (
-            api.dequantize(tensor.data, tensor.tensor_type)
-            .reshape(tuple(int(v) for v in reversed(tensor.shape)))
-            .astype("float32")
-        )
-        coded = cast(NativeArray, api.quantize(decoded, kinds.Q4_0))
-        restored = torch.tensor(
-            api.dequantize(coded, kinds.Q4_0).reshape(
-                tuple(int(v) for v in reversed(tensor.shape))
+    if model.native_codes:
+        cached = {name: (shape, data) for name, shape, data in model.native_codes}
+        if len(cached) != len(model.native_codes) or set(cached) != {*frozen, "output.weight"}:
+            raise ValueError("native frozen code coverage differs")
+        for name, (shape, data) in cached.items():
+            array = cast(NativeArray, np.frombuffer(data, dtype=np.uint8).reshape(shape))
+            head_code = name == "output.weight"
+            tensors.append(
+                ExportTensor(
+                    name,
+                    array,
+                    kinds.Q4_K if head_code else kinds.Q4_0,
+                    "Q4_K" if head_code else "Q4_0",
+                )
+            )
+    else:
+        if reader is None:
+            raise ValueError("source reader unavailable")
+        for tensor in reader.tensors:
+            if tensor.name in selected or "norm.weight" in tensor.name:
+                continue
+            decoded = (
+                api.dequantize(tensor.data, tensor.tensor_type)
+                .reshape(tuple(int(v) for v in reversed(tensor.shape)))
+                .astype("float32")
+            )
+            coded = cast(NativeArray, api.quantize(decoded, kinds.Q4_0))
+            restored = torch.tensor(
+                api.dequantize(coded, kinds.Q4_0).reshape(
+                    tuple(int(v) for v in reversed(tensor.shape))
+                ),
+                dtype=torch.float32,
+            )
+            if tensor.name not in frozen or not torch.equal(
+                restored, frozen[tensor.name].detach().cpu()
+            ):
+                raise ValueError("frozen source execution/export operands disagree")
+            tensors.append(ExportTensor(tensor.name, coded, kinds.Q4_0, "Q4_0"))
+        head_reader = api.GGUFReader(str(vocabulary.path))
+        lookup = {tensor.name: tensor for tensor in head_reader.tensors}
+        head = lookup.get("output.weight", lookup.get("token_embd.weight"))
+        if head is None or head.tensor_type.name != "Q4_K":
+            raise ValueError("explicit original Q4_K head required")
+        decoded_head = torch.tensor(
+            api.dequantize(head.data, head.tensor_type).reshape(
+                tuple(int(v) for v in reversed(head.shape))
             ),
             dtype=torch.float32,
         )
-        if tensor.name not in frozen or not torch.equal(
-            restored, frozen[tensor.name].detach().cpu()
-        ):
-            raise ValueError("frozen source execution/export operands disagree")
-        tensors.append(ExportTensor(tensor.name, coded, kinds.Q4_0, "Q4_0"))
-    head_reader = api.GGUFReader(str(vocabulary.path))
-    lookup = {tensor.name: tensor for tensor in head_reader.tensors}
-    head = lookup.get("output.weight", lookup.get("token_embd.weight"))
-    if head is None or head.tensor_type.name != "Q4_K":
-        raise ValueError("explicit original Q4_K head required")
-    decoded_head = torch.tensor(
-        api.dequantize(head.data, head.tensor_type).reshape(
-            tuple(int(v) for v in reversed(head.shape))
-        ),
-        dtype=torch.float32,
-    )
-    if not torch.equal(decoded_head, model.vocabulary.detach().cpu()):
-        raise ValueError("frozen vocabulary execution/export operands disagree")
-    tensors.append(ExportTensor("output.weight", cast(NativeArray, head.data), kinds.Q4_K, "Q4_K"))
+        if not torch.equal(decoded_head, model.vocabulary.detach().cpu()):
+            raise ValueError("frozen vocabulary execution/export operands disagree")
+        tensors.append(
+            ExportTensor("output.weight", cast(NativeArray, head.data), kinds.Q4_K, "Q4_K")
+        )
     if len({tensor.name for tensor in tensors}) != len(tensors):
         raise ValueError("duplicate export tensor")
     return writer, tensors
@@ -250,10 +286,18 @@ def export_he4(
         )
         if type(scratch_bytes) is not int or required > scratch_bytes:
             raise ValueError("export scratch budget exceeded")
-        expected = {
-            tensor.name: (tensor.kind_name, hashlib.sha256(tensor.data.tobytes()).hexdigest())
-            for tensor in tensors
-        }
+        expected: Expected = {}
+        for tensor in tensors:
+            shape = tuple(tensor.data.shape)
+            if tensor.kind_name in {"Q4_0", "Q4_K"}:
+                block, width = (32, 18) if tensor.kind_name == "Q4_0" else (256, 144)
+                shape = (*shape[:-1], shape[-1] // width * block)
+            expected[tensor.name] = (
+                tensor.kind_name,
+                tuple(reversed(shape)),
+                tensor.data.nbytes,
+                hashlib.sha256(tensor.data.tobytes()).hexdigest(),
+            )
         for tensor in tensors:
             writer.add_tensor(tensor.name, tensor.data, raw_dtype=tensor.kind)
 
@@ -274,17 +318,6 @@ def export_he4(
                 writer.write_padding(output, view.nbytes)
 
         def verify(artifact: Artifact) -> None:
-            reader = cast(ExportAPI, gguf).GGUFReader(str(artifact.path))
-            actual = {
-                tensor.name: (
-                    tensor.tensor_type.name,
-                    hashlib.sha256(cast(NativeArray, tensor.data).tobytes()).hexdigest(),
-                )
-                for tensor in reader.tensors
-            }
-            if expected != actual or len(reader.tensors) != len(expected):
-                raise ValueError("GGUF producer/reader tensor disagreement")
-            if reader.fields["dflash.w1ax.config_hash"].contents() != worker.identity:
-                raise ValueError("GGUF recipe identity disagreement")
+            verify_gguf(artifact.path, expected, worker.identity)
 
         return store.commit_with(write, worker.identity, worker.updates, max_bytes, verify)

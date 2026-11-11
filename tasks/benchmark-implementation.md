@@ -2,47 +2,48 @@
 
 ## Goal
 
-Finish the benchmark/data/training pipeline under Philip's revised runtime requirements,
-then generate the selected2K supplement and leave original HE4broad continuing on the hybrid.
+Qualify fast candidate-only checks and reusable historical references, then prepare for
+additional training. The authorized2K supplement and original-optimizer continuation remain
+unfinished; production stays unstarted during this pre-training qualification request.
 
 ## Authorized
 
-RTX5080 implementation/testing, scoped FP16 qualification,2K capture, optimizer-preserving
-hybrid continuation and hourly health/repair. Preserve other jobs. Reclaim obsolete large
-artifacts after ownership/dependency/evidence checks. No hosted CI, new remote, full6K
-capture or heldout24 consumption. New workload sizes are being discussed; do not restart
-the rejected oversized protocol or its disabled schedule.
+RTX5080 implementation/testing, scoped FP16 qualification,2K capture and Adam/RNG-preserving
+hybrid continuation; preserve other jobs. Reclaim obsolete large artifacts after ownership,
+dependency and evidence checks. No hosted CI, new remote, full6K capture or heldout24 use.
+Philip approved60-request candidate-only screens and reusable target/baseline/leader records,
+leaner broader panels, and removal of the aggregate authored-file size cap.
 
 ## Done when
 
-Revised benchmarks meet measured wall budgets and preserve target semantics;2K captures
-are validated and joined to15647 retained records; original220095 continues with Adam/RNG;
-monitoring, docs/findings and full checks are complete. No remote: commits remain local.
+Current request: reference compatibility, selection, recovery and actual complete training
+interruptions are exercised; a fresh agent can use maintained commands and docs reliably.
+The complete pause must fit120seconds, with production cadence1800–3600 optimizer seconds.
+Later: capture exactly2K FP16 records, validate17647-record mixture, continue original220095
+including Adam/RNG, and establish fresh hourly health upkeep. No remote: local-only commits.
 
 ## State
 
-Owner root. Artifact root `/home/philip/binary-eagle-artifacts`.
-Code, bank-v8/supplement-v2 and scoped FP16/migration/recovery qualification are implemented.
-Q4KM completed full600×2, harness90×2 and live12×3 for all3 arms. All matched target
-behavior; live completion8/12 per arm, with an HE4 slowdown despite request gains.
-The oversized suite full-qualification-01 was intentionally stopped during NVFP4 after
-Philip rejected its cost. Complete Q4 evidence stays valid; partial NV timing cannot rank.
-The obsolete hourly schedule is deleted. No production capture or hybrid training has begun.
-Original run/data physically lives in datasets/retained-he4broad-original under the artifact
-root; old path remains a symlink. Original220095 and selected controls are preserved.
-Runtime breakdown: qualification/benchmark-runtime-breakdown-q4km.json. Stopping receipt:
-benchmarks/full-qualification-01/operator-stop.json. Schedule: training/hourly-schedule.json.
+Owner root; artifact root `/home/philip/binary-eagle-artifacts`.
+Candidate-only execution, immutable reference registry, CPU preflight and acceptance-leader
+selection are implemented. Lean cohorts:60×128-token screen; broader120 requests,18 prefix
+variants and12 live tasks, one pass. Wrong/missing/partial references are refused. Historical
+speed is descriptive; native outputs still match saved target signatures.
+GPU qualification is active under qualification/lean-checks. Initial60-prompt controls
+completed; candidate inference about54seconds. Earlier complete pauses exceeded120seconds
+and remain as failed qualification attempts. Materialized initialization, frozen export
+codes and removal of redundant initialization work are being measured before adoption.
+Original220095,15647-record corpus and selected controls remain preserved. Original data
+physically lives in datasets/retained-he4broad-original; old locator is a symlink. FP16
+storage passed scoped qualification. No production supplement or hybrid training has begun.
+The obsolete full600×2 suite and deleted continuation schedule must not restart. Complete
+old Q4 panels remain usable evidence; incomplete NV panels cannot establish references.
 
 ## Next
 
-1. Philip wants candidate-only checks against preserved baseline/leader results, also
-   reusing full-comparison controls. Enforce complete matching evidence at preflight;
-   historical timing needs hardware/runtime compatibility and cannot prove paired speed.
-   Proposed, not yet qualified:60 short requests with128-token caps; broader120 requests,
-   18 prefix variants and12 live tasks, one pass each. Keep category/length breadth.
-   Training pause/export/eval/resume must fit a couple minutes every30–60 training minutes;
-   broader candidate comparison aims for15–20 minutes/target, pending measurement.
-2. Update definitions, guards, docs and qualification to the accepted budgets. Reuse valid
-   preserved evidence explicitly. Do not silently resume old600×2 or sampled120×3 runs.
-3. Then capture the frozen2K subset in qualified FP16, validate the real hybrid, continue
-   original220095, verify healthy progress/recovery and create fresh hourly health upkeep.
+1. Finish measured pause qualification, cached broader-panel tests and failure/recovery
+   checks. Preserve failed/unfavorable attempts; do not relax timing or evidence guarantees.
+2. Close this qualification with current docs, compact findings, full checks and commits.
+3. For subsequent training, use the frozen2K selection and qualified FP16 capture; revise
+   qualification/prepare-hybrid-production.py to the qualified V2 recipe before use. The
+   earlier10800-second cadence/short120 recipe is disabled and must remain unusable.

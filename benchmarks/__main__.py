@@ -26,7 +26,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(prog="python -m benchmarks")
     parser.add_argument("--frozen", action="store_true", help=argparse.SUPPRESS)
     commands = parser.add_subparsers(dest="command", required=True)
-    for name in ("plan", "verify-inputs", "reduce-trace", "campaign-report"):
+    for name in ("plan", "verify-inputs", "reduce-trace", "campaign-report", "campaign-preflight"):
         command = commands.add_parser(name)
         command.add_argument("input", type=Path)
     for name in (
@@ -47,17 +47,37 @@ def main() -> int:
         "profile-native",
         "prepare-project-workflows",
         "prepare-replays",
+        "record-reference",
+        "prepare-checks",
+        "prepare-initialization",
     ):
         comparison = commands.add_parser(name)
         comparison.add_argument("input", type=Path)
         comparison.add_argument("output", type=Path)
     args = parser.parse_args(namespace=Arguments())
     try:
+        if not args.frozen and args.command == "campaign-preflight":
+            root = Path(__file__).resolve().parents[1]
+            return subprocess.run(
+                [
+                    numerical_python(root),
+                    "-B",
+                    "-m",
+                    "benchmarks",
+                    "--frozen",
+                    args.command,
+                    str(args.input.resolve()),
+                ],
+                cwd=root,
+                env=benchmark_environment(root, root),
+                check=False,
+            ).returncode
         if not args.frozen and args.command not in {
             "plan",
             "verify-inputs",
             "reduce-trace",
             "campaign-report",
+            "campaign-preflight",
         }:
             root = Path(__file__).resolve().parents[1]
             code = source_identity(root)
@@ -67,7 +87,15 @@ def main() -> int:
             python = (
                 numerical_python(root)
                 if args.command
-                in {"curate", "admit-bank", "prepare-replays", "capture", "evaluate", "campaign"}
+                in {
+                    "curate",
+                    "admit-bank",
+                    "prepare-replays",
+                    "capture",
+                    "evaluate",
+                    "campaign",
+                    "prepare-initialization",
+                }
                 else sys.executable
             )
             return subprocess.run(
@@ -85,7 +113,35 @@ def main() -> int:
                 env=benchmark_environment(root, snapshot),
                 check=False,
             ).returncode
-        if args.command == "prepare-replays":
+        if args.command == "campaign-preflight":
+            from benchmarks.campaign import preflight
+
+            result = preflight(args.input)
+        elif args.command == "prepare-initialization":
+            from w1a1_eagle.contracts import integer, record
+            from w1a1_eagle.intent import Intent
+            from w1a1_eagle.model import Geometry
+            from w1a1_eagle.numerical.weights import prepare_initialization
+
+            intent = Intent.load(args.input)
+            result = prepare_initialization(
+                intent.source,
+                intent.vocabulary,
+                intent.memory_bytes,
+                Geometry(
+                    **{key: integer(value) for key, value in record(intent.raw["geometry"]).items()}
+                ),
+                args.output,
+            )
+        elif args.command == "prepare-checks":
+            from benchmarks.lean import prepare
+
+            result = prepare(args.input, args.output)
+        elif args.command == "record-reference":
+            from benchmarks.references import register
+
+            result = register(args.input, args.output)
+        elif args.command == "prepare-replays":
             from benchmarks.replays import prepare
 
             result = prepare(args.input, args.output)
@@ -159,12 +215,13 @@ def main() -> int:
             if hashed:
                 native_spec.verify()
             factor = native_spec.repeats * len(native_spec.arms) * len(native_spec.sampling.seeds)
-            groups = len(native_spec.arms) if native_spec.tier in {"full", "harness"} else 1
+            groups = native_spec.block_count()
             result = {
                 "tier": native_spec.tier,
                 "role": native_spec.role,
                 "tasks": len(native_spec.tasks),
                 "arms": [arm.name for arm in native_spec.arms],
+                "historical_arms": [name for name, _ in native_spec.references],
                 "measured_units": len(native_spec.tasks) * factor,
                 "unit": "live episodes"
                 if native_spec.tier == "live"

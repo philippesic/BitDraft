@@ -112,6 +112,8 @@ def preflight(path: Path, sealed: bool = False) -> Record:
         Diagnostics(artifact(intent.raw["development"], intent.base), corpus, intent.memory_bytes)
     intent.source.verify()
     intent.vocabulary.verify()
+    if intent.initialization is not None:
+        intent.initialization.verify()
     return admission(intent, corpus)
 
 
@@ -175,8 +177,24 @@ def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
     if owners != [cast(Record, asdict(own_identity))]:
         raise ValueError("worker requires its durable controller-bound process identity")
     journal.append({**admission(intent, corpus), "attempt": attempt})
-    model = load_he4(intent.source, intent.vocabulary, intent.memory_bytes, cfg)
+    phase_clock = Monotonic()
+
+    def phase(name: str) -> None:
+        journal.append(
+            {
+                "kind": "worker-phase",
+                "attempt": attempt,
+                "phase": name,
+                "monotonic": phase_clock.now(),
+            }
+        )
+
+    phase("model-load-began")
+    model = load_he4(
+        intent.source, intent.vocabulary, intent.memory_bytes, cfg, intent.initialization
+    )
     model.to(str(intent.raw["device"]))
+    phase("model-load-complete")
     loaded_cache: dict[tuple[int, int, int, int, int], str] = {}
     initial_loaded = loaded_identity(loaded_cache)
     journal.append({"kind": "loaded", "attempt": attempt, "identity": initial_loaded})
@@ -198,6 +216,7 @@ def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
             if intent.mode == "continue"
             else "branch",
         )
+    phase("restore-complete")
     attempted_updates = [row for row in journal.events() if row.get("kind") == "update-attempt"]
     if attempted_updates and intent.mode == "resume":
         attempted = max(integer(row["attempts"]) for row in attempted_updates)
@@ -318,8 +337,21 @@ def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
             last_checkpoint_seconds = clock.now()
         return False
 
+    resumed = False
+
     class RecordedSamples:
         def sample(self, cursor: int) -> tuple[Capture, Supervision]:
+            nonlocal resumed
+            if not resumed:
+                journal.append(
+                    {
+                        "kind": "training-ready",
+                        "attempt": attempt,
+                        "monotonic": clock.now(),
+                        "boot": owner.boot,
+                    }
+                )
+                resumed = True
             journal.append(
                 {
                     "kind": "update-attempt",
@@ -343,7 +375,8 @@ def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
             return capture, window
 
     worker.samples = RecordedSamples()
-    worker.checkpoint(states, intent.state_bytes)
+    if intent.parent is None:
+        worker.checkpoint(states, intent.state_bytes)
     try:
         result = worker.run(clock, intent.budget, stop)
         if result == "stopped" and stop_reason:
@@ -357,7 +390,16 @@ def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
             }
         )
         raise
+    journal.append(
+        {
+            "kind": "training-boundary",
+            "attempt": attempt,
+            "monotonic": clock.now(),
+            "boot": owner.boot,
+        }
+    )
     reference = worker.checkpoint(states, intent.state_bytes)
+    phase("checkpoint-complete")
     retain_states()
     export_store = Store(root / "exports", intent.disk_reserve_bytes)
     exported = export_he4(
@@ -368,6 +410,7 @@ def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
         intent.state_bytes,
         intent.memory_bytes,
     )
+    phase("export-complete")
     if "retention" in intent.raw:
         retired_exports = export_store.prune(integer(record(intent.raw["retention"])["exports"]))
         if retired_exports:
