@@ -27,7 +27,7 @@ Q4KM completed full600×2, harness90×2 and live12×3 for all3 arms. All matched
 behavior; live completion8/12 per arm, with an HE4 slowdown despite request gains.
 The oversized suite full-qualification-01 was intentionally stopped during NVFP4 after
 Philip rejected its cost. Complete Q4 evidence stays valid; partial NV timing cannot rank.
-Hourly schedule is disabled. No production data generation or hybrid training has begun.
+The obsolete hourly schedule is deleted. No production capture or hybrid training has begun.
 Original run/data physically lives in datasets/retained-he4broad-original under the artifact
 root; old path remains a symlink. Original220095 and selected controls are preserved.
 Runtime breakdown: qualification/benchmark-runtime-breakdown-q4km.json. Stopping receipt:
@@ -42,4 +42,4 @@ benchmarks/full-qualification-01/operator-stop.json. Schedule: training/hourly-s
 2. Update definitions, guards, docs and qualification to the accepted budgets. Reuse valid
    preserved evidence explicitly. Do not silently resume old600×2 or sampled120×3 runs.
 3. Then capture the frozen2K subset in qualified FP16, validate the real hybrid, continue
-   original220095, verify healthy progress/recovery and re-enable hourly upkeep.
+   original220095, verify healthy progress/recovery and create fresh hourly health upkeep.
