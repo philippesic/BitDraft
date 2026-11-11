@@ -78,6 +78,42 @@ def legacy(root: Path) -> Iterator[Record]:
             yield result
 
 
+def ultrachat_label(first: str) -> tuple[str, str] | None:
+    intro = first.split("\n", 1)[0][:400]
+    lead = r"^(?:(?:can|could|would) you |please |i (?:want|need) you to )?"
+    if re.search(
+        lead + r"(?:translate\b|provide (?:me with )?(?:a )?translation\b)", intro, re.IGNORECASE
+    ):
+        request = re.split(
+            r"Answer according to:|Generate according to:|Given the text:",
+            intro,
+            flags=re.IGNORECASE,
+        )[0]
+        if re.search(
+            r"\b(?:into|to|in) (?:standard )?(?:english|spanish|french|german|italian|portuguese|russian|chinese|japanese|korean|arabic|hindi|dutch|polish|swedish|turkish|vietnamese|greek|hebrew)\b",
+            request,
+            re.IGNORECASE,
+        ):
+            return "writing", "translation"
+        return None
+    if re.search(
+        lead
+        + r"(?:(?:create|develop|design|make|plan|outline)\b.{0,100}\b(?:plan|schedule|itinerary|strategy)\b|(?:solve|answer|explain)\b.{0,80}\b(?:riddle|puzzle|logic problem)\b)",
+        intro,
+        re.IGNORECASE,
+    ):
+        return "reasoning", "non_arithmetic"
+    if re.search(
+        lead + r"(?:write|rewrite|revise|edit|compose|rephrase|draft)\b", intro, re.IGNORECASE
+    ) and not re.search(
+        r"\b(?:code|python|javascript|program|function|algorithm|sql|script)\b",
+        intro,
+        re.IGNORECASE,
+    ):
+        return "writing", "writing"
+    return None
+
+
 def ultrachat(path: Path) -> Iterator[Record]:
     for row in parquet_rows(path):
         messages = [record(v) for v in sequence(row["messages"])]
@@ -85,36 +121,14 @@ def ultrachat(path: Path) -> Iterator[Record]:
         if not users:
             continue
         key = string(row["prompt_id"])
-        first = string(messages[0]["content"])
-        intro = first.split("\n", 1)[0][:400]
-        lead = r"^(?:(?:can|could|would) you |please |i (?:want|need) you to )?"
-        if re.search(
-            lead + r"(?:translate\b|provide (?:me with )?(?:a )?translation\b)",
-            intro,
-            re.IGNORECASE,
-        ):
-            yield candidate("ultrachat", key, key, "writing", "translation", messages[:1])
+        first = text_field(messages[0]["content"])
+        if not first.strip():
             continue
-        elif re.search(
-            lead
-            + r"(?:create|develop|design|write|make|plan|outline|provide)\b.{0,120}\b(?:plan|schedule|itinerary|strategy)\b|\b(?:riddle|puzzle|logical reasoning|logic problem|scheduling problem|constraint satisfaction)\b",
-            intro,
-            re.IGNORECASE,
-        ):
-            yield candidate("ultrachat", key, key, "reasoning", "non_arithmetic", messages[:1])
+        label = ultrachat_label(first)
+        if label is not None:
+            category, subtype = label
+            yield candidate("ultrachat", key, key, category, subtype, messages[:1])
             continue
-        if re.search(
-            lead + r"(?:write|rewrite|revise|edit|compose|rephrase|draft)\b",
-            intro,
-            re.IGNORECASE,
-        ):
-            if not re.search(
-                r"\b(?:code|python|javascript|program|function|algorithm|sql|script)\b",
-                intro,
-                re.IGNORECASE,
-            ):
-                yield candidate("ultrachat", key, key, "writing", "writing", messages[:1])
-                continue
         if len(users) > 1:
             yield candidate(
                 "ultrachat", key, key, "conversation", "followup", messages[: users[-1] + 1]

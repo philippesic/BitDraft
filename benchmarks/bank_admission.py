@@ -1,9 +1,19 @@
 from collections import Counter
+from itertools import chain
 from pathlib import Path
 
 from benchmarks.bank import publish
-from benchmarks.coverage import FULL, SHORT, TRAIN, select
+from benchmarks.coverage import (
+    FULL,
+    SHORT,
+    TRAIN,
+    TRAIN_INPUT_BUDGET,
+    length_band,
+    select,
+    selection_order,
+)
 from benchmarks.protection import source_names
+from benchmarks.sources import ultrachat_label
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, record, sequence, string
 from w1a1_eagle.identity import freeze_source, source_identity
@@ -14,7 +24,8 @@ from w1a1_eagle.records import artifact, canonical, identity, read, reference
 def admit(specification: Path, output: Path) -> Record:
     raw = read(specification)
     if (
-        set(raw) - {"heldout_exclusions"} != {"schema", "pool", "source_result", "exclusions"}
+        set(raw) - {"heldout_exclusions", "development_replays", "harnesses"}
+        != {"schema", "pool", "source_result", "exclusions"}
         or raw["schema"] != 1
     ):
         raise ValueError("unsupported bank admission specification")
@@ -41,7 +52,27 @@ def admit(specification: Path, output: Path) -> Record:
     pools: dict[str, list[Record]] = {"train": [], "dev": []}
     groups: dict[str, str] = {}
     rejected: Counter[str] = Counter()
-    for row in json_rows(refs["pool"].path):
+    replays: list[Record] = []
+    if "development_replays" in raw:
+        ref = artifact(raw["development_replays"], specification.resolve().parent)
+        ref.verify()
+        replay_receipt = read(ref.path)
+        if (
+            replay_receipt["target_sha256"] != target.sha256
+            or replay_receipt["template_sha256"] != previous["template_sha256"]
+        ):
+            raise ValueError("application replay target/template mismatch")
+        pool_ref = artifact(replay_receipt["pool"], ref.path.parent)
+        pool_ref.verify()
+        replays = list(json_rows(pool_ref.path))
+        if any(row["role"] != "dev" or row["source"] != "project-replay" for row in replays):
+            raise ValueError("application replays must remain DEV")
+    for row in chain(json_rows(refs["pool"].path), replays):
+        if row["source"] == "ultrachat" and row["category"] != "conversation":
+            first = record(sequence(row["messages"])[0])
+            if ultrachat_label(string(first["content"])) != (row["category"], row["subtype"]):
+                rejected["source_annotation_refused"] += 1
+                continue
         role, group = string(row["role"]), string(row["group"])
         if role not in pools:
             raise ValueError("bank role must remain train/dev")
@@ -64,12 +95,48 @@ def admit(specification: Path, output: Path) -> Record:
     store.atomic(store.root / "specification.json", canonical(raw))
     tokenizer = Tokenizer(binary.path, target.path, store.root / "tokenizer.log")
     try:
+        if "harnesses" in raw:
+            ref = artifact(raw["harnesses"], specification.resolve().parent)
+            ref.verify()
+            system = string(read(ref.path)["tools"])
+            for category, source in (("code", "commitpack"), ("structured", "glaive")):
+                eligible = sorted(
+                    (
+                        row
+                        for row in pools["train"]
+                        if row["category"] == category and row["source"] == source
+                    ),
+                    key=selection_order,
+                )[:100]
+                if len(eligible) != 100:
+                    raise ValueError(
+                        "training application prefix requires 100 code and 100 tool groups"
+                    )
+                for row in eligible:
+                    messages = [{"role": "system", "content": system}, *sequence(row["messages"])]
+                    rendered = tokenizer.render(
+                        [record(value) for value in messages],
+                        [record(value) for value in sequence(row["tools"])],
+                    )
+                    tokens = tokenizer.tokenize(rendered)
+                    row.update(
+                        {
+                            "messages": messages,
+                            "harness": "project-training",
+                            "input_tokens": len(tokens),
+                            "length_band": length_band(len(tokens)),
+                            "token_sha256": identity({"tokens": list(tokens)}),
+                            "rendered_sha256": identity({"text": rendered}),
+                        }
+                    )
         for role, counts, bands in (
             ("train", TRAIN, (3720, 1800, 420, 60)),
             ("dev", FULL, (300, 180, 90, 30)),
         ):
             while True:
-                selected = select(pools[role], counts, bands)
+                selected = select(
+                    pools[role], counts, bands, TRAIN_INPUT_BUDGET if role == "train" else None
+                )
                 refused: set[str] = set()
                 for row in selected:
                     rendered = tokenizer.render(

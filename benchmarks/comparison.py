@@ -1,6 +1,8 @@
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
+from benchmarks.coverage import FULL, SHORT, length_band
 from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
 from w1a1_eagle.data import Artifact
 from w1a1_eagle.records import artifact, read
@@ -191,6 +193,7 @@ class Comparison:
                 if not isinstance(message.get("content"), str):
                     raise ValueError("message content must be text")
         repeats, warmups = integer(raw["repeats"]), integer(raw["warmups"])
+        require_cohort(tier, tasks)
         context, depth = integer(raw["context"]), integer(raw["depth"])
         if (
             not 1 <= repeats <= 20
@@ -230,10 +233,24 @@ class Comparison:
             ref.verify()
         if not self.libraries:
             raise ValueError("explicit native library identities required")
-        if read(self.source.path).get("verification_trace", False) != self.diagnostic:
+        built = read(self.source.path)
+        if built.get("verification_trace", False) != self.diagnostic:
             raise ValueError(
                 "instrumented runtime must be explicitly diagnostic; primary timings require the clean runtime"
             )
+        produced = [
+            artifact(value, self.source.path.parent) for value in sequence(built["artifacts"])
+        ]
+        if not any(
+            ref.sha256 == self.binary.sha256
+            and ref.size == self.binary.size
+            and ref.path.name == "llama-server"
+            for ref in produced
+        ) or {ref.sha256 for ref in produced if ".so" in ref.path.name} != {
+            ref.sha256 for ref in self.libraries
+        }:
+            raise ValueError("comparison server/libraries do not match the authenticated build")
+
         if self.sampling.qualification is not None:
             self.sampling.qualification.verify()
             qualification = read(self.sampling.qualification.path)
@@ -246,3 +263,41 @@ class Comparison:
                 != {"sample-and-match", "rejection"}
             ):
                 raise ValueError("sampled verifier qualification does not bind this target/runtime")
+
+    def serving_identity(self) -> tuple[str, ...]:
+        return (
+            self.source.sha256,
+            self.binary.sha256,
+            self.target.sha256,
+            *sorted(ref.sha256 for ref in self.libraries),
+            str(self.context),
+            str(self.depth),
+            self.role,
+        )
+
+
+def require_cohort(tier: str, tasks: tuple[Record, ...]) -> None:
+    if tier in {"short", "full", "sampled"}:
+        categories = ("code", "reasoning", "documents", "conversation", "structured", "writing")
+        counts = FULL if tier == "full" else SHORT
+        bands = (300, 180, 90, 30) if tier == "full" else (60, 36, 18, 6)
+        observed = Counter(string(task["category"]) for task in tasks)
+        lengths = Counter(
+            length_band(integer(record(task["ancestry"])["input_tokens"])) for task in tasks
+        )
+        if (
+            observed != dict(zip(categories, counts, strict=True))
+            or lengths != dict(enumerate(bands))
+            or len({string(task["group"]) for task in tasks}) != len(tasks)
+        ):
+            raise ValueError(
+                "declared request cohort violates category, length or independent-group coverage"
+            )
+    if tier == "harness":
+        groups: dict[str, list[str]] = {}
+        for task in tasks:
+            groups.setdefault(string(task["group"]), []).append(string(task["harness"]))
+        if len(groups) != 30 or any(
+            sorted(values) != ["coding", "minimal", "tools"] for values in groups.values()
+        ):
+            raise ValueError("harness requires thirty groups with all three configurations")

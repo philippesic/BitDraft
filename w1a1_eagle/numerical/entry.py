@@ -39,8 +39,18 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
     known_prior = False
     if intent.parent is not None:
         parent = Store(intent.parent.path.parent).describe(intent.parent)
+        if intent.mode == "resume" and parent.config != intent.recipe:
+            raise ValueError(
+                "resume requires the recorded recipe; use an explicit continuation for changed inputs/source"
+            )
         starting_updates = parent.updates
         accounting = checkpoint_accounting(parent, intent.memory_bytes)
+        if (
+            intent.mode == "resume"
+            and accounting is not None
+            and accounting.dataset != intent.corpus.sha256
+        ):
+            raise ValueError("resume dataset identity differs from the durable checkpoint")
         if accounting is not None and accounting.dataset == intent.corpus.sha256:
             prior_labels = accounting.dataset_labels
             known_prior = True
@@ -98,6 +108,8 @@ def preflight(path: Path, sealed: bool = False) -> Record:
         raise ValueError("source identity differs from intent")
     cfg = record(intent.raw["geometry"])
     corpus = read_corpus(intent, integer(cfg["hidden"]))
+    if "development" in intent.raw:
+        Diagnostics(artifact(intent.raw["development"], intent.base), corpus, intent.memory_bytes)
     intent.source.verify()
     intent.vocabulary.verify()
     return admission(intent, corpus)

@@ -188,3 +188,94 @@ def test_native_bundle_refuses_paths_and_links(tmp_path: Path) -> None:
                 assert archive.getmember(name).linkname == "../../escape"
         with pytest.raises(ValueError, match="regular source"):
             unpack_bundle(path, tmp_path / "output", 1024)
+
+
+def test_fixed_cohort_rejects_narrow_categories_lengths_and_related_groups() -> None:
+    from benchmarks.comparison import require_cohort
+    from benchmarks.coverage import SHORT
+
+    categories = ("code", "reasoning", "documents", "conversation", "structured", "writing")
+    labels = [name for name, count in zip(categories, SHORT, strict=True) for _ in range(count)]
+    lengths = [100] * 60 + [1000] * 36 + [4000] * 18 + [10000] * 6
+    tasks: tuple[Record, ...] = tuple(
+        {"id": str(i), "group": str(i), "category": category, "ancestry": {"input_tokens": length}}
+        for i, (category, length) in enumerate(zip(labels, lengths, strict=True))
+    )
+    require_cohort("short", tasks)
+    for broken in (
+        ({**tasks[0], "category": "documents"}, *tasks[1:]),
+        ({**tasks[0], "ancestry": {"input_tokens": 10000}}, *tasks[1:]),
+        ({**tasks[0], "group": tasks[1]["group"]}, *tasks[1:]),
+    ):
+        with pytest.raises(ValueError, match="coverage"):
+            require_cohort("short", broken)
+
+
+def test_storage_selection_keeps_coverage_and_required_harness() -> None:
+    from benchmarks.coverage import select
+
+    rows: list[Record] = [
+        {
+            "id": name,
+            "group": name,
+            "source": "unit",
+            "role": "train",
+            "category": "code",
+            "subtype": kind,
+            "length_band": 0,
+            "input_tokens": tokens,
+        }
+        for name, kind, tokens in [
+            ("edit-long", "editing", 500),
+            ("edit-short", "editing", 100),
+            ("generate-long", "generation", 400),
+            ("generate-short", "generation", 80),
+        ]
+    ]
+    selected = select(rows, (2, 0, 0, 0, 0, 0), (2, 0, 0, 0), 180)
+    assert {row["id"] for row in selected} == {"edit-short", "generate-short"}
+    with pytest.raises(ValueError, match="input-token budget"):
+        select(rows, (2, 0, 0, 0, 0, 0), (2, 0, 0, 0), 179)
+    rows[0]["harness"] = "project-training"
+    assert rows[0] in select(rows, (2, 0, 0, 0, 0, 0), (2, 0, 0, 0), 580)
+    rows[0]["source"] = "project-replay"
+    with pytest.raises(ValueError, match="roles"):
+        select(rows, (2, 0, 0, 0, 0, 0), (2, 0, 0, 0))
+
+
+def test_native_comparison_refuses_server_not_produced_by_declared_build(tmp_path: Path) -> None:
+    from benchmarks.comparison import Arm, Comparison
+    from benchmarks.native import file_reference
+    from w1a1_eagle.records import artifact, canonical
+
+    server, library, source = (
+        tmp_path / name for name in ["llama-server", "libtest.so", "build.json"]
+    )
+    server.write_bytes(b"server")
+    library.write_bytes(b"library")
+    source.write_bytes(canonical({"artifacts": [file_reference(library)]}))
+    binary = artifact(file_reference(server), tmp_path)
+    lib = artifact(file_reference(library), tmp_path)
+    built = artifact(file_reference(source), tmp_path)
+    spec = Comparison(
+        built,
+        binary,
+        (lib,),
+        binary,
+        (Arm("target", None), Arm("baseline", binary)),
+        binary,
+        (),
+        1,
+        0,
+        16,
+        2,
+        "dev",
+        "pilot",
+        frozenset(),
+    )
+    with pytest.raises(ValueError, match="authenticated build"):
+        spec.verify()
+    source.write_bytes(canonical({"artifacts": [file_reference(library), file_reference(server)]}))
+    from dataclasses import replace
+
+    replace(spec, source=artifact(file_reference(source), tmp_path)).verify()

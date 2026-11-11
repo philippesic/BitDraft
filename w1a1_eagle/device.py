@@ -9,15 +9,29 @@ from typing import Callable, Iterator
 from w1a1_eagle.clock import Clock
 
 
-def active_cuda_processes() -> tuple[int, ...]:
+def cuda_tool() -> str:
     executable = shutil.which("nvidia-smi")
     if executable is None:
         candidate = Path("/usr/lib/wsl/lib/nvidia-smi")
         if not candidate.is_file():
             raise ValueError("nvidia-smi unavailable; cannot prove GPU ownership")
         executable = str(candidate)
+    return executable
+
+
+def cuda_identity() -> str:
+    return subprocess.run(
+        [cuda_tool(), "--query-gpu=index,name,uuid,driver_version,memory.total", "--format=csv"],
+        capture_output=True,
+        text=True,
+        check=True,
+        timeout=15,
+    ).stdout
+
+
+def active_cuda_processes() -> tuple[int, ...]:
     result = subprocess.run(
-        [executable, "--query-compute-apps=pid", "--format=csv,noheader,nounits"],
+        [cuda_tool(), "--query-compute-apps=pid", "--format=csv,noheader,nounits"],
         capture_output=True,
         text=True,
         check=True,

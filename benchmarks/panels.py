@@ -65,7 +65,11 @@ def panels(specification: Path, output: Path) -> Record:
                     "ancestry": ancestry,
                     "messages": [
                         {"role": "system", "content": system},
-                        *sequence(task["messages"]),
+                        *(
+                            value
+                            for value in sequence(task["messages"])
+                            if record(value)["role"] != "system"
+                        ),
                     ],
                 }
             )

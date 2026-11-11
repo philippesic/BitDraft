@@ -55,9 +55,16 @@ def campaign(specification: Path, output: Path) -> Record:
     code = source_identity(Path(__file__).resolve().parents[1])
     if template.raw["code_sha256"] != code:
         raise ValueError("campaign intent must bind the executing source")
+    admission: Record | None = None
+    if not (output / "binding.json").exists():
+        from w1a1_eagle.numerical.entry import preflight
+
+        admission = preflight(intent_ref.path)
     ownership = Ownership(output)
     try:
         store = Store(output)
+        if admission is not None:
+            store.atomic(store.root / "admission.json", canonical(admission))
         store.atomic(store.root / "controller.json", canonical(controller_record()))
         binding: Record = {"specification": file_reference(specification), "code_sha256": code}
         binding_path = store.root / "binding.json"

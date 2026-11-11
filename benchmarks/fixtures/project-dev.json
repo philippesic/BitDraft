@@ -12,7 +12,7 @@
         }
       ],
       "prompt": "Fix position_count in w1a1_eagle/data.py: partial supervision lengths are being counted as full 15-token windows. Preserve overlap handling and input validation. Inspect relevant context and run tests.",
-      "checks": "import sys\nsys.path.insert(0, '/work')\nfrom w1a1_eagle.data import position_count\nassert position_count((2,3),(2,1))==2\nassert position_count((0,20))==30\ntry: position_count((1,),(16,))\nexcept ValueError: pass\nelse: raise AssertionError('invalid length admitted')\nprint('ACCEPTANCE_CHECKS_PASSED')\n"
+      "checks": "from w1a1_eagle.data import position_count\nassert position_count((2,3),(2,1))==2\nassert position_count((0,20))==30\ntry: position_count((1,),(16,))\nexcept ValueError: pass\nelse: raise AssertionError('invalid length admitted')"
     },
     {
       "id": "project-normalized-alias",
@@ -25,7 +25,7 @@
         }
       ],
       "prompt": "Repair source_names in benchmarks/protection.py: whitespace variants of rendered prompts bypass historical exclusion matching. Keep all existing identity forms and add the missing normalized-text identity.",
-      "checks": "import sys\nsys.path.insert(0, '/work')\nimport hashlib\nfrom benchmarks.protection import source_names\nrow=dict(id='a', source_key='b', group='c', aliases=['d'], messages=[])\nnames=source_names(row,' a  b\\n')\nassert {'a','b','c','d',hashlib.sha256(b'a b').hexdigest()}<=names\nassert hashlib.sha256(b' a  b\\n').hexdigest() in names\nprint('ACCEPTANCE_CHECKS_PASSED')\n"
+      "checks": "import hashlib\nfrom benchmarks.protection import source_names\nrow=dict(id='a', source_key='b', group='c', aliases=['d'], messages=[])\nnames=source_names(row,' a  b\\n')\nassert {'a','b','c','d',hashlib.sha256(b'a b').hexdigest()}<=names\nassert hashlib.sha256(b' a  b\\n').hexdigest() in names"
     },
     {
       "id": "project-writing-quota",
@@ -38,7 +38,7 @@
         }
       ],
       "prompt": "Complete the translation allocation in benchmarks/coverage.py quotas: one fifth of writing tasks are translations; the rest remain writing-other. All category totals must be conserved.",
-      "checks": "import sys\nsys.path.insert(0, '/work')\nfrom benchmarks.coverage import quotas\nq=quotas((10,10,10,10,10,25))\nassert q['writing-translation']==5 and q['writing-other']==20\nassert sum(q.values())==75\nprint('ACCEPTANCE_CHECKS_PASSED')\n"
+      "checks": "from benchmarks.coverage import quotas\nq=quotas((10,10,10,10,10,25))\nassert q['writing-translation']==5 and q['writing-other']==20\nassert sum(q.values())==75"
     },
     {
       "id": "project-percentile-interval",
@@ -51,7 +51,7 @@
         }
       ],
       "prompt": "Complete interval in benchmarks/statistics.py: return the empirical 2.5% and 97.5% order-statistic endpoints, with available=false on empty input. Preserve the input list.",
-      "checks": "import sys\nsys.path.insert(0, '/work')\nfrom benchmarks.statistics import interval\nv=list(range(100,-1,-1)); before=list(v)\nassert interval(v)=={'lower':2,'upper':97}\nassert v==before and interval([])=={'available':False}\nprint('ACCEPTANCE_CHECKS_PASSED')\n"
+      "checks": "from benchmarks.statistics import interval\nv=list(range(100,-1,-1)); before=list(v)\nassert interval(v)=={'lower':2,'upper':97}\nassert v==before and interval([])=={'available':False}"
     },
     {
       "id": "project-reserve-accounting",
@@ -64,7 +64,7 @@
         }
       ],
       "prompt": "A disk admission check permits allocations that consume the configured reserve. Diagnose w1a1_eagle/capacity.py require, repair the boundary and retain validation of negative inputs.",
-      "checks": "import sys\nsys.path.insert(0, '/work')\nfrom pathlib import Path\nfrom types import SimpleNamespace\nfrom unittest.mock import patch\nfrom w1a1_eagle.capacity import require\nwith patch('shutil.disk_usage',return_value=SimpleNamespace(free=12)):\n    require(Path('/work'),10,2)\n    try: require(Path('/work'),10,3)\n    except ValueError: pass\n    else: raise AssertionError('reserve ignored')\nprint('ACCEPTANCE_CHECKS_PASSED')\n"
+      "checks": "from pathlib import Path\nfrom types import SimpleNamespace\nfrom unittest.mock import patch\nfrom w1a1_eagle.capacity import require\nwith patch('shutil.disk_usage',return_value=SimpleNamespace(free=12)):\n    require(Path('/work'),10,2)\n    try: require(Path('/work'),10,3)\n    except ValueError: pass\n    else: raise AssertionError('reserve ignored')"
     },
     {
       "id": "project-record-order",
@@ -77,7 +77,7 @@
         }
       ],
       "prompt": "Equivalent JSON objects produce different identities depending on key insertion order. Diagnose and fix w1a1_eagle/records.py without accepting NaN or changing identity hashing.",
-      "checks": "import sys\nsys.path.insert(0, '/work')\nfrom w1a1_eagle.records import identity,canonical\nassert identity({'a':1,'b':2})==identity({'b':2,'a':1})\ntry: canonical({'a':float('nan')})\nexcept ValueError: pass\nelse: raise AssertionError('nonfinite admitted')\nprint('ACCEPTANCE_CHECKS_PASSED')\n"
+      "checks": "from w1a1_eagle.records import identity,canonical\nassert identity({'a':1,'b':2})==identity({'b':2,'a':1})\ntry: canonical({'a':float('nan')})\nexcept ValueError: pass\nelse: raise AssertionError('nonfinite admitted')"
     },
     {
       "id": "project-empty-interval",
@@ -90,7 +90,7 @@
         }
       ],
       "prompt": "Inspect benchmarks/statistics.py and its callers: a missing interval is being reported as zero-width certainty. Repair interval for empty measurements while preserving nonempty percentile behavior.",
-      "checks": "import sys\nsys.path.insert(0, '/work')\nfrom benchmarks.statistics import interval\nassert interval([])=={'available':False}\nassert interval([2.0]*100)=={'lower':2.,'upper':2.}\nprint('ACCEPTANCE_CHECKS_PASSED')\n"
+      "checks": "from benchmarks.statistics import interval\nassert interval([])=={'available':False}\nassert interval([2.0]*100)=={'lower':2.,'upper':2.}"
     },
     {
       "id": "project-absolute-path",
@@ -103,7 +103,7 @@
         }
       ],
       "prompt": "Inspect Store.atomic in w1a1_eagle/checkpoints/store.py. Restore its owned-root publication boundary. Keep its fsync and atomic replacement behavior. Run the protected checks.",
-      "checks": "import sys\nsys.path.insert(0, '/work')\nfrom pathlib import Path\nfrom w1a1_eagle.checkpoints.store import Store\ns=Store(Path('/tmp/owned'))\ntry: s.atomic(Path('/tmp/outside.bin'),b'x')\nexcept ValueError: pass\nelse: raise AssertionError('escaped owned root')\ns.atomic(s.root/'inside.bin',b'good')\nassert (s.root/'inside.bin').read_bytes()==b'good' \nprint('ACCEPTANCE_CHECKS_PASSED')\n"
+      "checks": "from pathlib import Path\nfrom w1a1_eagle.checkpoints.store import Store\ns=Store(Path('/tmp/owned'))\ntry: s.atomic(Path('/tmp/outside.bin'),b'x')\nexcept ValueError: pass\nelse: raise AssertionError('escaped owned root')\ns.atomic(s.root/'inside.bin',b'good')\nassert (s.root/'inside.bin').read_bytes()==b'good' "
     },
     {
       "id": "project-quota-revision",
@@ -116,7 +116,7 @@
         }
       ],
       "prompt": "Update benchmarks/coverage.py so exactly one quarter of writing tasks are translations, conserving the writing total. Preserve all other category allocations. Run tests before finishing.",
-      "checks": "import sys\nsys.path.insert(0, '/work')\nfrom benchmarks.coverage import quotas\nq=quotas((10,10,10,10,10,20))\nassert q['writing-translation']==5 and q['writing-other']==15\nprint('ACCEPTANCE_CHECKS_PASSED')\n",
+      "checks": "from benchmarks.coverage import quotas\nq=quotas((10,10,10,10,10,20))\nassert q['writing-translation']==5 and q['writing-other']==15",
       "initial_changes": [
         {
           "old": "\"writing-translation\": writing // 5,\n        \"writing-other\": writing - writing // 5,",
@@ -130,7 +130,7 @@
           "new": "\"writing-translation\": writing // 5,\n        \"writing-other\": writing - writing // 5,"
         }
       ],
-      "followup_checks": "import sys\nsys.path.insert(0,'/work')\nfrom benchmarks.coverage import quotas\nq=quotas((10,10,10,10,10,20))\nassert q['writing-translation']==4 and q['writing-other']==16\nprint('ACCEPTANCE_CHECKS_PASSED')\n"
+      "followup_checks": "from benchmarks.coverage import quotas\nq=quotas((10,10,10,10,10,20))\nassert q['writing-translation']==4 and q['writing-other']==16"
     },
     {
       "id": "project-length-revision",
@@ -143,7 +143,7 @@
         }
       ],
       "prompt": "In benchmarks/coverage.py, lower the maximum admitted input length to 16000 tokens inclusive, retaining the existing 512, 2048 and 8192 band boundaries. Reject larger inputs.",
-      "checks": "import sys\nsys.path.insert(0, '/work')\nfrom benchmarks.coverage import length_band\nassert [length_band(x) for x in (511,512,2047,2048,8191,8192,16000)]==[0,1,1,2,2,3,3]\ntry: length_band(16001)\nexcept ValueError: pass\nelse: raise AssertionError('maximum not enforced')\nprint('ACCEPTANCE_CHECKS_PASSED')\n",
+      "checks": "from benchmarks.coverage import length_band\nassert [length_band(x) for x in (511,512,2047,2048,8191,8192,16000)]==[0,1,1,2,2,3,3]\ntry: length_band(16001)\nexcept ValueError: pass\nelse: raise AssertionError('maximum not enforced')",
       "initial_changes": [
         {
           "old": "tokens <= 16384",
@@ -157,7 +157,7 @@
           "new": "tokens <= 16384"
         }
       ],
-      "followup_checks": "import sys\nsys.path.insert(0,'/work')\nfrom benchmarks.coverage import length_band\nassert length_band(16384)==3\ntry: length_band(16385)\nexcept ValueError: pass\nelse: raise AssertionError('maximum not enforced')\nprint('ACCEPTANCE_CHECKS_PASSED')\n"
+      "followup_checks": "from benchmarks.coverage import length_band\nassert length_band(16384)==3\ntry: length_band(16385)\nexcept ValueError: pass\nelse: raise AssertionError('maximum not enforced')"
     },
     {
       "id": "project-docs-supervision",
@@ -170,7 +170,7 @@
         }
       ],
       "prompt": "Read w1a1_eagle/data.py and update WORKFLOW.md to explain the current behavior. Describe full15 versus up-to-15 supervision, the maximum label width of 15 and the shorter tail windows. Preserve the title and run checks.",
-      "checks": "import sys\nsys.path.insert(0, '/work')\nfrom pathlib import Path\nt=Path('/work/WORKFLOW.md').read_text().lower()\nassert t.startswith('# project workflow')\nassert all(x in t for x in ['full15', 'up-to-15', '15'])\nprint('ACCEPTANCE_CHECKS_PASSED')\n",
+      "checks": "from pathlib import Path\nt=Path('/work/WORKFLOW.md').read_text().lower()\nassert t.startswith('# project workflow')\nassert all(x in t for x in ['full15', 'up-to-15', '15'])",
       "followup": "Add an explicit limitation: these documentation checks do not establish deployment performance.",
       "followup_changes": [
         {
@@ -178,7 +178,7 @@
           "new": "full15 up-to-15 15\nThese documentation checks do not establish deployment performance."
         }
       ],
-      "followup_checks": "from pathlib import Path\nt=Path('/work/WORKFLOW.md').read_text().lower()\nassert 'do not establish deployment performance' in t\nprint('ACCEPTANCE_CHECKS_PASSED')\n",
+      "followup_checks": "from pathlib import Path\nt=Path('/work/WORKFLOW.md').read_text().lower()\nassert 'do not establish deployment performance' in t",
       "initial_changes": [
         {
           "old": "Current implementation notes.",
@@ -197,7 +197,7 @@
         }
       ],
       "prompt": "Read w1a1_eagle/records.py and update WORKFLOW.md to explain the current behavior. Describe canonical JSON identity, stable key ordering, compact serialization, and rejection of NaN. Preserve the title and run checks.",
-      "checks": "import sys\nsys.path.insert(0, '/work')\nfrom pathlib import Path\nt=Path('/work/WORKFLOW.md').read_text().lower()\nassert t.startswith('# project workflow')\nassert all(x in t for x in ['json', 'key', 'nan'])\nprint('ACCEPTANCE_CHECKS_PASSED')\n",
+      "checks": "from pathlib import Path\nt=Path('/work/WORKFLOW.md').read_text().lower()\nassert t.startswith('# project workflow')\nassert all(x in t for x in ['json', 'key', 'nan'])",
       "followup": "Add an explicit limitation: these documentation checks do not establish deployment performance.",
       "followup_changes": [
         {
@@ -205,7 +205,7 @@
           "new": "json key nan\nThese documentation checks do not establish deployment performance."
         }
       ],
-      "followup_checks": "from pathlib import Path\nt=Path('/work/WORKFLOW.md').read_text().lower()\nassert 'do not establish deployment performance' in t\nprint('ACCEPTANCE_CHECKS_PASSED')\n",
+      "followup_checks": "from pathlib import Path\nt=Path('/work/WORKFLOW.md').read_text().lower()\nassert 'do not establish deployment performance' in t",
       "initial_changes": [
         {
           "old": "Current implementation notes.",

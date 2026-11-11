@@ -2,7 +2,15 @@ from collections import Counter
 from pathlib import Path
 from typing import Iterator
 
-from benchmarks.coverage import FULL, SHORT, TRAIN, identifier, length_band, select
+from benchmarks.coverage import (
+    FULL,
+    SHORT,
+    TRAIN,
+    TRAIN_INPUT_BUDGET,
+    identifier,
+    length_band,
+    select,
+)
 from benchmarks.protection import source_names
 from benchmarks.sources import commitpack, glaive, legacy, qasper, qasper_development, ultrachat
 from w1a1_eagle.checkpoints.store import Store
@@ -143,7 +151,7 @@ def publish(
     status: str = "curated",
 ) -> Record:
     selected = {
-        "train": select(pools["train"], TRAIN, (3720, 1800, 420, 60)),
+        "train": select(pools["train"], TRAIN, (3720, 1800, 420, 60), TRAIN_INPUT_BUDGET),
         "dev": select(pools["dev"], FULL, (300, 180, 90, 30)),
     }
     short = select(selected["dev"], SHORT, (60, 36, 18, 6))
@@ -191,6 +199,9 @@ def publish(
             }
             for row in rows
         ]
+        for task, row in zip(tasks, rows, strict=True):
+            if "live_source" in row:
+                record(task["ancestry"])["live_source"] = row["live_source"]
         store.atomic(
             store.root / (name + "-workload.json"), canonical({"schema": 1, "tasks": tasks})
         )

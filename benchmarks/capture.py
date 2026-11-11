@@ -42,6 +42,7 @@ class Replies:
 
 
 def capture(specification: Path, output: Path) -> Record:
+    from w1a1_eagle.numerical.captures import CaptureSpec, validate_capture
     from w1a1_eagle.numerical.prompting import Tokenizer, json_rows
 
     raw = read(specification)
@@ -244,6 +245,21 @@ def capture(specification: Path, output: Path) -> Record:
                         for path in sorted(cell.root.iterdir())
                         if path.is_file() and path.name != "training-metadata.json"
                     ]
+                    checked = validate_capture(
+                        CaptureSpec(
+                            key,
+                            artifact(
+                                file_reference(cell.root / "training-metadata.json"), cell.root
+                            ),
+                            tuple(artifact(value, cell.root) for value in files),
+                        ),
+                        8 * 1024**3,
+                    )
+                    cell.atomic(
+                        cell.root / "validation.json",
+                        canonical({**checked, "code_sha256": code}),
+                    )
+                    files.append(file_reference(cell.root / "validation.json"))
                     result_row: Record = {
                         "id": key,
                         "source": row["source"],

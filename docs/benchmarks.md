@@ -1,277 +1,167 @@
-# Benchmark tools
+# Benchmarks
 
-The [implementation task](../tasks/benchmark-implementation.md) records current validation
-and remaining work. Request comparison, live tools, harness preparation, DEV loss and
-training coordination have entry points below. Sampled verification and full campaign
-qualification remain separate requirements; implemented commands are not evidence of
-their scientific validity.
+Use **short** during training and **full** for candidate comparisons. Loss/top1 diagnoses
+learning; native runs measure acceptance/speed. Request scores and complete application
+tasks remain separate evidence.
 
 ```sh
-uv run --locked --no-sync --offline python -m benchmarks plan SPEC.json
-uv run --locked --no-sync --offline python -m benchmarks verify-inputs SPEC.json
-uv run --locked --no-sync --offline python -m benchmarks reduce-trace TRACE.json
-uv run --locked --no-sync --offline python -m benchmarks compare COMPARISON.json NEW_OUTPUT
-uv run --locked --no-sync --offline python -m benchmarks prepare-project-workflows PROJECT.json NEW_OUTPUT
-uv run --locked --no-sync --offline python -m benchmarks prepare-panels PANELS.json NEW_OUTPUT
-uv run --locked --no-sync --offline python -m benchmarks live COMPARISON.json NEW_OUTPUT
-uv run --locked --no-sync --offline python -m benchmarks evaluate LOSS.json NEW_OUTPUT
-uv run --locked --no-sync --offline python -m benchmarks suite SUITE.json OUTPUT
-uv run --locked --no-sync --offline python -m benchmarks campaign CAMPAIGN.json OUTPUT
-uv run --locked --no-sync --offline python -m benchmarks campaign-report OUTPUT
-uv run --locked --no-sync --offline python -m benchmarks profile-native PROFILE.json NEW_OUTPUT
-uv run --locked --no-sync --offline python -m benchmarks verify-greedy ORACLE.json NEW_OUTPUT
-uv run --locked --no-sync --offline python -m benchmarks verify-sampler SAMPLER.json NEW_OUTPUT
-uv run --locked --no-sync --offline python -m benchmarks select-supplement SELECTION.json NEW_OUTPUT
+uv run --locked --no-sync --offline python -m benchmarks COMMAND INPUT [OUTPUT]
 ```
 
-Execution commands freeze source and launch from that snapshot. Numerical commands use
-the configured numerical Python. Source edits in the working checkout do not change an
-active benchmark. Resume an existing suite/campaign with its recorded source and
-specification; changed inputs need a new output.
+| Commands | Purpose |
+| --- | --- |
+| `plan`, `verify-inputs` | Native comparison units/warmups; optional model/runtime hashing |
+| `native-build`, `native-helpers` | Authenticated runtime/helper builds |
+| `curate`, `admit-bank`, `select-supplement` | Role-safe prompt preparation/selection |
+| `prepare-project-workflows`, `prepare-replays`, `prepare-panels` | Project controls, measured histories, live/harness inputs |
+| `capture`, `evaluate` | Teacher features; matched teacher-forced DEV loss |
+| `compare`, `live` | Isolated native requests; executing tool episodes |
+| `campaign`, `campaign-report` | Training/evaluation; read-only health/learning/exposure |
+| `suite` | Full panels and optional state selection |
+| `verify-greedy`, `verify-sampler`, `profile-native` | Independent decisions, distributions, kernel activation |
+| `reduce-trace` | Structural round accounting, not an independent verifier |
 
-Try `python -m benchmarks plan tests/fixtures/benchmark-plan.json` for a synthetic
-metadata-only example. It intentionally reports missing capture artifacts.
+Execution commands freeze source and use [the numerical environment](development.md)
+where needed. Preserve inputs, logs, ownership and failures. Comparison outputs must be
+new; capture resumes verified records. Resume campaigns/suites with their recorded source
+and specification. Checkout edits do not alter active runs. CPU preflight is not runtime
+qualification. Run [local checks](development.md); there is no hosted CI.
 
-`plan` is read-only. Schema 1 binds candidate/capture target, tokenizer, template, taps,
-feature semantics, width and objective. It refuses incompatible identities, related tasks
-across roles, duplicate task IDs and invalid sizes. It forecasts maximum training feature
-payload from exact input counts and output caps. It reports budget/acquisition blockers;
-a successfully printed plan is not runtime admission. `verify-inputs` additionally hashes
-the declared artifacts. This authenticates bytes, not tensor semantics or model correctness.
+## Workloads
 
-A specification has `schema`, `candidate`, `capture`, `tasks`, `features`, `storage_bytes`
-and `capture_limit_bytes`. Candidate and capture each contain `target`, `tokenizer` and
-`template` SHA256 values, integer `taps`, positive `hidden`, `semantics` and `objective`.
-Tasks contain `id`, `group`, `role` (train/dev/confirmation), `category`
-(code/reasoning/documents/conversation/structured/writing), `input_tokens`, `output_cap`.
-Feature references contain `path`, `sha256`, `bytes`. Paths are relative to the spec or
-absolute external artifact paths. `storage_bytes` is 2 or 4. Ceilings use bytes, not GiB.
-The metadata validator cannot discover aliases or semantic duplicates absent from inputs;
-use the product data ledger and source-group audit before any acquisition.
+| DEV panel | Units per arm/target | Execution |
+| --- | ---: | --- |
+| Short | 120 requests | Zero/periodic/final training checks |
+| Full | 600 requests | Two blocks, balanced positions across task groups |
+| Harness | 30 groups ×3 prefixes =90 requests | Two balanced blocks |
+| Live | 12 tasks, two per family | Three rounds balance arm positions |
+| Sampled | 120 requests ×3 seeds | Separate qualified robustness mode |
 
-`reduce-trace` consumes an object with `rounds`, each containing `proposed` token IDs,
-`accepted` prefix count, `emitted` token IDs and `target_tokens` (at most one correction
-or bonus). It reconciles emitted tokens with the prefix and separates target tokens from
-accepted draft tokens. A fallback-only trace reports acceptance unavailable. This is
-structural reconciliation, not independent proof that verifier decisions were correct.
-Use the independent native verifier checks below for executed verification and EOS/cap accounting.
+Initial targets: Qwen3.5 4B Q4KM/NVFP4. Arms: target-only, released DFlash Q4KM, candidate.
+Three arms/two targets cost7200 full requests,1080 harness requests,216 live episodes,
+plus load/warmup. Sampled adds2160 requests. Smaller pilots are explicit; more candidates
+add complete cells. [The bank definition](../benchmarks/definitions/prompt-bank-v1.json)
+owns exact coverage/sources/identities. Short is nested DEV; category/length/group
+marginals are checked. Keep related variants in one role/group.
 
-## Native build and capture
+Current cohorts are DEV and repeated use is selection exposure. New600-request/24-live/
+90-harness confirmation needs independent curation, frozen finalists/protocol and access
+receipts; a role label does not supply unseen data. Never consume heldout24 aliases.
+Public dialogue is partly synthetic; prior exposure is unknown. Planning dominates
+non-arithmetic reasoning; formal logic/independent projects remain thin. Length is not
+difficulty, the mixture is not measured traffic, and one-project trials do not establish
+universal transfer. Workflow regressions cannot be rescued by request scores.
 
-In the check environment, `python -m benchmarks native-build SPEC NEW_OUTPUT` reconstructs
-an authenticated source/header bundle and performs a fresh CUDA build. The spec binds
-`bundle`, `cuda_compiler`, `architecture`, `jobs` and `unpacked_bytes` under schema 1.
-`native-helpers` takes `{schema: 1, runtime: ARTIFACT}` and rebuilds project helpers against
-the pinned runtime. Helpers use native chat rendering and vocabulary-only tokenization;
-a separate Python template renderer is not an authoritative input source.
+## Prompts and captures
 
-In the numerical environment, `python -m benchmarks capture SPEC OUTPUT` acquires native
-hard-label features. Its schema is `native-hard-capture-v1`; exact fields are in
-`benchmarks/capture.py`. It binds runtime/model/bank artifacts, selected IDs, dtype,
-context, payload limit, opaque exclusions and explicit window policy. Optional `role`
-keeps TRAIN/DEV separate; heldout identity metadata can protect both. Reusing the same
-spec/output resumes verified completed records and preserves partial attempts.
+`curate` authenticates pinned sources and native token counts. `admit-bank` rechecks
+selected fingerprints and known/opaque exclusions. Labels follow requests rather than
+incidental context words. Tool stages are explicit; translations name a destination.
+Optional `development_replays` retains eight first-file-read histories from measured
+project trials, including failures, once per source group. Actual tools/messages and
+transcript identities remain attached. Optional `harnesses` adds the intended `tools`
+prefix to100 TRAIN code-edit and100 TRAIN tool groups. Preserve their ancestry/roles;
+the alternate `coding` prefix stays outside TRAIN.
 
-`curate` creates a provisional pool and panels from authenticated sources. `admit-bank`
-rechecks selected native token identities and known protected aliases before publishing
-the 6K TRAIN, 600 DEV and nested 120-request panels. It requires pinned pool/source-result
-and exclusion artifacts; optional heldout exclusions apply to every role. Source and
-content checks are bounded safeguards, not semantic deduplication proofs.
+Selection keeps category/subtype/length marginals and required examples. It can choose
+shorter complete records within cells to fit399 decimal GB of maximum raw FP16 features,
+leaving about1GB for metadata under400GB. FP32 raw features are twice that. No padding/
+truncation manufactures coverage. Exact inputs/caps set the maximum, EOS the actual size.
+These are dataset planning ceilings, not global disk limits. [Data](data.md) owns formats,
+partial tails, mixtures and ancestry.
 
-## Native request comparison
+[`capture`](../benchmarks/capture.py) binds teacher/runtime/tokenizer, bank/IDs, dtype,
+context, byte ceiling, exclusions and supervision policy. Every new record passes the
+bounded product loader before publication: hashes, geometry, finite values, token/label
+arrays and EOG. Validation receipts and partial attempts stay with external raw data.
+[FP16 adoption](../results/fp16-storage-adoption/result.md) qualifies HE4/Q4KM storage;
+training materializes FP32. It does not establish lifetime/other-family equivalence.
 
-`compare` requires an authenticated source manifest, server binary, runtime libraries,
-target, workload and at least two arms: `target` first, then named speculative drafters.
-The schema is `native-comparison-v1`; see `benchmarks/comparison.py` for exact fields.
-Short/full/harness request counts are 120/600/90; smaller pilots are explicit.
-Comparisons use greedy generation, thinking disabled, F16 caches, equal context/depth,
-serial arms, configured warmups and rotated repeat order. Every arm must match the
-target's token IDs, text and stopping fields. Draft counts reconcile against independent
-native final log counters. Fallback-only speculative arms are refused.
+`plan COMPARISON.json` reports native units/warmups; `verify-inputs` hashes models/runtime.
+The older schema1 [metadata example](../tests/fixtures/benchmark-plan.json) remains supported.
+Training CPU preflight is in [execution](execution.md). Neither grants authority.
 
-The output must be new. It preserves specification, workload, source snapshot, process
-ownership, loaded libraries, server logs, request/response bodies and partial failures.
-Totals use total tokens divided by total wall time and accepted/proposed token totals.
-These request measurements alone do not establish live-task transfer or model quality.
-The runtime must expose its final counters at ordinary info verbosity; trace logging is
-not part of clean timing. CUDA launch checks active processes and obtains a host lease.
+## Native comparison
 
-`python -m benchmarks curate SOURCES.json NEW_OUTPUT` runs in the numerical environment.
-It authenticates downloaded source artifacts and the original TRAIN manifest, renders
-complete histories with the target template and thinking disabled, and obtains actual
-native token counts. It never reads sealed-test prompt bodies. Selection solves category,
-subtype and length quotas from real available records; insufficient coverage is refused.
-Related source groups and identical tokenized prompts cannot cross roles. Public source
-exposure remains unknown. Curation outputs need semantic and ancestry review before capture;
-quota compliance alone does not establish representative or sufficient data.
+[`native-comparison-v1`](../benchmarks/comparison.py) binds build/server/libs, target,
+arms, workload, repeats/warmups, context/depth, role and tier. References use `path`,
+`sha256`, `bytes`, relative to the specification or absolute. Arm1 is `target`; keep the
+external baseline and candidates distinct. Server/libs must match their build.
 
-## Independent verifier checks
+Greedy arms must match target token IDs, text and stopping; actual returned generation
+settings are checked. Accepted/proposed counters reconcile with independent native logs;
+fallback-only arms are refused. Correction/bonus tokens are not accepted drafts. Zero
+proposals make acceptance unavailable.
 
-`native-build` applies the pinned sampled-EOG boundary repair and records it in the build
-receipt. Optional `verification_trace: true` produces a diagnostic runtime that records
-actual proposals, independently scanned target-logit argmax IDs, accepted vectors, replay
-and commit decisions. Comparison specs must explicitly mark that runtime `diagnostic`;
-instrumented results cannot select checkpoints or supply primary timings.
+Request time covers pretokenized HTTP completion including prefill/decode, excluding
+rendering/tokenization/load/warmup. Live time includes harness/tools. Models are loaded
+and warmed, thinking disabled, KV F16 and draft policy fixed. Independent requests/tasks
+start with empty caches; live sessions reuse prefixes after their first call. `gpu.txt`,
+commands, loaded libraries and ownership receipts identify execution. The lease preserves
+other tasks' jobs.
 
-`verify-greedy` takes schema 1 with authenticated `comparison` and named-arm `logs`.
-Use a complete single-block diagnostic comparison without warmups. The independent
-oracle checks every greedy prefix, correction/bonus and EOG boundary, then reconciles
-proposed/accepted totals. These are verified-token counters; work past an emitted output
-cap can still count. Requests with no speculative work may omit response draft fields;
-they count as zero only subject to reconciliation against the final native counters.
+Reports use total tokens/total time, acceptance totals, EOS/cap counts and category/length/
+harness breakdowns. Paired group bootstraps preserve category composition and keep repeats/
+variants together. Sparse strata make intervals unavailable; multiple candidates also
+receive adjusted intervals. Wide intervals are inconclusive. Compare matched arms within
+targets, without pooling away regressions or mixing absolute scores across changed eras.
+Sampled mode declares temperature/top-p/top-k/min-p, three seeds and target/runtime-bound
+qualification. Unequal paths get descriptive robustness, not greedy equality or checkpoint
+ranking by throughput.
 
-`verify-sampler` takes schema 1 with authenticated `source`, `binary`, `libraries`, `target`
-and `trials`, plus optional `device` (`cpu` or `cuda`). It runs the actual common native
-sample-and-match/rejection functions against controlled target logits, including zero
-probability support and EOG. The helper checks fixed probability/acceptance margins over
-10K–100K trials per case. CPU distribution tests qualify these host-side algorithms;
-neural GPU requests and deployed cache behavior still need separate evidence.
+## Live application and instructions
 
-A comparison can declare `sampling`: `temperature`, `top_p`, `top_k`, `min_p`, `seeds`
-and an authenticated `qualification` result. Tier `sampled` requires 120 requests and three
-fixed seeds, with qualification bound to the same target/runtime and both native sampler
-functions. Smaller unqualified pilots are explicit. Outputs need not equal target-only
-streams under paired seeds. Sampled throughput is descriptive; it cannot rank checkpoints
-by producing longer/different answers. Sampled live application behavior is not qualified
-by greedy workflow tests.
+`prepare-project-workflows` freezes source/recipes and verifies broken, repaired and
+followup controls in real project modules. `prepare-panels` creates live inputs and30
+fixed-history groups under `minimal`, `coding`, `tools`. Record instruction origins;
+identify authored alternatives. Treatments replace system messages, retaining task facts.
 
-## Live workflows and harness sensitivity
+`live` executes list/read/replace/write/test tools in isolated copies. Bubblewrap protects
+checks and excludes network, credentials and host source. Reads support ranges; edits
+require unique matches; truncation is explicit. Reset each task; count both initial and
+followup phases. Limits:16 turns/900seconds per task,1024 tokens per call. Retain warmups
+outside primary totals and reconcile their counters. All failures/timeouts stay denominated.
+Report completion, whole-task/model/tool/overhead time and greedy trajectory/filesystem
+agreement, including shared failures. Faster incomplete work is not a win. Deployment
+claims need trials in the intended application/configuration.
 
-`prepare-panels` consumes schema 1 with authenticated `workload` and `live_definitions`
-references. It creates 90 harness requests from 30 distinct DEV groups under three
-system instruction sets. Task content and existing tool definitions stay fixed. Variants
-retain their source groups for paired analysis. It also materializes the twelve controlled
-DEV workflow fixtures in [the maintained definition](../benchmarks/fixtures/live-dev.json).
-They cover bug fixes, features, diagnosis, documentation followups, tool workflows and
-revisions. These small authored scenarios test the execution mechanism; they do not
-establish coverage of real repositories or a particular coding application.
+## Training and selection
 
-`live` accepts the comparison schema with tier `live` (12 DEV or 24 confirmation tasks),
-or an explicit smaller pilot. Tasks add an authenticated `fixture` and optional `followup`.
-Each arm/repeat gets a fresh workspace, protected acceptance checks and deterministic
-read/write/list/test tools. Tests run in Bubblewrap without host home or network access,
-with read-only checks and bounded CPU, memory, file size and wall time. Install the host
-`bubblewrap` and `util-linux` packages; Linux user namespaces must work. The CPU fixture
-test checks actual sandbox execution, failing originals, accepted repairs and input reset.
+[`training-campaign-v1`](../benchmarks/campaign.py) binds intent, short comparison, initial
+drafter, optimizer-time cadence and failure policy. Validate TRAIN/DEV before zero eval;
+unload training for boundary/final native checks. Restore Adam/RNG/cursor. Resume requires
+the same recipe/dataset; changes require explicit continuation. Potential leaders face
+the prior leader in the same block; ties retain earlier states. Invalid/partial evals
+never select. Explicit pilot mode does not qualify full coverage.
 
-The first request is cold; later turns reuse the prefix within that task. Model wait,
-tool time, overhead and whole-task elapsed time are separate. Every task remains in the
-completion denominator, including caps, failed checks and deadlines. Tool errors omit
-host-specific paths so all arms receive identical observations. Greedy trajectory and
-final filesystem/check fingerprints must match target-only for a valid comparison.
-Keep failures as data; invalid measurement and unsuccessful model tasks are different.
+Latest recovery, provisional fast leader and full-DEV incumbent are distinct.
+[`suite`](../benchmarks/suite.py) prevalidates matching runtime/settings/role/target/arms.
+`completed_panels` can reuse complete matching specifications, never partial blocks.
+`candidate_bindings` references state/drafter/execution journals; workers must bind state
+to the evaluated export. Highest full-request score selects the experimental incumbent,
+with earlier-update ties. Workflow/harness evidence stays separate; no deployment promotion.
 
-`suite` consumes `full-suite-v1` with named `targets`, each supplying `requests`, `live`
-and `harness` comparison artifacts. Panels must use the same target and candidate arms,
-correct tier counts and at least two repeat blocks. Three rotated blocks balance three
-arm positions; two alone do not. Completed panels can be reused only under the same
-bound inputs/source; incomplete timing blocks require an explicit whole-panel rerun.
-Scientific conclusions remain separate from operational suite completion.
+Diagnostics preserve RNG and report category loss/top1 on120 fixed role-safe DEV windows.
+They are not acceptance. Lengthen optimizer intervals toward10% native overhead rather
+than shrinking panels. Keep model/data/evaluation/checkpoint clocks separate.
+`campaign-report OUTPUT` needs no GPU: liveness, pointers, journals, learning/native scores,
+costs/exposure. Attempts include retries; unique positions use actual label widths;
+lifetime history stays unknown. Inspect ownership/failures before restarting. Per-run
+retention bounds states/exports; global retirement preserves recovery/selected states
+with receipts after two later segments.
 
-## DEV loss and periodic training
+## Qualification and closeout
 
-`evaluate` runs in the numerical environment. `development-loss-v1` binds `source`,
-`vocabulary`, a DEV-only `corpus`, named checkpoint `states`, `windows_per_task`,
-`memory_bytes`, `training_corpora` and hard-heldout `exclusions`. It authenticates inputs,
-refuses training/DEV identity overlap, and reports task-mean weighted loss overall and
-by category. All candidate states use the same reference features and window anchors.
-This teacher-forced loss is not native acceptance.
+`native-build` uses pinned source/headers/compiler, without old objects; helpers rebuild
+rendering/tokenization/capture/verifier tools. Source includes the measured sampled-EOG
+repair. Trace builds are diagnostic, excluded from timing. `verify-greedy` independently
+checks target argmax, prefixes, correction/bonus/EOG and counters. `verify-sampler` tests
+both actual native algorithms on probabilities, zero support and EOG. CPU distributions
+and neural GPU requests are separate evidence. `reduce-trace` only checks supplied structure.
 
-An intent may provide `development`: a `training-diagnostics-v1` artifact binding a
-DEV `corpus`, hard-heldout `exclusions` and exactly 120 distinct `{id, anchor}` windows.
-The worker checks these at cursor zero and every 250 updates by default, separately from optimizer
-timing. It reports loss and top-1, checks training/DEV separation and preserves RNG.
-An explicit positive `development_cadence_updates` changes cadence without shrinking
-the panel. Measure its cost along with native evaluation overhead.
-
-`campaign` consumes `training-campaign-v1`: authenticated `intent`, `comparison` and
-`initial_drafter`, positive `optimizer_seconds_per_evaluation`, and explicit
-`evaluation_failure` (`stop` or `continue`). A durable initial parent is required. It
-evaluates at zero updates, runs the public supervisor until the next optimizer-time
-boundary, then unloads training before native evaluation. Each continuation restores
-the latest Adam/RNG/cursor; a provisional fast-DEV leader is a separate pointer.
-Potential leader changes compare against the prior leader in the same timing block;
-ties retain the earlier leader. Failed/partial evaluations cannot select a state.
-The full-DEV incumbent remains separate and is not assigned by fast checks.
-
-Campaign status and attempt journals are the operational evidence. A segment's product
-report describes that segment; campaign status owns cross-segment selection. Record
-measured evaluation overhead and lengthen cadence toward the planned ten-percent goal
-instead of shrinking the frozen panel. An individual test run does not establish that
-a long campaign, failure recovery or retention across many segments is qualified.
-
-## FP16 capture storage
-
-The numerical reader accepts metadata `feature_dtype: float16` with authenticated
-`layer-N.f16` arrays; absent dtype retains legacy `layer-N.f32` behavior. It materializes
-FP32 features for unchanged numerical training. Both stored and materialized geometry,
-finite values, byte budgets and optional token/label arrays are checked. No automatic
-conversion or capture deletion occurs. FP16 numerical loading support is separate from
-scientific suitability. The [scoped HE4/Q4KM qualification](../results/fp16-storage-adoption/result.md)
-passed matched training, separate DEV loss and native acceptance gates. The
-[initial screen](../results/fp16-feature-screen/result.md) remains earlier bounded evidence.
-
-The bounded screen command runs in a numerical environment:
-
-```sh
-python -m w1a1_eagle.numerical.precision FEATURE.f32 --sha256 DIGEST --bytes SIZE --device cpu
-```
-
-`--device cuda` explicitly uses that host's visible CUDA device. Check task ownership
-first. It checks one authenticated F32 array up to 32 MiB, reports rounding error,
-overflow and underflow, and never claims learning/native acceptance qualification.
-
-## Development and evidence
-
-Run the repository quick check while editing and full gate before committing. Tests
-exercise cross-target refusal, role leakage, storage arithmetic, correction/bonus
-accounting, fallback and FP16 feature round trips. GPU screens remain explicit external
-experiments. No GPU access is needed for normal pre-commit.
-
-Use [result closeout](results.md) and [close-results](../skills/close-results/SKILL.md)
-for durable investigations. Preserve raw execution evidence externally, compact outcomes
-in results and current conclusions in FINDINGS. Existing CPU check success never means
-the remaining native runtime, sampled verifier or live application path passed.
-
-## Project workflow controls and profiling
-
-`prepare-project-workflows` authenticates a mapping of project `sources` and a `recipes`
-artifact (schema1), constructs controlled regressions, and requires the original to fail
-and the reference repair to pass. Followups require separate initial/final checks; the
-future check is installed only after the first answer. The maintained recipes exercise
-actual project modules. They establish bounded single-project DEV coverage, not unseen
-application transfer. Protected Bubblewrap tests execute in isolated copies with no
-network, credentials or host checkout. File tools support line ranges and unique text
-replacement. Empty files are explicit and long tool output reports truncation.
-
-`prepare-panels` optionally accepts an authenticated `harnesses` object with exactly
-`minimal`, `coding` and `tools` prefixes. Record their origin; use actual project
-instructions where available. Never label an authored alternate prompt as a captured
-external application's system prompt. All variants remain one source group for analysis.
-
-`profile-native` takes schema1 with a diagnostic `comparison`, a pinned Nsight `profiler`,
-`expected_kernels` per arm, optional `forbidden_kernels` and
-`kernel_round_multipliers`. It owns a named Nsight session, verifies the exact server
-process/library identity, stops and reaps that session, and checks all requested kernel
-instances. Profile timings are excluded from primary speed measurements. The HE4 control
-requires the intended integer/packing kernels in every drafter layer and forbids them in
-target-only and external-baseline arms.
-
-Full-suite target entries may supply `candidate_bindings`: arm names mapped to
-artifacts containing `state`, `drafter` and `execution` journal references. The completed
-worker record must bind that state/export and the drafter must be the evaluated arm.
-The highest valid full-request score selects the experimental full-DEV incumbent.
-Live completion, whole-task performance and harness sensitivity remain separate evidence;
-selection does not grant a general deployment claim. Multiple candidate request
-comparisons include Bonferroni-adjusted paired bootstrap intervals as well as marginal
-95% intervals. Small cohorts can remain inconclusive.
-
-`campaign-report` reads status and journals without acquiring a GPU. It reports the
-controller's recorded process identity/liveness, latest and selected pointers, segment
-health, DEV curves, native scores, costs and observed exposure. Selected sample attempts
-include retries; unique positions are reported only where actual label widths were
-recorded. They are not lifetime exposure. Campaign pilot mode is explicit (`pilot: true`)
-and accepts a pilot request count; it cannot establish 120-request DEV qualification.
-Closed unselected segments are globally retired after two later segments, retaining
-latest recovery and selected states/exports with receipts. Interrupted timing blocks stay
-in evidence; they cannot be silently resumed or used for selection.
+`profile-native` owns/verifies/stops/reaps Nsight and checks expected/forbidden kernels and
+layer counts. Integer/packing activation needs positive/negative controls; profiler time
+is excluded. Follow [results/retention](results.md) and
+[close-results](../skills/close-results/SKILL.md): compact measurements with conclusions,
+raw execution externally, unfavorable outcomes intact, full local checks before commits.
+Ignored files are not automatically disposable.

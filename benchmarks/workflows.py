@@ -11,7 +11,7 @@ from benchmarks.serving import session
 from benchmarks.statistics import paired, partitions
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
-from w1a1_eagle.device import device_lease
+from w1a1_eagle.device import cuda_identity, device_lease
 from w1a1_eagle.identity import freeze_source, source_identity
 from w1a1_eagle.records import artifact, canonical, identity, read
 
@@ -80,6 +80,7 @@ def live_leased(
     specification: Path, output: Path, spec: Comparison, fixtures: dict[str, Record]
 ) -> Record:
     store = Store(output)
+    store.atomic(store.root / "gpu.txt", cuda_identity().encode())
     code_root = Path(__file__).resolve().parents[1]
     code = source_identity(code_root)
     freeze_source(code_root, store.root / "sources", code, 0)
@@ -95,6 +96,25 @@ def live_leased(
                 cell = Store(store.root / (str(rep) + "-" + arm.name))
                 responses: list[Record] = []
                 with session(spec, arm, cell) as port:
+                    for index in range(spec.warmups):
+                        warm = Store(cell.root / ("warmup-" + str(index)))
+                        task = spec.tasks[0]
+                        sandbox = Sandbox(warm.root / "sandbox", fixtures[string(task["id"])])
+                        row, transcript, generated = execute(
+                            port, task, sandbox, spec.context, arm.drafter is not None
+                        )
+                        responses.extend(generated)
+                        warm.atomic(
+                            warm.root / "result.json",
+                            canonical(
+                                {
+                                    "row": row,
+                                    "messages": transcript,
+                                    "responses": generated,
+                                    "scope": "warmup; excluded from primary task totals",
+                                }
+                            ),
+                        )
                     for task in spec.tasks:
                         name = string(task["id"])
                         task_store = Store(cell.root / name)
@@ -136,6 +156,12 @@ def live_leased(
                         store.atomic(store.root / "progress.json", canonical({"rows": rows}))
                 if arm.drafter:
                     reconcile((cell.root / "server.log").read_text(), responses)
+                    if not any(
+                        integer(record(row["native"])["proposed"])
+                        for row in rows
+                        if row["arm"] == arm.name
+                    ):
+                        raise ValueError("fallback-only live arm; activation not established")
         if source_identity(code_root) != code:
             raise ValueError("live benchmark source changed during execution")
         result: Record = {

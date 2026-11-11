@@ -35,6 +35,7 @@ class Diagnostics:
             for name in (row.prompt.identity, row.prompt.group, *row.prompt.aliases)
         }
         specs: dict[str, CaptureSpec] = {}
+        self.categories: dict[str, str] = {}
         for value in sequence(corpus["records"]):
             row = record(value)
             if row["role"] != "dev":
@@ -54,6 +55,13 @@ class Diagnostics:
                 artifact(row["metadata"], source.path.parent),
                 tuple(artifact(v, source.path.parent) for v in sequence(row["files"])),
             )
+            specs[name].metadata.verify()
+            if (
+                read(specs[name].metadata.path).get("target_sha256", training.target)
+                != training.target
+            ):
+                raise ValueError("individual DEV capture target differs from training")
+            self.categories[name] = string(row.get("topic") or "unclassified")
         windows = [
             (string(record(v)["id"]), integer(record(v)["anchor"]))
             for v in sequence(raw["windows"])
@@ -73,6 +81,7 @@ class Diagnostics:
         cuda_rng = torch.cuda.get_rng_state_all() if model.vocabulary.device.type == "cuda" else []
         losses: list[float] = []
         matched = labels_count = 0
+        categories: dict[str, list[tuple[float, int, int]]] = {}
         with torch.no_grad():
             for name, anchor in self.windows:
                 capture = self.cache.get(self.specs[name])
@@ -90,8 +99,12 @@ class Diagnostics:
                 if not bool(torch.isfinite(value)):
                     raise ValueError("nonfinite diagnostic loss")
                 losses.append(float(value))
-                matched += int((logits.argmax(dim=-1) == labels).sum())
+                correct = int((logits.argmax(dim=-1) == labels).sum())
+                matched += correct
                 labels_count += len(window.labels)
+                categories.setdefault(self.categories[name], []).append(
+                    (float(value), correct, len(window.labels))
+                )
         if not torch.equal(cpu_rng, torch.get_rng_state()) or any(
             not torch.equal(a, b)
             for a, b in zip(
@@ -104,5 +117,14 @@ class Diagnostics:
             "labels": labels_count,
             "mean_loss": sum(losses) / len(losses),
             "top1": matched / labels_count,
+            "by_category": {
+                name: {
+                    "windows": len(values),
+                    "mean_loss": sum(value[0] for value in values) / len(values),
+                    "labels": sum(value[2] for value in values),
+                    "top1": sum(value[1] for value in values) / sum(value[2] for value in values),
+                }
+                for name, values in categories.items()
+            },
             "scope": "teacher-forced hard-label diagnostic; not native acceptance",
         }
