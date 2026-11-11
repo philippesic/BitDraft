@@ -10,6 +10,8 @@ This is a local repository with no remote; preserve the separate active GPU job.
 
 [Agent first port overhaul](docs/port-overhaul.md) describes the authorized implementation and its remaining gates.
 
+[Remaining port stages](docs/remaining-stages.md). [Issue and failure analysis](docs/issue-analysis.md).
+
 HE4 means W1A4 with A8 down projection and Q4K head. W1A8 is historical DSpark W1A8.
 DSpark Q4KM is the historical baseline. Baseline means current external DFlash Q4KM drafter.
 These identities are separate; the evidence does not establish HE4 beating Baseline.

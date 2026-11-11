@@ -195,6 +195,8 @@ FOUNDATION_FILES = (
     "docs/runtime.md",
     "docs/benchmarking.md",
     "docs/port-overhaul.md",
+    "docs/issue-analysis.md",
+    "docs/remaining-stages.md",
     "docs/decisions/README.md",
     "docs/decisions/001-scope-and-names.md",
     "docs/decisions/002-boundaries-and-owners.md",
