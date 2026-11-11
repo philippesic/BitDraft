@@ -38,7 +38,6 @@ never enter training, calibration or selection. Names and metrics: [domain](docs
   creating remotes or publishing (license is undecided).
 - Never start GPU jobs. Another project's GPU job may be running; leave it alone.
 - `/home/philip/binary-eagle-decoding` and `vllm-semantic-cache-ext` are read-only references.
-- Disk limits in force are in [agent operations](tasks/agent-operations.md).
 - Parallel work: use a separate worktree. Preserve uncommitted work you did not write,
   and commit it only after confirming the thread that wrote it has finished.
 
