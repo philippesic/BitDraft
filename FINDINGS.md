@@ -22,7 +22,7 @@ Neither beats the external baseline; retain the latency and memory tradeoffs. [R
 
 The fixed-data continuation worsened acceptance and request throughput. [Result](results/he4-fixed-data-continuation/result.md).
 
-### F004: Did fresh-source HE4broad training produce a better checkpoint?
+### F004: Did the November 8 forty-sequence HE4broad run beat Baseline?
 
 It ended at 24.5658% acceptance and 174.113 tok/s, against 185.444 for target-only and 65.3257% and 249.662 tok/s for Baseline. [Result](results/he4broad-fresh-source-training/result.md).
 
@@ -139,8 +139,10 @@ No general binary-acceleration claim followed. [Result](results/binary-pipeline-
 
 ## Capture storage
 
-[FP16 feature rounding passed a small GPU screen; training suitability remains unresolved](results/fp16-feature-screen/result.md).
+[Early rounding screen](results/fp16-feature-screen/result.md), followed by
+[matched training/native adoption](results/fp16-storage-adoption/result.md).
 
 - [HE4broad checkpoint migration](results/he4-checkpoint-migration/result.md): the final original checkpoint reproduces its next update exactly after correcting cache gradients.
 
-- [FP16 capture qualification](results/fp16-capture-qualification/result.md): bounded capture, training and native checks passed; broad production qualification remains pending.
+- [Earlier bounded capture qualification](results/fp16-capture-qualification/result.md):
+  superseded for adoption by the matched 1,024-update study above.

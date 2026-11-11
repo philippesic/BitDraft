@@ -182,6 +182,7 @@ def suite(specification: Path, output: Path) -> Record:
             "scope": "complete greedy panels with matching declared roles; live failures retained; no automatic unseen-confirmation or deployment claim",
         }
         store.atomic(store.root / "result.json", canonical(result))
+        store.atomic(store.root / "status.json", canonical(result))
         return result
     except BaseException as error:
         Store(output).atomic(output.resolve() / "failure.json", canonical({"error": str(error)}))

@@ -10,12 +10,12 @@ feed-forward weights use one bit, gate/up inputs use four bits, and down inputs 
 eight bits. Other components retain their declared formats; it is not a whole-model
 one-bit system. The [model](docs/model.md) explains what is trained and frozen.
 
-This repository implements CPU data admission, numerical updates, supervised attempts,
-recoverable training states and GGUF export. Native runtime builds, real serving
-verification and benchmarks remain to be implemented and qualified. The historical
-external DFlash Q4_K_M comparator remains the deployment reference; retained results
-here do not establish an HE4 win. See [research context](docs/research.md) for the
-reasoning and evidence behind the development direction.
+The public pipeline covers data admission, CUDA training with optimizer recovery, GGUF
+export, native request comparisons, tool workflows and periodic acceptance checks.
+[Benchmarks](docs/benchmarks.md) gives entry points and workload contracts;
+[support](docs/support.md) distinguishes measured coverage from remaining limits.
+Released DFlash Q4KM remains the external comparator. Read [findings](FINDINGS.md)
+before interpreting a candidate score as a serving improvement.
 
 ## Setup
 
@@ -45,13 +45,9 @@ Set `BINARY_NUMERICAL_PYTHON`, or set the host-only `.host.toml` to its absolute
 numerical_python = "/absolute/path/to/this/repository/.venv/numerical-clean/bin/python"
 ```
 
-The full gate uses that interpreter with GPU visibility disabled. A fresh locked-wheel
-install and the numerical suite passed on the current Linux host; Torch, NumPy and GGUF
-resolve inside this environment, independently of the old checkout. This qualifies the
-CPU fixtures, not GPU execution or another host. Dependency versions live in
-[pyproject.toml](pyproject.toml) and the lock; retained arithmetic-source provenance and
-fixture coverage live in [numerical policy](policy/numerical.toml). Keep credentials out
-of `.host.toml`. [Checks](docs/checks.md#commands) gives the standalone numerical command.
+The full gate disables GPU visibility. Versions live in [pyproject.toml](pyproject.toml)
+and the lock; CPU fixture coverage lives in [numerical policy](policy/numerical.toml).
+Keep credentials out of `.host.toml`. [Checks](docs/checks.md#commands) explains each lane.
 
 ## Commands
 
@@ -76,4 +72,4 @@ see [execution](docs/execution.md).
 - [Task convention](tasks/README.md); [close-results skill](skills/close-results/SKILL.md)
 - License: not yet chosen.
 
-- [Benchmark implementation plan](tasks/benchmark-implementation.md): remaining work and qualification gates. [Benchmark tools](docs/benchmarks.md) describes the implemented metadata and trace commands.
+- [Benchmarks](docs/benchmarks.md): prompt preparation, capture, native comparisons and training campaigns.

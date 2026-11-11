@@ -39,9 +39,13 @@ model states were intentionally retired before adoption. Source-linked raw paths
 historical locators, not verified current availability. Experimental reruns require their
 own input/dependency verification; the archive does not establish GPU or native parity.
 
-The November 10 investigation was unfinished at the archive boundary. A separately
-hashed working-report snapshot is retained externally as interim evidence, not a final
-finding. Later changes in that active investigation are outside this snapshot.
+The initial November10 archive retains interim records. Final committed history is
+independently preserved under `/home/philip/binary-eagle-evidence/legacy-final-20261111/`
+with its own `preservation.json` and verified bare reader. Final working reports and
+the original run/data now live under
+`/home/philip/binary-eagle-artifacts/datasets/retained-he4broad-original/`; its
+`closeout-reports-preservation.json` verifies the copied reports. This includes the
+220095-update,15647-capture run, distinct from the November8 forty-sequence namesake.
 
 The bundles are verified local preservation, not an off-machine backup. No remote is
 configured for this project. Preserve the external archive when moving or deleting a

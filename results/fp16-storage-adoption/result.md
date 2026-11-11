@@ -50,3 +50,15 @@ executed inputs and source snapshots. Reproduce with the pinned capture conversi
 matched public training intents, `benchmarks evaluate` loss specification and
 `benchmarks compare` short-panel specification. Each raw output retains its commands,
 source snapshot, runtime identities, responses and checkpoint/export manifests.
+
+## Canonical export followup, 2026-11-11
+
+Export-time exponentials now run in CPU FP32, reproducing the original export exactly.
+Re-exporting the same two 1,024-update states and rerunning the frozen 120 requests gave
+17,827 accepted drafts for each arm: 37,901 proposed for FP32 and 37,900 for FP16.
+All outputs/stops matched. FP16/FP32 throughput was 1.0053, with paired 95% interval
+1.0011–1.0095; acceptance difference was +0.0012 percentage points, interval
+−0.2750–+0.2526. Every original qualification gate still passed. Earlier executions above
+remain unchanged; serial timing does not establish a storage-caused speed effect.
+Raw results and stratified bootstrap are in
+`/home/philip/binary-eagle-artifacts/qualification/precision-canonical-paired.json`.
