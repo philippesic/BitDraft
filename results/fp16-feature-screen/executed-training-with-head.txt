@@ -1,0 +1,56 @@
+import gc
+import hashlib
+import json
+from pathlib import Path
+import numpy as np
+import torch
+from w1a1_eagle.data import Artifact, windows
+from w1a1_eagle.numerical.captures import Capture
+from w1a1_eagle.numerical.weights import load_he4
+from w1a1_eagle.numerical.worker import TensorWorker
+root = Path('/home/philip/binary-eagle-benchmark-qualification-20261110')
+torch.set_num_threads(4)
+torch.backends.cuda.matmul.allow_tf32 = False
+torch.backends.cudnn.allow_tf32 = False
+torch.cuda.set_per_process_memory_fraction(.92)
+def reference(path):
+    with path.open('rb') as f:
+        digest = hashlib.file_digest(f, 'sha256').hexdigest()
+    return Artifact(path, digest, path.stat().st_size)
+source = reference(root/'qwen35-4b-dflash-bf16.gguf')
+target = reference(root/'Qwen3.5-4B-Q4_K_M.gguf')
+vocab = reference(Path('/home/philip/he4broad-training-20261110-01/candidate/model-0.gguf'))
+manifest = json.loads((root/'inputs.json').read_text())
+records = json.loads((root/'captures.json').read_text())
+class Samples:
+    def __init__(self, half):
+        self.rows = []
+        for rec in records:
+            files = [r for r in manifest if r['id'] == rec['id']]
+            files.sort(key=lambda r:int(Path(r['path']).stem.split('-')[1]))
+            features = torch.from_numpy(np.concatenate([np.fromfile(root/r['path'],dtype='<f4').reshape(-1,2560) for r in files],axis=1))
+            if half: features = features.half().float()
+            m = rec['metadata'];tokens = tuple(m['input_tokens'])
+            selected = windows(rec['id'],tokens,m['prompt_tokens'],tuple(m['logit_positions']),tuple(m['greedy_ids']),None)
+            self.rows.append(Capture(tokens,features,selected))
+    def sample(self,cursor):
+        c = self.rows[cursor%len(self.rows)]
+        return c,c.windows[0]
+results = []
+for half in [False, True]:
+    outcome = {'storage':'float16' if half else 'float32'}
+    try:
+        available = int(next(line.split()[1] for line in Path("/proc/meminfo").read_text().splitlines() if line.startswith("MemAvailable:"))) * 1024
+        outcome["host_available_bytes"] = available
+        model = load_he4(source,vocab,available).cuda()
+        worker = TensorWorker(model,Samples(half),'bounded-matched-storage-test')
+        outcome['losses'] = [worker.step(i) for i in range(6)]
+        outcome['updates'] = worker.updates
+        outcome['peak_gpu_bytes'] = torch.cuda.max_memory_allocated()
+        outcome['status']='complete'
+        del worker,model
+    except Exception as e:
+        outcome['status']='failed';outcome['error']=type(e).__name__+': '+str(e)
+    results.append(outcome)
+    gc.collect();torch.cuda.empty_cache();torch.cuda.reset_peak_memory_stats()
+print(json.dumps({'scope':'six-update matched storage smoke, not convergence or native acceptance','gpu':torch.cuda.get_device_name(0),'torch':torch.__version__,'source':source.sha256,'target':target.sha256,'vocabulary':vocab.sha256,'results':results},indent=2))

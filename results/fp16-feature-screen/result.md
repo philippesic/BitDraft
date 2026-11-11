@@ -21,6 +21,22 @@ The remote environment used Torch 2.11.0+cu128, which supports sm_75; this diffe
 the new repository's Torch 2.14.0 lock. No training update or model serving ran.
 The active RTX 5080 job was left alone. No new prompts or production captures were generated.
 
+## Matched-training attempts
+
+A bounded six-update-per-arm experiment was attempted, reusing these existing captures.
+The first attempt incorrectly supplied the target GGUF as the Q4_K head source and was
+refused: its tied embedding is Q6_K. The retained initializer has a separate Q4_K output
+head. A second attempt selected that authenticated artifact, then both F32/F16 arms were
+refused by the existing host-memory budget check before updates. The 2080 Ti WSL host has
+about 16 GB RAM and 14.2-14.4 GB available during these attempts. No memory guard was
+relaxed. This is a setup/resource refusal, not evidence against FP16 learning quality.
+
+[First refusal](training-refused.json), [second refusal](training-with-head.json),
+[first driver](executed-training-refused.txt), [second driver](executed-training-with-head.txt).
+Exact source, target and separate head identities are recorded. The modern target and
+BF16 initializer were copied into the remote qualification directory as reusable inputs;
+this was not prompt generation or a new production training dataset.
+
 ## Decision
 
 Unresolved. Keep FP32 references and require matched training/native evaluation before

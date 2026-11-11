@@ -37,7 +37,11 @@ round-trip loading and corruption refusal. On the idle 2080 Ti, screened 24 real
 from three short existing captures and the initializer fusion projection: no overflow;
 training/native suitability remains unresolved. See [result](../results/fp16-feature-screen/result.md).
 Torch 2.11.0+cu128 on that host supports sm_75; default Python has no Torch. The GPU is
-idle again. Qualification raw source/inputs live outside the repo on the 2080 Ti.
+idle again. A later full-model matched storage attempt was refused first for a Q6_K target
+embedding used as a Q4_K head, then (with the retained Q4_K head selected) for the loader
+host-memory budget on the 16 GB WSL host. No updates ran and no guard was relaxed.
+Compatible modern target/initializer/head artifacts are now present in the isolated
+remote qualification directory. Target identity must remain separate from head identity. Qualification raw source/inputs live outside the repo on the 2080 Ti.
 No production prompts/captures were generated. Full native runner, intermittent evaluation,
 live tasks, harness sensitivity and end-to-end GPU training remain unimplemented.
  Existing code provides
@@ -590,7 +594,8 @@ of the 6K scope. This is design review, not runtime or statistical qualification
 Finish phase 1 contracts against real capture metadata, not just benchmark specifications.
 Then implement the reproducible native vertical path, candidate-target binding at the
 worker, GPU training and shared comparison core. Run matched full-model F32/F16 training
-and native evaluation before adopting F16 captures. The 2080 Ti lacks a modern Qwen3.5
-target in the inspected models directory; old Qwen3 targets cannot substitute. Recover
-and qualify compatible source/models within the authorized test scope. Keep all remaining
+and native evaluation before adopting F16 captures. The copied modern target/initializer and retained Q4_K head resolve input availability,
+but full model materialization is refused by the 2080 Ti host-memory guard. A qualified
+more memory-efficient loader or sufficient host RAM is required for this full-size test.
+Do not increase a declared budget above available RAM or substitute old Qwen3 models. Keep all remaining
 phases open and do not represent CPU gates or the rounding screen as completion.

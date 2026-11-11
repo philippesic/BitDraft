@@ -1,0 +1,22 @@
+{
+  "scope": "six-update matched storage smoke, not convergence or native acceptance",
+  "gpu": "NVIDIA GeForce RTX 2080 Ti",
+  "torch": "2.11.0+cu128",
+  "source": "18cefa06c73309385eff05eae315d9e91c0606e44f8994e61c08c63683894521",
+  "target": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630",
+  "vocabulary": "a68f55d9e5006328d65b787e7383d107ce69183c39aaaaf94a178427c7cf72dc",
+  "results": [
+    {
+      "storage": "float32",
+      "host_available_bytes": 14359924736,
+      "status": "failed",
+      "error": "ValueError: model materialization exceeds memory budget"
+    },
+    {
+      "storage": "float16",
+      "host_available_bytes": 14196289536,
+      "status": "failed",
+      "error": "ValueError: model materialization exceeds memory budget"
+    }
+  ]
+}
