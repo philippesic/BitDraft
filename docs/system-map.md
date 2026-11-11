@@ -1,25 +1,53 @@
 # System map
 
+## Layout
+
+| Path | Holds |
+| --- | --- |
+| `w1a1_eagle/` | Product: data admission, intent, supervision, lifecycle, CPU training |
+| `w1a1_eagle/numerical/` | Torch and GGUF code: captures, corpus, worker, weights, export |
+| `w1a1_eagle/checkpoints/` | The state store |
+| `tools/` | Checks, doctor and the metadata snapshot tool |
+| `policy/` | Rule registry, boundaries, commands, pins, exceptions, evidence registry |
+| `tests/` | CPU tests; `tests/numerical/` runs in the numerical interpreter |
+| `tests/cases/` | One bad and one control specimen per rule |
+| `evidence/` | Dated records backing findings |
+| `tasks/` | Open multi-session work |
+
+## Boundaries
+
+From [boundaries](../policy/boundaries.toml), enforced by the architecture stage:
+
+- `w1a1_eagle` never imports `tools`, `tests` or `benchmarks`; `tools` never imports `tests`.
+- `w1a1_eagle.contracts` and `tools.contracts` use only the standard library.
+- `w1a1_eagle.model`, `w1a1_eagle.training` and the contracts do no file or process IO.
+- Only the owners below write durable state.
+
+| Owner | State |
+| --- | --- |
+| `w1a1_eagle.data` | Prompt roles and consumption |
+| `w1a1_eagle.checkpoints.store` | Tensor states, manifests, latest pointer |
+| `w1a1_eagle.lifecycle` | Event journal and controller identity |
+
+Environment variables are read only in `w1a1_eagle/config.py` and `tools/config.py`.
+Operational time comes from `w1a1_eagle/clock.py`.
+
+## Entries and flows
+
 | Flow | State | Path | Symbol | Trigger |
 | --- | --- | --- | --- | --- |
-| setup | active | pyproject.toml | check | Explicit wheel-only uv sync |
-| check | active | tools/check.py | main | Local and pre-commit; optional hosted runner |
-| doctor | active | tools/doctor.py | diagnose | Read-only environment and hook inspection |
-| selftest | active | tools/self_test.py | run_corpus | Stage 9 |
-| policy | active | tools/policy_review.py | verification_report | Full passing check |
-| W1 | active | w1a1_eagle/index.py | IndexReader | Retained metadata and role admission |
-| W2 | pending | w1a1_eagle/native/teacher.py | capture | Separate hardware gate |
-| W3 | active | w1a1_eagle/numerical/corpus.py | Corpus | Bounded CPU capture sampling |
-| W4 | active | w1a1_eagle/supervisor.py | execute | Scoped CPU run |
-| W5 | active | w1a1_eagle/numerical/worker.py | restore | Own schema-3 tensor resume/branch |
-| W6 | active | w1a1_eagle/numerical/export.py | export_he4 | Bounded CPU GGUF construction |
-| W7 | pending | w1a1_eagle/evaluation.py | evaluate | Deferred benchmark evaluator adapter |
-| W8 | pending | benchmarks/__main__.py | qualify | Separate hardware gate |
-| W9 | pending | benchmarks/__main__.py | run | Separate benchmark gate |
-| W10 | active | w1a1_eagle/lifecycle.py | Journal | Exposure and attempt accounting |
-| W11 | pending | benchmarks/runner.py | execute | Separate benchmark gate |
-| W12 | pending | w1a1_eagle/native/build.py | build | Separate native gate |
+| setup | active | pyproject.toml | check | `uv sync --locked --only-group check --no-build` |
+| check | active | tools/check.py | main | Developer, pre-commit hook |
+| doctor | active | tools/doctor.py | diagnose | Developer |
+| selftest | active | tools/self_test.py | run_corpus | Proof stage and `--self-test` |
+| policy | active | tools/policy_review.py | verification_report | Passing full check |
+| cli | active | w1a1_eagle/__main__.py | main | `python -m w1a1_eagle` |
+| snapshot | active | tools/snapshot_metadata.py | pack | `python -m tools.snapshot_metadata` |
+| admission | active | w1a1_eagle/index.py | IndexReader | Preflight and run |
+| sampling | active | w1a1_eagle/numerical/corpus.py | Corpus | Worker |
+| supervision | active | w1a1_eagle/supervisor.py | execute | Run |
+| restore | active | w1a1_eagle/numerical/worker.py | restore | Resume and branch |
+| export | active | w1a1_eagle/numerical/export.py | export_he4 | End of run |
+| journal | active | w1a1_eagle/lifecycle.py | Journal | Every run event |
 
-Pending paths reserve responsibilities; they do not exist or provide commands.
-Active check flow: environment → repository → comments → Ruff → mypy → architecture
-→ dependencies → documentation → CPU tests → specimens → qualification status.
+Public commands are declared in [commands](../policy/commands.toml).

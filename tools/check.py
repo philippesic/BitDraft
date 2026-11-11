@@ -40,9 +40,16 @@ def main() -> int:
         os.execve(
             sys.executable, [sys.executable, "-m", "tools.check", *sys.argv[1:]], config.environment
         )
-    if sys.argv[1:] not in ([], ["--self-test"]):
-        print("SETUP_ERROR: only --self-test is supported")
+    if sys.argv[1:] not in ([], ["--self-test"], ["--fast"]):
+        print("SETUP_ERROR: only --fast or --self-test is supported")
         return 2
+    fast = sys.argv[1:] == ["--fast"]
+
+    def mypy_cache(profile: str) -> list[str]:
+        if fast:
+            return [f"--cache-dir={config.temporary}-mypy-{profile}"]
+        return ["--no-incremental", "--cache-dir=/dev/null"]
+
     try:
         files, escapes = inventory(root)
         project = read_toml(root / "pyproject.toml")
@@ -178,8 +185,7 @@ def main() -> int:
                     [
                         "mypy",
                         "--strict",
-                        "--no-incremental",
-                        "--cache-dir=/dev/null",
+                        *mypy_cache("core"),
                         "--show-error-codes",
                         *core_paths,
                     ],
@@ -207,8 +213,7 @@ def main() -> int:
                     self_test.run_command(
                         [
                             "mypy",
-                            "--no-incremental",
-                            "--cache-dir=/dev/null",
+                            *mypy_cache("numerical"),
                             "--python-executable",
                             config.environment["BINARY_NUMERICAL_PYTHON"],
                             "--show-error-codes",
@@ -249,6 +254,33 @@ def main() -> int:
                 + dependencies.reconcile_tools(record(toolchain["uses"]), files),
             )
             stage("documentation", docs.validate_docs(files, evidence))
+            if fast:
+                quick = self_test.run_command(
+                    [
+                        "pytest",
+                        "-q",
+                        "--strict-config",
+                        "--strict-markers",
+                        "-W",
+                        "error",
+                        "-o",
+                        "addopts=",
+                        "--ignore=tests/numerical",
+                        "--ignore=tests/test_numerical.py",
+                        "tests",
+                    ],
+                    root,
+                )
+                print(quick.output.strip())
+                stage("cpu", [] if quick.exit == 0 else [Diagnostic("REQUIRED_TESTS", "tests")])
+        if fast:
+            verdict = "FAIL" if all_diagnostics else "PASS"
+            print(
+                f"fast {verdict}; partial: numerical tests, required-test roster and rule proofs"
+                " not run; no receipt written"
+            )
+            return int(bool(all_diagnostics))
+        with temporary_root(config.temporary):
             cpu = self_test.run_command(
                 [
                     "pytest",

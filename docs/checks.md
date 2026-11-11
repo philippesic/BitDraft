@@ -1,53 +1,84 @@
-# Development verification
+# Checks
 
-The full commit gate is:
+## Commands
 
-```sh
-uv run --locked --no-sync --offline python tools/check.py
-```
+| Command | Time | Use |
+| --- | --- | --- |
+| `uv run --locked --no-sync --offline python tools/check.py --fast` | about 3 s warm, 30 s cold | While editing |
+| `uv run --locked --no-sync --offline python tools/check.py` | about 90 s | Commit gate; the pre-commit hook runs it |
+| `uv run --locked --no-sync --offline python tools/check.py --self-test` | about 25 s | Rule proofs only, after changing a checker or rule |
+| `uv run --locked --no-sync --offline python -m tools.doctor` | seconds | Environment, hook and receipt inspection |
 
-It verifies the locked small environment, forbidden repository content, comments and
-exceptions, Ruff, strict core/numerical typing, dependency direction, Vulture/Deptry,
-document links and active map symbols, required CPU scenarios, and every bad/control
-specimen. It installs and downloads nothing and executes no GPU work. The numerical
-wrapper runs pinned CPU subprocesses and rejects missing cases, skips or failures.
-Current required names live in [CPU policy](../policy/cpu-tests.toml) and
-[numerical policy](../policy/numerical.toml). Rule IDs/group totals derive from
-[rules](../policy/rules.toml), not duplicated literal counts. Digest pins detect drift;
-changes to policy remain reviewable and do not grant approval.
+None of them installs or downloads anything, formats files or uses the GPU.
 
-A normal new authored file, test or document requires no file-allowlist/checker edit.
-Critical entries remain mandatory. Normal test discovery runs every collected test;
-the critical scenario roster additionally prevents removal, skipping and xfail from
-producing a green gate. There is one authored critical roster, with a pinned digest.
+`--fast` runs every static stage and the ordinary CPU tests. It skips the numerical
+test (about 37 s), the required-test roster and the rule proofs, keeps a type-check
+cache of about 300 MB in `/tmp`, writes no receipt and is never a commit result.
 
-For a focused diagnosis, use `ruff check PATH`, `ruff format --check PATH`, or a named
-CPU test through `.venv/bin/python -B -m pytest tests/test_training.py`. The numerical
-interpreter can run `-B -m unittest tests.numerical.test_model -v` with CUDA hidden and
-TMPDIR=/tmp. Focused checks issue no full verification receipt. `--self-test` runs the
-paired guardrail corpus with bootstrap prerequisites; it is not the full commit gate.
+For one file: `.venv/bin/ruff check PATH`, `.venv/bin/ruff format --check PATH`, or
+`.venv/bin/python -B -m pytest tests/test_training.py`. The numerical tests run in the
+numerical interpreter: `CUDA_VISIBLE_DEVICES= TMPDIR=/tmp PYTHON -B -m unittest
+tests.numerical.test_model -v`.
 
-Production core and numerical source retain all strict typing settings. Only numerical
-test modules permit Any expressions and untyped external calls. One numerical analysis
-checks both profiles. Mypy runs uncached without writing unused caches. No hardware
-measurements are cached. Exact exceptions are enumerated in
-[exceptions](../policy/exceptions.toml); ordinary comments/docstrings have no exemption.
+## Stages
 
-The full receipt binds authored source and policy content. Doctor reports it stale
-after either changes. It also checks the installed pre-commit interpreter path after
-a checkout relocation. The normal hook checks the staged worktree and independently
-compares index contents. A green receipt means the named CPU scenarios executed; it
-does not prove authority, scientific adequacy, actual model parity, native correctness
-or serving performance. Hosted CI and an optional container remain unexercised choices.
+| Stage | Covers |
+| --- | --- |
+| bootstrap | Python, tool and lock pins; configuration digests; hook configuration |
+| repository | Tracked outputs, large files, secrets, ignored escapes, instruction files, diary names |
+| comments | The comment ban and `policy/exceptions.toml` |
+| ruff | Format and selected lint codes |
+| mypy | Strict typing; the numerical profile allows Any only in `tests/numerical` |
+| architecture | Import direction, pure modules, owners, environment and clock access, entries |
+| dependencies | Deptry, Vulture and declared tool use |
+| documentation | Relative links and anchors, pinned evidence links, system-map symbols |
+| cpu | All CPU tests, the numerical subprocess test and the required roster in `policy/cpu-tests.toml` |
+| proofs | Each rule in `policy/rules.toml` rejects its bad specimen and accepts its control |
 
-[Decision 007](decisions/007-checks-and-review.md) records intentional policy changes and
-reference-semantic corrections. [Execution](execution.md) describes runtime refusal,
-reporting, identity and resource scope. Fresh-agent evidence includes [readiness/refusal](evidence/agent-readiness.json),
-[routine repair](evidence/agent-window-exercise.json) and
-[failed-run diagnosis/refusal](evidence/agent-diagnosis-exercise.json). These capability-gated
-exercises retain unaided failures, hints, limitations and parent adjudication. They
-qualify their scoped tasks, not general agent productivity or causal improvement.
+A green full check means the named CPU scenarios ran. It does not show native
+correctness, retained-artifact parity, scientific adequacy or serving performance.
 
-CPU scratch, including checker/specimen/type-check temporaries, now uses an owned RAM
-root under /tmp. Reclaimed stale type-check cache and compiler-cache evidence is in
-[disk receipt](evidence/disk-reclaim.json). No real weights or run evidence were deleted.
+## Comment ban
+
+Python, shell, TOML, YAML, C/C++/CUDA, Dockerfile and ignore-file comments and all
+docstrings fail. Markdown prose is allowed; fenced code in Markdown is checked. Only
+a necessary shebang, a legally required license header or a genuine tool directive can
+have an exception, and each entry in `policy/exceptions.toml` names the exact path and
+content with a reason. Wildcards and file-wide suppressions are refused. Unsupported
+syntax fails closed. Patches are checked hunk by hunk against their pinned base.
+
+## Adding things
+
+- A new test, source file or document needs no checker edit.
+- Add a test to `policy/cpu-tests.toml` only when its removal must fail the gate.
+- A new public command must be declared in `policy/commands.toml`.
+- A new evidence link to the predecessor repository must use the pinned revision and
+  be registered in `policy/evidence.toml`.
+
+## Pins and digests
+
+`tools/config.py` pins the tool versions and the digests of `policy/rules.toml`,
+`policy/commands.toml`, `policy/boundaries.toml`, `policy/cases.toml`,
+`policy/cpu-tests.toml`, `policy/check-stages.toml`, `policy/validation.toml`, the hook
+configuration, the workflow and the container file. A digest mismatch means a safeguard
+changed. If the change is intended and authorized, update the digest in the same commit
+and say so in the report. If not, revert it. Never update a digest only to get a pass.
+
+## Fixes
+
+| Diagnostic | Fix |
+| --- | --- |
+| `COMMENT_*` | Delete the comment; move rationale to the topic doc |
+| `LINT` | `.venv/bin/ruff format PATH` and fix the printed lint errors |
+| `TYPES` | Fix the printed mypy errors; do not add `Any` or `type: ignore` |
+| `ENV_OWNER` | Read environment variables only in `w1a1_eagle/config.py` or `tools/config.py` |
+| `TIMING_OWNER`, `SEEDED_RANDOM` | Take an injected clock or seeded generator as an argument |
+| `ARCH_*`, `IMPORTS` | Move the code so imports follow the direction in `policy/boundaries.toml` |
+| `OWNER_*` | Write through the owner module listed in [system map](system-map.md) |
+| `PUBLIC_ENTRY` | Declare the entry in `policy/commands.toml` or remove the main guard |
+| `DOC_LINK`, `MAP_ENTRY` | Fix the link, anchor or system-map symbol |
+| `EVIDENCE_PIN` | Use the pinned revision URL and register it in `policy/evidence.toml` |
+| `REPO_DIARY` | Put the content in FINDINGS, a topic doc or a task file |
+| `INSTRUCTIONS_BUDGET` | Shorten AGENTS.md to 80 lines and 4,000 bytes |
+| `REQUIRED_TESTS` | Read the pytest output above it; a test failed, was skipped or disappeared |
+| `CHECK_CONFIG`, `PIN_*`, `STAGE_GATE` | A pin or digest changed; see Pins and digests |

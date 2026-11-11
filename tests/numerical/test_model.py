@@ -170,7 +170,7 @@ class TestNumerical(unittest.TestCase):
         return self.reference(index), adapter
 
     def test_default_geometry_against_retained_header(self) -> None:
-        header = read(Path("docs/evidence/he4-initializer-header.json"))
+        header = read(Path("evidence/he4-initializer-header.json"))
         expected = {name: list(shape) for name, shape in shapes(Geometry()).items()}
         self.assertEqual(expected, header["tensor_shapes"])
         self.assertEqual(header["target_layers"], [2, 6, 10, 14, 18, 22, 26, 30])
@@ -216,7 +216,7 @@ class TestNumerical(unittest.TestCase):
 
     def test_historical_arithmetic_characterization(self) -> None:
         captured = record(
-            cast(object, json.loads(Path("docs/evidence/arithmetic-reference.json").read_text()))
+            cast(object, json.loads(Path("evidence/arithmetic-reference.json").read_text()))
         )
         expected_projection = record(captured["projection"])
         weight = torch.tensor([[0.2, -0.4, -1.0], [1.0, 1.4, -0.0]])

@@ -1,50 +1,43 @@
-# Binary Eagle source port
+# Binary Eagle
 
-The pre-benchmark CPU source path covers retained metadata admission, HE4 numerical
-updates, transactional states, exact own-state resume/branch, bounded supervision
-and verified GGUF export. End-to-end fixtures use retained source/intent snapshots.
-Fresh-context readiness, routine repair and failure-diagnosis exercises are recorded
-in [findings](FINDINGS.md); they establish no causal productivity gain.
-Actual retained-artifact parity and native qualification remain pending. Benchmark redesign and high-level agent operations remain deferred.
-This is a local repository with no remote; preserve the separate active GPU job.
+Binary Eagle trains small low-bit drafter models for speculative decoding with
+Qwen3.5-4B Q4_K_M targets. The current model family is HE4: 1-bit weights with
+4-bit activations, an 8-bit down projection and a Q4_K output head. Trained states
+export to GGUF for a native runtime.
 
-[Agent first port overhaul](docs/port-overhaul.md) describes the authorized implementation and its remaining gates.
-
-[Remaining port stages](docs/remaining-stages.md). [Issue and failure analysis](docs/issue-analysis.md).
-
-HE4 means W1A4 with A8 down projection and Q4K head. W1A8 is historical DSpark W1A8.
-DSpark Q4KM is the historical baseline. Baseline means current external DFlash Q4KM drafter.
-These identities are separate; the evidence does not establish HE4 beating Baseline.
+This repository holds the CPU source path: admitting captured training data,
+HE4 numerical updates, durable and resumable training state, a supervised run
+command and verified GGUF export. Native runtime builds and benchmarks are not here yet.
 
 ## Setup
 
-Use CPython 3.11.15 and uv 0.11.32 authenticated against the exact archive identities
-in [toolchain](policy/toolchain.toml). Check disk first. This stage has a hard combined
-1 GiB write cap and requires at least 2.5 GiB WSL space after writes. Install wheels only:
+Requires CPython 3.11.15 and uv 0.11.32 on Linux x86_64; exact archive identities are in
+[toolchain](policy/toolchain.toml). Install the check environment from wheels only:
 
 ```sh
 uv sync --locked --only-group check --no-build
 ```
 
-The numerical profile uses a separate interpreter selected by `BINARY_NUMERICAL_PYTHON`,
-local `.host.toml`, or `.venv/numerical/bin/python`. It requires the exact top-level
-versions in [numerical policy](policy/numerical.toml). This host reuses existing Torch
-libraries and an isolated pinned GGUF wheel; this is not a fresh hermetic environment
-or native qualification. CPU numerical subprocesses mask CUDA devices.
+Numerical code runs in a separate interpreter with the versions in
+[numerical policy](policy/numerical.toml). Point to it with `BINARY_NUMERICAL_PYTHON`,
+`numerical_python` in an untracked `.host.toml`, or a `.venv/numerical` environment.
 
-Run from this repository root:
+## Commands
 
 ```sh
+uv run --locked --no-sync --offline python tools/check.py --fast
 uv run --locked --no-sync --offline python tools/check.py
+uv run --locked --no-sync --offline python -m tools.doctor
+python -m w1a1_eagle preflight INTENT
 ```
 
-The command installs nothing, downloads nothing, formats nothing and uses no GPU.
-Its ordinary run includes all specimens. `--self-test` shows stage 9 with bootstrap prerequisites;
-it is an inspection convenience, never a reduced CI gate.
+The first is a quick partial check, the second is the full commit gate, the third
+inspects the environment and hook. The last family runs and reports CPU training;
+see [execution](docs/execution.md).
 
-Use [CPU execution](docs/execution.md) for the public run/intent contract and doctor.
+## More
 
-See [checks](docs/checks.md), [system map](docs/system-map.md), [findings](FINDINGS.md),
-and [decisions](docs/decisions/README.md). License remains undecided. Hosted CI, the
-optional image and authenticated policy review have not run. Native/runtime verify,
-source parity and benchmark qualification are unavailable until separately approved.
+- [System map](docs/system-map.md), [checks](docs/checks.md), [data](docs/data.md),
+  [domain terms and metrics](docs/domain.md)
+- [Findings](FINDINGS.md) from this project and its predecessor
+- License: not yet chosen.

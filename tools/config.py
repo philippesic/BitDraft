@@ -190,22 +190,6 @@ FOUNDATION_FILES = (
     "tests/test_self_test.py",
     "docs/system-map.md",
     "docs/checks.md",
-    "docs/data.md",
-    "docs/training.md",
-    "docs/runtime.md",
-    "docs/benchmarking.md",
-    "docs/port-overhaul.md",
-    "docs/issue-analysis.md",
-    "docs/remaining-stages.md",
-    "docs/decisions/README.md",
-    "docs/decisions/001-scope-and-names.md",
-    "docs/decisions/002-boundaries-and-owners.md",
-    "docs/decisions/003-data-and-exposure.md",
-    "docs/decisions/004-clocks-and-selection.md",
-    "docs/decisions/005-state-and-evidence.md",
-    "docs/decisions/006-comment-ban-and-exceptions.md",
-    "docs/decisions/007-checks-and-review.md",
-    "docs/decisions/008-verify-and-parity.md",
 )
 
 REQUIRED_CPU = tuple(string(value) for value in sequence(policy_data("cpu-tests.toml")["required"]))

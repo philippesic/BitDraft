@@ -1,134 +1,108 @@
-# CPU execution contract
+# CPU execution
 
-The public source entry is `python -m w1a1_eagle`, with `preflight INTENT`,
-`run INTENT OUTPUT --scope TASK`, and `report OUTPUT`. `--json` before or after the subcommand emits JSON records;
-a run emits its admission before allocation and a terminal report afterward.
-Human output describes the same records. Reporting reads existing records only.
-`python -m tools.doctor` belongs to development tooling, alongside the full check.
-The bootstrap and numerical worker are private controller entries declared in
-[commands](../policy/commands.toml). The benchmark command remains deferred.
+## Commands
 
-An intent has exact schema 2, validated by [Intent](../w1a1_eagle/intent.py).
-It names its objective, hypothesis, decision, risk and externally authorized scope;
-source, Q4_K vocabulary and corpus artifact references; explicit fresh/resume/branch
-mode and parent; geometry, seed and CPU device; update, attempt and cumulative wall
-limits; memory, maximum state bytes and disk reserve; a backing-capacity upper bound;
-code identity; explicit update/time checkpoint cadence; and a supplied minimum-distinct-data/maximum-reuse policy. These policy
-values are inputs, not recommended scientific thresholds. The complete current field
-set is executable in Intent.load and exercised by the numerical integration fixture.
-Unknown fields or schema versions refuse. No legacy checkpoint reader is implied.
+```sh
+python -m w1a1_eagle preflight INTENT
+python -m w1a1_eagle run INTENT OUTPUT --scope TASK
+python -m w1a1_eagle report OUTPUT
+```
 
-Artifact references contain `path`, `sha256`, and `bytes`. Relative paths resolve
-against their containing document. Corpus schema 1 contains `target_sha256`,
-`protected`, `expected_train`, and `records`. Each row names id/source/group/topic,
-aliases, role, ancestry, metadata and files. Roles and aliases are reconciled before
-opening training metadata. heldout24 is always protected. The ancestry field records
-upstream admission provenance; an editable manifest cannot independently establish
-that provenance or authorize a run. A real corpus must be produced and checked against
-its retained source/role receipts before a scientific run. The modern index adapter now reconciles the selected retained metadata/source chain;
-this remains distinct from raw tensor authentication on exposure and native qualification.
+`--json` before or after the subcommand prints JSON records instead of text; both forms
+describe the same records. A run prints its admission before allocating anything and a
+terminal report at the end. `report` only reads existing records. The bootstrap and
+numerical worker are private entries listed in [commands](../policy/commands.toml).
 
-The reader supports the selected modern eight-tap F32 capture contract and optional
-pinned int32 NPY copies. It authenticates files before exposure, rejects disagreement,
-keeps bounded feature materialization, and reconstructs the original single seeded
-permutation from the saved cursor, repeating it across passes. The final native label can lie at the last input position;
-future mask slots require labels, not observed future inputs. Exposure counts identify
-trajectory/native-logit positions. Admission reports planned successful exposure and
-the worst allowed exposure including failed attempts. Parent consumption is retained
-in checkpoint lineage; branch changes do not establish fresh-data eligibility.
+## Intent
 
-The store owns immutable tensor states and manifests; lifecycle owns the chained event
-journal and controller identity. Scratch and read-only diagnostics do not require those
-owners. The controller uses nonblocking local ownership to prevent two controllers
-writing one output root; this makes no claim about other projects or GPU exclusion.
-CPU workers hide CUDA. GPU requests refuse; no project-local lock claims GPU ownership.
-State writes recheck observed headroom. Windows backing availability is queried through
-the mounted /mnt/c adapter and bounded by the supplied observation. These checks do
-not reserve capacity against other writers.
+An intent (schema 2, validated by `Intent.load` in `w1a1_eagle/intent.py`) names the
+objective, hypothesis, decision, risk and authorized scope; source, Q4_K vocabulary and
+corpus artifacts; the mode (fresh, resume or branch) and parent; geometry, seed and CPU
+device; update, attempt and cumulative wall limits; memory, state-size and disk limits;
+checkpoint cadence; and the minimum-data and maximum-reuse policy. Policy values are
+inputs, not recommendations. Unknown fields or schema versions are refused.
 
-Each attempt binds dirty executable source, its intent and loaded Python/native library
-identities. A separate bootstrap arms an OS wall timer before importing Torch, so the
-limit remains active without an agent or notification service. The controller also
-bounds the subprocess and targets an isolated process group with exact boot/process
-birth identity. A failed attempt retains its cost. A lost controller refuses live owned
-work; once its owner is gone, recovery conservatively charges its entire remaining
-wall budget rather than inventing elapsed time. Automatic retry is unsupported; an
-explicit recovery remains subject to cumulative bounds. Before any state or update
-attempt exists, an exact-recipe fresh retry can reuse the same root and retain failed
-preflight cost. After initialization, recovery requires an explicit parent and resume.
+Artifact references are `path`, `sha256` and `bytes`; relative paths resolve from the
+containing document. A corpus (schema 1) has `target_sha256`, `protected`,
+`expected_train` and `records`. An optional `input_adapter` selects the modern index
+instead; see [data](data.md). An editable manifest cannot establish provenance or
+authorize a run.
 
-Training records an exposure before its update. Complete states are published through
-checksummed atomic manifests. A resume restores tensors, shared aliases, AdamW state,
-CPU RNG, sampler cursor and counters. A branch resets optimizer/cursor while retaining
-parent lineage and cumulative work. Neither mode silently loads an old trained state
-for a fresh run. Unknown or corrupt complete journal evidence refuses. A torn final append can be
-reconciled only after live ownership checks: preserve its bytes in an incident receipt,
-validate the intact prefix, and discard no complete event. It cannot become selected.
-Process-crash recovery is distinct from power-loss durability. Native, hardware,
-scientific adequacy and serving performance remain unqualified by CPU fixtures.
+## Owners
 
+- `w1a1_eagle/checkpoints/store.py` owns tensor states, manifests and the latest pointer.
+- `w1a1_eagle/lifecycle.py` owns the event journal and controller identity.
+- `w1a1_eagle/data.py` owns roles and consumption.
 
-Supported readers: intent 2, canonical corpus 1, tensor payload 3, store manifest 1,
-event envelope 1, and the emitted native-format GGUF W1Ax version 2. Earlier CPU
-tensor schemas 1/2 and intent schema 1 have no implicit reader or migration. Preserve its
-originals; migration needs an explicit new artifact and verified source lineage.
-Tensor payload 3 binds source/vocabulary identities and validates exact Adam moment
-coverage, types and shapes before restoration. Artifact relocation does not change
-content identity; exact recipe identity additionally binds executable source.
+Scratch files and read-only diagnostics need no owner. One controller at a time may
+write an output root; a second one is refused. This lock covers the output root only,
+not the GPU or other projects.
 
-A CPU run now also exports its final complete state. The pinned GGUF adapter streams
-headers and bounded tensor chunks through the store rather than letting NumPy bypass
-the byte budget. It preserves original Q4_K vocabulary codes, checks frozen execution
-operands against their export operands, and verifies every tensor through the GGUF
-reader before publication. Sign bits use little-endian 32-bit words, nonnegative zero
-is one, and unused tail bits are zero. This is format conformance, not native loading.
+## Attempts and cost
 
-Checkpoint cadence is explicit. The prospective byte bound includes retained intermediate
-states, initial/final state, export and a bounded torn-journal incident. The store never
-automatically deletes historical states to fit. Every entered update is journaled before
-sampling; actual exposure is a separate event. Recovery charges uncommitted attempts,
-including failed reads and updates. Whole-attempt wall cost includes preflight, loading,
-serialization and failure in the controller; the tensor's operational update timer is
-separate. A new task/root does not grant a new allocation merely by changing fields.
-Parent lineage remains explicit; full parent allocation reports must be retained rather
-than inferred from tensor update time.
+Each attempt retains a copy of its source under `sources/<identity>` and its intent under
+`intents/<identity>`, and runs from those copies, so later edits to the checkout or
+intent do not change it. Loaded Python and native library identities are recorded at
+start and checked again at the end.
 
-Loaded identity records actual mapped executables and imported package code files.
-Bytecode caches are bypassed in CPU subprocesses. Terminal identity adds late imports
-and rejects drift in previously loaded files. File hashes may be reused within that same
-attempt only when device/inode/size/mtime/ctime remain equal; the report labels reuse.
-This caches file identity work, never execution proof or hardware measurements.
+A bootstrap arms an OS wall timer before importing Torch, so the time limit holds even
+without a supervising agent. The controller runs the worker in its own process group
+and identifies it by boot and process start identity. CPU workers hide CUDA, and GPU
+requests are refused.
 
-An optional `input_adapter` selects `he4fresh-index-v1` with exact manifest/target
-identities, expected sequence/window/position counts, exclusions, logical root and
-physical metadata root. Optional data_root maps tensor files separately. Unsupported
-forms refuse; canonical corpus 1 remains supported. Intent payloads are internally
-immutable: reading raw returns a copy rather than a mutable admission record.
-Admission names prior-use counts explicitly. Exposure estimates describe additional
-visits, never unknown lifetime consumption or an assertion of scientific adequacy.
+Failed attempts keep their cost. There is no automatic retry. Before initialization, a
+fresh retry with the same recipe may reuse the root and keeps the failed preflight cost.
+After initialization, recovery needs an explicit parent and resume. If a controller is
+lost, live owned work is refused; once the owner is gone, recovery charges the whole
+remaining wall budget rather than guessing elapsed time.
 
-Each admitted run retains a bounded source closure under sources/<identity> and an
-exact schema-1 intent receipt under intents/<identity>. Workers and their preflight
-execute from that closure, with bytecode reuse disabled, rather than a mutable
-checkout. Relative input references retain their original containing directory.
-Changing the caller's intent after admission cannot change its child. Snapshot files
-are read-only and checked by content; this is cooperative worktree isolation, not
-protection against an owner who deliberately rewrites retained files or dependencies.
-Actual loaded dependency identities are still checked separately.
+## State, resume and branch
 
-Tensor payload 3 retains learned parameters, Adam/RNG/counters and the streamed
-fingerprint of every frozen buffer. The authenticated initializer and vocabulary
-remain required dependencies; they reconstruct frozen data before restore. A mismatch
-refuses. Runtime buffer object/version guards detect ordinary in-place/replacement
-mutations before publication. They are not a hostile Python memory sandbox.
-The exact next-update CPU witness covers this format; old payloads are preserved
-without implicit acceptance.
+Every entered update is journaled before sampling, and exposure is journaled before the
+update. Complete states are published through checksummed atomic manifests: writes go to
+a temporary file on the same filesystem, are synced, authenticated and then the latest
+pointer is replaced. A crash before publication keeps the parent; a crash after keeps a
+complete parent or a complete child. This covers process crashes, not power loss.
 
-The supported event journal is bounded to 64 MiB. CPU execution stops at 56 MiB to
-retain room for complete state/export/terminal evidence; it never deletes events to
-continue. This is a declared storage stop, not goal completion. The prospective disk
-upper bound includes the journal, source/intent snapshots and torn-tail receipt in
-addition to states/exports. Longer execution needs an explicitly qualified journal
-migration or larger supported format. No OS-reserved disk capacity is claimed.
-Human terminal output names controller outcome, worker stop, confirmed activation,
-starting state and risk; missing evidence remains unknown.
+- Fresh: proves the original authenticated initialization and no optimizer history.
+- Resume: restores parameters, shared aliases, AdamW counters and moments, CPU RNG,
+  sampler cursor, exposure and lineage, and must reproduce the next update exactly.
+- Branch: resets optimizer and cursor but keeps parent lineage, cost and exposure.
+
+No mode silently loads an old trained state. The store never deletes historical states
+to make room. Each state write rechecks free space; this does not reserve capacity.
+
+Tensor payload 3 stores learned parameters, Adam, RNG and counters plus a fingerprint of
+every frozen buffer. Frozen data is rebuilt from the required initializer and vocabulary
+and refused on mismatch. Buffer guards catch ordinary in-place mutation before
+publication; they are not a sandbox.
+
+## Export
+
+A run exports its final complete state to GGUF (native-format W1Ax version 2). The
+exporter streams through the store under its byte budget, keeps the original Q4_K
+vocabulary codes, checks frozen operands against export operands, and reads every tensor
+back before publishing. Sign bits are little-endian 32-bit words, nonnegative zero is 1,
+and unused tail bits are 0. This checks the format, not native loading.
+
+## Journal
+
+The journal is limited to 64 MiB, and execution stops at 56 MiB to leave room for the
+final state, export and terminal records. It never deletes events to continue. That stop
+is a storage limit, not completion. A torn final append is reconciled only after checking
+ownership: its bytes are saved in an incident receipt, the intact prefix is validated and
+no complete event is dropped. Corrupt complete events are refused.
+
+## Supported formats
+
+Intent 2, corpus 1, tensor payload 3, store manifest 1, event envelope 1 and GGUF W1Ax 2.
+Earlier tensor schemas 1 and 2 and intent 1 have no reader. Migrating one needs a new
+artifact with verified source lineage; keep the originals.
+
+## Limits
+
+These are CPU constructions with reduced geometry. They establish construction,
+accounting and recovery behavior, not full-size parity with retained artifacts, native
+correctness, useful learning or serving performance. The terminal report names the
+controller outcome, worker stop, confirmed activation, starting state and risk, and marks
+missing evidence as unknown.
