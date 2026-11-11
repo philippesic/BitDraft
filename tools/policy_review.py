@@ -1,5 +1,6 @@
 import hashlib
 
+from tools.config import STAGES
 from tools.contracts import Diagnostic, Record
 
 
@@ -38,18 +39,6 @@ def validate_report(files: dict[str, str], report: Record) -> list[Diagnostic]:
         report.get("policy_sha256") == policy_digest(files)
         and report.get("content_sha256") == content_digest(files)
         and report.get("approval") == "REVIEW_REQUIRED"
-        and report.get("stages")
-        == [
-            "bootstrap",
-            "repository",
-            "comments",
-            "ruff",
-            "mypy",
-            "architecture",
-            "dependencies",
-            "documentation",
-            "cpu",
-            "proofs",
-        ]
+        and report.get("stages") == list(STAGES)
     )
-    return [] if valid else [Diagnostic("POLICY_REVIEW", "policy/validation.toml")]
+    return [] if valid else [Diagnostic("POLICY_REVIEW", ".venv/foundation-verification.json")]

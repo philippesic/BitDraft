@@ -95,146 +95,16 @@ STAGES = (
     "cpu",
     "proofs",
 )
-PINS = {
-    "ruff": "0.16.8",
-    "mypy": "1.18.2",
-    "pytest": "8.4.2",
-    "hypothesis": "6.140.3",
-    "import-linter": "2.7",
-    "vulture": "2.14",
-    "deptry": "0.24.0",
-    "dulwich": "0.24.2",
-}
-RUFF: Record = {
-    "target-version": "py311",
-    "line-length": 100,
-    "exclude": [],
-    "lint": {
-        "select": ["F401", "F821", "I001", "B006", "UP006"],
-        "ignore": [],
-        "per-file-ignores": {},
-    },
-}
-MYPY: Record = {
-    "python_version": "3.11",
-    "strict": True,
-    "disallow_any_expr": True,
-    "disallow_any_explicit": True,
-    "disallow_any_unimported": True,
-    "warn_unreachable": True,
-    "follow_imports": "normal",
-    "ignore_missing_imports": False,
-    "enable_error_code": ["ignore-without-code"],
-    "warn_unused_configs": True,
-    "disallow_any_generics": True,
-    "disallow_subclassing_any": True,
-    "disallow_untyped_calls": True,
-    "disallow_untyped_defs": True,
-    "disallow_incomplete_defs": True,
-    "check_untyped_defs": True,
-    "disallow_untyped_decorators": True,
-    "warn_redundant_casts": True,
-    "warn_unused_ignores": True,
-    "warn_return_any": True,
-    "implicit_reexport": False,
-    "strict_equality": True,
-    "strict_bytes": True,
-    "extra_checks": True,
-}
-
-FOUNDATION_FILES = (
-    "AGENTS.md",
-    "CLAUDE.md",
-    "README.md",
-    "FINDINGS.md",
-    ".python-version",
-    "pyproject.toml",
-    "uv.lock",
-    ".gitignore",
-    ".editorconfig",
-    ".githooks/pre-commit",
-    "tools/__init__.py",
-    "tools/check.py",
-    "tools/config.py",
-    "tools/repo_files.py",
-    "tools/repo_policy.py",
-    "tools/comments.py",
-    "tools/boundaries.py",
-    "tools/contracts.py",
-    "tools/docs.py",
-    "tools/dependencies.py",
-    "tools/pytest_gate.py",
-    "tools/self_test.py",
-    "tools/policy_review.py",
-    "policy/rules.toml",
-    "policy/exceptions.toml",
-    "policy/boundaries.toml",
-    "policy/check-stages.toml",
-    "policy/cases.toml",
-    "policy/cpu-tests.toml",
-    "policy/toolchain.toml",
-    "policy/evidence.toml",
-    "policy/retained-states.toml",
-    "policy/validation.toml",
-    "tests/__init__.py",
-    "tests/test_contracts.py",
-    "tests/test_architecture.py",
-    "tests/test_policy.py",
-    "tests/test_self_test.py",
-    "docs/system-map.md",
-    "docs/checks.md",
+PROJECT = cast(
+    Record, tomllib.loads((Path(__file__).resolve().parent.parent / "pyproject.toml").read_text())
 )
-
-REQUIRED_CPU = tuple(string(value) for value in sequence(policy_data("cpu-tests.toml")["required"]))
-
-OTHER_TOOL_CONFIG: Record = {
-    "uv": {
-        "package": False,
-        "python-downloads": "never",
-        "default-groups": ["check"],
-        "required-environments": ["sys_platform == 'linux' and platform_machine == 'x86_64'"],
-        "no-build": True,
-    },
-    "pytest": {"ini_options": {"testpaths": ["tests"], "addopts": ""}},
-    "importlinter": {
-        "root_packages": ["tools", "tests", "w1a1_eagle"],
-        "include_external_packages": True,
-        "contracts": [
-            {
-                "name": "tools never import tests",
-                "type": "forbidden",
-                "source_modules": ["tools"],
-                "forbidden_modules": ["tests"],
-            },
-            {
-                "name": "contracts stay pure",
-                "type": "forbidden",
-                "source_modules": ["tools.contracts"],
-                "forbidden_modules": [
-                    "tools.config",
-                    "tools.check",
-                    "tools.repo_files",
-                    "tools.self_test",
-                ],
-            },
-        ],
-    },
-    "deptry": {
-        "exclude": ["^\\.git/", "^\\.venv/", "^\\.uv-cache/"],
-        "extend_exclude": [],
-        "ignore": [],
-        "per_rule_ignores": {},
-        "known_first_party": ["tools", "tests", "w1a1_eagle"],
-    },
+TOOL_CONFIG = record(PROJECT["tool"])
+RUFF = record(TOOL_CONFIG["ruff"])
+MYPY = record(TOOL_CONFIG["mypy"])
+PINS = {
+    string(value).partition("==")[0]: string(value).partition("==")[2]
+    for value in sequence(record(PROJECT["dependency-groups"])["check"])
 }
-
-CONFIG_DIGESTS = {
-    "policy/rules.toml": "2d65ffc01b2194d796fcf472fe24d2c540a64f0943d8557d81bb94289f94070a",
-    "policy/commands.toml": "d0b9093bb88ce5e8225cefad890f0507ae4e357fba4122255241b31bc4a9518c",
-    ".githooks/pre-commit": "2cf96c9ec4cb87837d34fbfaebac50fcbb25bd8bb65f33f9baac7080605c66b5",
-    "policy/boundaries.toml": "2222fafd65a0c3d355483f9d0ff3354550f495faefa282b80a327e5365ca024a",
-    "policy/cases.toml": "d3094468c15e70cec936fb2b3b2eb6f99ee2900b39a507492f5b762b32ee6cfc",
-    "policy/cpu-tests.toml": "936218d7b8f290fa9ad93493c4d9bf6f468fc4434ac5acd3cb7333d5085816d8",
-    "policy/check-stages.toml": "b292836462fa970fb2330e93b913ea1a3ac8fe5eb8efde756b691184bf8165f1",
-    "policy/validation.toml": "c87733b131a391b1575ab7b1af90d5cfcfbf1fa34c5841d722606d82a558210e",
-}
+TOOLCHAIN = policy_data("toolchain.toml")
+PYTHON = string(TOOLCHAIN["python"])
+UV = string(TOOLCHAIN["uv"])

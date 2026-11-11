@@ -1,4 +1,0 @@
-schema = 1
-max_case_bytes = 65536
-max_materialized_bytes = 1048576
-allowed_commands = ["ruff", "mypy", "vulture", "deptry", "component"]

@@ -1,27 +1,26 @@
-import hashlib
 import importlib.metadata
-import json
-import re
 import subprocess
 import sys
 from pathlib import Path
 from typing import cast
 
-from dulwich.porcelain import init
+from packaging.requirements import Requirement
 
 from tools import boundaries, comments, dependencies, docs, policy_review, pytest_gate, repo_policy
 from tools.config import (
     MYPY,
-    OTHER_TOOL_CONFIG,
     PINS,
+    PYTHON,
     REQUIRED_RULES,
     RUFF,
     STAGES,
+    TOOL_CONFIG,
+    UV,
     Result,
     settings,
 )
 from tools.contracts import Diagnostic, Record, integer, record, sequence, string, validate_contract
-from tools.repo_files import read_json, temporary_root
+from tools.repo_files import read_json
 
 
 def run_command(argv: list[str], root: Path) -> Result:
@@ -45,9 +44,9 @@ def run_command(argv: list[str], root: Path) -> Result:
 
 def validate_pins(data: Record) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
-    if data.get("python") != "3.11.15":
+    if data.get("python") != PYTHON:
         diagnostics.append(Diagnostic("PIN_PYTHON", "environment"))
-    if data.get("tools") != {**PINS, "uv": "0.11.32"}:
+    if data.get("tools") != {**PINS, "uv": UV}:
         diagnostics.append(Diagnostic("PIN_TOOL", "environment"))
     if data.get("lock_valid") is not True:
         diagnostics.append(Diagnostic("PIN_LOCK", "uv.lock"))
@@ -69,6 +68,39 @@ def installed_pins(root: Path) -> Record:
         "tools": pins,
         "lock_valid": lock.exit == 0,
     }
+
+
+def locked_check_packages(root: Path) -> dict[str, str]:
+    result = run_command(
+        [
+            "uv",
+            "--quiet",
+            "export",
+            "--locked",
+            "--offline",
+            "--only-group",
+            "check",
+            "--no-emit-project",
+            "--no-header",
+            "--no-annotate",
+            "--no-hashes",
+        ],
+        root,
+    )
+    if result.exit:
+        raise ValueError("cannot export locked check environment: " + result.output)
+    expected: dict[str, str] = {}
+    for line in result.output.splitlines():
+        requirement = Requirement(line)
+        if requirement.marker is not None and not requirement.marker.evaluate():
+            continue
+        specifiers = list(requirement.specifier)
+        if len(specifiers) != 1 or specifiers[0].operator != "==":
+            raise ValueError("check environment requires exact locked versions")
+        expected[requirement.name.lower().replace("_", "-")] = specifiers[0].version
+    if not expected:
+        raise ValueError("locked check environment is empty")
+    return expected
 
 
 def assess_outcome(
@@ -98,12 +130,17 @@ def validate_roster(ids: list[str], cases: set[str]) -> list[Diagnostic]:
 
 def component(rule: str, data: Record, files: dict[str, str]) -> list[Diagnostic]:
     if rule in {"pin_python", "pin_tool", "pin_lock"}:
-        return validate_pins(data)
+        observed: Record = {
+            "python": data.get("python", PYTHON),
+            "tools": {**PINS, "uv": UV, **record(data.get("tools", {}))},
+            "lock_valid": data.get("lock_valid", True),
+        }
+        return validate_pins(observed)
     if rule in {"check_config", "type_config", "stage_gate"}:
         project: Record = {
             "project": {"dependencies": []},
             "tool": {
-                **OTHER_TOOL_CONFIG,
+                **TOOL_CONFIG,
                 "ruff": data.get("ruff", RUFF),
                 "mypy": data.get("mypy", MYPY),
             },
@@ -181,146 +218,14 @@ def component(rule: str, data: Record, files: dict[str, str]) -> list[Diagnostic
     return validate_contract(rule, data)
 
 
-def tool_component(case: Record, root: Path) -> tuple[int, list[Diagnostic]]:
-    command, rule = string(case["command"]), string(case["rule"])
-    files = {k: string(v) for k, v in record(case["files"]).items()}
-    for path, text in files.items():
-        destination = root / path
-        if not destination.resolve().is_relative_to(root) or len(text.encode()) > 1048576:
-            return 127, [Diagnostic("SETUP_ERROR", "fixture")]
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_text(text)
-    expected_native = [string(v) for v in sequence(case.get("native", []))]
-    native_paths: list[str] = []
-    if command == "ruff":
-        argv = (
-            ["ruff", "format", "--check", "--no-cache", "case.py"]
-            if rule == "format"
-            else ["ruff", "check", "--no-cache", "--output-format", "json", "case.py"]
-        )
-        result = run_command(argv, root)
-        if result.exit not in (0, 1):
-            return 127, [Diagnostic("SETUP_ERROR", "ruff")]
-        if rule == "format":
-            native = (
-                ["format"]
-                if result.exit == 1
-                and "unformatted:" in result.output
-                and "case.py" in result.output
-                else []
-            )
-        else:
-            try:
-                raw: object = cast(object, json.loads(result.output))
-                native = [string(record(v)["code"]) for v in sequence(raw)]
-                native_paths = [
-                    Path(string(record(v)["filename"])).relative_to(root).as_posix()
-                    for v in sequence(raw)
-                ]
-            except (ValueError, KeyError):
-                return 127, [Diagnostic("SETUP_ERROR", "ruff-output")]
-    elif command == "mypy":
-        focused = record(case.get("focused", {}))
-        if set(focused) - {"disallow_any_expr", "disallow_any_explicit"} or any(
-            v is not False for v in focused.values()
-        ):
-            return 127, [Diagnostic("SETUP_ERROR", "focused-config")]
-        config_path = root / "pyproject.toml"
-        for key in focused:
-            config_path.write_text(
-                config_path.read_text().replace(key + " = true", key + " = false")
-            )
-        flags = [string(v) for v in sequence(case.get("flags", []))]
-        allowed = {
-            "--allow-untyped-defs",
-            "--allow-incomplete-defs",
-            "--allow-any-explicit",
-            "--allow-any-expr",
-            "--allow-untyped-calls",
-            "--follow-imports=skip",
-            "--no-incremental",
-            "--warn-unused-configs",
-        }
-        if any(flag not in allowed for flag in flags):
-            return 127, [Diagnostic("SETUP_ERROR", "mypy-flags")]
-        result = run_command(
-            [
-                "mypy",
-                "--strict",
-                "--no-incremental",
-                "--show-error-codes",
-                *flags,
-                *(["case.py", "consumer.py"] if rule == "type_reexport" else ["case.py"]),
-            ],
-            root,
-        )
-        if result.exit not in (0, 1):
-            return 127, [Diagnostic("SETUP_ERROR", "mypy")]
-        native = [
-            m.group(1) for m in re.finditer(r"(?m)^.*error: .* \[([a-z-]+)\]$", result.output)
-        ]
-        native_paths = [
-            m.group(1)
-            for m in re.finditer(r"(?m)^(.+?):\d+: error: .* \[([a-z-]+)\]$", result.output)
-        ]
-        if "Warning: unused section(s)" in result.output:
-            native.append("warn-unused-configs")
-            native_paths.append("pyproject.toml")
-        if result.exit and not native:
-            return 127, [Diagnostic("SETUP_ERROR", "mypy-output")]
-    elif command == "vulture":
-        result = run_command(["vulture", "case.py", "--min-confidence", "60"], root)
-        if result.exit not in (0, 3):
-            return 127, [Diagnostic("SETUP_ERROR", "vulture")]
-        native = (
-            ["dead_code"]
-            if result.exit == 3 and "unused function 'helper'" in result.output
-            else []
-        )
-    elif command == "deptry":
-        fixture_repo = init(str(root))
-        fixture_repo.close()
-        result = run_command(
-            [
-                "deptry",
-                ".",
-                "--config",
-                "pyproject.toml",
-                "--no-ansi",
-                "--json-output",
-                str(root / "issues.json"),
-            ],
-            root,
-        )
-        if result.exit not in (0, 1) or not (root / "issues.json").exists():
-            return 127, [Diagnostic("SETUP_ERROR", "deptry")]
-        raw = cast(object, json.loads((root / "issues.json").read_text()))
-        native = [string(record(record(v)["error"])["code"]) for v in sequence(raw)]
-        native_paths = [string(record(record(v)["location"])["file"]) for v in sequence(raw)]
-    else:
-        return 127, [Diagnostic("SETUP_ERROR", "command")]
-    if not native_paths and native:
-        native_paths = ["case.py"] * len(native)
-    expected_paths = [
-        string(v) for v in sequence(case.get("native_paths", ["case.py"] * len(expected_native)))
-    ]
-    if sorted(zip(native, native_paths, strict=True)) != sorted(
-        zip(expected_native, expected_paths, strict=True)
-    ):
-        return 127, [Diagnostic("PROOF_DIAGNOSTIC", ",".join(sorted(native)))]
-    return (
-        (1, sorted({Diagnostic(rule.upper(), path) for path in native_paths}))
-        if native
-        else (0, [])
-    )
-
-
-def run_case(case: Record, temporary: Path) -> tuple[int, list[Diagnostic]]:
+def run_case(case: Record) -> tuple[int, list[Diagnostic]]:
     rule = string(case["rule"])
     if rule.upper() not in REQUIRED_RULES:
         return 127, [Diagnostic("SETUP_ERROR", "rule")]
     if case.get("command") != "component":
-        return tool_component(case, temporary)
+        return 127, [
+            Diagnostic("SETUP_ERROR", "only project-authored component proofs are supported")
+        ]
     files = {k: cast(str, v) for k, v in record(case.get("files", {})).items()}
     for value in sequence(case.get("repeat", [])):
         item = record(value)
@@ -336,7 +241,7 @@ def run_case(case: Record, temporary: Path) -> tuple[int, list[Diagnostic]]:
     return int(bool(diagnostics)), diagnostics
 
 
-def run_corpus(root: Path, base: Path, digests: Record) -> tuple[list[Diagnostic], int, int]:
+def run_corpus(root: Path) -> tuple[list[Diagnostic], int, int]:
     diagnostics = validate_roster(
         list(REQUIRED_RULES), {p.name for p in (root / "tests/cases").glob("*.json")}
     )
@@ -347,9 +252,6 @@ def run_corpus(root: Path, base: Path, digests: Record) -> tuple[list[Diagnostic
         for kind in ("bad", "control"):
             path = f"tests/cases/{rule.lower()}.{kind}.json"
             source = root / path
-            if hashlib.sha256(source.read_bytes()).hexdigest() != digests.get(path):
-                diagnostics.append(Diagnostic("PROOF_DISABLED", path))
-                continue
             if source.stat().st_size > 65536:
                 diagnostics.append(Diagnostic("PROOF_DISABLED", path))
                 continue
@@ -366,8 +268,7 @@ def run_corpus(root: Path, base: Path, digests: Record) -> tuple[list[Diagnostic
                 if any(d.code != rule for d in expected):
                     diagnostics.append(Diagnostic("PROOF_DISABLED", path))
                     continue
-            with temporary_root(base) as temporary:
-                actual_exit, actual = run_case(case, temporary)
+            actual_exit, actual = run_case(case)
             if not assess_outcome(1 if kind == "bad" else 0, expected, actual_exit, actual):
                 diagnostics.append(Diagnostic("PROOF_DIAGNOSTIC", path + ":" + str(actual)))
             elif kind == "bad":

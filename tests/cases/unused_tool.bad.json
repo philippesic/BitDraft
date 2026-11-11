@@ -34,11 +34,15 @@
       "dulwich": {
         "path": "commands.txt",
         "needle": "dulwich"
+      },
+      "packaging": {
+        "path": "commands.txt",
+        "needle": "packaging"
       }
     }
   },
   "files": {
-    "commands.txt": "ruff mypy pytest hypothesis import-linter vulture deptry pre-commit PyYAML types-PyYAML dulwich"
+    "commands.txt": "ruff mypy pytest hypothesis import-linter vulture deptry pre-commit PyYAML types-PyYAML dulwich packaging"
   },
   "exit": 1,
   "path": "policy/toolchain.toml",

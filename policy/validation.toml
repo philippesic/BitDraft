@@ -1,5 +1,0 @@
-schema = 1
-scope = "Local CPU verification; no native, performance or scientific qualification"
-authority = "Receipts record checks; user instructions authorize work"
-rules = "policy/rules.toml"
-tests = "policy/cpu-tests.toml"

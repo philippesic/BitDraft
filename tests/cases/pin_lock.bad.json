@@ -2,18 +2,6 @@
   "rule": "pin_lock",
   "command": "component",
   "input": {
-    "python": "3.11.15",
-    "tools": {
-      "ruff": "0.16.8",
-      "mypy": "1.18.2",
-      "pytest": "8.4.2",
-      "hypothesis": "6.140.3",
-      "import-linter": "2.7",
-      "vulture": "2.14",
-      "deptry": "0.24.0",
-      "dulwich": "0.24.2",
-      "uv": "0.11.32"
-    },
     "lock_valid": false
   },
   "files": {},

@@ -1,6 +1,6 @@
 import re
 
-from tools.config import MYPY, OTHER_TOOL_CONFIG, REQUIRED_RULES, RUFF, STAGES
+from tools.config import REQUIRED_RULES, STAGES
 from tools.contracts import Diagnostic, Record, record, sequence
 
 TASK_SECTIONS = ("Goal", "Authorized", "Done when", "State", "Next")
@@ -80,15 +80,66 @@ def validate_policy(project: Record, stages: Record, rules: Record) -> list[Diag
     diagnostics: list[Diagnostic] = []
     try:
         tool = record(project["tool"])
+        mypy = record(tool["mypy"])
+        strict_flags = (
+            "strict",
+            "disallow_any_expr",
+            "disallow_any_explicit",
+            "disallow_any_unimported",
+            "warn_unreachable",
+            "warn_unused_configs",
+            "disallow_any_generics",
+            "disallow_subclassing_any",
+            "disallow_untyped_calls",
+            "disallow_untyped_defs",
+            "disallow_incomplete_defs",
+            "check_untyped_defs",
+            "disallow_untyped_decorators",
+            "warn_redundant_casts",
+            "warn_unused_ignores",
+            "warn_return_any",
+            "strict_equality",
+            "strict_bytes",
+            "extra_checks",
+        )
         if (
-            any(tool.get(k) != v for k, v in OTHER_TOOL_CONFIG.items())
-            or record(project["project"]).get("dependencies") != []
+            any(mypy.get(flag) is not True for flag in strict_flags)
+            or mypy.get("ignore_missing_imports") is not False
+            or mypy.get("implicit_reexport") is not False
+            or mypy.get("follow_imports") != "normal"
+            or "ignore-without-code" not in sequence(mypy.get("enable_error_code", []))
+            or any(mypy.get(key) for key in ("overrides", "disable_error_code", "exclude"))
+        ):
+            diagnostics.append(Diagnostic("TYPE_CONFIG", "pyproject.toml"))
+        ruff = record(tool["ruff"])
+        lint = record(ruff["lint"])
+        uv = record(tool["uv"])
+        deptry = record(tool["deptry"])
+        imports = record(tool["importlinter"])
+        if (
+            record(project["project"]).get("dependencies") != []
+            or not {"F401", "F821", "I001", "B006", "UP006"}.issubset(sequence(lint["select"]))
+            or any(
+                lint.get(key)
+                for key in (
+                    "ignore",
+                    "extend-ignore",
+                    "per-file-ignores",
+                    "extend-per-file-ignores",
+                )
+            )
+            or any(ruff.get(key) for key in ("exclude", "extend-exclude"))
+            or uv.get("package") is not False
+            or uv.get("python-downloads") != "never"
+            or uv.get("no-build") is not True
+            or uv.get("default-groups") != ["check"]
+            or any(deptry.get(key) for key in ("ignore", "per_rule_ignores", "extend_exclude"))
+            or deptry.get("exclude") != ["^\\.git/", "^\\.venv/", "^\\.uv-cache/"]
+            or set(sequence(deptry["known_first_party"])) != {"tools", "tests", "w1a1_eagle"}
+            or set(sequence(imports["root_packages"])) != {"tools", "tests", "w1a1_eagle"}
+            or imports.get("include_external_packages") is not True
         ):
             diagnostics.append(Diagnostic("CHECK_CONFIG", "pyproject.toml"))
-        if record(tool["ruff"]) != RUFF:
-            diagnostics.append(Diagnostic("CHECK_CONFIG", "pyproject.toml"))
-        if record(tool["mypy"]) != MYPY:
-            diagnostics.append(Diagnostic("TYPE_CONFIG", "pyproject.toml"))
         if stages["active"] != list(STAGES):
             diagnostics.append(Diagnostic("CHECK_CONFIG", "policy/check-stages.toml"))
         if stages["status"] != [

@@ -25,6 +25,6 @@
     "policy/x.toml": "x = 1\n"
   },
   "exit": 0,
-  "path": "policy/validation.toml",
+  "path": ".venv/foundation-verification.json",
   "native": []
 }

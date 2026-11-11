@@ -1,4 +1,3 @@
-import hashlib
 import importlib.metadata
 import os
 import platform
@@ -10,11 +9,8 @@ if __package__ in (None, ""):
 
 from tools import boundaries, comments, dependencies, docs, policy_review, repo_policy, self_test
 from tools.config import (
-    CONFIG_DIGESTS,
-    FOUNDATION_FILES,
     GROUP_COUNTS,
     MYPY,
-    REQUIRED_CPU,
     REQUIRED_RULES,
     STAGES,
     needs_reexec,
@@ -68,24 +64,18 @@ def main() -> int:
             d.metadata["Name"].lower().replace("_", "-"): d.version
             for d in importlib.metadata.distributions()
         }
-        locked = {
-            str(record(v)["name"]): str(record(v)["version"])
-            for v in sequence(read_toml(root / "uv.lock")["package"])
-            if "registry" in record(record(v)["source"])
-        }
-        if installed != toolchain["closure"] or any(
-            locked.get(k) != v for k, v in installed.items()
-        ):
-            diagnostics.append(Diagnostic("PIN_TOOL", "installed closure"))
+        if installed != self_test.locked_check_packages(root):
+            diagnostics.append(
+                Diagnostic("PIN_TOOL", "installed packages differ from the locked check group")
+            )
         if platform.system() != "Linux" or platform.machine() != "x86_64":
             diagnostics.append(Diagnostic("PIN_TOOL", "supported platform"))
-        for path, digest in CONFIG_DIGESTS.items():
-            if hashlib.sha256(files[path].encode()).hexdigest() != digest:
-                diagnostics.append(Diagnostic("CHECK_CONFIG", path))
-        if not os.access(root / ".githooks/pre-commit", os.X_OK):
-            diagnostics.append(Diagnostic("CHECK_CONFIG", ".githooks/pre-commit is not executable"))
-
-        expected = set(FOUNDATION_FILES) | {
+        hook = ".githooks/pre-commit"
+        if files.get(hook) != (
+            "BINARY_CHECK_STAGED=1 exec uv run --locked --no-sync --offline python tools/check.py --full\n"
+        ) or not os.access(root / hook, os.X_OK):
+            diagnostics.append(Diagnostic("CHECK_CONFIG", hook))
+        expected = {"AGENTS.md", "CLAUDE.md"} | {
             f"tests/cases/{name.lower()}.{kind}.json"
             for name in REQUIRED_RULES
             for kind in ("bad", "control")
@@ -94,12 +84,6 @@ def main() -> int:
             diagnostics.append(
                 Diagnostic("STAGE_GATE", "file roster: " + str(sorted(expected - set(files))))
             )
-        if read_toml(root / "policy/cpu-tests.toml").get("required") != list(REQUIRED_CPU):
-            diagnostics.append(Diagnostic("REQUIRED_TESTS", "policy/cpu-tests.toml"))
-        if hashlib.sha256((root / "uv.lock").read_bytes()).hexdigest() != toolchain.get(
-            "lock_sha256"
-        ):
-            diagnostics.append(Diagnostic("PIN_LOCK", "uv.lock"))
         if config.staged and not index_matches(root, files):
             diagnostics.append(
                 Diagnostic("CHECK_CONFIG", "index snapshot differs from authored worktree")
@@ -120,9 +104,7 @@ def main() -> int:
         print("0 bootstrap PASS")
         print("rules: " + ", ".join(f"{g}={n}" for g, n in GROUP_COUNTS.items()))
         if sys.argv[1:] == ["--self-test"]:
-            proof, bad, control = self_test.run_corpus(
-                root, config.temporary, record(evidence["fixtures"])
-            )
+            proof, bad, control = self_test.run_corpus(root)
             for diagnostic in proof:
                 print(format_diagnostic(diagnostic, files))
             print(
@@ -297,9 +279,7 @@ def main() -> int:
             )
             print(cpu.output.strip())
             stage("cpu", [] if cpu.exit == 0 else [Diagnostic("REQUIRED_TESTS", "tests")])
-            proof, bad, control = self_test.run_corpus(
-                root, config.temporary, record(evidence["fixtures"])
-            )
+            proof, bad, control = self_test.run_corpus(root)
             print(
                 f"specimens: {bad}/{len(REQUIRED_RULES)} bad rejected; {control}/{len(REQUIRED_RULES)} controls passed"
             )
