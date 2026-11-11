@@ -232,7 +232,7 @@ def main() -> int:
                 )
                 + dependencies.reconcile_tools(record(toolchain["uses"]), files),
             )
-            stage("documentation", docs.validate_docs(files, evidence))
+            stage("documentation", docs.validate_docs(files, evidence, rules))
             if fast:
                 quick = self_test.run_command(
                     [

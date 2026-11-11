@@ -5,7 +5,7 @@
 | Command | Time | Use |
 | --- | --- | --- |
 | `uv run --locked --no-sync --offline python tools/check.py` | about 3 s warm, 30 s cold | While editing |
-| `uv run --locked --no-sync --offline python tools/check.py --full` | about 90 s | Commit gate; the pre-commit hook runs it |
+| `uv run --locked --no-sync --offline python tools/check.py --full` | about 70 s | Commit gate; the pre-commit hook runs it |
 | `uv run --locked --no-sync --offline python tools/check.py --self-test` | seconds | Rule proofs only, after changing a checker or rule |
 | `uv run --locked --no-sync --offline python -m tools.doctor` | seconds | Environment, hook and receipt inspection |
 
@@ -69,6 +69,7 @@ environment with uv's locked export, including platform markers; it does not kee
 second copy of the dependency tree. Python and uv bootstrap identities live in
 `policy/toolchain.toml`.
 
+Rule rationale links point to current topic docs and are checked for broken targets.
 Project validators reject weakened typing, broad lint/dependency suppressions, a
 missing mandatory stage and a hook that omits the full gate. They check those
 properties directly rather than requiring a new checksum after every policy edit.

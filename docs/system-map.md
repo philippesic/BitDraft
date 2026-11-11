@@ -14,6 +14,11 @@
 | `evidence/` | Dated records backing findings |
 | `tasks/` | Open multi-session work; context, resumed only when asked |
 
+The [model](model.md) describes the current numerical graph and trainable state.
+[Research context](research.md) explains the development direction and historical
+sources. These are separate from the open scientific implementation work in
+[the port task](../tasks/port.md).
+
 ## Boundaries
 
 From [boundaries](../policy/boundaries.toml), enforced by the architecture stage:
@@ -51,3 +56,18 @@ Operational time comes from `w1a1_eagle/clock.py`.
 | journal | active | w1a1_eagle/lifecycle.py | Journal | Every run event |
 
 Public commands are declared in [commands](../policy/commands.toml).
+
+## Reserved benchmark interfaces
+
+No benchmark or plug-in runtime is implemented here yet. Some validators nevertheless
+reserve future software interfaces: extension filenames ending in `_adapter.py`,
+`_workload.py` or `_dataset.py`, unique extension IDs and declared protocol/schema/digest
+metadata. The source checker also rejects conditional or lookup-table dispatch on
+adapter, dataset or workload IDs outside a discovery module.
+
+These restrictions concern software organization. They do not prescribe a new neural
+network. For example, they could prevent a future benchmark from choosing a runner
+through a simple branch, forcing a discovery mechanism before that mechanism has been
+designed. Their removal or replacement remains an open design choice in
+[the overhaul task](../tasks/repo-overhaul.md). Current data-role and comparison
+protections apply independently.

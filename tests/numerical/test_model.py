@@ -176,9 +176,13 @@ class TestNumerical(unittest.TestCase):
         self.assertEqual(header["target_layers"], [2, 6, 10, 14, 18, 22, 26, 30])
 
     def test_projection_scalar_oracle(self) -> None:
-        policy = tomllib.loads(Path("policy/numerical.toml").read_text())
+        project = tomllib.loads(Path("pyproject.toml").read_text())
+        versions = dict(
+            requirement.split("==", 1)
+            for requirement in project["project"]["optional-dependencies"]["numerical"]
+        )
         for name in ("torch", "gguf", "numpy"):
-            self.assertEqual(importlib.metadata.version(name), policy[name])
+            self.assertEqual(importlib.metadata.version(name), versions[name])
         layer = Projection(
             torch.tensor([[0.2, -0.4]]),
             4,

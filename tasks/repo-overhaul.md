@@ -2,68 +2,58 @@
 
 ## Goal
 
-Make the correct path the easy one for agents: short instructions, one home per fact,
-fast feedback, useful diagnostics and rules that earn their cost.
+Make the correct path the easy one for agents: clear instructions and documentation,
+useful feedback and checks that protect current work without unnecessary maintenance.
 
 ## Authorized
 
-Philip authorized routine overhaul repairs and verification without repeated approval.
-Preserve the full commit gate, no hosted CI, scientific semantics and existing protections.
-Safeguard simplification is approved: remove redundant third-party tool proofs and
-manual policy checksum/configuration copies, retaining actual checks and project proofs.
-Audit documentation for port/overhaul leftovers and historically useful evidence.
-Bring remaining scientific and operational choices to Philip with concrete examples.
-No GPU work, training, artifact transfer, remote creation or publication is authorized.
+Philip authorized routine repairs and verification, removal of redundant third-party
+tool proofs and manual policy checksum/configuration copies, and a documentation audit
+covering port/overhaul leftovers and historically useful evidence. Keep the full local
+commit gate, no hosted CI and scientific semantics. No GPU work, training, artifact
+transfer, remote creation or publication is authorized.
 
 ## Done when
 
-Routine defects are repaired and verified, remaining policy and operations decisions
-are resolved or explicitly deferred, and matched fresh-agent exercises assess the final
-workflow without claiming general productivity from a few trials.
+Approved repairs are committed and verified, remaining choices are resolved or explicitly
+deferred, and matched fresh-agent exercises assess the final workflow with their limits.
 
 ## State
 
-Owner: Codex in the current conversation, branch main.
+Owner: Codex in the current conversation, branch main. No remote is configured.
 
-Completed: instructions and docs reorganized; task template enforced; quick partial
-check and full commit gate; executable local hook; no hosted CI. Diagnostics now use
-the fixes table as their single repair source, with repair coverage for every registered
-rule and Python comment locations. Doctor detects missing and non-executable hooks.
-The validation policy points to tracked registries rather than an external scratch
-proposal; CPU verification no longer prints a blanket approval request. README explains
-the check-only setup boundary and host numerical interpreter configuration.
+Current workflow: quick partial check, full local hook, enforced task sections,
+actionable diagnostics and doctor checks for hook configuration and executability.
+Actual third-party tools still check source; 92 project rules retain bad/control proofs.
+Settings and versions come from pyproject.toml and the marker-aware locked export.
+Manual policy/fixture hashes, copied dependency closure and dead foundation policy
+metadata are removed. Frozen source/data evidence authentication remains intact.
+[Safeguard receipt](../evidence/safeguards-simplification-20261110.json).
 
-Checks and limitations: [diagnostic probes](../evidence/overhaul-diagnostics-20261110.json)
-record three actual rejected mistakes and hook detection in a disposable clone. This
-first probe also exposed an inadequate hook repair message. The [verified probes](../evidence/overhaul-diagnostics-20261110-verified.json)
-confirm the corrected repair messages. Existing fresh-agent exercises are linked in
-[port](port.md); they are not a matched before/after comparison. The [clean check-only setup](../evidence/overhaul-setup-20261110.json) passed
-offline using cached wheels. Numerical environments were reused; a complete numerical
-reinstall was not verified. No remote is configured.
+Documentation now has a project explanation, [current model](../docs/model.md),
+[research context](../docs/research.md) and scoped historical findings. The
+[documentation audit](../evidence/documentation-audit-20261110.json) inventories 335
+historical Markdown paths and records selected-source dispositions; it is not a
+line-by-line review of every archive. Historical plans and job ownership stay outside
+current instructions. The older interactive tutorial is linked separately as teaching
+material. Existing data/execution docs were reviewed and retained.
 
-Safeguards simplified: third-party tools still check the full source; 92 project rules
-retain bad/control proofs. Direct versions and settings come from pyproject.toml;
-the installed dependency closure is checked against uv's locked export with platform
-markers. Manual policy and specimen checksums and dead policy metadata were removed.
-Frozen source/data evidence hashes remain. Ordinary check imports are permitted only
-in tools and tests. Documentation audit is in progress.
+The clean check-only install passed offline; numerical tests reuse the existing
+interpreter. A clean numerical reinstall remains unverified. Existing agent exercises
+are linked in [port](port.md), but no matched before/after comparison is claimed.
+Earlier diagnostics and setup receipts remain in evidence; their rule counts describe
+those snapshots rather than today's corpus.
 
-Remaining choices for Philip:
-
-1. Future architecture. Runtime, comparison, selection and discovery contracts precede
-   complete serving implementations. Recommend retaining scientific contracts, but
-   reviewing speculative discovery/layout restrictions when that component is designed.
-2. Numerical environment. Choose whether a clean standalone CPU installation or reuse
-   of host numerical libraries is the supported setup. Recommend a reproducible CPU
-   environment as the default, with host reuse explicit. Existing environments stay intact.
-3. Operations. Remote name/visibility and license, independent artifact backup, and
-   shared-GPU coordination remain in [agent operations](agent-operations.md) and
-   [port](port.md). No repository resource manager or agent disk cap is proposed.
-   Product capacity checks remain intact; their requirements are a separate decision.
+Open choices: rules already prescribe filenames and discovery for future benchmark
+plug-ins even though that system has not been built. Recommend designing those layout
+rules with the feature, while keeping data and comparison protections. This does not
+change the neural-network architecture. Native/GPU/scientific work remains in
+[port](port.md); remote, artifact backup and machine sharing remain in
+[agent operations](agent-operations.md).
 
 ## Next
 
-Present the remaining choices with recommendations. After the chosen policy changes,
-compare fresh agents on identical bounded tasks against the baseline recorded in the
-[setup audit](../evidence/overhaul-setup-20261110.json) and retain failures, interventions and limitations. Do not start the product
-port's pending scientific stages from this overhaul task.
+Review the remaining software-layout restriction with Philip using a concrete example.
+After the chosen changes, run matched fresh-agent tasks against the baseline in the
+[setup audit](../evidence/overhaul-setup-20261110.json). Do not resume scientific port
+stages merely because their task file is open.

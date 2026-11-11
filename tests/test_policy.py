@@ -159,3 +159,29 @@ def test_check_dependencies_are_allowed_only_in_checker_and_tests(tmp_path: Path
         assert diagnostics == (
             [Diagnostic("DEP004", path)] if path.startswith("w1a1_eagle/") else []
         )
+
+
+def test_historical_links_accept_registered_commits_and_refuse_mutable_or_unknown_sources() -> None:
+    from tools.docs import validate_docs
+
+    prefix = "https://github.com/philippesic/binary-eagle-decoding/blob/"
+    first = prefix + "1" * 40 + "/report.md"
+    second = prefix + "2" * 40 + "/report.md"
+    evidence: Record = {"object": [{"url": first}, {"url": second}]}
+    files = {"README.md": f"[first]({first}) [second]({second})"}
+    assert not any(d.code == "EVIDENCE_PIN" for d in validate_docs(files, evidence))
+    for target in (prefix + "main/report.md", prefix + "3" * 40 + "/report.md"):
+        files["README.md"] = f"[source]({target})"
+        assert any(d.code == "EVIDENCE_PIN" for d in validate_docs(files, evidence))
+
+
+def test_rule_rationale_references_must_resolve() -> None:
+    from tools.docs import validate_docs
+
+    files = {"docs/topic.md": "# Topic\n"}
+    references: list[Record] = [{"evidence": "docs/topic.md#topic"}]
+    rules: Record = {"rule": references}
+    assert Diagnostic("DOC_LINK", "policy/rules.toml") not in validate_docs(files, {}, rules)
+    for target in ("docs/missing.md", "docs/topic.md#missing"):
+        references[0]["evidence"] = target
+        assert Diagnostic("DOC_LINK", "policy/rules.toml") in validate_docs(files, {}, rules)
