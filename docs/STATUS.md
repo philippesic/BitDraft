@@ -1,53 +1,28 @@
 # Current project status
 
-## Fresh HE4broad on the newest 2080 Ti data
+## Completed: fresh HE4broad on the newest 2080 Ti data
 
-November 10: **RUNNING locally toward eight TOTAL hours of synchronized
-optimizer-update time**, explicitly authorized by Philip after localization.
-The resume parent contained 2,873.748 update seconds (47.9 minutes), 20,671
-updates and 20,702.123 training-wall seconds. At resume, the remaining update allocation was
-25,926.252 seconds (about 7 hours 12 minutes). There is no training-wall cap;
-data loading, setup, checkpoints/export and native evaluation remain separately
-reported. The original recipe/config stays unchanged for exact state recovery;
-the [continuation policy](../experiments/he4broad-20261110/continuation-policy.json)
-supersedes its old clock/budget. New native panels are at every cumulative update
-hour through eight hours, with distinct `formal-update-*` labels. All earlier
-wall-hour panels remain intact. The existing 90-minute health/repair event is enabled; the hourly availability
-event stays off. Exact state restore passed and post-restore updates are advancing.
-Latest health check (2026-11-11 07:50 UTC): **healthy**, 208,600 updates,
-7.584 / 8 update hours. About 25 update minutes remain,
-followed by final checkpoint/export, native panel and recovery verification.
-No errors or rejected updates; no repair needed. The final state/export plus
-8 GiB scratch fit current headroom. The old 43,200 wall-second threshold has
-been passed correctly without ending the update-time allocation.
+November 11: **COMPLETE and validated**. 220,095 updates; 28,800.105 total
+synchronized update seconds, including the pre-localization 47.9 minutes.
+All requested hourly native panels and recovery checks pass; all 1,059 requests
+are correct. Full final GPU parameters/Adam/RNG restore, exact CPU cursor/order,
+finite state and native-byte recovery pass; no rejected or uncheckpointed tail.
 
-Latest on-demand comparison (2026-11-11 07:15 UTC): the **seventh update-hour panel
-is complete**, and training is advancing in the final segment toward eight
-hours. Acceptance is 48.85%, complete-request throughput 222.07 tokens/s, and
-all 75 requests are correct on consumed DEV3. Compared with six hours, acceptance
-rises 2.53 percentage points and throughput 3.06%; prose supplies most of the
-quality gain. This is renewed progress on the same narrow panel, not a broad
-generalization claim. [Fresh comparison](../experiments/he4broad-20261110/update-6-to-7-comparison.md).
-The source-pinned eight-hour cap and 90-minute health cadence remain in effect.
+The best observed consumed-DEV3 point is seven hours: **48.85% acceptance,
+222.07 tokens/s**. Final eight-hour result: **46.94%, 199.51 tokens/s**, with
+both unchanged controls also slower. Both checkpoints and all raw measurements
+are retained. External DFlash Q4 remains incumbent; no promotion, broad
+overfitting diagnosis or further training allocation is made.
 
-The [five-to-six-hour audit](../experiments/he4broad-20261110/update-plateau-audit.md)
-is retained separately; its small speed change was unresolved amid timing
-variation and mixed per-prompt quality changes. Its recommendation to finish the
-existing bounded run remains appropriate; no extension is authorized here.
-
-
-All 15,647 captures and current-run checkpoints are verified on local ext4.
-The local-loader diagnostic produced exactly equal final parameters/Adam/RNG:
-loader 55.06× faster; steps 2–32 loader + update 6.69× faster.
-[Migration](../experiments/he4broad-20261110/localization.md) ·
-[Model retention](../experiments/storage-cleanup-20261110/report.md).
-The first five historical wall-hour formal panels and zero panel are complete;
-all their requests are correct. The first seven new update-hour panels are complete; the loader
-smoke itself is not an inference evaluation.
-[Throughput chart](../experiments/he4broad-20261110/throughput-progress.html) ·
-[Report](../experiments/he4broad-20261110/report.md) ·
-[Operations](../experiments/he4broad-20261110/operations.md) ·
-[Manifest](../experiments/he4broad-20261110/manifest.json).
+All 16 full states/native exports, newest 15,647-sequence data, parents, frozen
+source and evidence remain local. Owned jobs exited; GPU and all three locks
+are released; no teacher/archive mounts or disposable recovery scratch remain.
+Health-event shutdown follows final publication/push; the availability event
+stays disabled. [Final report](../experiments/he4broad-20261110/final-report.md) ·
+[Throughput curve](../experiments/he4broad-20261110/throughput-progress.html) ·
+[Validation](../experiments/he4broad-20261110/final-audit.json) ·
+[Retention](../experiments/he4broad-20261110/final-retention.json) ·
+[Operations](../experiments/he4broad-20261110/operations.md).
 
 ## HE4broad source-initialized QAT
 

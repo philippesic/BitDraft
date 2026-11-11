@@ -1,5 +1,5 @@
 {
-  "status": "TRAINING_UPDATE_TIME",
+  "status": "COMPLETE_VALIDATED",
   "run": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01",
   "owner_thread": "6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6",
   "prerequisite_thread": "mcp:launch:5cc79481d4d97b44b4c6cf5f1de491084f7f89c30d5802c9dbc55da66ceb13b2",
@@ -167,11 +167,11 @@
     "observation_unix": 1794354364.6874843
   },
   "latest_health": {
-    "status": "HEALTHY_NO_REPAIR_NEEDED",
+    "status": "COMPLETE_VALIDATED_GPU_RELEASED",
     "checked_unix": 1794383448.270328,
-    "updates": 208600,
-    "charged_update_seconds": 27300.83282318199,
-    "checkpointed_updates": 192372,
+    "updates": 220095,
+    "charged_update_seconds": 28800.104648497247,
+    "checkpointed_updates": 220095,
     "storage_local": true,
     "first_update_hour_native_complete": true,
     "observation_directory": "runs/he4broad-20261110-01/health",
@@ -185,7 +185,8 @@
     "storage_repair": "experiments/he4broad-20261110/storage-repair-20261111.json",
     "sixth_update_hour_native_complete": true,
     "seventh_update_hour_native_complete": true,
-    "remaining_update_seconds": 1499.1671768180095
+    "remaining_update_seconds": 0,
+    "eighth_update_hour_native_complete": true
   },
   "latest_on_demand_comparison": {
     "checked_unix": 1794381303.1360948,
@@ -196,5 +197,10 @@
     "training_continues": true,
     "live_updates_observed": 193700,
     "live_update_seconds_observed": 25375.903011105926
-  }
+  },
+  "gpu_owner_active": false,
+  "final_report": "experiments/he4broad-20261110/final-report.md",
+  "final_audit": "experiments/he4broad-20261110/final-audit.json",
+  "final_retention": "experiments/he4broad-20261110/final-retention.json",
+  "monitoring_shutdown": "pending final publication/push"
 }

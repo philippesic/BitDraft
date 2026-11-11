@@ -1,0 +1,407 @@
+{
+  "status": "RETAINED_AND_VERIFIED",
+  "checked_unix": 1794389340.7847142,
+  "full_states": 16,
+  "native_exports": 16,
+  "records": [
+    {
+      "label": "0",
+      "updates": 0,
+      "update_seconds": 0.0,
+      "checkpoint": {
+        "format": "dflash.byte_shuffle_zstd.stream.v1",
+        "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-0-0.pt.bsz",
+        "archive_sha256": "3b3d5c3a8d166ea5da7dad2b966ab4dcab8cec1545b37d74d7893eb55843c8ab",
+        "archive_bytes": 603609899,
+        "raw_sha256": "429bdaf7e3b0626cedde4f8b62eb8d3b18e4e9fd06430a2b1af0724e1e32d189",
+        "raw_bytes": 1707895979,
+        "lossless_verified": true,
+        "raw_materialized": false
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/candidate/model-0.gguf",
+        "sha256": "a68f55d9e5006328d65b787e7383d107ce69183c39aaaaf94a178427c7cf72dc",
+        "bytes": 541022336
+      },
+      "reason": "Keep current campaign trajectory/full-state recovery and exact native comparisons; seven-hour DEV3 frontier and final eight-hour state included."
+    },
+    {
+      "label": "60",
+      "updates": 56,
+      "update_seconds": 17.736043663928285,
+      "checkpoint": {
+        "format": "dflash.byte_shuffle_zstd.stream.v1",
+        "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-60-56.pt.bsz",
+        "archive_sha256": "cef063627fa22e783b2d28e236e325e8f7415681397c78e297a15df349a46cd7",
+        "archive_bytes": 4272186699,
+        "raw_sha256": "036b09db4c59c3b0478fc8d106602b81f39a4a38f0ad12a6613de007fcdb9416",
+        "raw_bytes": 5108251547,
+        "lossless_verified": true,
+        "raw_materialized": false
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/candidate/model-60.gguf",
+        "sha256": "61db831fb05ffec3faece1330a7de3de7de7f4214001da708a20cf9605e0f5b9",
+        "bytes": 541022336
+      },
+      "reason": "Keep current campaign trajectory/full-state recovery and exact native comparisons; seven-hour DEV3 frontier and final eight-hour state included."
+    },
+    {
+      "label": "3600",
+      "updates": 3662,
+      "update_seconds": 511.0459418288956,
+      "checkpoint": {
+        "format": "dflash.byte_shuffle_zstd.stream.v1",
+        "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-3600-3662.pt.bsz",
+        "archive_sha256": "7ee88e458ac7a257afded7750913d8799697d038b74ef1e1525325ab71b84c26",
+        "archive_bytes": 4237389025,
+        "raw_sha256": "da16871b0d53bd8d94bf25772238b40fc3f58e081ab84cd872422bddb3238265",
+        "raw_bytes": 5108251547,
+        "lossless_verified": true,
+        "raw_materialized": false
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/candidate/model-3600.gguf",
+        "sha256": "b1199432710ee0a267c2e9806a6b82339bfe041eac953faf5cf3d8c9a99bddd7",
+        "bytes": 541022336
+      },
+      "reason": "Keep current campaign trajectory/full-state recovery and exact native comparisons; seven-hour DEV3 frontier and final eight-hour state included."
+    },
+    {
+      "label": "7200",
+      "updates": 7281,
+      "update_seconds": 1009.7538733897673,
+      "checkpoint": {
+        "format": "dflash.byte_shuffle_zstd.stream.v1",
+        "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-7200-7281.pt.bsz",
+        "archive_sha256": "e790561d35a536aa1919647804a3b951197483b5c5172067e72bda189cb9f1dc",
+        "archive_bytes": 4236341036,
+        "raw_sha256": "b528b085d54d1bffb0f308c21e58565a17ec1b27d00200d105e11b6546f962e5",
+        "raw_bytes": 5108251547,
+        "lossless_verified": true,
+        "raw_materialized": false
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/candidate/model-7200.gguf",
+        "sha256": "da9df71369cc8821d2cb836811100e0a8678aa224c1b9a8f3dd88e812f0189ab",
+        "bytes": 541022336
+      },
+      "reason": "Keep current campaign trajectory/full-state recovery and exact native comparisons; seven-hour DEV3 frontier and final eight-hour state included."
+    },
+    {
+      "label": "10800",
+      "updates": 10934,
+      "update_seconds": 1508.974794055277,
+      "checkpoint": {
+        "format": "dflash.byte_shuffle_zstd.stream.v1",
+        "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-10800-10934.pt.bsz",
+        "archive_sha256": "3c85a1e24cdf03b9f528f69ca96b56a545d6c46437333601c94a243a71a2511d",
+        "archive_bytes": 4235360467,
+        "raw_sha256": "24b058065c671ecb4079ac447443ac26675541e66965d758e6bde21743181daf",
+        "raw_bytes": 5108251547,
+        "lossless_verified": true,
+        "raw_materialized": false
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/candidate/model-10800.gguf",
+        "sha256": "c42b8f244a1aa07ebf2be6660bb8c20f727937650ae016936ebcdacbd1374a7c",
+        "bytes": 541022336
+      },
+      "reason": "Keep current campaign trajectory/full-state recovery and exact native comparisons; seven-hour DEV3 frontier and final eight-hour state included."
+    },
+    {
+      "label": "14400",
+      "updates": 14556,
+      "update_seconds": 2012.361906342092,
+      "checkpoint": {
+        "format": "dflash.byte_shuffle_zstd.stream.v1",
+        "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-14400-14556.pt.bsz",
+        "archive_sha256": "6c6f5db6e90aa2405f19f9df1e70447298a9a603fe8d27cac1ebee9cbcd77912",
+        "archive_bytes": 4232920072,
+        "raw_sha256": "55ccec4a461c83ccb65de5df35f14a72f8277dc4c003f7ea5e50504fe648862e",
+        "raw_bytes": 5108251547,
+        "lossless_verified": true,
+        "raw_materialized": false
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/candidate/model-14400.gguf",
+        "sha256": "6aaa5def738b514adf7b8f2ee1e93fec52687db1832c4867dc8310df396fedd1",
+        "bytes": 541022336
+      },
+      "reason": "Keep current campaign trajectory/full-state recovery and exact native comparisons; seven-hour DEV3 frontier and final eight-hour state included."
+    },
+    {
+      "label": "18000",
+      "updates": 18187,
+      "update_seconds": 2521.24133713395,
+      "checkpoint": {
+        "format": "dflash.byte_shuffle_zstd.stream.v1",
+        "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-18000-18187.pt.bsz",
+        "archive_sha256": "b779e58c484644ca3218df30f61d7a4682a4706f2b05202e34aab728b64dc1c6",
+        "archive_bytes": 4231138155,
+        "raw_sha256": "d3d596b8cd27b8354e21bb259bd06efaafe9e9d9c33eeff99199cdd27c3f6374",
+        "raw_bytes": 5108251547,
+        "lossless_verified": true,
+        "raw_materialized": false
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/candidate/model-18000.gguf",
+        "sha256": "7d1e850bab47706fbd18253b46a145f5a3bcecc08a5af6d243602916bfdde59a",
+        "bytes": 541022336
+      },
+      "reason": "Keep current campaign trajectory/full-state recovery and exact native comparisons; seven-hour DEV3 frontier and final eight-hour state included."
+    },
+    {
+      "label": "paused-20671",
+      "updates": 20671,
+      "update_seconds": 2873.7484793208714,
+      "checkpoint": {
+        "format": "dflash.byte_shuffle_zstd.stream.v1",
+        "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-paused-20671-20671.pt.bsz",
+        "archive_sha256": "939d034da6e7bbd018ded94ed65d156966c75d6ba9ed65085d1367da5bbda014",
+        "archive_bytes": 4230857370,
+        "raw_sha256": "5a8bd1fcca505e84c83396f3f661ec24a06b2ca246374cb9efea888bad097d89",
+        "raw_bytes": 5108251547,
+        "lossless_verified": true,
+        "raw_materialized": false
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/candidate/model-paused-20671.gguf",
+        "sha256": "4e8b7a3fb70981c5be23cb34989b8bc022b376ae2b44952cee2347d72052af59",
+        "bytes": 541022336
+      },
+      "reason": "Keep current campaign trajectory/full-state recovery and exact native comparisons; seven-hour DEV3 frontier and final eight-hour state included."
+    },
+    {
+      "label": "update-3600",
+      "updates": 26173,
+      "update_seconds": 3600.0161758606555,
+      "checkpoint": {
+        "format": "dflash.byte_shuffle_zstd.stream.v1",
+        "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-update-3600-26173.pt.bsz",
+        "archive_sha256": "8823abd073dca98f038b27ca4414a75cdfb66b130e00529d0ff453708602a21d",
+        "archive_bytes": 4230451323,
+        "raw_sha256": "1be5d7c092aecd15c3d3104a3eedced460e59d0c2b05cefd7417a5d33a2d9de3",
+        "raw_bytes": 5108252443,
+        "lossless_verified": true,
+        "raw_materialized": false
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/candidate/model-update-3600.gguf",
+        "sha256": "faa740b93e2ed929c965b3b5a39389a94569c6708ee462da6186bdf8de01f3ff",
+        "bytes": 541022336
+      },
+      "reason": "Keep current campaign trajectory/full-state recovery and exact native comparisons; seven-hour DEV3 frontier and final eight-hour state included."
+    },
+    {
+      "label": "update-7200",
+      "updates": 53763,
+      "update_seconds": 7200.064524326706,
+      "checkpoint": {
+        "format": "dflash.byte_shuffle_zstd.stream.v1",
+        "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-update-7200-53763.pt.bsz",
+        "archive_sha256": "3c09cff465ec3faf367d48d7cfa0dc8d7dcf7f9883da36512335717fc36f6408",
+        "archive_bytes": 4230244282,
+        "raw_sha256": "152d98c2a03baa2cc8ce8f1bafb4ce101a28125b4337087945eb09ca007146c9",
+        "raw_bytes": 5108252443,
+        "lossless_verified": true,
+        "raw_materialized": false
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/candidate/model-update-7200.gguf",
+        "sha256": "1feda4ab541b38ed2ed6397982cad9be29dbde174da02985505c005f550279a0",
+        "bytes": 541022336
+      },
+      "reason": "Keep current campaign trajectory/full-state recovery and exact native comparisons; seven-hour DEV3 frontier and final eight-hour state included."
+    },
+    {
+      "label": "update-10800",
+      "updates": 81455,
+      "update_seconds": 10800.001996094594,
+      "checkpoint": {
+        "format": "dflash.byte_shuffle_zstd.stream.v1",
+        "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-update-10800-81455.pt.bsz",
+        "archive_sha256": "81b42e034655b48af5126b34b853ddc295bd0e3f130a00c7aef73315a3e547af",
+        "archive_bytes": 4234610276,
+        "raw_sha256": "e167e499deeafc6d6c93f3595584005103160d6c80b9288900bc13851e4fe620",
+        "raw_bytes": 5108252443,
+        "lossless_verified": true,
+        "raw_materialized": false
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/candidate/model-update-10800.gguf",
+        "sha256": "fbefd40fb31885e0e1b8d374bf77bc546fc6f9ad3abb8241dd0ef0cb0e1029b4",
+        "bytes": 541022336
+      },
+      "reason": "Keep current campaign trajectory/full-state recovery and exact native comparisons; seven-hour DEV3 frontier and final eight-hour state included."
+    },
+    {
+      "label": "update-14400",
+      "updates": 109165,
+      "update_seconds": 14400.124999271706,
+      "checkpoint": {
+        "format": "dflash.byte_shuffle_zstd.stream.v1",
+        "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-update-14400-109165.pt.bsz",
+        "archive_sha256": "cf3e946c86e54fce6de7be16bd4145ea7c93c33cd2d23c85176a4885837646db",
+        "archive_bytes": 4243578374,
+        "raw_sha256": "dd7e358a6f7dbed16c9933572a4012a92b3f3ee73d0611001e65b8b34583dbc0",
+        "raw_bytes": 5108252443,
+        "lossless_verified": true,
+        "raw_materialized": false
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/candidate/model-update-14400.gguf",
+        "sha256": "fa4a0f3a9713819f523061f4e43e944f61f89802470a10455352524e75d5f487",
+        "bytes": 541022336
+      },
+      "reason": "Keep current campaign trajectory/full-state recovery and exact native comparisons; seven-hour DEV3 frontier and final eight-hour state included."
+    },
+    {
+      "label": "update-18000",
+      "updates": 136860,
+      "update_seconds": 18000.03585471105,
+      "checkpoint": {
+        "format": "dflash.byte_shuffle_zstd.stream.v1",
+        "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-update-18000-136860.pt.bsz",
+        "archive_sha256": "a0652346bcad5aee38564586acafe79cf4d4be2d016c3960ce855aba5abaa511",
+        "archive_bytes": 4253959956,
+        "raw_sha256": "d1e1f774932faada82dff18526937f592cf97483ccf12729b626b9f43efd5aef",
+        "raw_bytes": 5108252443,
+        "lossless_verified": true,
+        "raw_materialized": false
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/candidate/model-update-18000.gguf",
+        "sha256": "fce701521d327da8eacaa86473db6879920c630f78b8f6e6ea9513eca8911792",
+        "bytes": 541022336
+      },
+      "reason": "Keep current campaign trajectory/full-state recovery and exact native comparisons; seven-hour DEV3 frontier and final eight-hour state included."
+    },
+    {
+      "label": "update-21600",
+      "updates": 164674,
+      "update_seconds": 21600.02401913397,
+      "checkpoint": {
+        "format": "dflash.byte_shuffle_zstd.stream.v1",
+        "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-update-21600-164674.pt.bsz",
+        "archive_sha256": "62c866b04a7e1b1ee0e53285c35684e33b9fa6bde63c7afde08d4cc8a9fb629c",
+        "archive_bytes": 4265719492,
+        "raw_sha256": "a36fdeac81cf3934a638978b0d8599d5996e126ba2fc7ff18e1d3cf962148898",
+        "raw_bytes": 5108252443,
+        "lossless_verified": true,
+        "raw_materialized": false
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/candidate/model-update-21600.gguf",
+        "sha256": "d8f6f62ec6a114f462976bcfe835027bfc06d3658788f4599bf480839f1d48c3",
+        "bytes": 541022336
+      },
+      "reason": "Keep current campaign trajectory/full-state recovery and exact native comparisons; seven-hour DEV3 frontier and final eight-hour state included."
+    },
+    {
+      "label": "update-25200",
+      "updates": 192372,
+      "update_seconds": 25200.107967323653,
+      "checkpoint": {
+        "format": "dflash.byte_shuffle_zstd.stream.v1",
+        "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-update-25200-192372.pt.bsz",
+        "archive_sha256": "b8886c0a8b7b28e43a1cae4560d761de957375b07c1f40020b881da0eb767ba4",
+        "archive_bytes": 4275440096,
+        "raw_sha256": "2797ecbd5aead7dcf764a97df3bd2a6480289376fdc17029bc153c635b5b6d42",
+        "raw_bytes": 5108252443,
+        "lossless_verified": true,
+        "raw_materialized": false
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/candidate/model-update-25200.gguf",
+        "sha256": "abed49f6c98fe01b7b9d5b34e84363131904efd9102a35056c4583ed08d31938",
+        "bytes": 541022336
+      },
+      "reason": "Keep current campaign trajectory/full-state recovery and exact native comparisons; seven-hour DEV3 frontier and final eight-hour state included."
+    },
+    {
+      "label": "update-28800",
+      "updates": 220095,
+      "update_seconds": 28800.104648497247,
+      "checkpoint": {
+        "format": "dflash.byte_shuffle_zstd.stream.v1",
+        "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-update-28800-220095.pt.bsz",
+        "archive_sha256": "8da6261bbf18cb17fa892e232563d2579a9ef6029d9438112133483f4cbf21fa",
+        "archive_bytes": 4260924378,
+        "raw_sha256": "2b816d930747580e5cb251cbf77ea65c2b32ba07b2650a8eff4e2d8c76c08bcc",
+        "raw_bytes": 5108252443,
+        "lossless_verified": true,
+        "raw_materialized": false
+      },
+      "model": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/candidate/model-update-28800.gguf",
+        "sha256": "75f4bfada667a3e9a7a5b0ace4dfbcca4725d0d632d1803fef8f67da8b6ece50",
+        "bytes": 541022336
+      },
+      "reason": "Keep current campaign trajectory/full-state recovery and exact native comparisons; seven-hour DEV3 frontier and final eight-hour state included."
+    }
+  ],
+  "parents": [
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/index.json",
+      "sha256": "d703d61f47eee8e695bbd09293c15bbae57184d078b98931ff4a2d5828bdbd73",
+      "bytes": 120130683
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/component-campaign-20261105-01/bases/Q4_K.gguf",
+      "sha256": "9aa8b32b8ff5d8b08ca6839b2514254918b6d6131880ca937594fc783eacb167",
+      "bytes": 541022080
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/spec-shortlist-20261030/models/qwen35-4b-dflash-Q4_K_M.gguf",
+      "sha256": "83586a63eab58b4ef9dd1d72de667738fcedb289e97d98d01d8df66f23df610f",
+      "bytes": 381456064
+    }
+  ],
+  "input_dataset": {
+    "status": "VERIFIED_LOCAL_READY",
+    "checked_unix": 1794351080.145368,
+    "index": {
+      "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/index.json",
+      "sha256": "d703d61f47eee8e695bbd09293c15bbae57184d078b98931ff4a2d5828bdbd73",
+      "bytes": 120130683
+    },
+    "manifest_sha256": "d56b7ee0572fec4333ec9c271a69befe1b0fb51e6507ef878f37ad90f1901592",
+    "sequences": 15647,
+    "windows": 1568435,
+    "teacher": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/teacher-mount",
+    "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount",
+    "source": "pstack-2080:/home/philip/he4-capture-2080ti",
+    "verification": {
+      "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/pause-fix-20261110/dataset-verified.json",
+      "sha256": "d40dccaf3f38e509b37ed7418b0d82f6baa28b65e7b1fca5964f1ff86be18fef",
+      "bytes": 1448
+    },
+    "policy": "One-time complete checksum/array/finite admission; runtime reads local feature bytes without repeat hashing or full scans."
+  },
+  "frozen_source_manifests": [
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/source-local-20261110-01/source-manifest.json",
+      "sha256": "41bb05af1c680d2e4179b6dd62c9fbdb1bc9d273a611b82bcaf02faa7962e790",
+      "bytes": 115045
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/source-update8h-20261110-01/source-manifest.json",
+      "sha256": "dbdb132b7fa21854e80b6f625d2848cca2bb9a97f0eab03b96fc7d1e8c0dcf1c",
+      "bytes": 117652
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/source/source-manifest.json",
+      "sha256": "57d2649957091766630583b8ce57050aedeb2eb0b9e1854d8932b2d8f9d07998",
+      "bytes": 104947
+    }
+  ],
+  "inventory": {
+    "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/final-artifact-inventory.json",
+    "sha256": "15850d46aebea63ab86d71ea30ddadb588eb140614353542311e80838aed380d",
+    "bytes": 20840
+  },
+  "verification": "All checkpoint/native SHA values verified by completed pinned final GPU recovery verifier; identity/size and release rechecked at closeout.",
+  "backup_scope": "Current final/best full states and teacher data are retained locally; Git holds source and compact evidence, not weights/data. Earlier remote checkpoint backup only covers the pre-localization portion.",
+  "deletions": "Only reproducible recovery/native-cache scratch was removed by the verified workflow. No campaign checkpoints, native exports, teacher captures or protected parents retired at closeout."
+}

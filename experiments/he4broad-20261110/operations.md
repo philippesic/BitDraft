@@ -1,9 +1,28 @@
 # HE4broad fresh training on the November 9–10 captures
 
-State: **RUNNING; eight-hour cumulative update-time continuation**. Philip authorized this run November 10 in
+State: **COMPLETE; eight-hour update-time allocation consumed and validated**. Philip authorized this run November 10 in
 thread `6a9bee6a-3f4d-4d2f-87c5-73a5e841c6c6`. The prerequisite campaign is complete and its RTX 5080 release is verified. Stage 6 release was verified against its pushed release proof and the completion message.
 
-## Current eight-hour update-time continuation
+## Final release and retained state
+
+The workflow finished successfully November 11 at 08:24:49 UTC after the final
+GPU restore/native-byte verification. Actual update time is 28,800.105 seconds,
+220,095 updates, with no rejected tail. All 1,059 formal/smoke requests pass.
+[Final report, timing limits and next decision boundary](final-report.md).
+
+All own process identities and 213 server releases are terminal. The exact owned
+tmux session is gone; current compute-client/utilization checks and all three
+lock acquire/release checks confirm GPU release. The final-recovery duplicate,
+base/native-cache scratch and partials are absent. Keep teacher/archive local
+ext4 directories, all sixteen complete checkpoints/native exports, their parents,
+three source closures and raw evidence. No new training or evaluation is assigned
+by the historical launch instructions below. Monitoring shutdown follows the
+final publication/push; use only the exact receipt in `schedules.json`.
+
+The following sections preserve execution history and recovery mechanics, not
+an active-job assignment.
+
+## Eight-hour update-time continuation (completed history)
 
 Actual launch: local tmux socket `binary-eagle-runtime`, session
 `he4fresh-update8h-20261110-01`; supervisor

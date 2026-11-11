@@ -73,3 +73,10 @@ reconciled all updates, native counts and artifact hashes. Eight new full states
 and nine native exports remain retained, with the original parent/dependencies
 unchanged. All owned jobs and GPU ownership were released. No mixed-weight
 experiment, deployment promotion or additional training allocation followed.
+
+## HE4broad fresh run completed, 2026-11-11
+
+[Eight-update-hour run](../experiments/he4broad-20261110/final-report.md): 220,095
+updates on the 15,647-sequence dataset, full-state/native recovery and all requested
+hourly panels validated. Seven hours is the best observed DEV3 point; the final
+panel and its slower controls are preserved. No promotion; no further allocation.
