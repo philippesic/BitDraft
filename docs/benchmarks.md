@@ -1,8 +1,10 @@
 # Benchmarks
 
-Use **short** during training and **full** for candidate comparisons. Loss/top1 diagnoses
-learning; native runs measure acceptance/speed. Request scores and complete application
-tasks remain separate evidence.
+Native runs measure acceptance/speed; loss/top1 diagnoses learning. The existing large
+cohorts below exceeded Philip's runtime requirements and must not restart as routine
+defaults. The [current task](../tasks/benchmark-implementation.md) tracks the lean redesign.
+Training checks must take at most a couple minutes every30–60 training minutes. Request
+scores and complete application tasks remain separate evidence.
 
 ```sh
 uv run --locked --no-sync --offline python -m benchmarks COMMAND INPUT [OUTPUT]
@@ -27,7 +29,7 @@ new; capture resumes verified records. Resume campaigns/suites with their record
 and specification. Checkout edits do not alter active runs. CPU preflight is not runtime
 qualification. Run [local checks](development.md); there is no hosted CI.
 
-## Workloads
+## Existing qualification cohorts
 
 | DEV panel | Units per arm/target | Execution |
 | --- | ---: | --- |
@@ -142,8 +144,9 @@ to the evaluated export. Highest full-request score selects the experimental inc
 with earlier-update ties. Workflow/harness evidence stays separate; no deployment promotion.
 
 Diagnostics preserve RNG and report category loss/top1 on120 fixed role-safe DEV windows.
-They are not acceptance. Lengthen optimizer intervals toward10% native overhead rather
-than shrinking panels. Keep model/data/evaluation/checkpoint clocks separate.
+They are not acceptance. Measure the complete training interruption against the short
+wall budget; do not stretch the training interval to accommodate an oversized check.
+Keep model/data/evaluation/checkpoint clocks separate.
 `campaign-report OUTPUT` needs no GPU: liveness, pointers, journals, learning/native scores,
 costs/exposure. Attempts include retries; unique positions use actual label widths;
 lifetime history stays unknown. Inspect ownership/failures before restarting. After code
