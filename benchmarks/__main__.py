@@ -3,6 +3,8 @@ import json
 from pathlib import Path
 
 from benchmarks.acceptance import reduce_rounds
+from benchmarks.capture import capture
+from benchmarks.native import build, helpers
 from benchmarks.runner import compare
 from benchmarks.specification import Specification
 from w1a1_eagle.contracts import Record, sequence
@@ -21,13 +23,23 @@ def main() -> int:
     for name in ("plan", "verify-inputs", "reduce-trace"):
         command = commands.add_parser(name)
         command.add_argument("input", type=Path)
-    for name in ("compare", "curate"):
+    for name in ("compare", "curate", "native-build", "capture", "admit-bank", "native-helpers"):
         comparison = commands.add_parser(name)
         comparison.add_argument("input", type=Path)
         comparison.add_argument("output", type=Path)
     args = parser.parse_args(namespace=Arguments())
     try:
-        if args.command == "curate":
+        if args.command == "native-helpers":
+            result = helpers(args.input, args.output)
+        elif args.command == "admit-bank":
+            from benchmarks.bank_admission import admit
+
+            result = admit(args.input, args.output)
+        elif args.command == "capture":
+            result = capture(args.input, args.output)
+        elif args.command == "native-build":
+            result = build(args.input, args.output)
+        elif args.command == "curate":
             from benchmarks.bank import curate
 
             result = curate(args.input, args.output)

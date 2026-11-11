@@ -1,4 +1,5 @@
 import hashlib
+import math
 import threading
 import zipfile
 from dataclasses import asdict
@@ -9,23 +10,38 @@ import torch
 from torch import Tensor
 
 from w1a1_eagle.checkpoints.store import StateRef, Store
-from w1a1_eagle.clock import Clock
+from w1a1_eagle.clock import Clock, Monotonic
 from w1a1_eagle.contracts import integer, number, record, sequence, string
-from w1a1_eagle.data import Window
+from w1a1_eagle.data import Supervision
+from w1a1_eagle.device import DeviceClock
 from w1a1_eagle.model import HE4, Projection
+from w1a1_eagle.numerical.accounting import Accounting
 from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.records import canonical
 from w1a1_eagle.training import Budget, Progress, train
 
 
 class Samples(Protocol):
-    def sample(self, cursor: int) -> tuple[Capture, Window]: ...
+    def sample(self, cursor: int) -> tuple[Capture, Supervision]: ...
 
 
 class TensorWorker:
-    def __init__(self, model: HE4, samples: Samples, identity: str) -> None:
+    def __init__(
+        self,
+        model: HE4,
+        samples: Samples,
+        identity: str,
+        dataset: str | None = None,
+        clock: Clock | None = None,
+    ) -> None:
         if not identity or model.geometry.slots != 16:
             raise ValueError("explicit HE4 recipe and sixteen slots required")
+        self.accounting = Accounting(dataset=dataset)
+        self.accounting.validate()
+        self.clock = clock or Monotonic()
+        self.update_clock = DeviceClock(
+            self.clock, torch.cuda.synchronize if model.vocabulary.device.type == "cuda" else None
+        )
         self.model = model
         self.samples = samples
         self.identity = identity
@@ -95,38 +111,63 @@ class TensorWorker:
                 raise ValueError("worker requires exact cursor or durable recovery")
             self.verify_frozen()
             self.ready = False
-            capture, window = self.samples.sample(cursor)
-            feature_version = capture.features._version
-            self.optimizer.zero_grad(set_to_none=True)
-            logits = self.model.forward(capture.features, capture.tokens, window.anchor)[1:]
-            labels = torch.tensor(window.labels, dtype=torch.int64, device=logits.device)
-            losses = torch.nn.functional.cross_entropy(logits, labels, reduction="none")
-            weights = torch.exp(-torch.arange(15, device=logits.device) / 7)
-            loss = (losses * weights).sum() / weights.sum()
-            if not bool(torch.isfinite(loss)):
-                raise ValueError("nonfinite loss")
-            torch.autograd.backward(loss)
-            norm = torch.nn.utils.clip_grad_norm_(
-                self.model.parameters(), 1.0, error_if_nonfinite=True
-            )
-            self.last_gradient_norm = float(norm)
-            self.optimizer.step()
-            with torch.no_grad():
-                for module in self.model.modules():
-                    if isinstance(module, Projection):
-                        module.scale.clamp_(min=0)
-            if any(
-                not bool(torch.isfinite(parameter).all()) for parameter in self.model.parameters()
-            ):
-                raise ValueError("nonfinite post-update state")
-            self.verify_frozen()
-            if capture.features._version != feature_version:
-                raise ValueError("teacher features changed during an update")
-            self.optimizer_updates += 1
-            self.updates += 1
-            self.cursor += 1
-            self.ready = True
-            return float(loss.detach())
+            started = self.clock.now()
+            try:
+                capture, window = self.samples.sample(cursor)
+            finally:
+                self.accounting.data_seconds += self.elapsed(started)
+            began = self.update_clock.now()
+            complete = False
+            try:
+                loss = self.update(capture, window)
+                complete = True
+                self.accounting.dataset_labels += len(window.labels)
+                self.accounting.observed_labels += len(window.labels)
+                return loss
+            finally:
+                elapsed = self.elapsed(began, self.update_clock)
+                if complete:
+                    self.accounting.successful_update_seconds += elapsed
+                else:
+                    self.accounting.failed_update_seconds += elapsed
+
+    def elapsed(self, started: float, clock: Clock | None = None) -> float:
+        elapsed = (clock or self.clock).now() - started
+        if not math.isfinite(started) or not math.isfinite(elapsed) or elapsed < 0:
+            self.ready = False
+            raise ValueError("invalid model/data measurement clock")
+        return elapsed
+
+    def update(self, capture: Capture, window: Supervision) -> float:
+        feature_version = capture.features._version
+        self.optimizer.zero_grad(set_to_none=True)
+        logits = self.model.forward(capture.features, capture.tokens, window.anchor)[
+            1 : 1 + len(window.labels)
+        ]
+        labels = torch.tensor(window.labels, dtype=torch.int64, device=logits.device)
+        losses = torch.nn.functional.cross_entropy(logits, labels, reduction="none")
+        weights = torch.exp(-torch.arange(len(window.labels), device=logits.device) / 7)
+        loss = (losses * weights).sum() / weights.sum()
+        if not bool(torch.isfinite(loss)):
+            raise ValueError("nonfinite loss")
+        torch.autograd.backward(loss)
+        norm = torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0, error_if_nonfinite=True)
+        self.last_gradient_norm = float(norm)
+        self.optimizer.step()
+        with torch.no_grad():
+            for module in self.model.modules():
+                if isinstance(module, Projection):
+                    module.scale.clamp_(min=0)
+        if any(not bool(torch.isfinite(parameter).all()) for parameter in self.model.parameters()):
+            raise ValueError("nonfinite post-update state")
+        self.verify_frozen()
+        if capture.features._version != feature_version:
+            raise ValueError("teacher features changed during an update")
+        self.optimizer_updates += 1
+        self.updates += 1
+        self.cursor += 1
+        self.ready = True
+        return float(loss.detach())
 
     def run(self, clock: Clock, budget: Budget, stop: Callable[[], bool]) -> str:
         with self.lock:
@@ -150,7 +191,8 @@ class TensorWorker:
             self.verify_frozen()
             self.progress.validate()
             state: dict[str, object] = {
-                "schema": 3,
+                "schema": 4,
+                "accounting": self.accounting.encode(),
                 "config": self.identity,
                 "updates": self.updates,
                 "cursor": self.cursor,
@@ -195,7 +237,9 @@ class TensorWorker:
             state = record(
                 cast(
                     object,
-                    torch.load(reference.artifact.path, map_location="cpu", weights_only=True),
+                    torch.load(
+                        reference.artifact.path, map_location="cpu", weights_only=True, mmap=True
+                    ),
                 )
             )
             required = {
@@ -217,8 +261,19 @@ class TensorWorker:
                 "origin",
                 "frozen_sha256",
             }
-            if set(state) != required or type(state["schema"]) is not int or state["schema"] != 3:
+            schema = integer(state["schema"])
+            if schema not in {3, 4} or set(state) != (
+                required | {"accounting"} if schema == 4 else required
+            ):
                 raise ValueError("unsupported tensor state schema")
+            accounting = Accounting.parse(state["accounting"]) if schema == 4 else Accounting()
+            dataset = self.accounting.dataset
+            if (
+                mode == "resume"
+                and accounting.dataset is not None
+                and accounting.dataset != dataset
+            ):
+                raise ValueError("resume dataset identity mismatch")
             if (
                 state["geometry"] != cast(dict[str, object], asdict(self.model.geometry))
                 or state["mask"] != self.model.mask
@@ -354,6 +409,29 @@ class TensorWorker:
             with torch.no_grad():
                 for name, parameter in expected.items():
                     parameter.copy_(tensors[name])
+            if mode in {"continue", "branch"} and (
+                dataset is None or accounting.dataset != dataset
+            ):
+                accounting.dataset_start_updates = updates
+                accounting.dataset_labels = 0
+            accounting.dataset = dataset
+            if reference.config == self.identity:
+                accounting.successful_update_seconds = max(
+                    accounting.successful_update_seconds, self.accounting.successful_update_seconds
+                )
+                accounting.failed_update_seconds = max(
+                    accounting.failed_update_seconds, self.accounting.failed_update_seconds
+                )
+                accounting.data_seconds = max(accounting.data_seconds, self.accounting.data_seconds)
+                accounting.observed_labels = max(
+                    accounting.observed_labels, self.accounting.observed_labels
+                )
+                if dataset == self.accounting.dataset:
+                    accounting.dataset_labels = max(
+                        accounting.dataset_labels, self.accounting.dataset_labels
+                    )
+            accounting.validate()
+            self.accounting = accounting
             lineage = tuple(string(v) for v in sequence(state["lineage"]))
             if mode in {"resume", "continue"}:
                 self.optimizer.load_state_dict(optimizer_state)
@@ -390,3 +468,29 @@ class TensorWorker:
                 raise ValueError("invalid gradient norm")
             self.updates = updates
             self.ready = True
+
+
+def checkpoint_accounting(reference: StateRef, memory_budget_bytes: int) -> Accounting | None:
+    reference.artifact.verify()
+    if reference.artifact.size > memory_budget_bytes:
+        raise ValueError("checkpoint accounting exceeds memory budget")
+    with zipfile.ZipFile(reference.artifact.path) as archive:
+        if sum(item.file_size for item in archive.infolist()) * 2 > memory_budget_bytes:
+            raise ValueError("checkpoint logical size exceeds memory budget")
+    state = record(
+        cast(
+            object,
+            torch.load(reference.artifact.path, map_location="cpu", weights_only=True, mmap=True),
+        )
+    )
+    if integer(state["updates"]) != reference.updates:
+        raise ValueError("checkpoint progress differs from its manifest")
+    schema = integer(state["schema"])
+    if schema == 3:
+        return None
+    if schema != 4:
+        raise ValueError("unsupported checkpoint accounting schema")
+    result = Accounting.parse(state["accounting"])
+    if result.dataset_start_updates > reference.updates:
+        raise ValueError("dataset exposure origin is ahead of checkpoint")
+    return result

@@ -16,7 +16,7 @@ def human(report: Record) -> str:
             f"Starting {report['mode']} from {report['starting_name']}.\n"
             f"Mechanism: {report['mechanism']}.\n"
             f"Data: {exposure['sequences']} sequences, {exposure['distinct_positions']} distinct positions; "
-            f"{exposure['label_exposures']} planned label exposures, {exposure['mean_visits']} mean additional visits.\n"
+            f"{exposure['label_exposures_upper_bound']} maximum planned label exposures, {exposure['mean_visits_upper_bound']} maximum mean additional visits.\n"
             f"Data history: {report['prior_use_warning']}\n"
             f"Limiting risk: {report['limiting_risk']}.\nStop: {report['stop_action']}.\n"
             f"Readiness: {report['readiness']}. Scientific: {report['scientific']}.\n"

@@ -63,7 +63,7 @@ python -m w1a1_eagle preflight INTENT
 ```
 
 The first is a quick partial check, the second is the full commit gate, the third
-inspects the environment and hook. The last family runs and reports CPU training;
+inspects the environment and hook. The last family runs and reports CPU/CUDA training;
 see [execution](docs/execution.md).
 
 ## More

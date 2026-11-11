@@ -57,7 +57,7 @@ def migrate(specification: Path, output: Path) -> Record:
             )
         model = load_he4(intent.source, intent.vocabulary, intent.memory_bytes, cfg)
         model.to(str(intent.raw["device"]))
-        worker = TensorWorker(model, corpus, intent.recipe)
+        worker = TensorWorker(model, corpus, intent.recipe, intent.corpus.sha256)
         state = import_state(
             raw, worker, Store(store.root / "states", intent.disk_reserve_bytes), intent.state_bytes
         )

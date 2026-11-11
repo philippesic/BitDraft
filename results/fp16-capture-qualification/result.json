@@ -1,0 +1,296 @@
+{
+  "scope": "bounded probe; broader policy not yet evaluated",
+  "training": [
+    {
+      "status": "complete",
+      "dtype": "float32",
+      "updates": 220167,
+      "parent_updates": 220095,
+      "matched_updates": 72,
+      "source_sha256": "d6d65b97c76a3e11ef9b8ef8d9394c920d7c3ca46bf40d3a0ef8beffd18f4650",
+      "state": {
+        "path": "/home/philip/binary-eagle-artifacts/qualification/capture-training-float32-01/states/d172eebde06f666b598553892d4d917313febc81ef0a00f45e2182eb15f6b5d3.bin",
+        "sha256": "d172eebde06f666b598553892d4d917313febc81ef0a00f45e2182eb15f6b5d3",
+        "bytes": 5100529307
+      },
+      "native": {
+        "path": "/home/philip/binary-eagle-artifacts/qualification/capture-training-float32-01/exports/2f521706379ca3beeec6bdc43c0a8825935f439704138220ae51d57dba4fedba.bin",
+        "sha256": "2f521706379ca3beeec6bdc43c0a8825935f439704138220ae51d57dba4fedba",
+        "bytes": 541022016
+      },
+      "peak_allocated_bytes": 13647143424,
+      "claim": "bounded precision qualification; not full campaign convergence"
+    },
+    {
+      "status": "complete",
+      "dtype": "float16",
+      "updates": 220167,
+      "parent_updates": 220095,
+      "matched_updates": 72,
+      "source_sha256": "9334ae7deaeec8b8cb0c07f34f6e104dc6c733e8e46d320bcd2be04342e53664",
+      "state": {
+        "path": "/home/philip/binary-eagle-artifacts/qualification/capture-training-float16-01/states/daee4ceca59c9805c894ba45f3adaa22873754c8c7d673f27ad6f01d250b42e2.bin",
+        "sha256": "daee4ceca59c9805c894ba45f3adaa22873754c8c7d673f27ad6f01d250b42e2",
+        "bytes": 5100529307
+      },
+      "native": {
+        "path": "/home/philip/binary-eagle-artifacts/qualification/capture-training-float16-01/exports/66bc2bb8d009ab816ec9d04f2c891c8c94581898763be5f56a6e13ad7dfa46bd.bin",
+        "sha256": "66bc2bb8d009ab816ec9d04f2c891c8c94581898763be5f56a6e13ad7dfa46bd",
+        "bytes": 541022016
+      },
+      "peak_allocated_bytes": 13647143424,
+      "claim": "bounded precision qualification; not full campaign convergence"
+    }
+  ],
+  "identical_numerical_inputs": {
+    "w1a1_eagle/model.py": true,
+    "w1a1_eagle/numerical/worker.py": true,
+    "w1a1_eagle/numerical/weights.py": true,
+    "w1a1_eagle/numerical/export.py": true,
+    "uv.lock": true
+  },
+  "native": {
+    "baseline": {
+      "acceptance": 0.8305084745762712,
+      "accepted": 147,
+      "correct": true,
+      "proposed": 177,
+      "requests": 4,
+      "tokens": 241,
+      "tokens_per_second": 82.50416795815714,
+      "wall_seconds": 2.9210645469720475
+    },
+    "float16-72": {
+      "acceptance": 0.5283842794759825,
+      "accepted": 121,
+      "correct": true,
+      "proposed": 229,
+      "requests": 4,
+      "tokens": 241,
+      "tokens_per_second": 79.3689176988186,
+      "wall_seconds": 3.0364531480008736
+    },
+    "float32-72": {
+      "acceptance": 0.5107296137339056,
+      "accepted": 119,
+      "correct": true,
+      "proposed": 233,
+      "requests": 4,
+      "tokens": 241,
+      "tokens_per_second": 79.98846984476316,
+      "wall_seconds": 3.0129342449945398
+    },
+    "target": {
+      "acceptance": null,
+      "accepted": 0,
+      "correct": true,
+      "proposed": 0,
+      "requests": 4,
+      "tokens": 241,
+      "tokens_per_second": 93.15064980269153,
+      "wall_seconds": 2.5872068580356427
+    }
+  },
+  "capture": {
+    "status": "PASS",
+    "rows": [
+      {
+        "id": "pilot-0",
+        "prompt_tokens": 35,
+        "generated": 64,
+        "stop_type": "limit",
+        "errors": [
+          {
+            "tap": 2,
+            "relative_l2": 0.00021573566482402384,
+            "max_absolute": 0.0009675025939941406
+          },
+          {
+            "tap": 6,
+            "relative_l2": 0.00020476871577557176,
+            "max_absolute": 0.0017118453979492188
+          },
+          {
+            "tap": 10,
+            "relative_l2": 0.0002087274770019576,
+            "max_absolute": 0.0035915374755859375
+          },
+          {
+            "tap": 14,
+            "relative_l2": 0.00019756944675464183,
+            "max_absolute": 0.0021800994873046875
+          },
+          {
+            "tap": 18,
+            "relative_l2": 0.00020321094780229032,
+            "max_absolute": 0.0021152496337890625
+          },
+          {
+            "tap": 22,
+            "relative_l2": 0.00020788093388546258,
+            "max_absolute": 0.0035419464111328125
+          },
+          {
+            "tap": 26,
+            "relative_l2": 0.00020495157514233142,
+            "max_absolute": 0.007587432861328125
+          },
+          {
+            "tap": 30,
+            "relative_l2": 0.0002052252384601161,
+            "max_absolute": 0.0077838897705078125
+          }
+        ]
+      },
+      {
+        "id": "pilot-1",
+        "prompt_tokens": 37,
+        "generated": 2,
+        "stop_type": "eos",
+        "errors": [
+          {
+            "tap": 2,
+            "relative_l2": 0.0002147074119420722,
+            "max_absolute": 0.0009644031524658203
+          },
+          {
+            "tap": 6,
+            "relative_l2": 0.00021175759320612997,
+            "max_absolute": 0.0019164085388183594
+          },
+          {
+            "tap": 10,
+            "relative_l2": 0.00020337240130174905,
+            "max_absolute": 0.0035915374755859375
+          },
+          {
+            "tap": 14,
+            "relative_l2": 0.00018731743330135942,
+            "max_absolute": 0.0021800994873046875
+          },
+          {
+            "tap": 18,
+            "relative_l2": 0.0002002292312681675,
+            "max_absolute": 0.0023860931396484375
+          },
+          {
+            "tap": 22,
+            "relative_l2": 0.0002105182793457061,
+            "max_absolute": 0.0032501220703125
+          },
+          {
+            "tap": 26,
+            "relative_l2": 0.00021033552184235305,
+            "max_absolute": 0.007747650146484375
+          },
+          {
+            "tap": 30,
+            "relative_l2": 0.0002031130570685491,
+            "max_absolute": 0.0077342987060546875
+          }
+        ]
+      },
+      {
+        "id": "pilot-2",
+        "prompt_tokens": 34,
+        "generated": 45,
+        "stop_type": "eos",
+        "errors": [
+          {
+            "tap": 2,
+            "relative_l2": 0.00020010453590657562,
+            "max_absolute": 0.0009338855743408203
+          },
+          {
+            "tap": 6,
+            "relative_l2": 0.00022840406745672226,
+            "max_absolute": 0.0019116401672363281
+          },
+          {
+            "tap": 10,
+            "relative_l2": 0.00020613345259334892,
+            "max_absolute": 0.0035915374755859375
+          },
+          {
+            "tap": 14,
+            "relative_l2": 0.00020170430070720613,
+            "max_absolute": 0.0021800994873046875
+          },
+          {
+            "tap": 18,
+            "relative_l2": 0.00020524708088487387,
+            "max_absolute": 0.0021152496337890625
+          },
+          {
+            "tap": 22,
+            "relative_l2": 0.00020777415193151683,
+            "max_absolute": 0.0033655166625976562
+          },
+          {
+            "tap": 26,
+            "relative_l2": 0.00020694801060017198,
+            "max_absolute": 0.005771636962890625
+          },
+          {
+            "tap": 30,
+            "relative_l2": 0.00020672474056482315,
+            "max_absolute": 0.0077419281005859375
+          }
+        ]
+      },
+      {
+        "id": "long-paper",
+        "prompt_tokens": 8394,
+        "generated": 128,
+        "stop_type": "limit",
+        "errors": [
+          {
+            "tap": 2,
+            "relative_l2": 0.0002074661897495389,
+            "max_absolute": 0.0019516944885253906
+          },
+          {
+            "tap": 6,
+            "relative_l2": 0.00022212631301954389,
+            "max_absolute": 0.0019516944885253906
+          },
+          {
+            "tap": 10,
+            "relative_l2": 0.00021386959997471422,
+            "max_absolute": 0.0049953460693359375
+          },
+          {
+            "tap": 14,
+            "relative_l2": 0.0002055605873465538,
+            "max_absolute": 0.001953125
+          },
+          {
+            "tap": 18,
+            "relative_l2": 0.00020014696929138154,
+            "max_absolute": 0.004161834716796875
+          },
+          {
+            "tap": 22,
+            "relative_l2": 0.00020891270833089948,
+            "max_absolute": 0.0039052963256835938
+          },
+          {
+            "tap": 26,
+            "relative_l2": 0.00021427837782539427,
+            "max_absolute": 0.0078105926513671875
+          },
+          {
+            "tap": 30,
+            "relative_l2": 0.00019994002650491893,
+            "max_absolute": 0.015079498291015625
+          }
+        ]
+      }
+    ],
+    "server_tokens_and_eos_identity": true,
+    "fp16_values_exact_roundtrip": true,
+    "labels_unchanged": true,
+    "repeated_cold_context_byte_identity": true,
+    "correction": "The serving token array includes the EOS token. Capture inputs stop before EOS; the final hard label retains it."
+  }
+}

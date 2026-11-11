@@ -243,3 +243,40 @@ def test_report_json_flag_positions_and_failure_exit(tmp_path: Path) -> None:
         outputs.append(result.stdout)
     assert outputs[0] == outputs[1]
     assert '"cumulative_attempt_seconds": 6.25' in outputs[0]
+
+
+def test_task_sampling_balances_tasks_and_retains_locality() -> None:
+    from w1a1_eagle.sampling import TaskSampler
+
+    sampler = TaskSampler(
+        (1, 100000, 2), ("first", "first", "second"), {"first": 1, "second": 3}, 8101, 8
+    )
+    batches = [sampler.locate(cursor * 8)[0] for cursor in range(2000)]
+    first = [value for value in batches if value in (0, 1)]
+    assert 0.17 < len(first) / len(batches) < 0.33
+    assert 0.4 < first.count(0) / len(first) < 0.6
+    for cursor in range(0, 80, 8):
+        assert len({sampler.locate(cursor + offset)[0] for offset in range(8)}) == 1
+        assert sampler.locate(cursor) == sampler.locate(cursor)
+
+
+def test_streamed_assets_and_retention_preserve_recoverable_states(tmp_path: Path) -> None:
+    from typing import BinaryIO
+
+    from w1a1_eagle.checkpoints.store import Store
+
+    store = Store(tmp_path)
+
+    def interrupted(output: BinaryIO) -> None:
+        output.write(b"partial")
+        raise ValueError("interrupted asset")
+
+    with pytest.raises(ValueError, match="interrupted"):
+        store.stream("layer.f16", interrupted, 32)
+    assert not (tmp_path / "layer.f16").exists()
+    assert list(tmp_path.glob(".pending-*")) == []
+    states = [store.commit(bytes([index]), "recipe", index) for index in range(4)]
+    retired = store.prune(2, (states[0].artifact.sha256,))
+    assert set(retired) == {states[1].artifact.sha256, states[2].artifact.sha256}
+    assert states[0].artifact.path.exists()
+    assert store.latest("recipe") == states[3]

@@ -257,3 +257,83 @@ def windows(
         and anchor + 14 < stop
         and all(anchor + j in mapping for j in range(15))
     )
+
+
+@dataclass(frozen=True)
+class TailWindow:
+    trajectory: str
+    anchor: int
+    labels: tuple[int, ...]
+
+    def __post_init__(self) -> None:
+        if (
+            not isinstance(self.trajectory, str)
+            or not self.trajectory.strip()
+            or type(self.anchor) is not int
+            or self.anchor < 0
+            or not isinstance(self.labels, tuple)
+            or not 1 <= len(self.labels) < 15
+            or any(type(value) is not int or value < 0 for value in self.labels)
+        ):
+            raise ValueError("invalid explicit partial supervision window")
+
+    def positions(self) -> tuple[tuple[str, int], ...]:
+        return tuple((self.trajectory, self.anchor + index) for index in range(len(self.labels)))
+
+
+Supervision = Window | TailWindow
+
+
+def supervision(
+    trajectory: str,
+    tokens: tuple[int, ...],
+    prompt_tokens: int,
+    positions: tuple[int, ...],
+    labels: tuple[int, ...],
+    eog: int | None,
+    policy: str,
+) -> tuple[Supervision, ...]:
+    complete = windows(trajectory, tokens, prompt_tokens, positions, labels, eog)
+    if policy == "full15":
+        return complete
+    if policy != "up-to-15":
+        raise ValueError("explicit supported supervision policy required")
+    existing = {window.anchor: window for window in complete}
+    mapping = dict(zip(positions, labels, strict=True))
+    stop = (
+        next(
+            (index for index in range(prompt_tokens, len(tokens)) if tokens[index] == eog),
+            len(tokens),
+        )
+        if eog is not None
+        else len(tokens)
+    )
+    selected: list[Supervision] = []
+    for anchor in positions:
+        if anchor < max(0, prompt_tokens - 1) or anchor >= stop:
+            continue
+        if anchor in existing:
+            selected.append(existing[anchor])
+            continue
+        available: list[int] = []
+        for offset in range(15):
+            position = anchor + offset
+            if position >= stop or position not in mapping:
+                break
+            available.append(mapping[position])
+        if available:
+            selected.append(TailWindow(trajectory, anchor, tuple(available)))
+    return tuple(selected)
+
+
+def supervision_positions(selected: tuple[Supervision, ...]) -> int:
+    count, end = 0, -1
+    for window in sorted(selected, key=window_anchor):
+        last = window.anchor + len(window.labels)
+        count += max(0, last - max(window.anchor, end))
+        end = max(end, last)
+    return count
+
+
+def window_anchor(window: Supervision) -> int:
+    return window.anchor

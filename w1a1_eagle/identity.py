@@ -15,13 +15,16 @@ def source_files(root: Path) -> dict[str, bytes]:
     values: dict[str, bytes] = {}
     paths = sorted((root / "w1a1_eagle").rglob("*"))
     paths.extend(sorted((root / "benchmarks").rglob("*.py")))
+    paths.extend(sorted((root / "native").rglob("*")))
     paths.extend(root / name for name in ("uv.lock", "policy/numerical.toml", "pyproject.toml"))
     total = 0
     for path in paths:
         if path.is_symlink():
             raise ValueError("source identity refuses symlinked executable inputs")
         if path.is_file() and (
-            path.suffix == ".py" or path.parent == root or path.name == "numerical.toml"
+            path.suffix in {".py", ".c", ".h", ".cpp", ".hpp", ".cu", ".cuh"}
+            or path.parent == root
+            or path.name == "numerical.toml"
         ):
             total += path.stat().st_size
             if total > 2 * 1024 * 1024:

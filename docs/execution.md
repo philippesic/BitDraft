@@ -1,4 +1,4 @@
-# CPU execution
+# Training execution
 
 ## Commands
 
@@ -17,7 +17,7 @@ numerical worker are private entries listed in [commands](../policy/commands.tom
 
 An intent (schema 2, validated by `Intent.load` in `w1a1_eagle/intent.py`) names the
 objective, hypothesis, decision, risk and authorized scope; source, Q4_K vocabulary and
-corpus artifacts; the mode (fresh, resume or branch) and parent; geometry, seed and CPU
+corpus artifacts; the mode (fresh, resume, continue or branch) and parent; geometry, seed and CPU/CUDA
 device; update, attempt and cumulative wall limits; memory, state-size and disk limits;
 checkpoint cadence; and the minimum-data and maximum-reuse policy. Policy values are
 inputs, not recommendations. Unknown fields or schema versions are refused.
@@ -36,7 +36,7 @@ authorize a run.
 
 Scratch files and read-only diagnostics need no owner. One controller at a time may
 write an output root; a second one is refused. This lock covers the output root only,
-not the GPU or other projects.
+and CUDA workers also obtain a host-wide exclusive GPU lease after checking active compute processes.
 
 ## Attempts and cost
 
@@ -47,8 +47,7 @@ start and checked again at the end.
 
 A bootstrap arms an OS wall timer before importing Torch, so the time limit holds even
 without a supervising agent. The controller runs the worker in its own process group
-and identifies it by boot and process start identity. CPU workers hide CUDA, and GPU
-requests are refused.
+and identifies it by boot and process start identity. CPU workers hide CUDA; CUDA workers use the authorized visible device under their GPU lease.
 
 Failed attempts keep their cost. There is no automatic retry. Before initialization, a
 fresh retry with the same recipe may reuse the root and keeps the failed preflight cost.
@@ -68,16 +67,42 @@ complete parent or a complete child. This covers process crashes, not power loss
 - Resume: restores parameters, shared aliases, AdamW counters and moments, CPU RNG,
   sampler cursor, aggregate exposure counters and lineage, and must reproduce the next
   update exactly.
+- Continue: changes recipe/data explicitly while retaining Adam, random state, cumulative
+  clocks and parent lineage. A changed dataset starts a new dataset exposure counter;
+  same-dataset continuation preserves it. Sampling restarts at cursor zero.
 - Branch: resets optimizer and cursor but keeps parent lineage, cost and aggregate
   exposure counters. A changed recipe does not preserve per-position lifetime exposure.
 
-No mode silently loads an old trained state. The store never deletes historical states
-to make room. Each state write rechecks free space; this does not reserve capacity.
+No mode silently loads an old trained state. Without a retention declaration, state history is retained. An explicit `retention`
+object bounds states/exports; pruning preserves latest and an in-store parent and leaves
+compact retirement receipts. Cross-run selected states need separate retention. Each state write rechecks free space; this does not reserve capacity.
 
-Tensor payload 3 stores learned parameters, Adam, RNG and counters plus a fingerprint of
-every frozen buffer. Frozen data is rebuilt from the required initializer and vocabulary
+Tensor payload 4 stores learned parameters, Adam, RNG and counters plus a fingerprint of
+every frozen buffer, dataset identity/exposure origin, observed labels and separate
+successful-update, failed-update and data clocks. Payload 3 remains readable with unknown
+new accounting fields; payloads 1/2 are refused. Frozen data is rebuilt from the required initializer and vocabulary
 and refused on mismatch. Buffer guards catch ordinary in-place mutation before
 publication; they are not a sandbox.
+
+## Sampling and clocks
+
+Optional `sampling` names an authenticated artifact with schema 1, policy
+`task-position-v1`, locality `burst` (1–64), positive `weights` and `strata` mapping every
+admitted task ID to a stratum. Sampling chooses a stratum, then a task uniformly, then an
+eligible position. A burst retains the task while varying positions. This samples with
+replacement; nominal window-equivalents are not completed epochs. Omitting it retains
+the original seeded window permutation. The recipe binds the sampling artifact.
+
+Successful model-update time starts after CPU capture materialization and includes input
+transfer, forward/backward, optimizer and validation, with CUDA synchronization at both
+boundaries. Data time covers sampling/materialization. Checkpoint/export/evaluation and
+startup are separate from that clock; controller attempt time remains an operational
+budget. Imported historical clocks stay in their receipts and must not be mixed with
+new measurements. Admission adds known dataset exposure to planned upper bounds; it does
+not reinterpret all historical updates as updates on a newly supplied corpus.
+
+Optional `retention: {states: 3, exports: 2}` bounds payload retention and admission's
+state-capacity estimate. It does not authorize deleting external inputs or selected states.
 
 ## Export
 
@@ -97,7 +122,7 @@ no complete event is dropped. Corrupt complete events are refused.
 
 ## Supported formats
 
-Intent 2, corpus 1, tensor payload 3, store manifest 1, event envelope 1 and GGUF W1Ax 2.
+Intent 2, corpus 1, tensor payload 4 (reader also accepts 3), store manifest 1, event envelope 1 and GGUF W1Ax 2.
 Earlier tensor schemas 1 and 2 and intent 1 have no reader. Migrating one needs a new
 artifact with verified source lineage; keep the originals.
 

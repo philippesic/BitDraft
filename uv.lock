@@ -22,7 +22,6 @@ source = { virtual = "." }
 [package.optional-dependencies]
 numerical = [
     { name = "gguf" },
-    { name = "jinja2" },
     { name = "numpy" },
     { name = "pyarrow" },
     { name = "torch" },
@@ -45,7 +44,6 @@ check = [
 [package.metadata]
 requires-dist = [
     { name = "gguf", marker = "extra == 'numerical'", specifier = "==0.19.0" },
-    { name = "jinja2", marker = "extra == 'numerical'", specifier = "==3.1.6" },
     { name = "numpy", marker = "extra == 'numerical'", specifier = "==2.4.6" },
     { name = "pyarrow", marker = "extra == 'numerical'", specifier = "==21.0.0" },
     { name = "torch", marker = "extra == 'numerical'", specifier = "==2.14.0" },

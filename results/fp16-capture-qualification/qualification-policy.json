@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "status": "frozen-before-broad-training-and-evaluation",
+  "scope": "Qwen3.5-4B Q4KM teacher and current HE4 recipe on RTX 5080; feature storage only",
+  "training_captures": 64,
+  "development_captures": 32,
+  "matched_updates_per_arm": 1024,
+  "seed": 8101,
+  "sampler": "task-position-v1; stratum weights proportional to selected task counts; eight updates per locality burst",
+  "capture_gates": {
+    "nonfinite_or_fp16_overflow_values": 0,
+    "maximum_per_array_relative_l2_rounding_error": 0.001,
+    "teacher_token_and_label_changes": 0
+  },
+  "training_gates": {
+    "nonfinite_losses_gradients_parameters_or_optimizer_values": 0,
+    "optimizer_updates_must_match": true,
+    "development_features_for_both_models": "same F32 teacher references",
+    "maximum_overall_mean_development_loss_increase": "max(0.01 absolute, 2 percent of F32 mean)",
+    "maximum_per_category_mean_development_loss_increase": "max(0.05 absolute, 5 percent of F32 category mean)"
+  },
+  "native_gates": {
+    "panel": "120-request short DEV panel; same settings and outputs across target, baseline and both storage arms",
+    "greedy_output_or_stopping_mismatches": 0,
+    "counter_reconciliation_failures": 0,
+    "minimum_fp16_minus_fp32_aggregate_acceptance": -0.01,
+    "minimum_paired_95_interval_lower_acceptance_difference": -0.03,
+    "minimum_paired_95_interval_lower_speed_ratio": 0.95,
+    "inconclusive_action": "Use the larger frozen comparison or retain F32; do not count uncertainty as a pass"
+  },
+  "interpretation": "These are project adoption margins, not universal research constants. One matched seed and bounded exposure cannot establish long-run recipe equivalence. Continue serving-based monitoring and retain F32 references. No production data or original capture is deleted on the strength of a rounding-only test."
+}

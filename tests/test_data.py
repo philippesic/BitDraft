@@ -304,3 +304,20 @@ def test_metadata_unpack_rejects_escape(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="unsafe"):
         unpack(archive, tmp_path / "owned", "0" * 64, 1024)
     assert not (tmp_path / "foreign.json").exists()
+
+
+def test_partial_supervision_is_explicit_and_stops_at_eos() -> None:
+    from w1a1_eagle.data import TailWindow, supervision, supervision_positions
+
+    tokens = (1, 2, 3, 4)
+    positions = (1, 2, 3)
+    labels = (3, 4, 9)
+    assert supervision("short", tokens, 2, positions, labels, 9, "full15") == ()
+    selected = supervision("short", tokens, 2, positions, labels, 9, "up-to-15")
+    assert all(isinstance(window, TailWindow) for window in selected)
+    assert tuple(window.labels for window in selected) == ((3, 4, 9), (4, 9), (9,))
+    assert supervision_positions(selected) == 3
+    with pytest.raises(ValueError, match="post-EOG"):
+        supervision("short", tokens, 2, positions, (3, 9, 4), 9, "up-to-15")
+    with pytest.raises(ValueError):
+        Window("short", 1, (3, 4, 9))

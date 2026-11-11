@@ -2,7 +2,7 @@ import bisect
 import math
 import random
 
-from w1a1_eagle.contracts import Record, integer, record, sequence, string
+from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
 from w1a1_eagle.data import (
     Artifact,
     CaptureRow,
@@ -10,22 +10,30 @@ from w1a1_eagle.data import (
     Ledger,
     Prompt,
     Role,
-    Window,
+    Supervision,
     optional_topic,
-    position_count,
     prior_use,
-    windows,
+    supervision,
+    supervision_positions,
 )
 from w1a1_eagle.numerical.captures import TAPS, Capture, CaptureCache, CaptureSpec
 from w1a1_eagle.records import artifact, read
+from w1a1_eagle.sampling import TaskSampler
 
 
 class Corpus:
     def __init__(
-        self, manifest: Artifact | Dataset, seed: int, byte_budget: int, hidden: int = 2560
+        self,
+        manifest: Artifact | Dataset,
+        seed: int,
+        byte_budget: int,
+        hidden: int = 2560,
+        sampling: Artifact | None = None,
     ) -> None:
         if type(byte_budget) is not int or byte_budget < 1 or type(seed) is not int or seed < 0:
             raise ValueError("positive memory budget and nonnegative seed required")
+        self.sampling = sampling
+        self.task_sampler: TaskSampler | None = None
         if isinstance(manifest, Dataset):
             Ledger(tuple(row.prompt for row in manifest.rows), manifest.protected).admit_training(
                 len(manifest.rows)
@@ -107,17 +115,20 @@ class Corpus:
                 or metadata.get("feature_semantics") != "zero_based_pre_block_input_all_tokens"
             ):
                 raise ValueError("capture semantics mismatch")
+            if metadata.get("target_sha256", self.target) != self.target:
+                raise ValueError("individual capture and corpus target identities differ")
             eog = {integer(v) for v in sequence(metadata["eog_ids"])}
             labels = tuple(integer(v) for v in sequence(metadata["greedy_ids"]))
             if any(v in eog for v in labels[:-1]):
                 raise ValueError("post-EOG training labels")
-            selected = windows(
+            selected = supervision(
                 prompt.identity,
                 tuple(integer(v) for v in sequence(metadata["input_tokens"])),
                 integer(metadata["prompt_tokens"]),
                 tuple(integer(v) for v in sequence(metadata["logit_positions"])),
                 labels,
                 labels[-1] if labels and labels[-1] in eog else None,
+                string(metadata.get("window_policy", "full15")),
             )
             anchors = tuple(window.anchor for window in selected)
             retained_bytes += (
@@ -128,7 +139,7 @@ class Corpus:
             metadata_bytes = max(metadata_bytes, retained_bytes)
             if metadata_bytes >= byte_budget // 2:
                 raise ValueError("corpus windows exceed memory budget")
-            rows.append(CaptureRow(prompt, spec, anchors, position_count(anchors)))
+            rows.append(CaptureRow(prompt, spec, anchors, supervision_positions(selected)))
         if {p.identity for p in admitted} != {r.prompt.identity for r in rows}:
             raise ValueError("ledger and reader disagree")
         self.rows = tuple(rows)
@@ -149,10 +160,36 @@ class Corpus:
         self.cache = CaptureCache(byte_budget - metadata_bytes, hidden)
         self.seed = seed
         self.order: list[int] = []
+        if self.sampling is not None:
+            self.sampling.verify()
+            configuration = read(self.sampling.path)
+            if (
+                set(configuration) != {"schema", "policy", "burst", "weights", "strata"}
+                or configuration["schema"] != 1
+                or configuration["policy"] != "task-position-v1"
+            ):
+                raise ValueError("unsupported sampling specification")
+            strata = record(configuration["strata"])
+            if set(strata) != {row.prompt.identity for row in self.rows}:
+                raise ValueError("sampling strata must cover the exact admitted corpus")
+            weights = {
+                name: number(value) for name, value in record(configuration["weights"]).items()
+            }
+            self.task_sampler = TaskSampler(
+                tuple(len(row.anchors) for row in self.rows),
+                tuple(string(strata[row.prompt.identity]) for row in self.rows),
+                weights,
+                seed,
+                integer(configuration["burst"]),
+            )
 
     def locate(self, cursor: int) -> tuple[CaptureRow, int]:
         if type(cursor) is not int or cursor < 0:
             raise ValueError("nonnegative sampler cursor required")
+        if self.task_sampler is not None:
+            row_index, position = self.task_sampler.locate(cursor)
+            row = self.rows[row_index]
+            return row, row.anchors[position]
         offset = cursor % self.count
         if not self.order:
             self.order = list(range(self.count))
@@ -162,7 +199,7 @@ class Corpus:
         row = self.rows[row_index]
         return row, row.anchors[index - (self.ends[row_index - 1] if row_index else 0)]
 
-    def sample(self, cursor: int) -> tuple[Capture, Window]:
+    def sample(self, cursor: int) -> tuple[Capture, Supervision]:
         row, anchor = self.locate(cursor)
         capture = self.cache.get(row.capture)
         index = bisect.bisect_left(row.anchors, anchor)
@@ -188,8 +225,11 @@ class Corpus:
             ),
             "windows": self.count,
             "distinct_positions": self.unique_positions,
-            "label_exposures": updates * 15,
-            "mean_visits": updates * 15 / self.unique_positions,
+            "label_exposures_upper_bound": updates * 15,
+            "mean_visits_upper_bound": updates * 15 / self.unique_positions,
             "window_passes": updates / self.count,
-            "maximum_position_visits_bound": math.ceil(updates / self.count) * 15,
+            "maximum_position_visits_bound": updates
+            if self.task_sampler is not None
+            else math.ceil(updates / self.count) * 15,
+            "sampling_with_replacement": int(self.task_sampler is not None),
         }

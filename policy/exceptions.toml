@@ -70,13 +70,3 @@ reason = "Pinned GGUF external protocol member consumed by the dependency; exerc
 decision_id = "007-checks-and-review"
 owner = "Philip"
 review_condition = "GGUF protocol or export boundary changes"
-
-[[exception]]
-rule_id = "VULTURE"
-path = "w1a1_eagle/numerical/export.py"
-symbol = "architecture"
-sha256 = "7a3b50da9f464c189cf6b230b5d7a5e1e6881fea8c334cef881382fa4b9f2c46"
-reason = "Pinned GGUF external protocol member consumed by the dependency; exercised by the bounded export conformance test"
-decision_id = "007-checks-and-review"
-owner = "Philip"
-review_condition = "GGUF protocol or export boundary changes"

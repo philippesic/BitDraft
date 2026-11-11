@@ -123,3 +123,68 @@ def test_coverage_requires_real_strata_and_length_supply() -> None:
     assert {row["id"] for row in chosen} == {"0", "1", "2", "3"}
     with pytest.raises(ValueError, match="cannot satisfy"):
         select(rows, (2, 0, 0, 2, 0, 0), (2, 2, 0, 0))
+
+
+def test_paired_statistics_preserve_groups_and_missing_pairs() -> None:
+    from benchmarks.statistics import paired
+
+    rows: list[Record] = [
+        {
+            "arm": arm,
+            "group": group,
+            "task": group,
+            "rep": 0,
+            "tokens": 10,
+            "wall_seconds": seconds,
+            "native": {"proposed": 4, "accepted": accepted},
+        }
+        for group in ("one", "two")
+        for arm, seconds, accepted in (("baseline", 1.0, 2), ("candidate", 0.5, 3))
+    ]
+    result = paired(rows, "candidate", "baseline", 100)
+    assert result["speed_ratio"] == 2
+    assert result["acceptance_difference"] == 0.25
+    assert result["speed_ratio_95_interval"] == {"lower": 2.0, "upper": 2.0}
+    with pytest.raises(ValueError, match="both arms"):
+        paired(rows[:-1], "candidate", "baseline", 100)
+
+
+def test_capture_replies_preserve_messages_and_refuse_eof() -> None:
+    import os
+
+    from benchmarks.capture import Replies
+
+    read_fd, write_fd = os.pipe()
+    with os.fdopen(read_fd, "rb") as source, os.fdopen(write_fd, "wb") as target:
+        target.write(b'{"ready":true}\n{"status":"complete"}\n')
+        target.flush()
+        replies = Replies(source)
+        assert replies.receive(1) == {"ready": True}
+        assert replies.receive(1) == {"status": "complete"}
+        target.close()
+        with pytest.raises(ValueError, match="exited"):
+            replies.receive(1)
+
+
+def test_native_bundle_refuses_paths_and_links(tmp_path: Path) -> None:
+    import io
+    import tarfile
+
+    from benchmarks.native import unpack_bundle
+
+    for index, name in enumerate(("../escape", "/escape", "source/file")):
+        path = tmp_path / (str(index) + ".tgz")
+        with tarfile.open(path, "w:gz") as archive:
+            member = tarfile.TarInfo(name)
+            if name == "source/file":
+                member.type = tarfile.SYMTYPE
+                member.linkname = "../../escape"
+                archive.addfile(member)
+            else:
+                member.size = 1
+                archive.addfile(member, io.BytesIO(b"x"))
+        if name == "source/file":
+            with tarfile.open(path, "r:gz") as archive:
+                assert archive.getmember(name).linkname == "../../escape"
+        with pytest.raises(ValueError, match="regular source"):
+            unpack_bundle(path, tmp_path / "output", 1024)

@@ -203,6 +203,9 @@ def import_state(
         for name, parameter in expected.items():
             parameter.copy_(mapped[name])
     worker.optimizer.load_state_dict(new_optimizer)
+    worker.accounting.dataset_labels = integer(progress.get("supervised_tokens", updates * 15))
+    worker.accounting.observed_labels = worker.accounting.dataset_labels
+    worker.accounting.validate()
     worker.updates = updates
     worker.optimizer_updates = updates
     worker.cursor = cursor

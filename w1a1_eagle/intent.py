@@ -102,7 +102,7 @@ class Intent:
             "checkpoint_seconds",
         }
         if (
-            set(raw) - {"input_adapter", "target_sha256"} != required
+            set(raw) - {"input_adapter", "target_sha256", "sampling", "retention"} != required
             or type(raw["schema"]) is not int
             or raw["schema"] != 2
         ):
@@ -146,6 +146,14 @@ class Intent:
             raise ValueError("unsupported training mode")
         if (mode == "fresh") != (raw["parent"] is None):
             raise ValueError("fresh requires no parent; resume/branch require an explicit parent")
+        if "retention" in raw:
+            retention = record(raw["retention"])
+            if (
+                set(retention) != {"states", "exports"}
+                or not 2 <= integer(retention["states"]) <= 64
+                or not 1 <= integer(retention["exports"]) <= 64
+            ):
+                raise ValueError("explicit bounded state/export retention required")
         budget = record(raw["budget"])
         if set(budget) != {"updates", "wall_seconds", "attempts", "retries"}:
             raise ValueError("unsupported budget")
@@ -238,6 +246,10 @@ class Intent:
         )
 
     @property
+    def sampling(self) -> Artifact | None:
+        return artifact(self.raw["sampling"], self.base) if "sampling" in self.raw else None
+
+    @property
     def recipe(self) -> str:
         return identity(
             {
@@ -246,6 +258,9 @@ class Intent:
                 "corpus": {"sha256": self.corpus.sha256, "bytes": self.corpus.size},
                 "seed": self.seed,
                 "device": self.raw["device"],
+                "sampling": None
+                if self.sampling is None
+                else {"sha256": self.sampling.sha256, "bytes": self.sampling.size},
                 "geometry": self.raw["geometry"],
                 "code": self.raw["code_sha256"],
                 "input_adapter": None
@@ -266,6 +281,11 @@ class Intent:
     def peak_new_bytes(self) -> int:
         import math
 
+        if "retention" in self.raw:
+            retention = record(self.raw["retention"])
+            return (
+                integer(retention["states"]) + integer(retention["exports"]) + 1
+            ) * self.state_bytes + 80 * 1024 * 1024
         intermediate = min(
             self.budget.updates - 1,
             math.ceil(self.budget.updates / self.checkpoint_updates)

@@ -4,7 +4,9 @@ import shutil
 import subprocess
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Iterator
+from typing import Callable, Iterator
+
+from w1a1_eagle.clock import Clock
 
 
 def active_cuda_processes() -> tuple[int, ...]:
@@ -49,3 +51,14 @@ def device_lease(device: str) -> Iterator[None]:
         yield
     finally:
         os.close(descriptor)
+
+
+class DeviceClock:
+    def __init__(self, clock: Clock, synchronize: Callable[[], None] | None) -> None:
+        self.clock = clock
+        self.synchronize = synchronize
+
+    def now(self) -> float:
+        if self.synchronize is not None:
+            self.synchronize()
+        return self.clock.now()
