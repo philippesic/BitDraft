@@ -14,14 +14,14 @@ supersedes its old clock/budget. New native panels are at every cumulative updat
 hour through eight hours, with distinct `formal-update-*` labels. All earlier
 wall-hour panels remain intact. The existing 30-minute health/repair event is enabled; the hourly availability
 event stays off. Exact state restore passed and post-restore updates are advancing.
-Latest health check (2026-11-11 02:45 UTC): **healthy**, 89,600 updates,
-3.293 / 8 update hours; training toward the fourth
-update-hour panel. The third update-hour panel is complete: 44.80% acceptance,
-213.59 tokens/s; all 75 requests correct on consumed DEV3. No training errors or
-rejected updates; no repair needed. All five remaining states/exports plus 8 GiB
-scratch fit current disk headroom. Process identity, three locks, GPU device
-handles and advancing updates pass; NVML's process list also matches the trainer
-again. Durable checks are under the run's `health/` directory.
+Latest health check (2026-11-11 03:15 UTC): **healthy**, 101,900 updates,
+3.739 / 8 update hours; training toward the fourth
+update-hour panel. The third update-hour panel remains the latest native result:
+44.80% acceptance, 213.59 tokens/s; all 75 requests correct on consumed DEV3.
+No training errors or rejected updates; no repair needed. All five remaining
+states/exports plus 8 GiB scratch fit current disk headroom. Process identity,
+three locks, GPU device handles, advancing updates and NVML's process list pass.
+Durable checks are under the run's `health/` directory.
 
 All 15,647 captures and current-run checkpoints are verified on local ext4.
 The local-loader diagnostic produced exactly equal final parameters/Adam/RNG:
