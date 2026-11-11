@@ -17,6 +17,7 @@ partial. It skips the numerical test (about 37 s), the required-test roster and 
 rule proofs, keeps a type-check cache of about 300 MB in `/tmp`, writes no receipt and
 is never a commit result. `--full` runs everything portable and writes the receipt.
 
+There is no hosted CI. Verification is the local hook plus the checks agents run.
 The hook is `.githooks/pre-commit`. Enable it once per clone with
 `git config core.hooksPath .githooks`; the doctor reports whether it is enabled.
 

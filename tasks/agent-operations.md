@@ -2,7 +2,7 @@
 
 ## Goal
 
-Decide how this repository handles its remote, CI, backups and shared machine resources.
+Decide how this repository handles its remote, backups and shared machine resources.
 Disk space is handled by a separate operations system, not by this repository.
 
 ## Authorized
@@ -18,9 +18,7 @@ AGENTS.md or a topic doc; then this file is deleted.
 
 Candidates:
 
-1. Create the private remote, then add CI that runs `tools/check.py --full`: install the
-   pinned uv, sync from the lock, run the check. Add a container only if CI needs the
-   numerical environment. The never-run workflow and container file were deleted.
+1. Create the private remote. It is storage only; there is no hosted CI.
 2. Backup for retained states and captures; local presence is not a backup.
 3. Coexisting with GPU jobs from other projects on the same machine.
 

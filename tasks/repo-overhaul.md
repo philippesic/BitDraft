@@ -8,7 +8,7 @@ one home per fact, fast feedback, rules that earn their cost.
 ## Authorized
 
 Instructions and documents restructure; quick default check with `--full` commit gate;
-hook through `core.hooksPath`; deleting the never-run CI files; enforcing the task-file
+hook through `core.hooksPath`; deleting the CI files (no hosted CI); enforcing the task-file
 template. Other components need Philip's decision as they come up.
 
 ## Done when
@@ -31,8 +31,7 @@ Remaining components:
 2. Rules: about 40 proofs test third-party tool behavior, comparison and selection
    rules guard code that does not exist yet, and configuration digests in
    `tools/config.py` force a hash edit for every policy change.
-3. CI and remote, after the remote exists; see [agent operations](agent-operations.md).
-4. Dependency integration: host Torch through `.host.toml`, the lock digest repeated in
+3. Dependency integration: host Torch through `.host.toml`, the lock digest repeated in
    `policy/toolchain.toml`.
 
 ## Next
