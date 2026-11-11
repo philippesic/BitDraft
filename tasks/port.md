@@ -7,21 +7,17 @@ replacing the per-campaign scripts of `/home/philip/binary-eagle-decoding`.
 
 ## Authorized
 
-The source port through end-to-end CPU verification, including a lightweight fresh-agent
-exercise. Not authorized: benchmark redesign, high-level agent operations, GPU work,
-training runs, data transfer, cleanup of old artifacts, remotes or publication. Each
-later stage below starts only on Philip's go.
+Identify and prepare the complete functional port before benchmark redesign and agent
+operations. CPU investigation is autonomous; GPU work follows the task-ownership rule
+in AGENTS.md. This inventory does not allocate a new training campaign or authorize
+artifact deletion. Philip will link the remote; retention tooling is deferred.
 
 ## Done when
 
-- Source: retained-artifact parity for latents, scales, masks, parameter groups, forward,
-  loss, gradient and update; exact sign, bit order, packing and GGUF metadata. CPU
-  equivalence does not certify native rounding.
-- Runtime: a reproduced runtime04 build closure and a real tiny verify on the RTX 5080.
-- Benchmark: one public entry with plan, run, verify, report and qualify modes that
-  enforces [comparison rules](../docs/domain.md#comparisons) and selection.
-- GPU qualification: hash-matched check and verify receipts, keep-best exercised on
-  hardware, bounded disk and GPU cost, all failures retained.
+The retained HE4 workflow can be installed, supplied real data, trained on the supported
+device, stopped and resumed, exported, and loaded by a rebuilt native runtime with
+correctness evidence. Current docs describe the supported product without requiring
+port history. Benchmark redesign and agent operations follow this milestone.
 
 ## State
 
@@ -41,35 +37,45 @@ transformers was observed at 4.57.6 against a declared 4.57.1.
 
 ## Next
 
-Retained-artifact parity for the source stage, once Philip confirms the stage is still
-the priority.
+Work through the prerequisite inventory below. It identifies work, not a claim that
+these capabilities have been completed. Preserve original artifacts and live jobs.
 
-## Proposed specifications
+## Prerequisites before benchmark redesign
 
-Smallest real verify: two synthetic non-heldout prompts of at most 32 input tokens,
-greedy cap 16, context 256, concurrency 1, depth 2, matched target, tokenizer, template,
-runtime, seed and F16 KV. Target-only and speculative generation must match every token
-ID, text and finish reason, with finite logits, confirmed loader activation and nonzero
-proposals. Capture at most 16 positions on one prompt and verify all eight taps,
-next-token and end-of-generation semantics, argmax labels and window coverage. Proposed
-limits: 128 MiB output, five GPU minutes, no download or build.
+1. Reproducible installation: rebuild numerical dependencies in a fresh environment,
+   and document the native compiler/library setup once recovered. Check-only setup works;
+   current numerical verification reuses host libraries.
+2. Real source/data equivalence: validate actual retained inputs, masks, forward/loss,
+   gradients, updates and exports. Current reduced CPU fixtures and reconciled index
+   metadata do not prove full-size equivalence. Resolve the eight-prompt discrepancy
+   from F005 before claiming that recapture is fully reconciled.
+3. Checkpoint continuity: verify retained state availability and its compression/source
+   dependencies, then implement explicit conversion/import for supported HE4 states.
+   The worker accepts its own schema 3; historical state locators are metadata records,
+   not demonstrated import/resume support. Never silently reset optimizer or exposure.
+4. GPU training and recovery: intents currently reject non-CPU devices and the CLI
+   masks CUDA. Implement the real device path, resource handling, interruption and exact
+   resume, then exercise it on hardware within an assigned task. GPU-aware state fields
+   alone do not qualify this path.
+5. Native runtime: recover the full runtime04 source/build inputs and rebuild it.
+   Load an export from this repo and compare target-only versus speculative token IDs,
+   text and stopping behavior. Confirm finite logits and actual drafter activation.
+6. Data capture: current code reads and authenticates existing captures; no public fresh
+   capture workflow is present. Provide the supported capture path and verify taps,
+   label offsets, end-of-generation handling, provenance and admission end to end.
+7. Basic evaluation/reporting: demonstrate useful training readouts and export/inference
+   correctness through normal entry points. Scientific/selection fields currently remain
+   unknown or unimplemented. Keep workload selection, comparative statistics and the
+   eventual serving-based best-checkpoint policy for the benchmark phase.
+8. End-to-end acceptance and docs: exercise a small real capture/import -> train ->
+   stop/resume -> export -> native verification workflow from documented commands.
+   Check failure recovery as well as success. Replace temporary port instructions with
+   current setup/use docs, preserve scoped evidence, and delete completed task files.
 
-Benchmark workloads from the original plan: native smoke, capture correctness, DEV
-diagnostic, formal runtime04 panel (consumed DEV3, depth 2, context 4096, greedy, cap
-256, two excluded warmups, five alternating process repetitions), larger serving
-selection, heldout confirmation, stress and recovery. These are replication references,
-not approved requirements.
+## Scope to settle when implementation reaches it
 
-## Open questions for Philip
-
-1. Permanent name, remote, license and publication visibility.
-2. Initial support breadth. Proposed: HE4, target-only and Baseline on Qwen3.5-4B
-   Q4_K_M, runtime04-equivalent, RTX 5080; other routes stay historical.
-3. Recapture acceptance: explain the eight-prompt difference in F005 before admission.
-4. Training budget and exposure. Proposed guards: at least 1 million admitted unique
-   positions, at most 2 window epochs, mean and max exposure at most 30.
-5. DEV, serving and stopping. Proposed: DEV60 every 30 update-minutes, formal serving at
-   frozen mid-run points, stop after three checks with 5% relative cross-entropy
-   deterioration and no top-1 improvement.
-6. Deployment margin and an untouched confirmation source; heldout24 is already consumed.
-7. How much conversion of historical state schemas to implement.
+HE4 remains the development priority. Preserve historical alternatives and evidence.
+The depth of legacy checkpoint conversion and support for other model families must
+be explicit before that work expands. Training budgets, evaluation cohorts and stopping
+policies are scientific choices, not defaults inferred from old campaigns. Historical
+benchmark workloads remain replication references, not approved new requirements.

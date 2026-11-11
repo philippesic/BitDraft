@@ -15,7 +15,7 @@ never enter training, calibration or selection. Names and metrics: [domain](docs
 ## Code
 
 - No comments or docstrings. Put intent in names and types, rationale in the topic doc.
-  Necessary machine lines need an entry in `policy/exceptions.toml`.
+  Machine directives need an entry in `policy/exceptions.toml`.
 - Strict typing everywhere; make invalid states unrepresentable at construction.
 - Product code never imports `tools` or `tests`. Each kind of state has one owner module.
 - Tests are small and deterministic: inject clocks, use small fakes, run on CPU.
@@ -24,8 +24,7 @@ never enter training, calibration or selection. Names and metrics: [domain](docs
 
 - While working: `uv run --locked --no-sync --offline python tools/check.py` (about 3 s
   warm). It is partial: no numerical test, required-test roster or rule proofs.
-- Commit gate: the same command with `--full` (about 70 s). The hook in `.githooks/` runs
-  it once enabled with `git config core.hooksPath .githooks`.
+- Commit gate: the same command with `--full` (about 70 s). Enable the `.githooks/` hook with `git config core.hooksPath .githooks`.
 - There is no hosted CI; the hook and agents' own runs are the verification. Do not add CI.
 - Fix the cause. Never weaken a check, update a digest or add an exception only to pass;
   if a pin or gate blocks legitimate work, stop and report it with the proposed change.
@@ -34,12 +33,15 @@ never enter training, calibration or selection. Names and metrics: [domain](docs
 
 - Without asking: repairs, tests, refactors, docs and local commits within the scope a
   task file or Philip authorized. Finish authorized work; do not wait for repeat approval.
-- Commit coherent checkpoints without coauthor trailers. Push to an established user-owned
-  remote at milestones and handoff; report local-only work when no remote exists.
+- Commit checkpoints without coauthor trailers. Push to the user-owned remote at
+  milestones and handoff; report local-only work.
 - Needs Philip: weakening a guarantee, changing scientific semantics or data roles,
-  training runs, GPU work, data transfer, deleting artifacts you did not create,
+  new training allocations, data transfer, deleting artifacts you did not create,
   creating remotes or publishing (license is undecided).
-- Never start GPU jobs. Another project's GPU job may be running; leave it alone.
+- CPU work is autonomous. GPU work follows task scope; there is no blanket prohibition.
+  Check GPU activity and task ownership before starting. Preserve other tasks' jobs.
+  An established GPU allocation belongs to that task until completion or release;
+  coordinate its agents within that allocation. Explicit user limits still apply.
 - `/home/philip/binary-eagle-decoding` and `vllm-semantic-cache-ext` are read-only references.
 - Parallel work: use a separate worktree. Preserve uncommitted work you did not write,
   and commit it only after confirming the thread that wrote it has finished.
@@ -55,7 +57,7 @@ never enter training, calibration or selection. Names and metrics: [domain](docs
   Work on a task only when asked to work on that task; an open task file is context,
   not an instruction to resume it.
 - No status, history, plan or scratch documents; Git keeps history.
-- Read FINDINGS and `tasks/` for context before starting. Write plainly: short sentences, no hedging.
+- Read FINDINGS and `tasks/` before starting. Write plainly.
 
 ## Evidence and reporting
 

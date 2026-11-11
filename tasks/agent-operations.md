@@ -2,26 +2,33 @@
 
 ## Goal
 
-Decide how this repository handles its remote, backups and shared machine resources.
-Disk space is handled by a separate operations system, not by this repository.
+Design project operations after the functional port and benchmark overhaul.
 
 ## Authorized
 
-Nothing yet.
+Record decisions and proposals. No retention skill, artifact purge or remote creation
+is assigned now. Philip will link the remote. No hosted CI.
 
 ## Done when
 
-Each candidate below is decided, implemented where needed, and its rule lives in
-AGENTS.md or a topic doc; then this file is deleted.
+The later operations phase defines and verifies evidence preservation, artifact backup,
+cleanup and reusable agent procedures.
 
 ## State
 
-Candidates:
+Disk handling belongs to Philip's separate system. Philip is considering a skill that
+turns experimental evidence into charts/writeups, stores the results, then retires
+source or artifacts where appropriate. This is a proposal, not deletion authorization.
+A report alone cannot replace everything needed to recompute a claim or resume a state.
+The design must identify what is retained, where it is backed up, what can be rebuilt
+and how a proposed retirement is checked before deletion.
 
-1. Create the private remote. It is storage only; there is no hosted CI.
-2. Backup for retained states and captures; local presence is not a backup.
-3. Coexisting with GPU jobs from other projects on the same machine.
+CPU work is autonomous. GPU work is allowed within task scope, commonly explicitly
+assigned by Philip. Check existing GPU activity and ownership first. Once a task owns
+an allocation, its agents may retain it for the whole task, coordinating their use.
+Other tasks' jobs and explicit limits remain protected. AGENTS.md holds the rule.
 
 ## Next
 
-Philip picks which candidate to take first.
+Finish the functional port, then overhaul benchmarks, then design these operations.
+Do not treat the unlinked remote or the proposed retention skill as a port blocker.
