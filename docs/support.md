@@ -10,7 +10,7 @@ resume and explicit branches, and streamed GGUF export/readback. See [execution]
 Reduced CPU fixtures exercise arithmetic, state restoration, ownership, recovery and
 export. The retained modern metadata index reconciles its records and window counts.
 Separate RTX 5080 evidence establishes the final HE4broad checkpoint’s next-update parity
-and a three-request native target/baseline/candidate token-and-stopping pilot. See
+and bounded native target/baseline/candidate token-and-stopping comparisons. See
 [migration](../results/he4-checkpoint-migration/result.md). These bounded measurements
 do not establish long-run equivalence or a serving-speed improvement.
 
@@ -26,10 +26,12 @@ The full gate uses the configured interpreter; this does not qualify other hosts
 | Training device | CPU and CUDA intents are implemented; CUDA obtains an exclusive host lease and refuses existing compute jobs. |
 | Historical checkpoints | Authenticated legacy BSZ import is implemented; the final HE4broad state reproduces its next original-data update exactly. |
 | Native runtime | Complete rebuild and maintained native-build/native-helpers commands were exercised on RTX 5080; build receipts remain external. Broader host compatibility is unqualified. |
-| Serving correctness | No exported model from this repository has completed native target-only/speculative output, stopping and finite-logit qualification. |
-| New data capture | Resumable capture and bounded format-conversion commands are implemented; diverse TRAIN/DEV qualification captures have run. Production format adoption remains under matched qualification. |
-| Scientific selection | Category/length selection, opaque identity admission and paired request statistics are implemented. Serving-based checkpoint selection and live workflow integration remain pending. |
-| End-to-end path | Public FP16 capture → optimizer-preserving CUDA continuation → export completed; schema-4 GPU resume and complete serving-based periodic workflow qualification remain pending. |
+| Serving correctness | Both matched precision descendants passed 120 target-token/stopping requests. An independent greedy target-argmax oracle passed 664 verification rounds, including EOG and short caps. This is bounded fidelity evidence, not universal runtime qualification. |
+| New data capture | Resumable TRAIN/DEV capture and streamed conversion ran. FP16 passed the scoped HE4/Q4KM qualification; other targets require separate storage checks. |
+| Scientific selection | Category/length selection, opaque identity admission and paired request statistics ran. Controlled live tools passed 12 tasks × three arms × two repeats. Full-suite/campaign coordinators are implemented but their complete GPU campaigns, recovery and selection qualification remain pending. |
+| End-to-end path | Public FP16 capture → optimizer-preserving CUDA continuation → export completed. Schema-4 GPU resume and periodic 120-window diagnostics ran. Production hybrid continuation has not yet launched. |
+| Sampled verification | Actual native sample-and-match and rejection functions passed controlled distribution/EOG tests for both targets after a measured rejection-EOG repair. Neural sampled request qualification remains separate. |
+| Long inputs | Real FP16 capture and training ran on a 13,974-token prompt. The current bank's maximum prompt has been captured; its memory proof is tracked in the implementation task. |
 | Exposure across branches | Aggregate counters and lineage survive; a per-position lifetime ledger across changed recipes/corpora is not implemented. |
 | Data recovery | The historical eight-prompt discrepancy remains unresolved; see the deduplication result. |
 

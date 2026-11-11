@@ -1,5 +1,9 @@
 # Findings
 
+- FP16 feature storage passed the matched 1,024-update HE4/Q4KM qualification,
+  including separate DEV loss and 120 native requests; use it for scoped supplemental
+  capture. [Result](results/fp16-storage-adoption/result.md).
+
 Established conclusions and scoped negative/inconclusive results. Historical
 measurements were imported, not rerun. Read each result before reusing its claims.
 See [closeout specification](docs/results.md).

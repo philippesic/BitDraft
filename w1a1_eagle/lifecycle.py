@@ -165,6 +165,7 @@ class Journal:
         admissions = [row for row in current_events if row.get("kind") == "admission"]
         workers = [row for row in current_events if row.get("kind") == "worker"]
         failures = [row for row in current_events if row.get("kind") == "failure"]
+        diagnostics = [row for row in current_events if row.get("kind") == "development-diagnostic"]
         return {
             "schema": 1,
             "attempts": attempts,
@@ -175,7 +176,10 @@ class Journal:
             "worker": workers[-1] if workers else None,
             "failure": failures[-1] if failures else None,
             "operational": "terminal" if terminal and len(terminal) == attempts else "incomplete",
-            "scientific": "unknown: no supplied development evidence was evaluated",
+            "scientific": "DEV teacher-forced diagnostics measured; native acceptance and usefulness remain separate"
+            if diagnostics
+            else "unknown: no supplied development evidence was evaluated",
+            "development_diagnostic": diagnostics[-1] if diagnostics else None,
             "objective": "unknown: no benchmark result exists",
             "validity": "journal integrity verified; numerical/serving validity is separate",
             "selection": "unselected; no selection policy or evaluator is installed",

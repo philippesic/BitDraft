@@ -1,5 +1,6 @@
 import json
 from collections import defaultdict, deque
+from typing import Callable
 
 from w1a1_eagle.contracts import Record, integer, string
 from w1a1_eagle.records import identity
@@ -56,10 +57,27 @@ def quotas(counts: tuple[int, ...]) -> dict[str, int]:
 
 
 def select(rows: list[Record], counts: tuple[int, ...], bands: tuple[int, ...]) -> list[Record]:
-    demands = quotas(counts)
+    return apportion(rows, quotas(counts), dict(enumerate(bands)), stratum, bank_length)
+
+
+def bank_length(row: Record) -> int:
+    return integer(row["length_band"])
+
+
+def apportion(
+    rows: list[Record],
+    demands: dict[str, int],
+    columns: dict[int, int],
+    row_kind: Callable[[Record], str],
+    column_kind: Callable[[Record], int],
+) -> list[Record]:
+    if sum(demands.values()) != sum(columns.values()) or any(
+        type(v) is not int or v < 0 for v in (*demands.values(), *columns.values())
+    ):
+        raise ValueError("nonnegative matching allocation margins required")
     pools: dict[tuple[str, int], list[Record]] = defaultdict(list)
     for row in rows:
-        pools[stratum(row), integer(row["length_band"])].append(row)
+        pools[row_kind(row), column_kind(row)].append(row)
     capacities: dict[tuple[str, str], int] = {}
     adjacency: dict[str, set[str]] = defaultdict(set)
 
@@ -71,9 +89,9 @@ def select(rows: list[Record], counts: tuple[int, ...], bands: tuple[int, ...]) 
 
     for name, count in demands.items():
         edge("start", name, count)
-        for band in range(4):
+        for band in columns:
             edge(name, "band" + str(band), len(pools[name, band]))
-    for band, count in enumerate(bands):
+    for band, count in columns.items():
         edge("band" + str(band), "end", count)
     flow = 0
     while True:
@@ -89,7 +107,7 @@ def select(rows: list[Record], counts: tuple[int, ...], bands: tuple[int, ...]) 
                     pending.append(right)
         if "end" not in visited:
             break
-        amount, node = sum(counts), "end"
+        amount, node = sum(demands.values()), "end"
         while node != "start":
             amount = min(amount, capacities[parents[node], node])
             node = parents[node]
@@ -100,7 +118,7 @@ def select(rows: list[Record], counts: tuple[int, ...], bands: tuple[int, ...]) 
             capacities[node, left] += amount
             node = left
         flow += amount
-    if flow != sum(counts) or flow != sum(bands):
+    if flow != sum(demands.values()):
         coverage = {name + "/" + str(band): len(values) for (name, band), values in pools.items()}
         raise ValueError(
             "source pool cannot satisfy real category/length coverage: "
@@ -108,6 +126,6 @@ def select(rows: list[Record], counts: tuple[int, ...], bands: tuple[int, ...]) 
         )
     selected: list[Record] = []
     for (name, band), values in sorted(pools.items()):
-        count = capacities["band" + str(band), name]
+        count = capacities.get(("band" + str(band), name), 0)
         selected.extend(sorted(values, key=selection_order)[:count])
     return selected

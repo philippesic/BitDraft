@@ -1,0 +1,63 @@
+{
+  "input_tokens": 1767619,
+  "maximum_feature_bytes": 154190602240,
+  "output_caps": {
+    "1024": 1000,
+    "2048": 400,
+    "256": 600
+  },
+  "quotas": {
+    "code:0": 230,
+    "code:1": 20,
+    "conversation:0": 602,
+    "conversation:1": 150,
+    "conversation:2": 98,
+    "documents:2": 80,
+    "documents:3": 20,
+    "reasoning:1": 100,
+    "structured:1": 650,
+    "writing:0": 25,
+    "writing:1": 25
+  },
+  "rejected_source_or_duplicate": 2404,
+  "scope": "new-source focused subset of the admitted bank; exact old aliases and tokenized prefixes excluded; semantic review remains required",
+  "status": "selected",
+  "storage_bytes": 2,
+  "target_sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630",
+  "tasks": 2000,
+  "unique_source_groups": 2000,
+  "selection_definition": {
+    "schema": 1,
+    "quotas": {
+      "code:0": 230,
+      "code:1": 20,
+      "reasoning:1": 100,
+      "documents:2": 80,
+      "documents:3": 20,
+      "conversation:0": 602,
+      "conversation:1": 150,
+      "conversation:2": 98,
+      "structured:1": 650,
+      "writing:0": 25,
+      "writing:1": 25
+    },
+    "output_caps": {
+      "256": 600,
+      "1024": 1000,
+      "2048": 400
+    },
+    "excluded_sources": [
+      "legacy-dolly",
+      "legacy-gsm8k",
+      "legacy-magicoder"
+    ],
+    "storage_bytes": 2,
+    "hidden": 2560,
+    "taps": 8
+  },
+  "raw_receipt": {
+    "path": "/home/philip/binary-eagle-artifacts/bank/supplement-v1/result.json",
+    "sha256": "2482cb2c47211297c123cbfe17786928297f81a72973b2c4af1162421dc15179",
+    "bytes": 992
+  }
+}

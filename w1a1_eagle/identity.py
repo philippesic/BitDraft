@@ -1,3 +1,4 @@
+import errno
 import hashlib
 import importlib.metadata
 import os
@@ -70,7 +71,15 @@ def freeze_source(root: Path, destination: Path, expected: str, reserve: int) ->
             path.chmod(0o444)
         if source_identity(temporary) != expected:
             raise ValueError("runtime snapshot verification failed")
-        os.rename(temporary, target)
+        try:
+            os.rename(temporary, target)
+        except OSError as error:
+            if error.errno not in {errno.EEXIST, errno.ENOTEMPTY}:
+                raise
+            if target.is_symlink() or not target.is_dir() or source_identity(target) != expected:
+                raise ValueError(
+                    "concurrent source snapshot differs from admitted identity"
+                ) from error
         descriptor = os.open(destination, os.O_RDONLY | os.O_DIRECTORY)
         try:
             os.fsync(descriptor)

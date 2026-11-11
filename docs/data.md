@@ -1,8 +1,31 @@
 # Data admission
 
+For the scoped Qwen3.5-4B Q4KM/HE4 recipe, FP16 feature storage passed the
+[production qualification](../results/fp16-storage-adoption/result.md). It changes file
+storage only; training still materializes FP32 features. Other targets need separate checks.
+
+An intent with `corpus_format: corpus-mixture-v1` binds a compact mixture artifact rather
+than copying feature arrays. Its fields are `schema: corpus-mixture-v1`, `target_sha256`
+and `components`. Each component has `kind` and authenticated `source`: `index-intent`
+binds a retained-index intent; `corpus-v1` binds a direct TRAIN-only corpus. Two to eight
+components are supported. All targets must match. Protected aliases and roles remain
+enforced, and source/group aliases plus exact tokenized prompt prefixes cannot overlap
+across components. Repeated captures already inside a legacy component are preserved.
+The mixture identity and sampling artifact bind the new candidate recipe. This supports
+explicit same-target mixtures, not automatic transfer between models.
+
 Training data enters through a typed ledger. Admission reads metadata, checks roles
 and counts, and refuses before any training starts. Raw tensors are authenticated when
 they are read, not at admission. Terms are defined in [domain](domain.md).
+
+The maintained [bank definition](../benchmarks/definitions/prompt-bank-v1.json) records
+coverage, source revisions/licenses, native template identity and authenticated external
+selected-ID artifacts. Prompt bodies and derived identity lists are data artifacts.
+[Supplement selection](../benchmarks/definitions/supplement-v1.json) records the focused
+2K slice. `benchmarks select-supplement` authenticates the bank and retained index, excludes
+legacy identities and exact tokenized prefixes, solves category/length and output-cap
+quotas, and forecasts maximum feature bytes. It does not generate captures or establish
+semantic difficulty. Inspect source quality before production acquisition.
 
 ## Prompt identity and roles
 

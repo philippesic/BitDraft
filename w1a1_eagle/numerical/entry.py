@@ -22,10 +22,13 @@ from w1a1_eagle.lifecycle import Journal, control
 from w1a1_eagle.model import Geometry
 from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.numerical.corpus import Corpus
+from w1a1_eagle.numerical.diagnostics import Diagnostics
 from w1a1_eagle.numerical.export import export_he4
+from w1a1_eagle.numerical.mixture import mixture
 from w1a1_eagle.numerical.weights import load_he4
 from w1a1_eagle.numerical.worker import TensorWorker, checkpoint_accounting
 from w1a1_eagle.processes import ProcessIdentity
+from w1a1_eagle.records import artifact
 
 
 def admission(intent: Intent, corpus: Corpus) -> Record:
@@ -101,6 +104,14 @@ def preflight(path: Path, sealed: bool = False) -> Record:
 
 
 def read_corpus(intent: Intent, hidden: int) -> Corpus:
+    if intent.raw.get("corpus_format") == "corpus-mixture-v1":
+        return Corpus(
+            mixture(intent.corpus, intent.seed, intent.memory_bytes, hidden),
+            intent.seed,
+            intent.memory_bytes,
+            hidden,
+            intent.sampling,
+        )
     source = (
         IndexReader(intent.corpus, intent.index_spec, intent.memory_bytes).load()
         if intent.index_spec is not None
@@ -158,6 +169,11 @@ def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
     initial_loaded = loaded_identity(loaded_cache)
     journal.append({"kind": "loaded", "attempt": attempt, "identity": initial_loaded})
     worker = TensorWorker(model, corpus, intent.recipe, intent.corpus.sha256)
+    diagnostics = (
+        Diagnostics(artifact(intent.raw["development"], intent.base), corpus, intent.memory_bytes)
+        if "development" in intent.raw
+        else None
+    )
     states = Store(root / "states", intent.disk_reserve_bytes)
     if intent.parent:
         parent = Store(intent.parent.path.parent).describe(intent.parent)
@@ -207,9 +223,37 @@ def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
 
     last_checkpoint_updates = worker.updates
     last_checkpoint_seconds = clock.now()
+    last_diagnostic_updates = -1
+    last_progress_updates = -1
 
     def stop() -> bool:
-        nonlocal last_checkpoint_updates, last_checkpoint_seconds, stop_reason
+        nonlocal \
+            last_checkpoint_updates, \
+            last_checkpoint_seconds, \
+            stop_reason, \
+            last_diagnostic_updates, \
+            last_progress_updates
+        if worker.updates != last_progress_updates and worker.cursor % 100 == 0:
+            journal.append(
+                {
+                    "kind": "training-progress",
+                    "attempt": attempt,
+                    "updates": worker.updates,
+                    "cursor": worker.cursor,
+                    "loss": worker.progress.last_loss,
+                    "gradient_norm": worker.last_gradient_norm,
+                    "accounting": worker.accounting.encode(),
+                }
+            )
+            last_progress_updates = worker.updates
+        if (
+            "model_update_seconds" in intent.raw
+            and worker.accounting.successful_update_seconds
+            + worker.accounting.failed_update_seconds
+            >= number(intent.raw["model_update_seconds"])
+        ):
+            stop_reason = "model-update-time"
+            return True
         if journal.path.stat().st_size >= 56 * 1024 * 1024:
             stop_reason = "journal-capacity"
             return True
@@ -225,6 +269,25 @@ def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
         if control(root, attempt, owner, 1):
             stop_reason = "owned-control-stop"
             return True
+        if (
+            diagnostics is not None
+            and worker.cursor % integer(intent.raw.get("development_cadence_updates", 250)) == 0
+            and worker.updates != last_diagnostic_updates
+        ):
+            worker.verify_frozen()
+            began = clock.now()
+            result = diagnostics.measure(model)
+            worker.verify_frozen()
+            journal.append(
+                {
+                    "kind": "development-diagnostic",
+                    "attempt": attempt,
+                    "updates": worker.updates,
+                    "seconds": clock.now() - began,
+                    "result": result,
+                }
+            )
+            last_diagnostic_updates = worker.updates
         if (
             worker.updates - last_checkpoint_updates >= intent.checkpoint_updates
             or clock.now() - last_checkpoint_seconds >= intent.checkpoint_seconds
@@ -325,14 +388,23 @@ def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
             "outcome": result,
             "updates": worker.updates,
             "cursor": worker.cursor,
+            "accounting": worker.accounting.encode(),
             "attempts": worker.progress.attempts,
             "state": reference.artifact.sha256,
             "export": exported.artifact.sha256,
             "activation": {
                 "actual_optimizer_updates": worker.optimizer_updates,
                 "training_device": model.vocabulary.device.type,
+                "peak_cuda_allocated_bytes": torch.cuda.max_memory_allocated()
+                if model.vocabulary.device.type == "cuda"
+                else None,
+                "peak_cuda_reserved_bytes": torch.cuda.max_memory_reserved()
+                if model.vocabulary.device.type == "cuda"
+                else None,
             },
-            "scientific": "unknown: no development evaluation supplied",
+            "scientific": "DEV teacher-forced diagnostics measured; native acceptance is separate"
+            if diagnostics is not None
+            else "unknown: no development evaluation supplied",
             "objective": "unknown: no benchmark",
         }
     )

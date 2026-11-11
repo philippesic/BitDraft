@@ -17,6 +17,28 @@ def file_reference(path: Path) -> Record:
     return {"path": str(path.resolve()), "sha256": digest, "bytes": path.stat().st_size}
 
 
+def repair_sampling(source: Path) -> None:
+    owner = Store(source / "common")
+    path = owner.root / "sampling.cpp"
+    text = path.read_text()
+    start = text.index("std::vector<llama_token> common_sampler_sample_and_accept_n_rejection(")
+    end = text.index("\nstd::vector<llama_token> common_sampler_sample_and_accept_n(", start)
+    body = text[start:end]
+    marker = "            result.push_back(draft[i]);\n            continue;"
+    reserve = "    result.reserve(idxs.size());"
+    if body.count(marker) != 1 or body.count(reserve) != 1:
+        raise ValueError("sampled EOS repair does not match the pinned runtime")
+    body = body.replace(
+        reserve,
+        reserve + "\n    const llama_vocab * vocab = llama_model_get_vocab(llama_get_model(ctx));",
+    )
+    body = body.replace(
+        marker,
+        "            result.push_back(draft[i]);\n            if (llama_vocab_is_eog(vocab, draft[i]) && i + 1 < draft.size()) break;\n            continue;",
+    )
+    owner.atomic(path, (text[:start] + body + text[end:]).encode())
+
+
 def unpack_bundle(bundle: Path, destination: Path, maximum: int) -> None:
     seen: set[str] = set()
     total = 0
@@ -51,7 +73,8 @@ def unpack_bundle(bundle: Path, destination: Path, maximum: int) -> None:
 def build(specification: Path, output: Path) -> Record:
     raw = read(specification)
     if (
-        set(raw) != {"schema", "bundle", "cuda_compiler", "architecture", "jobs", "unpacked_bytes"}
+        set(raw) - {"verification_trace"}
+        != {"schema", "bundle", "cuda_compiler", "architecture", "jobs", "unpacked_bytes"}
         or raw["schema"] != 1
     ):
         raise ValueError("unsupported native build specification")
@@ -72,6 +95,29 @@ def build(specification: Path, output: Path) -> Record:
     store.atomic(store.root / "specification.json", specification.read_bytes())
     unpack_bundle(bundle.path, store.root, bound)
     source, compiled = store.root / "source", store.root / "build"
+    repair_sampling(source)
+    diagnostic = raw.get("verification_trace", False)
+    if type(diagnostic) is not bool:
+        raise ValueError("verification_trace must be an explicit boolean")
+    if diagnostic:
+        server = Store(source / "tools/server")
+        header = snapshot / "native/verifier-trace.hpp"
+        server.atomic(server.root / header.name, header.read_bytes())
+        path = server.root / "server-context.cpp"
+        text = path.read_text()
+        marker = "                // check for partial draft acceptance\n"
+        if text.count(marker) != 1 or text.count('#include "server-context.h"') != 1:
+            raise ValueError("diagnostic adapter does not match the pinned server source")
+        text = text.replace(
+            '#include "server-context.h"',
+            '#include "server-context.h"\n#include "verifier-trace.hpp"',
+        )
+        text = text.replace(
+            marker,
+            "                binary_verifier_trace(slot.ctx_tgt, spec_i_batch, slot.spec_draft, accepted, slot.spec_is_replay, use_rejection, !(n_rollback > 0 && use_ckpt_tgt));\n\n"
+            + marker,
+        )
+        server.atomic(path, text.encode())
     configure = [
         "cmake",
         "-S",
@@ -129,6 +175,8 @@ def build(specification: Path, output: Path) -> Record:
             "code_sha256": code,
             "artifacts": files,
             "objects_reused": False,
+            "verification_trace": diagnostic,
+            "runtime_repairs": ["rejection_eog_boundary_v1"],
             "qualification": "build only; serving/capture must be exercised on this hardware",
         }
         store.atomic(store.root / "result.json", canonical(result))
@@ -145,6 +193,7 @@ def helper_commands(
     for name, extra in (
         ("tokenize", ["-lllama", "-lllama-common"]),
         ("capture", ["-lllama", "-lggml", "-lggml-base", "-ldl"]),
+        ("verifier-test", ["-lllama", "-lllama-common"]),
     ):
         commands.append(
             [
@@ -209,7 +258,7 @@ def helpers(specification: Path, output: Path) -> Record:
     outputs = [
         reference(value)
         for value in files
-        if value.path.name not in {"binary-tokenize", "binary-capture"}
+        if value.path.name not in {"binary-tokenize", "binary-capture", "binary-verifier-test"}
     ]
     outputs.extend(file_reference(path) for path in sorted(binaries.iterdir()) if path.is_file())
     result: Record = {
@@ -218,6 +267,8 @@ def helpers(specification: Path, output: Path) -> Record:
         "source_bundle": reference(bundle),
         "code_sha256": code,
         "artifacts": outputs,
+        "verification_trace": previous.get("verification_trace", False),
+        "runtime_repairs": previous.get("runtime_repairs", []),
         "qualification": "helper build only; template/capture matching requires execution",
     }
     store.atomic(store.root / "result.json", canonical(result))

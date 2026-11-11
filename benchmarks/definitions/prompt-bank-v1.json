@@ -1,0 +1,161 @@
+{
+  "schema": 1,
+  "version": "native-v3",
+  "seed": 8101,
+  "roles": {
+    "dev": {
+      "categories": {
+        "code": 150,
+        "conversation": 100,
+        "documents": 125,
+        "reasoning": 100,
+        "structured": 75,
+        "writing": 50
+      },
+      "count": 600,
+      "input_tokens": 842022,
+      "length_bands": {
+        "0": 300,
+        "1": 180,
+        "2": 90,
+        "3": 30
+      },
+      "source_counts": {
+        "commitpack": 75,
+        "glaive": 75,
+        "legacy-dolly": 45,
+        "legacy-gsm8k": 50,
+        "legacy-magicoder": 75,
+        "qasper": 90,
+        "ultrachat": 190
+      }
+    },
+    "train": {
+      "categories": {
+        "code": 1500,
+        "conversation": 1000,
+        "documents": 1250,
+        "reasoning": 1000,
+        "structured": 750,
+        "writing": 500
+      },
+      "count": 6000,
+      "input_tokens": 4259819,
+      "length_bands": {
+        "0": 3720,
+        "1": 1800,
+        "2": 420,
+        "3": 60
+      },
+      "source_counts": {
+        "commitpack": 750,
+        "glaive": 750,
+        "legacy-dolly": 1154,
+        "legacy-gsm8k": 500,
+        "legacy-magicoder": 750,
+        "qasper": 260,
+        "ultrachat": 1836
+      }
+    }
+  },
+  "target_sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630",
+  "template_sha256": "d7075b7ba939042d633b92fa72eaae0b5b7b3a9284777ec2d2efa6c6c6659110",
+  "sources": [
+    {
+      "kind": "ultrachat",
+      "repository": "HuggingFaceH4/ultrachat_200k",
+      "revision": "8049631c405ae6576f93f445c6b8166f76f5505a",
+      "license": "mit",
+      "url": "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k/resolve/8049631c405ae6576f93f445c6b8166f76f5505a/data/train_sft-00000-of-00003-a3ecf92756993583.parquet",
+      "sha256": "afa8fa7426081b2a0e732fb50dbb5cd402a28ad5f0dbe66c0d996d63e7220727",
+      "bytes": 243999189,
+      "scope": "complete selected source artifact"
+    },
+    {
+      "kind": "glaive",
+      "repository": "glaiveai/glaive-function-calling-v2",
+      "revision": "e7f4b6456019f5d8bcb991ef0dd67d8ff23221ac",
+      "license": "apache-2.0",
+      "url": "https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2/resolve/e7f4b6456019f5d8bcb991ef0dd67d8ff23221ac/glaive-function-calling-v2.json",
+      "sha256": "e9b5d671812b5ca2fbd7b625a37d5c99a19576c37252cdc806defe256aea6dad",
+      "bytes": 271190065,
+      "scope": "complete selected source artifact"
+    },
+    {
+      "kind": "qasper",
+      "repository": "allenai/qasper",
+      "revision": "fdc9d8214fbab5dd782958601db4d678e6934a54",
+      "license": [
+        "cc-by-4.0"
+      ],
+      "url": "https://qasper-dataset.s3.us-west-2.amazonaws.com/qasper-train-dev-v0.3.tgz",
+      "sha256": "a28fdf966db827bcee3d873107d6b6669864fb7ca8fbf73a192f5e39191bdb5a",
+      "bytes": 10835856,
+      "scope": "complete selected source artifact"
+    },
+    {
+      "kind": "commitpack",
+      "repository": "bigcode/commitpackft",
+      "revision": "fc56fe33c030c6daa414c2b112c932b8eed085e6",
+      "license": "mit",
+      "url": "https://huggingface.co/datasets/bigcode/commitpackft/resolve/fc56fe33c030c6daa414c2b112c932b8eed085e6/data/python/data.jsonl",
+      "sha256": "fe32634bca43007ff588b8036db74dc54282cdb81e80ed6b4b45ea2bed864c09",
+      "bytes": 19868152,
+      "scope": "first 8000 complete JSONL rows, not the complete upstream file"
+    },
+    {
+      "kind": "qasper-dev",
+      "repository": "allenai/qasper",
+      "revision": "fdc9d8214fbab5dd782958601db4d678e6934a54",
+      "license": [
+        "cc-by-4.0"
+      ],
+      "url": "https://qasper-dataset.s3.us-west-2.amazonaws.com/qasper-train-dev-v0.3.tgz",
+      "sha256": "a28fdf966db827bcee3d873107d6b6669864fb7ca8fbf73a192f5e39191bdb5a",
+      "bytes": 10835856,
+      "scope": "complete selected source artifact"
+    }
+  ],
+  "legacy_manifest_sha256": "9fc8caa80f2c29785eeaeff01f3875c27fee46853350de9ceebe682f8d12b8dc",
+  "train_ids": [
+    {
+      "path": "/home/philip/binary-eagle-artifacts/bank/v3/selection-ids/train-00.json",
+      "sha256": "f8027bd80d77d4384b60c05e362062356bc7c7444d2b8b73b0f62e965c7b1088",
+      "bytes": 118504
+    },
+    {
+      "path": "/home/philip/binary-eagle-artifacts/bank/v3/selection-ids/train-01.json",
+      "sha256": "b332a32960d2961383d635aaf94addfcc18b932b6c65c00c693797a8c404efb4",
+      "bytes": 111448
+    }
+  ],
+  "dev_ids": [
+    {
+      "path": "/home/philip/binary-eagle-artifacts/bank/v3/selection-ids/dev-00.json",
+      "sha256": "b7caaa4c8c65a36c9a9532217d12687125adbc5f8491b1bb1b23a22a214cc5ed",
+      "bytes": 22600
+    }
+  ],
+  "short_ids": {
+    "path": "/home/philip/binary-eagle-artifacts/bank/v3/selection-ids/short.json",
+    "sha256": "861a97c361f011a893ba3923a7c2cc416a194937836875b90396570edc5803b2",
+    "bytes": 4537
+  },
+  "hard_heldout_aliases": {
+    "path": "/home/philip/binary-eagle-artifacts/bank/v3/selection-ids/heldout-exclusions.json",
+    "sha256": "36c2be4657da4e4af5e971580acd9b9edad46a97c07349a6bc5840d8f20cb202",
+    "bytes": 26261
+  },
+  "caps": {
+    "256": 1800,
+    "1024": 3000,
+    "2048": 1200
+  },
+  "raw_receipt": {
+    "path": "/home/philip/binary-eagle-artifacts/bank/v3/result.json",
+    "sha256": "df623894b9de1bb67193a754d73b053ae55ec1273c54f55d46b766af55b3bc9a",
+    "bytes": 5903
+  },
+  "limits": "Coverage is a declared research mixture, not measured user frequencies. Public pretraining exposure is unknown. Complexity tags need semantic audit; no assertion of 40/40/20 difficulty without evidence.",
+  "retention": "Authored coverage and source locks are tracked here. Derived selected-ID lists and opaque identity metadata are authenticated external data artifacts alongside the bank; prompt content is external."
+}

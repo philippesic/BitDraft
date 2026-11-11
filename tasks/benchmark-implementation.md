@@ -34,47 +34,71 @@ explicit. Delete this task when implementation and scoped closeout are complete.
 
 ## State
 
-Owner: root. Implementation continues on RTX 5080; the predecessor finished and its final
-220,095-update state remains the production parent. No production 2K dataset or hybrid
-training has launched. Do not mistake qualification training for the requested continuation.
+Owner: root. Work continues on RTX 5080. The predecessor finished at 220,095 updates;
+that final state remains the production parent. No production 2K dataset or hybrid job
+has launched. Qualification descendants are disposable controls, not the requested run.
 
-Implemented/exercised: complete source-only native rebuild plus maintained rebuild/helper
-commands; authoritative native chat rendering/tokenization; provisional bank curation and
-opaque-identity admission; resumable TRAIN/DEV capture; streamed F32-to-F16 conversion;
-explicit partial supervision; CUDA supervision, legacy import and optimizer-preserving
-continuation; schema-4 dataset/clock accounting; task/position sampling with locality;
-bounded checkpoint/export retention; greedy request comparison and paired group statistics.
-The original checkpoint still reproduces its next update exactly after accounting changes.
-See [migration](../results/he4-checkpoint-migration/result.md) and
-[precision qualification](../results/fp16-capture-qualification/result.md).
+FP16 storage passed the frozen scoped policy: 64 TRAIN captures, 32 separate DEV captures,
+1,024 updates per arm, all 512 rounding checks and the real 120-request native panel.
+DEV losses and acceptance differences passed every margin. See
+[adoption](../results/fp16-storage-adoption/result.md) and
+[migration parity](../results/he4-checkpoint-migration/result.md). Original next-update
+parity remains exact. The public pipeline also ran 120-window diagnostics at cursor zero
+and 250, then resumed its schema-4 state on CUDA with Adam/RNG/cursor preserved.
 
-Canonical acquisition inputs/results are external under `/home/philip/binary-eagle-artifacts/`.
-`native/runtime-v2` is the complete rebuild; `native/runtime-v4-helpers` supplies the native
-renderer and capture helper. `bank/curation-06` and admitted `bank/v3` contain 6K TRAIN,
-600 DEV and nested 120-request panels with exact category/length quotas. Earlier provisional
-banks are superseded acquisition attempts, not production inputs. Native request identity
-checks exposed Python/native tool-template differences; the shared native renderer fixed
-these, and a 12-request/six-category pilot passed all three arms. Heldout24 protection uses
-469 opaque aliases from three consumption receipts; no prompt/answer bodies were read.
+Native greedy verification now has an independent target-logit argmax oracle: 18 requests
+per arm, 664 speculative rounds, ten EOG rounds, cap-one/cap-two cases, matching outputs
+and reconciled counters. Diagnostic instrumentation is isolated from primary timing.
+Native sampler tests exposed an actual post-EOG rejection bug; the maintained fresh build
+repairs it. Both actual sample-and-match and rejection functions passed four controlled
+probability cases plus EOG checks for Q4KM and NVFP4. Sampled request plumbing is written;
+its neural-request pilot and full robustness validation remain pending.
 
-A public three-capture FP16 continuation completed three CUDA updates/export. The broader
-format qualification has 64 TRAIN and 32 DEV captures; all 512 TRAIN arrays converted to
-F16 within the frozen rounding margin. Public F32 control completed 1,024 updates with
-real retention/export; matched F16 is running from the same frozen source and parent.
-Its receipts are `qualification/broad-training-location.json` and the two training roots.
-Next: finish the frozen precision policy, DEV loss and native short panel; independently
-exercise schema-4 GPU resume and longest-context memory. Native NVFP4 target input has
-been adopted but still needs serving/capture qualification.
+External artifacts are under `/home/philip/binary-eagle-artifacts/`. `native/runtime-v5`
+is the current clean rebuilt runtime with the sampler repair. `native/runtime-v4-helpers`
+and `runtime-v2` remain the identities used for the completed bank/precision evidence;
+never relabel those runs. `native/verifier-trace-runtime-01` is diagnostic only.
+`bank/v3` contains 6K TRAIN, 600 DEV and nested 120 tasks with verified native token
+fingerprints and exact coverage. Tracked source locks and coverage are in
+`benchmarks/definitions/`; derived ID lists and prompt content remain authenticated data
+artifacts. Legacy TRAIN/DEV prompt shards were independently preserved under
+`prompt-sources/legacy-train-dev`; no sealed prompt bodies were read.
 
-Still incomplete: live workflow executor/fixtures, harness panel, sampled verification,
-complete short/full qualification, periodic native evaluation/selection coordinator,
-hybrid corpus assembly, production 2K generation and the requested continuing HE4broad
-job with hourly monitoring. Evidence adoption, final source/entry-point documentation and
-owned-artifact closeout remain. Latest full CPU gate: 73 tests and 92 rejection/control
-pairs, before subsequent documentation-only state updates. No remote is configured;
-committed checkpoints remain local. Legacy retirements reclaimed about 157 GiB while
-preserving current data, final/best/recent predecessor states and compact receipts under
-`/home/philip/binary-eagle-evidence/retirement-20261111/`.
+`bank/supplement-v1` selects exactly 2,000 new-source prompts after excluding old corpus
+aliases and tokenized prefixes: code 250, non-arithmetic reasoning 100, documents 100,
+conversation 850, structured/tool histories 650, writing 50. There are 20 prompts above
+8K, 178 at 2K–8K, 945 at 512–2K and 857 below 512. Output caps preserve 600/1000/400
+at 256/1024/2048 tokens. Exact quotas and selected-data identities are in the tracked definition. Maximum feature payload is 154,190,602,240 bytes
+(143.60 GiB) before natural stopping. Semantic/source-quality review remains required.
+Three new-runtime FP16 qualification captures include the longest selected prompt
+(13,974 tokens), structured history and conversation. Two real updates on that long
+capture completed at about 13.6 GiB peak CUDA allocation. A separate maximum-bank prompt
+(14,651 input tokens) has been captured; its memory/update proof is next.
+
+The controlled live executor completed 12 tasks × three arms × two repeats with identical
+greedy trajectories/files/checks and all 72 tasks passing. Tool tests run in Bubblewrap
+with protected checks and deterministic path-safe replies. Earlier pilots retained an
+arm-path error leak, now fixed. These small authored fixtures qualify the mechanism;
+real project workflow coverage and actual application harness prefixes still need work.
+A 90-request/30-group harness builder and full-suite coordinator exist. Two-repeat request
+blocks now counterbalance arm positions across task groups. Their complete GPU panels
+remain to run. NVFP4 passed the earlier 12-request/six-category interface pilot.
+
+Implemented but not yet fully qualified: optimizer-time training coordinator with separate
+latest/provisional pointers, fixed DEV diagnostics, same-target corpus mixtures preserving
+partial-window counts, and full suite orchestration. Remaining work includes actual
+campaign transition/failure/retention tests, full-DEV incumbent selection, richer live and
+harness fixtures, full greedy/sample panels, kernel profiling, supplemental acquisition,
+hybrid assembly and production continuation with hourly monitoring. Do not mark the task
+complete until these and final documentation/evidence closeout pass.
+
+The latest quick gate passed 77 tests before the newest source-race/order tests. Full CPU
+execution previously passed 77 tests and 92 rejection/control proof pairs, with a typing
+issue subsequently repaired; rerun the full gate before committing. No remote is configured.
+Legacy retirements have preserved current data, final/best/recent predecessor states and
+metadata/source receipts under `/home/philip/binary-eagle-evidence/retirement-20261111/`.
+About 260 GiB has been recovered across several explicitly authorized retirements; inspect
+receipts for exact totals. Shared hardlinks were preserved rather than guessed disposable.
 
 ### Research basis and what it does not establish
 

@@ -109,6 +109,7 @@ class CaptureRow:
     capture: CaptureSpec
     anchors: tuple[int, ...]
     unique_positions: int
+    label_lengths: tuple[int, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -130,17 +131,22 @@ class Dataset:
         for row in self.rows:
             if row.anchors != tuple(
                 sorted(set(row.anchors))
-            ) or row.unique_positions != position_count(row.anchors):
+            ) or row.unique_positions != position_count(row.anchors, row.label_lengths):
                 raise ValueError("dataset anchor accounting mismatch")
 
 
-def position_count(anchors: tuple[int, ...]) -> int:
+def position_count(anchors: tuple[int, ...], lengths: tuple[int, ...] = ()) -> int:
+    if lengths and (
+        len(lengths) != len(anchors) or any(type(n) is not int or not 1 <= n <= 15 for n in lengths)
+    ):
+        raise ValueError("invalid supervision lengths")
     end = total = 0
-    for anchor in anchors:
+    for index, anchor in enumerate(anchors):
         if type(anchor) is not int or anchor < 0:
             raise ValueError("invalid supervision anchor")
-        total += max(0, anchor + 15 - max(end, anchor))
-        end = max(end, anchor + 15)
+        width = lengths[index] if lengths else 15
+        total += max(0, anchor + width - max(end, anchor))
+        end = max(end, anchor + width)
     return total
 
 

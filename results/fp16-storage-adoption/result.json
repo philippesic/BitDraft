@@ -1,0 +1,156 @@
+{
+  "decision": "retain",
+  "status": "qualified_for_scoped_production_capture",
+  "storage": "float16",
+  "hardware": "RTX 5080",
+  "target": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630",
+  "training_tasks": 64,
+  "development_tasks": 32,
+  "matched_updates_per_arm": 1024,
+  "parent_updates": 220095,
+  "windows_per_development_task": 8,
+  "seed": 8101,
+  "development": {
+    "f16": {
+      "by_category": {
+        "code": 2.099881950765848,
+        "conversation": 5.023966485634446,
+        "documents": 3.8245704422394433,
+        "reasoning": 2.7285557314753532,
+        "structured": 2.100429956884909,
+        "writing": 5.21485023573041
+      },
+      "mean_loss": 3.4395506521791503,
+      "tasks": 32
+    },
+    "f32": {
+      "by_category": {
+        "code": 2.0932680764235556,
+        "conversation": 5.050339623664816,
+        "documents": 3.8386632576584816,
+        "reasoning": 2.7443910790607333,
+        "structured": 2.094693144879784,
+        "writing": 5.223214499652386
+      },
+      "mean_loss": 3.44779239980312,
+      "tasks": 32
+    }
+  },
+  "native": {
+    "baseline": {
+      "acceptance": 0.7018627450980393,
+      "accepted": 21477,
+      "correct": true,
+      "proposed": 30600,
+      "requests": 120,
+      "tokens": 36895,
+      "tokens_per_second": 208.17559631428236,
+      "wall_seconds": 177.23018765513552
+    },
+    "f16": {
+      "acceptance": 0.4700622494197088,
+      "accepted": 17821,
+      "correct": true,
+      "proposed": 37912,
+      "requests": 120,
+      "tokens": 36895,
+      "tokens_per_second": 176.84798764109885,
+      "wall_seconds": 208.62550087296404
+    },
+    "f32": {
+      "acceptance": 0.4703305981372523,
+      "accepted": 17826,
+      "correct": true,
+      "proposed": 37901,
+      "requests": 120,
+      "tokens": 36895,
+      "tokens_per_second": 180.97800756842955,
+      "wall_seconds": 203.86454959755065
+    },
+    "target": {
+      "acceptance": null,
+      "accepted": 0,
+      "correct": true,
+      "proposed": 0,
+      "requests": 120,
+      "tokens": 36895,
+      "tokens_per_second": 165.86779033787948,
+      "wall_seconds": 222.43619406060316
+    }
+  },
+  "paired_f16_vs_f32": {
+    "groups": 120,
+    "speed_ratio": 0.9771794375304463,
+    "acceptance_difference": -0.00026834871754349843,
+    "speed_ratio_95_interval": {
+      "lower": 0.9687873314481775,
+      "upper": 0.984506225822201
+    },
+    "acceptance_difference_95_interval": {
+      "lower": -0.0027704251310868844,
+      "upper": 0.0023545687450041153
+    },
+    "bootstrap_draws": 2000,
+    "scope": "paired source-group bootstrap; repeats and harness variants stay together; small cohorts do not establish deployment transfer"
+  },
+  "conversion": {
+    "arrays": 512,
+    "feature_bytes": 3367608320,
+    "maximum_relative_l2": 0.0002237072919921288,
+    "roles_preserved": true
+  },
+  "gates": {
+    "overall_loss": true,
+    "category_loss": {
+      "code": true,
+      "conversation": true,
+      "documents": true,
+      "reasoning": true,
+      "structured": true,
+      "writing": true
+    },
+    "rounding": true,
+    "native_correct": true,
+    "acceptance_point": true,
+    "acceptance_interval": true,
+    "speed_interval": true
+  },
+  "evidence": {
+    "policy": {
+      "path": "/home/philip/binary-eagle-decoding-next/results/fp16-capture-qualification/qualification-policy.json",
+      "sha256": "96f3680b6f8f66afcc54163fc38d33ac8eb1737e0c2f2fb2b38bc4859b41732e",
+      "bytes": 1852
+    },
+    "development": {
+      "path": "/home/philip/binary-eagle-artifacts/qualification/broad-dev-loss-02/result.json",
+      "sha256": "0c034dade4291b6a26cb6778db1e5cec028b713ff0248b7f7b057f6a2cc9c78b",
+      "bytes": 25344
+    },
+    "native": {
+      "path": "/home/philip/binary-eagle-artifacts/benchmarks/precision-short-01/result.json",
+      "sha256": "f280e8df3fb7d73991499b25c4365e9b21121aa4e328dfe9068a00688d564e97",
+      "bytes": 189039
+    },
+    "native_specification": {
+      "path": "/home/philip/binary-eagle-artifacts/benchmarks/precision-short-spec.json",
+      "sha256": "b914b2a475aead1bdc9bccfe741b386dc074a02903487712a14d7f520d5ebc33",
+      "bytes": 4210
+    },
+    "conversion": {
+      "path": "/home/philip/binary-eagle-artifacts/qualification/broad-precision-train-f16-01/result.json",
+      "sha256": "e48c5250cf15818114ba0fba1290861f43a3d0aa4c2af3c2b0ec4f01b3ca2618",
+      "bytes": 637
+    },
+    "f32_intent": {
+      "path": "/home/philip/binary-eagle-artifacts/qualification/broad-training-f32-intent.json",
+      "sha256": "f5a10dceae2cb3578e254aef91c42ac7b9dee9ac7a86377781f291ee49fe60fe",
+      "bytes": 2426
+    },
+    "f16_intent": {
+      "path": "/home/philip/binary-eagle-artifacts/qualification/broad-training-f16-intent.json",
+      "sha256": "f205fdff90f39d951856444ba1510338257904a0f105fc8f9f121aea619f4476",
+      "bytes": 2430
+    }
+  },
+  "limits": "One scoped seed and 1024-update qualification, not lifetime equivalence. Q4KM target only. FP16 is feature storage, not model compute or deployed quantization. Native timing is one serial block and cannot establish a storage-caused speed effect. Original production continuation must start from update220095, not these disposable probe descendants."
+}
