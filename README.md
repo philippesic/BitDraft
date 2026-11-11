@@ -63,8 +63,9 @@ see [execution](docs/execution.md).
 
 ## More
 
-- [System map](docs/system-map.md), [checks](docs/checks.md), [data](docs/data.md),
+- [Architecture](docs/architecture.md), [development](docs/development.md), [checks](docs/checks.md), [data](docs/data.md),
   [domain terms and metrics](docs/domain.md), [model](docs/model.md),
   [research context and source guide](docs/research.md)
-- [Findings](FINDINGS.md): current conclusions and result pages; [closeout](docs/closeout.md)
+- [Findings](FINDINGS.md): short result index; [result format and closeout](docs/results.md)
+- [Task convention](tasks/README.md); [close-results skill](skills/close-results/SKILL.md)
 - License: not yet chosen.

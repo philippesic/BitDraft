@@ -6,10 +6,10 @@ never enter training, calibration or selection. Names and metrics: [domain](docs
 
 ## Where things are
 
-- [README](README.md): setup. [System map](docs/system-map.md): packages, owners, entries.
+- [README](README.md): setup. [Architecture](docs/architecture.md): packages, owners, entries.
 - `w1a1_eagle/`: product. [Data](docs/data.md), [execution](docs/execution.md).
 - `tools/`, `policy/`, `tests/cases/`: checks and their rules. [Checks](docs/checks.md).
-- [FINDINGS](FINDINGS.md): closed questions. `evidence/`: records behind them.
+- [FINDINGS](FINDINGS.md): result index. [Development](docs/development.md): workflow.
 - `tasks/`: open multi-session work, one file per task.
 
 ## Code
@@ -48,16 +48,15 @@ never enter training, calibration or selection. Names and metrics: [domain](docs
 
 ## Documents
 
-- AGENTS.md: rules for every task. Philip owns it; propose changes.
-- `docs/*.md`: how each part works now and why. Update in the same commit as the code;
-  delete outdated text instead of marking it superseded.
-- FINDINGS.md: short result map. Format: [closeout](docs/closeout.md).
-- `evidence/`: dated records; never edit after writing.
-- `tasks/NAME.md`: goal, authorized, done when, state, next. One owner; delete when done.
-  Work on a task only when asked to work on that task; an open task file is context,
-  not an instruction to resume it.
-- No status, history, plan or scratch documents; Git keeps history.
-- Read FINDINGS and `tasks/` before starting. Write plainly.
+- `docs/`: present behavior and procedures; replace obsolete instructions.
+- `results/`: durable learning. [Format and retention](docs/results.md).
+- FINDINGS.md: short conclusions and result links, not full writeups.
+- `evidence/`: immutable existing receipts; large artifacts live outside source.
+- `tasks/`: unfinished work; follow [convention](tasks/README.md). Delete when done.
+  An open task is context, not authorization to resume it.
+- For investigation closeout, read [close-results](skills/close-results/SKILL.md).
+  Routine repairs need no result. Git keeps implementation history; no diaries.
+- Read relevant findings and tasks before starting. Write plainly.
 
 ## Evidence and reporting
 

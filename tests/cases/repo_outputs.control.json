@@ -5,7 +5,9 @@
   "files": {
     "AGENTS.md": "# Instructions\n",
     "CLAUDE.md": "@AGENTS.md\n",
-    "tools/a.py": "x = 1\n"
+    "tools/a.py": "x = 1\n",
+    "results/example/result.md": "# A durable conclusion\n",
+    "results/example/result.json": "{\"value\": 1}\n"
   },
   "exit": 0,
   "path": "runs/model.py",

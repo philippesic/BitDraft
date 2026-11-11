@@ -2,7 +2,7 @@
 
 The goal is faster complete requests without changing the target model's verification
 semantics. This page explains why the current candidate exists and where to find the
-supporting work. Exact closed results and their limits live in [FINDINGS](../FINDINGS.md).
+supporting work. [FINDINGS](../FINDINGS.md) indexes result pages containing conclusions, scope and evidence.
 Current data, model and execution behavior live in [data](data.md), [model](model.md)
 and [execution](execution.md). Historical plans grant no present work allocation.
 

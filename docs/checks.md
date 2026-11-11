@@ -37,7 +37,7 @@ tests.numerical.test_model -v`.
 | mypy | Strict typing; the numerical profile allows Any only in `tests/numerical` |
 | architecture | Import direction, pure modules, owners, environment and clock access, entries |
 | dependencies | Deptry, Vulture and declared tool use |
-| documentation | Relative links and anchors, pinned evidence links, system-map symbols |
+| documentation | Relative links and anchors, pinned evidence links, architecture symbols |
 | cpu | Ordinary CPU tests; with `--full` also the numerical subprocess test and the required roster in `policy/cpu-tests.toml` |
 | proofs | With `--full`: each rule in `policy/rules.toml` rejects its bad specimen and accepts its control |
 
@@ -100,11 +100,11 @@ not user approval; a successful check does not require a new policy approval.
 | `ENV_OWNER` | Read environment variables only in `w1a1_eagle/config.py` or `tools/config.py` |
 | `TIMING_OWNER`, `SEEDED_RANDOM` | Take an injected clock or seeded generator as an argument |
 | `ARCH_*`, `IMPORTS` | Move the code so imports follow the direction in `policy/boundaries.toml` |
-| `OWNER_*` | Write through the owner module listed in [system map](system-map.md) |
+| `OWNER_*` | Write through the owner module listed in [system map](architecture.md) |
 | `PUBLIC_ENTRY` | Declare the entry in `policy/commands.toml` or remove the main guard |
-| `DOC_LINK`, `MAP_ENTRY` | Fix the link, anchor or system-map symbol |
+| `DOC_LINK`, `MAP_ENTRY` | Fix the link, anchor or architecture symbol |
 | `EVIDENCE_PIN` | Use the pinned revision URL and register it in `policy/evidence.toml` |
-| `REPO_DIARY` | Put the content in FINDINGS, a topic doc or a task file |
+| `REPO_DIARY` | Put conclusions in results, present behavior in docs, unfinished work in tasks |
 | `REPO_TASK` | Start with a `# ` title and keep `## Goal`, `## Authorized`, `## Done when`, `## State`, `## Next` in that order; other sections go after |
 | `INSTRUCTIONS_BUDGET` | Shorten AGENTS.md to 80 lines and 4,000 bytes |
 | `REQUIRED_TESTS` | Read the pytest output above it; a test failed, was skipped or disappeared |

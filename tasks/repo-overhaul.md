@@ -45,14 +45,14 @@ Earlier diagnostics and setup receipts remain in evidence; their rule counts des
 those snapshots rather than today's corpus.
 
 Philip's current priority is documentation housekeeping before benchmark design.
-The [closeout specification](../docs/closeout.md) and three trial results are ready
-for format review. FINDINGS is a short map; all thirteen prior entries remain in
-individual result pages. Ten retain their old prose pending fuller closeout.
-No historical artifacts were deleted and no shared skill has been installed.
-Functional-port gaps remain recorded in [port](port.md), outside this format trial.
+The approved [result convention](../docs/results.md) now separates present docs, active
+tasks and durable results. All thirteen findings live in descriptive result folders;
+FINDINGS links to them. Navigation, task conventions, the tracked closeout skill and
+repository checks use that layout. No historical artifacts were deleted.
+Functional-port gaps remain recorded in [port](port.md), outside this documentation task.
 
 ## Next
 
-Review the trial presentation with Philip, then apply the agreed format to remaining
-findings. Recover missing executed-source and reproduction details before proposing
-artifact retirement. Shared closeout automation follows agreement on the project format.
+Recover missing executed-source and reproduction details before proposing artifact
+retirement. Use the approved closeout convention for future investigations. Broader agent
+operations remain in [agent operations](agent-operations.md).
