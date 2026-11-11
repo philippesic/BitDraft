@@ -24,7 +24,7 @@ def test_disabled_checker_is_rejected(monkeypatch: pytest.MonkeyPatch, tmp_path:
         return []
 
     monkeypatch.setattr(comments, "scan_file", disabled)
-    exit_code, diagnostics = run_case(case, tmp_path)
+    exit_code, diagnostics = run_case(case)
     assert not assess_outcome(1, [Diagnostic("COMMENT_PYTHON", "case.py")], exit_code, diagnostics)
 
 
@@ -45,7 +45,7 @@ def test_missing_specimen_is_rejected(tmp_path: Path) -> None:
         if source.name != "comment_python.bad.json":
             (tmp_path / "tests/cases" / source.name).write_bytes(source.read_bytes())
     assert len(list((tmp_path / "tests/cases").glob("*.json"))) == 2 * len(REQUIRED_RULES) - 1
-    diagnostics, bad, control = run_corpus(tmp_path, tmp_path, {})
+    diagnostics, bad, control = run_corpus(tmp_path)
     assert diagnostics == [Diagnostic("RULE_PAIR", "policy/rules.toml")]
     assert bad == control == 0
 
@@ -64,3 +64,23 @@ def test_required_test_cannot_disappear_or_skip() -> None:
     for outcomes in [{}, {"a::test_a": "skipped"}, {"a::test_a": "xfail"}, {"a::test_a": "failed"}]:
         assert validate_run(required, ["a::test_a"], outcomes)
     assert validate_run(required, [], {})
+
+
+def test_locked_export_evaluates_markers_and_refuses_unpinned_packages(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    from tools import self_test
+    from tools.config import Result
+
+    def export(argv: list[str], root: Path) -> Result:
+        return Result(0, 'example_pkg==1.2\nwindows-only==2 ; sys_platform == "win32"\n')
+
+    monkeypatch.setattr(self_test, "run_command", export)
+    assert self_test.locked_check_packages(tmp_path) == {"example-pkg": "1.2"}
+
+    def unpinned(argv: list[str], root: Path) -> Result:
+        return Result(0, "example>=1.2\n")
+
+    monkeypatch.setattr(self_test, "run_command", unpinned)
+    with pytest.raises(ValueError, match="exact locked versions"):
+        self_test.locked_check_packages(tmp_path)

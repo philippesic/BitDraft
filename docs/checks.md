@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | `uv run --locked --no-sync --offline python tools/check.py` | about 3 s warm, 30 s cold | While editing |
 | `uv run --locked --no-sync --offline python tools/check.py --full` | about 90 s | Commit gate; the pre-commit hook runs it |
-| `uv run --locked --no-sync --offline python tools/check.py --self-test` | about 25 s | Rule proofs only, after changing a checker or rule |
+| `uv run --locked --no-sync --offline python tools/check.py --self-test` | seconds | Rule proofs only, after changing a checker or rule |
 | `uv run --locked --no-sync --offline python -m tools.doctor` | seconds | Environment, hook and receipt inspection |
 
 None of them installs or downloads anything, formats files, changes Git configuration
@@ -30,7 +30,7 @@ tests.numerical.test_model -v`.
 
 | Stage | Covers |
 | --- | --- |
-| bootstrap | Python, tool and lock pins; configuration digests; executable hook |
+| bootstrap | Python, tool and lock pins; configuration invariants; executable full-gate hook |
 | repository | Tracked outputs, large files, secrets, ignored escapes, instruction files, diary names, task-file sections |
 | comments | The comment ban and `policy/exceptions.toml` |
 | ruff | Format and selected lint codes |
@@ -58,17 +58,31 @@ syntax fails closed. Patches are checked hunk by hunk against their pinned base.
 - A new test, source file or document needs no checker edit.
 - Add a test to `policy/cpu-tests.toml` only when its removal must fail the gate.
 - A new public command must be declared in `policy/commands.toml`.
-- A new evidence link to the predecessor repository must use the pinned revision and
+- A new evidence link to the predecessor repository must use a full commit revision and
   be registered in `policy/evidence.toml`.
 
-## Pins and digests
+## Configuration and evidence
 
-`tools/config.py` pins the tool versions and the digests of `policy/rules.toml`,
-`policy/commands.toml`, `policy/boundaries.toml`, `policy/cases.toml`,
-`policy/cpu-tests.toml`, `policy/check-stages.toml`, `policy/validation.toml` and
-`.githooks/pre-commit`. Specimen digests are in `policy/evidence.toml`. A digest mismatch means a safeguard
-changed. If the change is intended and authorized, update the digest in the same commit
-and say so in the report. If not, revert it. Never update a digest only to get a pass.
+`pyproject.toml` owns tool settings and direct dependency versions. `uv.lock` owns
+the resolved dependencies and download hashes. The gate compares the installed check
+environment with uv's locked export, including platform markers; it does not keep a
+second copy of the dependency tree. Python and uv bootstrap identities live in
+`policy/toolchain.toml`.
+
+Project validators reject weakened typing, broad lint/dependency suppressions, a
+missing mandatory stage and a hook that omits the full gate. They check those
+properties directly rather than requiring a new checksum after every policy edit.
+Tests and checker modules may import declared check dependencies; product modules may not.
+The required-test list lives only in `policy/cpu-tests.toml`.
+
+The proof corpus tests project-authored validators, with one rejecting and one
+accepting specimen per rule. Ruff, mypy, Vulture and Deptry run on the actual source;
+the corpus does not retest their built-in error codes on toy programs.
+
+Hashes still authenticate frozen source evidence, model/data artifacts, exact machine
+line exceptions and verification receipts. A policy edit cannot authorize a run or
+change scientific semantics. Preserve those identities and use the user's authorized
+scope when changing checks.
 
 ## Fixes
 
@@ -76,7 +90,6 @@ Project diagnostics print a repair from this table after the stable rule code an
 location. Tool failures retain the tool's own line numbers and detailed output.
 The table is the single source for repair text. CPU receipts record verification,
 not user approval; a successful check does not require a new policy approval.
-
 
 | Diagnostic | Fix |
 | --- | --- |
@@ -94,7 +107,7 @@ not user approval; a successful check does not require a new policy approval.
 | `REPO_TASK` | Start with a `# ` title and keep `## Goal`, `## Authorized`, `## Done when`, `## State`, `## Next` in that order; other sections go after |
 | `INSTRUCTIONS_BUDGET` | Shorten AGENTS.md to 80 lines and 4,000 bytes |
 | `REQUIRED_TESTS` | Read the pytest output above it; a test failed, was skipped or disappeared |
-| `CHECK_CONFIG`, `PIN_*`, `STAGE_GATE`, `TYPE_CONFIG` | Compare the named configuration with its authorized pins; follow Pins and digests above for intended changes, otherwise restore the pinned configuration |
+| `CHECK_CONFIG`, `PIN_*`, `STAGE_GATE`, `TYPE_CONFIG` | Inspect the named configuration and tool output; restore the required properties described above or repair the locked environment without weakening checks |
 | `TYPE_*` | Fix the type error in the tool output; preserve strict typing and avoid suppression |
 | `FORMAT`, `F401`, `F821`, `I001`, `B006`, `UP006` | Run `.venv/bin/ruff check PATH` and `.venv/bin/ruff format --check PATH`; repair the reported source |
 | `DEP*`, `DEAD_CODE`, `UNUSED_TOOL` | Inspect the dependency tool output; declare a direct dependency in its proper group or remove the unused import, code or declaration |

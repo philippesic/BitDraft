@@ -9,7 +9,10 @@ fast feedback, useful diagnostics and rules that earn their cost.
 
 Philip authorized routine overhaul repairs and verification without repeated approval.
 Preserve the full commit gate, no hosted CI, scientific semantics and existing protections.
-Bring changes to guarantees and operational choices to Philip with concrete proposals.
+Safeguard simplification is approved: remove redundant third-party tool proofs and
+manual policy checksum/configuration copies, retaining actual checks and project proofs.
+Audit documentation for port/overhaul leftovers and historically useful evidence.
+Bring remaining scientific and operational choices to Philip with concrete examples.
 No GPU work, training, artifact transfer, remote creation or publication is authorized.
 
 ## Done when
@@ -38,21 +41,22 @@ confirm the corrected repair messages. Existing fresh-agent exercises are linked
 offline using cached wheels. Numerical environments were reused; a complete numerical
 reinstall was not verified. No remote is configured.
 
+Safeguards simplified: third-party tools still check the full source; 92 project rules
+retain bad/control proofs. Direct versions and settings come from pyproject.toml;
+the installed dependency closure is checked against uv's locked export with platform
+markers. Manual policy and specimen checksums and dead policy metadata were removed.
+Frozen source/data evidence hashes remain. Ordinary check imports are permitted only
+in tools and tests. Documentation audit is in progress.
+
 Remaining choices for Philip:
 
-1. Safeguard simplification. The corpus has 34 externally executed tool specimens
-   (6 Ruff, 23 mypy, 1 Vulture, 4 Deptry), plus project-authored proofs. Keep actual
-   lint/type/dependency stages. Review removing redundant tool-behavior specimens
-   while retaining project-specific integration checks, and replacing manual policy
-   digests/config copies with checks of the intended invariants. These alter the
-   safeguards and should be reviewed before implementation. Keep the full hook meanwhile.
-2. Future architecture. Runtime, comparison, selection and discovery contracts precede
+1. Future architecture. Runtime, comparison, selection and discovery contracts precede
    complete serving implementations. Recommend retaining scientific contracts, but
    reviewing speculative discovery/layout restrictions when that component is designed.
-3. Numerical environment. Choose whether a clean standalone CPU installation or reuse
+2. Numerical environment. Choose whether a clean standalone CPU installation or reuse
    of host numerical libraries is the supported setup. Recommend a reproducible CPU
    environment as the default, with host reuse explicit. Existing environments stay intact.
-4. Operations. Remote name/visibility and license, independent artifact backup, and
+3. Operations. Remote name/visibility and license, independent artifact backup, and
    shared-GPU coordination remain in [agent operations](agent-operations.md) and
    [port](port.md). No repository resource manager or agent disk cap is proposed.
    Product capacity checks remain intact; their requirements are a separate decision.

@@ -116,3 +116,46 @@ def test_registered_diagnostics_have_repairs_and_comment_location() -> None:
     message = format_diagnostic(Diagnostic("COMMENT_PYTHON", "source.py"), files)
     assert "source.py:3:1" in message
     assert "rationale" in message
+
+
+def test_policy_checks_properties_without_freezing_unrelated_settings() -> None:
+    import copy
+
+    from tools.config import PROJECT, RULES, policy_data
+    from tools.contracts import record
+    from tools.repo_policy import validate_policy
+
+    project = copy.deepcopy(PROJECT)
+    stages = policy_data("check-stages.toml")
+    rules: Record = {"rule": list(RULES)}
+    assert validate_policy(project, stages, rules) == []
+    tool = record(project["tool"])
+    record(tool["ruff"])["line-length"] = 99
+    assert validate_policy(project, stages, rules) == []
+    record(tool["mypy"])["disallow_untyped_calls"] = False
+    assert Diagnostic("TYPE_CONFIG", "pyproject.toml") in validate_policy(project, stages, rules)
+    record(tool["mypy"])["disallow_untyped_calls"] = True
+    record(record(tool["ruff"])["lint"])["per-file-ignores"] = {"*.py": ["F401"]}
+    assert Diagnostic("CHECK_CONFIG", "pyproject.toml") in validate_policy(project, stages, rules)
+
+
+def test_check_dependencies_are_allowed_only_in_checker_and_tests(tmp_path: Path) -> None:
+    import json
+
+    from tools.config import Result
+    from tools.dependencies import dependency_checks
+
+    for path in ("tools/checker.py", "tests/test_example.py", "w1a1_eagle/model.py"):
+
+        def run(argv: list[str], root: Path) -> Result:
+            if argv[0] == "deptry":
+                payload: list[Record] = [
+                    {"error": {"code": "DEP004"}, "location": {"file": path}, "module": "pytest"}
+                ]
+                Path(argv[-1]).write_text(json.dumps(payload))
+            return Result(0, "")
+
+        diagnostics = dependency_checks(tmp_path, [], tmp_path, run, [])
+        assert diagnostics == (
+            [Diagnostic("DEP004", path)] if path.startswith("w1a1_eagle/") else []
+        )

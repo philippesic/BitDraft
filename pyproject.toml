@@ -17,6 +17,7 @@ check = [
   "vulture==2.14",
   "deptry==0.24.0",
   "dulwich==0.24.2",
+  "packaging==26.3",
 ]
 
 [tool.uv]

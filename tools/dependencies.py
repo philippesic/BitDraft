@@ -58,6 +58,8 @@ def dependency_checks(
         path = str(location["file"])
         module = str(issue["module"])
         used.add((code, path, module))
+        if code == "DEP004" and path.startswith(("tools/", "tests/")):
+            continue
         if not any(
             e.get("rule_id") == code and e.get("path") == path and e.get("symbol") == module
             for e in exceptions
