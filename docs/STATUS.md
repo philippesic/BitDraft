@@ -31,6 +31,7 @@ loader 55.06× faster; steps 2–32 loader + update 6.69× faster.
 The first five historical wall-hour formal panels and zero panel are complete;
 all their requests are correct. The first three new update-hour panels are complete; the loader
 smoke itself is not an inference evaluation.
+[Throughput chart](../experiments/he4broad-20261110/throughput-progress.html) ·
 [Report](../experiments/he4broad-20261110/report.md) ·
 [Operations](../experiments/he4broad-20261110/operations.md) ·
 [Manifest](../experiments/he4broad-20261110/manifest.json).

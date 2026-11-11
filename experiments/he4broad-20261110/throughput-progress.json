@@ -1,0 +1,80 @@
+{
+  "metric": "Output tokens / complete-request wall seconds, including prompt processing",
+  "source_results_sha256": "74f35b306486e35ffc4e40cba241b4a9782cac1b9d4776194838a7ab68498117",
+  "points": [
+    {
+      "panel": "formal-0",
+      "update_seconds": 0.0,
+      "updates": 0,
+      "he4": 127.54584822433479,
+      "q4": 247.39789395607272,
+      "target": 184.00235389369524
+    },
+    {
+      "panel": "formal-3600",
+      "update_seconds": 511.0459418288956,
+      "updates": 3662,
+      "he4": 179.43818399966298,
+      "q4": 248.2428698786734,
+      "target": 184.81847428575617
+    },
+    {
+      "panel": "formal-7200",
+      "update_seconds": 1009.7538733897673,
+      "updates": 7281,
+      "he4": 183.02698276935638,
+      "q4": 249.5621671226802,
+      "target": 184.74547447784636
+    },
+    {
+      "panel": "formal-10800",
+      "update_seconds": 1508.974794055277,
+      "updates": 10934,
+      "he4": 187.44341774182666,
+      "q4": 249.63740688531269,
+      "target": 184.69602028013512
+    },
+    {
+      "panel": "formal-14400",
+      "update_seconds": 2012.361906342092,
+      "updates": 14556,
+      "he4": 187.43913664937205,
+      "q4": 249.02959606033144,
+      "target": 185.4014348307759
+    },
+    {
+      "panel": "formal-18000",
+      "update_seconds": 2521.24133713395,
+      "updates": 18187,
+      "he4": 189.17484853108584,
+      "q4": 249.2384542493493,
+      "target": 185.17535071395073
+    },
+    {
+      "panel": "formal-update-3600",
+      "update_seconds": 3600.0161758606555,
+      "updates": 26173,
+      "he4": 197.48412854660938,
+      "q4": 249.87387804056974,
+      "target": 184.90193059613895
+    },
+    {
+      "panel": "formal-update-7200",
+      "update_seconds": 7200.064524326706,
+      "updates": 53763,
+      "he4": 205.71792099078914,
+      "q4": 248.04396129509274,
+      "target": 184.42064710005687
+    },
+    {
+      "panel": "formal-update-10800",
+      "update_seconds": 10800.001996094594,
+      "updates": 81455,
+      "he4": 213.5847238008598,
+      "q4": 248.0372466640204,
+      "target": 183.89304331787073
+    }
+  ],
+  "limitations": "Consumed DEV3, one training trajectory. Timing repetitions are not fresh prompts/seeds. No heldout opened. External Q4 remains deployment incumbent; no promotion.",
+  "protocol": "Consumed DEV3; five measured repetitions per prompt/arm, two warmups, 256-token output reserve. Formal panels only."
+}
