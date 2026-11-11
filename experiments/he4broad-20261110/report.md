@@ -1,6 +1,6 @@
 # Fresh HE4broad on the combined 2080 Ti captures
 
-Status: **RUNNING**. 20,671 recoverable updates; 2873.748 synchronized update seconds, 20702.123 training wall seconds (including 17826.771 data I/O seconds). Philip's resumed allocation is **28,800 total synchronized update seconds (8 hours)**, including the existing 2873.748 seconds. Rejected update time also counts. There is no training-wall cap; data I/O, setup, checkpoints, export and native eval do not consume the update allocation and remain separately reported.
+Status: **RUNNING**. 26,173 recoverable updates; 3600.016 synchronized update seconds, 21504.457 training wall seconds (including 17902.703 data I/O seconds). Philip's resumed allocation is **28,800 total synchronized update seconds (8 hours)**, including the existing 2873.748 seconds. Rejected update time also counts. There is no training-wall cap; data I/O, setup, checkpoints, export and native eval do not consume the update allocation and remain separately reported.
 
 Fresh base-drafter HE4 quantization, fresh Adam, combined 15,647 sequences and 1,568,435 windows. Global seeded window shuffle; exact own-state resume. All hourly native panels use depth 2, greedy, F16 KV, context 4096, two warmups and five repetitions per cell with 256-token output reserve. The extra 60-second diagnostic uses one repetition and 64 tokens. Network model transfer is excluded from native request timings.
 
@@ -16,6 +16,7 @@ Historical numeric points are training-wall seconds; new `update-*` points are c
 | 14400 | 2012.362 | 14556 | 5.524400 | 19.2593% |
 | 18000 | 2521.241 | 18187 | 5.553204 | 20.0000% |
 | paused-20671 | 2873.748 | 20671 | 5.429714 | 19.2593% |
+| update-3600 | 3600.016 | 26173 | 5.317311 | 22.2222% |
 
 | Panel | Arm | Draft acceptance | Request tokens/s | Correct |
 | --- | --- | ---: | ---: | --- |
@@ -40,6 +41,9 @@ Historical numeric points are training-wall seconds; new `update-*` points are c
 | formal-18000 | target | — | 185.175 | True |
 | formal-18000 | q4 | 65.3257% | 249.238 | True |
 | formal-18000 | HE4broad | 32.5549% | 189.175 | True |
+| formal-update-3600 | target | — | 184.902 | True |
+| formal-update-3600 | q4 | 65.3257% | 249.874 | True |
+| formal-update-3600 | HE4broad | 36.5994% | 197.484 | True |
 
 Consumed DEV3, one training trajectory. Timing repetitions are not fresh prompts/seeds. No heldout opened. External Q4 remains deployment incumbent; no promotion.
 

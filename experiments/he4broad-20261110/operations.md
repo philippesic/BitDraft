@@ -12,8 +12,9 @@ Actual launch: local tmux socket `binary-eagle-runtime`, session
 `active-source.json`. Full parameters/Adam/RNG restore passed from the 20,671
 update parent; the cursor continued from 20,671 and completed new updates.
 All three locks belong to the authenticated workflow; storage is local.
-The existing health event is enabled at 30-minute intervals; next check at
-November 11 00:14 UTC / November 10 16:14 Pacific. Raw launch/process/source
+The existing health event is enabled at 30-minute intervals; its first resumed
+check was scheduled for November 11 00:14 UTC / November 10 16:14 Pacific.
+Durable health observations and comparisons are under the run's `health/` directory. Raw launch/process/source
 receipts are in `update8h-{preflight,resume-receipt}.json` under the run.
 The source and clock implementation were committed before freezing/launch.
 

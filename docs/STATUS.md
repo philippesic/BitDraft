@@ -4,8 +4,8 @@
 
 November 10: **RUNNING locally toward eight TOTAL hours of synchronized
 optimizer-update time**, explicitly authorized by Philip after localization.
-The saved state already contains 2,873.748 update seconds (47.9 minutes), 20,671
-updates and 20,702.123 training-wall seconds. The remaining update allocation is
+The resume parent contained 2,873.748 update seconds (47.9 minutes), 20,671
+updates and 20,702.123 training-wall seconds. At resume, the remaining update allocation was
 25,926.252 seconds (about 7 hours 12 minutes). There is no training-wall cap;
 data loading, setup, checkpoints/export and native evaluation remain separately
 reported. The original recipe/config stays unchanged for exact state recovery;
@@ -14,7 +14,11 @@ supersedes its old clock/budget. New native panels are at every cumulative updat
 hour through eight hours, with distinct `formal-update-*` labels. All earlier
 wall-hour panels remain intact. The existing 30-minute health/repair event is enabled; the hourly availability
 event stays off. Exact state restore passed and post-restore updates are advancing.
-Next health check: November 10, 16:14 Pacific (November 11, 00:14 UTC).
+Latest health check (2026-11-11 00:15 UTC): **healthy**, 31,800 updates,
+1.205 / 8 update hours. First update-hour native panel:
+36.60% acceptance, 197.48 tokens/s; all 75 requests correct on consumed DEV3.
+No repair needed; all seven remaining states/exports plus scratch fit current
+headroom. Durable checks are under the run's `health/` directory.
 
 All 15,647 captures and current-run checkpoints are verified on local ext4.
 The local-loader diagnostic produced exactly equal final parameters/Adam/RNG:
@@ -22,8 +26,8 @@ loader 55.06× faster; steps 2–32 loader + update 6.69× faster.
 [Migration](../experiments/he4broad-20261110/localization.md) ·
 [Model retention](../experiments/storage-cleanup-20261110/report.md).
 The first five historical wall-hour formal panels and zero panel are complete;
-all their requests are correct. No new inference result is claimed by the loader
-smoke or resume preparation.
+all their requests are correct. The first new update-hour panel is complete as reported above; the loader
+smoke itself is not an inference evaluation.
 [Report](../experiments/he4broad-20261110/report.md) ·
 [Operations](../experiments/he4broad-20261110/operations.md) ·
 [Manifest](../experiments/he4broad-20261110/manifest.json).

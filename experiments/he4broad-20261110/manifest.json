@@ -165,5 +165,15 @@
     "completed_updates_observed": 21300,
     "cumulative_update_seconds_observed": 2971.077096561028,
     "observation_unix": 1794354364.6874843
+  },
+  "latest_health": {
+    "status": "HEALTHY_NO_REPAIR_NEEDED",
+    "checked_unix": 1794356146.7672834,
+    "updates": 31800,
+    "charged_update_seconds": 4339.364620761655,
+    "checkpointed_updates": 26173,
+    "storage_local": true,
+    "first_update_hour_native_complete": true,
+    "observation_directory": "runs/he4broad-20261110-01/health"
   }
 }
