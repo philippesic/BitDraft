@@ -168,12 +168,13 @@
   },
   "latest_health": {
     "status": "HEALTHY_NO_REPAIR_NEEDED",
-    "checked_unix": 1794356146.7672834,
-    "updates": 31800,
-    "charged_update_seconds": 4339.364620761655,
+    "checked_unix": 1794357916.9331996,
+    "updates": 44100,
+    "charged_update_seconds": 5929.168702797382,
     "checkpointed_updates": 26173,
     "storage_local": true,
     "first_update_hour_native_complete": true,
-    "observation_directory": "runs/he4broad-20261110-01/health"
+    "observation_directory": "runs/he4broad-20261110-01/health",
+    "rejected_update_seconds": 0.0
   }
 }
