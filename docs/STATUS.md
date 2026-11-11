@@ -14,15 +14,15 @@ supersedes its old clock/budget. New native panels are at every cumulative updat
 hour through eight hours, with distinct `formal-update-*` labels. All earlier
 wall-hour panels remain intact. The existing 30-minute health/repair event is enabled; the hourly availability
 event stays off. Exact state restore passed and post-restore updates are advancing.
-Latest health check (2026-11-11 01:45 UTC): **healthy**, 66,800 updates,
-2.471 / 8 update hours; training toward the third
-update-hour panel. The second update-hour panel remains the latest native
-result: 40.79% acceptance, 205.72 tokens/s; all 75 requests correct on consumed
-DEV3. No training errors or rejected updates; no repair needed. All six remaining
-states/exports plus 8 GiB scratch fit current disk headroom. GPU ownership was
-independently authenticated through process identity, locks, GPU device handles
-and advancing updates; the WSL NVML process list remains empty. Durable checks
-are under the run's `health/` directory.
+Latest health check (2026-11-11 02:15 UTC): **healthy**, 79,100 updates,
+2.915 / 8 update hours; approaching the third
+update-hour checkpoint/evaluation. The second update-hour panel remains the
+latest native result: 40.79% acceptance, 205.72 tokens/s; all 75 requests correct
+on consumed DEV3. No training errors or rejected updates; no repair needed.
+All six remaining states/exports plus 8 GiB scratch fit current disk headroom.
+GPU ownership was independently authenticated through process identity, locks,
+GPU device handles and advancing updates; the WSL NVML process list remains
+empty. Durable checks are under the run's `health/` directory.
 
 All 15,647 captures and current-run checkpoints are verified on local ext4.
 The local-loader diagnostic produced exactly equal final parameters/Adam/RNG:
