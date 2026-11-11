@@ -66,5 +66,5 @@ see [execution](docs/execution.md).
 - [System map](docs/system-map.md), [checks](docs/checks.md), [data](docs/data.md),
   [domain terms and metrics](docs/domain.md), [model](docs/model.md),
   [research context and source guide](docs/research.md)
-- [Findings](FINDINGS.md) from this project and its predecessor
+- [Findings](FINDINGS.md): current conclusions and result pages; [closeout](docs/closeout.md)
 - License: not yet chosen.
