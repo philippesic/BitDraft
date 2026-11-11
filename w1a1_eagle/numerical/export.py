@@ -235,9 +235,10 @@ def export_he4(
             or scratch_bytes < 1
         ):
             raise ValueError("positive export byte and scratch budgets required")
-        operands = list(worker.model.parameters()) + list(worker.model.buffers())
+        parameters = list(worker.model.parameters())
+        operands = parameters + list(worker.model.buffers())
         estimate = (
-            max(value.numel() for value in operands) * 32
+            max(value.numel() for value in parameters) * 32
             + sum(value.numel() for value in operands) * 2
             + worker.model.vocabulary.numel() * 9
         )

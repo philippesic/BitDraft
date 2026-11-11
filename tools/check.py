@@ -116,7 +116,7 @@ def main() -> int:
         passed = ["bootstrap"]
         clock = Monotonic()
         last_stage = clock.now()
-        paths = sorted(p for p in files if p.endswith(".py"))
+        paths = sorted(p for p in files if p.endswith((".py", ".pyi")))
 
         def stage(name: str, diagnostics: list[Diagnostic]) -> None:
             nonlocal last_stage

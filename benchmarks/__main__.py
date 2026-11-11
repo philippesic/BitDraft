@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 from benchmarks.acceptance import reduce_rounds
+from benchmarks.runner import compare
 from benchmarks.specification import Specification
 from w1a1_eagle.contracts import Record, sequence
 from w1a1_eagle.records import read
@@ -11,6 +12,7 @@ from w1a1_eagle.records import read
 class Arguments(argparse.Namespace):
     command: str
     input: Path
+    output: Path
 
 
 def main() -> int:
@@ -19,9 +21,19 @@ def main() -> int:
     for name in ("plan", "verify-inputs", "reduce-trace"):
         command = commands.add_parser(name)
         command.add_argument("input", type=Path)
+    for name in ("compare", "curate"):
+        comparison = commands.add_parser(name)
+        comparison.add_argument("input", type=Path)
+        comparison.add_argument("output", type=Path)
     args = parser.parse_args(namespace=Arguments())
     try:
-        if args.command == "reduce-trace":
+        if args.command == "curate":
+            from benchmarks.bank import curate
+
+            result = curate(args.input, args.output)
+        elif args.command == "compare":
+            result = compare(args.input, args.output)
+        elif args.command == "reduce-trace":
             result = reduce_rounds(sequence(read(args.input, 16 * 1024 * 1024)["rounds"]))
         else:
             spec = Specification.load(args.input)

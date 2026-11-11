@@ -179,11 +179,14 @@ class TensorWorker:
         self,
         reference: StateRef,
         memory_budget_bytes: int,
-        mode: Literal["resume", "branch"] = "resume",
+        mode: Literal["resume", "branch", "continue"] = "resume",
     ) -> None:
         with self.lock:
             self.ready = False
-            if mode not in {"resume", "branch"} or reference.artifact.size > memory_budget_bytes:
+            if (
+                mode not in {"resume", "branch", "continue"}
+                or reference.artifact.size > memory_budget_bytes
+            ):
                 raise ValueError("restore mode or memory budget invalid")
             reference.artifact.verify()
             with zipfile.ZipFile(reference.artifact.path) as archive:
@@ -227,7 +230,10 @@ class TensorWorker:
                 raise ValueError("state manifest and payload identity disagree")
             if state["device"] not in {"cpu", "cuda"}:
                 raise ValueError("unsupported checkpoint device")
-            if mode == "resume" and state["device"] != self.model.vocabulary.device.type:
+            if (
+                mode in {"resume", "continue"}
+                and state["device"] != self.model.vocabulary.device.type
+            ):
                 raise ValueError("exact resume device mismatch")
             if mode == "resume" and (
                 state["config"] != self.identity or reference.config != self.identity
@@ -349,7 +355,7 @@ class TensorWorker:
                 for name, parameter in expected.items():
                     parameter.copy_(tensors[name])
             lineage = tuple(string(v) for v in sequence(state["lineage"]))
-            if mode == "resume":
+            if mode in {"resume", "continue"}:
                 self.optimizer.load_state_dict(optimizer_state)
                 self.optimizer_updates = optimizer_updates
                 rng = state["rng"]
@@ -367,8 +373,10 @@ class TensorWorker:
                     torch.cuda.set_rng_state_all(states_on_cuda)
                 elif cuda_rng is not None:
                     raise ValueError("CPU state contains CUDA RNG history")
-                self.cursor = cursor
-                self.lineage = lineage
+                self.cursor = cursor if mode == "resume" else 0
+                self.lineage = (
+                    lineage if mode == "resume" else (*lineage, reference.artifact.sha256)
+                )
             else:
                 if bool(cast(object, self.optimizer.state)):
                     raise ValueError("branch requires a fresh optimizer")

@@ -136,3 +136,5 @@ No general binary-acceleration claim followed. [Result](results/binary-pipeline-
 ## Capture storage
 
 [FP16 feature rounding passed a small GPU screen; training suitability remains unresolved](results/fp16-feature-screen/result.md).
+
+- [HE4broad checkpoint migration](results/he4-checkpoint-migration/result.md): the final original checkpoint reproduces its next update exactly after correcting cache gradients.

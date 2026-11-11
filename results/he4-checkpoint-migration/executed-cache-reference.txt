@@ -1,0 +1,23 @@
+import sys,json,hashlib
+from pathlib import Path
+from types import SimpleNamespace
+import torch
+from torch import nn
+from scripts.component_campaign.simulation import ComponentLayer,StorageProjection
+from scripts.dflash_baseline.prototype import Projection
+root=Path('/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/source-update8h-20261110-01')
+cfg=SimpleNamespace(hidden_size=4,intermediate_size=8,num_heads=2,num_kv_heads=1,head_dim=2,block_size=16,activation_bits=8,norm_eps=1e-6,rope_theta=1e7)
+shapes={'attn_norm':(4,),'attn_q_norm':(2,),'attn_k_norm':(2,),'ffn_norm':(4,),'attn_q':(4,4),'attn_k':(2,4),'attn_v':(2,4),'attn_output':(4,4),'ffn_gate':(8,4),'ffn_up':(8,4),'ffn_down':(4,8)}
+tensors={'blk.0.'+name+'.weight':torch.ones(shape) if len(shape)==1 else torch.sin(torch.arange(__import__('math').prod(shape),dtype=torch.float32)*.37).reshape(shape)*.1 for name,shape in shapes.items()}
+layer=ComponentLayer(tensors,0,cfg,None);layer.scalar={};layer.kformat=layer.vformat='f16'
+gain=nn.Parameter(torch.zeros(4));clip=nn.Parameter(torch.tensor(0.))
+for name in ('ffn_gate','ffn_up','ffn_down'):
+ p=Projection(tensors['blk.0.'+name+'.weight'],8 if name=='ffn_down' else 4,gain=gain if name!='ffn_down' else nn.Parameter(torch.zeros(8)),quantizer={'mode':'learned','clip':1.})
+ p.__class__=StorageProjection;p.storage={}
+ if name!='ffn_down':p.log_clip=clip
+ setattr(layer,name,p)
+encoded=(torch.cos(torch.arange(12,dtype=torch.float32)*.23).reshape(3,4)*.1).requires_grad_()
+state=(torch.sin(torch.arange(64,dtype=torch.float32)*.13).reshape(16,4)*.1).requires_grad_()
+result,_=layer(state,layer.project_context(encoded,torch.arange(3)),torch.arange(3,19),torch.ones((16,19),dtype=torch.bool));result.sum().backward()
+row={'schema':1,'scope':'Independent execution of the actual retained HE4 StorageProjection and ComponentLayer cache-STE graph; tiny CPU layer','sources':{str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [root/'scripts/component_campaign/simulation.py',root/'scripts/dflash_baseline/prototype.py',root/'src/w1a1_eagle/block_qat.py',root/'src/w1a1_eagle/recurrent_binary.py']},'layer':{'output':result.detach().tolist(),'state_grad':state.grad.tolist(),'encoded_grad':encoded.grad.tolist()}}
+Path('/home/philip/binary-eagle-artifacts/qualification/cache-layer-reference.json').write_text(json.dumps(row,indent=2)+'\n')

@@ -158,7 +158,7 @@ def scan_patch(
             result.extend(original[cursor:])
             post = "".join(result)
             suffix = PurePosixPath(target).suffix
-            if suffix == ".py":
+            if suffix in {".py", ".pyi"}:
                 tree = ast.parse(post)
                 tokens = tokenize.generate_tokens(io.StringIO(post).readline)
                 if any(
@@ -201,7 +201,7 @@ def scan_file(path: str, text: str, exceptions: list[Record]) -> list[Diagnostic
     name = PurePosixPath(path).name
     comments: list[str] = []
     code = "COMMENT_OTHER"
-    if suffix == ".py":
+    if suffix in {".py", ".pyi"}:
         code = "COMMENT_PYTHON"
         try:
             comments = [

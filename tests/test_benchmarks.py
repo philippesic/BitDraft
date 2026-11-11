@@ -103,3 +103,23 @@ def test_fallback_has_no_acceptance_denominator() -> None:
     result = reduce_rounds([{"proposed": [], "accepted": 0, "target_tokens": [2], "emitted": [2]}])
     assert result["acceptance"] is None
     assert result["activation"] == "fallback_only"
+
+
+def test_coverage_requires_real_strata_and_length_supply() -> None:
+    from benchmarks.coverage import select
+
+    rows: list[Record] = [
+        {"id": str(i), "category": category, "subtype": subtype, "length_band": band}
+        for i, (category, subtype, band) in enumerate(
+            (
+                ("code", "editing", 0),
+                ("code", "generation", 2),
+                ("conversation", "followup", 0),
+                ("conversation", "followup", 2),
+            )
+        )
+    ]
+    chosen = select(rows, (2, 0, 0, 2, 0, 0), (2, 0, 2, 0))
+    assert {row["id"] for row in chosen} == {"0", "1", "2", "3"}
+    with pytest.raises(ValueError, match="cannot satisfy"):
+        select(rows, (2, 0, 0, 2, 0, 0), (2, 2, 0, 0))

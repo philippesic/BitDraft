@@ -14,6 +14,7 @@ from w1a1_eagle.records import identity
 def source_files(root: Path) -> dict[str, bytes]:
     values: dict[str, bytes] = {}
     paths = sorted((root / "w1a1_eagle").rglob("*"))
+    paths.extend(sorted((root / "benchmarks").rglob("*.py")))
     paths.extend(root / name for name in ("uv.lock", "policy/numerical.toml", "pyproject.toml"))
     total = 0
     for path in paths:

@@ -1,0 +1,113 @@
+import json
+from collections import defaultdict, deque
+
+from w1a1_eagle.contracts import Record, integer, string
+from w1a1_eagle.records import identity
+
+TRAIN = (1500, 1000, 1250, 1000, 750, 500)
+FULL = (150, 100, 125, 100, 75, 50)
+SHORT = (30, 20, 25, 20, 15, 10)
+
+
+def selection_order(row: Record) -> str:
+    return identity({"seed": 8101, "id": row["id"]})
+
+
+def identifier(row: Record) -> str:
+    return string(row["id"])
+
+
+def length_band(tokens: int) -> int:
+    if tokens < 512:
+        return 0
+    if tokens < 2048:
+        return 1
+    if tokens < 8192:
+        return 2
+    if tokens <= 16384:
+        return 3
+    raise ValueError("prompt exceeds admitted bank length")
+
+
+def stratum(row: Record) -> str:
+    category, subtype = string(row["category"]), string(row["subtype"])
+    if category == "code":
+        return "code-edit" if subtype == "editing" else "code-generate"
+    if category == "reasoning":
+        return "reasoning-other" if subtype == "non_arithmetic" else "reasoning-arithmetic"
+    if category == "writing":
+        return "writing-translation" if subtype == "translation" else "writing-other"
+    return category
+
+
+def quotas(counts: tuple[int, ...]) -> dict[str, int]:
+    code, reasoning, documents, conversation, structured, writing = counts
+    return {
+        "code-edit": code // 2,
+        "code-generate": code - code // 2,
+        "reasoning-arithmetic": reasoning // 2,
+        "reasoning-other": reasoning - reasoning // 2,
+        "documents": documents,
+        "conversation": conversation,
+        "structured": structured,
+        "writing-translation": writing // 5,
+        "writing-other": writing - writing // 5,
+    }
+
+
+def select(rows: list[Record], counts: tuple[int, ...], bands: tuple[int, ...]) -> list[Record]:
+    demands = quotas(counts)
+    pools: dict[tuple[str, int], list[Record]] = defaultdict(list)
+    for row in rows:
+        pools[stratum(row), integer(row["length_band"])].append(row)
+    capacities: dict[tuple[str, str], int] = {}
+    adjacency: dict[str, set[str]] = defaultdict(set)
+
+    def edge(left: str, right: str, capacity: int) -> None:
+        capacities[left, right] = capacity
+        capacities[right, left] = 0
+        adjacency[left].add(right)
+        adjacency[right].add(left)
+
+    for name, count in demands.items():
+        edge("start", name, count)
+        for band in range(4):
+            edge(name, "band" + str(band), len(pools[name, band]))
+    for band, count in enumerate(bands):
+        edge("band" + str(band), "end", count)
+    flow = 0
+    while True:
+        parents: dict[str, str] = {}
+        pending = deque(["start"])
+        visited = {"start"}
+        while pending and "end" not in visited:
+            left = pending.popleft()
+            for right in sorted(adjacency[left]):
+                if right not in visited and capacities[left, right] > 0:
+                    visited.add(right)
+                    parents[right] = left
+                    pending.append(right)
+        if "end" not in visited:
+            break
+        amount, node = sum(counts), "end"
+        while node != "start":
+            amount = min(amount, capacities[parents[node], node])
+            node = parents[node]
+        node = "end"
+        while node != "start":
+            left = parents[node]
+            capacities[left, node] -= amount
+            capacities[node, left] += amount
+            node = left
+        flow += amount
+    if flow != sum(counts) or flow != sum(bands):
+        coverage = {name + "/" + str(band): len(values) for (name, band), values in pools.items()}
+        raise ValueError(
+            "source pool cannot satisfy real category/length coverage: "
+            + json.dumps(coverage, sort_keys=True)
+        )
+    selected: list[Record] = []
+    for (name, band), values in sorted(pools.items()):
+        count = capacities["band" + str(band), name]
+        selected.extend(sorted(values, key=selection_order)[:count])
+    return selected

@@ -19,7 +19,7 @@ class Intent:
     vocabulary: Artifact
     corpus: Artifact
     parent: Artifact | None
-    mode: Literal["fresh", "resume", "branch"]
+    mode: Literal["fresh", "resume", "branch", "continue"]
     budget: Budget
     memory_bytes: int
     state_bytes: int
@@ -102,7 +102,7 @@ class Intent:
             "checkpoint_seconds",
         }
         if (
-            set(raw) - {"input_adapter"} != required
+            set(raw) - {"input_adapter", "target_sha256"} != required
             or type(raw["schema"]) is not int
             or raw["schema"] != 2
         ):
@@ -121,8 +121,16 @@ class Intent:
         ):
             if not string(raw[key]).strip():
                 raise ValueError("intent requires " + key)
-        if raw["device"] != "cpu":
-            raise ValueError("only CPU execution is qualified; hardware admission is separate")
+        if raw["device"] not in {"cpu", "cuda"}:
+            raise ValueError(
+                "supported execution devices are cpu/cuda; GPU requires exclusive admission"
+            )
+        if raw["device"] == "cuda" or "target_sha256" in raw:
+            target = string(raw.get("target_sha256"))
+            if len(target) != 64 or any(c not in "0123456789abcdef" for c in target):
+                raise ValueError(
+                    "CUDA execution requires explicit target SHA256, distinct from head source"
+                )
         geometry = record(raw["geometry"])
         if set(geometry) != {
             "hidden",
@@ -134,7 +142,7 @@ class Intent:
         } or any(integer(value) < 1 for value in geometry.values()):
             raise ValueError("explicit positive geometry required")
         mode = raw["mode"]
-        if mode not in {"fresh", "resume", "branch"}:
+        if mode not in {"fresh", "resume", "branch", "continue"}:
             raise ValueError("unsupported training mode")
         if (mode == "fresh") != (raw["parent"] is None):
             raise ValueError("fresh requires no parent; resume/branch require an explicit parent")
@@ -206,7 +214,13 @@ class Intent:
             artifact(raw["vocabulary"], root),
             artifact(raw["corpus"], root),
             artifact(raw["parent"], root) if raw["parent"] is not None else None,
-            "fresh" if mode == "fresh" else "resume" if mode == "resume" else "branch",
+            "fresh"
+            if mode == "fresh"
+            else "resume"
+            if mode == "resume"
+            else "continue"
+            if mode == "continue"
+            else "branch",
             Budget(
                 integer(budget["updates"]),
                 number(budget["wall_seconds"]),
