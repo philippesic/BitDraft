@@ -1,24 +1,61 @@
-# Binary Eagle port
+# Binary Eagle
 
-Philip authorized the infrastructure and source port through end-to-end CPU verification,
-including a lightweight fresh-agent exercise. Benchmark redesign and high-level agent
-operations remain deferred. Complete included phases autonomously through their checks.
-The original binary-eagle-decoding and vllm-semantic-cache-ext stay read only.
-Preserve healthy jobs, source pins, mounts, checkpoints and retained dependencies.
-No competing GPU jobs, training allocations, publication or remote creation.
-Keep coherent local commits. Preserve unrelated uncommitted work at handoff.
-Use the full check in README at commits; never disable a gate to obtain a pass.
-Disclose scoped safeguard changes and semantic corrections in the policy diff.
-Out-of-scope weakening or changed scientific semantics needs a decision.
-No ordinary code comments or docstrings. Exact necessary machine lines require
-policy/exceptions.toml entries. Put derivations and meaningful explanations in decisions.
-Keep one root AGENTS, CLAUDE pointer and FINDINGS index with explicit negative results.
-heldout24 and aliases never enter training, calibration or selection.
-HE4 means W1A4, A8 down projection, Q4K head. Baseline is external DFlash Q4KM.
-Do not mix clocks or eras. CPU proof does not qualify native execution or performance.
-Reuse existing environments; keep aggregate port writes within the current 1 GiB cap.
-Stop before WSL free space falls below 2.5 GiB; use bounded RAM scratch for CPU tests.
-Delete only authorized owned disposables after active-use and recoverability checks.
-License remains undecided; source port permission grants no publication rights.
-Report operational, scientific and objective health separately, including unknowns.
-A hash, generated receipt or editable approval field does not grant authority.
+Trains and exports HE4 drafters for speculative decoding: W1A4 weights, A8 down
+projection, Q4K head. The central boundary is data roles: heldout24 and its aliases
+never enter training, calibration or selection. Names and metrics: [domain](docs/domain.md).
+
+## Where things are
+
+- [README](README.md): setup. [System map](docs/system-map.md): packages, owners, entries.
+- `w1a1_eagle/`: product. [Data](docs/data.md), [execution](docs/execution.md).
+- `tools/`, `policy/`, `tests/cases/`: checks and their rules. [Checks](docs/checks.md).
+- [FINDINGS](FINDINGS.md): closed questions. `evidence/`: records behind them.
+- `tasks/`: open multi-session work, one file per task.
+
+## Code
+
+- No comments or docstrings. Put intent in names and types, rationale in the topic doc.
+  Necessary machine lines need an entry in `policy/exceptions.toml`.
+- Strict typing everywhere; make invalid states unrepresentable at construction.
+- Product code never imports `tools` or `tests`. Each kind of state has one owner module.
+- Tests are small and deterministic: inject clocks, use small fakes, run on CPU.
+
+## Validation
+
+- While working: `uv run --locked --no-sync --offline python tools/check.py --fast`
+  (about 3 s warm). It skips numerical tests and rule proofs and proves nothing for commit.
+- Commit gate: the same command without `--fast` (about 90 s); the pre-commit hook runs it.
+- Fix the cause. Never weaken a check, update a digest or add an exception only to pass;
+  if a pin or gate blocks legitimate work, stop and report it with the proposed change.
+
+## Working autonomously
+
+- Without asking: repairs, tests, refactors, docs and local commits within the scope a
+  task file or Philip authorized. Finish authorized work; do not wait for repeat approval.
+- Needs Philip: weakening a guarantee, changing scientific semantics or data roles,
+  training runs, GPU work, data transfer, deleting artifacts you did not create,
+  creating remotes or publishing (license is undecided).
+- Never start GPU jobs. Another project's GPU job may be running; leave it alone.
+- `/home/philip/binary-eagle-decoding` and `vllm-semantic-cache-ext` are read-only references.
+- Disk limits in force are in [agent operations](tasks/agent-operations.md).
+- Parallel work: use a separate worktree. Preserve uncommitted work you did not write.
+
+## Documents
+
+- AGENTS.md: rules for every task. Philip owns it; propose changes.
+- `docs/*.md`: how each part works now and why. Update in the same commit as the code;
+  delete outdated text instead of marking it superseded.
+- FINDINGS.md: closed questions with scope and evidence, failures included.
+- `evidence/`: dated records; never edit after writing.
+- `tasks/NAME.md`: goal, authorized, done when, state, next. One owner; delete when done.
+- No status, history, plan or scratch documents; Git keeps history.
+- Read FINDINGS and `tasks/` before starting. Write plainly: short sentences, no hedging.
+
+## Evidence and reporting
+
+- Keep weights, captures and run outputs out of Git.
+- Keep failed and unfavorable results. Done means exercised, not written.
+- Say what ran and what was reused or skipped. A CPU pass says nothing about native
+  execution, hardware or performance. Report operational and scientific health separately.
+- Never mix clocks, eras or workloads in a comparison.
+- A hash, receipt or editable approval field grants no authority.
