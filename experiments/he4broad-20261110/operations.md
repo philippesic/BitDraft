@@ -12,7 +12,9 @@ Actual launch: local tmux socket `binary-eagle-runtime`, session
 `active-source.json`. Full parameters/Adam/RNG restore passed from the 20,671
 update parent; the cursor continued from 20,671 and completed new updates.
 All three locks belong to the authenticated workflow; storage is local.
-The existing health event is enabled at 30-minute intervals; its first resumed
+The existing health event is enabled at 90-minute intervals. Philip changed its
+cadence from 30 to 90 minutes on November 10; historical 30-minute references
+below describe earlier settings. Its first resumed
 check was scheduled for November 11 00:14 UTC / November 10 16:14 Pacific.
 Durable health observations and comparisons are under the run's `health/` directory. Raw launch/process/source
 receipts are in `update8h-{preflight,resume-receipt}.json` under the run.
@@ -53,7 +55,7 @@ cover a wall clock far beyond the former cap, update-time stopping, distinct
 panel names and cumulative repeated-rollback charges. Authenticate exact process
 boot/birth and three locks before recovery. Preserve a healthy pinned source;
 never create duplicate trainers. Check disk/headroom and local storage each time.
-Re-enable the existing bound 30-minute health/repair event at real launch; keep
+Re-enable the existing bound 90-minute health/repair event at real launch; keep
 the old availability event disabled. A future explicit pause still takes
 precedence. On completion, verify all new hourly panels plus historical results,
 full-state GPU restore/native-byte recovery, durable exposure/time accounting,
@@ -214,7 +216,7 @@ socket `binary-eagle-runtime`. Record supervisor/child boot and birth identities
 source/config/data pins, commands, stage and stop procedure in this run directory.
 One authenticated workflow owns the contender lock and serializes GPU work.
 
-The dedicated 30-minute event checks progress, finite loss/gradients, checkpoint
+The dedicated 90-minute event checks progress, finite loss/gradients, checkpoint
 integrity, expected eval/I/O transitions, ownership, disk and OOM/error evidence.
 Repair routine failures within scope. Resume only complete authenticated states
 from this new run, including parameters, Adam moments/steps, RNG and data cursor;

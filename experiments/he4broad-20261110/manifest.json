@@ -24,14 +24,14 @@
     "active_manifest": "runs/he4broad-20261110-01/teacher-mount/supplemental/combined-manifest.json"
   },
   "native_eval_interval_seconds": 3600,
-  "health_interval_seconds": 1800,
+  "health_interval_seconds": 5400,
   "gpu_availability_fallback_seconds": 3600,
   "gpu_training_launched": true,
   "remaining_preparation": [],
   "events": {
     "availability_enabled": false,
     "health_enabled": true,
-    "health_next_run_at": "2026-11-11T00:14:54.233Z",
+    "health_next_run_at": "2026-11-11T04:50:29.387Z",
     "receipts": "runs/he4broad-20261110-01/schedules.json"
   },
   "prerequisite_release_checkpoint": "04dba8f7f0a9b67b84430221adbdfc8d64d55446",

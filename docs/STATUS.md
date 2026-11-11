@@ -12,7 +12,7 @@ reported. The original recipe/config stays unchanged for exact state recovery;
 the [continuation policy](../experiments/he4broad-20261110/continuation-policy.json)
 supersedes its old clock/budget. New native panels are at every cumulative update
 hour through eight hours, with distinct `formal-update-*` labels. All earlier
-wall-hour panels remain intact. The existing 30-minute health/repair event is enabled; the hourly availability
+wall-hour panels remain intact. The existing 90-minute health/repair event is enabled; the hourly availability
 event stays off. Exact state restore passed and post-restore updates are advancing.
 Latest health check (2026-11-11 03:15 UTC): **healthy**, 101,900 updates,
 3.739 / 8 update hours; training toward the fourth
