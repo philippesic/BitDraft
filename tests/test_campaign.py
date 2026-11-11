@@ -47,6 +47,66 @@ def test_mixed_partial_windows_count_actual_positions() -> None:
         position_count((10,), (16,))
 
 
+def test_cached_acceptance_selection_ignores_historical_speed() -> None:
+    leader: Record = {"state": "earlier", "score": 0.5}
+    result: Record = {
+        "status": "complete",
+        "historical_references": {"baseline": {}},
+        "summary": {
+            "candidate": {"correct": True, "tokens_per_second": 999.0, "acceptance": 0.4},
+            "prior-leader": {"correct": True, "tokens_per_second": 1.0, "acceptance": 0.5},
+        },
+    }
+    assert select(result, leader, "new", "export", {}) is leader
+    record(record(result["summary"])["candidate"])["acceptance"] = 0.6
+    selected = record(select(result, leader, "new", "export", {}))
+    assert selected["score"] == 0.6 and selected["metric"] == "acceptance"
+    record(record(result["summary"])["candidate"])["acceptance"] = None
+    with pytest.raises(ValueError):
+        select(result, leader, "new", "export", {})
+
+
+def test_interruption_clock_excludes_controller_recovery_gaps(tmp_path: Path) -> None:
+    from benchmarks.reporting import interruptions
+    from w1a1_eagle.lifecycle import Journal
+
+    for segment, began, ended, controller in (
+        (1, 10.0, 20.0, 1),
+        (2, 95.0, 100.0, 1),
+        (3, 1000.0, 1010.0, 2),
+    ):
+        journal = Journal(tmp_path / (str(segment).zfill(4) + "-training"))
+        journal.append({"kind": "started", "attempt": "test", "controller": {"pid": controller}})
+        journal.append(
+            {"kind": "training-ready", "attempt": "test", "boot": "boot", "monotonic": began}
+        )
+        journal.append(
+            {"kind": "training-boundary", "attempt": "test", "boot": "boot", "monotonic": ended}
+        )
+    values = interruptions(tmp_path)
+    assert values[0]["seconds"] == 75.0 and values[1]["seconds"] is None
+
+
+def test_native_deadline_reaps_context_without_replacing_other_timer() -> None:
+    import signal
+
+    from benchmarks.measurement import deadline
+
+    previous = signal.getsignal(signal.SIGALRM)
+    with pytest.raises(ValueError, match="exceeded"):
+        with deadline(60):
+            signal.raise_signal(signal.SIGALRM)
+    assert signal.getsignal(signal.SIGALRM) == previous
+    assert signal.getitimer(signal.ITIMER_REAL)[0] == 0
+    signal.setitimer(signal.ITIMER_REAL, 60)
+    try:
+        with pytest.raises(ValueError, match="existing"):
+            with deadline(60):
+                pass
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+
+
 def test_grouped_blocks_balance_arm_positions_and_preserve_every_request(tmp_path: Path) -> None:
     ref = Artifact(tmp_path / "input", "a" * 64, 1)
     arms = (Arm("target", None), Arm("baseline", ref), Arm("candidate", ref))

@@ -3,6 +3,10 @@
 Use [`benchmarks campaign`](benchmarks.md) for training with intermittent native
 acceptance checks. It coordinates the supervisor below, keeping recovery, provisional
 fast leader and full-DEV incumbent distinct. Loss/top1 diagnostics do not measure acceptance.
+Campaign V2 executes60 candidate-only requests against authenticated saved controls;
+`benchmarks campaign-preflight SPEC` enforces their existence and compatibility. The
+provisional leader uses acceptance. Historical speed remains descriptive. See
+[reference records and pause budgets](benchmarks.md#reusable-references).
 
 ## Commands
 
@@ -26,6 +30,14 @@ corpus/index/mixture formats. Editable manifests establish neither provenance no
 
 ## Owners
 
+Optional authenticated `initialization` binds materialized source/vocabulary tensors
+and immutable native codes from `benchmarks prepare-initialization INTENT OUTPUT`.
+Origin, geometry, coverage, dtype, finiteness and byte budgets are checked before use.
+The reusable basis avoids repeated dequantization; its identity enters the recipe.
+Frozen codes are bound to model construction and guarded against replacement. Exports
+retain tensor readback. This is an external derived artifact, not a training capture.
+Retain its producer evidence and qualify tensor/export/update parity when adopting it.
+
 The [store](../w1a1_eagle/checkpoints/store.py) owns states/manifests; the
 [journal](../w1a1_eagle/lifecycle.py) owns lifecycle/controller identity;
 [data](../w1a1_eagle/data.py) owns roles/consumption. Output roots admit one controller.
@@ -36,6 +48,8 @@ CUDA also takes a host-wide lease after checking existing compute processes.
 Each attempt freezes source/intent and records loaded Python/native identities, checked
 again at exit. Checkout edits cannot alter it. A bootstrap arms an OS timer before Torch;
 the controller owns the worker process group by boot/start identity. CPU hides CUDA.
+V2 campaigns omit the duplicate preflight subprocess between segments; the worker still
+performs full data admission before model allocation. Public CPU preflight remains available.
 
 Failed attempts retain cost; there is no automatic retry. An uninitialized same-recipe
 retry may reuse its root. After initialization, recovery needs explicit parent/resume.
@@ -47,6 +61,8 @@ when its owner is gone rather than guessing elapsed time.
 Updates and exposure are journaled before execution. State publication uses a temporary
 file, fsync, checksum and atomic latest-pointer replacement. Process crashes preserve a
 complete parent or child; power-loss durability is not established.
+Continuations retain their external durable parent rather than rewriting an identical
+initial state in every segment. Fresh initialization still publishes its first state.
 
 - Fresh authenticates initialization and has no optimizer history.
 - Resume restores parameters/aliases, Adam moments/counters, RNG, cursor, clocks,
@@ -86,10 +102,12 @@ See [benchmarks](benchmarks.md) for native cadence, selection and health reporti
 
 ## Export
 
-Final complete states export through the store to W1Ax GGUF2, with original Q4K vocabulary
+Final complete states export through the store to W1Ax metadata2 in GGUF3, with original Q4K vocabulary
 codes, frozen-operand checks and tensor readback. Export-time exponentials use CPU FP32
 to match original arithmetic. Sign words are little-endian32-bit, nonnegative zero is1,
-unused bits0. Readback checks format; native execution needs separate evidence.
+unused bits0. Bounded readback checks metadata, tensor names/types/shapes, nonoverlapping
+aligned offsets and every payload hash. Independent SDK and native checks qualify it;
+format conformance alone does not establish useful serving performance.
 
 ## Journal
 
@@ -99,7 +117,7 @@ after owner checks; no complete event is dropped. Corrupt complete records are r
 
 ## Supported formats
 
-Intent2, corpus1, tensor payload4/3, store1, event envelope1, W1Ax GGUF2. Other tensor/intent
+Intent2, corpus1, tensor payload4/3, store1, event envelope1, W1Ax metadata2/GGUF3. Other tensor/intent
 schemas need explicit migration with verified lineage; preserve originals.
 
 ## Limits

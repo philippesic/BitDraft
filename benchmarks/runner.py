@@ -1,127 +1,38 @@
 import os
-import re
 from dataclasses import asdict
 from pathlib import Path
 from typing import cast
 
 from benchmarks.comparison import Arm, Comparison
 from benchmarks.coverage import length_band, selection_order
-from benchmarks.measurement import now, request
+from benchmarks.measurement import deadline, now, request
+from benchmarks.metrics import (
+    native_counts as native_counts,
+)
+from benchmarks.metrics import (
+    reconcile as reconcile,
+)
+from benchmarks.metrics import (
+    signature as signature,
+)
+from benchmarks.metrics import (
+    totals as totals,
+)
+from benchmarks.metrics import (
+    valid_sample as valid_sample,
+)
+from benchmarks.metrics import (
+    verify_generation as verify_generation,
+)
+from benchmarks.runtime_policy import payload
 from benchmarks.serving import session
 from benchmarks.statistics import paired, partitions
 from w1a1_eagle.checkpoints.store import Store
-from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
+from w1a1_eagle.contracts import Record, integer, record, sequence, string
 from w1a1_eagle.device import cuda_identity, device_lease
 from w1a1_eagle.identity import freeze_source, source_identity
 from w1a1_eagle.processes import ProcessIdentity
 from w1a1_eagle.records import canonical, identity
-
-
-def signature(response: Record) -> Record:
-    return {
-        key: response[key]
-        for key in ("tokens", "content", "stop_type", "stopping_word", "truncated")
-    }
-
-
-def valid_sample(response: Record, cap: int) -> bool:
-    tokens = sequence(response["tokens"])
-    return (
-        bool(tokens)
-        and len(tokens) <= cap
-        and all(type(token) is int and integer(token) >= 0 for token in tokens)
-        and response.get("truncated") is False
-        and response.get("stop_type") in {"eos", "limit"}
-        and (response["stop_type"] != "limit" or len(tokens) == cap)
-    )
-
-
-def verify_generation(response: Record, payload: Record, speculative: bool) -> None:
-    settings = record(response["generation_settings"])
-    for key in ("seed", "top_k", "n_predict"):
-        if integer(settings[key]) != integer(payload[key]):
-            raise ValueError("native generation setting differs from request: " + key)
-    for key in ("temperature", "top_p", "min_p"):
-        if abs(number(settings[key]) - number(payload[key])) > 1e-6:
-            raise ValueError("native sampling setting differs from request: " + key)
-    if settings.get("ignore_eos") is not False or settings.get("grammar") != "":
-        raise ValueError(
-            "native stopping/grammar settings differ from the qualified request policy"
-        )
-    if any(
-        number(settings[key]) != expected
-        for key, expected in (
-            ("repeat_penalty", 1.0),
-            ("frequency_penalty", 0.0),
-            ("presence_penalty", 0.0),
-            ("dynatemp_range", 0.0),
-        )
-    ):
-        raise ValueError("unrequested native penalty or dynamic temperature")
-    modes = string(settings["speculative.types"])
-    if ("draft-dflash" in modes) != speculative:
-        raise ValueError("actual native speculative mode differs from the selected arm")
-
-
-def native_counts(response: Record, speculative: bool) -> Record:
-    timings = record(response["timings"])
-    if not speculative:
-        return {"proposed": 0, "accepted": 0, "acceptance": None}
-    if ("draft_n" in timings) != ("draft_n_accepted" in timings):
-        raise ValueError("incomplete native draft counters")
-    proposed, accepted = (
-        integer(timings.get("draft_n", 0)),
-        integer(timings.get("draft_n_accepted", 0)),
-    )
-    if not 0 <= accepted <= proposed:
-        raise ValueError("native draft counters inconsistent")
-    return {
-        "proposed": proposed,
-        "accepted": accepted,
-        "acceptance": accepted / proposed if proposed else None,
-    }
-
-
-def totals(rows: list[Record]) -> Record:
-    if not rows:
-        raise ValueError("empty comparison")
-    seconds = sum(number(row["wall_seconds"]) for row in rows)
-    tokens = sum(integer(row["tokens"]) for row in rows)
-    proposed = sum(integer(record(row["native"])["proposed"]) for row in rows)
-    accepted = sum(integer(record(row["native"])["accepted"]) for row in rows)
-    if seconds <= 0:
-        raise ValueError("nonpositive measured request time")
-    return {
-        "requests": len(rows),
-        "tokens": tokens,
-        "wall_seconds": seconds,
-        "tokens_per_second": tokens / seconds,
-        "proposed": proposed,
-        "accepted": accepted,
-        "acceptance": accepted / proposed if proposed else None,
-        "correct": all(row["correct"] is True for row in rows),
-        "cap_hits": sum(row.get("stop_type") == "limit" for row in rows),
-        "eos_stops": sum(row.get("stop_type") == "eos" for row in rows),
-    }
-
-
-def reconcile(log: str, responses: list[Record]) -> None:
-    pattern = r"#calls\(b,g,a\) =\s*(\d+)\s+(\d+)\s+(\d+), #gen drafts =\s*(\d+), #acc drafts =\s*(\d+), #gen tokens =\s*(\d+), #acc tokens =\s*(\d+)"
-    matches = list(re.finditer(pattern, log))
-    if len(matches) != len(responses):
-        raise ValueError("native final log does not reconcile with request count")
-    last_proposed, last_accepted = 0, 0
-    for index, (match, response) in enumerate(zip(matches, responses, strict=True), 1):
-        if int(match[1]) != index:
-            raise ValueError("native request boundary is ambiguous")
-        proposed, accepted = int(match[6]), int(match[7])
-        timings = native_counts(response, True)
-        if (proposed - last_proposed, accepted - last_accepted) != (
-            timings["proposed"],
-            timings["accepted"],
-        ):
-            raise ValueError("native response and independent final log disagree")
-        last_proposed, last_accepted = proposed, accepted
 
 
 def compare(specification: Path, output: Path) -> Record:
@@ -129,15 +40,15 @@ def compare(specification: Path, output: Path) -> Record:
     spec.verify()
     if output.exists():
         raise ValueError("comparison output must be new; preserve prior attempts")
-    with device_lease("cuda"):
+    with deadline(120 if spec.tier == "screen" else None), device_lease("cuda"):
         return compare_leased(specification, output, spec)
 
 
 def execution_blocks(
     spec: Comparison,
 ) -> list[tuple[int, int, tuple[Record, ...], tuple[Arm, ...], int]]:
-    grouped = spec.tier in {"full", "harness"}
-    count = len(spec.arms) if grouped else 1
+    count = spec.block_count()
+    grouped = count > 1
     ordered = tuple(sorted(spec.tasks, key=selection_order)) if grouped else spec.tasks
     blocks: list[tuple[int, int, tuple[Record, ...], tuple[Arm, ...], int]] = []
     for rep in range(spec.repeats):
@@ -151,6 +62,7 @@ def execution_blocks(
 
 
 def compare_leased(specification: Path, output: Path, spec: Comparison) -> Record:
+    began_panel = now()
     store = Store(output)
     store.atomic(store.root / "gpu.txt", cuda_identity().encode())
     code_root = Path(__file__).resolve().parents[1]
@@ -163,7 +75,16 @@ def compare_leased(specification: Path, output: Path, spec: Comparison) -> Recor
         canonical(cast(Record, asdict(ProcessIdentity.read(os.getpid())))),
     )
     rows: list[Record] = []
-    references: dict[str, Record] = {}
+    cached = spec.cached()
+    if any(value["gpu"] != cuda_identity() for value in cached.values()):
+        raise ValueError(
+            "reference hardware/driver differs; establish new controls before comparison"
+        )
+    references = (
+        {key: record(value) for key, value in record(cached["target"]["signatures"]).items()}
+        if cached
+        else {}
+    )
     pending: dict[str, list[tuple[Record, Record | None]]] = {}
     try:
         for rep, group, selected, arms, seed in execution_blocks(spec):
@@ -210,23 +131,23 @@ def compare_leased(specification: Path, output: Path, spec: Comparison) -> Recor
                             raise ValueError(
                                 "task exceeds context; preserve workload and revise explicitly"
                             )
-                        payload: Record = {
-                            "prompt": identifiers,
-                            "n_predict": task["output_cap"],
-                            "temperature": spec.sampling.temperature,
-                            "seed": seed,
-                            "top_p": spec.sampling.top_p,
-                            "top_k": spec.sampling.top_k,
-                            "min_p": spec.sampling.min_p,
-                            "cache_prompt": False,
-                            "return_tokens": True,
-                        }
-                        cell.atomic(cell.root / f"{index}-request.json", canonical(payload))
+                        query = payload(
+                            identifiers,
+                            integer(task["output_cap"]),
+                            spec.sampling.temperature,
+                            spec.sampling.top_p,
+                            spec.sampling.top_k,
+                            spec.sampling.min_p,
+                            seed,
+                        )
+                        cell.atomic(cell.root / f"{index}-request.json", canonical(query))
                         began = now()
-                        response = request(port, "completion", payload)
+                        response = request(port, "completion", query)
                         elapsed = now() - began
                         cell.atomic(cell.root / f"{index}-response.json", canonical(response))
-                        verify_generation(response, payload, arm.drafter is not None)
+                        verify_generation(response, query, arm.drafter is not None)
+                        if not valid_sample(response, integer(task["output_cap"])):
+                            raise ValueError("invalid native tokens or stopping")
                         responses.append(response)
                         current = signature(response)
                         key = string(task["id"])
@@ -294,11 +215,21 @@ def compare_leased(specification: Path, output: Path, spec: Comparison) -> Recor
             raise ValueError(
                 "executed source changed during comparison; preserve and rerun affected evidence"
             )
+        historical_rows = [
+            record(row) for value in cached.values() for row in sequence(value["rows"])
+        ]
+        all_rows = rows + historical_rows
+        names = [arm.name for arm in spec.arms] + list(cached)
         aggregate: Record = {
-            arm.name: totals([row for row in rows if row["arm"] == arm.name]) for arm in spec.arms
+            name: {
+                **totals([row for row in all_rows if row["arm"] == name]),
+                "execution": "historical" if name in cached else "measured",
+            }
+            for name in names
         }
         result: Record = {
             "status": "complete",
+            "protocol": spec.reference_protocol(),
             "diagnostic": spec.diagnostic,
             "sampled": spec.sampling.temperature > 0,
             "distribution_qualified": spec.sampling.qualification is not None,
@@ -307,25 +238,26 @@ def compare_leased(specification: Path, output: Path, spec: Comparison) -> Recor
             "role": spec.role,
             "tier": spec.tier,
             "rows": rows,
+            "historical_references": {name: value["reference"] for name, value in cached.items()},
+            "historical_comparisons": historical_comparisons(rows, cached),
+            "elapsed_seconds": now() - began_panel,
             "summary": aggregate,
             "by_category": partitions(
-                rows,
+                all_rows,
                 "category",
                 lambda values: {
-                    arm.name: totals([row for row in values if row["arm"] == arm.name])
-                    for arm in spec.arms
+                    name: totals([row for row in values if row["arm"] == name]) for name in names
                 },
             ),
             "by_length": partitions(
-                rows,
+                all_rows,
                 "length_band",
                 lambda values: {
-                    arm.name: totals([row for row in values if row["arm"] == arm.name])
-                    for arm in spec.arms
+                    name: totals([row for row in values if row["arm"] == name]) for name in names
                 },
             ),
             "paired_against_baseline": {}
-            if spec.sampling.temperature
+            if spec.sampling.temperature or cached
             else {
                 arm.name: paired(rows, arm.name, spec.arms[1].name, family=len(spec.arms) - 2)
                 for arm in spec.arms[2:]
@@ -348,7 +280,7 @@ def compare_leased(specification: Path, output: Path, spec: Comparison) -> Recor
                     },
                 },
             )
-            if spec.tier == "harness"
+            if spec.tier in {"harness", "prefix"} and not cached
             else {},
             "code_sha256": code_identity,
             "scientific": "sampled descriptive robustness; unequal outputs cannot rank checkpoints by throughput"
@@ -363,3 +295,20 @@ def compare_leased(specification: Path, output: Path, spec: Comparison) -> Recor
             canonical({"status": "failed", "error": str(error), "completed_requests": len(rows)}),
         )
         raise
+
+
+def historical_comparisons(rows: list[Record], cached: dict[str, Record]) -> Record:
+    output: Record = {}
+    for arm in sorted({string(row["arm"]) for row in rows}):
+        for name, value in cached.items():
+            if name == "target":
+                continue
+            old = [record(row) for row in sequence(value["rows"])]
+            statistics = paired(rows + old, arm, name)
+            output[arm + "/" + name] = {
+                key: item for key, item in statistics.items() if "speed" not in key
+            } | {
+                "historical_speed_ratio": statistics["speed_ratio"],
+                "timing_scope": "separate executions; historical descriptive ratio, no paired timing claim",
+            }
+    return output

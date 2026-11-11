@@ -1,10 +1,9 @@
 # Benchmarks
 
-Native runs measure acceptance/speed; loss/top1 diagnoses learning. The existing large
-cohorts below exceeded Philip's runtime requirements and must not restart as routine
-defaults. The [current task](../tasks/benchmark-implementation.md) tracks the lean redesign.
-Training checks must take at most a couple minutes every30–60 training minutes. Request
-scores and complete application tasks remain separate evidence.
+Native runs measure acceptance/speed; loss/top1 diagnose learning. Routine training
+checks execute only the candidate against saved target/baseline/leader records. The
+complete pause must fit120seconds every1800–3600 optimizer seconds; qualify the actual
+pause before production. Request scores and whole application tasks stay separate.
 
 ```sh
 uv run --locked --no-sync --offline python -m benchmarks COMMAND INPUT [OUTPUT]
@@ -18,8 +17,10 @@ uv run --locked --no-sync --offline python -m benchmarks COMMAND INPUT [OUTPUT]
 | `prepare-project-workflows`, `prepare-replays`, `prepare-panels` | Project controls, measured histories, live/harness inputs |
 | `capture`, `evaluate` | Teacher features; matched teacher-forced DEV loss |
 | `compare`, `live` | Isolated native requests; executing tool episodes |
-| `campaign`, `campaign-report` | Training/evaluation; read-only health/learning/exposure |
-| `suite` | Full panels and optional state selection |
+| `campaign-preflight`, `campaign`, `campaign-report` | CPU admission; training; read-only health |
+| `prepare-checks`, `record-reference` | Frozen lean cohorts; authenticated reusable references |
+| `prepare-initialization` | Reusable authenticated model basis; no training or capture |
+| `suite` | Broader panels and optional state selection |
 | `verify-greedy`, `verify-sampler`, `profile-native` | Independent decisions, distributions, kernel activation |
 | `reduce-trace` | Structural round accounting, not an independent verifier |
 
@@ -29,30 +30,66 @@ new; capture resumes verified records. Resume campaigns/suites with their record
 and specification. Checkout edits do not alter active runs. CPU preflight is not runtime
 qualification. Run [local checks](development.md); there is no hosted CI.
 
-## Existing qualification cohorts
+## Routine DEV cohorts
 
-| DEV panel | Units per arm/target | Execution |
+| Panel | Units per candidate/target | Execution |
 | --- | ---: | --- |
-| Short | 120 requests | Zero/periodic/final training checks |
-| Full | 600 requests | Two blocks, balanced positions across task groups |
-| Harness | 30 groups ×3 prefixes =90 requests | Two balanced blocks |
-| Live | 12 tasks, two per family | Three rounds balance arm positions |
-| Sampled | 120 requests ×3 seeds | Separate qualified robustness mode |
+| Training screen |60 requests,128-token caps |One candidate pass; saved controls |
+| Broader requests |120 requests, existing longer caps |One pass |
+| Prefix sensitivity |6 groups ×3 prefixes =18 requests |One pass |
+| Live |12 tasks, two per family |One round; failures stay denominated |
 
-Initial targets: Qwen3.5 4B Q4KM/NVFP4. Arms: target-only, released DFlash Q4KM, candidate.
-Three arms/two targets cost7200 full requests,1080 harness requests,216 live episodes,
-plus load/warmup. Sampled adds2160 requests. Smaller pilots are explicit; more candidates
-add complete cells. [The bank definition](../benchmarks/definitions/prompt-bank-v1.json)
-owns exact coverage/sources/identities. Short is nested DEV; category/length/group
-marginals are checked. Keep related variants in one role/group.
+Screen categories:15 code,12 documents,10 reasoning,10 conversation,8 structured/tool,
+5 writing. Input bands:30 below512 tokens,18 at512–2047,9 at2048–8191,3 at8192–16384.
+The early-answer cap makes this a progress indicator; broader requests retain longer
+answers. Category estimates are noisy. Broader categories30/25/20/20/15/10 and input
+bands60/36/18/6 preserve breadth. Prefix groups split3 code/3 structured, each under
+minimal/coding/tools. Eight measured application histories remain in request coverage.
 
-Current cohorts are DEV and repeated use is selection exposure. New600-request/24-live/
-90-harness confirmation needs independent curation, frozen finalists/protocol and access
-receipts; a role label does not supply unseen data. Never consume heldout24 aliases.
-Public dialogue is partly synthetic; prior exposure is unknown. Planning dominates
-non-arithmetic reasoning; formal logic/independent projects remain thin. Length is not
-difficulty, the mixture is not measured traffic, and one-project trials do not establish
-universal transfer. Workflow regressions cannot be rescued by request scores.
+`prepare-checks` accepts schema1 with authenticated `requests`, `harness`, `live`
+comparison specifications, producing workloads and multi-arm `*-establish.json` specs.
+Use them to establish missing controls, then bind references for candidate-only execution.
+The [bank definition](../benchmarks/definitions/prompt-bank-v1.json) owns source identities
+and the6K TRAIN bank; smaller evals do not change training data. Targets remain Qwen3.5
+4B Q4KM/NVFP4, with separate reference records.
+
+Legacy short120/full600/harness90/live×3/sample120×3 evidence keeps its original meaning;
+these are supported readers, not routine defaults. No default sampled sweep or repeats.
+Additional seeds/repetitions answer explicit uncertainty, not an automatic checklist.
+
+These are reused DEV cohorts. Independent confirmation requires fresh curation and
+access receipts; a new label supplies no unseen data. Never consume heldout24 aliases.
+Public dialogue is partly synthetic, planning dominates non-arithmetic reasoning, and
+long inputs are mostly papers. Length is not difficulty; this is not measured traffic.
+One-project trials cannot establish universal transfer. Workflow regressions cannot be
+rescued by request scores. Broader candidate runtime aims for15–20minutes/precision;
+measure it rather than treating that estimate as qualification.
+
+## Reusable references
+
+`record-reference REGISTRATION REGISTRY` accepts schema1 with authenticated `comparison`
+(the desired cohort) and completed `result`, plus source `arm` and zero-based `rep`.
+It authenticates whole source-panel completeness, selected raw responses/counters and
+exact unchanged task definitions. Projection from a larger complete panel is explicit;
+partial/invalid panels cannot establish references. Changed caps require new evidence.
+
+The external registry keys records by protocol and model content identity. Its first
+canonical observation is reused, never overwritten. Separate observations remain under
+`observations/`; deliberate repeats cannot silently replace the reference. Raw result,
+specification and response/transcript receipts remain attached. Model identities persist
+even if obsolete weights are later retired with receipts; executing weights still requires
+full authentication.
+
+Candidate-only comparison specs contain one `candidate` arm and `references` mapping
+`target`, `baseline` and optionally `prior-leader` to authenticated registry records.
+Preflight refuses missing, damaged, incomplete or incompatible evidence before training.
+Protocol binds runtime/server/libraries, target precision, context/depth, role, exact
+messages/tools/caps and generation policy. Cached target signatures validate fresh greedy
+outputs/stopping. Hardware/driver identity is checked at execution. Reports distinguish
+fresh rows from historical summaries and report acceptance differences with source-group
+uncertainty. Historical speed ratios are descriptive, without paired timing intervals.
+Changed runtime/hardware needs new controls; consequential close speed decisions need
+fresh matched trials. Filesystem/tool tasks retain whole-episode failure denominators.
 
 ## Prompts and captures
 
@@ -87,8 +124,8 @@ Training CPU preflight is in [execution](execution.md). Neither grants authority
 
 [`native-comparison-v1`](../benchmarks/comparison.py) binds build/server/libs, target,
 arms, workload, repeats/warmups, context/depth, role and tier. References use `path`,
-`sha256`, `bytes`, relative to the specification or absolute. Arm1 is `target`; keep the
-external baseline and candidates distinct. Server/libs must match their build.
+`sha256`, `bytes`, relative to the specification or absolute. Fresh control runs start with `target`; cached runs execute speculative arms only.
+Keep external baselines and candidates distinct. Server/libs must match their build.
 
 Greedy arms must match target token IDs, text and stopping; actual returned generation
 settings are checked. Accepted/proposed counters reconcile with independent native logs;
@@ -115,7 +152,7 @@ ranking by throughput.
 
 `prepare-project-workflows` freezes source/recipes and verifies broken, repaired and
 followup controls in real project modules. `prepare-panels` creates live inputs and30
-fixed-history groups under `minimal`, `coding`, `tools`. Record instruction origins;
+fixed-history groups; `prepare-checks` selects6 of those groups under `minimal`, `coding`, `tools`. Record instruction origins;
 identify authored alternatives. Treatments replace system messages, retaining task facts.
 
 `live` executes list/read/replace/write/test tools in isolated copies. Bubblewrap protects
@@ -129,16 +166,29 @@ claims need trials in the intended application/configuration.
 
 ## Training and selection
 
-[`training-campaign-v1`](../benchmarks/campaign.py) binds intent, short comparison, initial
-drafter, optimizer-time cadence and failure policy. Validate TRAIN/DEV before zero eval;
-unload training for boundary/final native checks. Restore Adam/RNG/cursor. Resume requires
-the same recipe/dataset; changes require explicit continuation. Potential leaders face
-the prior leader in the same block; ties retain earlier states. Invalid/partial evals
-never select. Explicit pilot mode does not qualify full coverage.
+[`training-campaign-v2`](../benchmarks/campaign.py) binds intent, candidate-only screen,
+initial drafter, optimizer-time cadence, failure policy and `maximum_pause_seconds` ≤120.
+`campaign-preflight` validates roles, model/data/source and saved controls on CPU. V1 is
+legacy-pilot-only. V2 pilots accelerate cadence for tests while retaining all60 prompts.
+
+Boundary/final checks unload training and run the candidate once. A new acceptance leader
+publishes a reusable reference; later checks compare with that record without rerunning
+its model. Exact ties keep the earlier state. Invalid/partial evaluations never select.
+Adam/RNG/cursor restore exactly; changed recipes/data require explicit continuation.
+`training-boundary` and next `training-ready` journal events measure save/export, evaluation,
+selection bookkeeping and restoration through next sample readiness. Boot changes make
+that interval unavailable. The campaign records interruption budgets and refuses continued
+budget qualification after an overrun; final evaluation has no subsequent resume interval.
+Initial startup is separate. Preserve all costs and incomplete attempts.
+`initial_drafter` must match a completed producer bound to the durable parent, or a
+zero-update export derived from that parent. An arbitrary same-name GGUF cannot seed a
+campaign. V2's compatibility field `provisional_fast_leader` records an acceptance score;
+it is not a throughput verdict. Completed campaigns return idempotently without new runs.
 
 Latest recovery, provisional fast leader and full-DEV incumbent are distinct.
 [`suite`](../benchmarks/suite.py) prevalidates matching runtime/settings/role/target/arms.
-`completed_panels` can reuse complete matching specifications, never partial blocks.
+`full-suite-v2` uses the lean one-pass panels and saved controls. `completed_panels`
+reuses complete matching specifications, never partial blocks.
 `candidate_bindings` references state/drafter/execution journals; workers must bind state
 to the evaluated export. Highest full-request score selects the experimental incumbent,
 with earlier-update ties. Workflow/harness evidence stays separate; no deployment promotion.

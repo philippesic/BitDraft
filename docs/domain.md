@@ -44,20 +44,19 @@ generalization to unseen prompts.
 
 ## Comparisons
 
-Two results are comparable only when they match on machine and software, era, target,
-tokenizer and chat template, workload with prompt IDs, roles and prior consumption,
-output cap, complete process blocks, binary and runtime pins, instrumentation, draft
-depth, KV cache and generation controls. Declared candidate differences keep their
-exact identities. Never waive a clock, workload or correctness mismatch, keep only
-favorable retries, invent a missing field or add a force option. Keep raw token outputs
-and activation evidence so aggregates can be recomputed. Results from different machines
-stay separate. Historical DSpark and modern DFlash results get no speed ratio.
+Match target precision, tokenizer/template, exact prompts and output caps, generation
+controls, runtime, draft depth, KV policy and data role. Saved references bind those
+identities and raw evidence. Never pool incompatible protocols. Candidate-only checks
+verify output/stopping against saved target outputs and compare acceptance with the
+fixed baseline and previous leader. Historical timings are descriptive, even on the
+same GPU; they do not supply fresh paired speed evidence. A hardware/driver change
+requires new controls. Keep failures and unfavorable observations.
 
 ## Selection
 
-A checkpoint is selected by a valid, complete, matched serving score attached to a
-durable full state. Higher score wins; an exact tie keeps the earlier state. DEV loss,
-cross-entropy and acceptance are diagnostics, not selection scores. A final decline,
-an interrupted panel, invalid output, a nonfinite score or a state that is not durable
-cannot replace the current best. A DEV peak does not establish a serving peak.
-The selection mechanism itself is not implemented yet.
+A valid complete60-request screen can select a provisional acceptance leader attached
+to a durable state/export. Higher accepted/proposed wins; exact ties retain the earlier
+state. It does not establish better throughput or application performance. Full-request
+selection, live outcomes and the latest recovery checkpoint remain separate. Invalid,
+incomplete or nonfinite evaluations cannot select. DEV loss/top1 remain diagnostics;
+repeated DEV selection is not unseen confirmation.

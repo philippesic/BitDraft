@@ -192,6 +192,7 @@ class HE4(nn.Module):
         self.geometry = geometry
         self.mask = mask
         self.origin: tuple[str, str] | None = None
+        self.native_codes: tuple[tuple[str, tuple[int, ...], bytes], ...] = ()
         if (
             vocabulary.ndim != 2
             or vocabulary.shape[1] != geometry.hidden

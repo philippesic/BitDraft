@@ -6,6 +6,7 @@ from typing import cast
 from benchmarks.comparison import Comparison
 from benchmarks.measurement import now, request
 from benchmarks.runner import native_counts, reconcile, signature, valid_sample, verify_generation
+from benchmarks.runtime_policy import LIVE_SECONDS, LIVE_TURNS, payload
 from benchmarks.sandbox import TOOLS, Sandbox
 from benchmarks.serving import session
 from benchmarks.statistics import paired, partitions
@@ -86,7 +87,16 @@ def live_leased(
     freeze_source(code_root, store.root / "sources", code, 0)
     store.atomic(store.root / "specification.json", specification.read_bytes())
     rows: list[Record] = []
-    references: dict[str, str] = {}
+    cached = spec.cached()
+    if any(value["gpu"] != cuda_identity() for value in cached.values()):
+        raise ValueError(
+            "reference hardware/driver differs; establish new controls before comparison"
+        )
+    references = (
+        {key: string(value) for key, value in record(cached["target"]["signatures"]).items()}
+        if cached
+        else {}
+    )
     try:
         for rep in range(spec.repeats):
             arms = list(spec.arms)
@@ -164,18 +174,39 @@ def live_leased(
                         raise ValueError("fallback-only live arm; activation not established")
         if source_identity(code_root) != code:
             raise ValueError("live benchmark source changed during execution")
+        historical_rows = [
+            record(row) for value in cached.values() for row in sequence(value["rows"])
+        ]
         result: Record = {
             "status": "complete",
+            "protocol": spec.reference_protocol(),
             "role": spec.role,
             "tier": spec.tier,
             "rows": rows,
+            "historical_references": {name: value["reference"] for name, value in cached.items()},
             "summary": {
-                arm.name: summarize([row for row in rows if row["arm"] == arm.name])
+                arm.name: {
+                    **summarize([row for row in rows if row["arm"] == arm.name]),
+                    "execution": "measured",
+                }
                 for arm in spec.arms
+            }
+            | {
+                name: {
+                    **summarize([record(row) for row in sequence(value["rows"])]),
+                    "execution": "historical",
+                }
+                for name, value in cached.items()
             },
             "code_sha256": code,
             "by_category": partitions(rows, "category", summarize),
-            "paired_task_rate_against_baseline": {
+            "historical_timing_scope": "separate executions; descriptive timings only"
+            if cached
+            else None,
+            "historical_outcomes": partitions(historical_rows, "arm", summarize) if cached else {},
+            "paired_task_rate_against_baseline": {}
+            if cached
+            else {
                 arm.name: paired(
                     [{**row, "tokens": 1} for row in rows],
                     arm.name,
@@ -207,8 +238,8 @@ def execute(
     reason = "turn-limit"
     followup = task.get("followup")
     phase_checks: list[Record] = []
-    for turn in range(16):
-        if now() - began >= 900:
+    for turn in range(LIVE_TURNS):
+        if now() - began >= LIVE_SECONDS:
             reason = "task-deadline"
             break
         rendered = request(port, "apply-template", {"messages": messages, "tools": TOOLS})
@@ -223,21 +254,12 @@ def execute(
             reason = "context-limit"
             break
         start = now()
-        payload: Record = {
-            "prompt": identifiers,
-            "n_predict": task["output_cap"],
-            "temperature": 0,
-            "seed": 8101,
-            "top_k": 0,
-            "top_p": 1.0,
-            "min_p": 0.0,
-            "cache_prompt": turn > 0,
-            "return_tokens": True,
-        }
-        response = request(port, "completion", payload)
+        query = payload(identifiers, integer(task["output_cap"]), 0, 1.0, 0, 0.0, 8101)
+        query["cache_prompt"] = turn > 0
+        response = request(port, "completion", query)
         model_seconds += now() - start
         responses.append(response)
-        verify_generation(response, payload, speculative)
+        verify_generation(response, query, speculative)
         if not valid_sample(response, integer(task["output_cap"])):
             raise ValueError("live native response has invalid tokens or stopping")
         tokens += len(sequence(response["tokens"]))

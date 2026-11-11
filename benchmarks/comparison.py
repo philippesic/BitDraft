@@ -3,9 +3,11 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from benchmarks.coverage import FULL, SHORT, length_band
+from benchmarks.runtime_policy import LIVE_SECONDS, LIVE_TURNS, arguments, payload
+from benchmarks.sandbox import TOOLS
 from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
 from w1a1_eagle.data import Artifact
-from w1a1_eagle.records import artifact, read
+from w1a1_eagle.records import artifact, read, reference
 
 
 @dataclass(frozen=True)
@@ -42,12 +44,13 @@ class Comparison:
     protected: frozenset[str]
     diagnostic: bool = False
     sampling: Sampling = Sampling()
+    references: tuple[tuple[str, Artifact], ...] = ()
 
     @classmethod
     def load(cls, path: Path) -> "Comparison":
         raw = read(path)
         if (
-            set(raw) - {"exclusions", "diagnostic", "sampling"}
+            set(raw) - {"exclusions", "diagnostic", "sampling", "references"}
             != {
                 "schema",
                 "source",
@@ -119,9 +122,20 @@ class Comparison:
             arms.append(
                 Arm(name, artifact(row["drafter"], root) if row["drafter"] is not None else None)
             )
-        if len({a.name for a in arms}) != len(arms) or len(arms) < 2:
+        references = tuple(
+            (name, artifact(value, root))
+            for name, value in record(raw.get("references", {})).items()
+        )
+        arm_names = [a.name for a in arms] + [name for name, _ in references]
+        if len(set(arm_names)) != len(arm_names) or not arms or len(arm_names) < 2:
             raise ValueError("unique target and speculative arms required")
-        if sum(a.drafter is None for a in arms) != 1 or arms[0] != Arm("target", None):
+        if references and (
+            "target" not in dict(references) or any(a.drafter is None for a in arms)
+        ):
+            raise ValueError("cached execution requires a saved target and speculative-only arms")
+        if not references and (
+            sum(a.drafter is None for a in arms) != 1 or arms[0] != Arm("target", None)
+        ):
             raise ValueError("first arm must be target-only, named target")
         workload = artifact(raw["workload"], root)
         workload.verify()
@@ -137,6 +151,9 @@ class Comparison:
             "harness",
             "live",
             "sampled",
+            "screen",
+            "comparison",
+            "prefix",
         }:
             raise ValueError("explicit workload role/tier required")
         if sampling.temperature > 0 and tier not in {"pilot", "sampled"}:
@@ -153,6 +170,9 @@ class Comparison:
             "harness": 90,
             "live": 12 if role == "dev" else 24,
             "sampled": 120,
+            "screen": 60,
+            "comparison": 120,
+            "prefix": 18,
         }
         if not tasks or len(tasks) > 600 or (tier in expected and len(tasks) != expected[tier]):
             raise ValueError("workload count differs from declared tier")
@@ -202,6 +222,8 @@ class Comparison:
             or not 1 <= depth <= 15
         ):
             raise ValueError("comparison execution bounds invalid")
+        if (references or tier == "screen") and (repeats != 1 or sampling.temperature):
+            raise ValueError("lean/cached panels require one greedy pass")
         return cls(
             artifact(raw["source"], root),
             artifact(raw["binary"], root),
@@ -219,6 +241,7 @@ class Comparison:
             frozenset(protected),
             raw.get("diagnostic", False) is True,
             sampling,
+            references,
         )
 
     def verify(self) -> None:
@@ -263,6 +286,118 @@ class Comparison:
                 != {"sample-and-match", "rejection"}
             ):
                 raise ValueError("sampled verifier qualification does not bind this target/runtime")
+        if self.references:
+            self.cached()
+
+    def reference_protocol(self) -> Record:
+        return {
+            "policy": "native-greedy-request-v2" if self.tier != "live" else "native-live-v2",
+            "target_arguments": arguments(
+                Path("server"), Path("target"), None, self.context, self.depth, 0
+            ),
+            "draft_arguments": arguments(
+                Path("server"), Path("target"), Path("drafter"), self.context, self.depth, 0
+            ),
+            "request": payload(
+                [],
+                0,
+                self.sampling.temperature,
+                self.sampling.top_p,
+                self.sampling.top_k,
+                self.sampling.min_p,
+                8101,
+            ),
+            "serving": list(self.serving_identity()),
+            "tasks": list(self.tasks),
+            "sampling": [
+                self.sampling.temperature,
+                self.sampling.top_p,
+                self.sampling.top_k,
+                self.sampling.min_p,
+                *self.sampling.seeds,
+            ],
+            "live": {
+                "turns": LIVE_TURNS,
+                "seconds": LIVE_SECONDS,
+                "tools": TOOLS,
+                "cache_followups": True,
+            }
+            if self.tier == "live"
+            else None,
+        }
+
+    def cached(self) -> dict[str, Record]:
+        found: dict[str, Record] = {}
+        for name, ref in self.references:
+            ref.verify()
+            value = read(ref.path, 16 * 1024 * 1024)
+            if (
+                value.get("schema") != "benchmark-reference-v1"
+                or value.get("protocol") != self.reference_protocol()
+                or value.get("status") != "complete"
+            ):
+                raise ValueError(
+                    "reference protocol/target/workload differs or is incomplete: " + name
+                )
+            for key in ("result", "specification"):
+                source = artifact(value[key], ref.path.parent)
+                source.verify()
+            result_source = artifact(value["result"], ref.path.parent)
+            result = read(result_source.path, 64 * 1024 * 1024)
+            wanted = {task["id"] for task in self.tasks}
+            recorded = [
+                row
+                for row in sequence(result["rows"])
+                if record(row)["arm"] == value["source_arm"]
+                and record(row)["rep"] == value["source_repeat"]
+                and record(row)["task"] in wanted
+            ]
+            if (
+                result.get("status") != "complete"
+                or recorded != value["rows"]
+                or (result_source.path.parent / "gpu.txt").read_text() != value["gpu"]
+            ):
+                raise ValueError("reference facts differ from their source execution")
+            for receipt in sequence(value["raw"]):
+                artifact(receipt, ref.path.parent).verify()
+            rows = [record(row) for row in sequence(value["rows"])]
+            if (
+                len(rows) != len(self.tasks)
+                or {row["task"] for row in rows} != {task["id"] for task in self.tasks}
+                or any(row.get("correct") is not True for row in rows)
+                or set(record(value["signatures"])) != {string(task["id"]) for task in self.tasks}
+            ):
+                raise ValueError(
+                    "reference must contain one complete verified observation per task"
+                )
+            drafter = value["drafter"]
+            if (name == "target") != (drafter is None):
+                raise ValueError(
+                    "target reference must be target-only; competitors require drafters"
+                )
+            if drafter is not None:
+                artifact(drafter, ref.path.parent)
+            for row in rows:
+                counts = record(row["native"])
+                if (
+                    not 0 <= integer(counts["accepted"]) <= integer(counts["proposed"])
+                    or number(row["wall_seconds"]) <= 0
+                ):
+                    raise ValueError("invalid reference counters or timing")
+            found[name] = {
+                **value,
+                "reference": reference(ref),
+                "rows": [{**row, "arm": name, "rep": 0} for row in rows],
+            }
+        if found and ("target" not in found or "baseline" not in found):
+            raise ValueError(
+                "cached evaluation requires established target and baseline references"
+            )
+        if found and any(
+            value["signatures"] != found["target"]["signatures"] for value in found.values()
+        ):
+            raise ValueError("cached competitors disagree with target output signatures")
+        return found
 
     def serving_identity(self) -> tuple[str, ...]:
         return (
@@ -275,12 +410,25 @@ class Comparison:
             self.role,
         )
 
+    def block_count(self) -> int:
+        return (
+            min(len(self.arms), len(self.tasks))
+            if self.tier in {"full", "harness", "comparison", "prefix"}
+            else 1
+        )
+
 
 def require_cohort(tier: str, tasks: tuple[Record, ...]) -> None:
-    if tier in {"short", "full", "sampled"}:
+    if tier in {"short", "full", "sampled", "screen", "comparison"}:
         categories = ("code", "reasoning", "documents", "conversation", "structured", "writing")
-        counts = FULL if tier == "full" else SHORT
-        bands = (300, 180, 90, 30) if tier == "full" else (60, 36, 18, 6)
+        counts = (15, 10, 12, 10, 8, 5) if tier == "screen" else FULL if tier == "full" else SHORT
+        bands = (
+            (30, 18, 9, 3)
+            if tier == "screen"
+            else (300, 180, 90, 30)
+            if tier == "full"
+            else (60, 36, 18, 6)
+        )
         observed = Counter(string(task["category"]) for task in tasks)
         lengths = Counter(
             length_band(integer(record(task["ancestry"])["input_tokens"])) for task in tasks
@@ -293,11 +441,13 @@ def require_cohort(tier: str, tasks: tuple[Record, ...]) -> None:
             raise ValueError(
                 "declared request cohort violates category, length or independent-group coverage"
             )
-    if tier == "harness":
+        if tier == "screen" and any(task.get("output_cap") != 128 for task in tasks):
+            raise ValueError("training screen requires 128-token output caps")
+    if tier in {"harness", "prefix"}:
         groups: dict[str, list[str]] = {}
         for task in tasks:
             groups.setdefault(string(task["group"]), []).append(string(task["harness"]))
-        if len(groups) != 30 or any(
+        if len(groups) != (6 if tier == "prefix" else 30) or any(
             sorted(values) != ["coding", "minimal", "tools"] for values in groups.values()
         ):
-            raise ValueError("harness requires thirty groups with all three configurations")
+            raise ValueError("harness requires declared groups with all three configurations")

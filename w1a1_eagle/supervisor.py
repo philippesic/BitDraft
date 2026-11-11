@@ -19,7 +19,11 @@ from w1a1_eagle.processes import ProcessIdentity
 
 
 def execute(
-    intent_path: Path, root: Path, scope: str, emit: Callable[[Record], None] | None = None
+    intent_path: Path,
+    root: Path,
+    scope: str,
+    emit: Callable[[Record], None] | None = None,
+    worker_preflight: bool = False,
 ) -> Record:
     intent = Intent.load(intent_path)
     if scope != intent.raw["authority_scope"]:
@@ -112,6 +116,9 @@ def execute(
                 "intent_receipt": str(sealed_intent),
                 "controller": cast(Record, asdict(controller)),
                 "wall_budget": remaining,
+                "admission": "worker before model allocation"
+                if worker_preflight
+                else "separate CPU process and worker",
             }
         )
         clock = Monotonic()
@@ -123,28 +130,30 @@ def execute(
         outcome = "failed"
         exit_code: int | None = None
         try:
-            readiness = subprocess.run(
-                [
-                    numerical_python(code_root),
-                    "-B",
-                    "-m",
-                    "w1a1_eagle.bootstrap",
-                    str(remaining),
-                    "--sealed-preflight",
-                    str(sealed_intent),
-                ],
-                cwd=frozen_root,
-                env=environment,
-                stdin=subprocess.DEVNULL,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.DEVNULL,
-                text=True,
-                timeout=remaining,
-                check=False,
-            )
-            if emit is not None:
+            readiness = None
+            if not worker_preflight:
+                readiness = subprocess.run(
+                    [
+                        numerical_python(code_root),
+                        "-B",
+                        "-m",
+                        "w1a1_eagle.bootstrap",
+                        str(remaining),
+                        "--sealed-preflight",
+                        str(sealed_intent),
+                    ],
+                    cwd=frozen_root,
+                    env=environment,
+                    stdin=subprocess.DEVNULL,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.DEVNULL,
+                    text=True,
+                    timeout=remaining,
+                    check=False,
+                )
+            if emit is not None and readiness is not None:
                 emit(record(cast(object, json.loads(readiness.stdout))))
-            if readiness.returncode:
+            if readiness is not None and readiness.returncode:
                 journal.append(
                     {
                         "kind": "failure",

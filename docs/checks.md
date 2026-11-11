@@ -31,7 +31,7 @@ tests.numerical.test_model -v`.
 | Stage | Covers |
 | --- | --- |
 | bootstrap | Python, tool and lock pins; configuration invariants; executable full-gate hook |
-| repository | Tracked outputs, large files, secrets, ignored escapes, instruction files, diary names, task-file sections |
+| repository | Tracked outputs, individual large files, secrets, ignored escapes, instruction files, diary names, task-file sections |
 | comments | The comment ban and `policy/exceptions.toml` |
 | ruff | Format and selected lint codes |
 | mypy | Strict typing; the numerical profile allows Any only in `tests/numerical` |
@@ -43,6 +43,9 @@ tests.numerical.test_model -v`.
 
 A green full check means the named CPU scenarios ran. It does not show native
 correctness, retained-artifact parity, scientific adequacy or serving performance.
+
+Authored source and documentation have no aggregate byte cap. Individual file limits
+and external runtime-snapshot limits still apply.
 
 ## Comment ban
 

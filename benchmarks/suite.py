@@ -13,8 +13,9 @@ from w1a1_eagle.records import artifact, canonical, read
 
 def suite(specification: Path, output: Path) -> Record:
     raw = read(specification)
-    if set(raw) != {"schema", "targets"} or raw["schema"] != "full-suite-v1":
+    if set(raw) != {"schema", "targets"} or raw["schema"] not in {"full-suite-v1", "full-suite-v2"}:
         raise ValueError("unsupported full suite specification")
+    lean = raw["schema"] == "full-suite-v2"
     targets = record(raw["targets"])
     if not targets:
         raise ValueError("full suite requires explicit targets")
@@ -29,7 +30,11 @@ def suite(specification: Path, output: Path) -> Record:
             raise ValueError("full suite requires request, live and harness panels")
         runtime: tuple[str, ...] | None = None
         arms: object = None
-        for panel, tier in (("requests", "full"), ("live", "live"), ("harness", "harness")):
+        for panel, tier in (
+            ("requests", "comparison" if lean else "full"),
+            ("live", "live"),
+            ("harness", "prefix" if lean else "harness"),
+        ):
             ref = artifact(specs[panel], specification.resolve().parent)
             ref.verify()
             comparison = Comparison.load(ref.path)
@@ -37,9 +42,23 @@ def suite(specification: Path, output: Path) -> Record:
             current_arms = [
                 (arm.name, arm.drafter.sha256 if arm.drafter else None) for arm in comparison.arms
             ]
-            if comparison.tier != tier or comparison.repeats < 2 or comparison.diagnostic:
+            current_arms += [
+                (
+                    key,
+                    artifact(value["drafter"], ref.path.parent).sha256
+                    if value["drafter"] is not None
+                    else None,
+                )
+                for key, value in comparison.cached().items()
+            ]
+            current_arms.sort()
+            if (
+                comparison.tier != tier
+                or (comparison.repeats != 1 if lean else comparison.repeats < 2)
+                or comparison.diagnostic
+            ):
                 raise ValueError(
-                    "full suite requires primary full panels with at least two repeat blocks"
+                    "suite requires primary panels with matching declared coverage/repetitions"
                 )
             if runtime is not None and (
                 runtime != comparison.serving_identity() or arms != current_arms

@@ -61,6 +61,9 @@ python -m w1a1_eagle preflight INTENT
 The first is a quick partial check, the second is the full commit gate, the third
 inspects the environment and hook. The last family runs and reports CPU/CUDA training;
 see [execution](docs/execution.md).
+For intermittent acceptance checks, use `python -m benchmarks campaign-preflight SPEC`
+before `campaign SPEC OUTPUT`. The [benchmark guide](docs/benchmarks.md) explains60-prompt
+candidate checks, reusable baseline/leader records and complete interruption budgets.
 
 ## More
 

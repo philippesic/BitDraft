@@ -27,7 +27,7 @@ from w1a1_eagle.numerical.entry import admission
 from w1a1_eagle.numerical.export import export_he4, packed_signs
 from w1a1_eagle.numerical.weights import load_he4, shapes
 from w1a1_eagle.numerical.worker import TensorWorker
-from w1a1_eagle.records import canonical, read, reference
+from w1a1_eagle.records import artifact, canonical, read, reference
 from w1a1_eagle.supervisor import execute
 from w1a1_eagle.training import Budget
 
@@ -291,6 +291,22 @@ class TestNumerical(unittest.TestCase):
         actual = packed_signs(value).tobytes()
         self.assertEqual(actual, struct.pack("<II", 0x80000001, 1))
         self.assertEqual(struct.unpack("<ii", actual), (-2147483647, 1))
+        for columns in (1, 7, 8, 31, 32, 33, 65):
+            values = torch.randn(3, columns, generator=torch.Generator().manual_seed(columns))
+            expected_words = []
+            for row in values.tolist():
+                for offset in range(0, columns, 32):
+                    expected_words.append(
+                        sum(
+                            (1 << bit)
+                            for bit, item in enumerate(row[offset : offset + 32])
+                            if item >= 0
+                        )
+                    )
+            self.assertEqual(
+                packed_signs(values).tobytes(),
+                struct.pack("<" + "I" * len(expected_words), *expected_words),
+            )
 
     def test_historical_arithmetic_characterization(self) -> None:
         captured = record(
@@ -475,6 +491,20 @@ class TestNumerical(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "memory"):
                 load_he4(source_ref, vocabulary_ref, 0, cfg)
             model = load_he4(source_ref, vocabulary_ref, 64 * 1024 * 1024, cfg)
+            from w1a1_eagle.numerical.weights import prepare_initialization
+
+            prepared = prepare_initialization(
+                source_ref, vocabulary_ref, 64 * 1024 * 1024, cfg, root / "initialization"
+            )
+            initialization = artifact(prepared["materialized"], root)
+            cached_model = load_he4(
+                source_ref, vocabulary_ref, 64 * 1024 * 1024, cfg, initialization
+            )
+            self.assertEqual(model.native_codes, cached_model.native_codes)
+            for name, value in model.state_dict().items():
+                self.assertTrue(torch.equal(value, cached_model.state_dict()[name]), name)
+            with self.assertRaisesRegex(ValueError, "origin"):
+                load_he4(source_ref, source_ref, 64 * 1024 * 1024, cfg, initialization)
             self.assertEqual(model.mask, 19)
             block = cast(Layer, model.blocks[0])
             self.assertTrue(torch.equal(block.gate.latent_sign, torch.ones((256, 256))))
@@ -491,6 +521,23 @@ class TestNumerical(unittest.TestCase):
                 8 * 1024 * 1024,
                 32 * 1024 * 1024,
             )
+            cached_model.native_codes = ()
+            independent = TensorWorker(cached_model, corpus, "export-fixture")
+            self.assertEqual(independent.frozen_sha256, exporter.frozen_sha256)
+            slow_export = export_he4(
+                independent,
+                source_ref,
+                vocabulary_ref,
+                Store(root / "uncached-export"),
+                8 * 1024 * 1024,
+                32 * 1024 * 1024,
+            )
+            self.assertEqual(
+                exported.artifact.path.read_bytes(), slow_export.artifact.path.read_bytes()
+            )
+            independent.model.native_codes = model.native_codes
+            with self.assertRaisesRegex(ValueError, "frozen"):
+                independent.verify_frozen()
             tensors = {
                 tensor.name: tensor
                 for tensor in gguf.GGUFReader(str(exported.artifact.path)).tensors
@@ -525,6 +572,7 @@ class TestNumerical(unittest.TestCase):
                 "risk": "synthetic source cannot establish native parity or learning usefulness",
                 "authority_scope": "disposable-CPU-test",
                 "source": reference(source_ref),
+                "initialization": reference(initialization),
                 "vocabulary": reference(vocabulary_ref),
                 "corpus": reference(corpus_ref),
                 "parent": None,
@@ -573,6 +621,15 @@ class TestNumerical(unittest.TestCase):
             self.assertEqual(record(refused["latest"])["outcome"], "refused")
             self.assertIsNone(refused["worker"])
             self.assertFalse((root / "refused-retry/states/latest.json").exists())
+            worker_refused = execute(
+                intent_path,
+                root / "worker-admission-refused",
+                "disposable-CPU-test",
+                worker_preflight=True,
+            )
+            self.assertEqual(record(worker_refused["latest"])["outcome"], "failed")
+            self.assertIsNone(worker_refused["worker"])
+            self.assertFalse((root / "worker-admission-refused/states/latest.json").exists())
             intent_path.write_bytes(canonical(intent))
             recovered = execute(intent_path, root / "refused-retry", "disposable-CPU-test")
             self.assertEqual(recovered["attempts"], 2)
