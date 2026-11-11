@@ -3,7 +3,7 @@ import re
 from pathlib import PurePosixPath
 from urllib.parse import unquote, urlparse
 
-from tools.contracts import Diagnostic, Record, record, sequence
+from tools.contracts import Diagnostic, Record, record, sequence, string
 
 
 def anchors(text: str) -> set[str]:
@@ -15,10 +15,11 @@ def anchors(text: str) -> set[str]:
     return result
 
 
-def validate_docs(files: dict[str, str], evidence: Record) -> list[Diagnostic]:
+def validate_docs(
+    files: dict[str, str], evidence: Record, rules: Record | None = None
+) -> list[Diagnostic]:
     diagnostics: set[Diagnostic] = set()
     registered = {record(v)["url"] for v in sequence(evidence.get("object", []))}
-    revision = str(evidence.get("old_revision", ""))
     for path, text in files.items():
         if not path.endswith(".md"):
             continue
@@ -27,9 +28,7 @@ def validate_docs(files: dict[str, str], evidence: Record) -> list[Diagnostic]:
             parsed = urlparse(target)
             if parsed.scheme in {"https", "http"}:
                 if "binary-eagle-decoding" in target and (
-                    "/blob/" not in target
-                    or f"/blob/{revision}/" not in target
-                    or target not in registered
+                    re.search(r"/blob/[0-9a-f]{40}/", target) is None or target not in registered
                 ):
                     diagnostics.add(Diagnostic("EVIDENCE_PIN", path))
                 continue
@@ -49,6 +48,10 @@ def validate_docs(files: dict[str, str], evidence: Record) -> list[Diagnostic]:
                 and anchor not in anchors(files.get(destination, ""))
             ):
                 diagnostics.add(Diagnostic("DOC_LINK", path))
+    for value in sequence((rules or {}).get("rule", [])):
+        destination, _, anchor = string(record(value)["evidence"]).partition("#")
+        if destination not in files or anchor and anchor not in anchors(files[destination]):
+            diagnostics.add(Diagnostic("DOC_LINK", "policy/rules.toml"))
     mapped: list[str] = []
     for match in re.finditer(
         r"(?m)^\| (\w+) \| (active|pending) \| ([^ |]+) \| ([^ |]+) \|",

@@ -6,13 +6,13 @@ Each name below is a separate identity. Do not relabel one as another.
 
 | Name | Meaning |
 | --- | --- |
-| HE4 | Current drafter: W1A4 weights and activations, A8 down projection, Q4K head |
+| HE4 | Development drafter: one-bit FFN weights, four-bit gate/up inputs, eight-bit down inputs, Q4K head |
 | Baseline | Current incumbent: the external DFlash Q4KM drafter |
 | W1A8 | Historical DSpark W1A8 drafter |
 | DSpark Q4KM | Historical DSpark-era baseline |
 | Csmallbroad, B0, foundation | Retained historical states with their own identities |
 
-No result so far shows HE4 beating Baseline. See [findings](../FINDINGS.md).
+The retained comparisons summarized here do not show HE4 beating Baseline. See [findings](../FINDINGS.md).
 
 ## Data roles
 

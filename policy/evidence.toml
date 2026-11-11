@@ -201,3 +201,122 @@ scope = "tracked historical object; no reproduction"
 [external]
 recovery = "Philip supplied: 5505 vs approximately 5497; unresolved"
 raw = "External, not copied or freshly authenticated"
+
+[[object]]
+path = "docs/DECISIONS.md"
+sha256 = "becd28eab676b8784ff5fb7b1326cafb89224a11ce65d9c182fdf0312695c277"
+bytes = 4457
+url = "https://github.com/philippesic/binary-eagle-decoding/blob/7d9ab32066584edbb715ddbce38d0386b2efb0d6/docs/DECISIONS.md"
+scope = "Locally verified pinned historical source; not reproduced; remote availability not checked"
+
+[[object]]
+path = "experiments/precision-campaign-20261104/summary.json"
+sha256 = "fdd8bec5359fd4ce69944aec995e0be81b3faf548eb8b518d955634ea8b594a4"
+bytes = 10886
+url = "https://github.com/philippesic/binary-eagle-decoding/blob/7d9ab32066584edbb715ddbce38d0386b2efb0d6/experiments/precision-campaign-20261104/summary.json"
+scope = "Locally verified pinned historical source; not reproduced; remote availability not checked"
+
+[[object]]
+path = "experiments/binary-pipeline-profile-20261104/README.md"
+sha256 = "8c46fef49b96ca7962ccad200d1e718637afab887638499f5b11819835cacae7"
+bytes = 5339
+url = "https://github.com/philippesic/binary-eagle-decoding/blob/7d9ab32066584edbb715ddbce38d0386b2efb0d6/experiments/binary-pipeline-profile-20261104/README.md"
+scope = "Locally verified pinned historical source; not reproduced; remote availability not checked"
+
+[[object]]
+path = "experiments/training-audit-2026-10-01/03-binary-optimization.md"
+sha256 = "44c627be14c6aaf897105274f20f59f88f87c21f81bdc13e97810f1a79d21a92"
+bytes = 17137
+url = "https://github.com/philippesic/binary-eagle-decoding/blob/7d9ab32066584edbb715ddbce38d0386b2efb0d6/experiments/training-audit-2026-10-01/03-binary-optimization.md"
+scope = "Locally verified pinned historical source; not reproduced; remote availability not checked"
+
+[[object]]
+path = "experiments/nine-model-research-slate-2026-10-04/synthesis.md"
+sha256 = "f1cff9c1cebe48ef34441512108fd127b2313ee1db1ac4ce81f595671f0caf2a"
+bytes = 18385
+url = "https://github.com/philippesic/binary-eagle-decoding/blob/7d9ab32066584edbb715ddbce38d0386b2efb0d6/experiments/nine-model-research-slate-2026-10-04/synthesis.md"
+scope = "Locally verified pinned historical source; not reproduced; remote availability not checked"
+
+[[object]]
+path = "experiments/design-readiness-20261104/qat-source-audit.md"
+sha256 = "d0fcea9db5135f36c999c6a1a6ecab4949642c1f2d434627688318ccf55875bd"
+bytes = 10496
+url = "https://github.com/philippesic/binary-eagle-decoding/blob/7d9ab32066584edbb715ddbce38d0386b2efb0d6/experiments/design-readiness-20261104/qat-source-audit.md"
+scope = "Locally verified pinned historical source; not reproduced; remote availability not checked"
+
+[[object]]
+path = "experiments/he4broad-20261110/report.md"
+sha256 = "162feacae93a1a58c5ea5f0f08899391834b81bb4670c4fb406bea2aecb8895f"
+bytes = 3850
+url = "https://github.com/philippesic/binary-eagle-decoding/blob/7d9ab32066584edbb715ddbce38d0386b2efb0d6/experiments/he4broad-20261110/report.md"
+scope = "Locally verified pinned historical source; not reproduced; remote availability not checked"
+
+[[object]]
+path = "docs/PROJECT_OVERVIEW.md"
+sha256 = "681c42e90e2aa742603ce61c0fbcb0b004ae8ceb282bd2d2e0573694d63a0d31"
+bytes = 1017
+url = "https://github.com/philippesic/binary-eagle-decoding/blob/7d9ab32066584edbb715ddbce38d0386b2efb0d6/docs/PROJECT_OVERVIEW.md"
+scope = "Locally verified pinned historical source; not reproduced; remote availability not checked"
+
+[[object]]
+path = "docs/EVALUATION.md"
+sha256 = "1748b16e42ff72f4a296c5b2bd5bac4e3e653b11376f312864606fcce1531d21"
+bytes = 8776
+url = "https://github.com/philippesic/binary-eagle-decoding/blob/7d9ab32066584edbb715ddbce38d0386b2efb0d6/docs/EVALUATION.md"
+scope = "Locally verified pinned historical source; not reproduced; remote availability not checked"
+
+[[object]]
+path = "docs/CANDIDATE_BENCHMARKING.md"
+sha256 = "a783de080201ec9f50b6b9982a5a7467a4ab8d5509929cd02b79eda53929e085"
+bytes = 13447
+url = "https://github.com/philippesic/binary-eagle-decoding/blob/7d9ab32066584edbb715ddbce38d0386b2efb0d6/docs/CANDIDATE_BENCHMARKING.md"
+scope = "Locally verified pinned historical source; not reproduced; remote availability not checked"
+
+[[object]]
+path = "docs/SETUP.md"
+sha256 = "be7c111abccb53445e1efe5bbd5b03688c989698395a094b34088b2be213afe9"
+bytes = 4681
+url = "https://github.com/philippesic/binary-eagle-decoding/blob/7d9ab32066584edbb715ddbce38d0386b2efb0d6/docs/SETUP.md"
+scope = "Locally verified pinned historical source; not reproduced; remote availability not checked"
+
+[[object]]
+path = "docs/AGENT_OPERATIONS.md"
+sha256 = "a9e3f16f98ab1185b8ef7b2be18f5efe857c3c1b67dfc041bb1853866e5f9708"
+bytes = 7194
+url = "https://github.com/philippesic/binary-eagle-decoding/blob/7d9ab32066584edbb715ddbce38d0386b2efb0d6/docs/AGENT_OPERATIONS.md"
+scope = "Locally verified pinned historical source; not reproduced; remote availability not checked"
+
+[[object]]
+path = "docs/GIT_AND_ARTIFACTS.md"
+sha256 = "46282a4ebf37afc4d948e8283681e7f55602042526a24e5677c337eb3752f464"
+bytes = 3061
+url = "https://github.com/philippesic/binary-eagle-decoding/blob/7d9ab32066584edbb715ddbce38d0386b2efb0d6/docs/GIT_AND_ARTIFACTS.md"
+scope = "Locally verified pinned historical source; not reproduced; remote availability not checked"
+
+[[object]]
+path = "experiments/component-campaign-20261105/report.md"
+sha256 = "4a5baa3ba86410fdaaccc4bfceff83eff1423f779bdc8257f013837b88e9c721"
+bytes = 16126
+url = "https://github.com/philippesic/binary-eagle-decoding/blob/7d9ab32066584edbb715ddbce38d0386b2efb0d6/experiments/component-campaign-20261105/report.md"
+scope = "Locally verified pinned historical source; not reproduced; remote availability not checked"
+
+[[object]]
+path = "experiments/execution-campaign-20261105/report.md"
+sha256 = "b4d86ecaeb53afa031d23e5d3a008546e5f12a5b92facccd8a4637e7868cbf46"
+bytes = 10555
+url = "https://github.com/philippesic/binary-eagle-decoding/blob/7d9ab32066584edbb715ddbce38d0386b2efb0d6/experiments/execution-campaign-20261105/report.md"
+scope = "Locally verified pinned historical source; not reproduced; remote availability not checked"
+
+[[object]]
+path = "experiments/he4-continuation-20261107/report.md"
+sha256 = "18dafcce15c1ebaa3228ec661507234feb8aaa345720526896b053a67132ef4d"
+bytes = 7789
+url = "https://github.com/philippesic/binary-eagle-decoding/blob/7d9ab32066584edbb715ddbce38d0386b2efb0d6/experiments/he4-continuation-20261107/report.md"
+scope = "Locally verified pinned historical source; not reproduced; remote availability not checked"
+
+[[object]]
+path = "docs/learning/from-zero.html"
+sha256 = "06715d00a4915a42ddc4c9d329d368701cc6e7bd2f74b37d91778be978342e2f"
+bytes = 24918
+url = "https://github.com/philippesic/binary-eagle-decoding/blob/7d9ab32066584edbb715ddbce38d0386b2efb0d6/docs/learning/from-zero.html"
+scope = "Historical teaching artifact with invented numbers; not experimental evidence or current HE4 documentation"
