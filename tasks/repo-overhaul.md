@@ -44,14 +44,15 @@ are linked in [port](port.md), but no matched before/after comparison is claimed
 Earlier diagnostics and setup receipts remain in evidence; their rule counts describe
 those snapshots rather than today's corpus.
 
-The next milestone is the complete functional port, including real evidence and cleanup
-of temporary port documents, before benchmark redesign and agent operations. Detailed
-remaining work is in [port](port.md). Ordinary software-layout cleanup is engineering
-work; it does not require Philip to choose filenames or discovery mechanics.
+Philip's current priority is documentation housekeeping before benchmark design.
+The [closeout specification](../docs/closeout.md) and three trial results are ready
+for format review. FINDINGS is a short map; all thirteen prior entries remain in
+individual result pages. Ten retain their old prose pending fuller closeout.
+No historical artifacts were deleted and no shared skill has been installed.
+Functional-port gaps remain recorded in [port](port.md), outside this format trial.
 
 ## Next
 
-Use the functional-port prerequisite inventory. Finish clean-environment and end-to-end
-verification before declaring readiness. Benchmark redesign follows, and agent skills,
-retention tooling and other operations follow that. Preserve historical evidence while
-removing obsolete active instructions.
+Review the trial presentation with Philip, then apply the agreed format to remaining
+findings. Recover missing executed-source and reproduction details before proposing
+artifact retirement. Shared closeout automation follows agreement on the project format.

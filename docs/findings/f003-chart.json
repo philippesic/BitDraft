@@ -1,0 +1,24 @@
+{
+  "finding": "F003",
+  "status": "historical report values, not a new measurement",
+  "units": "tokens/second",
+  "aggregation": "complete-request throughput",
+  "conditions": "RTX 5080, consumed DEV3, five process repetitions, formal output cap 256",
+  "points": [
+    {
+      "label": "Before continuation",
+      "value": 170.56
+    },
+    {
+      "label": "After continuation",
+      "value": 160.51
+    }
+  ],
+  "paired_ratio": 0.9411,
+  "paired_ratio_interval95": [
+    0.9338,
+    0.947
+  ],
+  "source": "https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/he4-continuation-20261107/report.md",
+  "regeneration": "Draw a horizontal bar for each point on a zero-based 0\u2013200 tokens/second axis. Keep the conditions and imported-evidence label visible. The paired-ratio interval is not an interval for each bar."
+}

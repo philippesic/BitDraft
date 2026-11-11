@@ -51,7 +51,7 @@ never enter training, calibration or selection. Names and metrics: [domain](docs
 - AGENTS.md: rules for every task. Philip owns it; propose changes.
 - `docs/*.md`: how each part works now and why. Update in the same commit as the code;
   delete outdated text instead of marking it superseded.
-- FINDINGS.md: closed questions with scope and evidence, failures included.
+- FINDINGS.md: short result map. Format: [closeout](docs/closeout.md).
 - `evidence/`: dated records; never edit after writing.
 - `tasks/NAME.md`: goal, authorized, done when, state, next. One owner; delete when done.
   Work on a task only when asked to work on that task; an open task file is context,
