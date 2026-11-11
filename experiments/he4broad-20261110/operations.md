@@ -18,6 +18,13 @@ Durable health observations and comparisons are under the run's `health/` direct
 receipts are in `update8h-{preflight,resume-receipt}.json` under the run.
 The source and clock implementation were committed before freezing/launch.
 
+GPU telemetry note from the November 11 01:17 UTC health check: WSL NVML can
+return an empty process list while the authenticated trainer owns `/dev/dxg`
+handles and updates advance with active GPU utilization. An empty list alone is
+not release evidence. Cross-check process boot/birth/parent and GPU handles,
+three lock owners, stage/logs and advancing counters; preserve a healthy job.
+The raw observation and independently authenticated check are in `health/`.
+
 Philip subsequently authorized sustained resume to **28,800 TOTAL synchronized
 optimizer-update seconds**, including the saved 2,873.748 seconds. His explicit
 resume ends the migration pause. The original training-wall cap is removed:

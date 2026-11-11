@@ -14,14 +14,15 @@ supersedes its old clock/budget. New native panels are at every cumulative updat
 hour through eight hours, with distinct `formal-update-*` labels. All earlier
 wall-hour panels remain intact. The existing 30-minute health/repair event is enabled; the hourly availability
 event stays off. Exact state restore passed and post-restore updates are advancing.
-Latest health check (2026-11-11 00:45 UTC): **healthy**, 44,100 updates,
-1.647 / 8 update hours; training toward the second
-update-hour panel. The first update-hour panel remains the latest completed
-native result: 36.60% acceptance, 197.48 tokens/s; all 75 requests correct on
-consumed DEV3. No errors or rejected updates; no repair needed. All seven
-remaining states/exports plus 8 GiB scratch fit current disk headroom. GPU
-ownership and local storage pass. Durable checks are under the run's `health/`
-directory.
+Latest health check (2026-11-11 01:17 UTC): **healthy**, 55,500 updates,
+2.063 / 8 update hours; training toward the third
+update-hour panel. The second update-hour panel is complete: 40.79% acceptance,
+205.72 tokens/s; all 75 requests correct on consumed DEV3. No training errors or
+rejected updates; no repair needed. All six remaining states/exports plus 8 GiB
+scratch fit current disk headroom. GPU ownership was independently authenticated
+through process identity, locks, GPU device handles and advancing updates because
+the WSL NVML process list was empty despite active GPU work. Durable checks are
+under the run's `health/` directory.
 
 All 15,647 captures and current-run checkpoints are verified on local ext4.
 The local-loader diagnostic produced exactly equal final parameters/Adam/RNG:
@@ -29,7 +30,7 @@ loader 55.06× faster; steps 2–32 loader + update 6.69× faster.
 [Migration](../experiments/he4broad-20261110/localization.md) ·
 [Model retention](../experiments/storage-cleanup-20261110/report.md).
 The first five historical wall-hour formal panels and zero panel are complete;
-all their requests are correct. The first new update-hour panel is complete as reported above; the loader
+all their requests are correct. The first two new update-hour panels are complete; the loader
 smoke itself is not an inference evaluation.
 [Report](../experiments/he4broad-20261110/report.md) ·
 [Operations](../experiments/he4broad-20261110/operations.md) ·

@@ -168,13 +168,16 @@
   },
   "latest_health": {
     "status": "HEALTHY_NO_REPAIR_NEEDED",
-    "checked_unix": 1794357916.9331996,
-    "updates": 44100,
-    "charged_update_seconds": 5929.168702797382,
-    "checkpointed_updates": 26173,
+    "checked_unix": 1794359864.3450403,
+    "updates": 55500,
+    "charged_update_seconds": 7427.143542479316,
+    "checkpointed_updates": 53763,
     "storage_local": true,
     "first_update_hour_native_complete": true,
     "observation_directory": "runs/he4broad-20261110-01/health",
-    "rejected_update_seconds": 0.0
+    "rejected_update_seconds": 0.0,
+    "second_update_hour_native_complete": true,
+    "nvml_process_list_empty": true,
+    "gpu_ownership_independently_authenticated": true
   }
 }
