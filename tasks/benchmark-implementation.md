@@ -35,10 +35,13 @@ benchmarks/full-qualification-01/operator-stop.json. Schedule: training/hourly-s
 
 ## Next
 
-1. Agree lean workloads from the requested runtime breakdown. Training acceptance check:
-   at most a couple minutes every30–60 training minutes. Full comparison must be much
-   shorter than the rejected2h38/target. Keep breadth and real tool cases; remove default
-   excessive generations/repeats. Measure complete pause/export/eval/resume cost.
+1. Philip wants candidate-only checks against preserved baseline/leader results, also
+   reusing full-comparison controls. Enforce complete matching evidence at preflight;
+   historical timing needs hardware/runtime compatibility and cannot prove paired speed.
+   Proposed, not yet qualified:60 short requests with128-token caps; broader120 requests,
+   18 prefix variants and12 live tasks, one pass each. Keep category/length breadth.
+   Training pause/export/eval/resume must fit a couple minutes every30–60 training minutes;
+   broader candidate comparison aims for15–20 minutes/target, pending measurement.
 2. Update definitions, guards, docs and qualification to the accepted budgets. Reuse valid
    preserved evidence explicitly. Do not silently resume old600×2 or sampled120×3 runs.
 3. Then capture the frozen2K subset in qualified FP16, validate the real hybrid, continue
