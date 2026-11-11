@@ -1,0 +1,44 @@
+{
+  "scope": "Current authored CPU checker in a disposable local clone; reused installed interpreters; no installs, GPU work or scientific qualification",
+  "probes": [
+    {
+      "case": "python-comment",
+      "exit": 1,
+      "diagnostic": [
+        "COMMENT_PYTHON: w1a1_eagle/data.py:261:1",
+        "  Fix: Delete the comment; move rationale to the topic doc"
+      ]
+    },
+    {
+      "case": "task-template",
+      "exit": 1,
+      "diagnostic": [
+        "REPO_TASK: tasks/invalid.md",
+        "  Fix: Start with a `# ` title and keep `## Goal`, `## Authorized`, `## Done when`, `## State`, `## Next` in that order; other sections go after"
+      ]
+    },
+    {
+      "case": "broken-link",
+      "exit": 1,
+      "diagnostic": [
+        "DOC_LINK: README.md",
+        "  Fix: Fix the link, anchor or system-map symbol"
+      ]
+    },
+    {
+      "case": "doctor-hook-ready",
+      "exit": 0,
+      "hook": "ready"
+    },
+    {
+      "case": "doctor-hook-not-executable",
+      "exit": 1,
+      "hook": "disabled: run git config core.hooksPath .githooks"
+    },
+    {
+      "case": "doctor-hook-missing",
+      "exit": 1,
+      "hook": "disabled: run git config core.hooksPath .githooks"
+    }
+  ]
+}

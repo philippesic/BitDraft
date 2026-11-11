@@ -21,6 +21,7 @@ from tools.config import (
     settings,
 )
 from tools.contracts import Diagnostic, Record, record, sequence
+from tools.diagnostics import format_diagnostic
 from tools.repo_files import (
     content_digest,
     index_matches,
@@ -106,7 +107,7 @@ def main() -> int:
 
         if diagnostics:
             for d in diagnostics:
-                print(f"{d.code}: {d.path}")
+                print(format_diagnostic(d, files))
             print("bootstrap FAIL; subsequent stages unavailable")
             return 2
         observed_groups = {
@@ -114,7 +115,7 @@ def main() -> int:
             for group in GROUP_COUNTS
         }
         if observed_groups != GROUP_COUNTS:
-            print("RULE_PAIR: group counts differ")
+            print(format_diagnostic(Diagnostic("RULE_PAIR", "group counts differ"), files))
             return 2
         print("0 bootstrap PASS")
         print("rules: " + ", ".join(f"{g}={n}" for g, n in GROUP_COUNTS.items()))
@@ -123,7 +124,7 @@ def main() -> int:
                 root, config.temporary, record(evidence["fixtures"])
             )
             for diagnostic in proof:
-                print(f"{diagnostic.code}: {diagnostic.path}")
+                print(format_diagnostic(diagnostic, files))
             print(
                 f"{len(REQUIRED_RULES)} rules; {bad}/{len(REQUIRED_RULES)} bad rejected; {control}/{len(REQUIRED_RULES)} controls passed"
             )
@@ -144,7 +145,7 @@ def main() -> int:
             )
             last_stage = now
             for diagnostic in diagnostics:
-                print(f"  {diagnostic.code}: {diagnostic.path}")
+                print(format_diagnostic(diagnostic, files))
             if not diagnostics:
                 passed.append(name)
 
@@ -315,7 +316,14 @@ def main() -> int:
             all_diagnostics.append(
                 Diagnostic("CHECK_CONFIG", "authored content or index changed during verification")
             )
-            print("CHECK_CONFIG: authored content or index changed during verification")
+            print(
+                format_diagnostic(
+                    Diagnostic(
+                        "CHECK_CONFIG", "authored content or index changed during verification"
+                    ),
+                    files,
+                )
+            )
         if not all_diagnostics:
             import json
 
@@ -324,7 +332,9 @@ def main() -> int:
         print(
             "10 qualification: native/runtime verify/source parity/benchmark UNAVAILABLE; foundation only"
         )
-        print("REVIEW_REQUIRED: local verification cannot authenticate Philip's policy approval")
+        print(
+            "Authority: verification is CPU evidence; it grants no approval for runs or policy changes"
+        )
         print("foundation " + ("FAIL" if all_diagnostics else "PASS"))
         return int(bool(all_diagnostics))
     except (OSError, KeyError, ValueError) as error:

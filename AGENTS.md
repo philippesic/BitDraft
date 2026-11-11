@@ -34,6 +34,8 @@ never enter training, calibration or selection. Names and metrics: [domain](docs
 
 - Without asking: repairs, tests, refactors, docs and local commits within the scope a
   task file or Philip authorized. Finish authorized work; do not wait for repeat approval.
+- Commit coherent checkpoints without coauthor trailers. Push to an established user-owned
+  remote at milestones and handoff; report local-only work when no remote exists.
 - Needs Philip: weakening a guarantee, changing scientific semantics or data roles,
   training runs, GPU work, data transfer, deleting artifacts you did not create,
   creating remotes or publishing (license is undecided).

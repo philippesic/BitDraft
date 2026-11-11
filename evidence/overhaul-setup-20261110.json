@@ -1,0 +1,46 @@
+{
+  "command": [
+    "uv",
+    "sync",
+    "--locked",
+    "--only-group",
+    "check",
+    "--no-build",
+    "--offline"
+  ],
+  "exit": 0,
+  "scope": "Clean check-only virtual environment using existing uv cache; no numerical install, GPU work or downloads; temporary environment removed after inspection",
+  "baseline_revision": "b4413ac",
+  "external_tool_specimens": {
+    "ruff": 6,
+    "mypy": 23,
+    "vulture": 1,
+    "deptry": 4
+  },
+  "installed": {
+    "Pygments": "2.21.0",
+    "attrs": "26.1.0",
+    "click": "8.5.1",
+    "deptry": "0.24.0",
+    "dulwich": "0.24.2",
+    "grimp": "3.13",
+    "hypothesis": "6.140.3",
+    "import-linter": "2.7",
+    "iniconfig": "2.3.1",
+    "markdown-it-py": "4.2.0",
+    "mdurl": "0.1.2",
+    "mypy": "1.18.2",
+    "mypy_extensions": "1.2.0",
+    "packaging": "26.3",
+    "pathspec": "1.1.1",
+    "pluggy": "1.7.0",
+    "pytest": "8.4.2",
+    "requirements-parser": "0.13.1",
+    "rich": "15.0.0",
+    "ruff": "0.16.8",
+    "sortedcontainers": "2.4.0",
+    "typing_extensions": "4.16.0",
+    "urllib3": "2.8.0",
+    "vulture": "2.14"
+  }
+}

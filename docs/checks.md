@@ -23,7 +23,7 @@ The hook is `.githooks/pre-commit`. Enable it once per clone with
 
 For one file: `.venv/bin/ruff check PATH`, `.venv/bin/ruff format --check PATH`, or
 `.venv/bin/python -B -m pytest tests/test_training.py`. The numerical tests run in the
-numerical interpreter: `CUDA_VISIBLE_DEVICES= TMPDIR=/tmp PYTHON -B -m unittest
+numerical interpreter: `CUDA_VISIBLE_DEVICES= TMPDIR=/tmp /absolute/path/to/numerical/bin/python -B -m unittest
 tests.numerical.test_model -v`.
 
 ## Stages
@@ -72,6 +72,12 @@ and say so in the report. If not, revert it. Never update a digest only to get a
 
 ## Fixes
 
+Project diagnostics print a repair from this table after the stable rule code and
+location. Tool failures retain the tool's own line numbers and detailed output.
+The table is the single source for repair text. CPU receipts record verification,
+not user approval; a successful check does not require a new policy approval.
+
+
 | Diagnostic | Fix |
 | --- | --- |
 | `COMMENT_*` | Delete the comment; move rationale to the topic doc |
@@ -88,4 +94,22 @@ and say so in the report. If not, revert it. Never update a digest only to get a
 | `REPO_TASK` | Start with a `# ` title and keep `## Goal`, `## Authorized`, `## Done when`, `## State`, `## Next` in that order; other sections go after |
 | `INSTRUCTIONS_BUDGET` | Shorten AGENTS.md to 80 lines and 4,000 bytes |
 | `REQUIRED_TESTS` | Read the pytest output above it; a test failed, was skipped or disappeared |
-| `CHECK_CONFIG`, `PIN_*`, `STAGE_GATE` | A pin or digest changed; see Pins and digests |
+| `CHECK_CONFIG`, `PIN_*`, `STAGE_GATE`, `TYPE_CONFIG` | Compare the named configuration with its authorized pins; follow Pins and digests above for intended changes, otherwise restore the pinned configuration |
+| `TYPE_*` | Fix the type error in the tool output; preserve strict typing and avoid suppression |
+| `FORMAT`, `F401`, `F821`, `I001`, `B006`, `UP006` | Run `.venv/bin/ruff check PATH` and `.venv/bin/ruff format --check PATH`; repair the reported source |
+| `DEP*`, `DEAD_CODE`, `UNUSED_TOOL` | Inspect the dependency tool output; declare a direct dependency in its proper group or remove the unused import, code or declaration |
+| `EXCEPTION_*` | Remove a broad, stale or duplicate exception; necessary machine directives require an exact reasoned entry in `policy/exceptions.toml` |
+| `INSTRUCTIONS_ROOT`, `CLAUDE_POINTER` | Keep the sole authority in root AGENTS.md and make CLAUDE.md contain only `@AGENTS.md` followed by a newline |
+| `REPO_OUTPUTS`, `REPO_LARGE` | Keep generated outputs and large artifacts outside tracked source; preserve valuable files before changing their Git tracking |
+| `REPO_SECRET` | Remove the credential from authored source without printing it; report any credential already committed so it can be revoked |
+| `REPO_IGNORED` | Remove the ignore or symlink escape hiding authored source; preserve secrets and generated artifacts outside authored paths |
+| `RULE_PAIR`, `PROOF_*` | Inspect the named specimen and actual diagnostic; restore missing tools or fixtures and repair the validator without accepting unrelated failures |
+| `POLICY_REVIEW` | Run the full check for a current CPU receipt; a receipt cannot approve policy changes or scientific work |
+| `VERIFY_*` | Supply matching finite token, label and mechanism evidence from the qualified runtime; CPU fixtures alone cannot qualify it |
+| `DISCOVERY_*` | Follow the declared discovery protocol and unique IDs in `policy/boundaries.toml`; report a legitimate extension blocked by this policy |
+| `NULL_TOPICS`, `TOPIC_*`, `GROUP_PROPERTIES` | Preserve distinct missing topics and namespaced relationships; fix grouping without merging unrelated prompts |
+| `HELDOUT_ROLE`, `UNKNOWN_ANCESTRY` | Correct the declared role or ancestry evidence; never admit protected evaluation data into training, calibration or selection |
+| `COUNT_*`, `CAPTURE_*`, `EXPOSURE_*` | Reconcile source counts, label boundaries and parent exposure against the declared intent; retain refused inputs and failures |
+| `DISK_*` | Supply separate current filesystem and backing-space observations and satisfy the run's declared capacity requirement |
+| `SELECTION_*` | Preserve the earlier durable valid serving best until a complete, comparable serving result improves it |
+| `COMPARE_*` | Match the declared machine, target, workload, controls and evidence before computing a comparison; retain incompatible results separately |
