@@ -14,6 +14,13 @@ supersedes its old clock/budget. New native panels are at every cumulative updat
 hour through eight hours, with distinct `formal-update-*` labels. All earlier
 wall-hour panels remain intact. The existing 90-minute health/repair event is enabled; the hourly availability
 event stays off. Exact state restore passed and post-restore updates are advancing.
+Latest health check (2026-11-11 07:50 UTC): **healthy**, 208,600 updates,
+7.584 / 8 update hours. About 25 update minutes remain,
+followed by final checkpoint/export, native panel and recovery verification.
+No errors or rejected updates; no repair needed. The final state/export plus
+8 GiB scratch fit current headroom. The old 43,200 wall-second threshold has
+been passed correctly without ending the update-time allocation.
+
 Latest on-demand comparison (2026-11-11 07:15 UTC): the **seventh update-hour panel
 is complete**, and training is advancing in the final segment toward eight
 hours. Acceptance is 48.85%, complete-request throughput 222.07 tokens/s, and

@@ -168,10 +168,10 @@
   },
   "latest_health": {
     "status": "HEALTHY_NO_REPAIR_NEEDED",
-    "checked_unix": 1794378046.0031347,
-    "updates": 173100,
-    "charged_update_seconds": 22695.490357974137,
-    "checkpointed_updates": 164674,
+    "checked_unix": 1794383448.270328,
+    "updates": 208600,
+    "charged_update_seconds": 27300.83282318199,
+    "checkpointed_updates": 192372,
     "storage_local": true,
     "first_update_hour_native_complete": true,
     "observation_directory": "runs/he4broad-20261110-01/health",
@@ -183,7 +183,9 @@
     "fourth_update_hour_native_complete": true,
     "fifth_update_hour_native_complete": true,
     "storage_repair": "experiments/he4broad-20261110/storage-repair-20261111.json",
-    "sixth_update_hour_native_complete": true
+    "sixth_update_hour_native_complete": true,
+    "seventh_update_hour_native_complete": true,
+    "remaining_update_seconds": 1499.1671768180095
   },
   "latest_on_demand_comparison": {
     "checked_unix": 1794381303.1360948,
