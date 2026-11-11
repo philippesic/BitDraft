@@ -1,4 +1,4 @@
 schema = 1
-public = ["tools.snapshot_metadata", "tools.check", "tools.doctor", "w1a1_eagle.__main__"]
+public = ["tools.snapshot_metadata", "tools.check", "tools.doctor", "w1a1_eagle.__main__", "benchmarks.__main__", "w1a1_eagle.numerical.precision"]
 private = ["w1a1_eagle.bootstrap", "w1a1_eagle.numerical.entry"]
-deferred = ["benchmarks.__main__"]
+deferred = []

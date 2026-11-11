@@ -132,3 +132,7 @@ No general binary-acceleration claim followed. [Result](results/binary-pipeline-
 ## Evidence preservation
 
 [Historical reports and committed source are independently recoverable](results/archive-preservation/result.md); raw-artifact limits remain explicit.
+
+## Capture storage
+
+[FP16 feature rounding passed a small GPU screen; training suitability remains unresolved](results/fp16-feature-screen/result.md).

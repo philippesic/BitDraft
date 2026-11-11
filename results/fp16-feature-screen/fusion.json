@@ -1,0 +1,33 @@
+{
+  "scope": "actual initializer fusion projection only; no downstream layers, optimizer or native acceptance",
+  "torch": "2.11.0+cu128",
+  "gpu": "NVIDIA GeForce RTX 2080 Ti",
+  "source": "/home/philip/he4broad-training-20261110-01/candidate/model-0.gguf",
+  "results": [
+    {
+      "domain": "code",
+      "positions": 233,
+      "finite": true,
+      "relative_l2": 0.00013956555063459822,
+      "max_absolute_error": 0.0050506591796875
+    },
+    {
+      "domain": "prose",
+      "positions": 190,
+      "finite": true,
+      "relative_l2": 0.00014499449909591706,
+      "max_absolute_error": 0.0051422119140625
+    },
+    {
+      "domain": "reasoning",
+      "positions": 220,
+      "finite": true,
+      "relative_l2": 0.00013666258564846894,
+      "max_absolute_error": 0.0054454803466796875
+    }
+  ],
+  "source_sha256": "a68f55d9e5006328d65b787e7383d107ce69183c39aaaaf94a178427c7cf72dc",
+  "gguf_version": "0.19.0",
+  "PyYAML_version": "6.0.3",
+  "driver_sha256": "803eacaafb740a724ebb40b816c2e6a2373bac9578424241c2b669060bafd6aa"
+}

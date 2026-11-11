@@ -7,8 +7,11 @@ Each name below is a separate identity. Do not relabel one as another.
 | Name | Meaning |
 | --- | --- |
 | HE4 | Development drafter: one-bit FFN weights, four-bit gate/up inputs, eight-bit down inputs, Q4K head |
-| Baseline | Current incumbent: the external DFlash Q4KM drafter |
-| W1A8 | Historical DSpark W1A8 drafter |
+| Baseline | Fixed external DFlash Q4KM drafter paired with the selected target |
+| Candidate | Specific experimental drafter recipe and checkpoint |
+| Incumbent | Best supported experimental candidate; does not replace Baseline |
+| Target-only | Selected target running without a drafter |
+| W1A8 | One-bit weights/eight-bit activations in declared components; name the model family |
 | DSpark Q4KM | Historical DSpark-era baseline |
 | Csmallbroad, B0, foundation | Retained historical states with their own identities |
 

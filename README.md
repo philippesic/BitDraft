@@ -76,4 +76,4 @@ see [execution](docs/execution.md).
 - [Task convention](tasks/README.md); [close-results skill](skills/close-results/SKILL.md)
 - License: not yet chosen.
 
-- [Benchmark implementation plan](tasks/benchmark-implementation.md): proposed work and qualification gates; no new commands are available yet.
+- [Benchmark implementation plan](tasks/benchmark-implementation.md): remaining work and qualification gates. [Benchmark tools](docs/benchmarks.md) describes the implemented metadata and trace commands.
