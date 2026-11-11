@@ -14,20 +14,20 @@ supersedes its old clock/budget. New native panels are at every cumulative updat
 hour through eight hours, with distinct `formal-update-*` labels. All earlier
 wall-hour panels remain intact. The existing 90-minute health/repair event is enabled; the hourly availability
 event stays off. Exact state restore passed and post-restore updates are advancing.
-Latest health check (2026-11-11 06:20 UTC): **healthy**, 173,100 updates,
-6.304 / 8 update hours; training toward the seventh update-hour
-panel. The sixth update-hour panel is complete: 46.31% acceptance, 215.47 tokens/s;
-all 75 requests correct on consumed DEV3. No training errors or rejected updates;
-no further repair needed. Both remaining states/exports plus 8 GiB scratch fit
-current disk headroom after the earlier cache repair. The sixth-hour checkpoint
-restored exact parameters/Adam/RNG/cursor and continued real updates. GPU
-ownership and local storage pass. Durable checks are under the run's `health/`
-directory.
+Latest on-demand comparison (2026-11-11 07:15 UTC): the **seventh update-hour panel
+is complete**, and training is advancing in the final segment toward eight
+hours. Acceptance is 48.85%, complete-request throughput 222.07 tokens/s, and
+all 75 requests are correct on consumed DEV3. Compared with six hours, acceptance
+rises 2.53 percentage points and throughput 3.06%; prose supplies most of the
+quality gain. This is renewed progress on the same narrow panel, not a broad
+generalization claim. [Fresh comparison](../experiments/he4broad-20261110/update-6-to-7-comparison.md).
+The source-pinned eight-hour cap and 90-minute health cadence remain in effect.
 
-The [five-to-six-hour plateau audit](../experiments/he4broad-20261110/update-plateau-audit.md)
-finds no observed data/resume/evaluation discontinuity. The small speed change is
-unresolved amid timing variation and mixed per-prompt quality changes. Audit recommendation: finish
-the existing eight-hour allocation; no extension is supported by DEV3 alone.
+The [five-to-six-hour audit](../experiments/he4broad-20261110/update-plateau-audit.md)
+is retained separately; its small speed change was unresolved amid timing
+variation and mixed per-prompt quality changes. Its recommendation to finish the
+existing bounded run remains appropriate; no extension is authorized here.
+
 
 All 15,647 captures and current-run checkpoints are verified on local ext4.
 The local-loader diagnostic produced exactly equal final parameters/Adam/RNG:
@@ -35,7 +35,7 @@ loader 55.06× faster; steps 2–32 loader + update 6.69× faster.
 [Migration](../experiments/he4broad-20261110/localization.md) ·
 [Model retention](../experiments/storage-cleanup-20261110/report.md).
 The first five historical wall-hour formal panels and zero panel are complete;
-all their requests are correct. The first six new update-hour panels are complete; the loader
+all their requests are correct. The first seven new update-hour panels are complete; the loader
 smoke itself is not an inference evaluation.
 [Throughput chart](../experiments/he4broad-20261110/throughput-progress.html) ·
 [Report](../experiments/he4broad-20261110/report.md) ·

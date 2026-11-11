@@ -82,3 +82,6 @@ Reproduce with the CPU-only commands:
 
 The earlier [wall-time/input-pipeline investigation](setup-audit.md) remains a
 separate historical record; its files were preserved.
+
+A subsequent [seven-hour follow-up](update-6-to-7-comparison.md) shows renewed
+progress. This earlier audit describes the five-to-six-hour interval specifically.

@@ -184,5 +184,15 @@
     "fifth_update_hour_native_complete": true,
     "storage_repair": "experiments/he4broad-20261110/storage-repair-20261111.json",
     "sixth_update_hour_native_complete": true
+  },
+  "latest_on_demand_comparison": {
+    "checked_unix": 1794381303.1360948,
+    "older_update_hour": 6,
+    "newer_update_hour": 7,
+    "comparison": "experiments/he4broad-20261110/update-6-to-7-comparison.json",
+    "all_new_requests_correct": true,
+    "training_continues": true,
+    "live_updates_observed": 193700,
+    "live_update_seconds_observed": 25375.903011105926
   }
 }
