@@ -11,15 +11,11 @@ This is a proposed implementation plan, not an implemented capability or run rec
 
 ## Authorized
 
-Philip requested research, a repository-specific overarching plan and independent
-Sol review, including a second review and reasoned reconciliation of the workflow and
-harness-sensitivity additions. This turn authorizes documentation and checks, not implementation,
-prompt generation, capture, transfers, training allocations or GPU experiments.
-Keep 6,000 selected training tasks as the working design; reassess adequacy before
-next data generation. Preserve the original bank and all protected data roles.
-The active RTX 5080 training job belongs to other work. A future FP16 study may use
-the 2080 Ti only after checking ownership, availability and the supported path.
-No hosted CI, new remote, historical artifact deletion or generic agent-ops system.
+Philip authorized implementation and validation of this plan, including bounded GPU
+experiments on the 2080 Ti. Preserve the active RTX 5080 training job. No production
+prompt/capture batch is to be generated now. Bounded reuse/transfer of existing captures
+and test setup are within this assignment. Reassess the 6K design before future production
+acquisition. No hosted CI, new remote or historical artifact deletion.
 
 ## Done when
 
@@ -33,7 +29,18 @@ and local validation. Its completion does not authorize the implementation phase
 
 ## State
 
-Owner: root. Planning only; no acquisition or GPU work started. Existing code provides
+Owner: root. Implementation in progress. Implemented read-only benchmark plan/input
+verification and structural acceptance trace reduction, explicit F16 feature loading into
+F32 tensors, and a bounded precision-screen command. Current docs and command registry
+are linked. CPU tests exercise mismatch/leakage/accounting; numerical tests exercise F16
+round-trip loading and corruption refusal. On the idle 2080 Ti, screened 24 real arrays
+from three short existing captures and the initializer fusion projection: no overflow;
+training/native suitability remains unresolved. See [result](../results/fp16-feature-screen/result.md).
+Torch 2.11.0+cu128 on that host supports sm_75; default Python has no Torch. The GPU is
+idle again. Qualification raw source/inputs live outside the repo on the 2080 Ti.
+No production prompts/captures were generated. Full native runner, intermittent evaluation,
+live tasks, harness sensitivity and end-to-end GPU training remain unimplemented.
+ Existing code provides
 CPU training, authenticated inputs, transactional schema-3 state, resume/branch and
 GGUF export/readback. GPU training, fresh capture, a source-complete native runtime,
 serving qualification and benchmark selection remain unqualified or absent. See
@@ -580,7 +587,10 @@ of the 6K scope. This is design review, not runtime or statistical qualification
 
 ## Next
 
-Planning, second independent review and reconciliation are complete. On a subsequent implementation assignment,
-start phase 1 with the explicit compatibility contract and no-side-effect plan/report
-commands. Reassess 6K coverage and actual byte forecasts before any acquisition.
-No prompt/capture generation or GPU work is authorized by this task file alone.
+Finish phase 1 contracts against real capture metadata, not just benchmark specifications.
+Then implement the reproducible native vertical path, candidate-target binding at the
+worker, GPU training and shared comparison core. Run matched full-model F32/F16 training
+and native evaluation before adopting F16 captures. The 2080 Ti lacks a modern Qwen3.5
+target in the inspected models directory; old Qwen3 targets cannot substitute. Recover
+and qualify compatible source/models within the authorized test scope. Keep all remaining
+phases open and do not represent CPU gates or the rounding screen as completion.

@@ -10,7 +10,7 @@ never enter training, calibration or selection. Names and metrics: [domain](docs
 - `w1a1_eagle/`: product. [Data](docs/data.md), [execution](docs/execution.md).
 - `tools/`, `policy/`, `tests/cases/`: checks and their rules. [Checks](docs/checks.md).
 - [FINDINGS](FINDINGS.md): result index. [Development](docs/development.md): workflow.
-- `tasks/`: open multi-session work, one file per task.
+- [Benchmarks](docs/benchmarks.md): commands. `tasks/`: open work.
 
 ## Code
 
@@ -56,7 +56,7 @@ never enter training, calibration or selection. Names and metrics: [domain](docs
   An open task is context, not authorization to resume it.
 - For investigation closeout, read [close-results](skills/close-results/SKILL.md).
   Routine repairs need no result. Git keeps implementation history; no diaries.
-- Read relevant findings and tasks before starting. Write plainly.
+- Read relevant findings and tasks first. Write plainly.
 
 ## Evidence and reporting
 

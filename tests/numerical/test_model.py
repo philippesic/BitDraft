@@ -33,6 +33,37 @@ from w1a1_eagle.training import Budget
 
 
 class TestNumerical(unittest.TestCase):
+    def test_fp16_feature_loading_matches_explicit_roundtrip(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            corpus = Corpus(self.fixture_corpus(root, 8), 1, 32 * 1024 * 1024, 8)
+            original = corpus.rows[0].capture
+            expected = load_capture(original, 32 * 1024 * 1024, 8)
+            typed = record(cast(object, json.loads(original.metadata.path.read_text())))
+            typed["feature_dtype"] = "float16"
+            original.metadata.path.write_bytes(canonical(typed))
+            files = []
+            for ref in original.files:
+                if ref.path.suffix == ".f32":
+                    half = ref.path.with_suffix(".f16")
+                    values = cast(
+                        np.ndarray[tuple[int, ...], np.dtype[np.float32]],
+                        np.fromfile(ref.path, dtype="<f4"),
+                    )
+                    half.write_bytes(values.astype(np.float16).tobytes())
+                    files.append(self.reference(half))
+                else:
+                    files.append(ref)
+            spec = CaptureSpec(
+                original.identity, self.reference(original.metadata.path), tuple(files)
+            )
+            actual = load_capture(spec, 32 * 1024 * 1024, 8)
+            self.assertTrue(torch.equal(actual.features, expected.features.half().float()))
+            self.assertEqual(actual.windows, expected.windows)
+            files[0].path.write_bytes(b"broken")
+            with self.assertRaises(ValueError):
+                load_capture(spec, 32 * 1024 * 1024, 8)
+
     def reference(self, path: Path) -> Artifact:
         return Artifact(path, hashlib.sha256(path.read_bytes()).hexdigest(), path.stat().st_size)
 

@@ -11,6 +11,7 @@ from w1a1_eagle.contracts import integer, record, sequence
 from w1a1_eagle.data import CaptureSpec as CaptureSpec
 from w1a1_eagle.data import Window, windows
 
+HalfArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.float16]]"
 FloatArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.float32]]"
 IntArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.int32]]"
 
@@ -55,6 +56,11 @@ def load_capture(spec: CaptureSpec, byte_budget: int, hidden: int = 2560) -> Cap
         labels,
         labels[-1] if labels and labels[-1] in eog else None,
     )
+    feature_dtype = metadata.get("feature_dtype", "float32")
+    if feature_dtype not in ("float32", "float16"):
+        raise ValueError("unsupported feature storage dtype")
+    suffix = "f16" if feature_dtype == "float16" else "f32"
+    storage_size = 2 if feature_dtype == "float16" else 4
     n = len(tokens)
     expected_size = n * hidden * len(TAPS) * 4
     if expected_size * 3 + spec.metadata.size * 32 > byte_budget:
@@ -63,8 +69,8 @@ def load_capture(spec: CaptureSpec, byte_budget: int, hidden: int = 2560) -> Cap
     if len(files) != len(spec.files):
         raise ValueError("duplicate capture filenames")
     for tap in TAPS:
-        ref = files.get(f"layer-{tap}.f32")
-        if ref is None or ref.size != n * hidden * 4:
+        ref = files.get(f"layer-{tap}.{suffix}")
+        if ref is None or ref.size != n * hidden * storage_size:
             raise ValueError("capture feature geometry mismatch")
     for ref in spec.files:
         ref.verify()
@@ -81,13 +87,16 @@ def load_capture(spec: CaptureSpec, byte_budget: int, hidden: int = 2560) -> Cap
                 or tuple(integer(v) for v in sequence(cast(object, array.tolist()))) != expected
             ):
                 raise ValueError("capture array metadata disagreement")
-    arrays = [
-        cast(
-            FloatArray,
-            np.memmap(files[f"layer-{tap}.f32"].path, dtype="<f4", mode="r", shape=(n, hidden)),
-        )
-        for tap in TAPS
-    ]
+    arrays: list[FloatArray] = []
+    for tap in TAPS:
+        path = files[f"layer-{tap}.{suffix}"].path
+        if storage_size == 2:
+            mapped = cast(HalfArray, np.memmap(path, dtype="<f2", mode="r", shape=(n, hidden)))
+            arrays.append(mapped.astype(np.float32))
+        else:
+            arrays.append(
+                cast(FloatArray, np.memmap(path, dtype="<f4", mode="r", shape=(n, hidden)))
+            )
     features = torch.from_numpy(cast(FloatArray, np.concatenate(arrays, axis=1)))
     if not bool(torch.isfinite(features).all()):
         raise ValueError("nonfinite teacher features")

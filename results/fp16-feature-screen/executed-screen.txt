@@ -1,0 +1,11 @@
+import json
+from pathlib import Path
+import torch
+from w1a1_eagle.data import Artifact
+from w1a1_eagle.numerical.precision import screen
+rows = json.loads(Path('inputs.json').read_text())
+results = []
+for row in rows:
+    artifact = Artifact(Path(row['path']), row['sha256'], row['bytes'])
+    results.append({'domain': row['domain'], 'id': row['id'], 'file': row['path'], 'report': screen(artifact, 'cuda')})
+print(json.dumps({'scope': '24 real feature arrays from 3 short captures; no learning or native acceptance qualification', 'gpu': torch.cuda.get_device_name(0), 'results': results}, indent=2))

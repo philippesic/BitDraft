@@ -49,6 +49,8 @@ Operational time comes from `w1a1_eagle/clock.py`.
 | selftest | active | tools/self_test.py | run_corpus | Proof stage and `--self-test` |
 | policy | active | tools/policy_review.py | verification_report | Passing full check |
 | cli | active | w1a1_eagle/__main__.py | main | `python -m w1a1_eagle` |
+| benchmark | active | benchmarks/__main__.py | main | `python -m benchmarks` |
+| precision | active | w1a1_eagle/numerical/precision.py | main | Explicit CPU/CUDA screen |
 | snapshot | active | tools/snapshot_metadata.py | pack | `python -m tools.snapshot_metadata` |
 | admission | active | w1a1_eagle/index.py | IndexReader | Preflight and run |
 | sampling | active | w1a1_eagle/numerical/corpus.py | Corpus | Worker |
@@ -59,9 +61,15 @@ Operational time comes from `w1a1_eagle/clock.py`.
 
 Public commands are declared in [commands](../policy/commands.toml).
 
+## Benchmark metadata interfaces
+
+The `benchmarks` package implements read-only planning, artifact authentication and
+structural trace reduction; see [benchmark tools](benchmarks.md). It depends on product
+contracts; product code never imports it. Native runners remain unimplemented.
+
 ## Reserved benchmark interfaces
 
-No benchmark or plug-in runtime is implemented here yet. Some validators nevertheless
+No native benchmark or plug-in runtime is implemented here yet. Some validators nevertheless
 reserve future software interfaces: extension filenames ending in `_adapter.py`,
 `_workload.py` or `_dataset.py`, unique extension IDs and declared protocol/schema/digest
 metadata. The source checker also rejects conditional or lookup-table dispatch on

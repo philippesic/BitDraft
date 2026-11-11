@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "candidate": {
+    "target": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "tokenizer": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "template": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "taps": [
+      2,
+      6,
+      10,
+      14,
+      18,
+      22,
+      26,
+      30
+    ],
+    "hidden": 2560,
+    "semantics": "zero_based_pre_block_input_all_tokens",
+    "objective": "fifteen-label-weighted-hard-ce"
+  },
+  "capture": {
+    "target": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "tokenizer": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "template": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "taps": [
+      2,
+      6,
+      10,
+      14,
+      18,
+      22,
+      26,
+      30
+    ],
+    "hidden": 2560,
+    "semantics": "zero_based_pre_block_input_all_tokens",
+    "objective": "fifteen-label-weighted-hard-ce"
+  },
+  "tasks": [
+    {
+      "id": "synthetic-example",
+      "group": "synthetic-example",
+      "role": "train",
+      "category": "code",
+      "input_tokens": 256,
+      "output_cap": 512
+    }
+  ],
+  "features": [],
+  "storage_bytes": 2,
+  "capture_limit_bytes": 400000000000
+}

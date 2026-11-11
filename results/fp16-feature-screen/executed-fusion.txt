@@ -1,0 +1,23 @@
+import json
+from pathlib import Path
+import numpy as np
+import torch
+import gguf
+root = Path('/home/philip/binary-eagle-benchmark-qualification-20261110')
+source = Path('/home/philip/he4broad-training-20261110-01/candidate/model-0.gguf')
+reader = gguf.GGUFReader(str(source))
+selected = next(t for t in reader.tensors if t.name == 'fc.weight')
+weight = torch.from_numpy(gguf.dequantize(selected.data, selected.tensor_type).copy()).float().cuda()
+torch.backends.cuda.matmul.allow_tf32 = False
+rows = json.loads((root/'inputs.json').read_text())
+results = []
+for domain in sorted({r['domain'] for r in rows}):
+    files = [r for r in rows if r['domain'] == domain]
+    files.sort(key=lambda r: int(Path(r['path']).stem.split('-')[1]))
+    features = np.concatenate([np.fromfile(root/r['path'], dtype='<f4').reshape(-1, 2560) for r in files], axis=1)
+    x = torch.from_numpy(features).cuda()
+    y = torch.nn.functional.linear(x, weight)
+    yh = torch.nn.functional.linear(x.half().float(), weight)
+    error = yh - y
+    results.append({'domain':domain,'positions':len(features),'finite':bool(torch.isfinite(yh).all()),'relative_l2':float(error.double().square().sum().sqrt()/y.double().square().sum().sqrt()),'max_absolute_error':float(error.abs().max())})
+print(json.dumps({'scope':'actual initializer fusion projection only; no downstream layers, optimizer or native acceptance','torch':torch.__version__,'gpu':torch.cuda.get_device_name(0),'source':str(source),'results':results},indent=2))
