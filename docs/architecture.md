@@ -66,24 +66,17 @@ by `benchmarks/measurement.py`.
 
 Public commands are declared in [commands](../policy/commands.toml).
 
-## Benchmark metadata interfaces
+## Benchmark interfaces
 
-The `benchmarks` package implements read-only planning, artifact authentication and
-structural trace reduction; see [benchmark tools](benchmarks.md). It depends on product
-contracts; product code never imports it. The request runner launches a pinned native server under an exclusive GPU lease, authenticates
-its inputs and preserves every request/response. Live workflow and sampled verification
-qualification remain tracked in the implementation task.
+The [benchmark package](benchmarks.md) owns source preparation, capture orchestration,
+native requests, live tools, statistics and campaign coordination. Product contracts
+remain independent. Execution freezes source and authenticates models/runtime/data;
+GPU ownership and result provenance survive checkout edits. Data formats and ancestry
+belong to [data](data.md); training/recovery contracts belong to [execution](execution.md).
 
 ## Reserved benchmark interfaces
 
-The request runner is implemented; a model plug-in registry is not. Some validators
-reserve future software interfaces: extension filenames ending in `_adapter.py`,
-`_workload.py` or `_dataset.py`, unique extension IDs and declared protocol/schema/digest
-metadata. The source checker also rejects conditional or lookup-table dispatch on
-adapter, dataset or workload IDs outside a discovery module.
-
-These restrictions concern software organization. They do not prescribe a new neural
-network. For example, they could prevent a future benchmark from choosing a runner
-through a simple branch, forcing a discovery mechanism before that mechanism has been
-designed. Revisit these interface guards when implementing the benchmark design. Current
-data-role and comparison protections apply independently.
+A model plug-in registry is not implemented. Existing extension guards require declared
+IDs, protocol/schema/digest metadata and discovery-owned dispatch for files ending in
+`_adapter.py`, `_workload.py` or `_dataset.py`. They constrain software organization,
+not neural architectures. New family support needs its own numerical/native evidence.

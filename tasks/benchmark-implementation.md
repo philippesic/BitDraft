@@ -2,39 +2,44 @@
 
 ## Goal
 
-Complete the accepted benchmark/data/training plan and leave HE4broad running on its
-retained corpus plus roughly2K new prompts covering missing workloads/lengths.
+Finish the benchmark/data/training pipeline under Philip's revised runtime requirements,
+then generate the selected2K supplement and leave original HE4broad continuing on the hybrid.
 
 ## Authorized
 
-Philip authorizes RTX5080 work after its predecessor finishes, implementation/testing,
-FP16 qualification,2K capture, hybrid continuation and hourly health/repair. Preserve
-other jobs. Reclaim old high-volume artifacts after ownership/dependency/evidence checks.
-No hosted CI, new remote, full6K generation or heldout consumption. CPU is autonomous.
+RTX5080 implementation/testing, scoped FP16 qualification,2K capture, optimizer-preserving
+hybrid continuation and hourly health/repair. Preserve other jobs. Reclaim obsolete large
+artifacts after ownership/dependency/evidence checks. No hosted CI, new remote, full6K
+capture or heldout24 consumption. New workload sizes are being discussed; do not restart
+the rejected oversized protocol or its disabled schedule.
 
 ## Done when
 
-Scoped paths have execution evidence; the2K data is validated and joined to15647 retained
-captures; original220095 continues with Adam/RNG preserved; monitoring/docs/findings and
-full local checks are complete. Delete this task then. No remote: commits remain local.
+Revised benchmarks meet measured wall budgets and preserve target semantics;2K captures
+are validated and joined to15647 retained records; original220095 continues with Adam/RNG;
+monitoring, docs/findings and full checks are complete. No remote: commits remain local.
 
 ## State
 
-Owner: root, RTX5080. Artifact root `/home/philip/binary-eagle-artifacts`.
-Original220095 is the production parent; no production acquisition/continuation yet.
-Bank-v8/supplement-v2 are fixed. Bounded migration/precision/runtime/recovery/retention/
-hybrid probes passed. Canonical zero-export matches118 tensors and operational metadata;
-its native FP16 recheck completed480 matching requests. Remaining broad panels and final
-post-admission campaign pilot must complete before production. Current contracts and
-coverage are in docs/benchmarks.md, data.md, execution.md and benchmarks/definitions/.
-Raw receipts are under qualification/, native/, benchmarks/; legacy retirements under
-`/home/philip/binary-eagle-evidence/retirement-20261111/`. Preserve selected inputs/states.
+Owner root. Artifact root `/home/philip/binary-eagle-artifacts`.
+Code, bank-v8/supplement-v2 and scoped FP16/migration/recovery qualification are implemented.
+Q4KM completed full600×2, harness90×2 and live12×3 for all3 arms. All matched target
+behavior; live completion8/12 per arm, with an HE4 slowdown despite request gains.
+The oversized suite full-qualification-01 was intentionally stopped during NVFP4 after
+Philip rejected its cost. Complete Q4 evidence stays valid; partial NV timing cannot rank.
+Hourly schedule is disabled. No production data generation or hybrid training has begun.
+Original run/data physically lives in datasets/retained-he4broad-original under the artifact
+root; old path remains a symlink. Original220095 and selected controls are preserved.
+Runtime breakdown: qualification/benchmark-runtime-breakdown-q4km.json. Stopping receipt:
+benchmarks/full-qualification-01/operator-stop.json. Schedule: training/hourly-schedule.json.
 
 ## Next
 
-1. Pass final gate/source audit and run post-admission pilot, both targets' full600/
-   harness90/live12 panels, and sampled120×3; retain failures and scoped limitations.
-2. Generate selected2K in qualified FP16, validate every record, construct the real hybrid
-   and resume original220095 through the supervised120-task DEV campaign.
-3. Leave training healthy, schedule hourly repair/health checks, close evidence/docs,
-   reclaim unselected artifacts and commit coherent local checkpoints.
+1. Agree lean workloads from the requested runtime breakdown. Training acceptance check:
+   at most a couple minutes every30–60 training minutes. Full comparison must be much
+   shorter than the rejected2h38/target. Keep breadth and real tool cases; remove default
+   excessive generations/repeats. Measure complete pause/export/eval/resume cost.
+2. Update definitions, guards, docs and qualification to the accepted budgets. Reuse valid
+   preserved evidence explicitly. Do not silently resume old600×2 or sampled120×3 runs.
+3. Then capture the frozen2K subset in qualified FP16, validate the real hybrid, continue
+   original220095, verify healthy progress/recovery and re-enable hourly upkeep.

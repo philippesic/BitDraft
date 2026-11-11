@@ -40,3 +40,13 @@ original next-update state and migration receipts remain under
 Drivers and exact input identities are retained in the external qualification directory.
 Reproduction runs the legacy driver first, then the new driver against the imported state;
 GPU ownership must be exclusive. The earlier mismatching attempt remains in its log.
+
+## Canonical export followup, 2026-11-11
+
+A zero-update export now matches all 118 original tensor payloads and operational
+metadata. GPU evaluation of export-time exponentials had introduced one-ULP differences
+in 12 gain tensors; CPU FP32 restores original export arithmetic. Training is unchanged.
+Both the failed check and corrected proof remain under
+`/home/philip/binary-eagle-artifacts/qualification/original-export-canonical-equivalence.json`.
+The corrected state/export and producer journal are retained in `original-zero-export-02/`
+there; informational headers differ. This adds export evidence to the update proof above.

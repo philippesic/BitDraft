@@ -146,7 +146,15 @@ They are not acceptance. Lengthen optimizer intervals toward10% native overhead 
 than shrinking panels. Keep model/data/evaluation/checkpoint clocks separate.
 `campaign-report OUTPUT` needs no GPU: liveness, pointers, journals, learning/native scores,
 costs/exposure. Attempts include retries; unique positions use actual label widths;
-lifetime history stays unknown. Inspect ownership/failures before restarting. Per-run
+lifetime history stays unknown. Inspect ownership/failures before restarting. After code
+changes, read `OUTPUT/binding.json` and run from its code snapshot under
+`OUTPUT.parent/executed-sources/IDENTITY`, using the configured numerical interpreter:
+
+```sh
+BINARY_NUMERICAL_PYTHON=/absolute/numerical/bin/python /absolute/numerical/bin/python -B -m benchmarks --frozen campaign /absolute/SPEC /absolute/OUTPUT
+```
+
+Preserve incomplete evaluation blocks; their failure policy governs continuation. Per-run
 retention bounds states/exports; global retirement preserves recovery/selected states
 with receipts after two later segments.
 
