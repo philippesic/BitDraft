@@ -325,6 +325,7 @@ def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
                     "cursor": cursor,
                     "trajectory": window.trajectory,
                     "anchor": window.anchor,
+                    "labels": len(window.labels),
                 }
             )
             return capture, window

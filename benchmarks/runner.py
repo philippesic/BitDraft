@@ -36,6 +36,33 @@ def valid_sample(response: Record, cap: int) -> bool:
     )
 
 
+def verify_generation(response: Record, payload: Record, speculative: bool) -> None:
+    settings = record(response["generation_settings"])
+    for key in ("seed", "top_k", "n_predict"):
+        if integer(settings[key]) != integer(payload[key]):
+            raise ValueError("native generation setting differs from request: " + key)
+    for key in ("temperature", "top_p", "min_p"):
+        if abs(number(settings[key]) - number(payload[key])) > 1e-6:
+            raise ValueError("native sampling setting differs from request: " + key)
+    if settings.get("ignore_eos") is not False or settings.get("grammar") != "":
+        raise ValueError(
+            "native stopping/grammar settings differ from the qualified request policy"
+        )
+    if any(
+        number(settings[key]) != expected
+        for key, expected in (
+            ("repeat_penalty", 1.0),
+            ("frequency_penalty", 0.0),
+            ("presence_penalty", 0.0),
+            ("dynatemp_range", 0.0),
+        )
+    ):
+        raise ValueError("unrequested native penalty or dynamic temperature")
+    modes = string(settings["speculative.types"])
+    if ("draft-dflash" in modes) != speculative:
+        raise ValueError("actual native speculative mode differs from the selected arm")
+
+
 def native_counts(response: Record, speculative: bool) -> Record:
     timings = record(response["timings"])
     if not speculative:
@@ -196,6 +223,7 @@ def compare_leased(specification: Path, output: Path, spec: Comparison) -> Recor
                         response = request(port, "completion", payload)
                         elapsed = now() - began
                         cell.atomic(cell.root / f"{index}-response.json", canonical(response))
+                        verify_generation(response, payload, arm.drafter is not None)
                         responses.append(response)
                         current = signature(response)
                         key = string(task["id"])
@@ -295,7 +323,10 @@ def compare_leased(specification: Path, output: Path, spec: Comparison) -> Recor
             ),
             "paired_against_baseline": {}
             if spec.sampling.temperature
-            else {arm.name: paired(rows, arm.name, spec.arms[1].name) for arm in spec.arms[2:]},
+            else {
+                arm.name: paired(rows, arm.name, spec.arms[1].name, family=len(spec.arms) - 2)
+                for arm in spec.arms[2:]
+            },
             "code_sha256": code_identity,
             "scientific": "sampled descriptive robustness; unequal outputs cannot rank checkpoints by throughput"
             if spec.sampling.temperature

@@ -137,3 +137,19 @@ def test_validation_and_root_ownership_before_publication(tmp_path: Path) -> Non
     with pytest.raises(ValueError, match="configuration"):
         store.commit(b"other task", "other", 1)
     assert store.latest("recipe") == parent
+
+
+def test_closed_retention_preserves_selected_and_valid_recovery(tmp_path: Path) -> None:
+    old = Store(tmp_path / "old")
+    unselected = old.commit(b"unselected", "recipe", 1)
+    selected = old.commit(b"selected", "recipe", 2)
+    recovery = Store(tmp_path / "new").commit(b"recovery", "recipe", 3)
+    retired = old.retire_closed(frozenset({selected.artifact.path}), recovery.artifact)
+    assert retired == (unselected.artifact.sha256,)
+    assert not unselected.artifact.path.exists()
+    assert old.describe(selected.artifact) == selected
+    assert old.retire_closed(frozenset({selected.artifact.path}), recovery.artifact) == ()
+    recovery.artifact.path.write_bytes(b"badstate")
+    with pytest.raises(ValueError, match="content"):
+        old.retire_closed(frozenset(), recovery.artifact)
+    assert selected.artifact.path.exists()

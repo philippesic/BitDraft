@@ -11,11 +11,14 @@ uv run --locked --no-sync --offline python -m benchmarks plan SPEC.json
 uv run --locked --no-sync --offline python -m benchmarks verify-inputs SPEC.json
 uv run --locked --no-sync --offline python -m benchmarks reduce-trace TRACE.json
 uv run --locked --no-sync --offline python -m benchmarks compare COMPARISON.json NEW_OUTPUT
+uv run --locked --no-sync --offline python -m benchmarks prepare-project-workflows PROJECT.json NEW_OUTPUT
 uv run --locked --no-sync --offline python -m benchmarks prepare-panels PANELS.json NEW_OUTPUT
 uv run --locked --no-sync --offline python -m benchmarks live COMPARISON.json NEW_OUTPUT
 uv run --locked --no-sync --offline python -m benchmarks evaluate LOSS.json NEW_OUTPUT
 uv run --locked --no-sync --offline python -m benchmarks suite SUITE.json OUTPUT
 uv run --locked --no-sync --offline python -m benchmarks campaign CAMPAIGN.json OUTPUT
+uv run --locked --no-sync --offline python -m benchmarks campaign-report OUTPUT
+uv run --locked --no-sync --offline python -m benchmarks profile-native PROFILE.json NEW_OUTPUT
 uv run --locked --no-sync --offline python -m benchmarks verify-greedy ORACLE.json NEW_OUTPUT
 uv run --locked --no-sync --offline python -m benchmarks verify-sampler SAMPLER.json NEW_OUTPUT
 uv run --locked --no-sync --offline python -m benchmarks select-supplement SELECTION.json NEW_OUTPUT
@@ -51,7 +54,7 @@ use the product data ledger and source-group audit before any acquisition.
 or bonus). It reconciles emitted tokens with the prefix and separates target tokens from
 accepted draft tokens. A fallback-only trace reports acceptance unavailable. This is
 structural reconciliation, not independent proof that verifier decisions were correct.
-The future runtime adapter must validate actual verification and EOS/cap accounting.
+Use the independent native verifier checks below for executed verification and EOS/cap accounting.
 
 ## Native build and capture
 
@@ -229,3 +232,46 @@ Use [result closeout](results.md) and [close-results](../skills/close-results/SK
 for durable investigations. Preserve raw execution evidence externally, compact outcomes
 in results and current conclusions in FINDINGS. Existing CPU check success never means
 the remaining native runtime, sampled verifier or live application path passed.
+
+## Project workflow controls and profiling
+
+`prepare-project-workflows` authenticates a mapping of project `sources` and a `recipes`
+artifact (schema1), constructs controlled regressions, and requires the original to fail
+and the reference repair to pass. Followups require separate initial/final checks; the
+future check is installed only after the first answer. The maintained recipes exercise
+actual project modules. They establish bounded single-project DEV coverage, not unseen
+application transfer. Protected Bubblewrap tests execute in isolated copies with no
+network, credentials or host checkout. File tools support line ranges and unique text
+replacement. Empty files are explicit and long tool output reports truncation.
+
+`prepare-panels` optionally accepts an authenticated `harnesses` object with exactly
+`minimal`, `coding` and `tools` prefixes. Record their origin; use actual project
+instructions where available. Never label an authored alternate prompt as a captured
+external application's system prompt. All variants remain one source group for analysis.
+
+`profile-native` takes schema1 with a diagnostic `comparison`, a pinned Nsight `profiler`,
+`expected_kernels` per arm, optional `forbidden_kernels` and
+`kernel_round_multipliers`. It owns a named Nsight session, verifies the exact server
+process/library identity, stops and reaps that session, and checks all requested kernel
+instances. Profile timings are excluded from primary speed measurements. The HE4 control
+requires the intended integer/packing kernels in every drafter layer and forbids them in
+target-only and external-baseline arms.
+
+Full-suite target entries may supply `candidate_bindings`: arm names mapped to
+artifacts containing `state`, `drafter` and `execution` journal references. The completed
+worker record must bind that state/export and the drafter must be the evaluated arm.
+The highest valid full-request score selects the experimental full-DEV incumbent.
+Live completion, whole-task performance and harness sensitivity remain separate evidence;
+selection does not grant a general deployment claim. Multiple candidate request
+comparisons include Bonferroni-adjusted paired bootstrap intervals as well as marginal
+95% intervals. Small cohorts can remain inconclusive.
+
+`campaign-report` reads status and journals without acquiring a GPU. It reports the
+controller's recorded process identity/liveness, latest and selected pointers, segment
+health, DEV curves, native scores, costs and observed exposure. Selected sample attempts
+include retries; unique positions are reported only where actual label widths were
+recorded. They are not lifetime exposure. Campaign pilot mode is explicit (`pilot: true`)
+and accepts a pilot request count; it cannot establish 120-request DEV qualification.
+Closed unselected segments are globally retired after two later segments, retaining
+latest recovery and selected states/exports with receipts. Interrupted timing blocks stay
+in evidence; they cannot be silently resumed or used for selection.

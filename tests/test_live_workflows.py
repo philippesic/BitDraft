@@ -31,6 +31,8 @@ def test_live_fixtures_reject_original_accept_repair_and_reset(tmp_path: Path) -
         sandbox = Sandbox(tmp_path / name, record(definition["fixture"]))
         assert sandbox.test()["passed"] is False
         path = "README.md" if name.startswith("docs-") else "service.py"
+        if "followup" in definition:
+            sandbox.advance()
         sandbox.write(path, SOLUTIONS[name])
         assert sandbox.test()["passed"] is True
         assert sandbox.test()["passed"] is True
@@ -50,3 +52,28 @@ def test_native_tool_parser_preserves_code_and_rejects_duplicate_parameters() ->
         calls(
             "<tool_call><function=read_file><parameter=path>a</parameter><parameter=path>b</parameter></function></tool_call>"
         )
+
+
+def test_read_ranges_unique_patch_and_protected_followup_phase(tmp_path: Path) -> None:
+    sandbox = Sandbox(
+        tmp_path,
+        {
+            "files": {"value.txt": "old\nsecond\n", "empty.txt": ""},
+            "checks": "from pathlib import Path\nassert Path('/work/value.txt').read_text()=='old\\nsecond\\n'\nprint('ACCEPTANCE_CHECKS_PASSED')\n",
+            "followup_checks": "from pathlib import Path\nassert Path('/work/value.txt').read_text()=='new\\nsecond\\n'\nprint('ACCEPTANCE_CHECKS_PASSED')\n",
+        },
+    )
+    assert sandbox.invoke("read_file", {"path": "empty.txt"}) == "[Empty file.]"
+    assert (
+        sandbox.invoke("read_file", {"path": "value.txt", "start_line": 2, "end_line": 2})
+        == "second\n"
+    )
+    assert sandbox.test()["passed"] is True
+    sandbox.advance()
+    assert sandbox.test()["passed"] is False
+    sandbox.invoke("replace_text", {"path": "value.txt", "old": "old", "new": "new"})
+    assert sandbox.test()["passed"] is True
+    with pytest.raises(ValueError, match="exactly once"):
+        sandbox.invoke("replace_text", {"path": "value.txt", "old": "missing", "new": ""})
+    with pytest.raises(ValueError, match="no followup"):
+        sandbox.advance()

@@ -26,7 +26,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(prog="python -m benchmarks")
     parser.add_argument("--frozen", action="store_true", help=argparse.SUPPRESS)
     commands = parser.add_subparsers(dest="command", required=True)
-    for name in ("plan", "verify-inputs", "reduce-trace"):
+    for name in ("plan", "verify-inputs", "reduce-trace", "campaign-report"):
         command = commands.add_parser(name)
         command.add_argument("input", type=Path)
     for name in (
@@ -44,13 +44,20 @@ def main() -> int:
         "verify-sampler",
         "verify-greedy",
         "select-supplement",
+        "profile-native",
+        "prepare-project-workflows",
     ):
         comparison = commands.add_parser(name)
         comparison.add_argument("input", type=Path)
         comparison.add_argument("output", type=Path)
     args = parser.parse_args(namespace=Arguments())
     try:
-        if not args.frozen and args.command not in {"plan", "verify-inputs", "reduce-trace"}:
+        if not args.frozen and args.command not in {
+            "plan",
+            "verify-inputs",
+            "reduce-trace",
+            "campaign-report",
+        }:
             root = Path(__file__).resolve().parents[1]
             code = source_identity(root)
             snapshot = freeze_source(
@@ -58,7 +65,7 @@ def main() -> int:
             )
             python = (
                 numerical_python(root)
-                if args.command in {"curate", "capture", "evaluate", "campaign"}
+                if args.command in {"curate", "admit-bank", "capture", "evaluate", "campaign"}
                 else sys.executable
             )
             return subprocess.run(
@@ -76,7 +83,19 @@ def main() -> int:
                 env=benchmark_environment(root, snapshot),
                 check=False,
             ).returncode
-        if args.command == "select-supplement":
+        if args.command == "campaign-report":
+            from benchmarks.reporting import report
+
+            result = report(args.input)
+        elif args.command == "prepare-project-workflows":
+            from benchmarks.project_workflows import prepare
+
+            result = prepare(args.input, args.output)
+        elif args.command == "profile-native":
+            from benchmarks.profiling import profile
+
+            result = profile(args.input, args.output)
+        elif args.command == "select-supplement":
             from benchmarks.supplement import supplement
 
             result = supplement(args.input, args.output)

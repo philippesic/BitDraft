@@ -5,9 +5,10 @@ from typing import cast
 
 from benchmarks.comparison import Comparison
 from benchmarks.measurement import now, request
-from benchmarks.runner import native_counts, reconcile, signature
+from benchmarks.runner import native_counts, reconcile, signature, valid_sample, verify_generation
 from benchmarks.sandbox import TOOLS, Sandbox
 from benchmarks.serving import session
+from benchmarks.statistics import paired, partitions
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
 from w1a1_eagle.device import device_lease
@@ -34,7 +35,14 @@ def calls(content: str) -> list[tuple[str, Record]]:
         values.append(
             (
                 function[1],
-                {name: value.strip() if name == "path" else value for name, value in parameters},
+                {
+                    name: int(value.strip())
+                    if name in {"start_line", "end_line"}
+                    else value.strip()
+                    if name == "path"
+                    else value
+                    for name, value in parameters
+                },
             )
         )
     if len(values) > 8 or "<tool_call>" in content and not values:
@@ -56,8 +64,13 @@ def live(specification: Path, output: Path) -> Record:
         ref = artifact(task["fixture"], specification.resolve().parent)
         ref.verify()
         fixture = read(ref.path)
-        if set(fixture) != {"schema", "files", "checks"} or fixture["schema"] != 1:
+        if (
+            set(fixture) - {"followup_checks"} != {"schema", "files", "checks"}
+            or fixture["schema"] != 1
+        ):
             raise ValueError("unsupported live fixture")
+        if ("followup_checks" in fixture) != ("followup" in task):
+            raise ValueError("live followup requires separate protected phase checks")
         fixtures[string(task["id"])] = fixture
     with device_lease("cuda"):
         return live_leased(specification, output, spec, fixtures)
@@ -135,6 +148,16 @@ def live_leased(
                 for arm in spec.arms
             },
             "code_sha256": code,
+            "by_category": partitions(rows, "category", summarize),
+            "paired_task_rate_against_baseline": {
+                arm.name: paired(
+                    [{**row, "tokens": 1} for row in rows],
+                    arm.name,
+                    spec.arms[1].name,
+                    family=len(spec.arms) - 2,
+                )
+                for arm in spec.arms[2:]
+            },
             "scope": "controlled live filesystem/tool tasks; all tasks and failures count; deployment transfer requires application traces",
         }
         store.atomic(store.root / "result.json", canonical(result))
@@ -157,6 +180,7 @@ def execute(
     began = now()
     reason = "turn-limit"
     followup = task.get("followup")
+    phase_checks: list[Record] = []
     for turn in range(16):
         if now() - began >= 900:
             reason = "task-deadline"
@@ -173,20 +197,23 @@ def execute(
             reason = "context-limit"
             break
         start = now()
-        response = request(
-            port,
-            "completion",
-            {
-                "prompt": identifiers,
-                "n_predict": task["output_cap"],
-                "temperature": 0,
-                "seed": 8101,
-                "cache_prompt": turn > 0,
-                "return_tokens": True,
-            },
-        )
+        payload: Record = {
+            "prompt": identifiers,
+            "n_predict": task["output_cap"],
+            "temperature": 0,
+            "seed": 8101,
+            "top_k": 0,
+            "top_p": 1.0,
+            "min_p": 0.0,
+            "cache_prompt": turn > 0,
+            "return_tokens": True,
+        }
+        response = request(port, "completion", payload)
         model_seconds += now() - start
         responses.append(response)
+        verify_generation(response, payload, speculative)
+        if not valid_sample(response, integer(task["output_cap"])):
+            raise ValueError("live native response has invalid tokens or stopping")
         tokens += len(sequence(response["tokens"]))
         counters = native_counts(response, speculative)
         proposed += integer(counters["proposed"])
@@ -207,6 +234,10 @@ def execute(
         if not selected:
             messages.append({"role": "assistant", "content": content})
             if followup is not None:
+                start = now()
+                phase_checks.append(sandbox.test())
+                sandbox.advance()
+                tool_seconds += now() - start
                 messages.append({"role": "user", "content": string(followup)})
                 followup = None
                 continue
@@ -236,14 +267,22 @@ def execute(
                     str(error.strerror) if isinstance(error, OSError) else str(error)
                 )
             tool_seconds += now() - start
-            messages.append({"role": "tool", "tool_call_id": call, "content": reply[:16384]})
+            bounded = (
+                reply
+                if len(reply) <= 16384
+                else reply[:16384] + "\n[Output truncated; request a smaller line range.]"
+            )
+            messages.append({"role": "tool", "tool_call_id": call, "content": bounded})
     start = now()
     checks = sandbox.test()
     tool_seconds += now() - start
     elapsed = now() - began
     return (
         {
-            "completed": checks["passed"] is True and followup is None,
+            "completed": checks["passed"] is True
+            and followup is None
+            and all(check["passed"] is True for check in phase_checks),
+            "phase_checks": phase_checks,
             "termination": reason,
             "checks": checks,
             "turns": len(responses),

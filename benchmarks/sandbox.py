@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import cast
 
 from w1a1_eagle.checkpoints.store import Store
-from w1a1_eagle.contracts import Record, record, string
+from w1a1_eagle.contracts import Record, integer, record, string
 
 TOOLS: list[Record] = [
     {
@@ -23,7 +23,22 @@ TOOLS: list[Record] = [
     }
     for name, description, properties, required in (
         ("list_files", "List project files.", {}, []),
-        ("read_file", "Read one project file.", {"path": {"type": "string"}}, ["path"]),
+        (
+            "read_file",
+            "Read a project file; optional inclusive line range starts at one.",
+            {
+                "path": {"type": "string"},
+                "start_line": {"type": "integer"},
+                "end_line": {"type": "integer"},
+            },
+            ["path"],
+        ),
+        (
+            "replace_text",
+            "Replace exactly one matching text block in a project file.",
+            {"path": {"type": "string"}, "old": {"type": "string"}, "new": {"type": "string"}},
+            ["path", "old", "new"],
+        ),
         (
             "write_file",
             "Replace one project file with complete text.",
@@ -41,9 +56,18 @@ class Sandbox:
         self.work = Store(root / "work")
         self.checks = Store(root / "checks")
         for name, value in record(fixture["files"]).items():
-            self.write(name, string(value))
+            if not isinstance(value, str):
+                raise ValueError("fixture file must be text")
+            self.write(name, value)
         self.checks.atomic(self.checks.root / "check.py", string(fixture["checks"]).encode())
         self.runs = 0
+        self.followup_checks = fixture.get("followup_checks")
+
+    def advance(self) -> None:
+        if self.followup_checks is None:
+            raise ValueError("fixture has no followup phase")
+        self.checks.atomic(self.checks.root / "check.py", string(self.followup_checks).encode())
+        self.followup_checks = None
 
     def path(self, name: str) -> Path:
         selected = Path(name)
@@ -69,11 +93,29 @@ class Sandbox:
                 for path in sorted(self.work.root.rglob("*"))
                 if path.is_file()
             )
-        if name == "read_file" and set(arguments) == {"path"}:
+        if name == "read_file" and {"path"} <= set(arguments) <= {"path", "start_line", "end_line"}:
             path = self.path(string(arguments["path"]))
             if path.stat().st_size > 128 * 1024:
                 raise ValueError("file exceeds tool read bound")
-            return path.read_text()
+            lines = path.read_text().splitlines(keepends=True)
+            start = integer(arguments.get("start_line", 1))
+            end = integer(arguments.get("end_line", max(1, len(lines))))
+            if not 1 <= start <= end:
+                raise ValueError("invalid inclusive line range")
+            return "".join(lines[start - 1 : end]) if lines else "[Empty file.]"
+        if name == "replace_text" and set(arguments) == {"path", "old", "new"}:
+            path = self.path(string(arguments["path"]))
+            if path.stat().st_size > 128 * 1024:
+                raise ValueError("file exceeds tool read bound")
+            text = path.read_text()
+            old = string(arguments["old"])
+            if not old or text.count(old) != 1:
+                raise ValueError("old text must match exactly once")
+            new = arguments["new"]
+            if not isinstance(new, str):
+                raise ValueError("replacement must be text")
+            self.write(string(arguments["path"]), text.replace(old, new, 1))
+            return "Text replaced."
         if name == "write_file" and set(arguments) == {"path", "content"}:
             content = arguments["content"]
             if not isinstance(content, str):

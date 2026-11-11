@@ -15,18 +15,22 @@ def measures(rows: list[Record]) -> tuple[float, float | None]:
     return tokens / seconds, accepted / proposed if proposed else None
 
 
-def interval(values: list[float]) -> Record:
+def interval(values: list[float], alpha: float = 0.05) -> Record:
+    if not 0 < alpha < 1:
+        raise ValueError("interval alpha must be between zero and one")
     if not values:
         return {"available": False}
     ordered = sorted(values)
     return {
-        "lower": ordered[int((len(ordered) - 1) * 0.025)],
-        "upper": ordered[int((len(ordered) - 1) * 0.975)],
+        "lower": ordered[int((len(ordered) - 1) * alpha / 2)],
+        "upper": ordered[int((len(ordered) - 1) * (1 - alpha / 2))],
     }
 
 
-def paired(rows: list[Record], candidate: str, baseline: str, draws: int = 2000) -> Record:
-    if draws < 100:
+def paired(
+    rows: list[Record], candidate: str, baseline: str, draws: int = 2000, family: int = 1
+) -> Record:
+    if draws < 100 or type(family) is not int or family < 1:
         raise ValueError("at least 100 bootstrap draws required")
     grouped: dict[str, dict[str, list[Record]]] = defaultdict(lambda: defaultdict(list))
     for row in rows:
@@ -79,6 +83,9 @@ def paired(rows: list[Record], candidate: str, baseline: str, draws: int = 2000)
         "acceptance_difference": acceptance,
         "speed_ratio_95_interval": interval(ratios),
         "acceptance_difference_95_interval": interval(differences),
+        "simultaneous_speed_ratio_interval": interval(ratios, 0.05 / family),
+        "simultaneous_acceptance_difference_interval": interval(differences, 0.05 / family),
+        "comparison_family": family,
         "bootstrap_draws": draws,
         "scope": "paired source-group bootstrap; repeats and harness variants stay together; small cohorts do not establish deployment transfer",
     }
