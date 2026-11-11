@@ -1,0 +1,108 @@
+import torch
+
+from w1a1_eagle.contracts import Record, integer, record, sequence, string
+from w1a1_eagle.data import Artifact, CaptureSpec
+from w1a1_eagle.model import HE4
+from w1a1_eagle.numerical.captures import CaptureCache
+from w1a1_eagle.numerical.corpus import Corpus
+from w1a1_eagle.records import artifact, read
+
+
+class Diagnostics:
+    def __init__(self, specification: Artifact, training: Corpus, byte_budget: int) -> None:
+        specification.verify()
+        raw = read(specification.path)
+        if (
+            set(raw) != {"schema", "corpus", "exclusions", "windows"}
+            or raw["schema"] != "training-diagnostics-v1"
+        ):
+            raise ValueError("unsupported training diagnostics")
+        root = specification.path.parent
+        source = artifact(raw["corpus"], root)
+        source.verify()
+        corpus = read(source.path, 64 * 1024 * 1024)
+        if corpus["target_sha256"] != training.target:
+            raise ValueError("diagnostic target differs from training")
+        exclusions = artifact(raw["exclusions"], root)
+        exclusions.verify()
+        protected = {
+            "heldout24",
+            *(string(v) for v in sequence(read(exclusions.path)["identities"])),
+        }
+        names = {
+            name
+            for row in training.rows
+            for name in (row.prompt.identity, row.prompt.group, *row.prompt.aliases)
+        }
+        specs: dict[str, CaptureSpec] = {}
+        for value in sequence(corpus["records"]):
+            row = record(value)
+            if row["role"] != "dev":
+                raise ValueError("diagnostics require a DEV-only corpus")
+            current = {
+                string(row["id"]),
+                string(row["group"]),
+                *(string(v) for v in sequence(row["aliases"])),
+            }
+            if current & (names | protected):
+                raise ValueError("training or protected identity in diagnostic DEV")
+            name = string(row["id"])
+            if name in specs:
+                raise ValueError("duplicate diagnostic task")
+            specs[name] = CaptureSpec(
+                name,
+                artifact(row["metadata"], source.path.parent),
+                tuple(artifact(v, source.path.parent) for v in sequence(row["files"])),
+            )
+        windows = [
+            (string(record(v)["id"]), integer(record(v)["anchor"]))
+            for v in sequence(raw["windows"])
+        ]
+        if (
+            len(windows) != 120
+            or len(set(windows)) != 120
+            or any(name not in specs or anchor < 0 for name, anchor in windows)
+        ):
+            raise ValueError("diagnostics require 120 distinct fixed DEV windows")
+        self.windows = tuple(sorted(windows))
+        self.specs = specs
+        self.cache = CaptureCache(byte_budget)
+
+    def measure(self, model: HE4) -> Record:
+        cpu_rng = torch.get_rng_state()
+        cuda_rng = torch.cuda.get_rng_state_all() if model.vocabulary.device.type == "cuda" else []
+        losses: list[float] = []
+        matched = labels_count = 0
+        with torch.no_grad():
+            for name, anchor in self.windows:
+                capture = self.cache.get(self.specs[name])
+                selected = [window for window in capture.windows if window.anchor == anchor]
+                if len(selected) != 1:
+                    raise ValueError("diagnostic anchor is not eligible in authenticated capture")
+                window = selected[0]
+                logits = model.forward(capture.features, capture.tokens, anchor)[
+                    1 : 1 + len(window.labels)
+                ]
+                labels = torch.tensor(window.labels, device=logits.device, dtype=torch.int64)
+                loss = torch.nn.functional.cross_entropy(logits, labels, reduction="none")
+                weights = torch.exp(-torch.arange(len(window.labels), device=logits.device) / 7)
+                value = (loss * weights).sum() / weights.sum()
+                if not bool(torch.isfinite(value)):
+                    raise ValueError("nonfinite diagnostic loss")
+                losses.append(float(value))
+                matched += int((logits.argmax(dim=-1) == labels).sum())
+                labels_count += len(window.labels)
+        if not torch.equal(cpu_rng, torch.get_rng_state()) or any(
+            not torch.equal(a, b)
+            for a, b in zip(
+                cuda_rng, torch.cuda.get_rng_state_all() if cuda_rng else [], strict=True
+            )
+        ):
+            raise ValueError("diagnostics changed training RNG")
+        return {
+            "windows": len(losses),
+            "labels": labels_count,
+            "mean_loss": sum(losses) / len(losses),
+            "top1": matched / labels_count,
+            "scope": "teacher-forced hard-label diagnostic; not native acceptance",
+        }

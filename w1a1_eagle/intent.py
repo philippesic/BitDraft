@@ -102,7 +102,18 @@ class Intent:
             "checkpoint_seconds",
         }
         if (
-            set(raw) - {"input_adapter", "target_sha256", "sampling", "retention"} != required
+            set(raw)
+            - {
+                "input_adapter",
+                "target_sha256",
+                "sampling",
+                "retention",
+                "corpus_format",
+                "development",
+                "model_update_seconds",
+                "development_cadence_updates",
+            }
+            != required
             or type(raw["schema"]) is not int
             or raw["schema"] != 2
         ):
@@ -154,6 +165,12 @@ class Intent:
                 or not 1 <= integer(retention["exports"]) <= 64
             ):
                 raise ValueError("explicit bounded state/export retention required")
+        if "development_cadence_updates" in raw and (
+            "development" not in raw or integer(raw["development_cadence_updates"]) < 1
+        ):
+            raise ValueError("positive diagnostic cadence requires an explicit DEV specification")
+        if "model_update_seconds" in raw and number(raw["model_update_seconds"]) <= 0:
+            raise ValueError("positive cumulative model-update time limit required")
         budget = record(raw["budget"])
         if set(budget) != {"updates", "wall_seconds", "attempts", "retries"}:
             raise ValueError("unsupported budget")
@@ -182,6 +199,10 @@ class Intent:
         ):
             raise ValueError("explicit positive scientific admission policy required")
         adapter: IndexSpec | None = None
+        if "corpus_format" in raw and (
+            raw["corpus_format"] != "corpus-mixture-v1" or raw.get("input_adapter") is not None
+        ):
+            raise ValueError("explicit mixture format cannot use a direct input adapter")
         if raw.get("input_adapter") is not None:
             values = record(raw["input_adapter"])
             fields = {
@@ -256,6 +277,21 @@ class Intent:
                 "source": {"sha256": self.source.sha256, "bytes": self.source.size},
                 "vocabulary": {"sha256": self.vocabulary.sha256, "bytes": self.vocabulary.size},
                 "corpus": {"sha256": self.corpus.sha256, "bytes": self.corpus.size},
+                **(
+                    {"corpus_format": self.raw["corpus_format"]}
+                    if "corpus_format" in self.raw
+                    else {}
+                ),
+                **(
+                    {"development": artifact(self.raw["development"], self.base).sha256}
+                    if "development" in self.raw
+                    else {}
+                ),
+                **(
+                    {"development_cadence_updates": self.raw["development_cadence_updates"]}
+                    if "development_cadence_updates" in self.raw
+                    else {}
+                ),
                 "seed": self.seed,
                 "device": self.raw["device"],
                 "sampling": None

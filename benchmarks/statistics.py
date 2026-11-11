@@ -45,7 +45,11 @@ def paired(rows: list[Record], candidate: str, baseline: str, draws: int = 2000)
             (string(row["task"]), integer(row["rep"]), integer(row.get("seed", 8101)))
             for row in grouped[name][baseline]
         }
-        if left != right:
+        if (
+            len(left) != len(grouped[name][candidate])
+            or len(right) != len(grouped[name][baseline])
+            or left != right
+        ):
             raise ValueError("unmatched requests or repeats in comparison")
 
     def draw(indices: list[str]) -> tuple[float, float | None]:

@@ -40,7 +40,9 @@ def execution_environment(device: str) -> dict[str, str]:
     return environment
 
 
-def native_environment(libraries: Path) -> dict[str, str]:
+def native_environment(libraries: Path, device: str = "cuda") -> dict[str, str]:
+    if device not in {"cpu", "cuda"}:
+        raise ValueError("native device must be cpu or cuda")
     environment = {
         key: value
         for key, value in os.environ.items()
@@ -49,7 +51,14 @@ def native_environment(libraries: Path) -> dict[str, str]:
     environment.update(
         LD_LIBRARY_PATH=str(libraries),
         GGML_CUDA_DECODE_CONSISTENT="32",
-        CUDA_VISIBLE_DEVICES="0",
+        CUDA_VISIBLE_DEVICES="0" if device == "cuda" else "",
         OMP_NUM_THREADS="4",
     )
+    return environment
+
+
+def benchmark_environment(root: Path, snapshot: Path) -> dict[str, str]:
+    environment = execution_environment("cuda")
+    environment["PYTHONPATH"] = str(snapshot)
+    environment["BINARY_NUMERICAL_PYTHON"] = numerical_python(root)
     return environment

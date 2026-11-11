@@ -4,8 +4,8 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import cast
 
-from benchmarks.comparison import Comparison
-from benchmarks.coverage import length_band
+from benchmarks.comparison import Arm, Comparison
+from benchmarks.coverage import length_band, selection_order
 from benchmarks.measurement import now, request
 from benchmarks.serving import session
 from benchmarks.statistics import paired, partitions
@@ -24,11 +24,28 @@ def signature(response: Record) -> Record:
     }
 
 
+def valid_sample(response: Record, cap: int) -> bool:
+    tokens = sequence(response["tokens"])
+    return (
+        bool(tokens)
+        and len(tokens) <= cap
+        and all(type(token) is int and integer(token) >= 0 for token in tokens)
+        and response.get("truncated") is False
+        and response.get("stop_type") in {"eos", "limit"}
+        and (response["stop_type"] != "limit" or len(tokens) == cap)
+    )
+
+
 def native_counts(response: Record, speculative: bool) -> Record:
     timings = record(response["timings"])
     if not speculative:
         return {"proposed": 0, "accepted": 0, "acceptance": None}
-    proposed, accepted = integer(timings["draft_n"]), integer(timings["draft_n_accepted"])
+    if ("draft_n" in timings) != ("draft_n_accepted" in timings):
+        raise ValueError("incomplete native draft counters")
+    proposed, accepted = (
+        integer(timings.get("draft_n", 0)),
+        integer(timings.get("draft_n_accepted", 0)),
+    )
     if not 0 <= accepted <= proposed:
         raise ValueError("native draft counters inconsistent")
     return {
@@ -69,10 +86,10 @@ def reconcile(log: str, responses: list[Record]) -> None:
         if int(match[1]) != index:
             raise ValueError("native request boundary is ambiguous")
         proposed, accepted = int(match[6]), int(match[7])
-        timings = record(response["timings"])
+        timings = native_counts(response, True)
         if (proposed - last_proposed, accepted - last_accepted) != (
-            timings["draft_n"],
-            timings["draft_n_accepted"],
+            timings["proposed"],
+            timings["accepted"],
         ):
             raise ValueError("native response and independent final log disagree")
         last_proposed, last_accepted = proposed, accepted
@@ -85,6 +102,23 @@ def compare(specification: Path, output: Path) -> Record:
         raise ValueError("comparison output must be new; preserve prior attempts")
     with device_lease("cuda"):
         return compare_leased(specification, output, spec)
+
+
+def execution_blocks(
+    spec: Comparison,
+) -> list[tuple[int, int, tuple[Record, ...], tuple[Arm, ...], int]]:
+    grouped = spec.tier in {"full", "harness"}
+    count = len(spec.arms) if grouped else 1
+    ordered = tuple(sorted(spec.tasks, key=selection_order)) if grouped else spec.tasks
+    blocks: list[tuple[int, int, tuple[Record, ...], tuple[Arm, ...], int]] = []
+    for rep in range(spec.repeats):
+        for group in range(count):
+            shift = (rep + group) % len(spec.arms)
+            arms = spec.arms[shift:] + spec.arms[:shift]
+            blocks.extend(
+                (rep, group, ordered[group::count], arms, seed) for seed in spec.sampling.seeds
+            )
+    return blocks
 
 
 def compare_leased(specification: Path, output: Path, spec: Comparison) -> Record:
@@ -100,18 +134,25 @@ def compare_leased(specification: Path, output: Path, spec: Comparison) -> Recor
     )
     rows: list[Record] = []
     references: dict[str, Record] = {}
+    pending: dict[str, list[tuple[Record, Record | None]]] = {}
     try:
-        for rep in range(spec.repeats):
-            arms = list(spec.arms)
-            if rep:
-                shift = rep % len(arms)
-                arms = arms[shift:] + arms[:shift]
+        for rep, group, selected, arms, seed in execution_blocks(spec):
             for arm in arms:
-                cell = Store(store.root / (str(rep) + "-" + arm.name))
+                cell = Store(
+                    store.root
+                    / (
+                        str(rep)
+                        + "-"
+                        + str(group)
+                        + "-"
+                        + (str(seed) + "-" if spec.sampling.temperature else "")
+                        + arm.name
+                    )
+                )
                 responses: list[Record] = []
                 with session(spec, arm, cell) as port:
-                    tasks = [spec.tasks[i % len(spec.tasks)] for i in range(spec.warmups)] + list(
-                        spec.tasks
+                    tasks = [selected[i % len(selected)] for i in range(spec.warmups)] + list(
+                        selected
                     )
                     for index, task in enumerate(tasks):
                         rendered = request(
@@ -142,8 +183,11 @@ def compare_leased(specification: Path, output: Path, spec: Comparison) -> Recor
                         payload: Record = {
                             "prompt": identifiers,
                             "n_predict": task["output_cap"],
-                            "temperature": 0,
-                            "seed": 8101,
+                            "temperature": spec.sampling.temperature,
+                            "seed": seed,
+                            "top_p": spec.sampling.top_p,
+                            "top_k": spec.sampling.top_k,
+                            "min_p": spec.sampling.min_p,
                             "cache_prompt": False,
                             "return_tokens": True,
                         }
@@ -155,15 +199,32 @@ def compare_leased(specification: Path, output: Path, spec: Comparison) -> Recor
                         responses.append(response)
                         current = signature(response)
                         key = string(task["id"])
-                        if arm.name == "target":
+                        if arm.name == "target" and not spec.sampling.temperature:
                             if key in references and references[key] != current:
                                 raise ValueError("target-only generation is not repeatable")
                             references[key] = current
-                        correct = key in references and references[key] == current
+                            for observed, prior_row in pending.pop(key, []):
+                                if observed != current:
+                                    raise ValueError(
+                                        "greedy output/stopping mismatch before target reference: "
+                                        + key
+                                    )
+                                if prior_row is not None:
+                                    prior_row["correct"] = True
+                        correct = (
+                            valid_sample(response, integer(task["output_cap"]))
+                            if spec.sampling.temperature
+                            else references[key] == current
+                            if key in references
+                            else None
+                        )
                         metrics = native_counts(response, arm.drafter is not None)
+                        row: Record | None = None
                         if index >= spec.warmups:
-                            row: Record = {
+                            row = {
                                 "rep": rep,
+                                "seed": seed,
+                                "order_group": group,
                                 "arm": arm.name,
                                 "task": key,
                                 "group": task["group"],
@@ -180,7 +241,9 @@ def compare_leased(specification: Path, output: Path, spec: Comparison) -> Recor
                             }
                             rows.append(row)
                             store.atomic(store.root / "progress.json", canonical({"rows": rows}))
-                        if not correct:
+                        if correct is None:
+                            pending.setdefault(key, []).append((current, row))
+                        if correct is False:
                             raise ValueError(
                                 "greedy token/text/stopping mismatch: " + arm.name + "/" + key
                             )
@@ -194,6 +257,8 @@ def compare_leased(specification: Path, output: Path, spec: Comparison) -> Recor
                         raise ValueError(
                             "fallback-only speculative arm; activation not established"
                         )
+        if pending:
+            raise ValueError("unverified requests remain without a target-only reference")
         if source_identity(code_root) != code_identity:
             raise ValueError(
                 "executed source changed during comparison; preserve and rerun affected evidence"
@@ -203,6 +268,11 @@ def compare_leased(specification: Path, output: Path, spec: Comparison) -> Recor
         }
         result: Record = {
             "status": "complete",
+            "diagnostic": spec.diagnostic,
+            "sampled": spec.sampling.temperature > 0,
+            "distribution_qualified": spec.sampling.qualification is not None,
+            "temperature": spec.sampling.temperature,
+            "seeds": list(spec.sampling.seeds),
             "role": spec.role,
             "tier": spec.tier,
             "rows": rows,
@@ -223,11 +293,13 @@ def compare_leased(specification: Path, output: Path, spec: Comparison) -> Recor
                     for arm in spec.arms
                 },
             ),
-            "paired_against_baseline": {
-                arm.name: paired(rows, arm.name, spec.arms[1].name) for arm in spec.arms[2:]
-            },
+            "paired_against_baseline": {}
+            if spec.sampling.temperature
+            else {arm.name: paired(rows, arm.name, spec.arms[1].name) for arm in spec.arms[2:]},
             "code_sha256": code_identity,
-            "scientific": "matched request panel only; live workflow and harness claims require their panels",
+            "scientific": "sampled descriptive robustness; unequal outputs cannot rank checkpoints by throughput"
+            if spec.sampling.temperature
+            else "matched request panel only; live workflow and harness claims require their panels",
         }
         store.atomic(store.root / "result.json", canonical(result))
         return result

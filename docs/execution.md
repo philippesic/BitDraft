@@ -1,5 +1,14 @@
 # Training execution
 
+For coordinated training with intermittent native evaluation, use
+[`benchmarks campaign`](benchmarks.md). It calls the supervisor described here and keeps
+latest recovery state, provisional fast-DEV leader and full-DEV incumbent distinct.
+Optional `development` binds 120 fixed DEV windows measured every 250 updates; optional
+`model_update_seconds` bounds cumulative synchronized successful and failed optimizer
+work separately from data loading, diagnostics, export and controller wall time. A legacy
+state has no historical optimizer-clock measurement; the new clock cannot reconstruct it.
+Workers publish loss, gradient norm and dataset/clock accounting every 100 updates.
+
 ## Commands
 
 ```sh

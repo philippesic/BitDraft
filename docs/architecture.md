@@ -15,6 +15,7 @@
 | `evidence/` | Existing immutable execution and provenance receipts |
 | `skills/close-results/` | Reusable investigation closeout procedure |
 | `native/` | Authored tokenizer and capture helpers for the pinned runtime |
+| `benchmarks/` | Frozen-source native comparisons, live tools, harness panels and campaign coordination |
 | `typings/` | Minimal typed interfaces for untyped external APIs |
 | `tasks/` | Open multi-session work; context, resumed only when asked |
 

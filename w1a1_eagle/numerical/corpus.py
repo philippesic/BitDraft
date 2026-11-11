@@ -139,7 +139,15 @@ class Corpus:
             metadata_bytes = max(metadata_bytes, retained_bytes)
             if metadata_bytes >= byte_budget // 2:
                 raise ValueError("corpus windows exceed memory budget")
-            rows.append(CaptureRow(prompt, spec, anchors, supervision_positions(selected)))
+            rows.append(
+                CaptureRow(
+                    prompt,
+                    spec,
+                    anchors,
+                    supervision_positions(selected),
+                    tuple(len(window.labels) for window in selected),
+                )
+            )
         if {p.identity for p in admitted} != {r.prompt.identity for r in rows}:
             raise ValueError("ledger and reader disagree")
         self.rows = tuple(rows)

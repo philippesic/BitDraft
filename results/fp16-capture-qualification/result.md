@@ -1,5 +1,9 @@
 # FP16 passed bounded capture and training checks; broad qualification remains pending
 
+2026-11-11 followup: the broader investigation completed and qualified the scoped storage
+format. See [FP16 storage adoption](../fp16-storage-adoption/result.md). The original
+bounded outcome and unresolved decision below describe the earlier evidence stage.
+
 ## Outcome
 
 The RTX 5080 completed a matched 72-update probe from the final original HE4broad state,
