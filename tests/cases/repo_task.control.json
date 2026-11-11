@@ -6,7 +6,8 @@
     "AGENTS.md": "# Instructions\n",
     "CLAUDE.md": "@AGENTS.md\n",
     "tools/a.py": "x = 1\n",
-    "tasks/example.md": "# Example task\n\n## Goal\nA.\n\n## Authorized\nB.\n\n## Done when\nC.\n\n## State\nD.\n\n## Next\nE.\n\n## Notes\nF.\n"
+    "tasks/example.md": "# Example task\n\n## Goal\nA.\n\n## Authorized\nB.\n\n## Done when\nC.\n\n## State\nD.\n\n## Next\nE.\n\n## Notes\nF.\n",
+    "tasks/README.md": "# Task convention\nThis guide is not an active task.\n"
   },
   "exit": 0,
   "path": "tasks/example.md",

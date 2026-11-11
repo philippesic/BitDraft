@@ -3,7 +3,8 @@
   "command": "component",
   "input": {},
   "files": {
-    "case.json": "{\"x\":1}\n"
+    "case.json": "{\"x\":1}\n",
+    "results/example/chart.svg": "<svg xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"10\" height=\"20\"/></svg>\n"
   },
   "exit": 0,
   "path": "case.rs",

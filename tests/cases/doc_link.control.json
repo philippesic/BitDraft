@@ -6,8 +6,8 @@
   },
   "files": {
     "a.py": "def f():\n    pass\n",
-    "docs/system-map.md": "| Flow | State | Path | Symbol |\n| --- | --- | --- | --- |\n| check | active | a.py | f |\n| policy | active | a.py | f |\n| selftest | active | a.py | f |\n| setup | active | a.py | f |\n",
-    "README.md": "[map](docs/system-map.md)\n"
+    "docs/architecture.md": "| Flow | State | Path | Symbol |\n| --- | --- | --- | --- |\n| check | active | a.py | f |\n| policy | active | a.py | f |\n| selftest | active | a.py | f |\n| setup | active | a.py | f |\n",
+    "README.md": "[map](docs/architecture.md)\n"
   },
   "exit": 0,
   "path": "README.md",

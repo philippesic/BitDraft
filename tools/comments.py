@@ -7,7 +7,7 @@ from pathlib import PurePosixPath
 
 from tools.contracts import Diagnostic, Record, record, sequence, string
 
-TEXT_SUFFIXES = {".md", ".json", ".lock", ".csv", ".txt"}
+TEXT_SUFFIXES = {".md", ".json", ".lock", ".csv", ".txt", ".svg"}
 HASH_SUFFIXES = {".sh", ".bash", ".toml", ".yaml", ".yml", ".ini", ".cfg", ".cmake"}
 NATIVE_SUFFIXES = {".c", ".cc", ".cpp", ".h", ".hpp", ".cu", ".cuh"}
 

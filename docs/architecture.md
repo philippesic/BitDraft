@@ -1,4 +1,4 @@
-# System map
+# Architecture
 
 ## Layout
 
@@ -11,7 +11,9 @@
 | `policy/` | Rule registry, boundaries, commands, pins, exceptions, evidence registry |
 | `tests/` | CPU tests; `tests/numerical/` runs in the numerical interpreter |
 | `tests/cases/` | One bad and one control specimen per rule |
-| `evidence/` | Dated records backing findings |
+| `results/` | Durable conclusions and small supporting data |
+| `evidence/` | Existing immutable execution and provenance receipts |
+| `skills/close-results/` | Reusable investigation closeout procedure |
 | `tasks/` | Open multi-session work; context, resumed only when asked |
 
 The [model](model.md) describes the current numerical graph and trainable state.

@@ -10,7 +10,7 @@ replacing the per-campaign scripts of `/home/philip/binary-eagle-decoding`.
 Identify and prepare the complete functional port before benchmark redesign and agent
 operations. CPU investigation is autonomous; GPU work follows the task-ownership rule
 in AGENTS.md. This inventory does not allocate a new training campaign or authorize
-artifact deletion. Philip will link the remote; retention tooling is deferred.
+artifact deletion. Philip will link the remote; artifact backup and retirement automation remain deferred.
 
 ## Done when
 

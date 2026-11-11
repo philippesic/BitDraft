@@ -55,7 +55,7 @@ def validate_docs(
     mapped: list[str] = []
     for match in re.finditer(
         r"(?m)^\| (\w+) \| (active|pending) \| ([^ |]+) \| ([^ |]+) \|",
-        files.get("docs/system-map.md", ""),
+        files.get("docs/architecture.md", ""),
     ):
         flow: str = match.group(1)
         state: str = match.group(2)
@@ -65,7 +65,7 @@ def validate_docs(
             continue
         mapped.append(flow)
         if mapped_path not in files:
-            diagnostics.add(Diagnostic("MAP_ENTRY", "docs/system-map.md"))
+            diagnostics.add(Diagnostic("MAP_ENTRY", "docs/architecture.md"))
         elif mapped_path.endswith(".py"):
             names = {
                 n.name
@@ -73,9 +73,9 @@ def validate_docs(
                 if isinstance(n, (ast.FunctionDef, ast.ClassDef))
             }
             if symbol not in names:
-                diagnostics.add(Diagnostic("MAP_ENTRY", "docs/system-map.md"))
+                diagnostics.add(Diagnostic("MAP_ENTRY", "docs/architecture.md"))
     if len(mapped) != len(set(mapped)) or not {"check", "policy", "selftest", "setup"}.issubset(
         mapped
     ):
-        diagnostics.add(Diagnostic("MAP_ENTRY", "docs/system-map.md"))
+        diagnostics.add(Diagnostic("MAP_ENTRY", "docs/architecture.md"))
     return sorted(diagnostics)

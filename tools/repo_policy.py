@@ -30,12 +30,13 @@ def validate_files(files: dict[str, str], escapes: list[str] | None = None) -> l
             path.split("/")[0]
             in {
                 "runs",
-                "results",
                 "checkouts",
                 "models",
                 "captures",
                 "checkpoints",
             }
+            or path.startswith("results/")
+            and not path.endswith((".md", ".json", ".csv", ".txt", ".svg"))
             or path.endswith((".pt", ".gguf", ".safetensors", ".so"))
             or re.search(r"(?i)generated (?:code|source)|do not edit.*generated", text[:500])
         ):
@@ -49,8 +50,13 @@ def validate_files(files: dict[str, str], escapes: list[str] | None = None) -> l
             result.add(Diagnostic("REPO_SECRET", path))
         if re.search(r"(?i)(?:^|/)(?:STATUS|HISTORY|PLAN|SCRATCH)(?:[._-]|$)", path):
             result.add(Diagnostic("REPO_DIARY", path))
-        if re.fullmatch(r"tasks/[^/]+\.md", path) and (
-            not text.startswith("# ") or sections(text)[: len(TASK_SECTIONS)] != list(TASK_SECTIONS)
+        if (
+            path != "tasks/README.md"
+            and re.fullmatch(r"tasks/[^/]+\.md", path)
+            and (
+                not text.startswith("# ")
+                or sections(text)[: len(TASK_SECTIONS)] != list(TASK_SECTIONS)
+            )
         ):
             result.add(Diagnostic("REPO_TASK", path))
     if sum(len(t.encode()) for p, t in files.items() if p != "uv.lock") > 2097152:

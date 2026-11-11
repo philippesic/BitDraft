@@ -1,0 +1,29 @@
+# Fresh-source HE4broad remained slower than target-only and baseline
+
+## Outcome
+
+It ended at 24.5658% acceptance and 174.113 tok/s, against 185.444 for target-only and
+65.3257% and 249.662 tok/s for Baseline. Training ran 226,853 updates over 40 sequences,
+3,234 windows and 3,794 unique labels, a mean exposure of 896.889. DEV top-1 peaked at
+17.7778% at hour 4 and ended at 13.3333%; final cross-entropy was 8.899076. Formal serving
+was scored only at hours 0 and 8, so the best checkpoint was never selected, although
+hourly full states were kept.
+
+## Scope and limitations
+
+DEV3, one seed and trajectory. The hour-4 DEV peak does not establish a formal
+serving peak. No HE4 win over Baseline.
+
+## Decision
+
+Retain this scoped finding for future decisions. No new experimental or deployment decision is made by this documentation migration.
+
+## Evidence and reproduction
+
+[experiments/he4broad-20261108/report.md](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/he4broad-20261108/report.md) [experiments/he4broad-20261108/audit.json](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/he4broad-20261108/audit.json) [experiments/he4broad-20261108/results.json](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/he4broad-20261108/results.json) [experiments/he4broad-20261108/manifest.json](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/he4broad-20261108/manifest.json)
+
+Imported from the linked records; no experiment was rerun for this documentation
+migration. Complete executed-source, dependency and artifact availability have not
+been reverified. Missing reproduction details must be recovered before artifact
+retirement; report revisions alone are not execution provenance. No original source,
+checkpoint or capture was deleted.
