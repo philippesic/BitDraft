@@ -31,18 +31,6 @@
         "path": "commands.txt",
         "needle": "deptry"
       },
-      "pre-commit": {
-        "path": "commands.txt",
-        "needle": "pre-commit"
-      },
-      "PyYAML": {
-        "path": "commands.txt",
-        "needle": "PyYAML"
-      },
-      "types-PyYAML": {
-        "path": "commands.txt",
-        "needle": "types-PyYAML"
-      },
       "dulwich": {
         "path": "commands.txt",
         "needle": "dulwich"

@@ -4,16 +4,21 @@
 
 | Command | Time | Use |
 | --- | --- | --- |
-| `uv run --locked --no-sync --offline python tools/check.py --fast` | about 3 s warm, 30 s cold | While editing |
-| `uv run --locked --no-sync --offline python tools/check.py` | about 90 s | Commit gate; the pre-commit hook runs it |
+| `uv run --locked --no-sync --offline python tools/check.py` | about 3 s warm, 30 s cold | While editing |
+| `uv run --locked --no-sync --offline python tools/check.py --full` | about 90 s | Commit gate; the pre-commit hook runs it |
 | `uv run --locked --no-sync --offline python tools/check.py --self-test` | about 25 s | Rule proofs only, after changing a checker or rule |
 | `uv run --locked --no-sync --offline python -m tools.doctor` | seconds | Environment, hook and receipt inspection |
 
-None of them installs or downloads anything, formats files or uses the GPU.
+None of them installs or downloads anything, formats files, changes Git configuration
+or uses the GPU.
 
-`--fast` runs every static stage and the ordinary CPU tests. It skips the numerical
-test (about 37 s), the required-test roster and the rule proofs, keeps a type-check
-cache of about 300 MB in `/tmp`, writes no receipt and is never a commit result.
+The plain command runs every static stage and the ordinary CPU tests and labels itself
+partial. It skips the numerical test (about 37 s), the required-test roster and the
+rule proofs, keeps a type-check cache of about 300 MB in `/tmp`, writes no receipt and
+is never a commit result. `--full` runs everything portable and writes the receipt.
+
+The hook is `.githooks/pre-commit`. Enable it once per clone with
+`git config core.hooksPath .githooks`; the doctor reports whether it is enabled.
 
 For one file: `.venv/bin/ruff check PATH`, `.venv/bin/ruff format --check PATH`, or
 `.venv/bin/python -B -m pytest tests/test_training.py`. The numerical tests run in the
@@ -24,16 +29,16 @@ tests.numerical.test_model -v`.
 
 | Stage | Covers |
 | --- | --- |
-| bootstrap | Python, tool and lock pins; configuration digests; hook configuration |
-| repository | Tracked outputs, large files, secrets, ignored escapes, instruction files, diary names |
+| bootstrap | Python, tool and lock pins; configuration digests; executable hook |
+| repository | Tracked outputs, large files, secrets, ignored escapes, instruction files, diary names, task-file sections |
 | comments | The comment ban and `policy/exceptions.toml` |
 | ruff | Format and selected lint codes |
 | mypy | Strict typing; the numerical profile allows Any only in `tests/numerical` |
 | architecture | Import direction, pure modules, owners, environment and clock access, entries |
 | dependencies | Deptry, Vulture and declared tool use |
 | documentation | Relative links and anchors, pinned evidence links, system-map symbols |
-| cpu | All CPU tests, the numerical subprocess test and the required roster in `policy/cpu-tests.toml` |
-| proofs | Each rule in `policy/rules.toml` rejects its bad specimen and accepts its control |
+| cpu | Ordinary CPU tests; with `--full` also the numerical subprocess test and the required roster in `policy/cpu-tests.toml` |
+| proofs | With `--full`: each rule in `policy/rules.toml` rejects its bad specimen and accepts its control |
 
 A green full check means the named CPU scenarios ran. It does not show native
 correctness, retained-artifact parity, scientific adequacy or serving performance.
@@ -59,8 +64,8 @@ syntax fails closed. Patches are checked hunk by hunk against their pinned base.
 
 `tools/config.py` pins the tool versions and the digests of `policy/rules.toml`,
 `policy/commands.toml`, `policy/boundaries.toml`, `policy/cases.toml`,
-`policy/cpu-tests.toml`, `policy/check-stages.toml`, `policy/validation.toml`, the hook
-configuration, the workflow and the container file. A digest mismatch means a safeguard
+`policy/cpu-tests.toml`, `policy/check-stages.toml`, `policy/validation.toml` and
+`.githooks/pre-commit`. Specimen digests are in `policy/evidence.toml`. A digest mismatch means a safeguard
 changed. If the change is intended and authorized, update the digest in the same commit
 and say so in the report. If not, revert it. Never update a digest only to get a pass.
 
@@ -79,6 +84,7 @@ and say so in the report. If not, revert it. Never update a digest only to get a
 | `DOC_LINK`, `MAP_ENTRY` | Fix the link, anchor or system-map symbol |
 | `EVIDENCE_PIN` | Use the pinned revision URL and register it in `policy/evidence.toml` |
 | `REPO_DIARY` | Put the content in FINDINGS, a topic doc or a task file |
+| `REPO_TASK` | Start with a `# ` title and keep `## Goal`, `## Authorized`, `## Done when`, `## State`, `## Next` in that order; other sections go after |
 | `INSTRUCTIONS_BUDGET` | Shorten AGENTS.md to 80 lines and 4,000 bytes |
 | `REQUIRED_TESTS` | Read the pytest output above it; a test failed, was skipped or disappeared |
 | `CHECK_CONFIG`, `PIN_*`, `STAGE_GATE` | A pin or digest changed; see Pins and digests |

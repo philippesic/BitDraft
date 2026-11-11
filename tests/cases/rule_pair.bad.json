@@ -127,7 +127,8 @@
       "REPO_LARGE",
       "REPO_SECRET",
       "REPO_IGNORED",
-      "REPO_DIARY"
+      "REPO_DIARY",
+      "REPO_TASK"
     ],
     "cases": [
       "pin_python.bad.json",
@@ -378,7 +379,9 @@
       "repo_secret.control.json",
       "repo_ignored.bad.json",
       "repo_ignored.control.json",
-      "repo_diary.bad.json"
+      "repo_diary.bad.json",
+      "repo_task.bad.json",
+      "repo_task.control.json"
     ]
   },
   "files": {},

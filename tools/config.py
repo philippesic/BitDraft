@@ -43,13 +43,12 @@ def settings(root: Path) -> Settings:
             "PYTHONPATH": str(root),
             "TMPDIR": str(temporary),
             "PYTEST_DEBUG_TEMPROOT": str(temporary),
-            "PRE_COMMIT_HOME": str(root / ".venv/check-cache/pre-commit"),
             "BINARY_NUMERICAL_PYTHON": numerical_python(root),
             "UV_PYTHON_DOWNLOADS": "never",
             "UV_CACHE_DIR": str(root / ".venv/check-cache"),
         }
     )
-    return Settings(root, temporary, environment, os.environ.get("PRE_COMMIT") == "1")
+    return Settings(root, temporary, environment, os.environ.get("BINARY_CHECK_STAGED") == "1")
 
 
 def needs_reexec(config: Settings) -> bool:
@@ -104,9 +103,6 @@ PINS = {
     "import-linter": "2.7",
     "vulture": "2.14",
     "deptry": "0.24.0",
-    "pre-commit": "4.3.0",
-    "PyYAML": "6.0.3",
-    "types-PyYAML": "6.0.12.20250915",
     "dulwich": "0.24.2",
 }
 RUFF: Record = {
@@ -155,11 +151,8 @@ FOUNDATION_FILES = (
     "pyproject.toml",
     "uv.lock",
     ".gitignore",
-    ".dockerignore",
     ".editorconfig",
-    ".pre-commit-config.yaml",
-    ".github/workflows/checks.yml",
-    "Dockerfile.checks",
+    ".githooks/pre-commit",
     "tools/__init__.py",
     "tools/check.py",
     "tools/config.py",
@@ -236,11 +229,9 @@ OTHER_TOOL_CONFIG: Record = {
 }
 
 CONFIG_DIGESTS = {
-    "policy/rules.toml": "f54020182c172d32326adebd7c5e3ea96de376179eda283a96f2bf58dca7f5c2",
+    "policy/rules.toml": "2d65ffc01b2194d796fcf472fe24d2c540a64f0943d8557d81bb94289f94070a",
     "policy/commands.toml": "d0b9093bb88ce5e8225cefad890f0507ae4e357fba4122255241b31bc4a9518c",
-    ".pre-commit-config.yaml": "30f513d6c67238996c9f8496b2d32ae39c39f3909da15adcc220ca79fc5ae69d",
-    ".github/workflows/checks.yml": "b77dd147c5047bf7fab676f08303ab264fda7b50f073241c6c0d5b52e85cdb56",
-    "Dockerfile.checks": "c8f0ad1105d976a3f757b74727bf2aed9f4bbfb5030a193f1328ba6f5a9b5696",
+    ".githooks/pre-commit": "2cf96c9ec4cb87837d34fbfaebac50fcbb25bd8bb65f33f9baac7080605c66b5",
     "policy/boundaries.toml": "2222fafd65a0c3d355483f9d0ff3354550f495faefa282b80a327e5365ca024a",
     "policy/cases.toml": "d3094468c15e70cec936fb2b3b2eb6f99ee2900b39a507492f5b762b32ee6cfc",
     "policy/cpu-tests.toml": "936218d7b8f290fa9ad93493c4d9bf6f468fc4434ac5acd3cb7333d5085816d8",

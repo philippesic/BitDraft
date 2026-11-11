@@ -197,7 +197,7 @@ def scan_patch(
 
 
 def scan_file(path: str, text: str, exceptions: list[Record]) -> list[Diagnostic]:
-    suffix = PurePosixPath(path).suffix
+    suffix = ".sh" if path.startswith(".githooks/") else PurePosixPath(path).suffix
     name = PurePosixPath(path).name
     comments: list[str] = []
     code = "COMMENT_OTHER"

@@ -1374,3 +1374,14 @@ bad = "tests/cases/repo_diary.bad.json"
 control = "tests/cases/repo_diary.control.json"
 exit = 1
 diagnostic = "REPO_DIARY"
+
+[[rule]]
+id = "REPO_TASK"
+group = "R"
+validator = "repo_task"
+evidence = "Task files are the only home for open multi-session work; agents resume from their sections."
+requirement = "A tasks/*.md file without a title and Goal, Authorized, Done when, State, Next in order fails."
+bad = "tests/cases/repo_task.bad.json"
+control = "tests/cases/repo_task.control.json"
+exit = 1
+diagnostic = "REPO_TASK"

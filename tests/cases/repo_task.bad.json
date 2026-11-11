@@ -1,0 +1,14 @@
+{
+  "rule": "repo_task",
+  "command": "component",
+  "input": {},
+  "files": {
+    "AGENTS.md": "# Instructions\n",
+    "CLAUDE.md": "@AGENTS.md\n",
+    "tools/a.py": "x = 1\n",
+    "tasks/example.md": "# Example task\n\n## Goal\nA.\n\n## Done when\nC.\n\n## State\nD.\n\n## Next\nE.\n"
+  },
+  "exit": 1,
+  "path": "tasks/example.md",
+  "native": []
+}

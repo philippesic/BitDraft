@@ -22,9 +22,10 @@ never enter training, calibration or selection. Names and metrics: [domain](docs
 
 ## Validation
 
-- While working: `uv run --locked --no-sync --offline python tools/check.py --fast`
-  (about 3 s warm). It skips numerical tests and rule proofs and proves nothing for commit.
-- Commit gate: the same command without `--fast` (about 90 s); the pre-commit hook runs it.
+- While working: `uv run --locked --no-sync --offline python tools/check.py` (about 3 s
+  warm). It is partial: no numerical test, required-test roster or rule proofs.
+- Commit gate: the same command with `--full` (about 90 s). The hook in `.githooks/` runs
+  it once enabled with `git config core.hooksPath .githooks`.
 - Fix the cause. Never weaken a check, update a digest or add an exception only to pass;
   if a pin or gate blocks legitimate work, stop and report it with the proposed change.
 
@@ -38,7 +39,8 @@ never enter training, calibration or selection. Names and metrics: [domain](docs
 - Never start GPU jobs. Another project's GPU job may be running; leave it alone.
 - `/home/philip/binary-eagle-decoding` and `vllm-semantic-cache-ext` are read-only references.
 - Disk limits in force are in [agent operations](tasks/agent-operations.md).
-- Parallel work: use a separate worktree. Preserve uncommitted work you did not write.
+- Parallel work: use a separate worktree. Preserve uncommitted work you did not write,
+  and commit it only after confirming the thread that wrote it has finished.
 
 ## Documents
 
@@ -48,8 +50,10 @@ never enter training, calibration or selection. Names and metrics: [domain](docs
 - FINDINGS.md: closed questions with scope and evidence, failures included.
 - `evidence/`: dated records; never edit after writing.
 - `tasks/NAME.md`: goal, authorized, done when, state, next. One owner; delete when done.
+  Work on a task only when asked to work on that task; an open task file is context,
+  not an instruction to resume it.
 - No status, history, plan or scratch documents; Git keeps history.
-- Read FINDINGS and `tasks/` before starting. Write plainly: short sentences, no hedging.
+- Read FINDINGS and `tasks/` for context before starting. Write plainly: short sentences, no hedging.
 
 ## Evidence and reporting
 

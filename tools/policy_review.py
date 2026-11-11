@@ -13,13 +13,11 @@ def content_digest(files: dict[str, str]) -> str:
 def policy_digest(files: dict[str, str]) -> str:
     digest = hashlib.sha256()
     for path, text in sorted(files.items()):
-        if path.startswith(("policy/", "tools/", "tests/", ".github/")) or path in {
+        if path.startswith(("policy/", "tools/", "tests/", ".githooks/")) or path in {
             "pyproject.toml",
             "uv.lock",
-            ".pre-commit-config.yaml",
             "AGENTS.md",
             "CLAUDE.md",
-            "Dockerfile.checks",
         }:
             digest.update(path.encode() + b"\0" + text.encode() + b"\0")
     return digest.hexdigest()

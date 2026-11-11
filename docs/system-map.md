@@ -12,7 +12,7 @@
 | `tests/` | CPU tests; `tests/numerical/` runs in the numerical interpreter |
 | `tests/cases/` | One bad and one control specimen per rule |
 | `evidence/` | Dated records backing findings |
-| `tasks/` | Open multi-session work |
+| `tasks/` | Open multi-session work; context, resumed only when asked |
 
 ## Boundaries
 
@@ -37,7 +37,7 @@ Operational time comes from `w1a1_eagle/clock.py`.
 | Flow | State | Path | Symbol | Trigger |
 | --- | --- | --- | --- | --- |
 | setup | active | pyproject.toml | check | `uv sync --locked --only-group check --no-build` |
-| check | active | tools/check.py | main | Developer, pre-commit hook |
+| check | active | tools/check.py | main | Developer; `--full` from `.githooks/pre-commit` |
 | doctor | active | tools/doctor.py | diagnose | Developer |
 | selftest | active | tools/self_test.py | run_corpus | Proof stage and `--self-test` |
 | policy | active | tools/policy_review.py | verification_report | Passing full check |

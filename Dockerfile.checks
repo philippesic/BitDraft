@@ -1,6 +1,0 @@
-FROM python@sha256:77923445c077d8eb971b14b2b114a1d9cd4a87edb4c75654820ca4832ee8cb15
-WORKDIR /foundation
-RUN python -c "import hashlib,io,tarfile,urllib.request; b=urllib.request.urlopen('https://github.com/astral-sh/uv/releases/download/0.11.32/uv-x86_64-unknown-linux-gnu.tar.gz').read(); assert len(b)==26296576; assert hashlib.sha256(b).hexdigest()=='aab924fd522efd06f1c5f3b93a243864fc453132c94b2dc49f1371b528a4b967'; t=tarfile.open(fileobj=io.BytesIO(b)); f=t.extractfile(\"uv-x86_64-unknown-linux-gnu/uv\"); assert f is not None; open(\"/usr/local/bin/uv\",\"wb\").write(f.read())" && chmod 755 /usr/local/bin/uv
-COPY . /foundation
-RUN uv sync --locked --only-group check --no-build
-CMD ["uv", "run", "--locked", "--no-sync", "--offline", "python", "tools/check.py"]
