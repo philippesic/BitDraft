@@ -21,10 +21,10 @@ Retain this scoped finding for future decisions. No new experimental or deployme
 
 ## Evidence and reproduction
 
-[binary pipeline profile](https://github.com/philippesic/binary-eagle-decoding/blob/7d9ab32066584edbb715ddbce38d0386b2efb0d6/experiments/binary-pipeline-profile-20261104/README.md).
+[binary pipeline profile](../sources/experiments-binary-pipeline-profile-20261104-readme-8c46fef4.txt).
 
 Imported from the linked records; no experiment was rerun for this documentation
 migration. Complete executed-source, dependency and artifact availability have not
-been reverified. Missing reproduction details must be recovered before artifact
-retirement; report revisions alone are not execution provenance. No original source,
+been reverified. [Evidence access](../../docs/evidence.md) describes archive recovery and remaining
+raw-input limits; report revisions alone are not execution provenance. No original source,
 checkpoint or capture was deleted.

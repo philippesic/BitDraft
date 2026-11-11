@@ -1,0 +1,9 @@
+{
+  "kind": "archived-source-reference",
+  "repository_bundle": "/home/philip/binary-eagle-evidence/legacy-20261110/repository.bundle",
+  "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+  "path": "experiments/he4broad-20261108/results.json",
+  "sha256": "3d7147f157ffa086dd1ae939814b44a3bd7c15c11dcffd375919ee8d9604c1db",
+  "bytes": 108338,
+  "retrieval": "git --git-dir /home/philip/binary-eagle-evidence/legacy-20261110/recovered.git show 7cbc9f1833841c7f394789a209b23b1ad5a77af2:experiments/he4broad-20261108/results.json"
+}

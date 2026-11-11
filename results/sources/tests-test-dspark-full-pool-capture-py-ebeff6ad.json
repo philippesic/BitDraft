@@ -1,0 +1,9 @@
+{
+  "kind": "archived-source-reference",
+  "repository_bundle": "/home/philip/binary-eagle-evidence/legacy-20261110/repository.bundle",
+  "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+  "path": "tests/test_dspark_full_pool_capture.py",
+  "sha256": "ebeff6ad15f2ad6ab1f20d5edf27b074399d3f3fa84f7ae923e2cd54eae142bb",
+  "bytes": 24442,
+  "retrieval": "git --git-dir /home/philip/binary-eagle-evidence/legacy-20261110/recovered.git show 7cbc9f1833841c7f394789a209b23b1ad5a77af2:tests/test_dspark_full_pool_capture.py"
+}

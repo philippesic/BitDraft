@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "archive_head": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+  "date": "2026-11-10",
+  "bundles": [
+    {
+      "name": "repository",
+      "bundle": "/home/philip/binary-eagle-evidence/legacy-20261110/repository.bundle",
+      "bytes": 12155678,
+      "sha256": "cedb8a1df07171992327a912c73bc420802fc9df4a470cddffb0363c97a4d933",
+      "verification": "Independent mirror clone and git fsck --full passed; no alternates",
+      "reader": "/home/philip/binary-eagle-evidence/legacy-20261110/recovered.git"
+    },
+    {
+      "name": "native",
+      "bundle": "/home/philip/binary-eagle-evidence/legacy-20261110/native.bundle",
+      "bytes": 455294322,
+      "sha256": "c8738a78268847b595ff59bae08003386ec7501fe5dd85416344fea4dbd2643b",
+      "verification": "Independent mirror clone and git fsck --full passed; no alternates",
+      "reader": "/home/philip/binary-eagle-evidence/legacy-20261110/native-recovered.git"
+    }
+  ],
+  "interim": [
+    {
+      "original": "experiments/he4broad-20261110/report.md",
+      "snapshot": "/home/philip/binary-eagle-evidence/legacy-20261110/interim/report.md",
+      "bytes": 4087,
+      "sha256": "fa6699c3d3a1dfc098865d7774e3a8c5e679bf15ee9f0eab9091c1b4020e1fd0",
+      "status": "unfinished working-tree snapshot, not a final result"
+    },
+    {
+      "original": "experiments/he4broad-20261110/results.json",
+      "snapshot": "/home/philip/binary-eagle-evidence/legacy-20261110/interim/results.json",
+      "bytes": 109967,
+      "sha256": "d00947bbcb3f7a4817ae1d60c4f59305f0a44b601c576eec20132bb196aae193",
+      "status": "unfinished working-tree snapshot, not a final result"
+    }
+  ],
+  "selected_source_references": 81,
+  "byte_identical_source_copies": 67,
+  "tracked_markdown_inventory": 375,
+  "verification_scope": "All selected source objects recovered from independent bundle clone; tracked reports and history preserved. Editorial review used report-level outcomes and consolidated campaign catalogs, not reproduction of every run.",
+  "excluded": [
+    "ignored/untracked raw execution trees",
+    "external datasets and model weights",
+    "uncommitted worktrees other than the two named interim snapshots",
+    "future changes to the active investigation",
+    "off-machine backup"
+  ],
+  "old_repository_modified": false,
+  "experiments_rerun": false,
+  "catalog_verification": {
+    "source_references": 81,
+    "markdown_objects": 375,
+    "all_lengths_and_hashes_match": true
+  }
+}

@@ -67,5 +67,6 @@ see [execution](docs/execution.md).
   [domain terms and metrics](docs/domain.md), [model](docs/model.md),
   [research context and source guide](docs/research.md)
 - [Findings](FINDINGS.md): short result index; [result format and closeout](docs/results.md)
+- [Supported behavior and limits](docs/support.md), [evidence access](docs/evidence.md)
 - [Task convention](tasks/README.md); [close-results skill](skills/close-results/SKILL.md)
 - License: not yet chosen.

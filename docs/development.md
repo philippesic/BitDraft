@@ -1,6 +1,6 @@
 # Development
 
-Start with [setup](../README.md#setup), [architecture](architecture.md), relevant topic
+Start with [setup](../README.md#setup), [architecture](architecture.md), [support limits](support.md), relevant topic
 docs and [FINDINGS](../FINDINGS.md). The findings index leads to prior results; it does
 not contain their full evidence. Read the linked result before reusing a conclusion.
 

@@ -28,6 +28,6 @@ Retain this scoped finding for future decisions. No new experimental or deployme
 
 Imported from the linked records; no experiment was rerun for this documentation
 migration. Complete executed-source, dependency and artifact availability have not
-been reverified. Missing reproduction details must be recovered before artifact
-retirement; report revisions alone are not execution provenance. No original source,
+been reverified. [Evidence access](../../docs/evidence.md) describes archive recovery and remaining
+raw-input limits; report revisions alone are not execution provenance. No original source,
 checkpoint or capture was deleted.

@@ -20,10 +20,10 @@ Retain this scoped finding for future decisions. No new experimental or deployme
 
 ## Evidence and reproduction
 
-[experiments/he4broad-20261108/report.md](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/he4broad-20261108/report.md) [experiments/he4broad-20261108/audit.json](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/he4broad-20261108/audit.json) [experiments/he4broad-20261108/results.json](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/he4broad-20261108/results.json) [experiments/he4broad-20261108/manifest.json](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/he4broad-20261108/manifest.json)
+[experiments/he4broad-20261108/report.md](../sources/experiments-he4broad-20261108-report-4887a5fb.txt) [experiments/he4broad-20261108/audit.json](../sources/experiments-he4broad-20261108-audit-2c53389f.json) [experiments/he4broad-20261108/results.json](../sources/experiments-he4broad-20261108-results-json-3d7147f1.json) [experiments/he4broad-20261108/manifest.json](../sources/experiments-he4broad-20261108-manifest-a44a5efe.json)
 
 Imported from the linked records; no experiment was rerun for this documentation
 migration. Complete executed-source, dependency and artifact availability have not
-been reverified. Missing reproduction details must be recovered before artifact
-retirement; report revisions alone are not execution provenance. No original source,
+been reverified. [Evidence access](../../docs/evidence.md) describes archive recovery and remaining
+raw-input limits; report revisions alone are not execution provenance. No original source,
 checkpoint or capture was deleted.

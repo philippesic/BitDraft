@@ -18,10 +18,10 @@ Retain the development tradeoffs and external deployment baseline; no promotion.
 
 ## Evidence and reproduction
 
-[experiments/component-campaign-20261105/report.md](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/component-campaign-20261105/report.md) [experiments/component-campaign-20261105/results.json](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/component-campaign-20261105/results.json)
+[experiments/component-campaign-20261105/report.md](../sources/experiments-component-campaign-20261105-report-4a5baa3b.txt) [experiments/component-campaign-20261105/results.json](../sources/experiments-component-campaign-20261105-results-json-8cc5d76d.json)
 
 Imported from the linked records; no experiment was rerun for this documentation
 migration. Complete executed-source, dependency and artifact availability have not
-been reverified. Missing reproduction details must be recovered before artifact
-retirement; report revisions alone are not execution provenance. No original source,
+been reverified. [Evidence access](../../docs/evidence.md) describes archive recovery and remaining
+raw-input limits; report revisions alone are not execution provenance. No original source,
 checkpoint or capture was deleted.

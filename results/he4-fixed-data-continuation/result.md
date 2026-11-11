@@ -28,10 +28,10 @@ Revise the continuation approach; retain the negative result. This remains a pro
 
 ## Evidence and reproduction
 
-[experiments/he4-continuation-20261107/report.md](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/he4-continuation-20261107/report.md) [experiments/he4-continuation-20261107/audit.json](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/he4-continuation-20261107/audit.json) [experiments/he4-continuation-20261107/trajectory.csv](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/he4-continuation-20261107/trajectory.csv) [experiments/he4-continuation-20261107/native.csv](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/he4-continuation-20261107/native.csv)
+[experiments/he4-continuation-20261107/report.md](../sources/experiments-he4-continuation-20261107-report-f38d371a.txt) [experiments/he4-continuation-20261107/audit.json](../sources/experiments-he4-continuation-20261107-audit-d5c79541.json) [experiments/he4-continuation-20261107/trajectory.csv](../sources/experiments-he4-continuation-20261107-trajectory-c8057511.csv) [experiments/he4-continuation-20261107/native.csv](../sources/experiments-he4-continuation-20261107-native-0c26d1d0.csv)
 
 Imported from the linked records; no experiment was rerun for this documentation
 migration. Complete executed-source, dependency and artifact availability have not
-been reverified. Missing reproduction details must be recovered before artifact
-retirement; report revisions alone are not execution provenance. No original source,
+been reverified. [Evidence access](../../docs/evidence.md) describes archive recovery and remaining
+raw-input limits; report revisions alone are not execution provenance. No original source,
 checkpoint or capture was deleted.

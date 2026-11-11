@@ -18,8 +18,8 @@
 
 The [model](model.md) describes the current numerical graph and trainable state.
 [Research context](research.md) explains the development direction and historical
-sources. These are separate from the open scientific implementation work in
-[the port task](../tasks/port.md).
+sources. The [support boundary](support.md) distinguishes implemented behavior from unqualified
+execution paths.
 
 ## Boundaries
 
@@ -70,6 +70,5 @@ adapter, dataset or workload IDs outside a discovery module.
 These restrictions concern software organization. They do not prescribe a new neural
 network. For example, they could prevent a future benchmark from choosing a runner
 through a simple branch, forcing a discovery mechanism before that mechanism has been
-designed. Their removal or replacement remains an open design choice in
-[the overhaul task](../tasks/repo-overhaul.md). Current data-role and comparison
-protections apply independently.
+designed. Revisit these interface guards when implementing the benchmark design. Current
+data-role and comparison protections apply independently.

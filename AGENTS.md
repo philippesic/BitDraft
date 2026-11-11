@@ -42,7 +42,7 @@ never enter training, calibration or selection. Names and metrics: [domain](docs
   Check GPU activity and task ownership before starting. Preserve other tasks' jobs.
   An established GPU allocation belongs to that task until completion or release;
   coordinate its agents within that allocation. Explicit user limits still apply.
-- `/home/philip/binary-eagle-decoding` and `vllm-semantic-cache-ext` are read-only references.
+- Historical evidence: [access and limits](docs/evidence.md). Old checkouts are read-only.
 - Parallel work: use a separate worktree. Preserve uncommitted work you did not write,
   and commit it only after confirming the thread that wrote it has finished.
 
