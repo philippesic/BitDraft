@@ -50,10 +50,13 @@ The reconciled counts are in [findings](../FINDINGS.md#f011-does-the-retained-mo
 
 ## Exposure
 
-Exposure counts visits to each unique position across overlapping windows. Parent
-exposure, seed, cursor and trajectory identity carry through resume and branch.
-Exposure limits and minimum-data policies are inputs to each run; the values in tests
-are examples, not approved thresholds.
+Admission estimates position visits for the current corpus and supplied run budget,
+accounting for overlapping windows. These are not measured lifetime per-position counts.
+Same-recipe resume restores the sampler cursor and aggregate exposure counters. Branching
+keeps aggregate counters and parent lineage but resets the cursor and optimizer; its
+recipe, seed or corpus may change. No per-position lifetime exposure ledger is retained
+across those changes. Exposure limits and minimum-data policies are caller inputs; test
+values are examples, not approved scientific thresholds.
 
 ## Moving metadata
 
