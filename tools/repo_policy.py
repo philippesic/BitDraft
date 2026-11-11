@@ -3,6 +3,16 @@ import re
 from tools.config import MYPY, OTHER_TOOL_CONFIG, REQUIRED_RULES, RUFF, STAGES
 from tools.contracts import Diagnostic, Record, record, sequence
 
+TASK_SECTIONS = ("Goal", "Authorized", "Done when", "State", "Next")
+
+
+def sections(text: str) -> list[str]:
+    result: list[str] = []
+    for match in re.finditer(r"(?m)^## (.+)$", text):
+        heading: str = match.group(1)
+        result.append(heading)
+    return result
+
 
 def validate_files(files: dict[str, str], escapes: list[str] | None = None) -> list[Diagnostic]:
     result: set[Diagnostic] = set()
@@ -39,6 +49,10 @@ def validate_files(files: dict[str, str], escapes: list[str] | None = None) -> l
             result.add(Diagnostic("REPO_SECRET", path))
         if re.search(r"(?i)(?:^|/)(?:STATUS|HISTORY|PLAN|SCRATCH)(?:[._-]|$)", path):
             result.add(Diagnostic("REPO_DIARY", path))
+        if re.fullmatch(r"tasks/[^/]+\.md", path) and (
+            not text.startswith("# ") or sections(text)[: len(TASK_SECTIONS)] != list(TASK_SECTIONS)
+        ):
+            result.add(Diagnostic("REPO_TASK", path))
     if sum(len(t.encode()) for p, t in files.items() if p != "uv.lock") > 2097152:
         result.add(Diagnostic("REPO_LARGE", "."))
     for path in escapes or []:

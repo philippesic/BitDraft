@@ -4,16 +4,14 @@ import sys
 from pathlib import Path
 
 from tools.policy_review import validate_report
-from tools.repo_files import inventory, read_json
+from tools.repo_files import hooks_path, inventory, read_json
 from w1a1_eagle.capacity import backing_available
 from w1a1_eagle.config import numerical_python
 from w1a1_eagle.identity import source_identity
 
 
 def diagnose(root: Path) -> dict[str, object]:
-    hook = root / ".git/hooks/pre-commit"
-    expected = str(root / ".venv/bin/python")
-    hook_ready = hook.is_file() and f"INSTALL_PYTHON={expected}\n" in hook.read_text()
+    hook_ready = hooks_path(root) == ".githooks"
     receipt = root / ".venv/foundation-verification.json"
     files, escapes = inventory(root)
     verification = "missing"
@@ -25,7 +23,7 @@ def diagnose(root: Path) -> dict[str, object]:
         "schema": 1,
         "check_python": sys.executable,
         "numerical_python": numerical_python(root),
-        "hook": "ready" if hook_ready else "missing or relocated: run .venv/bin/pre-commit install",
+        "hook": "ready" if hook_ready else "disabled: run git config core.hooksPath .githooks",
         "wsl_available_bytes": shutil.disk_usage(root).free,
         "backing_available_bytes": backing_available(),
         "verification": verification,

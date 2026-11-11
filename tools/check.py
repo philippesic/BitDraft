@@ -27,7 +27,6 @@ from tools.repo_files import (
     inventory,
     read_toml,
     temporary_root,
-    validate_yaml,
 )
 from w1a1_eagle.clock import Monotonic
 
@@ -40,10 +39,13 @@ def main() -> int:
         os.execve(
             sys.executable, [sys.executable, "-m", "tools.check", *sys.argv[1:]], config.environment
         )
-    if sys.argv[1:] not in ([], ["--self-test"], ["--fast"]):
-        print("SETUP_ERROR: only --fast or --self-test is supported")
+    if sys.argv[1:] not in ([], ["--full"], ["--self-test"]):
+        print(
+            "SETUP_ERROR: modes are tools/check.py (quick, partial), --full (commit gate)"
+            " and --self-test (rule proofs only)"
+        )
         return 2
-    fast = sys.argv[1:] == ["--fast"]
+    fast = sys.argv[1:] == []
 
     def mypy_cache(profile: str) -> list[str]:
         if fast:
@@ -79,11 +81,8 @@ def main() -> int:
         for path, digest in CONFIG_DIGESTS.items():
             if hashlib.sha256(files[path].encode()).hexdigest() != digest:
                 diagnostics.append(Diagnostic("CHECK_CONFIG", path))
-        hook = self_test.run_command(
-            ["pre-commit", "validate-config", ".pre-commit-config.yaml"], root
-        )
-        if hook.exit:
-            diagnostics.append(Diagnostic("CHECK_CONFIG", ".pre-commit-config.yaml"))
+        if not os.access(root / ".githooks/pre-commit", os.X_OK):
+            diagnostics.append(Diagnostic("CHECK_CONFIG", ".githooks/pre-commit is not executable"))
 
         expected = set(FOUNDATION_FILES) | {
             f"tests/cases/{name.lower()}.{kind}.json"
@@ -100,9 +99,6 @@ def main() -> int:
             "lock_sha256"
         ):
             diagnostics.append(Diagnostic("PIN_LOCK", "uv.lock"))
-        for path in (".pre-commit-config.yaml", ".github/workflows/checks.yml"):
-            if not validate_yaml(files[path]):
-                diagnostics.append(Diagnostic("CHECK_CONFIG", path))
         if config.staged and not index_matches(root, files):
             diagnostics.append(
                 Diagnostic("CHECK_CONFIG", "index snapshot differs from authored worktree")
@@ -276,8 +272,8 @@ def main() -> int:
         if fast:
             verdict = "FAIL" if all_diagnostics else "PASS"
             print(
-                f"fast {verdict}; partial: numerical tests, required-test roster and rule proofs"
-                " not run; no receipt written"
+                f"quick {verdict}; partial: numerical test, required-test roster and rule proofs"
+                " not run; commit gate is --full"
             )
             return int(bool(all_diagnostics))
         with temporary_root(config.temporary):

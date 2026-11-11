@@ -16,7 +16,10 @@ Requires CPython 3.11.15 and uv 0.11.32 on Linux x86_64; exact archive identitie
 
 ```sh
 uv sync --locked --only-group check --no-build
+git config core.hooksPath .githooks
 ```
+
+The second line enables the pre-commit hook, which runs the full check.
 
 Numerical code runs in a separate interpreter with the versions in
 [numerical policy](policy/numerical.toml). Point to it with `BINARY_NUMERICAL_PYTHON`,
@@ -25,8 +28,8 @@ Numerical code runs in a separate interpreter with the versions in
 ## Commands
 
 ```sh
-uv run --locked --no-sync --offline python tools/check.py --fast
 uv run --locked --no-sync --offline python tools/check.py
+uv run --locked --no-sync --offline python tools/check.py --full
 uv run --locked --no-sync --offline python -m tools.doctor
 python -m w1a1_eagle preflight INTENT
 ```

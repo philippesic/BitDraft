@@ -1,0 +1,1 @@
+BINARY_CHECK_STAGED=1 exec uv run --locked --no-sync --offline python tools/check.py --full

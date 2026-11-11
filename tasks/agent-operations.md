@@ -29,8 +29,9 @@ Earlier cleanup receipt: [disk reclaim](../evidence/disk-reclaim.json).
 Candidates:
 
 1. Replace the fixed limits with a free-space check before writes at a chosen reserve.
-2. Create the private remote, then add CI that runs the full check. The current
-   workflow and `Dockerfile.checks` have never run.
+2. Create the private remote, then add CI that runs `tools/check.py --full`: install the
+   pinned uv, sync from the lock, run the check. Add a container only if CI needs the
+   numerical environment. The never-run workflow and container file were deleted.
 3. Backup for retained states and captures; local presence is not a backup.
 4. Coexisting with GPU jobs from other projects on the same machine.
 5. Retention and cleanup policy for run outputs outside Git.

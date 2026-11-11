@@ -43,16 +43,6 @@ review_condition = "Review when the declaration, discovery mechanism or pinned t
 
 [[exception]]
 rule_id = "DEP004"
-path = "tools/repo_files.py"
-symbol = "yaml"
-sha256 = "1ba25a0ad00c4511b591046805e6342b82d740583998a6e7a79a83be33fa67bf"
-reason = "Foundation checker/test imports its declared check dependency; no product import is authorized"
-decision_id = "007-checks-and-review"
-owner = "Philip"
-review_condition = "Review when the declaration, discovery mechanism or pinned tool changes"
-
-[[exception]]
-rule_id = "DEP004"
 path = "tools/self_test.py"
 symbol = "dulwich"
 sha256 = "256a6ba46456497fdfcc3770187336518b3db128783a03aaa5c4234feb87086b"

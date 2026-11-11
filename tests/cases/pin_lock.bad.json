@@ -11,9 +11,6 @@
       "import-linter": "2.7",
       "vulture": "2.14",
       "deptry": "0.24.0",
-      "pre-commit": "4.3.0",
-      "PyYAML": "6.0.3",
-      "types-PyYAML": "6.0.12.20250915",
       "dulwich": "0.24.2",
       "uv": "0.11.32"
     },

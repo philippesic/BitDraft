@@ -11,7 +11,7 @@ from dulwich.ignore import IgnoreFilterManager
 from dulwich.index import IndexEntry
 from dulwich.repo import Repo
 
-from tools.contracts import Record, sequence
+from tools.contracts import Record
 from tools.policy_review import content_digest as content_digest
 
 
@@ -88,33 +88,12 @@ def index_matches(root: Path, files: dict[str, str]) -> bool:
         repo.close()
 
 
-def validate_yaml(text: str) -> bool:
-    import yaml
-
+def hooks_path(root: Path) -> str:
+    repo = Repo(str(root))
     try:
-        root = cast(object, yaml.compose(text, Loader=yaml.SafeLoader))
-        pending: list[object] = [root] if root is not None else []
-        visited: set[int] = set()
-        while pending:
-            node = pending.pop()
-            if id(node) in visited:
-                continue
-            visited.add(id(node))
-            kind = cast(object, getattr(node, "id", None))
-            value = cast(object, getattr(node, "value", None))
-            if kind == "mapping":
-                keys: set[str] = set()
-                for item in sequence(value):
-                    if not isinstance(item, tuple) or len(item) != 2:
-                        return False
-                    key, child = cast(tuple[object, object], item)
-                    key_value = cast(object, getattr(key, "value", None))
-                    if not isinstance(key_value, str) or key_value in keys:
-                        return False
-                    keys.add(key_value)
-                    pending.append(child)
-            elif kind == "sequence":
-                pending.extend(sequence(value))
-        return True
-    except (yaml.YAMLError, ValueError):
-        return False
+        value = repo.get_config().get((b"core",), b"hooksPath")
+        return value.decode()
+    except KeyError:
+        return ""
+    finally:
+        repo.close()
