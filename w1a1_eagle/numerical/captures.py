@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from torch import Tensor
 
-from w1a1_eagle.contracts import integer, record, sequence
+from w1a1_eagle.contracts import Record, integer, record, sequence
 from w1a1_eagle.data import CaptureSpec as CaptureSpec
 from w1a1_eagle.data import Supervision, supervision
 
@@ -102,6 +102,17 @@ def load_capture(spec: CaptureSpec, byte_budget: int, hidden: int = 2560) -> Cap
     if not bool(torch.isfinite(features).all()):
         raise ValueError("nonfinite teacher features")
     return Capture(tokens, features, selected)
+
+
+def validate_capture(spec: CaptureSpec, byte_budget: int) -> Record:
+    torch.set_num_threads(2)
+    checked = load_capture(spec, byte_budget)
+    return {
+        "status": "passed",
+        "checks": "product loader: authenticated arrays, geometry, finite values, tokens, labels and EOG",
+        "supervision_windows": len(checked.windows),
+        "materialized_bytes": checked.bytes,
+    }
 
 
 class CaptureCache:

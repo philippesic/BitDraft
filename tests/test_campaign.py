@@ -64,3 +64,31 @@ def test_grouped_blocks_balance_arm_positions_and_preserve_every_request(tmp_pat
                 requests[rep, str(task["id"]), arm.name] += 1
     assert set(positions.values()) == {2}
     assert len(requests) == 90 * 3 * 2 and set(requests.values()) == {1}
+
+
+def test_bootstrap_preserves_fixed_category_mix_and_grouped_repeats() -> None:
+    from benchmarks.statistics import paired
+
+    rows: list[Record] = []
+    for category in ["code", "writing"]:
+        for group in range(2):
+            for rep in range(2):
+                for arm in ["candidate", "baseline"]:
+                    seconds = 10.0 if category == "writing" else 1.0 if arm == "candidate" else 2.0
+                    name = category + str(group)
+                    rows.append(
+                        {
+                            "category": category,
+                            "arm": arm,
+                            "group": name,
+                            "task": name,
+                            "rep": rep,
+                            "tokens": 1,
+                            "wall_seconds": seconds,
+                            "native": {"accepted": 1, "proposed": 2},
+                        }
+                    )
+    result = paired(rows, "candidate", "baseline", 100)
+    interval = record(result["speed_ratio_95_interval"])
+    assert interval["lower"] == interval["upper"] == result["speed_ratio"]
+    assert result["groups"] == 4

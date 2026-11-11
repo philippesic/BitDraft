@@ -8,6 +8,7 @@ from w1a1_eagle.records import identity
 TRAIN = (1500, 1000, 1250, 1000, 750, 500)
 FULL = (150, 100, 125, 100, 75, 50)
 SHORT = (30, 20, 25, 20, 15, 10)
+TRAIN_INPUT_BUDGET = 399_000_000_000 // (2560 * 8 * 2) - (1800 * 256 + 3000 * 1024 + 1200 * 2048)
 
 
 def selection_order(row: Record) -> str:
@@ -56,8 +57,69 @@ def quotas(counts: tuple[int, ...]) -> dict[str, int]:
     }
 
 
-def select(rows: list[Record], counts: tuple[int, ...], bands: tuple[int, ...]) -> list[Record]:
-    return apportion(rows, quotas(counts), dict(enumerate(bands)), stratum, bank_length)
+def select(
+    rows: list[Record],
+    counts: tuple[int, ...],
+    bands: tuple[int, ...],
+    maximum_input_tokens: int | None = None,
+) -> list[Record]:
+    required = [
+        row
+        for row in rows
+        if row.get("source") == "project-replay" or row.get("harness") == "project-training"
+    ]
+    demands, lengths = quotas(counts), dict(enumerate(bands))
+    for row in required:
+        if (
+            row.get("source") == "project-replay"
+            and row["role"] != "dev"
+            or row.get("harness") == "project-training"
+            and row["role"] != "train"
+        ):
+            raise ValueError("application replay/training harness roles changed")
+        demands[stratum(row)] -= 1
+        lengths[bank_length(row)] -= 1
+    remainder = [row for row in rows if row not in required]
+    selected = required + apportion(remainder, demands, lengths, stratum, bank_length)
+    if maximum_input_tokens is not None:
+        total = sum(integer(row["input_tokens"]) for row in selected)
+        chosen = {identifier(row) for row in selected}
+        cells: dict[tuple[str, int], list[Record]] = defaultdict(list)
+        for row in remainder:
+            cells[stratum(row), bank_length(row)].append(row)
+        for cell in cells.values():
+            cell.sort(key=input_order)
+
+        def longest(index: int) -> int:
+            return -integer(selected[index]["input_tokens"])
+
+        for index in sorted(range(len(required), len(selected)), key=longest):
+            if total <= maximum_input_tokens:
+                break
+            old = selected[index]
+            replacement = next(
+                (
+                    row
+                    for row in cells[stratum(old), bank_length(old)]
+                    if identifier(row) not in chosen
+                ),
+                None,
+            )
+            if replacement is None or integer(replacement["input_tokens"]) >= integer(
+                old["input_tokens"]
+            ):
+                continue
+            total += integer(replacement["input_tokens"]) - integer(old["input_tokens"])
+            chosen.remove(identifier(old))
+            chosen.add(identifier(replacement))
+            selected[index] = replacement
+        if total > maximum_input_tokens:
+            raise ValueError("real source coverage cannot fit the declared input-token budget")
+    return selected
+
+
+def input_order(row: Record) -> tuple[int, str]:
+    return integer(row["input_tokens"]), selection_order(row)
 
 
 def bank_length(row: Record) -> int:

@@ -11,7 +11,7 @@ from benchmarks.serving import session
 from benchmarks.statistics import paired, partitions
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
-from w1a1_eagle.device import device_lease
+from w1a1_eagle.device import cuda_identity, device_lease
 from w1a1_eagle.identity import freeze_source, source_identity
 from w1a1_eagle.processes import ProcessIdentity
 from w1a1_eagle.records import canonical, identity
@@ -100,6 +100,8 @@ def totals(rows: list[Record]) -> Record:
         "accepted": accepted,
         "acceptance": accepted / proposed if proposed else None,
         "correct": all(row["correct"] is True for row in rows),
+        "cap_hits": sum(row.get("stop_type") == "limit" for row in rows),
+        "eos_stops": sum(row.get("stop_type") == "eos" for row in rows),
     }
 
 
@@ -150,6 +152,7 @@ def execution_blocks(
 
 def compare_leased(specification: Path, output: Path, spec: Comparison) -> Record:
     store = Store(output)
+    store.atomic(store.root / "gpu.txt", cuda_identity().encode())
     code_root = Path(__file__).resolve().parents[1]
     code_identity = source_identity(code_root)
     freeze_source(code_root, store.root / "sources", code_identity, 0)
@@ -327,6 +330,26 @@ def compare_leased(specification: Path, output: Path, spec: Comparison) -> Recor
                 arm.name: paired(rows, arm.name, spec.arms[1].name, family=len(spec.arms) - 2)
                 for arm in spec.arms[2:]
             },
+            "by_harness": partitions(
+                rows,
+                "harness",
+                lambda values: {
+                    "summary": {
+                        arm.name: totals([row for row in values if row["arm"] == arm.name])
+                        for arm in spec.arms
+                    },
+                    "paired_against_baseline": {}
+                    if spec.sampling.temperature
+                    else {
+                        arm.name: paired(
+                            values, arm.name, spec.arms[1].name, family=len(spec.arms) - 2
+                        )
+                        for arm in spec.arms[2:]
+                    },
+                },
+            )
+            if spec.tier == "harness"
+            else {},
             "code_sha256": code_identity,
             "scientific": "sampled descriptive robustness; unequal outputs cannot rank checkpoints by throughput"
             if spec.sampling.temperature

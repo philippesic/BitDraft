@@ -46,6 +46,7 @@ def main() -> int:
         "select-supplement",
         "profile-native",
         "prepare-project-workflows",
+        "prepare-replays",
     ):
         comparison = commands.add_parser(name)
         comparison.add_argument("input", type=Path)
@@ -65,7 +66,8 @@ def main() -> int:
             )
             python = (
                 numerical_python(root)
-                if args.command in {"curate", "admit-bank", "capture", "evaluate", "campaign"}
+                if args.command
+                in {"curate", "admit-bank", "prepare-replays", "capture", "evaluate", "campaign"}
                 else sys.executable
             )
             return subprocess.run(
@@ -83,7 +85,11 @@ def main() -> int:
                 env=benchmark_environment(root, snapshot),
                 check=False,
             ).returncode
-        if args.command == "campaign-report":
+        if args.command == "prepare-replays":
+            from benchmarks.replays import prepare
+
+            result = prepare(args.input, args.output)
+        elif args.command == "campaign-report":
             from benchmarks.reporting import report
 
             result = report(args.input)
@@ -145,6 +151,28 @@ def main() -> int:
             result = compare(args.input, args.output)
         elif args.command == "reduce-trace":
             result = reduce_rounds(sequence(read(args.input, 16 * 1024 * 1024)["rounds"]))
+        elif read(args.input)["schema"] == "native-comparison-v1":
+            from benchmarks.comparison import Comparison
+
+            native_spec = Comparison.load(args.input)
+            hashed = args.command == "verify-inputs"
+            if hashed:
+                native_spec.verify()
+            factor = native_spec.repeats * len(native_spec.arms) * len(native_spec.sampling.seeds)
+            groups = len(native_spec.arms) if native_spec.tier in {"full", "harness"} else 1
+            result = {
+                "tier": native_spec.tier,
+                "role": native_spec.role,
+                "tasks": len(native_spec.tasks),
+                "arms": [arm.name for arm in native_spec.arms],
+                "measured_units": len(native_spec.tasks) * factor,
+                "unit": "live episodes"
+                if native_spec.tier == "live"
+                else "native completion requests",
+                "warmup_units": native_spec.warmups * groups * factor,
+                "model_and_runtime_artifacts_hashed": hashed,
+                "scope": "CPU input/coverage plan; hardware support, execution, performance and authority remain separate",
+            }
         else:
             spec = Specification.load(args.input)
             result = spec.report()

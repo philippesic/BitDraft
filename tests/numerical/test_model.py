@@ -15,7 +15,7 @@ from torch import nn
 
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.clock import Monotonic
-from w1a1_eagle.contracts import Record, number, record, sequence
+from w1a1_eagle.contracts import Record, integer, number, record, sequence
 from w1a1_eagle.data import Artifact, Supervision, Window
 from w1a1_eagle.identity import source_identity
 from w1a1_eagle.intent import Intent
@@ -842,3 +842,35 @@ class TestNumerical(unittest.TestCase):
             )
             with self.assertRaisesRegex(ValueError, "unsupported tensor state"):
                 self.fixture_worker("recipe").restore(old, 8 * 1024 * 1024)
+
+    def test_diagnostic_categories_reconcile_without_changing_rng(self) -> None:
+        from w1a1_eagle.numerical.diagnostics import Diagnostics
+
+        model, features = self.tiny_model()
+        capture = Capture(tuple([1] * 20), features, (Window("sample", 0, tuple([1] * 15)),))
+
+        class Cache(CaptureCache):
+            def get(self, spec: CaptureSpec) -> Capture:
+                return capture
+
+        diagnostics = Diagnostics.__new__(Diagnostics)
+        diagnostics.windows = tuple((str(index), 0) for index in range(120))
+        reference = Artifact(Path("/unused"), "a" * 64, 1)
+        diagnostics.specs = {
+            str(index): CaptureSpec(str(index), reference, ()) for index in range(120)
+        }
+        diagnostics.categories = {
+            str(index): "code" if index % 2 else "writing" for index in range(120)
+        }
+        diagnostics.cache = Cache(1024)
+        before = torch.get_rng_state()
+        result = diagnostics.measure(model)
+        groups = record(result["by_category"])
+        self.assertEqual(sum(integer(record(value)["windows"]) for value in groups.values()), 120)
+        self.assertEqual(
+            sum(integer(record(value)["labels"]) for value in groups.values()), result["labels"]
+        )
+        self.assertEqual(
+            record(groups["code"])["mean_loss"], record(groups["writing"])["mean_loss"]
+        )
+        self.assertTrue(torch.equal(before, torch.get_rng_state()))

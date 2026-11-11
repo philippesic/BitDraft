@@ -102,3 +102,42 @@ class TestPrompts(unittest.TestCase):
                 if row["subtype"] == "tool_request":
                     self.assertEqual(last["content"], "Look it up")
                     self.assertNotIn("tool_calls", str(row["messages"]))
+
+    def test_request_labels_do_not_scan_words_inside_source_context(self) -> None:
+        from typing import Iterator
+        from unittest.mock import patch
+
+        from benchmarks.sources import ultrachat
+
+        values: list[Record] = [
+            {
+                "prompt_id": "context",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": "Read this passage: the translation puzzle required planning.",
+                    }
+                ],
+            },
+            {
+                "prompt_id": "plan",
+                "messages": [
+                    {"role": "user", "content": "Create a weekly study plan with deadlines."}
+                ],
+            },
+            {
+                "prompt_id": "translate",
+                "messages": [
+                    {"role": "user", "content": "Translate into Spanish: the train is late."}
+                ],
+            },
+            {"prompt_id": "blank", "messages": [{"role": "user", "content": ""}]},
+        ]
+
+        def rows(path: Path) -> Iterator[Record]:
+            yield from values
+
+        with patch("benchmarks.sources.parquet_rows", new=rows):
+            selected = list(ultrachat(Path("unused")))
+        self.assertEqual({row["source_key"] for row in selected}, {"plan", "translate"})
+        self.assertEqual({row["subtype"] for row in selected}, {"non_arithmetic", "translation"})

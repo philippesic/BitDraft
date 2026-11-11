@@ -18,6 +18,35 @@ def suite(specification: Path, output: Path) -> Record:
     targets = record(raw["targets"])
     if not targets:
         raise ValueError("full suite requires explicit targets")
+    prepared: dict[tuple[str, str], Comparison] = {}
+    for name, value in targets.items():
+        specs = record(value)
+        if set(specs) - {"candidate_bindings", "completed_panels"} != {
+            "requests",
+            "live",
+            "harness",
+        }:
+            raise ValueError("full suite requires request, live and harness panels")
+        runtime: tuple[str, ...] | None = None
+        arms: object = None
+        for panel, tier in (("requests", "full"), ("live", "live"), ("harness", "harness")):
+            ref = artifact(specs[panel], specification.resolve().parent)
+            ref.verify()
+            comparison = Comparison.load(ref.path)
+            comparison.verify()
+            current_arms = [
+                (arm.name, arm.drafter.sha256 if arm.drafter else None) for arm in comparison.arms
+            ]
+            if comparison.tier != tier or comparison.repeats < 2 or comparison.diagnostic:
+                raise ValueError(
+                    "full suite requires primary full panels with at least two repeat blocks"
+                )
+            if runtime is not None and (
+                runtime != comparison.serving_identity() or arms != current_arms
+            ):
+                raise ValueError("suite panels differ in runtime, settings, role or candidate arms")
+            runtime, arms = comparison.serving_identity(), current_arms
+            prepared[name, panel] = comparison
     ownership = Ownership(output)
     try:
         store = Store(output)
@@ -34,34 +63,25 @@ def suite(specification: Path, output: Path) -> Record:
             if not name.replace("-", "").replace("_", "").isalnum():
                 raise ValueError("unsafe target name")
             specs = record(value)
-            if set(specs) - {"candidate_bindings"} != {"requests", "live", "harness"}:
+            if set(specs) - {"candidate_bindings", "completed_panels"} != {
+                "requests",
+                "live",
+                "harness",
+            }:
                 raise ValueError("full suite requires request, live and harness panels")
-            target = ""
-            arms: object = None
             cells: Record = {}
             for panel in ("requests", "live", "harness"):
                 ref = artifact(specs[panel], specification.resolve().parent)
-                ref.verify()
-                comparison = Comparison.load(ref.path)
-                comparison.verify()
-                expected = {"requests": "full", "live": "live", "harness": "harness"}[panel]
-                if comparison.tier != expected or comparison.repeats < 2 or comparison.diagnostic:
-                    raise ValueError(
-                        "full suite requires declared full panels and at least two repeat blocks"
-                    )
-                arm_identity = [
-                    (arm.name, arm.drafter.sha256 if arm.drafter else None)
-                    for arm in comparison.arms
-                ]
-                if target and (target != comparison.target.sha256 or arms != arm_identity):
-                    raise ValueError(
-                        "full suite panels must use the same target and candidate arms"
-                    )
-                target, arms = comparison.target.sha256, arm_identity
+                comparison = prepared[name, panel]
                 destination = store.root / (name + "-" + panel)
                 result_path = destination / "result.json"
+                completed = record(specs.get("completed_panels", {}))
+                if panel in completed:
+                    result_ref = artifact(completed[panel], specification.resolve().parent)
+                    result_ref.verify()
+                    result_path = result_ref.path
                 if result_path.exists():
-                    prior = read(destination / "specification.json")
+                    prior = read(result_path.parent / "specification.json")
                     if prior != read(ref.path):
                         raise ValueError("published panel inputs disagree with suite")
                     result = read(result_path, 64 * 1024 * 1024)
@@ -94,6 +114,8 @@ def suite(specification: Path, output: Path) -> Record:
                 cells[panel] = file_reference(result_path)
             results[name] = cells
             if "candidate_bindings" in specs:
+                if comparison.role != "dev":
+                    raise ValueError("full-DEV incumbent selection requires DEV panels")
                 request_result = read(
                     artifact(cells["requests"], store.root).path, 64 * 1024 * 1024
                 )
@@ -136,12 +158,15 @@ def suite(specification: Path, output: Path) -> Record:
                         "score": record(record(request_result["summary"])[arm])[
                             "tokens_per_second"
                         ],
+                        "updates": Store(state.path.parent).describe(state).updates,
                     }
                 if not selections:
                     raise ValueError("at least one state-bound candidate required")
 
-                def score(arm: str) -> float:
-                    return number(record(selections[arm])["score"])
+                def score(arm: str) -> tuple[float, float]:
+                    return number(record(selections[arm])["score"]), -number(
+                        record(selections[arm])["updates"]
+                    )
 
                 winner = max(selections, key=score)
                 cells["full_dev_incumbent"] = {
@@ -154,7 +179,7 @@ def suite(specification: Path, output: Path) -> Record:
             "status": "complete",
             "targets": results,
             "code_sha256": code,
-            "scope": "complete greedy DEV panels; live outcome failures retained; sampled and unseen-confirmation claims remain separate",
+            "scope": "complete greedy panels with matching declared roles; live failures retained; no automatic unseen-confirmation or deployment claim",
         }
         store.atomic(store.root / "result.json", canonical(result))
         return result

@@ -1,6 +1,6 @@
 {
-  "input_tokens": 1767619,
-  "maximum_feature_bytes": 154190602240,
+  "input_tokens": 1922287,
+  "maximum_feature_bytes": 160525803520,
   "output_caps": {
     "1024": 1000,
     "2048": 400,
@@ -9,17 +9,17 @@
   "quotas": {
     "code:0": 230,
     "code:1": 20,
-    "conversation:0": 602,
-    "conversation:1": 150,
-    "conversation:2": 98,
+    "conversation:0": 40,
+    "conversation:1": 650,
+    "conversation:2": 160,
     "documents:2": 80,
     "documents:3": 20,
-    "reasoning:1": 100,
+    "reasoning:0": 100,
     "structured:1": 650,
-    "writing:0": 25,
-    "writing:1": 25
+    "writing:0": 40,
+    "writing:1": 10
   },
-  "rejected_source_or_duplicate": 2404,
+  "rejected_source_or_duplicate": 2248,
   "scope": "new-source focused subset of the admitted bank; exact old aliases and tokenized prefixes excluded; semantic review remains required",
   "status": "selected",
   "storage_bytes": 2,
@@ -31,15 +31,15 @@
     "quotas": {
       "code:0": 230,
       "code:1": 20,
-      "reasoning:1": 100,
+      "reasoning:0": 100,
       "documents:2": 80,
       "documents:3": 20,
-      "conversation:0": 602,
-      "conversation:1": 150,
-      "conversation:2": 98,
+      "conversation:0": 40,
+      "conversation:1": 650,
+      "conversation:2": 160,
       "structured:1": 650,
-      "writing:0": 25,
-      "writing:1": 25
+      "writing:0": 40,
+      "writing:1": 10
     },
     "output_caps": {
       "256": 600,
@@ -56,8 +56,8 @@
     "taps": 8
   },
   "raw_receipt": {
-    "path": "/home/philip/binary-eagle-artifacts/bank/supplement-v1/result.json",
-    "sha256": "2482cb2c47211297c123cbfe17786928297f81a72973b2c4af1162421dc15179",
+    "path": "/home/philip/binary-eagle-artifacts/bank/supplement-v2/result.json",
+    "sha256": "8e6c34ea0577eec38fabae2fb4e1111e69c963b5b4b5beaae1d22b11f3e52f43",
     "bytes": 992
   }
 }

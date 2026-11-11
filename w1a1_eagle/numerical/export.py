@@ -165,7 +165,7 @@ def prepare(
             add(f"blk.{index}.{name}.weight", value)
         for name, projection in (("gate", block.gate), ("up", block.up), ("down", block.down)):
             base = f"blk.{index}.ffn_{name}"
-            bound = projection.log_clip.exp()
+            bound = projection.log_clip.detach().float().cpu().exp()
             if not bool(torch.isfinite(bound)) or float(bound.detach()) <= 0:
                 raise ValueError("invalid export clipping bound")
             writer.add_uint32(base + ".w1ax.bits", projection.bits)
@@ -179,7 +179,7 @@ def prepare(
             add(base + ".w1a1_scale", projection.scale.clamp_min(0))
             add(base + ".w1ax_midpoint", projection.midpoint)
             if name != "up":
-                add(base + ".w1ax_gain", projection.log_gain.exp())
+                add(base + ".w1ax_gain", projection.log_gain.detach().float().cpu().exp())
     for tensor in reader.tensors:
         if tensor.name in selected or "norm.weight" in tensor.name:
             continue

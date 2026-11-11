@@ -1,5 +1,5 @@
 import random
-from collections import defaultdict
+from collections import Counter, defaultdict
 from typing import Callable
 
 from w1a1_eagle.contracts import Record, integer, number, record, string
@@ -62,18 +62,31 @@ def paired(
         return a / b, aa - ba if aa is not None and ba is not None else None
 
     estimate, acceptance = draw(names)
-    if len(names) < 2:
+    strata: dict[str, list[str]] = defaultdict(list)
+    for name in names:
+        composition = Counter(
+            string(row.get("category", "unclassified")) for row in grouped[name][baseline]
+        )
+        strata[str(sorted(composition.items()))].append(name)
+    if any(len(members) < 2 for members in strata.values()):
         return {
             "groups": len(names),
             "speed_ratio": estimate,
             "acceptance_difference": acceptance,
             "interval_available": False,
+            "reason": "insufficient independent groups within a category-composition stratum",
+            "strata": {key: len(value) for key, value in strata.items()},
         }
     generator = random.Random(8101)
     ratios: list[float] = []
     differences: list[float] = []
     for _ in range(draws):
-        ratio, difference = draw(generator.choices(names, k=len(names)))
+        indices = [
+            name
+            for members in strata.values()
+            for name in generator.choices(members, k=len(members))
+        ]
+        ratio, difference = draw(indices)
         ratios.append(ratio)
         if difference is not None:
             differences.append(difference)
@@ -86,8 +99,10 @@ def paired(
         "simultaneous_speed_ratio_interval": interval(ratios, 0.05 / family),
         "simultaneous_acceptance_difference_interval": interval(differences, 0.05 / family),
         "comparison_family": family,
+        "strata": {key: len(value) for key, value in strata.items()},
         "bootstrap_draws": draws,
-        "scope": "paired source-group bootstrap; repeats and harness variants stay together; small cohorts do not establish deployment transfer",
+        "interval_available": True,
+        "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
     }
 
 
