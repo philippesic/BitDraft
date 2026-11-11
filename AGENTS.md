@@ -26,6 +26,7 @@ never enter training, calibration or selection. Names and metrics: [domain](docs
   warm). It is partial: no numerical test, required-test roster or rule proofs.
 - Commit gate: the same command with `--full` (about 90 s). The hook in `.githooks/` runs
   it once enabled with `git config core.hooksPath .githooks`.
+- There is no hosted CI; the hook and agents' own runs are the verification. Do not add CI.
 - Fix the cause. Never weaken a check, update a digest or add an exception only to pass;
   if a pin or gate blocks legitimate work, stop and report it with the proposed change.
 
