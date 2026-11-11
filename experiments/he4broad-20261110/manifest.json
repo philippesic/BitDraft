@@ -168,9 +168,9 @@
   },
   "latest_health": {
     "status": "HEALTHY_NO_REPAIR_NEEDED",
-    "checked_unix": 1794359864.3450403,
-    "updates": 55500,
-    "charged_update_seconds": 7427.143542479316,
+    "checked_unix": 1794361515.9903736,
+    "updates": 66800,
+    "charged_update_seconds": 8895.60712226617,
     "checkpointed_updates": 53763,
     "storage_local": true,
     "first_update_hour_native_complete": true,
