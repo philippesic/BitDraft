@@ -61,6 +61,21 @@ precedence. On completion, verify all new hourly panels plus historical results,
 full-state GPU restore/native-byte recovery, durable exposure/time accounting,
 artifact inventory, GPU/lock release, compact results and scoped commit/push.
 
+## November 11 storage-headroom repair
+
+The 04:50 UTC check found free space below the forecast for the final three
+checkpoints/exports plus 8 GiB scratch. The trainer remained healthy. Retiring
+two stopped own-run CUDA caches, pruning dangling uv entries and prebuilt package
+cache with uv's supported `--ci` mode, then retiring the unused default CUDA cache
+recovered 4.47 GiB physically. The active private CUDA cache and installed
+environments were preserved; uv retains wheels built from source. No model,
+checkpoint, data or evidence was deleted, no optimizer was reset, and training
+continued throughout. Fresh CPU dependency imports pass after pruning.
+[Measured before/after and raw receipts](storage-repair-20261111.json) ·
+[uv cache semantics](https://docs.astral.sh/uv/concepts/cache/#caching-in-continuous-integration).
+Current headroom again covers all remaining states/exports and 8 GiB scratch;
+continue checking actual growth at the authorized 90-minute cadence.
+
 ## Earlier pause and completed localization (historical)
 
 The following records describe the completed migration pause, before the above

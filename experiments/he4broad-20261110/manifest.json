@@ -167,11 +167,11 @@
     "observation_unix": 1794354364.6874843
   },
   "latest_health": {
-    "status": "HEALTHY_NO_REPAIR_NEEDED",
-    "checked_unix": 1794366921.1977835,
-    "updates": 101900,
-    "charged_update_seconds": 13461.273016164021,
-    "checkpointed_updates": 81455,
+    "status": "HEALTHY_STORAGE_RESERVE_REPAIRED",
+    "checked_unix": 1794373115.7291698,
+    "updates": 140800,
+    "charged_update_seconds": 18513.573722186848,
+    "checkpointed_updates": 136860,
     "storage_local": true,
     "first_update_hour_native_complete": true,
     "observation_directory": "runs/he4broad-20261110-01/health",
@@ -179,6 +179,9 @@
     "second_update_hour_native_complete": true,
     "nvml_process_list_empty": false,
     "gpu_ownership_independently_authenticated": true,
-    "third_update_hour_native_complete": true
+    "third_update_hour_native_complete": true,
+    "fourth_update_hour_native_complete": true,
+    "fifth_update_hour_native_complete": true,
+    "storage_repair": "experiments/he4broad-20261110/storage-repair-20261111.json"
   }
 }

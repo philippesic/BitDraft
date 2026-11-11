@@ -222,13 +222,13 @@
       "accounting": "Completed and rejected update time charged cumulatively; setup/data/checkpoint/export/native time reported separately",
       "historical_panels": "Original wall-clock panels retained with their original labels; update-hour panels use formal-update-*"
     },
-    "charged_update_seconds": 10800.001996094594,
+    "charged_update_seconds": 18000.03585471105,
     "discarded_update_seconds": 0.0,
-    "actual_update_seconds": 10800.001996094594,
-    "training_seconds": 29548.445080049656,
-    "data_io_seconds": 18745.19002614511,
-    "updates": 81455,
-    "last_loss": 6.825260162353516,
+    "actual_update_seconds": 18000.03585471105,
+    "training_seconds": 37597.22301722216,
+    "data_io_seconds": 19592.365470988676,
+    "updates": 136860,
+    "last_loss": 1.8032262325286865,
     "readouts": [
       {
         "label": "0",
@@ -1511,20 +1511,256 @@
         "evaluation_seconds": 1.014049988007173,
         "segment_wall_seconds": 4203.88446745,
         "segment_updates": 27692
+      },
+      {
+        "label": "update-14400",
+        "requested_update_seconds": 14400,
+        "clock": "synchronized_update_seconds",
+        "charged_update_seconds": 14400.124999271706,
+        "additional_update_seconds": 14400.124999271706,
+        "training_seconds": 33579.15396899532,
+        "data_io_seconds": 19174.9932839658,
+        "updates": 109165,
+        "dev": {
+          "records": [
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+              "anchor": 168,
+              "positions": 15,
+              "ce": 6.85815954208374,
+              "agree": 3,
+              "rank_sum": 81757,
+              "margin_sum": -63.207645416259766
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+              "anchor": 200,
+              "positions": 15,
+              "ce": 4.792479038238525,
+              "agree": 4,
+              "rank_sum": 1924,
+              "margin_sum": -37.357582092285156
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+              "anchor": 231,
+              "positions": 15,
+              "ce": 6.077200889587402,
+              "agree": 4,
+              "rank_sum": 22721,
+              "margin_sum": -63.409507751464844
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+              "anchor": 38,
+              "positions": 15,
+              "ce": 6.217926502227783,
+              "agree": 1,
+              "rank_sum": 10160,
+              "margin_sum": -48.67192459106445
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+              "anchor": 70,
+              "positions": 15,
+              "ce": 6.844952583312988,
+              "agree": 1,
+              "rank_sum": 17580,
+              "margin_sum": -56.913352966308594
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+              "anchor": 101,
+              "positions": 15,
+              "ce": 7.262423992156982,
+              "agree": 0,
+              "rank_sum": 12532,
+              "margin_sum": -83.02304077148438
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+              "anchor": 72,
+              "positions": 15,
+              "ce": 3.0662460327148438,
+              "agree": 6,
+              "rank_sum": 500,
+              "margin_sum": -7.8524041175842285
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+              "anchor": 104,
+              "positions": 15,
+              "ce": 2.3686819076538086,
+              "agree": 6,
+              "rank_sum": 81,
+              "margin_sum": 3.1399030685424805
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+              "anchor": 135,
+              "positions": 15,
+              "ce": 1.7375754117965698,
+              "agree": 6,
+              "rank_sum": 67,
+              "margin_sum": 1.3238043785095215
+            }
+          ],
+          "positions": 135,
+          "ce": 5.025071766641405,
+          "agreement": 0.22962962962962963,
+          "mean_rank": 1091.2740740740742,
+          "mean_margin": -2.6368277796992547
+        },
+        "recovery": {
+          "format": "dflash.byte_shuffle_zstd.stream.v1",
+          "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-update-14400-109165.pt.bsz",
+          "archive_sha256": "cf3e946c86e54fce6de7be16bd4145ea7c93c33cd2d23c85176a4885837646db",
+          "archive_bytes": 4243578374,
+          "raw_sha256": "dd7e358a6f7dbed16c9933572a4012a92b3f3ee73d0611001e65b8b34583dbc0",
+          "raw_bytes": 5108252443,
+          "lossless_verified": true,
+          "raw_materialized": false
+        },
+        "model": {
+          "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/candidate/model-update-14400.gguf",
+          "sha256": "fa4a0f3a9713819f523061f4e43e944f61f89802470a10455352524e75d5f487",
+          "bytes": 541022336
+        },
+        "evaluation_seconds": 1.0960718719870783,
+        "segment_wall_seconds": 4202.386210497993,
+        "segment_updates": 27710
+      },
+      {
+        "label": "update-18000",
+        "requested_update_seconds": 18000,
+        "clock": "synchronized_update_seconds",
+        "charged_update_seconds": 18000.03585471105,
+        "additional_update_seconds": 18000.03585471105,
+        "training_seconds": 37597.22301722216,
+        "data_io_seconds": 19592.365470988676,
+        "updates": 136860,
+        "dev": {
+          "records": [
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+              "anchor": 168,
+              "positions": 15,
+              "ce": 6.032034397125244,
+              "agree": 6,
+              "rank_sum": 19255,
+              "margin_sum": -41.570411682128906
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+              "anchor": 200,
+              "positions": 15,
+              "ce": 4.326653003692627,
+              "agree": 4,
+              "rank_sum": 996,
+              "margin_sum": -31.192468643188477
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-code-00/capture",
+              "anchor": 231,
+              "positions": 15,
+              "ce": 5.88168478012085,
+              "agree": 3,
+              "rank_sum": 37390,
+              "margin_sum": -51.92213439941406
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+              "anchor": 38,
+              "positions": 15,
+              "ce": 6.019996166229248,
+              "agree": 1,
+              "rank_sum": 8356,
+              "margin_sum": -43.308807373046875
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+              "anchor": 70,
+              "positions": 15,
+              "ce": 6.924522876739502,
+              "agree": 2,
+              "rank_sum": 16312,
+              "margin_sum": -60.1779899597168
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-prose-00/capture",
+              "anchor": 101,
+              "positions": 15,
+              "ce": 6.95098352432251,
+              "agree": 0,
+              "rank_sum": 14687,
+              "margin_sum": -81.23423767089844
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+              "anchor": 72,
+              "positions": 15,
+              "ce": 2.926758289337158,
+              "agree": 7,
+              "rank_sum": 354,
+              "margin_sum": -9.206344604492188
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+              "anchor": 104,
+              "positions": 15,
+              "ce": 2.0964715480804443,
+              "agree": 8,
+              "rank_sum": 55,
+              "margin_sum": 4.392185211181641
+            },
+            {
+              "capture": "/home/philip/binary-eagle-decoding/runs/dflash-modern-capture-20261104-04/data/development-reasoning-00/capture",
+              "anchor": 135,
+              "positions": 15,
+              "ce": 0.9617318511009216,
+              "agree": 11,
+              "rank_sum": 28,
+              "margin_sum": 19.991870880126953
+            }
+          ],
+          "positions": 135,
+          "ce": 4.6800929374165,
+          "agreement": 0.3111111111111111,
+          "mean_rank": 721.7259259259259,
+          "mean_margin": -2.179469172159831
+        },
+        "recovery": {
+          "format": "dflash.byte_shuffle_zstd.stream.v1",
+          "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-update-18000-136860.pt.bsz",
+          "archive_sha256": "a0652346bcad5aee38564586acafe79cf4d4be2d016c3960ce855aba5abaa511",
+          "archive_bytes": 4253959956,
+          "raw_sha256": "d1e1f774932faada82dff18526937f592cf97483ccf12729b626b9f43efd5aef",
+          "raw_bytes": 5108252443,
+          "lossless_verified": true,
+          "raw_materialized": false
+        },
+        "model": {
+          "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/candidate/model-update-18000.gguf",
+          "sha256": "fce701521d327da8eacaa86473db6879920c630f78b8f6e6ea9513eca8911792",
+          "bytes": 541022336
+        },
+        "evaluation_seconds": 1.0083919460012112,
+        "segment_wall_seconds": 4163.420592920011,
+        "segment_updates": 27695
       }
     ],
     "recovery": {
       "format": "dflash.byte_shuffle_zstd.stream.v1",
-      "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-update-10800-81455.pt.bsz",
-      "archive_sha256": "81b42e034655b48af5126b34b853ddc295bd0e3f130a00c7aef73315a3e547af",
-      "archive_bytes": 4234610276,
-      "raw_sha256": "e167e499deeafc6d6c93f3595584005103160d6c80b9288900bc13851e4fe620",
+      "archive": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/archive-mount/HE4broad-update-18000-136860.pt.bsz",
+      "archive_sha256": "a0652346bcad5aee38564586acafe79cf4d4be2d016c3960ce855aba5abaa511",
+      "archive_bytes": 4253959956,
+      "raw_sha256": "d1e1f774932faada82dff18526937f592cf97483ccf12729b626b9f43efd5aef",
       "raw_bytes": 5108252443,
       "lossless_verified": true,
       "raw_materialized": false
     },
-    "peak_allocated_bytes": 10749370880,
-    "peak_reserved_bytes": 11075059712
+    "peak_allocated_bytes": 10748159488,
+    "peak_reserved_bytes": 11051991040
   },
   "panels": {
     "formal-0": {
@@ -2454,6 +2690,196 @@
         "paired_95_interval": [
           1.1559870436771937,
           1.167131785880797
+        ],
+        "draws": 2000,
+        "scope": "Paired complete prompts and process-cell repetitions; consumed/heldout cohort per source panel. Repeated greedy quality observations are not fresh samples or training seeds."
+      }
+    },
+    "formal-update-14400": {
+      "source": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/formal-update-14400/result.json",
+        "sha256": "ff59ad0c51ecb8aa2ce0059eb8b9c2c2c81d8d51ecea381193b0c9bf4126181b",
+        "bytes": 80541
+      },
+      "freeze": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/formal-update-14400/freeze.json",
+        "sha256": "71ad82e20f86f2575f3ace6946277a918de4bd73ae074ce1eeac42ff0635f9b5",
+        "bytes": 4917
+      },
+      "arms": {
+        "target": {
+          "responses": 15,
+          "timing_repetitions": 5,
+          "prompts": 3,
+          "output_tokens": 3025,
+          "request_wall_seconds": 16.35616049505188,
+          "request_tok_s": 184.94560510794284,
+          "accepted": 0,
+          "proposed": 0,
+          "rounds": 0,
+          "accepted_per_round": null,
+          "emitted_per_round": null,
+          "acceptance": null,
+          "correct": true,
+          "instrumented": false,
+          "full_draft_host_ms_per_round": null,
+          "profiled": false,
+          "draft_prefill_host_ms_per_request": null,
+          "full_draft_all_phases_host_ms_per_round": null,
+          "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing."
+        },
+        "q4": {
+          "responses": 15,
+          "timing_repetitions": 5,
+          "prompts": 3,
+          "output_tokens": 3025,
+          "request_wall_seconds": 12.128450181015069,
+          "request_tok_s": 249.4135652002017,
+          "accepted": 1705,
+          "proposed": 2610,
+          "rounds": 1305,
+          "accepted_per_round": 1.3065134099616857,
+          "emitted_per_round": 2.318007662835249,
+          "acceptance": 0.6532567049808429,
+          "correct": true,
+          "instrumented": false,
+          "full_draft_host_ms_per_round": null,
+          "profiled": false,
+          "draft_prefill_host_ms_per_request": null,
+          "full_draft_all_phases_host_ms_per_round": null,
+          "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing."
+        },
+        "HE4broad": {
+          "responses": 15,
+          "timing_repetitions": 5,
+          "prompts": 3,
+          "output_tokens": 3025,
+          "request_wall_seconds": 14.007487942959415,
+          "request_tok_s": 215.95592388287267,
+          "accepted": 1425,
+          "proposed": 3160,
+          "rounds": 1580,
+          "accepted_per_round": 0.9018987341772152,
+          "emitted_per_round": 1.9145569620253164,
+          "acceptance": 0.4509493670886076,
+          "correct": true,
+          "instrumented": false,
+          "full_draft_host_ms_per_round": null,
+          "profiled": false,
+          "draft_prefill_host_ms_per_request": null,
+          "full_draft_all_phases_host_ms_per_round": null,
+          "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing."
+        }
+      },
+      "vs_q4": {
+        "ratio": 0.8658547649945466,
+        "paired_95_interval": [
+          0.8615851726904568,
+          0.8710409421371966
+        ],
+        "draws": 2000,
+        "scope": "Paired complete prompts and process-cell repetitions; consumed/heldout cohort per source panel. Repeated greedy quality observations are not fresh samples or training seeds."
+      },
+      "vs_target": {
+        "ratio": 1.1676726449208175,
+        "paired_95_interval": [
+          1.1636038023889406,
+          1.1710951632539184
+        ],
+        "draws": 2000,
+        "scope": "Paired complete prompts and process-cell repetitions; consumed/heldout cohort per source panel. Repeated greedy quality observations are not fresh samples or training seeds."
+      }
+    },
+    "formal-update-18000": {
+      "source": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/formal-update-18000/result.json",
+        "sha256": "b410cba90151ecb89a78aaf5c4de846770c6fcf098e4d5ac2c21b409da254cbe",
+        "bytes": 80371
+      },
+      "freeze": {
+        "path": "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/formal-update-18000/freeze.json",
+        "sha256": "ab58adf0006fc4356765e356f3f183fd3a16f2882c2ae6dfea714ee01bd90203",
+        "bytes": 4917
+      },
+      "arms": {
+        "target": {
+          "responses": 15,
+          "timing_repetitions": 5,
+          "prompts": 3,
+          "output_tokens": 3025,
+          "request_wall_seconds": 16.43981789413374,
+          "request_tok_s": 184.00447130739923,
+          "accepted": 0,
+          "proposed": 0,
+          "rounds": 0,
+          "accepted_per_round": null,
+          "emitted_per_round": null,
+          "acceptance": null,
+          "correct": true,
+          "instrumented": false,
+          "full_draft_host_ms_per_round": null,
+          "profiled": false,
+          "draft_prefill_host_ms_per_request": null,
+          "full_draft_all_phases_host_ms_per_round": null,
+          "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing."
+        },
+        "q4": {
+          "responses": 15,
+          "timing_repetitions": 5,
+          "prompts": 3,
+          "output_tokens": 3025,
+          "request_wall_seconds": 12.163459114992293,
+          "request_tok_s": 248.6957017244775,
+          "accepted": 1705,
+          "proposed": 2610,
+          "rounds": 1305,
+          "accepted_per_round": 1.3065134099616857,
+          "emitted_per_round": 2.318007662835249,
+          "acceptance": 0.6532567049808429,
+          "correct": true,
+          "instrumented": false,
+          "full_draft_host_ms_per_round": null,
+          "profiled": false,
+          "draft_prefill_host_ms_per_request": null,
+          "full_draft_all_phases_host_ms_per_round": null,
+          "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing."
+        },
+        "HE4broad": {
+          "responses": 15,
+          "timing_repetitions": 5,
+          "prompts": 3,
+          "output_tokens": 3025,
+          "request_wall_seconds": 13.961497384967515,
+          "request_tok_s": 216.66730412864226,
+          "accepted": 1440,
+          "proposed": 3130,
+          "rounds": 1565,
+          "accepted_per_round": 0.9201277955271565,
+          "emitted_per_round": 1.9329073482428114,
+          "acceptance": 0.46006389776357826,
+          "correct": true,
+          "instrumented": false,
+          "full_draft_host_ms_per_round": null,
+          "profiled": false,
+          "draft_prefill_host_ms_per_request": null,
+          "full_draft_all_phases_host_ms_per_round": null,
+          "host_scope": "Generation metric includes disjoint draft generate/catchup/accept root spans; prefill and all-phases totals also reported. Complete request wall includes prompt processing."
+        }
+      },
+      "vs_q4": {
+        "ratio": 0.8712145108510218,
+        "paired_95_interval": [
+          0.8656624292331169,
+          0.8782302083266806
+        ],
+        "draws": 2000,
+        "scope": "Paired complete prompts and process-cell repetitions; consumed/heldout cohort per source panel. Repeated greedy quality observations are not fresh samples or training seeds."
+      },
+      "vs_target": {
+        "ratio": 1.1775110821447174,
+        "paired_95_interval": [
+          1.1734006067158615,
+          1.1817807406238576
         ],
         "draws": 2000,
         "scope": "Paired complete prompts and process-cell repetitions; consumed/heldout cohort per source panel. Repeated greedy quality observations are not fresh samples or training seeds."

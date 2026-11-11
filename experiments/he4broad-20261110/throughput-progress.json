@@ -1,6 +1,6 @@
 {
   "metric": "Output tokens / complete-request wall seconds, including prompt processing",
-  "source_results_sha256": "74f35b306486e35ffc4e40cba241b4a9782cac1b9d4776194838a7ab68498117",
+  "source_results_sha256": "1bb12cdb2ce8f634f49b3fec3c6099a5b659a3b3511db84f285514621e502209",
   "points": [
     {
       "panel": "formal-0",
@@ -73,6 +73,22 @@
       "he4": 213.5847238008598,
       "q4": 248.0372466640204,
       "target": 183.89304331787073
+    },
+    {
+      "panel": "formal-update-14400",
+      "update_seconds": 14400.124999271706,
+      "updates": 109165,
+      "he4": 215.95592388287267,
+      "q4": 249.4135652002017,
+      "target": 184.94560510794284
+    },
+    {
+      "panel": "formal-update-18000",
+      "update_seconds": 18000.03585471105,
+      "updates": 136860,
+      "he4": 216.66730412864226,
+      "q4": 248.6957017244775,
+      "target": 184.00447130739923
     }
   ],
   "limitations": "Consumed DEV3, one training trajectory. Timing repetitions are not fresh prompts/seeds. No heldout opened. External Q4 remains deployment incumbent; no promotion.",
