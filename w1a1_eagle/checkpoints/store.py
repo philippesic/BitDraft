@@ -216,6 +216,34 @@ class Store:
             raise ValueError("parent manifest disagrees with explicit artifact")
         return reference
 
+    def retire_closed(self, protected: frozenset[Path], recovery: Artifact) -> tuple[str, ...]:
+        recovery.verify()
+        retired: list[str] = []
+        with (self.root / ".writer").open("ab") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            for path in sorted(self.root.glob("*.bin")):
+                if path in protected:
+                    continue
+                status = path.lstat()
+                if path.is_symlink() or status.st_uid != os.getuid() or status.st_nlink != 1:
+                    raise ValueError("closed retention refuses foreign or shared payload")
+                metadata = record(cast(object, json.loads(path.with_suffix(".json").read_text())))
+                candidate = Artifact(path, path.stem, status.st_size)
+                self.describe(candidate)
+                receipt: dict[str, object] = {
+                    "state": metadata,
+                    "recovery": str(recovery.path),
+                    "recovery_sha256": recovery.sha256,
+                    "reason": "closed unselected campaign segment; exact retired resume point unavailable",
+                }
+                self.atomic(
+                    self.root / ("retirement-" + path.stem + ".json"),
+                    json.dumps(receipt, sort_keys=True).encode(),
+                )
+                path.unlink()
+                retired.append(path.stem)
+        return tuple(retired)
+
     def parse(self, raw: dict[str, object], config: str) -> StateRef:
         if set(raw) != {
             "schema",

@@ -2,6 +2,7 @@ from pathlib import Path
 
 from benchmarks.comparison import Comparison
 from benchmarks.native import file_reference
+from benchmarks.reporting import controller_record
 from benchmarks.runner import compare
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
@@ -15,7 +16,7 @@ from w1a1_eagle.supervisor import execute
 def campaign(specification: Path, output: Path) -> Record:
     raw = read(specification)
     if (
-        set(raw)
+        set(raw) - {"pilot"}
         != {
             "schema",
             "intent",
@@ -29,6 +30,9 @@ def campaign(specification: Path, output: Path) -> Record:
         raise ValueError("unsupported training campaign")
     if raw["evaluation_failure"] not in {"stop", "continue"}:
         raise ValueError("explicit evaluation failure policy required")
+    pilot = raw.get("pilot", False)
+    if type(pilot) is not bool:
+        raise ValueError("pilot must be explicit boolean")
     cadence = number(raw["optimizer_seconds_per_evaluation"])
     if cadence <= 0:
         raise ValueError("positive optimizer-time evaluation cadence required")
@@ -41,7 +45,7 @@ def campaign(specification: Path, output: Path) -> Record:
     comparison = Comparison.load(comparison_ref.path)
     comparison.verify()
     if (
-        comparison.tier != "short"
+        comparison.tier != ("pilot" if pilot else "short")
         or comparison.role != "dev"
         or comparison.target.sha256 != template.raw.get("target_sha256")
     ):
@@ -54,6 +58,7 @@ def campaign(specification: Path, output: Path) -> Record:
     ownership = Ownership(output)
     try:
         store = Store(output)
+        store.atomic(store.root / "controller.json", canonical(controller_record()))
         binding: Record = {"specification": file_reference(specification), "code_sha256": code}
         binding_path = store.root / "binding.json"
         if binding_path.exists() and read(binding_path) != binding:
@@ -76,6 +81,17 @@ def campaign(specification: Path, output: Path) -> Record:
                 "completed_evaluations": [],
             }
         )
+        if not status_path.exists():
+            from w1a1_eagle.numerical.worker import checkpoint_accounting
+
+            parent_state = Store(template.parent.path.parent).describe(template.parent)
+            initial_accounting = checkpoint_accounting(parent_state, template.memory_bytes)
+            if initial_accounting is not None:
+                status["model_update_seconds"] = (
+                    initial_accounting.successful_update_seconds
+                    + initial_accounting.failed_update_seconds
+                )
+            status["scope"] = "pilot only" if pilot else "120-request DEV selection"
         while True:
             segment = integer(status["segment"])
             prefix = str(segment).zfill(4)
@@ -163,6 +179,7 @@ def campaign(specification: Path, output: Path) -> Record:
                 {"status": "running", "active_training": str(training_root), "phase": "train"}
             )
             store.atomic(status_path, canonical(status))
+            retain(store.root, status)
             prior = (
                 Journal(training_root).report() if (training_root / "events.jsonl").exists() else {}
             )
@@ -242,3 +259,20 @@ def select(
         "evidence": evidence,
         "status": "provisional DEV request leader; not a full-DEV incumbent or deployment qualification",
     }
+
+
+def retain(root: Path, status: Record) -> None:
+    recovery = artifact(status["latest_state"], root)
+    protected = {recovery.path, artifact(status["latest_drafter"], root).path}
+    for key in ("provisional_fast_leader", "full_dev_incumbent"):
+        if status.get(key) is not None:
+            selected = record(status[key])
+            protected.update(artifact(selected[name], root).path for name in ("state", "drafter"))
+    current = integer(status["segment"])
+    for path in sorted(root.glob("[0-9][0-9][0-9][0-9]-training")):
+        if int(path.name[:4]) >= current - 1:
+            continue
+        if Journal(path).report().get("operational") != "terminal":
+            raise ValueError("campaign retention refuses active segment")
+        for name in ("states", "exports"):
+            Store(path / name).retire_closed(frozenset(protected), recovery)

@@ -84,7 +84,8 @@
           "service.py": "DEFAULT_TIMEOUT_SECONDS=30\ndef timeout(config):\n    return config.get(\"timeout_seconds\", DEFAULT_TIMEOUT_SECONDS)\n",
           "README.md": "# Request client\n\nA small request helper.\n"
         },
-        "checks": "import sys\nsys.path.insert(0, '/work')\nimport service\nfrom pathlib import Path\ntext=Path(\"/work/README.md\").read_text()\nassert text.startswith(\"# Request client\")\nassert \"timeout_seconds\" in text and \"30\" in text\nassert \"milliseconds\" not in text.lower()\nassert \"0\" in text and \"disable\" in text.lower()\nprint('ACCEPTANCE_CHECKS_PASSED')\n"
+        "checks": "import sys\nsys.path.insert(0, '/work')\nimport service\nfrom pathlib import Path\ntext=Path(\"/work/README.md\").read_text()\nassert text.startswith(\"# Request client\")\nassert \"timeout_seconds\" in text and \"30\" in text\nassert \"milliseconds\" not in text.lower()\nprint('ACCEPTANCE_CHECKS_PASSED')\n",
+        "followup_checks": "import sys\nsys.path.insert(0, '/work')\nimport service\nfrom pathlib import Path\ntext=Path(\"/work/README.md\").read_text()\nassert text.startswith(\"# Request client\")\nassert \"timeout_seconds\" in text and \"30\" in text\nassert \"milliseconds\" not in text.lower()\nassert \"0\" in text and \"disable\" in text.lower()\nprint('ACCEPTANCE_CHECKS_PASSED')\n"
       },
       "followup": "Also document that timeout_seconds=0 disables the timeout. The unit is seconds, not milliseconds. Keep the introduction."
     },
@@ -98,7 +99,8 @@
           "service.py": "def record(value):\n    return {\"name\":value[\"name\"], \"enabled\":value.get(\"enabled\", True)}\n",
           "README.md": "# Record loader\n"
         },
-        "checks": "import sys\nsys.path.insert(0, '/work')\nimport service\nfrom pathlib import Path\ntext=Path(\"/work/README.md\").read_text()\nassert text.startswith(\"# Record loader\")\nassert \"name\" in text and \"enabled\" in text and \"true\" in text.lower()\nassert \"json\" in text.lower() and \"false\" in text.lower()\nprint('ACCEPTANCE_CHECKS_PASSED')\n"
+        "checks": "import sys\nsys.path.insert(0, '/work')\nimport service\nfrom pathlib import Path\ntext=Path(\"/work/README.md\").read_text()\nassert text.startswith(\"# Record loader\")\nassert \"name\" in text and \"enabled\" in text and \"true\" in text.lower()\nprint('ACCEPTANCE_CHECKS_PASSED')\n",
+        "followup_checks": "import sys\nsys.path.insert(0, '/work')\nimport service\nfrom pathlib import Path\ntext=Path(\"/work/README.md\").read_text()\nassert text.startswith(\"# Record loader\")\nassert \"name\" in text and \"enabled\" in text and \"true\" in text.lower()\nassert \"json\" in text.lower() and \"false\" in text.lower()\nprint('ACCEPTANCE_CHECKS_PASSED')\n"
       },
       "followup": "Add a valid JSON example with name=\"demo\" and enabled=false."
     },
@@ -137,7 +139,8 @@
         "files": {
           "service.py": "def ordered(rows):\n    return list(rows)\n"
         },
-        "checks": "import sys\nsys.path.insert(0, '/work')\nimport service\nfrom pathlib import Path\nrows=[{\"priority\":1,\"id\":\"a\"},{\"priority\":2,\"id\":\"b\"},{\"priority\":2,\"id\":\"c\"}]\nassert [v[\"id\"] for v in service.ordered(rows)]==[\"b\",\"c\",\"a\"]\nassert [v[\"id\"] for v in rows]==[\"a\",\"b\",\"c\"]\nprint('ACCEPTANCE_CHECKS_PASSED')\n"
+        "checks": "import sys\nsys.path.insert(0, '/work')\nimport service\nfrom pathlib import Path\nrows=[{\"priority\":2,\"id\":\"b\"},{\"priority\":1,\"id\":\"a\"},{\"priority\":2,\"id\":\"c\"}]\nassert [v[\"id\"] for v in service.ordered(rows)]==[\"a\",\"b\",\"c\"]\nassert [v[\"id\"] for v in rows]==[\"b\",\"a\",\"c\"]\nprint('ACCEPTANCE_CHECKS_PASSED')\n",
+        "followup_checks": "import sys\nsys.path.insert(0, '/work')\nimport service\nfrom pathlib import Path\nrows=[{\"priority\":1,\"id\":\"a\"},{\"priority\":2,\"id\":\"b\"},{\"priority\":2,\"id\":\"c\"}]\nassert [v[\"id\"] for v in service.ordered(rows)]==[\"b\",\"c\",\"a\"]\nassert [v[\"id\"] for v in rows]==[\"a\",\"b\",\"c\"]\nprint('ACCEPTANCE_CHECKS_PASSED')\n"
       },
       "followup": "Change the requirement: sort priority descending instead. Preserve stable ordering of ties and leave the input unchanged."
     },
@@ -150,7 +153,8 @@
         "files": {
           "service.py": "def summarize(values):\n    raise NotImplementedError\n"
         },
-        "checks": "import sys\nsys.path.insert(0, '/work')\nimport service\nfrom pathlib import Path\nassert service.summarize([1,2,3])=={\"count\":3,\"total\":6}\nassert service.summarize([])=={\"count\":0,\"total\":0}\nprint('ACCEPTANCE_CHECKS_PASSED')\n"
+        "checks": "import sys\nsys.path.insert(0, '/work')\nimport service\nfrom pathlib import Path\nassert service.summarize([1,2,3])==(3,6)\nassert service.summarize([])==(0,0)\nprint('ACCEPTANCE_CHECKS_PASSED')\n",
+        "followup_checks": "import sys\nsys.path.insert(0, '/work')\nimport service\nfrom pathlib import Path\nassert service.summarize([1,2,3])=={\"count\":3,\"total\":6}\nassert service.summarize([])=={\"count\":0,\"total\":0}\nprint('ACCEPTANCE_CHECKS_PASSED')\n"
       },
       "followup": "Revise summarize to return a dictionary with keys count and total instead of a tuple. Keep the same numeric behavior."
     }

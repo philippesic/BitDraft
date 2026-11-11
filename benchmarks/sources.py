@@ -86,23 +86,35 @@ def ultrachat(path: Path) -> Iterator[Record]:
             continue
         key = string(row["prompt_id"])
         first = string(messages[0]["content"])
-        if re.search(r"\btranslat(?:e|ion)\b", first, re.IGNORECASE):
+        intro = first.split("\n", 1)[0][:400]
+        lead = r"^(?:(?:can|could|would) you |please |i (?:want|need) you to )?"
+        if re.search(
+            lead + r"(?:translate\b|provide (?:me with )?(?:a )?translation\b)",
+            intro,
+            re.IGNORECASE,
+        ):
             yield candidate("ultrachat", key, key, "writing", "translation", messages[:1])
             continue
         elif re.search(
-            r"\b(?:rewrite|write a (?:story|poem|letter|email)|edit the|revise)\b",
-            first,
-            re.IGNORECASE,
-        ):
-            yield candidate("ultrachat", key, key, "writing", "writing", messages[:1])
-            continue
-        if re.search(
-            r"\b(?:logic|logical|riddle|puzzle|schedule|planning|constraints|deduc|reasoning)\b",
-            first,
+            lead
+            + r"(?:create|develop|design|write|make|plan|outline|provide)\b.{0,120}\b(?:plan|schedule|itinerary|strategy)\b|\b(?:riddle|puzzle|logical reasoning|logic problem|scheduling problem|constraint satisfaction)\b",
+            intro,
             re.IGNORECASE,
         ):
             yield candidate("ultrachat", key, key, "reasoning", "non_arithmetic", messages[:1])
             continue
+        if re.search(
+            lead + r"(?:write|rewrite|revise|edit|compose|rephrase|draft)\b",
+            intro,
+            re.IGNORECASE,
+        ):
+            if not re.search(
+                r"\b(?:code|python|javascript|program|function|algorithm|sql|script)\b",
+                intro,
+                re.IGNORECASE,
+            ):
+                yield candidate("ultrachat", key, key, "writing", "writing", messages[:1])
+                continue
         if len(users) > 1:
             yield candidate(
                 "ultrachat", key, key, "conversation", "followup", messages[: users[-1] + 1]
@@ -141,7 +153,11 @@ def glaive(path: Path) -> Iterator[Record]:
                 "content": "You are a helpful assistant. Use the supplied functions when appropriate.",
             }
         ]
-        eligible: list[list[Record]] = []
+        prefixes: dict[str, list[list[Record]]] = {
+            "tool_request": [],
+            "tool_result": [],
+            "tool_abstention": [],
+        }
         valid = True
         calls = 0
         for position in range(1, len(parts), 2):
@@ -151,7 +167,6 @@ def glaive(path: Path) -> Iterator[Record]:
                 continue
             if role == "USER":
                 messages.append({"role": "user", "content": content})
-                eligible.append(list(messages))
             elif role == "FUNCTION RESPONSE":
                 if not calls:
                     valid = False
@@ -159,7 +174,7 @@ def glaive(path: Path) -> Iterator[Record]:
                 messages.append(
                     {"role": "tool", "tool_call_id": "call_" + str(calls), "content": content}
                 )
-                eligible.append(list(messages))
+                prefixes["tool_result"].append(list(messages))
             elif content.startswith("<functioncall>"):
                 try:
                     function = record(
@@ -171,6 +186,13 @@ def glaive(path: Path) -> Iterator[Record]:
                         if isinstance(arguments, str)
                         else record(arguments)
                     )
+                    if (
+                        function["name"] not in {record(tool["function"])["name"] for tool in tools}
+                        or messages[-1]["role"] != "user"
+                    ):
+                        valid = False
+                        break
+                    prefixes["tool_request"].append(list(messages))
                     calls += 1
                     messages.append(
                         {
@@ -192,15 +214,24 @@ def glaive(path: Path) -> Iterator[Record]:
                     valid = False
                     break
             else:
+                if messages[-1]["role"] == "user":
+                    prefixes["tool_abstention"].append(list(messages))
                 messages.append({"role": "assistant", "content": content})
-        if valid and eligible and tools:
-            selected = eligible[-1]
+        available = [key for key, values in prefixes.items() if values]
+        if valid and available and tools:
+            bucket = int(identity({"group": index, "seed": 8101})[:8], 16) % 10
+            subtype = (
+                "tool_request" if bucket < 7 else "tool_result" if bucket < 9 else "tool_abstention"
+            )
+            if not prefixes[subtype]:
+                subtype = available[0]
+            selected = prefixes[subtype][-1]
             yield candidate(
                 "glaive",
                 str(index),
                 str(index),
                 "structured",
-                "tool_result" if any(m["role"] == "tool" for m in selected) else "tool_request",
+                subtype,
                 selected,
                 tools,
             )

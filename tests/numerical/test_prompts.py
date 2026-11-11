@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 
 from benchmarks.sources import commitpack, qasper
-from w1a1_eagle.contracts import Record
+from w1a1_eagle.contracts import Record, record, sequence
 
 
 class TestPrompts(unittest.TestCase):
@@ -75,3 +75,30 @@ class TestPrompts(unittest.TestCase):
         restored = json.loads(canonical(messages))
         self.assertEqual(tokenizer.render(messages, []), tokenizer.render(restored, []))
         self.assertEqual(tokenizer.tokenize(str(tokenizer.last_prompt)), (1,))
+
+    def test_tool_stage_selection_excludes_future_calls_and_labels_last_role(self) -> None:
+        from benchmarks.sources import glaive
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "tools.json"
+            tool = {
+                "name": "lookup",
+                "description": "Look up a value",
+                "parameters": {"type": "object", "properties": {}},
+            }
+            chat = 'USER: Look it up\n\nASSISTANT: <functioncall> {"name":"lookup","arguments":{}}\n\nFUNCTION RESPONSE: {"value":1}\n\nASSISTANT: The value is one\n\nUSER: Thank you\n\nASSISTANT: You are welcome'
+            path.write_text(
+                json.dumps([{"system": json.dumps(tool), "chat": chat} for _ in range(100)])
+            )
+            rows = list(glaive(path))
+            self.assertEqual(
+                {row["subtype"] for row in rows}, {"tool_request", "tool_result", "tool_abstention"}
+            )
+            for row in rows:
+                last = record(sequence(row["messages"])[-1])
+                self.assertEqual(
+                    last["role"], "tool" if row["subtype"] == "tool_result" else "user"
+                )
+                if row["subtype"] == "tool_request":
+                    self.assertEqual(last["content"], "Look it up")
+                    self.assertNotIn("tool_calls", str(row["messages"]))

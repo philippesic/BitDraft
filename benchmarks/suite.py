@@ -5,9 +5,9 @@ from benchmarks.native import file_reference
 from benchmarks.runner import compare
 from benchmarks.workflows import live
 from w1a1_eagle.checkpoints.store import Store
-from w1a1_eagle.contracts import Record, record
+from w1a1_eagle.contracts import Record, number, record
 from w1a1_eagle.identity import source_identity
-from w1a1_eagle.lifecycle import Ownership
+from w1a1_eagle.lifecycle import Journal, Ownership
 from w1a1_eagle.records import artifact, canonical, read
 
 
@@ -34,7 +34,7 @@ def suite(specification: Path, output: Path) -> Record:
             if not name.replace("-", "").replace("_", "").isalnum():
                 raise ValueError("unsafe target name")
             specs = record(value)
-            if set(specs) != {"requests", "live", "harness"}:
+            if set(specs) - {"candidate_bindings"} != {"requests", "live", "harness"}:
                 raise ValueError("full suite requires request, live and harness panels")
             target = ""
             arms: object = None
@@ -93,6 +93,63 @@ def suite(specification: Path, output: Path) -> Record:
                     raise ValueError("invalid full panel cannot select an incumbent")
                 cells[panel] = file_reference(result_path)
             results[name] = cells
+            if "candidate_bindings" in specs:
+                request_result = read(
+                    artifact(cells["requests"], store.root).path, 64 * 1024 * 1024
+                )
+                selections: Record = {}
+                for arm, value in record(specs["candidate_bindings"]).items():
+                    if arm in {"target", "baseline"} or arm not in record(
+                        request_result["summary"]
+                    ):
+                        raise ValueError("incumbent must be an evaluated experimental arm")
+                    ref = artifact(value, specification.resolve().parent)
+                    ref.verify()
+                    bound = read(ref.path)
+                    state = artifact(bound["state"], ref.path.parent)
+                    drafter = artifact(bound["drafter"], ref.path.parent)
+                    execution = artifact(bound["execution"], ref.path.parent)
+                    for item in (state, drafter, execution):
+                        item.verify()
+                    report = Journal(execution.path.parent).report()
+                    worker = record(report["worker"])
+                    if (
+                        report["operational"] != "terminal"
+                        or worker["state"] != state.sha256
+                        or worker["export"] != drafter.sha256
+                    ):
+                        raise ValueError(
+                            "candidate state/export binding disagrees with completed execution"
+                        )
+                    request_spec = Comparison.load(
+                        artifact(specs["requests"], specification.resolve().parent).path
+                    )
+                    if not any(
+                        item.name == arm
+                        and item.drafter is not None
+                        and item.drafter.sha256 == drafter.sha256
+                        for item in request_spec.arms
+                    ):
+                        raise ValueError("incumbent drafter differs from evaluated arm")
+                    selections[arm] = {
+                        **bound,
+                        "score": record(record(request_result["summary"])[arm])[
+                            "tokens_per_second"
+                        ],
+                    }
+                if not selections:
+                    raise ValueError("at least one state-bound candidate required")
+
+                def score(arm: str) -> float:
+                    return number(record(selections[arm])["score"])
+
+                winner = max(selections, key=score)
+                cells["full_dev_incumbent"] = {
+                    "arm": winner,
+                    **record(selections[winner]),
+                    "evidence": cells["requests"],
+                    "scope": "full DEV request-selected experimental state; workflow/harness outcomes remain separate, no deployment promotion",
+                }
         result = {
             "status": "complete",
             "targets": results,

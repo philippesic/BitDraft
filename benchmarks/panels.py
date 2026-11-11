@@ -15,7 +15,7 @@ SYSTEMS = {
 
 def panels(specification: Path, output: Path) -> Record:
     raw = read(specification)
-    if set(raw) != {"schema", "workload", "live_definitions"} or raw["schema"] != 1:
+    if set(raw) - {"harnesses"} != {"schema", "workload", "live_definitions"} or raw["schema"] != 1:
         raise ValueError("unsupported panel preparation specification")
     if output.exists():
         raise ValueError("panel output must be new")
@@ -24,6 +24,13 @@ def panels(specification: Path, output: Path) -> Record:
     definitions = artifact(raw["live_definitions"], root)
     workload.verify()
     definitions.verify()
+    systems = SYSTEMS
+    if "harnesses" in raw:
+        ref = artifact(raw["harnesses"], root)
+        ref.verify()
+        systems = {key: string(value) for key, value in read(ref.path).items()}
+        if set(systems) != set(SYSTEMS):
+            raise ValueError("three named harness configurations required")
     tasks = [record(value) for value in sequence(read(workload.path)["tasks"])]
     selected: list[Record] = []
     groups: set[str] = set()
@@ -46,7 +53,7 @@ def panels(specification: Path, output: Path) -> Record:
     for task in selected:
         if task["role"] != "dev":
             raise ValueError("development harness cannot consume confirmation tasks")
-        for name, system in SYSTEMS.items():
+        for name, system in systems.items():
             variant = dict(task)
             ancestry = dict(record(task.get("ancestry", {})))
             if "token_sha256" in ancestry:
@@ -73,11 +80,11 @@ def panels(specification: Path, output: Path) -> Record:
         store.atomic(fixture, canonical(definition["fixture"]))
         live_task: Record = {
             "id": name,
-            "group": name,
+            "group": definition.get("group", name),
             "role": "dev",
             "category": definition["category"],
             "messages": [
-                {"role": "system", "content": SYSTEMS["tools"]},
+                {"role": "system", "content": systems["tools"]},
                 {"role": "user", "content": definition["prompt"]},
             ],
             "output_cap": 1024,
