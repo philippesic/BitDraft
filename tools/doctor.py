@@ -1,4 +1,5 @@
 import json
+import os
 import shutil
 import sys
 from pathlib import Path
@@ -11,7 +12,15 @@ from w1a1_eagle.identity import source_identity
 
 
 def diagnose(root: Path) -> dict[str, object]:
-    hook_ready = hooks_path(root) == ".githooks"
+    hook = root / ".githooks/pre-commit"
+    if hooks_path(root) != ".githooks":
+        hook_status = "disabled: run git config core.hooksPath .githooks"
+    elif not hook.is_file():
+        hook_status = "missing: restore .githooks/pre-commit from the working branch"
+    elif not os.access(hook, os.X_OK):
+        hook_status = "not executable: run chmod +x .githooks/pre-commit"
+    else:
+        hook_status = "ready"
     receipt = root / ".venv/foundation-verification.json"
     files, escapes = inventory(root)
     verification = "missing"
@@ -23,7 +32,7 @@ def diagnose(root: Path) -> dict[str, object]:
         "schema": 1,
         "check_python": sys.executable,
         "numerical_python": numerical_python(root),
-        "hook": "ready" if hook_ready else "disabled: run git config core.hooksPath .githooks",
+        "hook": hook_status,
         "wsl_available_bytes": shutil.disk_usage(root).free,
         "backing_available_bytes": backing_available(),
         "verification": verification,

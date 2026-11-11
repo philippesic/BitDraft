@@ -19,11 +19,25 @@ uv sync --locked --only-group check --no-build
 git config core.hooksPath .githooks
 ```
 
-The second line enables the pre-commit hook, which runs the full check.
+The second line enables the pre-commit hook, which runs the full check. Run
+`uv run --locked --no-sync --offline python -m tools.doctor` to confirm the hook
+is configured and executable. The check-only install does not provide the numerical
+interpreter required by the full gate.
 
 Numerical code runs in a separate interpreter with the versions in
 [numerical policy](policy/numerical.toml). Point to it with `BINARY_NUMERICAL_PYTHON`,
 `numerical_python` in an untracked `.host.toml`, or a `.venv/numerical` environment.
+For a host-provided interpreter, the configuration is:
+
+```toml
+numerical_python = "/absolute/path/to/numerical/bin/python"
+```
+
+The file contains host paths only; do not put credentials in it. The numerical lane
+runs with GPU visibility disabled. Check it independently with the command in
+[checks](docs/checks.md#commands). A successful check-only install is not a complete
+numerical setup; rebuilding the numerical environment from scratch has not been
+verified by this overhaul.
 
 ## Commands
 

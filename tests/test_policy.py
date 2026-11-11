@@ -1,7 +1,10 @@
 import hashlib
+from pathlib import Path
 
 from tools.comments import scan_file, scan_patch, validate_exceptions
+from tools.config import REQUIRED_RULES
 from tools.contracts import Diagnostic, Record
+from tools.diagnostics import format_diagnostic
 from tools.policy_review import validate_report, verification_report
 from tools.repo_policy import validate_files
 
@@ -85,3 +88,31 @@ def test_pinned_noninitial_multifile_patch() -> None:
     assert (
         scan_file("new.patch", "--- /dev/null\n+++ b/new.cpp\n@@ -0,0 +1 @@\n+int n;\n", []) == []
     )
+
+
+def test_diagnostic_repairs_follow_documented_patterns() -> None:
+    files = {
+        "docs/checks.md": "| `COMMENT_*` | Remove the comment |\n"
+        "| `CHECK_CONFIG`, `PIN_*` | Restore the authorized configuration |\n"
+    }
+    message = format_diagnostic(Diagnostic("COMMENT_PYTHON", "source.py"), files)
+    assert "COMMENT_PYTHON: source.py" in message
+    assert "Fix: Remove the comment" in message
+    assert "Restore the authorized configuration" in format_diagnostic(
+        Diagnostic("PIN_TOOL", "environment"), files
+    )
+    assert "undocumented diagnostic" in format_diagnostic(Diagnostic("NEW_RULE", "a"), files)
+
+
+def test_registered_diagnostics_have_repairs_and_comment_location() -> None:
+    files = {
+        "docs/checks.md": Path("docs/checks.md").read_text(),
+        "source.py": "#!/usr/bin/env python3\nvalue = 1\n# reason\n",
+    }
+    for code in REQUIRED_RULES:
+        assert "undocumented diagnostic" not in format_diagnostic(
+            Diagnostic(code, "source.py"), files
+        ), code
+    message = format_diagnostic(Diagnostic("COMMENT_PYTHON", "source.py"), files)
+    assert "source.py:3:1" in message
+    assert "rationale" in message

@@ -236,5 +236,5 @@ CONFIG_DIGESTS = {
     "policy/cases.toml": "d3094468c15e70cec936fb2b3b2eb6f99ee2900b39a507492f5b762b32ee6cfc",
     "policy/cpu-tests.toml": "936218d7b8f290fa9ad93493c4d9bf6f468fc4434ac5acd3cb7333d5085816d8",
     "policy/check-stages.toml": "b292836462fa970fb2330e93b913ea1a3ac8fe5eb8efde756b691184bf8165f1",
-    "policy/validation.toml": "059cdf0120d2fc9c974512f6ec9943b79cceae47719d62ddc47c6a16392d7368",
+    "policy/validation.toml": "c87733b131a391b1575ab7b1af90d5cfcfbf1fa34c5841d722606d82a558210e",
 }
