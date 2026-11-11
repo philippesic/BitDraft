@@ -1,0 +1,3777 @@
+{
+  "archive_head": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+  "sources": [
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/w1a8-standing-20261102/baseline.json",
+      "sha256": "a79f08524fd7ed9f799429b3b3cb6239c52bd76551244ec9461196c2349a3116",
+      "bytes": 6099,
+      "local": "results/sources/experiments-w1a8-standing-20261102-baseline-a79f0852.json",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "docs/CANDIDATE_BENCHMARKING.md",
+      "sha256": "a783de080201ec9f50b6b9982a5a7467a4ab8d5509929cd02b79eda53929e085",
+      "bytes": 13447,
+      "local": "results/sources/docs-candidate-benchmarking-a783de08.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/dspark-dflash-catchup-20261104/README.md",
+      "sha256": "e527a691be03dabf41ddb648fb0efaca6f1974c1ffc5d1e45f8dad63726a3182",
+      "bytes": 3798,
+      "local": "results/sources/experiments-dspark-dflash-catchup-20261104-readme-e527a691.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "scripts/capture_nine_model_train_data.py",
+      "sha256": "7355cc2a7f655247f36c6904872da406630b08ce947cf32640c28f908fc30c0b",
+      "bytes": 75270,
+      "local": "results/sources/scripts-capture-nine-model-train-data-py-7355cc2a.json",
+      "storage": "verified external Git archive"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "tests/test_dspark_full_pool_capture.py",
+      "sha256": "ebeff6ad15f2ad6ab1f20d5edf27b074399d3f3fa84f7ae923e2cd54eae142bb",
+      "bytes": 24442,
+      "local": "results/sources/tests-test-dspark-full-pool-capture-py-ebeff6ad.json",
+      "storage": "verified external Git archive"
+    },
+    {
+      "revision": "7d9ab32066584edbb715ddbce38d0386b2efb0d6",
+      "path": "experiments/binary-pipeline-profile-20261104/README.md",
+      "sha256": "8c46fef49b96ca7962ccad200d1e718637afab887638499f5b11819835cacae7",
+      "bytes": 5339,
+      "local": "results/sources/experiments-binary-pipeline-profile-20261104-readme-8c46fef4.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/storage-cleanup-20261106/report.md",
+      "sha256": "0a2b5afef8703e76c2a7f0402111c0ce64f29ae339f1ddbeab98087211603c79",
+      "bytes": 2676,
+      "local": "results/sources/experiments-storage-cleanup-20261106-report-0a2b5afe.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/storage-cleanup-20261106/summary.json",
+      "sha256": "f2c19f796e32d7b5c44db9a639bea779c79c913a925c6cc571f455690e54ff31",
+      "bytes": 18567,
+      "local": "results/sources/experiments-storage-cleanup-20261106-summary-f2c19f79.json",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "docs/DECISIONS.md",
+      "sha256": "becd28eab676b8784ff5fb7b1326cafb89224a11ce65d9c182fdf0312695c277",
+      "bytes": 4457,
+      "local": "results/sources/docs-decisions-becd28ea.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/dflash2-smoke-20261106/report.md",
+      "sha256": "7e0e0aa561673661ac1f51daa46145cf59d2b45de8d5614076bca566812b8e6a",
+      "bytes": 13075,
+      "local": "results/sources/experiments-dflash2-smoke-20261106-report-7e0e0aa5.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/dflash2-smoke-20261106/parent-review.md",
+      "sha256": "5280640e434ad6c0645c003d86876c533b3a60fc5c0aed16cad2cbad9d1f68a5",
+      "bytes": 1804,
+      "local": "results/sources/experiments-dflash2-smoke-20261106-parent-review-5280640e.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/dflash2-smoke-20261106/attempts.md",
+      "sha256": "e23aac881b19261e52468d674b34e2a338dc6fbb4e4e4e66ff453c7d633313e0",
+      "bytes": 7693,
+      "local": "results/sources/experiments-dflash2-smoke-20261106-attempts-e23aac88.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "tests/test_gpu_resume_optimizer_state.py",
+      "sha256": "fc6b2695922e386dc12acb60ab2de00c4fcf34e2d47a93ac865d6363506ef9c1",
+      "bytes": 980,
+      "local": "results/sources/tests-test-gpu-resume-optimizer-state-py-fc6b2695.json",
+      "storage": "verified external Git archive"
+    },
+    {
+      "revision": "7d9ab32066584edbb715ddbce38d0386b2efb0d6",
+      "path": "experiments/precision-campaign-20261104/summary.json",
+      "sha256": "fdd8bec5359fd4ce69944aec995e0be81b3faf548eb8b518d955634ea8b594a4",
+      "bytes": 10886,
+      "local": "results/sources/experiments-precision-campaign-20261104-summary-fdd8bec5.json",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/he4broad-20261108/report.md",
+      "sha256": "4887a5fbe5fca525160512524d6fb85590ab7366a898467f16d6b87acf1ea671",
+      "bytes": 4730,
+      "local": "results/sources/experiments-he4broad-20261108-report-4887a5fb.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/he4broad-20261108/audit.json",
+      "sha256": "2c53389f8ac92eac72b91a84120dac97b135b81f431dfd7be8d5d9f21174ae33",
+      "bytes": 556,
+      "local": "results/sources/experiments-he4broad-20261108-audit-2c53389f.json",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/he4broad-20261108/results.json",
+      "sha256": "3d7147f157ffa086dd1ae939814b44a3bd7c15c11dcffd375919ee8d9604c1db",
+      "bytes": 108338,
+      "local": "results/sources/experiments-he4broad-20261108-results-json-3d7147f1.json",
+      "storage": "verified external Git archive"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/he4broad-20261108/manifest.json",
+      "sha256": "a44a5efe81de47f83297ccee4c51b25e638cb4131943b7f9fee253a8c293aefe",
+      "bytes": 756,
+      "local": "results/sources/experiments-he4broad-20261108-manifest-a44a5efe.json",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/dflash2-smoke-20261106/results.json",
+      "sha256": "939ce214c4ed1c06504bfa1f7660b90949dcd26ac407e23fd20d9b3fbe8785df",
+      "bytes": 180654,
+      "local": "results/sources/experiments-dflash2-smoke-20261106-results-json-939ce214.json",
+      "storage": "verified external Git archive"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/execution-campaign-20261105/report.md",
+      "sha256": "b4d86ecaeb53afa031d23e5d3a008546e5f12a5b92facccd8a4637e7868cbf46",
+      "bytes": 10555,
+      "local": "results/sources/experiments-execution-campaign-20261105-report-b4d86eca.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/execution-campaign-20261105/ledger.json",
+      "sha256": "717c76e6c6ddb7d31f2310d25bb2e096a3fa17b919fd107d2ac1a579059822aa",
+      "bytes": 50864,
+      "local": "results/sources/experiments-execution-campaign-20261105-ledger-json-717c76e6.json",
+      "storage": "verified external Git archive"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/execution-campaign-20261105/historical-latency-context.md",
+      "sha256": "e0f1a6bf41842be89e8a45aa167d626d281b05e98e5c5d74e3064afd0558ca4e",
+      "bytes": 2980,
+      "local": "results/sources/experiments-execution-campaign-20261105-historical-latency-context-e0f1a6bf.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/component-campaign-20261105/report.md",
+      "sha256": "4a5baa3ba86410fdaaccc4bfceff83eff1423f779bdc8257f013837b88e9c721",
+      "bytes": 16126,
+      "local": "results/sources/experiments-component-campaign-20261105-report-4a5baa3b.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/component-campaign-20261105/results.json",
+      "sha256": "8cc5d76d909fa21c89cc0a8c2fa13e8d6d4c10f42f8afcbe691497627a025fc6",
+      "bytes": 110596,
+      "local": "results/sources/experiments-component-campaign-20261105-results-json-8cc5d76d.json",
+      "storage": "verified external Git archive"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/binary-methods-20261104/README.md",
+      "sha256": "c03c241fb17dbd2dcf7f99d2d00ade23f31602a485a36341be1bcd6b9a9a9de1",
+      "bytes": 12595,
+      "local": "results/sources/experiments-binary-methods-20261104-readme-c03c241f.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/binary-methods-20261104/analysis.json",
+      "sha256": "dd9413a49c4c7d6f4501ea24a8a34345896478ce4d1aee8178365f4a584f6e32",
+      "bytes": 45725,
+      "local": "results/sources/experiments-binary-methods-20261104-analysis-json-dd9413a4.json",
+      "storage": "verified external Git archive"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/he4-continuation-20261107/report.md",
+      "sha256": "f38d371a0e2dd0cc7eac8847900bff867d7089399b4af9604025f4405c1dd060",
+      "bytes": 7581,
+      "local": "results/sources/experiments-he4-continuation-20261107-report-f38d371a.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/he4-continuation-20261107/audit.json",
+      "sha256": "d5c795411e683315042b4703c0b64e7350fb6163bca7d69bd80956d590064e97",
+      "bytes": 14137,
+      "local": "results/sources/experiments-he4-continuation-20261107-audit-d5c79541.json",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/he4-continuation-20261107/trajectory.csv",
+      "sha256": "c80575110da2d0242f4b7e7b2fd412de03cfa1c6b0c5e53abbb3d73e81667899",
+      "bytes": 2079,
+      "local": "results/sources/experiments-he4-continuation-20261107-trajectory-c8057511.csv",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+      "path": "experiments/he4-continuation-20261107/native.csv",
+      "sha256": "0c26d1d08bd50edac8a97f2c0fcffbbf0b459584e3454bec25878fb8e6a02640",
+      "bytes": 1226,
+      "local": "results/sources/experiments-he4-continuation-20261107-native-0c26d1d0.csv",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7d9ab32066584edbb715ddbce38d0386b2efb0d6",
+      "path": "docs/DECISIONS.md",
+      "sha256": "becd28eab676b8784ff5fb7b1326cafb89224a11ce65d9c182fdf0312695c277",
+      "bytes": 4457,
+      "local": "results/sources/docs-decisions-becd28ea.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7d9ab32066584edbb715ddbce38d0386b2efb0d6",
+      "path": "experiments/component-campaign-20261105/report.md",
+      "sha256": "4a5baa3ba86410fdaaccc4bfceff83eff1423f779bdc8257f013837b88e9c721",
+      "bytes": 16126,
+      "local": "results/sources/experiments-component-campaign-20261105-report-4a5baa3b.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7d9ab32066584edbb715ddbce38d0386b2efb0d6",
+      "path": "docs/CANDIDATE_BENCHMARKING.md",
+      "sha256": "a783de080201ec9f50b6b9982a5a7467a4ab8d5509929cd02b79eda53929e085",
+      "bytes": 13447,
+      "local": "results/sources/docs-candidate-benchmarking-a783de08.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7d9ab32066584edbb715ddbce38d0386b2efb0d6",
+      "path": "experiments/training-audit-2026-10-01/03-binary-optimization.md",
+      "sha256": "44c627be14c6aaf897105274f20f59f88f87c21f81bdc13e97810f1a79d21a92",
+      "bytes": 17137,
+      "local": "results/sources/experiments-training-audit-2026-10-01-03-binary-optimization-44c627be.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7d9ab32066584edbb715ddbce38d0386b2efb0d6",
+      "path": "experiments/nine-model-research-slate-2026-10-04/synthesis.md",
+      "sha256": "f1cff9c1cebe48ef34441512108fd127b2313ee1db1ac4ce81f595671f0caf2a",
+      "bytes": 18385,
+      "local": "results/sources/experiments-nine-model-research-slate-2026-10-04-synthesis-f1cff9c1.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7d9ab32066584edbb715ddbce38d0386b2efb0d6",
+      "path": "experiments/design-readiness-20261104/qat-source-audit.md",
+      "sha256": "d0fcea9db5135f36c999c6a1a6ecab4949642c1f2d434627688318ccf55875bd",
+      "bytes": 10496,
+      "local": "results/sources/experiments-design-readiness-20261104-qat-source-audit-d0fcea9d.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7d9ab32066584edbb715ddbce38d0386b2efb0d6",
+      "path": "experiments/he4broad-20261110/report.md",
+      "sha256": "162feacae93a1a58c5ea5f0f08899391834b81bb4670c4fb406bea2aecb8895f",
+      "bytes": 3850,
+      "local": "results/sources/experiments-he4broad-20261110-report-162feaca.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "7d9ab32066584edbb715ddbce38d0386b2efb0d6",
+      "path": "docs/learning/from-zero.html",
+      "sha256": "06715d00a4915a42ddc4c9d329d368701cc6e7bd2f74b37d91778be978342e2f",
+      "bytes": 24918,
+      "local": "results/sources/docs-learning-from-zero-06715d00.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/rtx2080ti-synthesis.md",
+      "sha256": "4cae21cb1f00e4648ec2f19177912d437c4e1b81fa2704f049ed1d9ea2709eff",
+      "bytes": 7717,
+      "local": "results/sources/experiments-rtx2080ti-synthesis-4cae21cb.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/rtx2080ti-quantization-suite.md",
+      "sha256": "4c56c3bcd9e6fe47bff375563f56406811820f7f100e705a5c79a2caf51314b0",
+      "bytes": 73933,
+      "local": "results/sources/experiments-rtx2080ti-quantization-suite-4c56c3bc.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/w1ax-activation-precision-results.md",
+      "sha256": "4c7c5fb7a1586153c3afb26b929d789e8f396d27192ce9ef5d990865cb9a1578",
+      "bytes": 38876,
+      "local": "results/sources/experiments-w1ax-activation-precision-results-4c7c5fb7.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/w1ax-policy-grid-results.md",
+      "sha256": "440709aab1853c0b2da5f8b67ee9afd5b2e95cf1f207406bd067e6c583db6976",
+      "bytes": 17338,
+      "local": "results/sources/experiments-w1ax-policy-grid-results-440709aa.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/binary-scale-fitting-5080.md",
+      "sha256": "cd55bc2f6d7060d8f95dd4ac2c98dece6301ea49050064401091aee49ce2af1c",
+      "bytes": 18071,
+      "local": "results/sources/experiments-binary-scale-fitting-5080-cd55bc2f.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/binary-rescue-head-5080.md",
+      "sha256": "a988921ca87dd5b338ec2a91581add605959848cbcc4361116e9a57a086fb133",
+      "bytes": 33124,
+      "local": "results/sources/experiments-binary-rescue-head-5080-a988921c.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/qat-head-pilot-results.md",
+      "sha256": "913aa53332d3d36a45e6e8894ef0fc8b9766a5d7d24252615d8b916397073314",
+      "bytes": 6879,
+      "local": "results/sources/experiments-qat-head-pilot-results-913aa533.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/a8-qat-recovery/comparison.md",
+      "sha256": "34e1416c27be64d4338dcb52a7f9bfb2f77d99412cc25f2ec561d5c5f9b9d687",
+      "bytes": 14727,
+      "local": "results/sources/experiments-a8-qat-recovery-comparison-34e1416c.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/dspark-sm75-20261003/results.md",
+      "sha256": "82c7d454bb5c8cff997f55f819050a3fd97d33085b82cc6d8aedb0aa9017aae4",
+      "bytes": 11198,
+      "local": "results/sources/experiments-dspark-sm75-20261003-results-82c7d454.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/dspark-sm75-20261003/reference-results.md",
+      "sha256": "97e9318d248e96bc90abb8ba0a551f0f2a76c66471b1d706ec9bc7bbe57bc854",
+      "bytes": 5290,
+      "local": "results/sources/experiments-dspark-sm75-20261003-reference-results-97e9318d.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/dspark-dflash-catchup-20261104/README.md",
+      "sha256": "e527a691be03dabf41ddb648fb0efaca6f1974c1ffc5d1e45f8dad63726a3182",
+      "bytes": 3798,
+      "local": "results/sources/experiments-dspark-dflash-catchup-20261104-readme-e527a691.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/dspark-w1a8-dflash-20261104/README.md",
+      "sha256": "185a81c19e916911f86821c759685ba4700b0092736d8c81bb639d04cac1a98b",
+      "bytes": 4375,
+      "local": "results/sources/experiments-dspark-w1a8-dflash-20261104-readme-185a81c1.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/fusion-binary-real-a8-2026-10-03/README.md",
+      "sha256": "5092da5e4982541774b77c0596cd3d3607060861a39a5b32914f7578877564d7",
+      "bytes": 10134,
+      "local": "results/sources/experiments-fusion-binary-real-a8-2026-10-03-readme-5092da5e.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/fusion-binary-real-a8-2026-10-03/independent-validation.md",
+      "sha256": "d8afa196c3c3c7a62ae7d6ae5bfd7ad215bb9bd6177a46be574ca8c0f08d0171",
+      "bytes": 13640,
+      "local": "results/sources/experiments-fusion-binary-real-a8-2026-10-03-independent-validation-d8afa196.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/parallel20261002/lsq_batching/report.md",
+      "sha256": "f473661b90fad9a881c545895f8b810c4aae88499259f8078cbb8e0f8d19494a",
+      "bytes": 10375,
+      "local": "results/sources/experiments-parallel20261002-lsq-batching-report-f473661b.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/parallel20261002/recurrent_vjp/report.md",
+      "sha256": "07036e93854ca222e557ea9ceaaafd7a1beb21ef7b88d22a767a37f96efb4879",
+      "bytes": 6984,
+      "local": "results/sources/experiments-parallel20261002-recurrent-vjp-report-07036e93.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/parallel20261002/export_function/report.md",
+      "sha256": "82903f4c2f7572e9b83bd29841a8d034c2e28d9507327af0c97c9f8748b5b845",
+      "bytes": 7336,
+      "local": "results/sources/experiments-parallel20261002-export-function-report-82903f4c.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/parallel20261002/resume_validation/README.md",
+      "sha256": "d5eabdf0d4b7cd285c7bc26f19504918dcb9d55d36fd509bccd58e9fef97ff16",
+      "bytes": 7826,
+      "local": "results/sources/experiments-parallel20261002-resume-validation-readme-d5eabdf0.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/parallel20261002/sign_inertia/report.md",
+      "sha256": "d8132d83da75488554d8be4893c9f99ae79529f7ade13dce83da1a943e081089",
+      "bytes": 9502,
+      "local": "results/sources/experiments-parallel20261002-sign-inertia-report-d8132d83.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/parallel20261002/step_bookkeeping/report.md",
+      "sha256": "42674677cf3c2558ae5d5edb45ef26f441e36fb3656f97a7fb6ff402fe5aa1c5",
+      "bytes": 6160,
+      "local": "results/sources/experiments-parallel20261002-step-bookkeeping-report-42674677.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/recurrent-binary-integrated-cpu-diagnostic.md",
+      "sha256": "5db00866f40f4928e06449259e65f9c0af8d522b75abdd68214aab1ffd77bfe1",
+      "bytes": 3004,
+      "local": "results/sources/experiments-recurrent-binary-integrated-cpu-diagnostic-5db00866.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/recurrent-binary-target-feature-parity.md",
+      "sha256": "6505eca617799c1e96b30473ca3aa074a98d6a4b73f88b81061e273559a0b5cf",
+      "bytes": 19119,
+      "local": "results/sources/experiments-recurrent-binary-target-feature-parity-6505eca6.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/native-verifier-trace-5080.md",
+      "sha256": "8362fa0e2c31e3e200160b810264b83cda670756d79fc3ae438728e7c1a7d65a",
+      "bytes": 3560,
+      "local": "results/sources/experiments-native-verifier-trace-5080-8362fa0e.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/recurrent-target-block14-stage-intervention.md",
+      "sha256": "b3c889813c850e1e4099b1aca2f3892b0229ff61ba9eb37edc8a2dc27085b468",
+      "bytes": 2587,
+      "local": "results/sources/experiments-recurrent-target-block14-stage-intervention-b3c88981.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/local-resume-20261101/runtime-and-transfer.md",
+      "sha256": "206177e615194919eb59499e257f81d0ed862b48928ab7daf5df22b9edfdeee5",
+      "bytes": 27003,
+      "local": "results/sources/experiments-local-resume-20261101-runtime-and-transfer-206177e6.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/clean-baseline-20261101/report.md",
+      "sha256": "ed355a255f7c28e1caed4c5c1b7c5874f2404b13ce07a85d2fa137a2ea25ada7",
+      "bytes": 10460,
+      "local": "results/sources/experiments-clean-baseline-20261101-report-ed355a25.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/upstream-cuda-consistency-2026-11-01/report.md",
+      "sha256": "5439def063c670f982bb4a961c2d926a6c8d235d09b8794200b333a0efdfcd3c",
+      "bytes": 19105,
+      "local": "results/sources/experiments-upstream-cuda-consistency-2026-11-01-report-5439def0.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/data-cost-transfer-20261104/README.md",
+      "sha256": "fb52150c94a0060a0090608e27aba8aea795a382a4b5627ac6625b89f780b77a",
+      "bytes": 9236,
+      "local": "results/sources/experiments-data-cost-transfer-20261104-readme-fb52150c.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/design-readiness-20261104/readiness.md",
+      "sha256": "6ed200d8ff392e826a15af635dcc55bc1c93649cdb3ebda15385504b19f0a41f",
+      "bytes": 11323,
+      "local": "results/sources/experiments-design-readiness-20261104-readiness-6ed200d8.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/design-readiness-20261104/backlog-audit.md",
+      "sha256": "88f65969cbc153fe25f3c282b45196c4b8954633ccab0e1a17d944eb1548d36f",
+      "bytes": 39584,
+      "local": "results/sources/experiments-design-readiness-20261104-backlog-audit-88f65969.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/design-readiness-20261104/decision-feature-map.md",
+      "sha256": "917b5c543dc152a0b2be6fc42093a7c3fe0cb528ba908394a5e5d5156c56c3b6",
+      "bytes": 19117,
+      "local": "results/sources/experiments-design-readiness-20261104-decision-feature-map-917b5c54.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/precision-campaign-20261104/clip-control-report.md",
+      "sha256": "77a98b366be52782e56cdd3a0a696a4c329106bbade42da3812d0c6b0c5bee77",
+      "bytes": 6319,
+      "local": "results/sources/experiments-precision-campaign-20261104-clip-control-report-77a98b36.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/he4broad-20261110/setup-audit.md",
+      "sha256": "485d9fd67060c5406aa6629157770f48a4f906a199d4b157ee1c6b049920cf8d",
+      "bytes": 6484,
+      "local": "results/sources/experiments-he4broad-20261110-setup-audit-485d9fd6.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/he4broad-20261110/localization.md",
+      "sha256": "b1bccc409ae4dae0a601a74a9dc8b33f3eb7d55898fa1143bcdfb2747f024c2e",
+      "bytes": 4916,
+      "local": "results/sources/experiments-he4broad-20261110-localization-b1bccc40.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/storage-cleanup-20261110/report.md",
+      "sha256": "fc4853c79510396e05353659cb693ba3eb7e5700fe6b6037d76cf278b4683bfe",
+      "bytes": 5375,
+      "local": "results/sources/experiments-storage-cleanup-20261110-report-fc4853c7.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/storage-cleanup-20261106/report.md",
+      "sha256": "0a2b5afef8703e76c2a7f0402111c0ce64f29ae339f1ddbeab98087211603c79",
+      "bytes": 2676,
+      "local": "results/sources/experiments-storage-cleanup-20261106-report-0a2b5afe.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/training-optimization-audit-2026-10-01.md",
+      "sha256": "1ded13efa715a8440cede61ecaad9791ce5fdcc1d95301b3dbebbf59a1bab555",
+      "bytes": 11224,
+      "local": "results/sources/experiments-training-optimization-audit-2026-10-01-1ded13ef.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/broader-project-audit-2026-10-01.md",
+      "sha256": "33f7d1232a6d6dbd25f6da624579b1edba981a06edca3c4799e3a861972b5992",
+      "bytes": 12224,
+      "local": "results/sources/experiments-broader-project-audit-2026-10-01-33f7d123.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/nine-model-research-slate-2026-10-04/synthesis.md",
+      "sha256": "f1cff9c1cebe48ef34441512108fd127b2313ee1db1ac4ce81f595671f0caf2a",
+      "bytes": 18385,
+      "local": "results/sources/experiments-nine-model-research-slate-2026-10-04-synthesis-f1cff9c1.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/research-cross-reference-2026-09-25.md",
+      "sha256": "7c12271644709d25039385a31f96ffff18c737dee43296d5e08f3b1afb72a9eb",
+      "bytes": 20724,
+      "local": "results/sources/experiments-research-cross-reference-2026-09-25-7c122716.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/eagle-prune-timing-5080.md",
+      "sha256": "ad64ee36bc8b7b9d95662638dff4646e8d09ef00a9fe906eb72ecad026d7f820",
+      "bytes": 5095,
+      "local": "results/sources/experiments-eagle-prune-timing-5080-ad64ee36.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/eagle-prune-quality-5080.md",
+      "sha256": "71d8305b703ae4448b5e1e54d44c8eda8183b6d63ac1ebd08ca677e72d1da853",
+      "bytes": 3894,
+      "local": "results/sources/experiments-eagle-prune-quality-5080-71d8305b.txt",
+      "storage": "byte-identical tracked copy"
+    },
+    {
+      "revision": "0d4820c53664aa20cc07e55c3894c50952e46e84",
+      "path": "experiments/native-end-to-end-5080.md",
+      "sha256": "2e29d556e2f4d6f6c14cff7945099ad7b1f7fa3b4b968a2396ed7ddd1f238890",
+      "bytes": 15037,
+      "local": "results/sources/experiments-native-end-to-end-5080-2e29d556.txt",
+      "storage": "byte-identical tracked copy"
+    }
+  ],
+  "markdown_inventory": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 2805,
+      "sha256": "7145ee88a0d6edb1367ea84f685f949d1dd3c820242c3cc028f3d1b7dced9691",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "README.md",
+      "bytes": 3757,
+      "sha256": "f4127974d81785fcb2fe260834ec501c9a1f46602f097618af121bba986da203",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "configs/nine-model/README.md",
+      "bytes": 8068,
+      "sha256": "5d56d21c630cf7000edb5ca97e8dac42d41b0d2d5db74a9c64590ab7078ad82a",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "data/README.md",
+      "bytes": 307,
+      "sha256": "ca4819e7b145cbfa0e51447f6ea7b54d33407d8ce6158bc5cd8a9e81bf31f2c0",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/AGENT_OPERATIONS.md",
+      "bytes": 7194,
+      "sha256": "a9e3f16f98ab1185b8ef7b2be18f5efe857c3c1b67dfc041bb1853866e5f9708",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/CANDIDATE_BENCHMARKING.md",
+      "bytes": 13447,
+      "sha256": "a783de080201ec9f50b6b9982a5a7467a4ab8d5509929cd02b79eda53929e085",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/docs-candidate-benchmarking-a783de08.txt",
+        "results/sources/docs-candidate-benchmarking-a783de08.txt"
+      ],
+      "topic_result": null
+    },
+    {
+      "path": "docs/CANDIDATE_STAGES.md",
+      "bytes": 16828,
+      "sha256": "da94fedcefb26fcbe8dddf81c2b095c3d0b7cc5f95ee52e311edaabf122e8205",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/COMPONENT_CAMPAIGN.md",
+      "bytes": 61786,
+      "sha256": "fda66c73562cb3ceed55af584bd6a9583509f9028307d4a82334165fbf03539e",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/DECISIONS.md",
+      "bytes": 4457,
+      "sha256": "becd28eab676b8784ff5fb7b1326cafb89224a11ce65d9c182fdf0312695c277",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/docs-decisions-becd28ea.txt",
+        "results/sources/docs-decisions-becd28ea.txt"
+      ],
+      "topic_result": null
+    },
+    {
+      "path": "docs/DFLASH2_SMOKE.md",
+      "bytes": 4969,
+      "sha256": "982090837d3cace24546dd3b2fe425de18a2da4a67522e78aa945d9bf3ec0d70",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/EVALUATION.md",
+      "bytes": 8776,
+      "sha256": "1748b16e42ff72f4a296c5b2bd5bac4e3e653b11376f312864606fcce1531d21",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/EXECUTION_CAMPAIGN.md",
+      "bytes": 17598,
+      "sha256": "1a6ffc2e2c2980f8be4f2dc3ecb847781152b220a2c308e1c70e6b48a567933f",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/EXECUTION_OPTIMIZATION.md",
+      "bytes": 15716,
+      "sha256": "2046a29aed140830d2dd300c07e344a5f56f841e6420fc5984e0610de76e260c",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/GIT_AND_ARTIFACTS.md",
+      "bytes": 3061,
+      "sha256": "46282a4ebf37afc4d948e8283681e7f55602042526a24e5677c337eb3752f464",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/HISTORY.md",
+      "bytes": 4586,
+      "sha256": "12c54a77175aaf9fffb283153ec69475e90d24e05ef16d79d1bd490c115a1543",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/PRECISION_CAMPAIGN.md",
+      "bytes": 51657,
+      "sha256": "08ee4cb3516d64a6dea79b981ea1d9a159992f7a2ea0a949254f8cc3340064d3",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/PRECISION_SEARCH.md",
+      "bytes": 12574,
+      "sha256": "96111cb942c6eb889e648f268c5b56c9f4931b553e7aeec76e7d517ba9e06c58",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/PROJECT_OVERVIEW.md",
+      "bytes": 1017,
+      "sha256": "681c42e90e2aa742603ce61c0fbcb0b004ae8ceb282bd2d2e0573694d63a0d31",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/REMAINING_PRECISION.md",
+      "bytes": 14432,
+      "sha256": "fdcf2cda5dff599f2a30d8c4481f22d34df65d66741a082631d4cb48fe5458eb",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/SETUP.md",
+      "bytes": 4681,
+      "sha256": "be7c111abccb53445e1efe5bbd5b03688c989698395a094b34088b2be213afe9",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/STATUS.md",
+      "bytes": 9636,
+      "sha256": "5f98ea6eec82899ac89f1ee4d211d79190a55e854d2fa9e2cc4a025919d70412",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/goals/README.md",
+      "bytes": 401,
+      "sha256": "5526cf1e92b87dc98ccdb24a7a5d503efd385ead3b189a5a8bfe8e30e52ead78",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/CONTINUOUS_W1AX_MONITOR.md",
+      "bytes": 27018,
+      "sha256": "622d2768a7fce7f53e1c243f3f5f1f29ca8a4b278e73727bd8666c7dcc7e86c8",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/CONTINUOUS_W1AX_RUNBOOK.md",
+      "bytes": 12847,
+      "sha256": "447e2aaa419eb2397c95efb17d4ad748b6b7d17e05ae0040954719bc9fd0eb2d",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/DECISIONS_20261105.md",
+      "bytes": 123321,
+      "sha256": "6f90d5094516307c635f787e3fd635761357a36dad0a2622e0b853690f5617c5",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/DRAFT_PROTOTYPING.md",
+      "bytes": 7637,
+      "sha256": "ca94deb77572bd2dfbac9fd8654e90d218e73355807964fc23531e1fbf3367eb",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/OVERNIGHT_RESEARCH.md",
+      "bytes": 10716,
+      "sha256": "0b56935fe247e35551c1eeb084b1c5a010e0aca2960666b5c803748a0f9bee3d",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/PROJECT_OVERVIEW_20261105.md",
+      "bytes": 18118,
+      "sha256": "f0368d520086f405bd574156fa2d0752b25c94442552283373fa465b86976697",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/QAT_GPU_AUDIT_OVERLAP.md",
+      "bytes": 3860,
+      "sha256": "25b327d6d22b66bb1af7590bbc6b4db7075d9bb0e6073924b43d81edc35b9706",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/QAT_OPTIMIZATION_RUNBOOK.md",
+      "bytes": 10532,
+      "sha256": "f93d938cbfd3ee3806f66a1f7d5d44b81a50fc1a01b6475cec39a38c485a9e9b",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/QAT_TRAINING_HANDOFF.md",
+      "bytes": 14529,
+      "sha256": "bbd75bba4b8a3ba9864f3d85d22638c27c786a117fb5f6d7cca0b8c23c2ad394",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/README.md",
+      "bytes": 694,
+      "sha256": "9af265af136e9ad3fdc1f1c42986d4e6b3d2534349e23b560771dbe29ba2b9f5",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/RTX2080TI_RUNBOOK.md",
+      "bytes": 8999,
+      "sha256": "de200ac4665c0020c7b48f3aa6952bbe0e033b422ddfddfecf133d6134a5325a",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/STATUS_HISTORY.md",
+      "bytes": 156880,
+      "sha256": "a3c0f202e607dbbd63fd76802f6e3a29bbee31ad9753ead2baa6b76ceeb887cd",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/STATUS_HISTORY_20261105.md",
+      "bytes": 40113,
+      "sha256": "6c2e782c58ea9f0649fce1e9a9cee9e65c9d7273e4be238b8598937ea61dd4df",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/W1_RESEARCH_PLAN.md",
+      "bytes": 20377,
+      "sha256": "085ac9a658344f7b584dd409f020881209fae13aecaf06f8826386cec0b23cc3",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/goals/README.md",
+      "bytes": 868,
+      "sha256": "80265667d81762090528b20bcaabf733a25b18dc3cc4ecbb8a4b177b31fd0108",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/goals/a8-qat-recovery-and-comparison.md",
+      "bytes": 122879,
+      "sha256": "95cb36fc4a299266668c1a191be8e5a5c5fae34e83ea069d1e6542560b2ec545",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/goals/binary-rescue-head-5080.md",
+      "bytes": 23368,
+      "sha256": "7ec6fcf9ea51998425866181003d7b3665c5725e8aec1f5198248f1aca5138b3",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/goals/binary-scale-fitting-5080.md",
+      "bytes": 13065,
+      "sha256": "47f8139dc20b4d8a343bd8b4190d962946717c7644901ede87cb93e322a71d52",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/goals/full-w1a1-eagle-project.md",
+      "bytes": 41658,
+      "sha256": "5f58351779884637e3d912e8ba909df709b3ebf8b7d17393a4da808f3bc8ecb7",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/goals/nine-model-qat-overnight.md",
+      "bytes": 413559,
+      "sha256": "2a6aa2edf53b567edc98cf446a4c92923c7d20299c2a46e95629693b781235b9",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/goals/nine-model-qat-preparation.md",
+      "bytes": 68558,
+      "sha256": "e56ab8e39096fb40587c791f98a09f41106a66b2c88ca995567419b4f3d8619a",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/goals/pytorch-w1a1-eagle.md",
+      "bytes": 9888,
+      "sha256": "7ef362d7f82a3c50204f6183dbd57dcf132ba74e42b6791f0c02ffb2eb563aa4",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/goals/qat-optimization-readiness.md",
+      "bytes": 355210,
+      "sha256": "cdf8ab227eb72cc0ccc6e2da89b747cc5dbc98bd4e804a33c564fa53c4cd6772",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/goals/recurrent-binary-body-head.md",
+      "bytes": 356750,
+      "sha256": "ef598be9448571a30acdcc91dd948aee4d17c64ec3b81018452098b64bb1fdce",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/goals/rtx2080ti-quantization-suite.md",
+      "bytes": 5972,
+      "sha256": "334d9c84f7187dc6c59a687a09f4724d691fcf1ebfefdde4b6a4e8515263f95e",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/goals/rtx5080-draft-acceptance.md",
+      "bytes": 18006,
+      "sha256": "bbb79bdcd441cf395465f032b9b4f877d6d913c6de742e2828eacad71ddbc25d",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/goals/w1ax-activation-precision-suite.md",
+      "bytes": 83997,
+      "sha256": "caa230c1e3449aaa5bff14ac3c6327a7a85bcd6d50290842429b8feddd489045",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/native-w1a1-path.md",
+      "bytes": 6881,
+      "sha256": "16736a1f4602d20bbfefe348e45c01070cfee3b77def0fde73ecbf5d5b121d2b",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/overnight20261002/launch.md",
+      "bytes": 2817,
+      "sha256": "357d0d1dc034256d2b8aea03ce9203b7d0260162a45f34c091ff6bc3fc6b218d",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/parallel20261002/astra-fifth-slate.md",
+      "bytes": 13418,
+      "sha256": "86fb3a9d5275f92c71fb70fb91c4257456ff4596611fbf3c8784951008d9a4b7",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/parallel20261002/astra-finite-update-certificate.md",
+      "bytes": 4300,
+      "sha256": "48528fc761d10423431a9e0a0b60b0e41e8dad2f54adcab0c8f9b8fa660fa566",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/parallel20261002/astra-fourth-slate.md",
+      "bytes": 7727,
+      "sha256": "6ac0f6960794408dbb1f9548fdbef43e115073a37948a06a2473470c8e6e4000",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/parallel20261002/astra-head-flip-oracle.md",
+      "bytes": 6350,
+      "sha256": "528f7961af7690bbec4a71874ef2f30ffee9a3f9bc0e64810b0d455cb8e18eb2",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/parallel20261002/astra-lsq-review.md",
+      "bytes": 6357,
+      "sha256": "648e636281a7d0714a5b0c7cedc38aaa92d6c3aff1e9b79abf6e63df9dff808b",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/parallel20261002/astra-native-trace-review.md",
+      "bytes": 5563,
+      "sha256": "08b52d9016f2ff80c05267639a7025f6ab3669ec8764b3e825fce583b991c82b",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/parallel20261002/astra-research.md",
+      "bytes": 18964,
+      "sha256": "b7f3ab4d6189c70ace1c61117e79b2b384cfebedffe1dfc5af3233c06e8aff61",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/parallel20261002/astra-third-slate.md",
+      "bytes": 9299,
+      "sha256": "ac7ad3310c0573f02be8b17c0533549ed4114a85a745fcf9355da2df8727c9dd",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/parallel20261002/qat-host-save-admission.md",
+      "bytes": 3543,
+      "sha256": "608ac6304c1a9b0b8c1fb3a4cf48b0c9759f9e054d19b7432bc602d23eb0ab11",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/parallel20261002/qat-host-save-validation.md",
+      "bytes": 5396,
+      "sha256": "b9258bfcc428577614a55e02012788620b454adf1938fef3dcffc22d5a9e150d",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/parallel20261002/qat-lsq-validation.md",
+      "bytes": 7926,
+      "sha256": "84c928366fa9ce6cb42fd6af4b77eeda450062fbc4148406465e19efcc7ac032",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/parallel20261002/qat-priority.md",
+      "bytes": 37293,
+      "sha256": "a08fed642c1a540ef78d9a11d2a98e029877c90e5d88e8931eae7592df26ad8f",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/parallel20261002/supervisor.md",
+      "bytes": 28599,
+      "sha256": "0126d278b8e3ced3d008bcc8f1370a52484ec8ac1b680a04afc3971c1736c6d5",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "docs/history/parallel20261002/usage-monitor.md",
+      "bytes": 65459,
+      "sha256": "baa8ed2470ad5015f26bce774f30813e43e2afb8fde9e247b93d23c68f536110",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "experiments/README.md",
+      "bytes": 1754,
+      "sha256": "b668ab8e7f3c42c1c95ea8dfe1f5ed72b71e358ff0ae1f115cb5764dbbcc55fc",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/a8-qat-recovery/comparison.md",
+      "bytes": 14727,
+      "sha256": "34e1416c27be64d4338dcb52a7f9bfb2f77d99412cc25f2ec561d5c5f9b9d687",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-a8-qat-recovery-comparison-34e1416c.txt"
+      ],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/binary-methods-20261104/README.md",
+      "bytes": 12595,
+      "sha256": "c03c241fb17dbd2dcf7f99d2d00ade23f31602a485a36341be1bcd6b9a9a9de1",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-binary-methods-20261104-readme-c03c241f.txt"
+      ],
+      "topic_result": "results/binary-method-comparison/result.md"
+    },
+    {
+      "path": "experiments/binary-pipeline-profile-20261104/README.md",
+      "bytes": 5339,
+      "sha256": "8c46fef49b96ca7962ccad200d1e718637afab887638499f5b11819835cacae7",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-binary-pipeline-profile-20261104-readme-8c46fef4.txt"
+      ],
+      "topic_result": "results/binary-method-comparison/result.md"
+    },
+    {
+      "path": "experiments/binary-rescue-head-5080.md",
+      "bytes": 33124,
+      "sha256": "a988921ca87dd5b338ec2a91581add605959848cbcc4361116e9a57a086fb133",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-binary-rescue-head-5080-a988921c.txt"
+      ],
+      "topic_result": "results/scale-and-head-recovery/result.md"
+    },
+    {
+      "path": "experiments/binary-scale-fitting-5080.md",
+      "bytes": 18071,
+      "sha256": "cd55bc2f6d7060d8f95dd4ac2c98dece6301ea49050064401091aee49ce2af1c",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-binary-scale-fitting-5080-cd55bc2f.txt"
+      ],
+      "topic_result": "results/scale-and-head-recovery/result.md"
+    },
+    {
+      "path": "experiments/binary-screen-20261104/README.md",
+      "bytes": 8743,
+      "sha256": "81e3ba35caed290e16e5fbddc4870fea1aa235e69a52799a22ba58859e4ed8a4",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/binary-method-comparison/result.md"
+    },
+    {
+      "path": "experiments/blackwell-binary-search-20261104/README.md",
+      "bytes": 4441,
+      "sha256": "e29c8454f74370c9ee07c2a1b622f51621b10de34b3a9a613aa81845cb7217d0",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/binary-method-comparison/result.md"
+    },
+    {
+      "path": "experiments/broader-audit-2026-10-01/01-architectures.md",
+      "bytes": 11480,
+      "sha256": "f6881dfc741d2a66a9332f3ff8d9d78f71a81efd160f87a61d647b3733f7aed4",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/broader-audit-2026-10-01/02-smaller-drafters.md",
+      "bytes": 10421,
+      "sha256": "7db7545876c221ebe6050443618310529488d055d435374e93c8a716a14fc341",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/broader-audit-2026-10-01/03-binary-representations.md",
+      "bytes": 10860,
+      "sha256": "bc226d8b00f71b7b4fa6d278c14e2eb8cb8f46da54061bc98d79f9616b9361c1",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/broader-audit-2026-10-01/04-small-corrections.md",
+      "bytes": 10803,
+      "sha256": "9441349ff17efef2b045008dfd576e0fe1ae35f7a953ba5e1376b1b290839484",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/broader-audit-2026-10-01/05-discrete-fitting.md",
+      "bytes": 11430,
+      "sha256": "bbb903564e31c0f984e5e418a53ba600651a81ce587db3ee261266d37c4ea32a",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/broader-audit-2026-10-01/06-lowbit-formats.md",
+      "bytes": 10395,
+      "sha256": "7090b615862a7d7fb9e8a148c7e998da70b384c47824c9683804188a846ecc23",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/broader-audit-2026-10-01/07-draft-policies.md",
+      "bytes": 10908,
+      "sha256": "490e1ae6c0ca56c3e27e3595e63ed6ae2be9b85d89386e85ae11b3d2e61a9d7e",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/broader-audit-2026-10-01/08-output-head.md",
+      "bytes": 9959,
+      "sha256": "745429842dfe55acd4cc27bc61d8748006fcb384d081095a68d9270a3a544d79",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/broader-audit-2026-10-01/09-native-execution.md",
+      "bytes": 10476,
+      "sha256": "0050228b8a1e404fc1ce8bf2f994383f3f8fbb616c7328e87c47d3a2c4646ac7",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/broader-audit-2026-10-01/10-data-value.md",
+      "bytes": 10943,
+      "sha256": "68c62d897ba828a30992cc96340c0d3b09ddc8ded30a230e07d3f841d05fa1af",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/broader-project-audit-2026-10-01.md",
+      "bytes": 12224,
+      "sha256": "33f7d1232a6d6dbd25f6da624579b1edba981a06edca3c4799e3a861972b5992",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-broader-project-audit-2026-10-01-33f7d123.txt"
+      ],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/clean-baseline-20261101/report.md",
+      "bytes": 10460,
+      "sha256": "ed355a255f7c28e1caed4c5c1b7c5874f2404b13ce07a85d2fa137a2ea25ada7",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-clean-baseline-20261101-report-ed355a25.txt"
+      ],
+      "topic_result": "results/verifier-and-runtime-controls/result.md"
+    },
+    {
+      "path": "experiments/component-campaign-20261105/parent-review.md",
+      "bytes": 1668,
+      "sha256": "e8e8d2407509f86fffc06ecfbae9b492bae89e36d6e72bbec4cf3efee6a054f9",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/retained-drafter-tradeoffs/result.md"
+    },
+    {
+      "path": "experiments/component-campaign-20261105/report.md",
+      "bytes": 16126,
+      "sha256": "4a5baa3ba86410fdaaccc4bfceff83eff1423f779bdc8257f013837b88e9c721",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-component-campaign-20261105-report-4a5baa3b.txt",
+        "results/sources/experiments-component-campaign-20261105-report-4a5baa3b.txt"
+      ],
+      "topic_result": "results/retained-drafter-tradeoffs/result.md"
+    },
+    {
+      "path": "experiments/component-campaign-20261105/runtime/README.md",
+      "bytes": 1173,
+      "sha256": "1db7ee5adf12d35d6fb4a5104d735e6453263231d033bb8384de76fdb7bfa2dc",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/retained-drafter-tradeoffs/result.md"
+    },
+    {
+      "path": "experiments/contender-infra-20261104/README.md",
+      "bytes": 8315,
+      "sha256": "dc9e886688e5193046aeef2ce6ac65473151afef5257b20702da7131ccc10a0e",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/continuous-w1ax-data-preparation.md",
+      "bytes": 11623,
+      "sha256": "74e531ba63853366d53dfb681d61c3d67c19d2cf93d395a9825b18703fc57161",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/continuous-w1ax-preparation.md",
+      "bytes": 15999,
+      "sha256": "ad0519f10d2206e3b9efc6ec95a5da5eaa818264130a25d38228c9212517df1d",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/cpu-archived-latency-and-readiness.md",
+      "bytes": 11348,
+      "sha256": "aab597379d8ea8b94d8ee16d2a2df50c976cab28d570b9d471a657fc174bd529",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/data-cost-transfer-20261104/README.md",
+      "bytes": 9236,
+      "sha256": "fb52150c94a0060a0090608e27aba8aea795a382a4b5627ac6625b89f780b77a",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-data-cost-transfer-20261104-readme-fb52150c.txt"
+      ],
+      "topic_result": "results/data-and-objective-controls/result.md"
+    },
+    {
+      "path": "experiments/data-cost-transfer-20261104/design-use.md",
+      "bytes": 2735,
+      "sha256": "e407e40d5c8d227aa4b0002a98319bb69032e7b50e347b9b760d158169f01fd1",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/data-and-objective-controls/result.md"
+    },
+    {
+      "path": "experiments/design-readiness-20261104/backlog-audit.md",
+      "bytes": 39584,
+      "sha256": "88f65969cbc153fe25f3c282b45196c4b8954633ccab0e1a17d944eb1548d36f",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-design-readiness-20261104-backlog-audit-88f65969.txt"
+      ],
+      "topic_result": "results/data-and-objective-controls/result.md"
+    },
+    {
+      "path": "experiments/design-readiness-20261104/bottleneck-audit.md",
+      "bytes": 6867,
+      "sha256": "e030db2ca5380312d0626f5342c282b4df9b8612eb28ba28f6ff04d7a95bb339",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/data-and-objective-controls/result.md"
+    },
+    {
+      "path": "experiments/design-readiness-20261104/decision-feature-map.md",
+      "bytes": 19117,
+      "sha256": "917b5c543dc152a0b2be6fc42093a7c3fe0cb528ba908394a5e5d5156c56c3b6",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-design-readiness-20261104-decision-feature-map-917b5c54.txt"
+      ],
+      "topic_result": "results/data-and-objective-controls/result.md"
+    },
+    {
+      "path": "experiments/design-readiness-20261104/design-questions.md",
+      "bytes": 4042,
+      "sha256": "b33db8ac4c93a9a48cdd244a0f14079e3e1c1a1089cf4044f0f5bbbfbe83e30b",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/data-and-objective-controls/result.md"
+    },
+    {
+      "path": "experiments/design-readiness-20261104/qat-source-audit.md",
+      "bytes": 10496,
+      "sha256": "d0fcea9db5135f36c999c6a1a6ecab4949642c1f2d434627688318ccf55875bd",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-design-readiness-20261104-qat-source-audit-d0fcea9d.txt"
+      ],
+      "topic_result": "results/data-and-objective-controls/result.md"
+    },
+    {
+      "path": "experiments/design-readiness-20261104/readiness.md",
+      "bytes": 11323,
+      "sha256": "6ed200d8ff392e826a15af635dcc55bc1c93649cdb3ebda15385504b19f0a41f",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-design-readiness-20261104-readiness-6ed200d8.txt"
+      ],
+      "topic_result": "results/data-and-objective-controls/result.md"
+    },
+    {
+      "path": "experiments/dflash-prototype-20261104/report.md",
+      "bytes": 720,
+      "sha256": "7e0d583d4428461cbd44ff07ea24b8acf73861801da69a3aff57a42bc298323d",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/dflash-prototype-integration-20261104/report.md",
+      "bytes": 2965,
+      "sha256": "c257298fcb6fdc8380bb3e6db936e67210b27f352babae6c58f4c4c1c3f94995",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/dflash-runner-packed-20261104/report.md",
+      "bytes": 3540,
+      "sha256": "fdbba74c59e4d9624b57086e6a3e3d11c17d5e10b4376c452f5ba9ba59d58a60",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/dflash-w1a8-baseline-20261104/HANDOFF.md",
+      "bytes": 3880,
+      "sha256": "d5efa8535942df61b9ac4a032cd4b51d8050adcf0d0d251777000d8e49271b4d",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/dflash-w1a8-baseline-20261104/README.md",
+      "bytes": 5457,
+      "sha256": "3a66fb53650f4177e2d8deb3200e1078135066c823c41643496b3b84492f5545",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/dflash-w1a8-baseline-20261104/runtime/README.md",
+      "bytes": 1069,
+      "sha256": "47ae1990cc5c701785955a2b906a56b801ad4aafd75bcc7a396010d4d6a11983",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/dflash2-smoke-20261106/attempts.md",
+      "bytes": 7693,
+      "sha256": "e23aac881b19261e52468d674b34e2a338dc6fbb4e4e4e66ff453c7d633313e0",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-dflash2-smoke-20261106-attempts-e23aac88.txt"
+      ],
+      "topic_result": "results/csmallbroad-continuation/result.md"
+    },
+    {
+      "path": "experiments/dflash2-smoke-20261106/parent-review.md",
+      "bytes": 1804,
+      "sha256": "5280640e434ad6c0645c003d86876c533b3a60fc5c0aed16cad2cbad9d1f68a5",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-dflash2-smoke-20261106-parent-review-5280640e.txt"
+      ],
+      "topic_result": "results/csmallbroad-continuation/result.md"
+    },
+    {
+      "path": "experiments/dflash2-smoke-20261106/report.md",
+      "bytes": 13075,
+      "sha256": "7e0e0aa561673661ac1f51daa46145cf59d2b45de8d5614076bca566812b8e6a",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-dflash2-smoke-20261106-report-7e0e0aa5.txt"
+      ],
+      "topic_result": "results/csmallbroad-continuation/result.md"
+    },
+    {
+      "path": "experiments/drafter-static-coverage.md",
+      "bytes": 1474,
+      "sha256": "149990216ae21f760d4933341ccef37a40e2be109614d7d1894bbe649bec96e2",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/dspark-dflash-catchup-20261104/README.md",
+      "bytes": 3798,
+      "sha256": "e527a691be03dabf41ddb648fb0efaca6f1974c1ffc5d1e45f8dad63726a3182",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-dspark-dflash-catchup-20261104-readme-e527a691.txt",
+        "results/sources/experiments-dspark-dflash-catchup-20261104-readme-e527a691.txt"
+      ],
+      "topic_result": "results/historical-dspark-cost/result.md"
+    },
+    {
+      "path": "experiments/dspark-sm75-20261003/checkpoint.md",
+      "bytes": 28148,
+      "sha256": "d35d5baa2ec3fc2a18c5d1ab2894a2df97bc5808f05fce645726ad463b2f7351",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/released-block-drafters/result.md"
+    },
+    {
+      "path": "experiments/dspark-sm75-20261003/native-runtime-admission.md",
+      "bytes": 12427,
+      "sha256": "f68c42dc17ef126f5ec7fbff7affda17e803d9e03f8e510385efb2c8d5a8e93e",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/released-block-drafters/result.md"
+    },
+    {
+      "path": "experiments/dspark-sm75-20261003/operator.md",
+      "bytes": 52432,
+      "sha256": "466a07e0d1e06ce380a30e899a8edd1b84df2423446efcb7ad668ce0d9ffb6ae",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/released-block-drafters/result.md"
+    },
+    {
+      "path": "experiments/dspark-sm75-20261003/precision-admission.md",
+      "bytes": 10734,
+      "sha256": "5fe91154528a5766d757325b1838f6ea5536569c9cc942cf26b493853fa16c29",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/released-block-drafters/result.md"
+    },
+    {
+      "path": "experiments/dspark-sm75-20261003/reference-results.md",
+      "bytes": 5290,
+      "sha256": "97e9318d248e96bc90abb8ba0a551f0f2a76c66471b1d706ec9bc7bbe57bc854",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-dspark-sm75-20261003-reference-results-97e9318d.txt"
+      ],
+      "topic_result": "results/released-block-drafters/result.md"
+    },
+    {
+      "path": "experiments/dspark-sm75-20261003/results.md",
+      "bytes": 11198,
+      "sha256": "82c7d454bb5c8cff997f55f819050a3fd97d33085b82cc6d8aedb0aa9017aae4",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-dspark-sm75-20261003-results-82c7d454.txt"
+      ],
+      "topic_result": "results/released-block-drafters/result.md"
+    },
+    {
+      "path": "experiments/dspark-w1a8-dflash-20261104/README.md",
+      "bytes": 4375,
+      "sha256": "185a81c19e916911f86821c759685ba4700b0092736d8c81bb639d04cac1a98b",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-dspark-w1a8-dflash-20261104-readme-185a81c1.txt"
+      ],
+      "topic_result": "results/historical-dspark-cost/result.md"
+    },
+    {
+      "path": "experiments/eagle-int-mma-source-integration.md",
+      "bytes": 1673,
+      "sha256": "b776017861e9744fd1ab1a0f34608c740a8957915b78fb52fe345952f7931602",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/turing-quantization/result.md"
+    },
+    {
+      "path": "experiments/eagle-int-shared-array-link.md",
+      "bytes": 1235,
+      "sha256": "a9e27f5a46e7e72eb70a84244f04d783508af84d31f668284806c72747d5d12c",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/turing-quantization/result.md"
+    },
+    {
+      "path": "experiments/eagle-latency-phase1a-cpu.md",
+      "bytes": 6074,
+      "sha256": "c64d88f00f263974e691244c994c2586d9e8bc1df009e07728a569e13bdc3507",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/eagle-prune-quality-5080.md",
+      "bytes": 3894,
+      "sha256": "71d8305b703ae4448b5e1e54d44c8eda8183b6d63ac1ebd08ca677e72d1da853",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-eagle-prune-quality-5080-71d8305b.txt"
+      ],
+      "topic_result": "results/unused-head-pruning/result.md"
+    },
+    {
+      "path": "experiments/eagle-prune-timing-5080.md",
+      "bytes": 5095,
+      "sha256": "ad64ee36bc8b7b9d95662638dff4646e8d09ef00a9fe906eb72ecad026d7f820",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-eagle-prune-timing-5080-ad64ee36.txt"
+      ],
+      "topic_result": "results/unused-head-pruning/result.md"
+    },
+    {
+      "path": "experiments/eagle-runtime-optimizations.md",
+      "bytes": 35995,
+      "sha256": "4a60defad2f26021d5f1c53a2387a29070c678339ddc9711de08a0aa0030ec2a",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/eagle3-acceptance-metric-audit.md",
+      "bytes": 2712,
+      "sha256": "51440d7de9c6237e08eae8077e46b2fa153f61b92bca0b86396f899e9af6771a",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/eagle3-graph-audit.md",
+      "bytes": 3553,
+      "sha256": "1806c45d6e8272f46603edc5cab2ff7de8301f45743f878d126bcef0ba3b6492",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/execution-campaign-20261105/historical-latency-context.md",
+      "bytes": 2980,
+      "sha256": "e0f1a6bf41842be89e8a45aa167d626d281b05e98e5c5d74e3064afd0558ca4e",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-execution-campaign-20261105-historical-latency-context-e0f1a6bf.txt"
+      ],
+      "topic_result": "results/execution-speed-and-model-quality/result.md"
+    },
+    {
+      "path": "experiments/execution-campaign-20261105/ledger.md",
+      "bytes": 12406,
+      "sha256": "57d5c3938ed6f05add9c6703728558432feca19011431a4e3876b9997d2e7baf",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/execution-speed-and-model-quality/result.md"
+    },
+    {
+      "path": "experiments/execution-campaign-20261105/report.md",
+      "bytes": 10555,
+      "sha256": "b4d86ecaeb53afa031d23e5d3a008546e5f12a5b92facccd8a4637e7868cbf46",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-execution-campaign-20261105-report-b4d86eca.txt"
+      ],
+      "topic_result": "results/execution-speed-and-model-quality/result.md"
+    },
+    {
+      "path": "experiments/fusion-binary-discrete-a8-2026-10-03/README.md",
+      "bytes": 8066,
+      "sha256": "402f6da984c28f56f7caadaa005c207fe8f079445d1cbc42beca17efe6fe033f",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/fusion-fitting/result.md"
+    },
+    {
+      "path": "experiments/fusion-binary-discrete-a8-2026-10-03/independent-validation.md",
+      "bytes": 7416,
+      "sha256": "9ac6b54af0a79fdb908410aa0b89ab6f0284ebf902749d96422792c2351aa48b",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/fusion-fitting/result.md"
+    },
+    {
+      "path": "experiments/fusion-binary-real-a8-2026-10-03/README.md",
+      "bytes": 10134,
+      "sha256": "5092da5e4982541774b77c0596cd3d3607060861a39a5b32914f7578877564d7",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-fusion-binary-real-a8-2026-10-03-readme-5092da5e.txt"
+      ],
+      "topic_result": "results/fusion-fitting/result.md"
+    },
+    {
+      "path": "experiments/fusion-binary-real-a8-2026-10-03/independent-validation.md",
+      "bytes": 13640,
+      "sha256": "d8afa196c3c3c7a62ae7d6ae5bfd7ad215bb9bd6177a46be574ca8c0f08d0171",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-fusion-binary-real-a8-2026-10-03-independent-validation-d8afa196.txt"
+      ],
+      "topic_result": "results/fusion-fitting/result.md"
+    },
+    {
+      "path": "experiments/ggml-w1a1-cuda-5080.md",
+      "bytes": 9617,
+      "sha256": "12b00e32d6fe23b0f1b8739a89e4569eff8d1f8530b9a2a02ae302c303fec527",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/turing-quantization/result.md"
+    },
+    {
+      "path": "experiments/gguf-baseline-conversion.md",
+      "bytes": 2982,
+      "sha256": "b8a95729ff2146dd3b3ade812ed0407f56ea7d266088bfcc971d2cdcd4b1d028",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/he4-continuation-20261107/report.md",
+      "bytes": 7789,
+      "sha256": "18dafcce15c1ebaa3228ec661507234feb8aaa345720526896b053a67132ef4d",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-he4-continuation-20261107-report-f38d371a.txt"
+      ],
+      "topic_result": "results/he4-fixed-data-continuation/result.md"
+    },
+    {
+      "path": "experiments/he4broad-20261108/operations.md",
+      "bytes": 7741,
+      "sha256": "785fa89bc7c6ce57b7176b451a574b6640adc5673a6821c9827553d04487748b",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/he4broad-fresh-source-training/result.md"
+    },
+    {
+      "path": "experiments/he4broad-20261108/report.md",
+      "bytes": 4959,
+      "sha256": "d06bf5e4af27b669d045822e628f0975823e1d709f1b42e973cd489546b6da69",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-he4broad-20261108-report-4887a5fb.txt"
+      ],
+      "topic_result": "results/he4broad-fresh-source-training/result.md"
+    },
+    {
+      "path": "experiments/he4broad-20261110/localization.md",
+      "bytes": 4916,
+      "sha256": "b1bccc409ae4dae0a601a74a9dc8b33f3eb7d55898fa1143bcdfb2747f024c2e",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-he4broad-20261110-localization-b1bccc40.txt"
+      ],
+      "topic_result": "results/input-locality-and-clock/result.md"
+    },
+    {
+      "path": "experiments/he4broad-20261110/operations.md",
+      "bytes": 18761,
+      "sha256": "111031b229a676f7cf06b16aae5cfe2737f298745786aee37401ff570a6a151f",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/input-locality-and-clock/result.md"
+    },
+    {
+      "path": "experiments/he4broad-20261110/report.md",
+      "bytes": 3850,
+      "sha256": "162feacae93a1a58c5ea5f0f08899391834b81bb4670c4fb406bea2aecb8895f",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-he4broad-20261110-report-162feaca.txt"
+      ],
+      "topic_result": "results/input-locality-and-clock/result.md"
+    },
+    {
+      "path": "experiments/he4broad-20261110/setup-audit.md",
+      "bytes": 6484,
+      "sha256": "485d9fd67060c5406aa6629157770f48a4f906a199d4b157ee1c6b049920cf8d",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-he4broad-20261110-setup-audit-485d9fd6.txt"
+      ],
+      "topic_result": "results/input-locality-and-clock/result.md"
+    },
+    {
+      "path": "experiments/int4-int8-acceptance-plan.md",
+      "bytes": 6297,
+      "sha256": "babba5210c9040959e33aa100f28cd46ab3b40999409ba6df0fc939476772a9c",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/integrated-binary-mma-5080.md",
+      "bytes": 3435,
+      "sha256": "f10bfe629fc67ba467137ed880622b67d8a6be5339d7e52a0075ad19d5e869d2",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/turing-quantization/result.md"
+    },
+    {
+      "path": "experiments/local-resume-20261101/modern-evidence.md",
+      "bytes": 12086,
+      "sha256": "0933a570ff7abe88b544320b42868a4f9d568ef30ca15c7fb6156c681e12a039",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/verifier-and-runtime-controls/result.md"
+    },
+    {
+      "path": "experiments/local-resume-20261101/runtime-and-transfer.md",
+      "bytes": 27003,
+      "sha256": "206177e615194919eb59499e257f81d0ed862b48928ab7daf5df22b9edfdeee5",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-local-resume-20261101-runtime-and-transfer-206177e6.txt"
+      ],
+      "topic_result": "results/verifier-and-runtime-controls/result.md"
+    },
+    {
+      "path": "experiments/local-resume-20261101/transfer-diagnosis.md",
+      "bytes": 13066,
+      "sha256": "94d2e1f2953cb9e078920eefce9837f17ef3e9c95bacf441dc125f6171b66877",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/verifier-and-runtime-controls/result.md"
+    },
+    {
+      "path": "experiments/native-end-to-end-5080.md",
+      "bytes": 15037,
+      "sha256": "2e29d556e2f4d6f6c14cff7945099ad7b1f7fa3b4b968a2396ed7ddd1f238890",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-native-end-to-end-5080-2e29d556.txt"
+      ],
+      "topic_result": "results/packed-head-native-comparison/result.md"
+    },
+    {
+      "path": "experiments/native-verifier-trace-5080.md",
+      "bytes": 3560,
+      "sha256": "8362fa0e2c31e3e200160b810264b83cda670756d79fc3ae438728e7c1a7d65a",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-native-verifier-trace-5080-8362fa0e.txt"
+      ],
+      "topic_result": "results/verifier-and-runtime-controls/result.md"
+    },
+    {
+      "path": "experiments/native-w1a1-cuda-prototype.md",
+      "bytes": 4012,
+      "sha256": "1d95769cacf2deebabe6db7775dbb0883377fbfd3e32052fbdbe324b0926fb13",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/turing-quantization/result.md"
+    },
+    {
+      "path": "experiments/native-w1a1-gguf-check.md",
+      "bytes": 4993,
+      "sha256": "cadaee056a81f2225812fcfcead52a0bc0527d1f3f5e1963658e6195b2e1d04b",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/turing-quantization/result.md"
+    },
+    {
+      "path": "experiments/native-w1a1-groups-local.md",
+      "bytes": 5971,
+      "sha256": "427776bb579eafaebeee443148aa9aff21c628f201e3ea020ca16f1f2ccd0f9d",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/turing-quantization/result.md"
+    },
+    {
+      "path": "experiments/native-weight-only-draft-prep.md",
+      "bytes": 4449,
+      "sha256": "04cccf01dd52d660a77aa2cf0a11e7e91d23dd9299a2e6d8d63cee891078ff4b",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/a1-handoff-plan.md",
+      "bytes": 9884,
+      "sha256": "1f5a14568da59884c73736d6d07601bd053dec23940af53877e7f8661d53a720",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/a1-historical-golden-reuse.md",
+      "bytes": 4212,
+      "sha256": "594462d45b930c8caa61e1f36f22b85da5c06cea335a7873aa2be7e226f4e867",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/artifact-guard.md",
+      "bytes": 4148,
+      "sha256": "88a05ef9fd02d69a2323fded73028308b6f53efca600ced8a208a4341632d7e4",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/astra-training-audit-20261006.md",
+      "bytes": 34356,
+      "sha256": "d728f4403411b56139d36b5772c8f8e788e380f01deb3e72535f59b8a32c8765",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/block-capture-options.md",
+      "bytes": 10162,
+      "sha256": "8b4ecd573ebd6bef11ac97cb303c6b7387bd7f10718aa424a871323a1d9d2b86",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/block-checkpoint-retention.md",
+      "bytes": 9226,
+      "sha256": "c10f8d1d8ecbf6bb093ebe0e955f2ca8f1d34ce92dde6f8dd1ac15d763b18713",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/block-exposure-depth-options.md",
+      "bytes": 11585,
+      "sha256": "d0fb6f447d29962a37e59843114e3907510dbb95bf17fa4abebdcdf34fd91a53",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/block-lane-packet.md",
+      "bytes": 13710,
+      "sha256": "7927247b9f83b61c65462e7c4ddf8e8b473034124d313dec3562989f208f1e9c",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/block-production-capture-plans.md",
+      "bytes": 14664,
+      "sha256": "f9110d94137380cea93a9d9bad343be1250188068312da54cb0bcb98e686ac80",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/block-storage-20261006.md",
+      "bytes": 5105,
+      "sha256": "4e372f6e7db7cef01fb20fac5057157ebe8ee6fd24524aa010aa9a260e3688af",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/collection-runtime.md",
+      "bytes": 8778,
+      "sha256": "03bedda8d535e9fab4227243b9df36227b7b195c79e0bd3dfe83f3d45799ff19",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/current-eagle-a8-acceptance-20261006.md",
+      "bytes": 3827,
+      "sha256": "0d7a9bdbad85702ab3b7f989b71ce29bf303de44c9d7bd569fa071d7d3e643c9",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/dspark-a8-next-run-plan-20261006.md",
+      "bytes": 26136,
+      "sha256": "01574a4b6ae39bc0c1e3b4967656169dc806673662956d796b8f7ab3c1f7c77d",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/eagle-data.md",
+      "bytes": 11378,
+      "sha256": "ea3d382d0ebe0b35ef01eea4e507fca913f40a57879954a56af76a96d3802565",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/endpoint-collection.md",
+      "bytes": 7234,
+      "sha256": "e1ea70cf13c0caa7fb9bbafbc409c64e98625d4377cfe0983667c86fedee3bd1",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/heldout-admission.md",
+      "bytes": 6586,
+      "sha256": "8a57fe357b2fa6882805403d30e5380c068736f4268b1f5f97f58eab2d8b94bb",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/indexed-block-teacher.md",
+      "bytes": 6974,
+      "sha256": "034eb35fa7b987ddba5fdb80cfe8ac2e67cd2d227b2176538cced2d1cdfb3769",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/operator.md",
+      "bytes": 22125,
+      "sha256": "f015f23dec8bbe8ce101456e53c65de4553bfb8386736b03e8da7bbcd4b2544a",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/original-q4-recovery-20261006.md",
+      "bytes": 2248,
+      "sha256": "cbfca5cdd3a05f8a139ef4ff838406dbf35b65afef8a7d118ccef3468514bc64",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/production-plan.md",
+      "bytes": 35710,
+      "sha256": "741f89c187dadc96398f956e234986e1940f7071f0c3f94b0f845fdb28b3234e",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/qa.md",
+      "bytes": 35083,
+      "sha256": "e183a6efc4593dc3918f7a4083735b2ff14a21743d65d19f3153cdfb65df0d8d",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/remaining-inputs.md",
+      "bytes": 17322,
+      "sha256": "f3100644f235916905a3e2048c9f343b3cf4b82b8267f21bc8c03b59d3de9443",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-overnight/staged-lane-export.md",
+      "bytes": 6296,
+      "sha256": "14287ac4029268efc39bbc3157de447d07cf840b817b789f9740196abec0bd18",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/a8-equal-budget-recovery/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-preparation/calibrated-native-cpu-artifacts.md",
+      "bytes": 7529,
+      "sha256": "fbcff75a11da636b80a1bc6c44893a99cccff7cef3cf676655a22a343eab614a",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-preparation/completion-audit-2026-10-04.md",
+      "bytes": 6117,
+      "sha256": "c86adac7ec5d0b2c7d3b72eb9a770b65ad85b35400e21ed80f6e17e373f6951c",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-preparation/cuda-plan.md",
+      "bytes": 39551,
+      "sha256": "49dc2ff5fbcad28ac589556f91882110c73c54cb5e974b45284d983200e71e4d",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-preparation/data-fusion-checkpoint.md",
+      "bytes": 16880,
+      "sha256": "d6320044a3ef4bd31990db0e436a3b3fc243a73817bda292441f1294639f482d",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-preparation/eagle-fusion-cpu-20261004.md",
+      "bytes": 6357,
+      "sha256": "a25ed050777987e8eb5c466c43b3b3ce6ebdaf15f4df4ac40a976d5e37095ff4",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/fusion-fitting/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-preparation/mac-checkpoint-2026-10-04.md",
+      "bytes": 5456,
+      "sha256": "9ec85efefb8c1aa2ec526024ce457d75a89f31aa14b6f9c37e10e64d0ae35ec2",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-preparation/native-cpu-artifacts.md",
+      "bytes": 11061,
+      "sha256": "3a079b914f08fc841196c57b4ff87d219675dc440c221421781e7e859ec8c3d4",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-preparation/opus-checkpoint-review.md",
+      "bytes": 3638,
+      "sha256": "5652a32e7eeb492f9a2b67fa3c3164993fe882027cbcbac69c4f9de8bbef9db6",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-preparation/opus-native-contract-review.md",
+      "bytes": 6622,
+      "sha256": "2bd52ac8f347e70be8dda5c920656811a192d0edeadc35c00638eefca8b093bd",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-preparation/pipeline-draft-packet.md",
+      "bytes": 5505,
+      "sha256": "551b2f980fd26f31fdf2906b3b0798c4cce113b600a5406ac959fa42d175c36f",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-preparation/qa-ledger.md",
+      "bytes": 25395,
+      "sha256": "111f0af40812423747727ae9d33f30b9cd38db30a2a01e0434397cf1080b96f6",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-qat-research-plan-2026-10-04.md",
+      "bytes": 32273,
+      "sha256": "aaf2ec32e8307d75daea6053de7da4cc91d07bc9cf4aedbb4adf928830fb6a18",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-research-slate-2026-10-04/01-literature-quantizers.md",
+      "bytes": 9402,
+      "sha256": "e520e0280b7a234d8c6710b17b9b21cc6911cae3d3e16385e93b1caa462b7274",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-research-slate-2026-10-04/02-literature-training-data.md",
+      "bytes": 10780,
+      "sha256": "90faf528027c16805d8a89276411d24c34fc0d4facf124107a4f858e1f252401",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-research-slate-2026-10-04/03-literature-train-systems.md",
+      "bytes": 11136,
+      "sha256": "645958efe7bf9d7638cd6f45bf8dc947a23ad7374734250743aa320dca9b053a",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-research-slate-2026-10-04/04-literature-inference.md",
+      "bytes": 10259,
+      "sha256": "920fdd515ed51b3a35add2bd278726b1523621fe4fbc522bad88fd0e12344f14",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-research-slate-2026-10-04/05-reason-root-acceptance.md",
+      "bytes": 9585,
+      "sha256": "e53d4d930dfa4f264abc3bf61f9896056ac5d1956b6490485a319504378c9997",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-research-slate-2026-10-04/06-reason-trajectory.md",
+      "bytes": 11366,
+      "sha256": "b35ca318fe788300dc028d7e768607761bbfe40218781099fce8995b781c525e",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-research-slate-2026-10-04/07-reason-latency.md",
+      "bytes": 11167,
+      "sha256": "8a3335c372874b94d6a4133d0f1b4e5a848fddf3a704e7abfd861e33b7eea778",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-research-slate-2026-10-04/08-reason-cost-quality.md",
+      "bytes": 8877,
+      "sha256": "3d8a31285866dab4152c2bca9f02106cc11dab8abb68ec6a02f647f1de74aba7",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-research-slate-2026-10-04/checkpoint.md",
+      "bytes": 5182,
+      "sha256": "259293abb0bf0c56a0a5b4076b8fa9d096a758818a1489664b51f20d8807ada6",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/nine-model-research-slate-2026-10-04/synthesis.md",
+      "bytes": 18385,
+      "sha256": "f1cff9c1cebe48ef34441512108fd127b2313ee1db1ac4ce81f595671f0caf2a",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-nine-model-research-slate-2026-10-04-synthesis-f1cff9c1.txt",
+        "results/sources/experiments-nine-model-research-slate-2026-10-04-synthesis-f1cff9c1.txt"
+      ],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/one-bit-next-steps-2026-09-27.md",
+      "bytes": 14277,
+      "sha256": "99765870f7c33615ce7d43b8c4a51031d7fdedd0270f84c35ca9836b8ccd7d72",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/activation_reuse/report.md",
+      "bytes": 4728,
+      "sha256": "aac13c0553e2fc2840e94a5cd48175040ca5a4701aedbe0174cdd96f52ed28eb",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/activation_reuse/validation_report.md",
+      "bytes": 4829,
+      "sha256": "30b3d5cd8b0d8101ea5527e7a3183d1effdb2fc1edeb48f00837438ddc011955",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/auxiliary_vjp/report.md",
+      "bytes": 7319,
+      "sha256": "ed5729f9217c5cd1fa6e4c77513c4fa2e730a13b208d6a132e6c1c3815ab9f7b",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/curriculum_transition/PATCH_PROPOSAL.md",
+      "bytes": 3816,
+      "sha256": "e231a9da15647d82f45bb47a2a5658537c145bc1c2b3eafd078973bb42ba302d",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/curriculum_transition/README.md",
+      "bytes": 8648,
+      "sha256": "32b71b8de6ea61ff6b585e1245f26eb3c1ab1ed5493bcdba1afdac14ff3e3c32",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/curriculum_transition/independent_validation.md",
+      "bytes": 6133,
+      "sha256": "b912a8f8f7ebade25c58345048b47678a382b84ff0492570d22e956555f5629c",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/eval_recipe/active-goal-checkpoint.md",
+      "bytes": 2235,
+      "sha256": "0f4d74a00141343a4f104e32c8defd05c4c29a34ff458ae1c67d74115a3dc982",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/eval_recipe/report.md",
+      "bytes": 7917,
+      "sha256": "5ee8beb59d416be2276ed3a6df358a7a6b06f6d5ba7f2acf6e2101f2bc60e9a2",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/eval_recipe/validation.md",
+      "bytes": 6603,
+      "sha256": "d9ab44e5df858bebb98929ec9bb5055c8f065b78bcbaba4ab86a5680de5a6c52",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/export_function/goal-checkpoint.md",
+      "bytes": 2108,
+      "sha256": "a0919c7a7aed8ef560122d75105e3b296d0c93b0652dd6fa1ff708983fc192c0",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/export_function/report.md",
+      "bytes": 7336,
+      "sha256": "82903f4c2f7572e9b83bd29841a8d034c2e28d9507327af0c97c9f8748b5b845",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-parallel20261002-export-function-report-82903f4c.txt"
+      ],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/export_function/validation-report.md",
+      "bytes": 3364,
+      "sha256": "01dad2b946d8007a00a5c16c9caa43036739db6f708c914f1239900145c3a80b",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/lsq_batching/report.md",
+      "bytes": 10375,
+      "sha256": "f473661b90fad9a881c545895f8b810c4aae88499259f8078cbb8e0f8d19494a",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-parallel20261002-lsq-batching-report-f473661b.txt"
+      ],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/lsq_batching/validation_vjp.md",
+      "bytes": 2660,
+      "sha256": "fcdbc13136efe9cd7491e9900eb3572e8405a6d56078e53c02a6142baa54e8bb",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/memory_ledger/report.md",
+      "bytes": 17475,
+      "sha256": "7749dd357d156f30d51c4e104abc8df02455e2cc14992364f3e6c6f92a3842db",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/memory_ledger/validation.md",
+      "bytes": 5721,
+      "sha256": "aebd942ddcec9f8e9d32e19800cb310700b29305a8212e49eba8c0e0b5de8722",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/recurrent_vjp/report.md",
+      "bytes": 6984,
+      "sha256": "07036e93854ca222e557ea9ceaaafd7a1beb21ef7b88d22a767a37f96efb4879",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-parallel20261002-recurrent-vjp-report-07036e93.txt"
+      ],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/refresh_contract/goal-checkpoint.md",
+      "bytes": 2087,
+      "sha256": "19a65b30651580ac0668f4d2cee8ee613154665cbe2d8c7db05c3eaaaa5e3db8",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/refresh_contract/report.md",
+      "bytes": 9223,
+      "sha256": "24421da076d12cc9cae2a7c21613eb3d5ac91b4aa0fa7bb12e1466473bec7d47",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/refresh_contract/validation.md",
+      "bytes": 5303,
+      "sha256": "22aabf7b73ce459094849ccbd24587fa937a5901002b438c6e893b312d9dd106",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/resume_validation/README.md",
+      "bytes": 7826,
+      "sha256": "d5eabdf0d4b7cd285c7bc26f19504918dcb9d55d36fd509bccd58e9fef97ff16",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-parallel20261002-resume-validation-readme-d5eabdf0.txt"
+      ],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/resume_validation/independent_validation.md",
+      "bytes": 3622,
+      "sha256": "e810a29574b183d4e7f5ddc51f4331dd453fea8d5fabb4b91bbd71407f48ebc5",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/sign_inertia/checkpoint.md",
+      "bytes": 1804,
+      "sha256": "e609d0683cdf71db57bf3735f4245cb9e8a1b7f6409ca9a72ed36c76d0ea08c9",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/sign_inertia/report.md",
+      "bytes": 9502,
+      "sha256": "d8132d83da75488554d8be4893c9f99ae79529f7ade13dce83da1a943e081089",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-parallel20261002-sign-inertia-report-d8132d83.txt"
+      ],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/sign_inertia/validation.md",
+      "bytes": 5275,
+      "sha256": "bef47be71f05b6d3b829b41c9d4301c84e188a292316b8ef268d887d30363933",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/step_bookkeeping/report.md",
+      "bytes": 6160,
+      "sha256": "42674677cf3c2558ae5d5edb45ef26f441e36fb3656f97a7fb6ff402fe5aa1c5",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-parallel20261002-step-bookkeeping-report-42674677.txt"
+      ],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/parallel20261002/step_bookkeeping/validation.md",
+      "bytes": 2973,
+      "sha256": "5ac643309eebb409ccddbb9d201c115c81fb80e44f1dac1eda701090408726d1",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/precision-campaign-20261104/checkpoint-retirement-20261105.md",
+      "bytes": 2133,
+      "sha256": "63acb8af553e4e0dfd66b1a98900d64bc85abf08ca8209000490e8fa2525a64d",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/artifact-retirement/result.md"
+    },
+    {
+      "path": "experiments/precision-campaign-20261104/clip-control-report.md",
+      "bytes": 6319,
+      "sha256": "77a98b366be52782e56cdd3a0a696a4c329106bbade42da3812d0c6b0c5bee77",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-precision-campaign-20261104-clip-control-report-77a98b36.txt"
+      ],
+      "topic_result": "results/activation-family-comparison/result.md"
+    },
+    {
+      "path": "experiments/precision-campaign-20261104/report.md",
+      "bytes": 11166,
+      "sha256": "73a0f085a141bc6955b448d60d4438a5182362e22045f781d8355165a384446e",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/activation-family-comparison/result.md"
+    },
+    {
+      "path": "experiments/precision-campaign-20261104/runtime/README.md",
+      "bytes": 1328,
+      "sha256": "8b0c6632ce980b3df824558332f4e33e20b2ed3f2e9d7bfdb321987e6ef39926",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/activation-family-comparison/result.md"
+    },
+    {
+      "path": "experiments/precision-history-20261105/README.md",
+      "bytes": 887,
+      "sha256": "703c0c5912e314fe56502c576cd49a0f8f17fd2e73277db09de604375ec66c02",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/activation-family-comparison/result.md"
+    },
+    {
+      "path": "experiments/precision-history-20261105/full-table.md",
+      "bytes": 30582,
+      "sha256": "2e464587d396feb09d020a4bd47dc5cfb1e6cdd178d7d168643f4f6f23978ae9",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/activation-family-comparison/result.md"
+    },
+    {
+      "path": "experiments/prism-quantization-research-2026-09-25.md",
+      "bytes": 31464,
+      "sha256": "d33f59f9cd0b947fa1b663732b2677c317404857f0c2fad2b23d20635d5e03d4",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/pytorch-int4-int8-cuda-acceptance.md",
+      "bytes": 8931,
+      "sha256": "e7ca8a46f8e5e1ee804f23778920aa512d711a10352170a59155b3336ec77833",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/pytorch-w1a1-cuda-acceptance.md",
+      "bytes": 16487,
+      "sha256": "3e11c43c80e04be344f5b351fcf1c88dd5284aaf6a0041de4bcc209e631706b4",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/pytorch-w1a1-metal-acceptance.md",
+      "bytes": 4830,
+      "sha256": "25a6bf595eeeb0679687e1e9f766e3533226fb9babf8afdf14732b7ea55433a5",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/q4-comparison-metrics-2026-09-27.md",
+      "bytes": 2766,
+      "sha256": "ebeb1c05db4f574232a2c50588590d26eac185c937d74a6115683d0723dad948",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/qat-head-pilot-plan.md",
+      "bytes": 4579,
+      "sha256": "461c4bbce6f6d8b985d999096d7605a6e30ac25243f7d9c2ebf28e7bbbc5160c",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/scale-and-head-recovery/result.md"
+    },
+    {
+      "path": "experiments/qat-head-pilot-results.md",
+      "bytes": 6879,
+      "sha256": "913aa53332d3d36a45e6e8894ef0fc8b9766a5d7d24252615d8b916397073314",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-qat-head-pilot-results-913aa533.txt"
+      ],
+      "topic_result": "results/scale-and-head-recovery/result.md"
+    },
+    {
+      "path": "experiments/qat-optimization-readiness/01-computation.md",
+      "bytes": 7704,
+      "sha256": "b5f6dc6b57de9cdcbd5d86cb8987a01216fc065c84527255f0187871ebb724a5",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/qat-optimization-readiness/02-cache-head.md",
+      "bytes": 9273,
+      "sha256": "8162a34eafcd6f63f36287101a5152f236e2fefbeb8df4d6f7cbcbf5c9ee5dee",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/qat-optimization-readiness/03-recipes.md",
+      "bytes": 15571,
+      "sha256": "01a898d960f7ba74041244634b193eb80de1b72eb3748ada9797498f03600d9a",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/qat-optimization-readiness/04-learned-activations.md",
+      "bytes": 8704,
+      "sha256": "27c76267ddff5e1a2f67460460cb83554b2ea79a81a9887ab9c737a64f704ae4",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/qat-optimization-readiness/05-validation-plan.md",
+      "bytes": 8814,
+      "sha256": "ca99fb1bdf004e00ce4b8199714cdc24b23bab66df0516bede592c1dd9b5cc3f",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/qat-optimization-readiness/06-native-quantizers.md",
+      "bytes": 14951,
+      "sha256": "446a73d66311bcfd5881c2c0178d07558b228b4c685fd9a66381e69faa2928e0",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/qat-optimization-readiness/07-fusion-correction.md",
+      "bytes": 8424,
+      "sha256": "527cd8fb47f21b31e11efc5aa90a4eaa0a38b01303701a7b61800644345935f0",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/qat-optimization-readiness/08-curriculum-runner.md",
+      "bytes": 10859,
+      "sha256": "587a1d4510174daf728d9517acc6197958a778a5db8554de1689968713384c63",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/qat-optimization-readiness/09-independent-review.md",
+      "bytes": 4946,
+      "sha256": "5b4a345068b6441697be5f27f818c16640886aed7555e69a911ac1f6ba8f448e",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/qat-optimization-readiness/10-affine-binary.md",
+      "bytes": 6542,
+      "sha256": "5ad8d819114dd7c1a80594b3f7f8f2f1ddea5112d289de489723fcea580c380b",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/qat-optimization-readiness/11-integration.md",
+      "bytes": 5087,
+      "sha256": "32449d678b4b0cf3933e34b47b0c5f2f31bf05cd28a3473a4c60699263c58697",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/qat-optimization-readiness/12-completion-audit.md",
+      "bytes": 7196,
+      "sha256": "78a68a0ed69d3116951ea2f302e2f95d46fbbc75fb83bedccab62382ab309ebb",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/qat-optimization-readiness/copied-native-2026-10-03.md",
+      "bytes": 1775,
+      "sha256": "d4330c974319fce9f5cf211677064c37a493477a64dce5f5a06fd9cb3288bea0",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/qat-optimization-readiness/first-1000-paired-steps-2026-10-03.md",
+      "bytes": 9304,
+      "sha256": "2b36d2495d1259c82375c6e65ccaebdf63373d9fb5bbf26cdbdbb9654ee15ad0",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/qat-optimization-readiness/full-source-model-2026-10-03.md",
+      "bytes": 1917,
+      "sha256": "89daa695cbdbdcd430567c61937753931cff37b008d1c540a31001838a607ec9",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "experiments/qat-revisit-plan.md",
+      "bytes": 10185,
+      "sha256": "46047e6ae06ab9ea67cff65bacf2b49983370040dc46c429b364fdffdb3f5995",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/quality-cost-screen.md",
+      "bytes": 2567,
+      "sha256": "c85878711541aef493d826014a6424720aa4bdf3e0fd848f72b6e203d59e45ff",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/real-head-parity-5080.md",
+      "bytes": 3131,
+      "sha256": "b2d9c21f46d22cf7bd0cf154b3cff8bcd713d49be71f36bac2371a7745d007fa",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-cpu-attention-oracle.md",
+      "bytes": 2992,
+      "sha256": "b193255793b0aff55d8959d9823371963a1c6a9ff24c40835b49ad119b610b2e",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-cpu-broader-diagnostic.md",
+      "bytes": 12055,
+      "sha256": "31df2536802ed65acded60aa89dd42533a27ca563d2c9bbf2197e28cb92b527c",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-cpu-cache-parity.md",
+      "bytes": 3592,
+      "sha256": "e0b22ab2190a5eb503ed0953579a08de7230b3b86b9a87b4b5b9460898e8d07b",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-cpu-capture-smoke.md",
+      "bytes": 15501,
+      "sha256": "6df9cd99a39325f26f8e4559e034d36b20f08649569275784abc06710e1e31b5",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-cuda-capture-smoke.md",
+      "bytes": 2800,
+      "sha256": "00c061e57f45b435180e73bf250e398da04fda25e06bd17d561ffc30a5270538",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-ffn-native-silu.md",
+      "bytes": 1814,
+      "sha256": "91e5960313ec139481f511851a768ce6a330f695fa938531435d2da9e7710acc",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-ffn-same-input.md",
+      "bytes": 2799,
+      "sha256": "763e1ba083bf8bbb157ab71e4baec44c65ff088df06d44c557776b5914058859",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-ffn-stage-parity.md",
+      "bytes": 2437,
+      "sha256": "2928e04c89cb0a6bc2b9329b6239ec0427fbb91d19c3a9ac7809512be73d0f23",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-full-capture-5080.md",
+      "bytes": 5170,
+      "sha256": "81e2e0592a076c6dea21b930e72e4d41cfd5c9aa515a12c050ff816a3d5f8178",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-integrated-cpu-diagnostic.md",
+      "bytes": 3004,
+      "sha256": "5db00866f40f4928e06449259e65f9c0af8d522b75abdd68214aab1ffd77bfe1",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-recurrent-binary-integrated-cpu-diagnostic-5db00866.txt"
+      ],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-native-attention-student.md",
+      "bytes": 5262,
+      "sha256": "8f1be4f0e271dcb96b7812d89db1e4ae3c50e18b778ef44e832d852e728d6781",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-postacceptance-cpu.md",
+      "bytes": 2963,
+      "sha256": "f2027fc087ddce157e815c54ec396328aacaebe7a4c499613de20291d50dfb76",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-prose-multidepth-cpu.md",
+      "bytes": 2880,
+      "sha256": "1d131699452cd7c3c7f0c8f1cf4ecbbdf2642feb2c75f00a45e4ae880ddf1c80",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-qat-plan.md",
+      "bytes": 21222,
+      "sha256": "58e42059d415521dd200676bae16cf686e0ffea8ada63d44b4557d8340d65a7f",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-real-later-gradient.md",
+      "bytes": 2458,
+      "sha256": "8af23ed719dafdc854ea2eab99d6b4f37cce01172336ccc666f826b1bd46d1a8",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-reasoning-cache-boundary.md",
+      "bytes": 3365,
+      "sha256": "244074399cb20ddd58b242be41fa3135c8c15a9a8f3c225bcc7034d866d4c05d",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-reasoning-middle-cpu.md",
+      "bytes": 1936,
+      "sha256": "1d9fae2043fe2cd9e6b0a2a4e107af94161424eaf100df30ce833db5853560fd",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-reasoning-multidepth-cpu.md",
+      "bytes": 3027,
+      "sha256": "7d9c947cfac2dfce889d6c68d85d6bd5dc3b8a1690d0d18d4165129eb76192c1",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-reasoning-rope-oracle.md",
+      "bytes": 2309,
+      "sha256": "baae77dc5fee90bc5e44f34ddc7f9ba66879e2ce56277ad03e2dfbfd53f46569",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-reasoning-seed-intervention.md",
+      "bytes": 2971,
+      "sha256": "8695d54b1ed485e5c13f2dbbe48b78c02d76dc9fd50bf8927d50d0128d147627",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-silu-arithmetic.md",
+      "bytes": 2648,
+      "sha256": "f0f37da2937f5cdf9ea35b6471fa3b60af5a52c885ad35612c52d31470218bd2",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-binary-target-feature-parity.md",
+      "bytes": 19119,
+      "sha256": "6505eca617799c1e96b30473ca3aa074a98d6a4b73f88b81061e273559a0b5cf",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-recurrent-binary-target-feature-parity-6505eca6.txt"
+      ],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-target-attention-intervention.md",
+      "bytes": 3095,
+      "sha256": "9ba7651344c29d581d63d86e741f9dfc6fdd396ecab8cd53d4c1a9af4242b133",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-target-attention-stage-split.md",
+      "bytes": 3160,
+      "sha256": "f90589bbc282c16ca1cf11f156b8f6a1335535a589fca836381e10f15ebf33d9",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-target-attn-output-safe.md",
+      "bytes": 1759,
+      "sha256": "fe9ee0d6744eefba2c14d6abbf1807a71958b0ca3027e59c787784a5b8dc77e0",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-target-block0-safe-taps-5080.md",
+      "bytes": 4331,
+      "sha256": "319a27bf0425f2db665e42de00c41145e9127264a3d95f6a41f6040bcec35664",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-target-block14-safe-stages.md",
+      "bytes": 1625,
+      "sha256": "daeeee4dcd4fd975da72b32ba1a9620a3cf720c24cc52d0fb0a079e7bf6ceb92",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-target-block14-stage-intervention.md",
+      "bytes": 2587,
+      "sha256": "b3c889813c850e1e4099b1aca2f3892b0229ff61ba9eb37edc8a2dc27085b468",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-recurrent-target-block14-stage-intervention-b3c88981.txt"
+      ],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-target-flash-attention-cuda.md",
+      "bytes": 2437,
+      "sha256": "04cb99bac9e131028a85bdc9454287c7ed945210a31ff24867934fa8b9dc4c24",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-target-k-cuda-projection.md",
+      "bytes": 3249,
+      "sha256": "70a8a3a971ed247767bbb8ab7d987d0403fda5ab9ca1a30173a9999ceee73b0a",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-target-k-rope-safe.md",
+      "bytes": 1856,
+      "sha256": "24d6cfa492e841e4efeeedd53ff1a69056325f09a5d2449ef0c309be0d36ce7d",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-target-q-deferred-cuda.md",
+      "bytes": 3122,
+      "sha256": "21818c59db2567461081c06b82bc17a8aa07e2534acdc41019d56f1fb6484111",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-target-q-torch-control.md",
+      "bytes": 2910,
+      "sha256": "bef8c57aedba54844d1007ba6bd088d9ef2a7fbf80276a3744a4292857de5fe7",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/recurrent-target-v-cuda-projection.md",
+      "bytes": 2512,
+      "sha256": "9c7d258ea82f2e2da1ee53cc07d2d4a358256156877f5e5f00f01344f2c2ebec",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/native-parity-diagnostics/result.md"
+    },
+    {
+      "path": "experiments/related-work-note.md",
+      "bytes": 3507,
+      "sha256": "65a2d0f1dee8e89736b0d2311cbb8614efc1b61f9a44d3ee98f0194aa8cc8684",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/research-cross-reference-2026-09-25.md",
+      "bytes": 20724,
+      "sha256": "7c12271644709d25039385a31f96ffff18c737dee43296d5e08f3b1afb72a9eb",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-research-cross-reference-2026-09-25-7c122716.txt"
+      ],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/research-review-2026-09-25.md",
+      "bytes": 11465,
+      "sha256": "ee31633f132f5ceef2cd857f8ae35703b0d57669ea83dff546010a01d277b583",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/research-review-2026-09-25/01-qat.md",
+      "bytes": 25613,
+      "sha256": "faefe130f39b51572b20e58e9e3335ebf9aa94b75c9029f2889be6fdcb75b29a",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/research-review-2026-09-25/02-architectures.md",
+      "bytes": 27743,
+      "sha256": "fa079a132a0e18d390aa960f27c9e93de7b2a5635300a4a02abd3648a3660eab",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/research-review-2026-09-25/03-throughput.md",
+      "bytes": 26652,
+      "sha256": "741b14dde346f0b011e67fa5a6d09f63d4fd64efedfc398d8189c82b920b7abd",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/research-review-2026-09-25/04-pipeline.md",
+      "bytes": 25041,
+      "sha256": "423b4b3ab45de09c2b7a8f5836d84415fe303e7dfd00a07a9cf4e95ea09d9403",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/research-review-2026-09-25/05-precision.md",
+      "bytes": 27754,
+      "sha256": "1514dd352cdc165c483deddd28cb27ef7dba456fe56ec68976bab6cdc3498efd",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/research-review-2026-09-25/06-data.md",
+      "bytes": 19305,
+      "sha256": "e0da518320d706c4cb262154b44bbbe3bd42a381ed2cc7517597a8f43c24e350",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/research-review-2026-09-25/07-evaluation.md",
+      "bytes": 26454,
+      "sha256": "a5f2842eb7cdf089f4199e880f41aeb35a703b3a0c4c1de5f489c497bf51e06a",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/rtx2080ti-goal-checkpoints.md",
+      "bytes": 44253,
+      "sha256": "9fe68b1ca0e62ec7cfde8262347478c0903251d6f9e123aedcad2c87bb2d8c45",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/turing-quantization/result.md"
+    },
+    {
+      "path": "experiments/rtx2080ti-int4-int8-path.md",
+      "bytes": 10338,
+      "sha256": "d12e925282693ea4c915e2cdec6243fd310c812fa2b633ee763252dd1fa4c489",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/turing-quantization/result.md"
+    },
+    {
+      "path": "experiments/rtx2080ti-quantization-suite.md",
+      "bytes": 73933,
+      "sha256": "4c56c3bcd9e6fe47bff375563f56406811820f7f100e705a5c79a2caf51314b0",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-rtx2080ti-quantization-suite-4c56c3bc.txt"
+      ],
+      "topic_result": "results/turing-quantization/result.md"
+    },
+    {
+      "path": "experiments/rtx2080ti-synthesis.md",
+      "bytes": 7717,
+      "sha256": "4cae21cb1f00e4648ec2f19177912d437c4e1b81fa2704f049ed1d9ea2709eff",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-rtx2080ti-synthesis-4cae21cb.txt"
+      ],
+      "topic_result": "results/turing-quantization/result.md"
+    },
+    {
+      "path": "experiments/sm75-binary-mma-plan.md",
+      "bytes": 5617,
+      "sha256": "b88e649d65702413976a87a6e41970e9d78d059dbfd0e223b1039e236eabed10",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/storage-cleanup-20261106/report.md",
+      "bytes": 2676,
+      "sha256": "0a2b5afef8703e76c2a7f0402111c0ce64f29ae339f1ddbeab98087211603c79",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-storage-cleanup-20261106-report-0a2b5afe.txt",
+        "results/sources/experiments-storage-cleanup-20261106-report-0a2b5afe.txt"
+      ],
+      "topic_result": "results/artifact-retirement/result.md"
+    },
+    {
+      "path": "experiments/storage-cleanup-20261110/report.md",
+      "bytes": 5375,
+      "sha256": "fc4853c79510396e05353659cb693ba3eb7e5700fe6b6037d76cf278b4683bfe",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-storage-cleanup-20261110-report-fc4853c7.txt"
+      ],
+      "topic_result": "results/artifact-retirement/result.md"
+    },
+    {
+      "path": "experiments/training-audit-2026-10-01/01-qat-kernels.md",
+      "bytes": 18451,
+      "sha256": "15a4820bb2d95ba5e25ab873a4a058852c2f2129d088b29e27a0a5f9ecc62bc6",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/training-audit-2026-10-01/02-batching-cache.md",
+      "bytes": 19518,
+      "sha256": "e3e399017e74207ac4d9d9fccf9d89cdd303fccd1f3c2eb5d41d7e310c75985a",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/training-audit-2026-10-01/03-binary-optimization.md",
+      "bytes": 17137,
+      "sha256": "44c627be14c6aaf897105274f20f59f88f87c21f81bdc13e97810f1a79d21a92",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-training-audit-2026-10-01-03-binary-optimization-44c627be.txt"
+      ],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/training-audit-2026-10-01/04-learned-quantizers.md",
+      "bytes": 18238,
+      "sha256": "63b1258c3a9f7c4434a2404dbb634faff56c0b73f2f5336365837eb4b546eaab",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/training-audit-2026-10-01/05-curricula.md",
+      "bytes": 14308,
+      "sha256": "1f0fa1b54134d99e00602d3b51a7a9d90d6b0ca89835aa14abf1f23a1509b564",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/training-optimization-audit-2026-10-01.md",
+      "bytes": 11224,
+      "sha256": "1ded13efa715a8440cede61ecaad9791ce5fdcc1d95301b3dbebbf59a1bab555",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-training-optimization-audit-2026-10-01-1ded13ef.txt"
+      ],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/upstream-cuda-consistency-2026-11-01/report.md",
+      "bytes": 19105,
+      "sha256": "5439def063c670f982bb4a961c2d926a6c8d235d09b8794200b333a0efdfcd3c",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-upstream-cuda-consistency-2026-11-01-report-5439def0.txt"
+      ],
+      "topic_result": "results/verifier-and-runtime-controls/result.md"
+    },
+    {
+      "path": "experiments/w1-phase1b-completion-audit.md",
+      "bytes": 5617,
+      "sha256": "ed07a9b5b6dc98f43203c1b4fdee1b9a84c5bebfb4b5796093a4545ca6a85d28",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/w1a-data-preparation.md",
+      "bytes": 6873,
+      "sha256": "ae50564f02ac6605f32251f1ba3f21e80abb6702be21af111957873cd968b10d",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/w1a-public-source-freeze.md",
+      "bytes": 6986,
+      "sha256": "e8307ebd5e9cd6de7efe0f01ef66690f95c79a5954487b5cc782363a1ceb3ade",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/w1a8-generalization-20261102/report.md",
+      "bytes": 26328,
+      "sha256": "8d67e370058a1276cb6ef5010f6ee9ad89fb56b50da6310dd09854f7fa801aca",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/data-and-objective-controls/result.md"
+    },
+    {
+      "path": "experiments/w1a8-modern-native-20261103/progress.md",
+      "bytes": 66857,
+      "sha256": "cc48f052c1b3b5ce3829c5fb9145ee859ca1216c96641cacebad08d8aed5783b",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/w1a8-modern-native-20261103/report.md",
+      "bytes": 16360,
+      "sha256": "2e56c4930cb523ea9f4c59235e54f9f8ec117661a11664dac2f2a17826cdb713",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/w1a8-standing-20261102/report.md",
+      "bytes": 12833,
+      "sha256": "0008826a430dbaa4072ecfa2624fc72daaf217f6019a25657484d085a17530fc",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/w1ax-activation-precision-plan.md",
+      "bytes": 10887,
+      "sha256": "2b36b864dd698ed94e9889fbaebc69d5389f87830db3e8e843cc6a248b40785d",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/turing-activation-policy/result.md"
+    },
+    {
+      "path": "experiments/w1ax-activation-precision-results.md",
+      "bytes": 38876,
+      "sha256": "4c7c5fb7a1586153c3afb26b929d789e8f396d27192ce9ef5d990865cb9a1578",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-w1ax-activation-precision-results-4c7c5fb7.txt"
+      ],
+      "topic_result": "results/turing-activation-policy/result.md"
+    },
+    {
+      "path": "experiments/w1ax-checkpoint-zero-native-5080.md",
+      "bytes": 4423,
+      "sha256": "10c17fe94b5e63ff4561164ee2730185c22047e18b71ace4e0022c6ba73d82fc",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/w1ax-phase1b-pilot-gate.md",
+      "bytes": 6865,
+      "sha256": "030a7e9575b1c2c3a31531513697eb6dad6e2946cc2b669067ed0646f8fdd944",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/w1ax-policy-grid-results.md",
+      "bytes": 17338,
+      "sha256": "440709aab1853c0b2da5f8b67ee9afd5b2e95cf1f207406bd067e6c583db6976",
+      "disposition": "supporting report copied locally",
+      "local": [
+        "results/sources/experiments-w1ax-policy-grid-results-440709aa.txt"
+      ],
+      "topic_result": "results/turing-activation-policy/result.md"
+    },
+    {
+      "path": "experiments/w1ax-row-a16-calibration-5080.md",
+      "bytes": 6532,
+      "sha256": "3249df1fcf5cd3c972f8d143759a512378af9ab64c1830e9d9d2abf1f4cff8f7",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/w1ax-shard0000-capture-5080.md",
+      "bytes": 6630,
+      "sha256": "f17ef7c961beb77636b5aa3eeb0fb1ea0c37b8d7be30463981bb7aa863cdb522",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/w1ax-sharded-capture-plan.md",
+      "bytes": 10119,
+      "sha256": "d56cf89844456f8ff3c11d85086e1d9021933c559da5823d22683fecbb098439",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/w1ax-trajectory-refresh-protocol.md",
+      "bytes": 16108,
+      "sha256": "20ea0dcc6dbef2961a327c6f2d600c566a55a0c3a0e37472fa19b667fabe1f4c",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/research-hypotheses/result.md"
+    },
+    {
+      "path": "experiments/w4a4-cpu-loader-gate.md",
+      "bytes": 4419,
+      "sha256": "2b8bfb7348d5df6d971c13ea4864a112e6a489db856afcf34f01679af870a129",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/turing-quantization/result.md"
+    },
+    {
+      "path": "experiments/w4a4-cuda-source-gate.md",
+      "bytes": 4970,
+      "sha256": "fb3763c56f181e5c6581a423ee204653b48408201e9415223a05429bc64ae2aa",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/turing-quantization/result.md"
+    },
+    {
+      "path": "experiments/w4a4-export-cpu-gate.md",
+      "bytes": 5194,
+      "sha256": "4dc6bcc7a7f767348c01e1eac05661d4212c338ea9aee1b2b693b4258d72bdde",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/turing-quantization/result.md"
+    },
+    {
+      "path": "experiments/w4a4-sm75-mma-production-source.md",
+      "bytes": 3215,
+      "sha256": "e513b03e12167437f1ac87d0f2be9642e01f0fb87ffc857c2fe4b611a0024c66",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/turing-quantization/result.md"
+    },
+    {
+      "path": "experiments/w8a8-cpu-loader-gate.md",
+      "bytes": 3703,
+      "sha256": "bef6a1d0b78a5a960386a8314b3bddce908e6dba83d186eb601cb9db23ed2f54",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/turing-quantization/result.md"
+    },
+    {
+      "path": "experiments/w8a8-cuda-source-gate.md",
+      "bytes": 3308,
+      "sha256": "7dbc95608d0884e57138a5262117f8395bdd90af22901c9f35767fe071cfbbd0",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/turing-quantization/result.md"
+    },
+    {
+      "path": "experiments/w8a8-export-cpu-gate.md",
+      "bytes": 4468,
+      "sha256": "f4eda027cf99ee0388e08d5e50ed2d34589b4fe14d13e442d9c83c2e46ed3220",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/turing-quantization/result.md"
+    },
+    {
+      "path": "experiments/w8a8-w4a4-cuda-integration.md",
+      "bytes": 2509,
+      "sha256": "e59cb625a6589a258177e4ce84a21e4778bd84ef5ff996b6293066dbd6711ea9",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/turing-quantization/result.md"
+    },
+    {
+      "path": "kernels/README.md",
+      "bytes": 7862,
+      "sha256": "1408b2620a49b8fb9ff008bca01bbb45a23c6007c326baf80099f930877204de",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "kernels/w1ax-replay/README.md",
+      "bytes": 11515,
+      "sha256": "0593bc03d5b0c61e16504819ce9690faeeea657452532a4c0f6e6017d949f44d",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "models/README.md",
+      "bytes": 321,
+      "sha256": "89d6725be4b54a53f352f9b31fcdec621da75f4e5ead9866bef6648ca5cabd36",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "research/parallel20261002/activation_reuse/reference/checkpoint.md",
+      "bytes": 2311,
+      "sha256": "10e339d5329fe3f2d163598605199878cb350f64cd1c6a51b02a4cc239a6c913",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "research/parallel20261002/auxiliary_vjp/reference/checkpoint.md",
+      "bytes": 1915,
+      "sha256": "6d57f7c570e0068370dadf5f2384c6defe3e47a0fe8d3edec43783e23c68c05c",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "research/parallel20261002/auxiliary_vjp/validation/independent-vjp.md",
+      "bytes": 4244,
+      "sha256": "95f71ebc16e5c1ec8f0028e1456af736e835bce344aa085fed3cabd435fb2604",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "research/parallel20261002/curriculum_transition/CHECKPOINT.md",
+      "bytes": 2422,
+      "sha256": "a84a18b427dc8ec64ecf9432886d3efbd45bb1db6393a423a5fedd13ef891738",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "research/parallel20261002/lsq_batching/reference/README.md",
+      "bytes": 1363,
+      "sha256": "5876726afb9a32cac610208354dd18c26f7bcba2b3ee9fa9ec9e6c90fa143087",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "research/parallel20261002/recurrent_vjp/validation/independent-vjp.md",
+      "bytes": 6681,
+      "sha256": "5dc19671c0aee1d69c4e1a4d8c6bacf650136d344dd30e4fa8931c15b4a01dce",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "research/parallel20261002/resume_validation/CHECKPOINT.md",
+      "bytes": 2319,
+      "sha256": "4a17f46c2fb642fb963f09f926317e7d670ddbeae20641bcddb2e1c49ecd7c22",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "research/parallel20261002/step_bookkeeping/reference/checkpoint.md",
+      "bytes": 3547,
+      "sha256": "04de860cca8f4c4a5e1fdb4fee4cde1e5f711a9e62fe8307356c7b23159009be",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": "results/cpu-training-contracts/result.md"
+    },
+    {
+      "path": "results/README.md",
+      "bytes": 677,
+      "sha256": "c5206ea522d0d706c327c70f31dec1532b77d7c8c647a80251e4ee03ed040a2a",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "runs/w1a8-algorithms-20261020/acceptance-loop2-frozen-result-astra11.md",
+      "bytes": 17316,
+      "sha256": "ba388e96d4e7230a8d23906a73ba2addc0554951e4c8f75710d8f45279dae5ab",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "runs/w1a8-modern-actual-training-data-20261103-01/bridge-alias-audit.md",
+      "bytes": 6493,
+      "sha256": "ecfa821e57372a4cbf824c6244a59e931245c36ab8293bf8bd5f4015e0ff90ee",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "runs/w1a8-modern-actual-training-data-20261103-01/confirmation-plan.md",
+      "bytes": 16022,
+      "sha256": "bc33bee4548567e5bdb0dde0364a7c3e7576e19ec3c62a17825553c17d0d78b7",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "runs/w1a8-modern-actual-training-data-20261103-01/serving-cost-source-audit.md",
+      "bytes": 11300,
+      "sha256": "65bc0598ca9d6e8237816f2ba35bf11c9eb7137a2f2037290b066e105d80f2a1",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "runs/w1a8-modern-actual-training-data-20261103-01/serving-cost-source-audit02.md",
+      "bytes": 12112,
+      "sha256": "5d709b369659e077cf109439195616a3c7dfb42039edd2b6d7c77301bd782d82",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "runs/w1a8-modern-actual-training-data-20261103-01/trainer-review.md",
+      "bytes": 5489,
+      "sha256": "c0204778f119fcb6a915897459687e9fe28b974529d711df35d2ccbfd043f1be",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "runs/w1a8-modern-admission-20261103-01/actor-loader-plan.md",
+      "bytes": 11587,
+      "sha256": "abe55fdc905e50b0368ba1819d8ba65298c07903baebccbce3c8532d286dfe78",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "runs/w1a8-modern-cadence-20261103-02/packed-port-plan.md",
+      "bytes": 11470,
+      "sha256": "6545937ceb7cdca8193e36364645b4cd2ed66680299dd7b440ff666556326159",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "runs/w1a8-modern-generalization-data-20261103-01/report.md",
+      "bytes": 4386,
+      "sha256": "86d1c7392f3ab6834443b5079953475360018ae176f2142e8c09df6565406e69",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "runs/w1a8-modern-generalization-data-20261103-01/report02.md",
+      "bytes": 1767,
+      "sha256": "d4144f6cf66a09a1606435cc1e1f97e50b1793c4c9794d8ca838da3ebcdf32da",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "runs/w1a8-modern-native-replay-20261103-01/cache-dedup-inventory.md",
+      "bytes": 4221,
+      "sha256": "fef5af3e175ae6d631826d1d2fdf3cb4fb6e6bcf2f42def71e7e30ccef3da72e",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "runs/w1a8-modern-native-replay-20261103-01/generalization-data-plan.md",
+      "bytes": 9028,
+      "sha256": "a4f88c831e696053c56fee82f4ac6fbbafbd5ba5941e8737cfffa64e326767ac",
+      "disposition": "historical state/plan retained in archive only; no current work authority",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "runs/w1a8-modern-native-replay-20261103-01/source-protocol-audit.md",
+      "bytes": 10608,
+      "sha256": "21dbed2ca145a9c1015fd35351b69ef4a0a85d163f122445e67f7b8ebf291ff7",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "runs/w1a8-modern-protected-20261103-01/selected-sign-source-advice.md",
+      "bytes": 1097,
+      "sha256": "e9d93a0823673494a2cc74df4f3a458f92f9318c58ce766f76f606fd42f8142f",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "scripts/binary_methods/README.md",
+      "bytes": 2481,
+      "sha256": "abd51e5244d9a32f2e558bf1632c41f60bd7dc5426cfc4cba954ae5e914b661a",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "scripts/binary_pipeline_profile/README.md",
+      "bytes": 1069,
+      "sha256": "4169c5716cb26b8221e35a17dca0262b223d04a0e75dbf4410395b36920c6119",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "scripts/binary_screen/README.md",
+      "bytes": 2052,
+      "sha256": "d024e2a45af71e63a7bc8fe21fb55aa6d6321b5fdb2a15a56e7f7ab42353328f",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "scripts/contender_pipeline/README.md",
+      "bytes": 11941,
+      "sha256": "328935a65fe0f06b07e0aba71fc83a76c1cb8ff6b2f030ebcea31a85f327e7c2",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "scripts/data_cost_transfer/README.md",
+      "bytes": 5612,
+      "sha256": "a0ee5ffc5ac6c2b5e8f7b2c5f84341b7e870ab53ea0d6de0de81a8dce9eda9eb",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "scripts/dspark_catchup/README.md",
+      "bytes": 1174,
+      "sha256": "729cf03df08ee87f2abf04fe6326c8d1b7db96f707a49f1adbc6b264fbc5b182",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "scripts/dspark_screen/README.md",
+      "bytes": 16011,
+      "sha256": "63c1deb2516b3b108b491c53226d83448c51ab66fb48dc7e3eb811446e528572",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "scripts/dspark_w1a8_compare/README.md",
+      "bytes": 1550,
+      "sha256": "f538e1d16255e1c3e281af677b9f8f724016eb05ec0440e893d12b72494a880a",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "src/w1a1_eagle/README.md",
+      "bytes": 8274,
+      "sha256": "a50d37a9e062a3c699b46fa7454da1fce8c4179ac3f530ae4f0ddeda0f0d74cd",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    },
+    {
+      "path": "third_party/README.md",
+      "bytes": 1233,
+      "sha256": "b425c414e7d70f1a649ed282073560d1c133800839019343a4ca05db48bc575b",
+      "disposition": "retained in verified archive; historical implementation/proposal context, not current instructions",
+      "local": [],
+      "topic_result": null
+    }
+  ]
+}

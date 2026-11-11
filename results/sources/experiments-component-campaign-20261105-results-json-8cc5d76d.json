@@ -1,0 +1,9 @@
+{
+  "kind": "archived-source-reference",
+  "repository_bundle": "/home/philip/binary-eagle-evidence/legacy-20261110/repository.bundle",
+  "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+  "path": "experiments/component-campaign-20261105/results.json",
+  "sha256": "8cc5d76d909fa21c89cc0a8c2fa13e8d6d4c10f42f8afcbe691497627a025fc6",
+  "bytes": 110596,
+  "retrieval": "git --git-dir /home/philip/binary-eagle-evidence/legacy-20261110/recovered.git show 7cbc9f1833841c7f394789a209b23b1ad5a77af2:experiments/component-campaign-20261105/results.json"
+}

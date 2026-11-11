@@ -23,10 +23,10 @@ Retain this scoped finding for future decisions. No new experimental or deployme
 
 ## Evidence and reproduction
 
-[scripts/capture_nine_model_train_data.py](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/scripts/capture_nine_model_train_data.py) [tests/test_dspark_full_pool_capture.py](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/tests/test_dspark_full_pool_capture.py)
+[scripts/capture_nine_model_train_data.py](../sources/scripts-capture-nine-model-train-data-py-7355cc2a.json) [tests/test_dspark_full_pool_capture.py](../sources/tests-test-dspark-full-pool-capture-py-ebeff6ad.json)
 
 Imported from the linked records; no experiment was rerun for this documentation
 migration. Complete executed-source, dependency and artifact availability have not
-been reverified. Missing reproduction details must be recovered before artifact
-retirement; report revisions alone are not execution provenance. No original source,
+been reverified. [Evidence access](../../docs/evidence.md) describes archive recovery and remaining
+raw-input limits; report revisions alone are not execution provenance. No original source,
 checkpoint or capture was deleted.

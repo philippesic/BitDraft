@@ -58,7 +58,8 @@ syntax fails closed. Patches are checked hunk by hunk against their pinned base.
 - A new test, source file or document needs no checker edit.
 - Add a test to `policy/cpu-tests.toml` only when its removal must fail the gate.
 - A new public command must be declared in `policy/commands.toml`.
-- A new evidence link to the predecessor repository must use a full commit revision and
+- Prefer local archived evidence (see [evidence access](evidence.md)). An original-repository
+  provenance link must use a full commit revision and
   be registered in `policy/evidence.toml`.
 
 ## Configuration and evidence

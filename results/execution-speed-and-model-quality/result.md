@@ -17,10 +17,10 @@ Retain this scoped finding for future decisions. No new experimental or deployme
 
 ## Evidence and reproduction
 
-[experiments/execution-campaign-20261105/report.md](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/execution-campaign-20261105/report.md) [experiments/execution-campaign-20261105/ledger.json](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/execution-campaign-20261105/ledger.json) [experiments/execution-campaign-20261105/historical-latency-context.md](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/execution-campaign-20261105/historical-latency-context.md)
+[experiments/execution-campaign-20261105/report.md](../sources/experiments-execution-campaign-20261105-report-b4d86eca.txt) [experiments/execution-campaign-20261105/ledger.json](../sources/experiments-execution-campaign-20261105-ledger-json-717c76e6.json) [experiments/execution-campaign-20261105/historical-latency-context.md](../sources/experiments-execution-campaign-20261105-historical-latency-context-e0f1a6bf.txt)
 
 Imported from the linked records; no experiment was rerun for this documentation
 migration. Complete executed-source, dependency and artifact availability have not
-been reverified. Missing reproduction details must be recovered before artifact
-retirement; report revisions alone are not execution provenance. No original source,
+been reverified. [Evidence access](../../docs/evidence.md) describes archive recovery and remaining
+raw-input limits; report revisions alone are not execution provenance. No original source,
 checkpoint or capture was deleted.

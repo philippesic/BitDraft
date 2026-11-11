@@ -17,10 +17,10 @@ Retain this scoped finding for future decisions. No new experimental or deployme
 
 ## Evidence and reproduction
 
-[experiments/binary-methods-20261104/README.md](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/binary-methods-20261104/README.md) [experiments/binary-methods-20261104/analysis.json](https://github.com/philippesic/binary-eagle-decoding/blob/7cbc9f1833841c7f394789a209b23b1ad5a77af2/experiments/binary-methods-20261104/analysis.json)
+[experiments/binary-methods-20261104/README.md](../sources/experiments-binary-methods-20261104-readme-c03c241f.txt) [experiments/binary-methods-20261104/analysis.json](../sources/experiments-binary-methods-20261104-analysis-json-dd9413a4.json)
 
 Imported from the linked records; no experiment was rerun for this documentation
 migration. Complete executed-source, dependency and artifact availability have not
-been reverified. Missing reproduction details must be recovered before artifact
-retirement; report revisions alone are not execution provenance. No original source,
+been reverified. [Evidence access](../../docs/evidence.md) describes archive recovery and remaining
+raw-input limits; report revisions alone are not execution provenance. No original source,
 checkpoint or capture was deleted.

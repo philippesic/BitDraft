@@ -21,10 +21,10 @@ Retain this scoped finding for future decisions. No new experimental or deployme
 
 ## Evidence and reproduction
 
-[precision summary](https://github.com/philippesic/binary-eagle-decoding/blob/7d9ab32066584edbb715ddbce38d0386b2efb0d6/experiments/precision-campaign-20261104/summary.json).
+[precision summary](../sources/experiments-precision-campaign-20261104-summary-fdd8bec5.json).
 
 Imported from the linked records; no experiment was rerun for this documentation
 migration. Complete executed-source, dependency and artifact availability have not
-been reverified. Missing reproduction details must be recovered before artifact
-retirement; report revisions alone are not execution provenance. No original source,
+been reverified. [Evidence access](../../docs/evidence.md) describes archive recovery and remaining
+raw-input limits; report revisions alone are not execution provenance. No original source,
 checkpoint or capture was deleted.

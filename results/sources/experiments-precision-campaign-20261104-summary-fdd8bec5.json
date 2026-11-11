@@ -1,0 +1,319 @@
+{
+  "status": "FULL_INITIAL_COMPARISON_COMPLETE",
+  "scope": "Modern4B Q4_K_M / RTX5080 only",
+  "incumbent": "DFlash Q4_K_M",
+  "formal_responses": 8980,
+  "points": 240,
+  "publication": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/campaign-completion.json",
+  "artifacts": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/charts-initial",
+  "heldout": [
+    {
+      "arm": "target",
+      "cohort": "heldout24",
+      "scope": "confirmation",
+      "family": "external",
+      "quantizer_mode": "native baseline",
+      "execution": "Native external model",
+      "accepted": 0,
+      "proposed": 0,
+      "acceptance": null,
+      "prefix_survival": [],
+      "emitted_per_round": null,
+      "request_tps": 174.69231799485507,
+      "decode_tps": 189.64618864980213,
+      "request_vs_q4": 0.7219266278039198,
+      "request_vs_q4_bootstrap95": [
+        0.6856486567488449,
+        0.762196579842591
+      ],
+      "full_draft_ms": null,
+      "model_bytes": 0,
+      "combined_deployment_bytes": 2834975040,
+      "total_peak_device_MiB": 4635,
+      "incremental_peak_device_MiB_vs_target": 0,
+      "incremental_cuda_model_buffers_MiB_vs_target": 0.0,
+      "training_updates": null
+    },
+    {
+      "arm": "q4",
+      "cohort": "heldout24",
+      "scope": "confirmation",
+      "family": "external",
+      "quantizer_mode": "native baseline",
+      "execution": "Native external model",
+      "accepted": 17105,
+      "proposed": 23300,
+      "acceptance": 0.7341201716738197,
+      "prefix_survival": [
+        0.8179871520342612,
+        0.6471092077087794
+      ],
+      "emitted_per_round": 2.4779443254817988,
+      "request_tps": 241.98071004288084,
+      "decode_tps": 281.9713942798306,
+      "request_vs_q4": 1.0,
+      "request_vs_q4_bootstrap95": [
+        1.0,
+        1.0
+      ],
+      "full_draft_ms": 2.1581665635117773,
+      "model_bytes": 381456064,
+      "combined_deployment_bytes": 3216431104,
+      "total_peak_device_MiB": 6209,
+      "incremental_peak_device_MiB_vs_target": 1574,
+      "incremental_cuda_model_buffers_MiB_vs_target": 353.3499999999999,
+      "training_updates": null
+    },
+    {
+      "arm": "G8D8-learned-clip-2048",
+      "cohort": "heldout24",
+      "scope": "confirmation",
+      "family": "G8/D8",
+      "quantizer_mode": "learned",
+      "execution": "Native INT8-code DP4A / packed W1 FFN",
+      "accepted": 10845,
+      "proposed": 35760,
+      "acceptance": 0.30327181208053694,
+      "prefix_survival": [
+        0.4276940256839754,
+        0.17783361250697935
+      ],
+      "emitted_per_round": 1.6152987158012284,
+      "request_tps": 156.23785718150577,
+      "decode_tps": 172.43604308121118,
+      "request_vs_q4": 0.6456624462082916,
+      "request_vs_q4_bootstrap95": [
+        0.6291308877408188,
+        0.6621466038572664
+      ],
+      "full_draft_ms": 2.876267336125071,
+      "model_bytes": 484906720,
+      "combined_deployment_bytes": 3319881760,
+      "total_peak_device_MiB": 6415,
+      "incremental_peak_device_MiB_vs_target": 1780,
+      "incremental_cuda_model_buffers_MiB_vs_target": 452.0,
+      "training_updates": 2048
+    },
+    {
+      "arm": "G4D8-learned-small-2048",
+      "cohort": "heldout24",
+      "scope": "confirmation",
+      "family": "G4/D8",
+      "quantizer_mode": "learned",
+      "execution": "Native INT8-code DP4A / packed W1 FFN",
+      "accepted": 10765,
+      "proposed": 35935,
+      "acceptance": 0.29956866564630585,
+      "prefix_survival": [
+        0.4196775986659255,
+        0.17871039466370206
+      ],
+      "emitted_per_round": 1.6081156197887716,
+      "request_tps": 163.13310533170508,
+      "decode_tps": 180.54250320002689,
+      "request_vs_q4": 0.6741574785146991,
+      "request_vs_q4_bootstrap95": [
+        0.6566737814397858,
+        0.6914814164963194
+      ],
+      "full_draft_ms": 2.4054728347971097,
+      "model_bytes": 183441120,
+      "combined_deployment_bytes": 3018416160,
+      "total_peak_device_MiB": 6031,
+      "incremental_peak_device_MiB_vs_target": 1396,
+      "incremental_cuda_model_buffers_MiB_vs_target": 164.5,
+      "training_updates": 2048
+    },
+    {
+      "arm": "G2D8-2048",
+      "cohort": "heldout24",
+      "scope": "confirmation",
+      "family": "G2/D8",
+      "quantizer_mode": "dynamic",
+      "execution": "Native INT8-code DP4A / packed W1 FFN",
+      "accepted": 3670,
+      "proposed": 50020,
+      "acceptance": 0.07337065173930428,
+      "prefix_survival": [
+        0.1363545617887802,
+        0.010181672988620483
+      ],
+      "emitted_per_round": 1.1551207825913357,
+      "request_tps": 115.41667474098539,
+      "decode_tps": 123.73431990945129,
+      "request_vs_q4": 0.4769664272847727,
+      "request_vs_q4_bootstrap95": [
+        0.4572684676793302,
+        0.49759837585054983
+      ],
+      "full_draft_ms": 2.929517882970654,
+      "model_bytes": 484906720,
+      "combined_deployment_bytes": 3319881760,
+      "total_peak_device_MiB": 6415,
+      "incremental_peak_device_MiB_vs_target": 1780,
+      "incremental_cuda_model_buffers_MiB_vs_target": 452.0,
+      "training_updates": 2048
+    },
+    {
+      "arm": "G1D8-2048",
+      "cohort": "heldout24",
+      "scope": "confirmation",
+      "family": "G1/D8",
+      "quantizer_mode": "dynamic",
+      "execution": "Native INT8-code DP4A / packed W1 FFN",
+      "accepted": 6450,
+      "proposed": 44505,
+      "acceptance": 0.14492753623188406,
+      "prefix_survival": [
+        0.23553162853297444,
+        0.05383580080753701
+      ],
+      "emitted_per_round": 1.2978914311350382,
+      "request_tps": 127.68298077489294,
+      "decode_tps": 138.25554354669936,
+      "request_vs_q4": 0.5276576829296291,
+      "request_vs_q4_bootstrap95": [
+        0.5071984390686922,
+        0.5482141985757275
+      ],
+      "full_draft_ms": 2.8930468153880655,
+      "model_bytes": 484906720,
+      "combined_deployment_bytes": 3319881760,
+      "total_peak_device_MiB": 6415,
+      "incremental_peak_device_MiB_vs_target": 1780,
+      "incremental_cuda_model_buffers_MiB_vs_target": 452.0,
+      "training_updates": 2048
+    }
+  ],
+  "dynamic1024": [
+    {
+      "arm": "G8D8-1024",
+      "cohort": "natural12",
+      "scope": "confirmation",
+      "family": "G8/D8",
+      "quantizer_mode": "dynamic",
+      "execution": "Native INT8-code DP4A / packed W1 FFN",
+      "accepted": 3800,
+      "proposed": 19615,
+      "acceptance": 0.1937292888095845,
+      "prefix_survival": [
+        0.28105906313645623,
+        0.10590631364562118
+      ],
+      "emitted_per_round": 1.3961303462321792,
+      "request_tps": 141.71741006705437,
+      "decode_tps": 152.4712978342414,
+      "request_vs_q4": 0.5559961768730747,
+      "request_vs_q4_bootstrap95": [
+        0.5364554270673315,
+        0.5752155053029845
+      ],
+      "full_draft_ms": 2.8616570533604877,
+      "model_bytes": 484906720,
+      "combined_deployment_bytes": 3319881760,
+      "total_peak_device_MiB": 6405,
+      "incremental_peak_device_MiB_vs_target": 1774,
+      "incremental_cuda_model_buffers_MiB_vs_target": 452.0,
+      "training_updates": 1024
+    },
+    {
+      "arm": "G4D8-1024",
+      "cohort": "natural12",
+      "scope": "confirmation",
+      "family": "G4/D8",
+      "quantizer_mode": "dynamic",
+      "execution": "Native INT8-code DP4A / packed W1 FFN",
+      "accepted": 2060,
+      "proposed": 23085,
+      "acceptance": 0.08923543426467404,
+      "prefix_survival": [
+        0.1475551709216789,
+        0.03072263089571614
+      ],
+      "emitted_per_round": 1.1864993509303332,
+      "request_tps": 122.50723297974942,
+      "decode_tps": 130.42526284257895,
+      "request_vs_q4": 0.48062939580825975,
+      "request_vs_q4_bootstrap95": [
+        0.45773130536775675,
+        0.5040947126677414
+      ],
+      "full_draft_ms": 2.895363704543488,
+      "model_bytes": 484906720,
+      "combined_deployment_bytes": 3319881760,
+      "total_peak_device_MiB": 6405,
+      "incremental_peak_device_MiB_vs_target": 1774,
+      "incremental_cuda_model_buffers_MiB_vs_target": 452.0,
+      "training_updates": 1024
+    },
+    {
+      "arm": "G2D8-1024",
+      "cohort": "natural12",
+      "scope": "confirmation",
+      "family": "G2/D8",
+      "quantizer_mode": "dynamic",
+      "execution": "Native INT8-code DP4A / packed W1 FFN",
+      "accepted": 1705,
+      "proposed": 23780,
+      "acceptance": 0.07169890664423885,
+      "prefix_survival": [
+        0.13061738765224695,
+        0.0125997480050399
+      ],
+      "emitted_per_round": 1.1516169676606467,
+      "request_tps": 118.82912152274686,
+      "decode_tps": 126.26200415743662,
+      "request_vs_q4": 0.46619915814558394,
+      "request_vs_q4_bootstrap95": [
+        0.44180447213145396,
+        0.4908580473120839
+      ],
+      "full_draft_ms": 2.892871832927341,
+      "model_bytes": 484906720,
+      "combined_deployment_bytes": 3319881760,
+      "total_peak_device_MiB": 6405,
+      "incremental_peak_device_MiB_vs_target": 1774,
+      "incremental_cuda_model_buffers_MiB_vs_target": 452.0,
+      "training_updates": 1024
+    },
+    {
+      "arm": "G1D8-1024",
+      "cohort": "natural12",
+      "scope": "confirmation",
+      "family": "G1/D8",
+      "quantizer_mode": "dynamic",
+      "execution": "Native INT8-code DP4A / packed W1 FFN",
+      "accepted": 2985,
+      "proposed": 21220,
+      "acceptance": 0.14066918001885015,
+      "prefix_survival": [
+        0.2272941176470588,
+        0.05364705882352941
+      ],
+      "emitted_per_round": 1.2903529411764705,
+      "request_tps": 132.2559664794374,
+      "decode_tps": 141.57310269660212,
+      "request_vs_q4": 0.518876344807796,
+      "request_vs_q4_bootstrap95": [
+        0.4974891605249382,
+        0.5427997989227333
+      ],
+      "full_draft_ms": 2.8889369162352945,
+      "model_bytes": 484906720,
+      "combined_deployment_bytes": 3319881760,
+      "total_peak_device_MiB": 6405,
+      "incremental_peak_device_MiB_vs_target": 1774,
+      "incremental_cuda_model_buffers_MiB_vs_target": 452.0,
+      "training_updates": 1024
+    }
+  ],
+  "limits": [
+    "RTX5080 / modern Qwen3.5-4B Q4_K_M only.",
+    "Smokes and repeated confirmations are separated by panel/cohort.",
+    "A1/A2 execute INT8-code DP4A fallback, not hypothetical binary kernels.",
+    "Full draft cost uses disjoint instrumented host spans including catchup, generation and accept; asynchronous work may be charged at a later synchronization.",
+    "Sampled device-memory peak includes display/unrelated baseline and is not exact allocator peak.",
+    "Confidence intervals resample reused prompts/repetitions; no independent-training variance estimate.",
+    "Full-model HF/native untrained numeric parity gate failed historically and is not declared repaired. Native features/labels and direct acceptance/throughput are used; byte-exact integer operation checks do not prove full-model parity."
+  ]
+}

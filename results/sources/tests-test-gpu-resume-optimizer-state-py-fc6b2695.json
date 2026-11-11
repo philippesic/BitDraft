@@ -1,0 +1,9 @@
+{
+  "kind": "archived-source-reference",
+  "repository_bundle": "/home/philip/binary-eagle-evidence/legacy-20261110/repository.bundle",
+  "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+  "path": "tests/test_gpu_resume_optimizer_state.py",
+  "sha256": "fc6b2695922e386dc12acb60ab2de00c4fcf34e2d47a93ac865d6363506ef9c1",
+  "bytes": 980,
+  "retrieval": "git --git-dir /home/philip/binary-eagle-evidence/legacy-20261110/recovered.git show 7cbc9f1833841c7f394789a209b23b1ad5a77af2:tests/test_gpu_resume_optimizer_state.py"
+}

@@ -1,0 +1,9 @@
+{
+  "kind": "archived-source-reference",
+  "repository_bundle": "/home/philip/binary-eagle-evidence/legacy-20261110/repository.bundle",
+  "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+  "path": "experiments/dflash2-smoke-20261106/results.json",
+  "sha256": "939ce214c4ed1c06504bfa1f7660b90949dcd26ac407e23fd20d9b3fbe8785df",
+  "bytes": 180654,
+  "retrieval": "git --git-dir /home/philip/binary-eagle-evidence/legacy-20261110/recovered.git show 7cbc9f1833841c7f394789a209b23b1ad5a77af2:experiments/dflash2-smoke-20261106/results.json"
+}

@@ -1,0 +1,300 @@
+{
+  "status": "COMPLETED_AND_VERIFIED",
+  "files_retired": 34,
+  "bytes_by_storage": {
+    "WSL": 68258710002,
+    "WindowsC": 66131426450
+  },
+  "free_before": {
+    "/": 2831855616,
+    "/mnt/c": 1225797632
+  },
+  "free_after": {
+    "/": 71078187008,
+    "/mnt/c": 67818754048
+  },
+  "protected_full_states": [
+    {
+      "path": "/mnt/c/binary-eagle-component-20261105-01/Csmallbroad-4096.pt.bsz",
+      "sha256": "7ec2b71aefc58ff17de06636c9e30f7ee24fdf19f31b9015b5cf75f7fc4f73e6",
+      "bytes": 4244125704,
+      "role": "Csmallbroad",
+      "device": 51,
+      "inode": 5066549580949789,
+      "mtime_ns": 1793955462526660300,
+      "verified_sha256": "7ec2b71aefc58ff17de06636c9e30f7ee24fdf19f31b9015b5cf75f7fc4f73e6",
+      "post_cleanup_identity_unchanged": true
+    },
+    {
+      "path": "/mnt/c/binary-eagle-component-20261105-01/HE4-confirm-4096.pt.bsz",
+      "sha256": "0a33150b21316d0bfa4392309ab670a3fcb4e21d5264909cd4b0421651a4dad4",
+      "bytes": 4250228027,
+      "role": "HE4",
+      "device": 51,
+      "inode": 17169973579372209,
+      "mtime_ns": 1793957756104590200,
+      "verified_sha256": "0a33150b21316d0bfa4392309ab670a3fcb4e21d5264909cd4b0421651a4dad4",
+      "post_cleanup_identity_unchanged": true
+    },
+    {
+      "path": "/mnt/c/binary-eagle-dflash2-smoke-20261106-01/Csmallbroad-exact-plus1800-14094.pt.bsz",
+      "sha256": "181ffb6d0d93fb911cf02102e6f67736336627e23dc89d06ee04eb5b0c726a13",
+      "bytes": 4246079884,
+      "role": "Csmallbroad accepted extra30minute state",
+      "device": 51,
+      "inode": 14636698789112128,
+      "mtime_ns": 1793969834339951600,
+      "verified_sha256": "181ffb6d0d93fb911cf02102e6f67736336627e23dc89d06ee04eb5b0c726a13",
+      "post_cleanup_identity_unchanged": true
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/finalists/G4D8-learned-small/checkpoint.pt.bsz",
+      "sha256": "f0a1bb0fd8a30549ca197c17d79fd9d250eb854c1c93a9222a62db7232c3b9f9",
+      "bytes": 4207188154,
+      "role": "B0 parent",
+      "device": 2096,
+      "inode": 2154996,
+      "mtime_ns": 1793875944472750983,
+      "verified_sha256": "f0a1bb0fd8a30549ca197c17d79fd9d250eb854c1c93a9222a62db7232c3b9f9",
+      "post_cleanup_identity_unchanged": true
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/foundation/checkpoint.pt.zst",
+      "sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328",
+      "bytes": 4736661975,
+      "role": "frozen essential foundation",
+      "device": 2096,
+      "inode": 2141842,
+      "mtime_ns": 1793860593050346475,
+      "verified_sha256": "996ded66720b9471e976e76e72e10ea2e37455b796b096d3c19f3d873bc0c328",
+      "post_cleanup_identity_unchanged": true
+    }
+  ],
+  "native_exports": [
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/component-campaign-20261105-01/arms/Csmallbroad/model-4096.gguf",
+      "sha256": "36a40befce8c6b9c64d49ae7074a14938bd0817687f49d40b3f8251ee2111156",
+      "bytes": 183225472,
+      "full_native_stream_verified_after_cleanup": true
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/component-campaign-20261105-01/arms/HE4/model-4096.gguf",
+      "sha256": "d24a366aac5c1c3a8757b0533ad03bc87facd386b91350c42831b054ca72a17b",
+      "bytes": 541022144,
+      "full_native_stream_verified_after_cleanup": true
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/dflash2-smoke-20261106-01/candidate/model-1800.gguf",
+      "sha256": "b498820f4c5a64ddf0c788fffedafcf1589ccd8494b0b6f0537f5e1a563120f5",
+      "bytes": 183225472,
+      "full_native_stream_verified_after_cleanup": true
+    }
+  ],
+  "retired": [
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/adapted/G1D1/checkpoint.pt.bsz",
+      "bytes": 4111448069,
+      "storage": "WSL",
+      "reason": "Superseded completed precision optimizer state; native exports, dictionary bases, config, updates/readouts and results retained."
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/adapted/G1D8/checkpoint.pt.bsz",
+      "bytes": 4210370789,
+      "storage": "WSL",
+      "reason": "Superseded completed precision optimizer state; native exports, dictionary bases, config, updates/readouts and results retained."
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/adapted/G1D8-private-head/checkpoint.pt.bsz",
+      "bytes": 4210483212,
+      "storage": "WSL",
+      "reason": "Superseded completed precision optimizer state; native exports, dictionary bases, config, updates/readouts and results retained."
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/adapted/G2D2/checkpoint.pt.bsz",
+      "bytes": 2364792577,
+      "storage": "WSL",
+      "reason": "Superseded completed precision optimizer state; native exports, dictionary bases, config, updates/readouts and results retained."
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/adapted/G2D8/checkpoint.pt.bsz",
+      "bytes": 3945592371,
+      "storage": "WSL",
+      "reason": "Superseded completed precision optimizer state; native exports, dictionary bases, config, updates/readouts and results retained."
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/adapted/G4D4/checkpoint.pt.bsz",
+      "bytes": 3889191701,
+      "storage": "WSL",
+      "reason": "Superseded completed precision optimizer state; native exports, dictionary bases, config, updates/readouts and results retained."
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/adapted/G4D8/checkpoint.pt.bsz",
+      "bytes": 4027067449,
+      "storage": "WSL",
+      "reason": "Superseded completed precision optimizer state; native exports, dictionary bases, config, updates/readouts and results retained."
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/adapted/G4D8-learned-clip/checkpoint.pt.bsz",
+      "bytes": 4213714362,
+      "storage": "WSL",
+      "reason": "Superseded completed precision optimizer state; native exports, dictionary bases, config, updates/readouts and results retained."
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/adapted/G8D4/checkpoint.pt.bsz",
+      "bytes": 3969896823,
+      "storage": "WSL",
+      "reason": "Superseded completed precision optimizer state; native exports, dictionary bases, config, updates/readouts and results retained."
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/adapted/G8D8/checkpoint.pt.bsz",
+      "bytes": 4259455700,
+      "storage": "WSL",
+      "reason": "Superseded completed precision optimizer state; native exports, dictionary bases, config, updates/readouts and results retained."
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/extensions/G1D8/checkpoint.pt.bsz",
+      "bytes": 4203458908,
+      "storage": "WSL",
+      "reason": "Superseded completed precision optimizer state; native exports, dictionary bases, config, updates/readouts and results retained."
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/extensions/G8D8/checkpoint.pt.bsz",
+      "bytes": 4278572638,
+      "storage": "WSL",
+      "reason": "Superseded completed precision optimizer state; native exports, dictionary bases, config, updates/readouts and results retained."
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/interactions/G4D8-learned-small/checkpoint.pt.bsz",
+      "bytes": 4214314269,
+      "storage": "WSL",
+      "reason": "Superseded completed precision optimizer state; native exports, dictionary bases, config, updates/readouts and results retained."
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/interactions/G8D8-learned-clip/checkpoint.pt.bsz",
+      "bytes": 4215332898,
+      "storage": "WSL",
+      "reason": "Superseded completed precision optimizer state; native exports, dictionary bases, config, updates/readouts and results retained."
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/finalists/G2D8/checkpoint.pt.bsz",
+      "bytes": 3933699446,
+      "storage": "WSL",
+      "reason": "Superseded completed precision optimizer state; native exports, dictionary bases, config, updates/readouts and results retained."
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/finalists/G8D8-learned-clip/checkpoint.pt.bsz",
+      "bytes": 4208538797,
+      "storage": "WSL",
+      "reason": "Superseded completed precision optimizer state; native exports, dictionary bases, config, updates/readouts and results retained."
+    },
+    {
+      "path": "/home/philip/binary-eagle-decoding/runs/precision-campaign-20261104-01/qual-four/checkpoint.pt.bsz",
+      "bytes": 4002779993,
+      "storage": "WSL",
+      "reason": "Superseded completed precision optimizer state; native exports, dictionary bases, config, updates/readouts and results retained."
+    },
+    {
+      "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/campaign-control124-qualification-checkpoints/0283bad731a8640e90afad22bc48f892d51fff4b1943fa616b3323cc3cee39aa/checkpoint-00000008.pt",
+      "bytes": 3887446451,
+      "storage": "WindowsC",
+      "reason": "Obsolete October28 6/8-update feature/qualification probe; original DSpark parent3504 and current modern DFlash parents retained; source and result records untouched."
+    },
+    {
+      "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/campaign-selected128-short_binary_double-binary-checkpoints/b1bcf9c51cfb4482aa33a7b6f3294d716034dde870983000b7db33fee727a6a7/checkpoint-00000008.pt",
+      "bytes": 3593283427,
+      "storage": "WindowsC",
+      "reason": "Obsolete October28 6/8-update feature/qualification probe; original DSpark parent3504 and current modern DFlash parents retained; source and result records untouched."
+    },
+    {
+      "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/campaign-selected128-short_binary_double-binary-rank1984-checkpoints/fa70d046bfdec99dcb39682c8f7c1563d8a9b8711b31eaadba3f28c6fd8fd9b7/checkpoint-00000008.pt",
+      "bytes": 3881117539,
+      "storage": "WindowsC",
+      "reason": "Obsolete October28 6/8-update feature/qualification probe; original DSpark parent3504 and current modern DFlash parents retained; source and result records untouched."
+    },
+    {
+      "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/campaign-selected128-short_binary_elastic-gradient-checkpoints/3a0b9f654d0759e6cf0051a12bbe6ac94f7b5bcdf303896709ce07987b3dcdfb/checkpoint-00000008.pt",
+      "bytes": 3887366387,
+      "storage": "WindowsC",
+      "reason": "Obsolete October28 6/8-update feature/qualification probe; original DSpark parent3504 and current modern DFlash parents retained; source and result records untouched."
+    },
+    {
+      "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/campaign-selected128-short_binary_mos-checkpoints/66aabad3993f1c5c363d9abd9af31c773e9b860d9cf6112cdbe6def3e72e1d5a/checkpoint-00000008.pt",
+      "bytes": 3887735835,
+      "storage": "WindowsC",
+      "reason": "Obsolete October28 6/8-update feature/qualification probe; original DSpark parent3504 and current modern DFlash parents retained; source and result records untouched."
+    },
+    {
+      "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/campaign-selected128-short_binary_mos-static-checkpoints/835671d3c9002b3da6d513fad6e6c536fadec869b43179e287aed9b8ca1c0f46/checkpoint-00000008.pt",
+      "bytes": 3887735835,
+      "storage": "WindowsC",
+      "reason": "Obsolete October28 6/8-update feature/qualification probe; original DSpark parent3504 and current modern DFlash parents retained; source and result records untouched."
+    },
+    {
+      "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/campaign-selected128-short_binary_selective-gradient-checkpoints/326008efd7c39a20e5e7be333adfef1303af2fb6f9910e6185066ae5414f5c9e/checkpoint-00000008.pt",
+      "bytes": 3887366387,
+      "storage": "WindowsC",
+      "reason": "Obsolete October28 6/8-update feature/qualification probe; original DSpark parent3504 and current modern DFlash parents retained; source and result records untouched."
+    },
+    {
+      "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/campaign-selected128-short_binary_ternary-a8-checkpoints/b3a5b135c0f98da01016bf8de3ac1beb8d1d41ce522472ad533f833761ff9db4/checkpoint-00000008.pt",
+      "bytes": 3887414705,
+      "storage": "WindowsC",
+      "reason": "Obsolete October28 6/8-update feature/qualification probe; original DSpark parent3504 and current modern DFlash parents retained; source and result records untouched."
+    },
+    {
+      "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/campaign-selected128-short_binary_trust-gradient-checkpoints/9bdc1c5167cda6f85e227785ee1f301bcc5689a459b30a15845409ba9d054e53/checkpoint-00000008.pt",
+      "bytes": 3887366387,
+      "storage": "WindowsC",
+      "reason": "Obsolete October28 6/8-update feature/qualification probe; original DSpark parent3504 and current modern DFlash parents retained; source and result records untouched."
+    },
+    {
+      "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/campaign-selected128-short_objective_dpal-checkpoints/4a0d03093be0514eceed5220a426c4c047458c3afe5ace7fa9883b7a064732c1/checkpoint-00000008.pt",
+      "bytes": 3887366515,
+      "storage": "WindowsC",
+      "reason": "Obsolete October28 6/8-update feature/qualification probe; original DSpark parent3504 and current modern DFlash parents retained; source and result records untouched."
+    },
+    {
+      "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/campaign-selected128-short_objective_edr-checkpoints/87d4dd1458ebfec68dde467cf3815b03608edced6dbdfb0cd5803e336736ff20/checkpoint-00000008.pt",
+      "bytes": 3887369139,
+      "storage": "WindowsC",
+      "reason": "Obsolete October28 6/8-update feature/qualification probe; original DSpark parent3504 and current modern DFlash parents retained; source and result records untouched."
+    },
+    {
+      "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/campaign-selected128-short_objective_vat-checkpoints/b7a9fc5c20fc92a026e5f2038cfe217122b45204e713e918c19b39069567bbac/checkpoint-00000008.pt",
+      "bytes": 3887400163,
+      "storage": "WindowsC",
+      "reason": "Obsolete October28 6/8-update feature/qualification probe; original DSpark parent3504 and current modern DFlash parents retained; source and result records untouched."
+    },
+    {
+      "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/interval124-control-checkpoints/f838377fc1a1d7ef28fa879b95ade33b0da0c79a909bcbdd63618194d3c1ab0e/checkpoint-00000006.pt",
+      "bytes": 3887446451,
+      "storage": "WindowsC",
+      "reason": "Obsolete October28 6/8-update feature/qualification probe; original DSpark parent3504 and current modern DFlash parents retained; source and result records untouched."
+    },
+    {
+      "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/interval124-control-checkpoints/f838377fc1a1d7ef28fa879b95ade33b0da0c79a909bcbdd63618194d3c1ab0e/checkpoint-00000008.pt",
+      "bytes": 3887446451,
+      "storage": "WindowsC",
+      "reason": "Obsolete October28 6/8-update feature/qualification probe; original DSpark parent3504 and current modern DFlash parents retained; source and result records untouched."
+    },
+    {
+      "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/matrix-15-short_binary_double-binary-rank1984-checkpoints/3c818c7bb51a3d5ec487c180383a732a3c5f578d821810e08452ac590cfd4994/checkpoint-00000008.pt",
+      "bytes": 3881095907,
+      "storage": "WindowsC",
+      "reason": "Obsolete October28 6/8-update feature/qualification probe; original DSpark parent3504 and current modern DFlash parents retained; source and result records untouched."
+    },
+    {
+      "path": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/matrix-15-short_binary_double-binary-rank1984-checkpoints/41deb7518f9310dd7ff3a1318765a481bed3ccb5a888720479a9e95fe205c024/checkpoint-00000008.pt",
+      "bytes": 3881095843,
+      "storage": "WindowsC",
+      "reason": "Obsolete October28 6/8-update feature/qualification probe; original DSpark parent3504 and current modern DFlash parents retained; source and result records untouched."
+    },
+    {
+      "path": "/mnt/c/binary-eagle-dflash2-smoke-20261106-01/Csmallbroad-plus1800-14019.pt.bsz",
+      "bytes": 4245373028,
+      "storage": "WindowsC",
+      "reason": "Rejected optimizer-aliasing attempt, parent review complete. Valid before/after full states, invalid native exports, source and failure/regression evidence retained."
+    }
+  ],
+  "limits": "Five full state hashes verified before retirement, same file identities/sizes/mtimes after; three selected native byte streams reverified after. Historical state files intentionally retired; reports/configs/source/captures and native exports/dictionaries untouched. Raw inventories include one bounded incomplete historical Windows inventory, not a claim of full-machine coverage."
+}

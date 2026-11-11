@@ -1,0 +1,9 @@
+{
+  "kind": "archived-source-reference",
+  "repository_bundle": "/home/philip/binary-eagle-evidence/legacy-20261110/repository.bundle",
+  "revision": "7cbc9f1833841c7f394789a209b23b1ad5a77af2",
+  "path": "scripts/capture_nine_model_train_data.py",
+  "sha256": "7355cc2a7f655247f36c6904872da406630b08ce947cf32640c28f908fc30c0b",
+  "bytes": 75270,
+  "retrieval": "git --git-dir /home/philip/binary-eagle-evidence/legacy-20261110/recovered.git show 7cbc9f1833841c7f394789a209b23b1ad5a77af2:scripts/capture_nine_model_train_data.py"
+}
