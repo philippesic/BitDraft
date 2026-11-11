@@ -12,7 +12,8 @@ This is a proposed implementation plan, not an implemented capability or run rec
 ## Authorized
 
 Philip requested research, a repository-specific overarching plan and independent
-Sol review. This turn authorizes documentation and checks, not implementation,
+Sol review, including a second review and reasoned reconciliation of the workflow and
+harness-sensitivity additions. This turn authorizes documentation and checks, not implementation,
 prompt generation, capture, transfers, training allocations or GPU experiments.
 Keep 6,000 selected training tasks as the working design; reassess adequacy before
 next data generation. Preserve the original bank and all protected data roles.
@@ -82,7 +83,9 @@ model. Historical DSpark W1A8 must retain its family and original target identit
 Update docs/domain.md with these definitions during phase 1; preserve old result identities.
 
 Start with HE4's DFlash-derived architecture, batch one, warm loaded models, no
-cross-request prefix reuse, fixed draft policy and target KV settings within comparisons.
+cross-request prefix reuse in isolated-request tests, fixed draft policy and target KV
+settings within comparisons. Live workflows use the intended application cache policy;
+isolated no-cache results cannot substitute for deployed cache behavior.
 Thinking disabled initially, recorded explicitly; no reasoning-mode or concurrent-serving
 claim. Additional targets, architectures, dynamic policies and KV changes are separate
 experiments, not automatic axes of every run. Runtime-unsupported NVFP4 is blocked,
@@ -119,9 +122,10 @@ documents and conversations. Complexity targets: 40% direct, 40% compositional,
 Evaluation deliberately keeps broader length coverage: fast 60/36/18/6 and full
 300/180/90/30 across those same bands. Report long-context outcomes separately, with
 limited training coverage stated. One unit is one independently grouped task; initially
-one selected continuation per conversation, with fixed authentic history, not a live
-agent rollout. Related turns, source documents, repository tasks and paraphrases stay
-in one split. Claims do not extend to complete autonomous task success.
+one selected continuation per conversation in the request suite, with fixed authentic
+history. The separate live portion of the larger comparison executes complete tasks. Related turns, source documents, repository tasks and paraphrases stay
+in one split across request, replay, live and harness panels. Request-only results do
+not establish complete autonomous task success.
 
 Desired response mix: 30% short, 50% ordinary, 20% extended; caps 256/1024/2048 respectively.
 Natural stopping stays enabled. Record realized lengths, EOS and cap hits; caps are
@@ -169,6 +173,34 @@ effects. Predeclare tolerances and useful noninferiority margins after measuring
 variation, before observing the treatment results. Do not accept merely nonsignificant
 differences. 2080 Ti results qualify their stated scope, not 5080 speed or NVFP4 support.
 
+### Artifact placement and lifecycle
+
+Use a host-configured external artifact root, proposed default sibling directory
+/home/philip/binary-eagle-artifacts (not created by this plan). One authoritative
+content-addressed capture store owns immutable shards; dataset manifests reference
+shards rather than copying them per candidate. Runs own journals, outputs and checkpoint
+references; results in Git retain only compact evidence and regeneration inputs. The
+config separately identifies the local fast cache and any verified backup destination.
+A path called archive or a second directory on one disk is not proof of a backup.
+Before acquisition, the operator resolves actual filesystem/mount/free-space identity,
+payload forecast, local staging peak, checkpoint peak and backup availability. Report
+local-only durability if no independent backup exists; do not invent a remote destination.
+
+Lifecycle: prepare temporary shard -> validate semantics and hashes -> atomically publish
+immutable shard/manifest -> materialize a verified local cache -> train with pinned shard
+handles -> retain authoritative data while recipes/evidence depend on it. Evict only owned
+cache copies whose identical authoritative copy is verified and not in active use. A failed
+publication stays identifiable; it cannot replace valid data. Valuable sole copies, selected
+states and source dependencies cannot be removed by cache pressure. Original captures stay
+unchanged in an FP16 trial. Retention changes require the existing closeout process.
+
+The pilot must measure local shard sequential/random access, target capture cost, training
+steps, materialization, checkpoint publication and evaluation switching. Prefer immutable
+packed shards with an index over remote per-window small-file reads. Qualify locality-aware
+sampling against the frozen category/task/position distribution and exact resume. No
+arbitrary fixed cache size until measured; the user ceilings govern retained capture payload,
+not just residency. Moving bytes off the training host does not satisfy a total-payload cap.
+
 ### Compatibility and sampling contracts
 
 A run binds prompt selection, capture specification, candidate recipe and runtime.
@@ -195,13 +227,141 @@ short tasks, or qualify a new partial-tail mask/objective including loss normali
 and native behavior; a loader-only patch is insufficient. Changing sampling or the
 loss mask is a recipe change, requiring qualification against existing behavior.
 
-### Two evaluation tiers and selection
+### Two evaluation tiers: exactly what runs
+
+There are two public benchmark choices, short and full, under the same compare entry.
+Loss diagnostics remain separate and are not a third benchmark. Short runs the 120
+requests in the table above, with the declared length mix, normally every training hour.
+Full runs 600 requests plus 12 live DEV tasks and a 90-request harness panel. Sampled
+robustness is an explicitly selected full-comparison mode, not a hidden hourly expense.
+Both run the exported candidate through the qualified native serving path, not a training
+simulation. Resolve the expanded execution matrix and cost before any run.
+
+Short requests include authentic coding/conversation/tool histories from application
+sessions, within the existing category/length quotas, not 120 additional replay requests.
+Record their source session and cluster them by session. Each arm generates normally;
+never force a recorded continuation to manufacture acceptance. Fixed-history replay
+measures those calls only, not the consequences of subsequent changed tool calls.
+A target-only reference authenticates output/stopping; immutable reference outputs may
+be reused only with identical runtime/target/settings and repeated determinism checks.
+Current candidate timing is measured live; an old reference receipt is not a fresh speed
+comparison. If the fast check reports relative speed, time both arms in matched blocks.
+
+### Live tasks within the larger comparison
+
+Run 12 development tasks, two each: fix a bug and execute tests; add and verify a small
+feature; investigate code/log failures; answer document questions with a follow-up;
+complete a structured tool workflow; revise work after feedback. Use actual repository
+or document snapshots, explicit requirements and independent completion checks. Choose
+feasible tasks for the target, not only tasks the candidate later wins. Freeze exclusions
+and reasons before candidate testing. A broken target-only harness must be repaired before
+interpreting candidate outcomes. Failure on valid tasks remains a reported outcome.
+
+Each arm starts from an identical isolated filesystem/tool state and actually reads,
+edits, calls tools and responds to their outputs. Pin harness source, system instructions,
+tool schemas, dependencies, model template, context management, cache policy, sampling
+and stopping. Use deterministic local tools and frozen inputs initially; no changing
+network services or real external side effects. Fixed scripted follow-ups arrive at a
+specified turn/event; no human idle time in the measured task clock. Run arms serially,
+reset state between trials, and record warm/cold boundaries and model load separately.
+Start each independent task with empty target and drafter request/KV/prefix caches but
+warm loaded models; permit normal prefix reuse and context compaction within its session.
+Never leak cache state across arms, repeats or independent tasks. If the application
+requires prewarmed shared prefixes, qualify that as a separately pinned entry condition.
+Never execute generated code on the source checkout or allow benchmark tools to mutate
+shared datasets, credentials, host configuration or unrelated jobs.
+
+Report completion checks, failures/timeouts, elapsed task time, model-wait time, tool
+execution time, call count, output length, retries and acceptance. The initial local
+harness is sequential: model-wait and tool intervals do not overlap; unclassified overhead
+is separate. If later work introduces overlap, report interval unions/critical-path time
+rather than summing overlapping component clocks. All tasks remain in
+the denominator. Do not average successful-task latency while hiding failed arms; show
+paired completion outcomes and latency on jointly successful tasks with that scope
+explicit, alongside full task totals and deadline outcomes. Predeclare limits per task
+family using DEV controls, equally applied to all arms. Unexpected greedy divergence is
+a correctness investigation, not an opportunity to claim a shorter/faster solution.
+Live sampled runs permit differing paths; assess completion and distributions separately.
+
+Use 24 distinct live confirmation tasks (four per family) when freezing a finalist claim.
+Twelve/twenty-four tasks are a deployment transfer check, not broad statistical proof;
+uncertainty can require a later larger frozen set. Repeat count/order come from the DEV
+pilot and are frozen for confirmation. Keep request and task outcomes separate: no
+combined score that averages away a live regression. Passing the request suite alone
+cannot earn a general deployment claim; a demonstrated workflow slowdown or reliability
+regression blocks that claim or restricts it to explicitly supported workloads. Uncertain
+live outcomes are inconclusive, not passed. Numerical practical margins must be frozen
+before finalist execution rather than chosen to excuse the observed result.
+
+### Harness sensitivity within the larger comparison
+
+Run 30 DEV tasks under three configurations: minimal assistant instructions, the intended
+coding harness instructions/tool schema, and a second realistic harness configuration.
+These are exactly one fixed-history response per task/configuration: 90 requests per
+arm per target per timing block, not 90 total across models. No tools execute and no
+autonomous continuation occurs in this panel; live episodes belong only in the live panel.
+Select tasks with meaningful completion criteria under all configurations; minimal mode
+still supplies the same task facts and any required tool outputs. Clearly distinguish
+textual/structured-response requests from live tool-use episodes. A configuration that
+cannot express the task is ineligible, not a drafter acceptance failure.
+
+Freeze task IDs before candidate evaluation; record exact system prompts, tool definitions,
+chat template and generation settings. Hold target/runtime/draft policy fixed within
+comparisons. Input length changes caused by the harness are part of the treatment and
+must be reported; this tests whole harness-configuration sensitivity, not an isolated
+causal effect of wording. Each configuration has its own target-only reference. Compare
+candidate versus baseline acceptance and request speed within each configuration, then
+report how that relative advantage changes. Never compare raw acceptance across different
+target output paths as though the workloads were identical. Use task-clustered paired
+intervals, keeping each task's variants together; task success/correctness remains required.
+
+Include real system instructions and tool schemas in relevant TRAIN examples. Reserve
+one harness configuration from TRAIN to test transfer, while acknowledging that repeated
+DEV use is still selection. Final confirmation requires new tasks and an independently
+frozen configuration/version not used to tune the candidate; same prompts or edited
+versions retain ancestry. Public availability does not make an example exposure-free.
+If no independently held-out harness is available, scope the claim to the tested harnesses
+instead of promising unseen-harness transfer. Maintain 30 x 3 confirmation requests with
+separate IDs/roles if this claim is sought. Performance confined to one configuration is
+a harness-specific result, not a generally better drafter.
+
+### Acceptance accounting qualification
+
+Define proposed as the actual draft tokens submitted to verification under the frozen
+linear proposal policy; accepted counts only those draft tokens committed as accepted.
+Target-generated correction/bonus tokens are emitted output, not accepted draft tokens.
+Record proposals, verifier decisions, first rejection, accepted prefix, corrections,
+bonus tokens, EOS and unused suffix at each round. Define EOS/cap boundary counting in
+one versioned contract and check it against executed runtime behavior before comparing;
+never count nonexistent padding slots as proposals. A different tree/proposal algorithm
+requires an explicit accounting extension, not reuse of linear counters by name.
+
+An independent reducer reconstructs accepted/proposed, emitted/round and stopping from
+traces; test all-accepted, first rejection, middle rejection, EOS, output cap, zero proposal,
+and fallback-only paths. Zero denominator is unavailable, never zero or perfect acceptance.
+Raw token decisions and server counter totals must agree. Sampled rejection sampling is
+separately qualified; token-equality checks alone are not distribution tests. Full traces
+run in a diagnostic lane to avoid altering clean timings; verify unchanged deterministic
+outputs/counters and disclose any measured instrumentation overhead. The clean timed calls themselves must retain low-overhead activation and fallback
+counts, not rely on detailed traces from different calls to prove activation. Validate
+counter overhead on DEV and freeze instrumentation. Fallback-only output cannot qualify
+the candidate as active speculative decoding; partial fallback is visible in the result
+and may not be silently excluded from timing.
+
+### Evaluation protocol and selection
 
 Cheap diagnostic: 120 fixed DEV windows, initially every 250 updates. Loss/top-1 are
 not native acceptance. Fast native DEV: 120 tasks at zero updates, each 60 minutes of
 optimizer work and completion, initially one pass. Calibrate cadence to about 10% evaluation
 overhead; lengthen the interval rather than silently shrinking the suite. The cadence is
 agent-proposed, not a resource allocation or a rule to terminate useful training.
+Candidate-only native diagnostics cost 120 requests per target/check. A paired candidate/
+baseline timing block costs 240; freshly executing target-only adds another 120. Qualify
+reference reuse separately. Schedule the two targets independently within their allocations;
+no promise of both targets every hour. Do not rank absolute timings across days/changed
+load: compare potential leader changes in a contemporaneous matched candidate/prior-leader
+block (240 requests) before replacing the provisional leader. External speed claims need
+contemporaneous external baseline blocks. Report omitted timing comparisons as unmeasured.
 
 The same comparison runner supports full DEV and sealed confirmation roles. They use
 separate 600-task cohorts with the same coverage design; thus comparison and confirmation
@@ -221,7 +381,11 @@ claim of unseen confirmation based solely on a folder name or editable flag.
 
 Start full timing at two complete counterbalanced blocks: 600 tasks x 3 arms x 2 blocks
 x 2 targets = 7200 requests. Three arms are target-only, external baseline and one
-candidate; each extra candidate adds 2400. A pilot on DEV chooses warmups, order and
+candidate; each extra candidate adds 2400 isolated requests. Full DEV also adds
+12 live tasks x 3 arms x 2 targets x the frozen live repeat count, plus 30 tasks x 3
+harness configurations x 3 arms x 2 targets x the harness repeat count. At two repeats
+the harness panel adds 1080 requests. Full confirmation substitutes 24 live tasks.
+Report these extra costs; 7200 is not the total full-benchmark budget. A pilot on DEV chooses warmups, order and
 repeat count, then freezes them before confirmation. All repetitions and related examples
 remain together when resampling groups. The pilot fixes arm order at task/server-block
 level, reload boundaries, warmups and cache state. Two repeats cannot by themselves
@@ -234,13 +398,26 @@ identical token streams. Require verifier/distribution tests and stop/schema che
 report sampled lengths and quality separately rather than calling arbitrary output changes
 speed gains. Greedy qualification demands matched token IDs/text/stops and finite logits.
 Failure or unsupported sampled execution limits the claim to greedy; it is not passed.
+A sampled application claim additionally requires live tasks under that sampled policy
+and intended cache behavior, with seeds/repetitions fixed on DEV. The 2160 request count
+does not include these episodes. Greedy live evidence cannot qualify sampled workflows.
 
 Primary serving score: total emitted tokens / total complete request seconds on a fixed,
-valid matched DEV panel. Preserve current domain selection semantics: highest complete
+valid, greedy token-matched DEV panel. Sampled token throughput is descriptive only; it
+cannot rank checkpoints by rewarding verbosity or different incomplete answers. Preserve current domain selection semantics: highest complete
 valid score attached to durable state; ties keep earlier. Fast one-pass score is a
 provisional within-run selection, not evidence of external superiority. Keep latest
-resumable state, provisional fast-DEV leader and full-DEV-qualified incumbent separately.
-Fast DEV alone cannot replace the full-DEV-qualified incumbent. Apply complete-score
+resumable state, provisional fast-DEV leader and full-DEV request-selected incumbent separately.
+Fast DEV alone cannot replace the full-DEV request-selected incumbent. Its eligibility
+requires all mandatory full-DEV panels operationally complete with valid measurement
+and verifier fidelity; task outcome failures remain reported data, not missing cells.
+The name denotes request-score selection, not deployment qualification. Every incumbent
+report carries separate live-task and harness claim statuses. Demonstrated workflow or
+harness regressions block a broad deployment recommendation; inconclusive transfer
+prevents a positive workflow-improvement claim but does not discard a useful checkpoint.
+No significance gate is imposed on each two/four-task family. Positive claims name the
+represented families, actual harness versions, target, cache and sampling settings;
+absence of observed failure is not proof across all possible workflows. Apply complete-score
 selection within each declared tier, never compare scores from different panels.
 Full DEV comparison confirms promising
 checkpoints; confirmation cannot retroactively be used to search all saved checkpoints.
@@ -249,7 +426,9 @@ Report full-request latency, TTFT when instrumented, decode speed, memory, accep
 accepted tokens/round and prefix survival; separate clean timings from diagnostic traces.
 Report category/length results, aggregate request throughput, slow/no-benefit cases and
 uncertainty. No mean of request token rates. Show setup/capture/train/export/eval wall
-cost separately from optimizer work. Correctness failure invalidates promotion even if fast.
+cost separately from optimizer work. Verifier/runtime fidelity failure invalidates
+request-state promotion even if fast; task-quality outcomes govern separately scoped
+workflow claims. A target answer failure shared by all arms is not a verifier mismatch.
 Task answer quality (exact answers, schema checks, sandboxed code tests where suitable)
 is distinct from verifier fidelity and target intelligence; bounded checks are not universal
 quality proof. No training-model changes to make benchmark answers look better.
@@ -345,6 +524,10 @@ never delete checkpoints, original captures or frozen source because a chart exi
    comparison using the minimal shared comparison core (not a throwaway runner). Qualify
    Q4KM first, then NVFP4 explicitly. Do not call a metadata fixture
    the vertical path. Preserve current strict checks; add numerical/runtime tests.
+   Bring up the intended application harness with target-only and released baseline here,
+   before long training. Run a few DEV live tasks, then the first usable candidate through
+   the same path. Use actual session lengths/tool behavior to challenge the proposed mix;
+   do not postpone the first application trial until the full 6K capture is paid for.
 3. FP16 storage study and GPU training: first CPU round-trip tests, then authorized 2080 Ti
    matched experiment if supported, then extended native confirmation. Preserve FP32
    reference. Device support must include optimizer, RNG, checkpoint and export behavior.
@@ -355,7 +538,10 @@ never delete checkpoints, original captures or frozen source because a chart exi
    analysis and stopping rules. Test wrong/fallback model, nonfinite output, stopping
    mismatch, cap hits, missing cells, telemetry interference and malformed counters.
    Synthetic fixtures test mechanics; actual requests qualify runtime and performance.
-6. Training coordinator: checkpoint-bound intermittent eval, independent latest/provisional/full-DEV-qualified states,
+   Qualify live sandbox reset, task checks, timeouts and model/tool clocks; test harness
+   variation, cache behavior and request-to-session lineage. Resolve deployment regressions
+   before generalizing an isolated-prompt improvement.
+6. Training coordinator: checkpoint-bound intermittent eval, independent latest/provisional/full-DEV request-selected states,
    exact restart across train/eval transitions, realized exposure and learning curves.
    Fault-inject crash during save, server startup/eval and restore; no duplicate updates,
    lost durable state, accidental ownership adoption or false selection.
@@ -370,17 +556,31 @@ behavior per phase. No blanket code cleanup or unrelated operations tooling.
 
 ### Review
 
+Second independent Sol review and root reconciliation completed. Agreed changes:
+fixed-history 90-request harness panel, separate live episodes, explicit per-arm short
+and full costs, cold independent-task caches with warm within-session reuse, greedy-only
+checkpoint score and sampled live qualification for sampled application claims. Clean
+measured calls must prove activation themselves; separate traces do not prove that.
+
+Root challenged treating small live panels as statistical proof or requiring significant
+nonregression for every tiny task family. Sol agreed: preserve exactly three checkpoint
+roles, name the full-DEV request-selected incumbent precisely, and attach live/harness
+claim statuses instead of conflating operational completion with deployment proof.
+A useful experimental state may be retained while its workflow advantage is inconclusive.
+Both reviewers reject averaging away a workflow regression or calling no detected failure
+universal transfer. These are agreed design boundaries, not measured performance claims.
+
 Independent gpt-6.1-sol review completed. It found the plan sound overall and identified
 three concrete corrections, now incorporated: show cap-bound storage as well as expected
 size, build the shared comparison core in phase 2 rather than a temporary runner, and
-separate provisional fast-DEV leaders from full-DEV-qualified incumbents. Also clarified
+separate provisional fast-DEV leaders from full-DEV request-selected incumbents. Also clarified
 confirmation quarantine, per-target paired score intervals, actual counterbalancing and
 short-tail objective qualification. No review finding required experiments or expansion
 of the 6K scope. This is design review, not runtime or statistical qualification.
 
 ## Next
 
-Planning and independent review are complete. On a subsequent implementation assignment,
+Planning, second independent review and reconciliation are complete. On a subsequent implementation assignment,
 start phase 1 with the explicit compatibility contract and no-side-effect plan/report
 commands. Reassess 6K coverage and actual byte forecasts before any acquisition.
 No prompt/capture generation or GPU work is authorized by this task file alone.
