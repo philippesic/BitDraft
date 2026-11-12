@@ -55,7 +55,7 @@ Keep credentials out of `.host.toml`. [Checks](docs/checks.md#commands) explains
 uv run --locked --no-sync --offline python tools/check.py
 uv run --locked --no-sync --offline python tools/check.py --full
 uv run --locked --no-sync --offline python -m tools.doctor
-python -m w1a1_eagle preflight INTENT
+uv run --locked --no-sync --offline python -m w1a1_eagle preflight INTENT
 ```
 
 The first is a quick partial check, the second is the full commit gate, the third

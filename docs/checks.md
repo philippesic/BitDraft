@@ -4,13 +4,17 @@
 
 | Command | Time | Use |
 | --- | --- | --- |
-| `uv run --locked --no-sync --offline python tools/check.py` | about 3 s warm, 30 s cold | While editing |
-| `uv run --locked --no-sync --offline python tools/check.py --full` | about 70 s | Commit gate; the pre-commit hook runs it |
+| `uv run --locked --no-sync --offline python tools/check.py` | about 5–20 s, depending on type caches | While editing |
+| `uv run --locked --no-sync --offline python tools/check.py --full` | about 60 s | Commit gate; the pre-commit hook runs it |
 | `uv run --locked --no-sync --offline python tools/check.py --self-test` | seconds | Rule proofs only, after changing a checker or rule |
 | `uv run --locked --no-sync --offline python -m tools.doctor` | seconds | Environment, hook and receipt inspection |
 
 None of them installs or downloads anything, formats files, changes Git configuration
 or uses the GPU.
+
+The doctor inspects this checkout's environment, hook and CPU receipt. It does not
+inspect GPU jobs or qualify native execution. Read [support](support.md) and the relevant
+result for measured hardware coverage.
 
 The plain command runs every static stage and the ordinary CPU tests and labels itself
 partial. It skips the numerical test (about 37 s), the required-test roster and the
@@ -25,6 +29,36 @@ For one file: `.venv/bin/ruff check PATH`, `.venv/bin/ruff format --check PATH`,
 `.venv/bin/python -B -m pytest tests/test_training.py`. The numerical tests run in the
 numerical interpreter: `CUDA_VISIBLE_DEVICES= TMPDIR=/tmp /absolute/path/to/numerical/bin/python -B -m unittest
 tests.numerical.test_model -v`.
+
+## Choosing verification
+
+Choose checks for the behavior being changed, then run the full gate at a coherent
+checkpoint. Find existing coverage in the relevant test module; a focused pytest node
+can run alone while editing. A new ordinary test is discovered automatically. Required
+roster entries protect selected critical coverage rather than defining every test.
+
+- For ordinary product behavior, run relevant CPU cases and meaningful failure cases.
+  For graph, capture-loader, Adam/RNG, export or accounting changes, also use the numerical
+  interpreter and affected numerical cases. The full gate includes the reduced numerical
+  fixture; that does not establish full-size CUDA or native behavior.
+- For capture, model or runtime changes, qualify the affected real path within the
+  authorized allocation using [data](data.md), [execution](execution.md) and
+  [benchmarks](benchmarks.md). Loader success is distinct from learning suitability;
+  loss is distinct from acceptance; acceptance is distinct from serving speed.
+- For a candidate's measured behavior, use the existing native screen and broader
+  comparison as the decision requires. Authenticate saved controls; do not regenerate
+  fixed baselines or replace incompatible references merely to obtain a comparison.
+  Read the benchmark guide for exact workloads, costs and compatibility rules.
+- For checker/rule changes, exercise the relevant rejecting and accepting cases, then
+  run `--self-test` and the full gate. Preserve the guarantee while repairing its cause.
+- For instructions or documentation, validate the affected links, commands and examples
+  and use the full gate before committing. Do not spend GPU time for a prose-only change
+  or add a permanent test that merely repeats the wording.
+
+When a command fails, use its location, cause and [repair](#fixes). Repair and rerun the
+affected check. If resolving it would change an agreed guarantee, explain that proposed
+change and continue independent authorized work while input is pending. A passing gate
+does not make missing hardware evidence available.
 
 ## Stages
 
@@ -43,6 +77,8 @@ tests.numerical.test_model -v`.
 
 A green full check means the named CPU scenarios ran. It does not show native
 correctness, retained-artifact parity, scientific adequacy or serving performance.
+Its qualification line describes lanes unavailable in that CPU run; it does not
+declare the project's maintained commands absent or invalidate retained scoped evidence.
 
 Authored source and documentation have no aggregate byte cap. Individual file limits
 and external runtime-snapshot limits still apply.

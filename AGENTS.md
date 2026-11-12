@@ -4,6 +4,10 @@ Trains and exports HE4 drafters for speculative decoding: W1A4 weights, A8 down
 projection, Q4K head. The central boundary is data roles: heldout24 and its aliases
 never enter training, calibration or selection. Names and metrics: [domain](docs/domain.md).
 
+Checkout: `/home/philip/binary-eagle-decoding-next` on the RTX5080 host. The original
+`binary-eagle-decoding` checkout is historical source with different instructions.
+Artifacts: `/home/philip/binary-eagle-artifacts`; tasks name owners and scope.
+
 ## Where things are
 
 - [README](README.md): setup. [Architecture](docs/architecture.md): packages, owners, entries.
@@ -22,47 +26,43 @@ never enter training, calibration or selection. Names and metrics: [domain](docs
 
 ## Validation
 
-- While working: `uv run --locked --no-sync --offline python tools/check.py` (about 3 s
-  warm). It is partial: no numerical test, required-test roster or rule proofs.
-- Commit gate: the same command with `--full` (about 70 s). Enable the `.githooks/` hook with `git config core.hooksPath .githooks`.
+- While working: `uv run --locked --no-sync --offline python tools/check.py`.
+  It is partial: no numerical test, required-test roster or rule proofs.
+- Commit gate: the same command with `--full`. Enable the `.githooks/` hook with
+  `git config core.hooksPath .githooks`. [Checks](docs/checks.md) explains which lanes to use.
 - No hosted CI; the local hook and agents verify. Do not add CI.
 - Fix the cause. Never weaken a check, update a digest or add an exception only to pass;
-  if a pin or gate blocks legitimate work, stop and report it with the proposed change.
+  if a pin or gate blocks legitimate work, report it with the proposed change and
+  continue independent authorized work while the decision is pending.
 
 ## Working autonomously
 
-- Without asking: repairs, tests, refactors, docs and local commits within the scope a
-  task file or Philip authorized. Finish authorized work; do not wait for repeat approval.
-- Commit checkpoints without coauthor trailers. Push to the user-owned remote at
-  milestones and handoff; report local-only work.
-- Needs Philip: weakening a guarantee, changing scientific semantics or data roles,
+- Preserve the current assignment and its recorded decisions across sessions.
+  [Development](docs/development.md) describes maintenance and verification; a task
+  records scope rather than granting an assignment merely because it exists.
+- Needs Philip unless already authorized: weaker guarantees, changed scientific semantics or data roles,
   new training allocations, data transfer, deleting artifacts you did not create,
   creating remotes or publishing (license is undecided).
 - CPU work is autonomous. GPU work follows task scope; there is no blanket prohibition.
   Check GPU activity and task ownership before starting. Preserve other tasks' jobs.
   An established GPU allocation belongs to that task until completion or release;
-  coordinate its agents within that allocation. Explicit user limits still apply.
+  explicit user limits still apply. [Execution](docs/execution.md) covers recovery.
 - Historical evidence: [access and limits](docs/evidence.md). Old checkouts are read-only.
-- Parallel work: use a separate worktree. Preserve uncommitted work you did not write,
+- Isolate edits that conflict with active or pinned source. Preserve uncommitted work you did not write,
   and commit it only after confirming the thread that wrote it has finished.
 
 ## Documents
 
-- `docs/`: present behavior and procedures; replace obsolete instructions.
-- `results/`: durable learning. [Format and retention](docs/results.md).
-- FINDINGS.md: short conclusions and result links, not full writeups.
-- `evidence/`: immutable existing receipts; large artifacts live outside source.
-- `tasks/`: unfinished work; follow [convention](tasks/README.md). Delete when done.
-  An open task is context, not authorization to resume it.
-- For investigation closeout, read [close-results](skills/close-results/SKILL.md).
-  Routine repairs need no result. Git keeps implementation history; no diaries.
-- Read relevant findings and tasks first. Write plainly.
+- `docs/` describes the present; replace obsolete instructions.
+- `tasks/` holds unfinished work; follow its [convention](tasks/README.md).
+- `results/` preserves learning; follow [format and retention](docs/results.md) and
+  the pinned [close-results](skills/close-results/SKILL.md) procedure. FINDINGS indexes it.
+- `evidence/` contains immutable receipts. Large artifacts stay outside source.
 
 ## Evidence and reporting
 
 - Keep weights, captures and run outputs out of Git.
-- Keep failed and unfavorable results. Done means exercised, not written.
-- Say what ran and what was reused or skipped. A CPU pass says nothing about native
-  execution, hardware or performance. Report operational and scientific health separately.
+- [Support](docs/support.md) scopes qualification. Report operational and scientific
+  health separately; CPU checks do not qualify native execution or performance.
 - Never mix clocks, eras or workloads in a comparison.
 - A hash, receipt or editable approval field grants no authority.
