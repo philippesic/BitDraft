@@ -102,6 +102,14 @@ teacher trajectories. TRAIN and DEV acquisitions keep their roles. A DEV capture
 is diagnostic input and cannot pass training admission as an empty TRAIN corpus.
 Opaque heldout identity metadata protects heldout24 without reading its prompts/answers.
 
+An acquisition can reuse completed captures of the exact same bank entries. Authenticate
+the original corpus and arrays; match messages/tools, token identity, output cap, target,
+storage precision, role and supervision policy. Keep one record per requested ID and
+retain its original references and validation receipt. Fresh shards use public `capture`
+entry points. A combined corpus is complete only when every requested ID is present and
+all product validations passed. Storage can span host filesystems; record physical roots
+and preserve their references. Reusing captures does not make previously seen data fresh.
+
 `python -m w1a1_eagle.numerical.conversion SPEC OUTPUT` converts a schema-1 F32 corpus to
 F16 in a new external root. The spec binds `corpus`, `maximum_relative_l2` and
 `capture_limit_bytes` under schema 1. It checks all finite values and overflow, streams
