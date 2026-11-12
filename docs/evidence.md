@@ -90,11 +90,15 @@ BitDraft is the project name; old names inside immutable receipts identify histo
 ## BitDraft source identities
 
 Current main includes the final legacy main history, followed by the current project's
-implementation snapshots. The 52 replayed commits retain identical trees and messages.
-Original current-project revisions are reachable through `archive/pre-bitdraft` in this
-checkout and the independent `pre-bitdraft.bundle`/`pre-bitdraft.git` under the closeout
-archive. `history-rebase.json` maps old/new IDs; keep original IDs in immutable execution
-records. Relocation changes a locator, not a measured result or its source identity.
+implementation snapshots. The 52 replayed commits retain identical file trees. Philip
+subsequently requested removal of Cursor coauthor trailers: five messages in each original
+and replayed history were cleaned, preserving authors, committers, timestamps and topology.
+`archive/pre-bitdraft` points to the cleaned original history. Exact original revisions
+remain in the independent `pre-bitdraft.bundle`/`pre-bitdraft.git` under the closeout
+archive. `history-rebase.json` records the earlier replay; the later
+`artifacts/archive/cursor-attribution-removal-20261112/rewrite.json` maps the attribution
+rewrite. Keep original IDs in immutable execution records. Relocation and attribution
+cleanup do not change measured results or executed source-file identities.
 
 The canonical checkout is `/home/philip/BitDraft`; the T3 project points there. Both old
 checkout paths are absent. The remaining legacy main tree is quarantined under
@@ -103,7 +107,7 @@ its deletion. It contains no required current data input. Delete only that owned
 quarantine, without following its compatibility links into other retained evidence/data.
 `origin` is the user-owned `git@github.com:philippesic/BitDraft.git`. Main preserves
 legacy main ancestry; `archive/legacy-main` and `archive/pre-bitdraft` preserve the
-original legacy tip and the original port history. Publication keeps existing repository
+original legacy tip and the port history with the requested attribution cleanup. Publication keeps existing repository
 visibility; it does not upload ignored datasets, model files or supporting archives.
 
 ## Historical 2080 Ti records

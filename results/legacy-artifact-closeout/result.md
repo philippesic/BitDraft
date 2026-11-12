@@ -87,6 +87,14 @@ Final deletion awaits Philip's requested confirmation.
 
 ## Artifact disposition
 
+November12 attribution correction: after the transition above, Philip requested removal
+of Cursor coauthor trailers. Five messages in each original/replayed history changed;
+all file trees, authors, committers, timestamps and graph topology were verified unchanged.
+The published `archive/pre-bitdraft` tag now names that cleaned history. Exact original
+commits remain in the independent bundles/readers, and the old/new map is retained under
+`artifacts/archive/cursor-attribution-removal-20261112/`. This changes attribution and
+commit IDs, not historical scientific evidence.
+
 Retain compact measurements, figures' inputs where present, useful diagnostics, source,
 WIP recovery and retirement receipts under ignored `artifacts/archive/`, with this result and index in Git.
 Retain original 220095 in raw and normalized form, the original teacher corpus, the full 6K
