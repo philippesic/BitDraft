@@ -69,3 +69,9 @@ or verified-record resume. Existing completed data need no regeneration for insp
 Recompute counts and byte totals from the authenticated corpus/record metadata; the
 product Corpus reader supplies role, label and eligible-window admission. These checks
 do not allocate a model or authorize training.
+
+## Artifact disposition
+
+Retain the current corpus, original parent, recorded source and validated product inputs
+at their external locations identified above. They serve future training; summary data
+cannot replace those inputs. This result does not require retaining unrelated raw runs.

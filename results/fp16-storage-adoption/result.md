@@ -62,3 +62,10 @@ All outputs/stops matched. FP16/FP32 throughput was 1.0053, with paired 95% inte
 remain unchanged; serial timing does not establish a storage-caused speed effect.
 Raw results and stratified bootstrap are in
 `/home/philip/binary-eagle-artifacts/qualification/precision-canonical-paired.json`.
+
+## Artifact disposition
+
+Retain the compact measurements and executed source linked above. Reusable saved
+controls and active data/model inputs retain their dependency closure outside source.
+Qualification-only descendants are disposable after their measurements and failure
+receipts are verified; exact retired states cannot be resumed.

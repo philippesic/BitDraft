@@ -64,10 +64,48 @@ a diary. Retain tools and tests only while they still serve the project.
 Before removing implementation or artifacts, identify paths, ownership, recoverable source,
 dependent inputs, evidence, backup location and verification, and regeneration limits.
 Preserve what the result needs before deleting anything. Existing authorization governs
-cleanup; a local commit alone is not a remote backup. No historical artifact deletion is
-authorized by adoption of this convention. Do not rewrite Git history during closeout.
+cleanup; a local commit alone is not a remote backup. Artifact deletion still needs an authorized scope; a retention plan is a record, not
+permission. Git history changes require a separate explicit instruction.
 
-Raw execution records remain immutable. Correct a result explicitly with a dated note;
+### Compact evidence is the default
+
+At artifact creation, identify its purpose and disposal point in the task or run recipe.
+At closeout, extract the facts the result actually needs: all comparison arms, counts and
+failure denominators, per-request or per-group values needed to recompute statistics,
+small figure inputs, relevant diagnostics, and exact source/recipe/model/data identities.
+Preserve negative and incomplete outcomes. Do not select favorable runs or treat a hash
+as a replacement for missing measurements. Verify the summary against the source before
+deleting it. Retained measurements must support every reported aggregation and figure.
+
+Decide explicitly for each artifact class: retain a current input, selected/recovery state,
+or reusable reference with its dependency closure; or discard it after compact evidence
+verification. A historical selected state is not automatically needed forever. If its
+weights are discarded, record that exact replay/resume is unavailable. Unknown ownership,
+active jobs, unresolved dependencies and unpreserved unique source block that disposal;
+record the specific exception rather than quietly keeping an entire run forever.
+
+Keep retained raw inputs outside source. No investigation is closed while its raw-output
+disposition is undecided. A successful run alone does not complete closeout. Existing
+imported findings describe historical observations; they do not promise all raw bytes.
+
+### Retirement command
+
+Use `uv run --locked --no-sync --offline python -m tools.retention PLAN RECEIPT`
+to verify a proposed cleanup without deleting. The explicit apply form adds
+`--apply PLAN_SHA256`. Plans contain schema1, owner, the actual authorization, result path,
+limitations, an absolute physical root, protected path roots, authenticated retained files
+and an exact authenticated `remove` file list. Retained evidence and the plan/receipt must
+live outside that root. Review the exact plan and dependency closure before applying it.
+
+The command verifies preserved evidence, file identities, ownership, hardlink closure,
+protected roots and observed process dependencies. It refuses symlinks and Git metadata,
+journals each intent with fsync before removal and resumes only journaled missing files.
+Do not use a recursive deletion as a shortcut. Git/worktree retirement is separate because
+it must preserve unpublished commits, staged/unstaged edits and submodule objects first.
+The tool cannot infer scientific value or grant authorization, detect every remote reader,
+or enforce behavior of arbitrary shell commands. Agents must follow this closeout route.
+
+Raw execution records remain immutable while retained. Correct a result explicitly with a dated note;
 a materially changed question or body of evidence gets a new result linked to the earlier
 one. FINDINGS points to the current conclusion while conflicting evidence stays discoverable.
 

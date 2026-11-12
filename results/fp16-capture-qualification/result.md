@@ -53,3 +53,10 @@ source snapshots are beside each training attempt. Native serving used the compl
 rebuild; artifact identities and commands are retained in the comparison specification.
 The initial capture verification attempt expected serving to omit EOS; the corrected
 verifier accounts for the retained EOS label. Both attempts remain in their logs.
+
+## Artifact disposition
+
+Retain the compact measurements and executed source linked above. Reusable saved
+controls and active data/model inputs retain their dependency closure outside source.
+Qualification-only descendants are disposable after their measurements and failure
+receipts are verified; exact retired states cannot be resumed.

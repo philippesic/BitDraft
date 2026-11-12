@@ -22,3 +22,10 @@ Imported historical measurements; no experiment was rerun. Full source/history a
 non-copied supporting records are recoverable from the verified external archive
 described in [evidence access](../../docs/evidence.md). Raw models/captures are not
 part of the Git archive; past retirement and missing inputs limit exact reproduction.
+
+## Artifact disposition
+
+Retain the linked compact reports, measurements and independently archived source.
+These imported findings do not promise raw checkpoint, capture or runtime availability.
+Current availability and later authorized disposals are recorded in
+[the evidence guide](../../docs/evidence.md); historical observations stay unchanged.

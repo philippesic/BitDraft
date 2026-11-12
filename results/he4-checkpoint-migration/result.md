@@ -50,3 +50,9 @@ Both the failed check and corrected proof remain under
 `/home/philip/binary-eagle-artifacts/qualification/original-export-canonical-equivalence.json`.
 The corrected state/export and producer journal are retained in `original-zero-export-02/`
 there; informational headers differ. This adds export evidence to the update proof above.
+
+## Artifact disposition
+
+Retain the current corpus, original parent, recorded source and validated product inputs
+at their external locations identified above. They serve future training; summary data
+cannot replace those inputs. This result does not require retaining unrelated raw runs.
