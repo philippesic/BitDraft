@@ -1,15 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
   <title id="title">BitDraft</title>
-  <desc id="desc">A mint B with forward-pointing counters and three digital bits on a dark tile.</desc>
+  <desc id="desc">A folded mint-green arrow with a dark central seam, moving forward.</desc>
   <defs>
-    <linearGradient id="tile" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#19312f"/>
-      <stop offset="1" stop-color="#0b171c"/>
+    <linearGradient id="tile" x1="8" y1="0" x2="56" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#19221f"/>
+      <stop offset="1" stop-color="#0d1513"/>
+    </linearGradient>
+    <linearGradient id="wing" x1="16" y1="17" x2="48" y2="40" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#c9f4d8"/>
+      <stop offset="1" stop-color="#8bdbad"/>
     </linearGradient>
   </defs>
-  <rect x="0.5" y="0.5" width="63" height="63" rx="14.5" fill="url(#tile)" stroke="#365650"/>
-  <path fill="#b1f5d5" fill-rule="evenodd" d="M20 12h16c8 0 12 4 12 12 0 4-2 6-5 8 6 2 9 5 9 10 0 7-6 10-16 10H20V12Zm8 8v8h6l6-4-6-4h-6Zm0 16v8h8l8-4-8-4h-8Z"/>
-  <rect x="12" y="16" width="4" height="4" rx="1" fill="#61cfa6" opacity="0.55"/>
-  <rect x="12" y="28" width="4" height="4" rx="1" fill="#7ce4b8" opacity="0.8"/>
-  <rect x="12" y="40" width="4" height="4" rx="1" fill="#b1f5d5"/>
+  <rect width="64" height="64" rx="16" fill="url(#tile)"/>
+  <path d="m13 23 36-9-20 18-16-9Z" fill="url(#wing)"/>
+  <path d="m49 17-9 33-9-15 18-18Z" fill="#65b78c"/>
 </svg>
