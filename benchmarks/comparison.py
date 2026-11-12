@@ -344,6 +344,30 @@ class Comparison:
                 source.verify()
             result_source = artifact(value["result"], ref.path.parent)
             result = read(result_source.path, 64 * 1024 * 1024)
+            source_spec = Comparison.load(artifact(value["specification"], ref.path.parent).path)
+            source_protocol = source_spec.reference_protocol()
+            desired_protocol = self.reference_protocol()
+            source_protocol.pop("tasks")
+            desired_protocol.pop("tasks")
+            original_tasks = {string(task["id"]): task for task in source_spec.tasks}
+            source_arm = next(
+                (arm for arm in source_spec.arms if arm.name == value["source_arm"]), None
+            )
+            recorded_model = (
+                artifact(value["drafter"], ref.path.parent)
+                if value["drafter"] is not None
+                else None
+            )
+            if (
+                source_protocol != desired_protocol
+                or source_arm is None
+                or (source_arm.drafter.sha256 if source_arm.drafter else None)
+                != (recorded_model.sha256 if recorded_model else None)
+                or any(original_tasks.get(string(task["id"])) != task for task in self.tasks)
+                or source_spec.diagnostic
+                or source_spec.sampling.temperature
+            ):
+                raise ValueError("reference model/workload identity differs from its source")
             wanted = {task["id"] for task in self.tasks}
             recorded = [
                 row
@@ -397,6 +421,8 @@ class Comparison:
             value["signatures"] != found["target"]["signatures"] for value in found.values()
         ):
             raise ValueError("cached competitors disagree with target output signatures")
+        if len({string(value["gpu"]) for value in found.values()}) > 1:
+            raise ValueError("cached references come from different hardware/driver conditions")
         return found
 
     def serving_identity(self) -> tuple[str, ...]:

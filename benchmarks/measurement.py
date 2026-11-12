@@ -21,24 +21,35 @@ def pause(seconds: float) -> None:
 
 
 @contextmanager
-def deadline(seconds: float | None) -> Iterator[None]:
+def deadline(seconds: float | None, nested: bool = False) -> Iterator[None]:
     if seconds is None:
         yield
         return
-    if signal.getitimer(signal.ITIMER_REAL)[0]:
+    remaining = signal.getitimer(signal.ITIMER_REAL)[0]
+    if remaining and not nested:
         raise ValueError("screen cannot replace an existing process deadline")
     previous = signal.getsignal(signal.SIGALRM)
+    began = now()
 
     def expired(_signal: int, _frame: object) -> None:
+        if remaining and remaining <= seconds:
+            signal.signal(signal.SIGALRM, previous)
+            signal.raise_signal(signal.SIGALRM)
         raise ValueError("training screen exceeded120 seconds; incomplete attempt retained")
 
     signal.signal(signal.SIGALRM, expired)
-    signal.setitimer(signal.ITIMER_REAL, seconds)
+    signal.setitimer(signal.ITIMER_REAL, min(seconds, remaining) if remaining else seconds)
     try:
         yield
     finally:
         signal.setitimer(signal.ITIMER_REAL, 0)
         signal.signal(signal.SIGALRM, previous)
+        if remaining:
+            budget = remaining - (now() - began)
+            if budget <= 0:
+                signal.raise_signal(signal.SIGALRM)
+            else:
+                signal.setitimer(signal.ITIMER_REAL, budget)
 
 
 def port_number() -> int:

@@ -113,6 +113,7 @@ class Intent:
                 "model_update_seconds",
                 "development_cadence_updates",
                 "initialization",
+                "cpu_threads",
             }
             != required
             or type(raw["schema"]) is not int
@@ -123,6 +124,8 @@ class Intent:
             )
         if integer(raw["checkpoint_updates"]) < 1 or number(raw["checkpoint_seconds"]) <= 0:
             raise ValueError("positive explicit checkpoint cadence required")
+        if not 1 <= integer(raw.get("cpu_threads", 2)) <= 16:
+            raise ValueError("cpu_threads must be between1 and16")
         for key in (
             "objective",
             "hypothesis",
@@ -276,6 +279,10 @@ class Intent:
         )
 
     @property
+    def cpu_threads(self) -> int:
+        return integer(self.raw.get("cpu_threads", 2))
+
+    @property
     def sampling(self) -> Artifact | None:
         return artifact(self.raw["sampling"], self.base) if "sampling" in self.raw else None
 
@@ -306,6 +313,7 @@ class Intent:
                 "initialization": None
                 if self.initialization is None
                 else self.initialization.sha256,
+                "cpu_threads": self.cpu_threads,
                 "sampling": None
                 if self.sampling is None
                 else {"sha256": self.sampling.sha256, "bytes": self.sampling.size},

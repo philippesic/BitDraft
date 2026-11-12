@@ -1,4 +1,6 @@
+import os
 import subprocess
+import sys
 from contextlib import contextmanager
 from dataclasses import asdict
 from pathlib import Path
@@ -26,7 +28,7 @@ def server_arguments(spec: Comparison, arm: Arm, port: int) -> list[str]:
 
 
 @contextmanager
-def session(spec: Comparison, arm: Arm, cell: Store) -> Iterator[int]:
+def session(spec: Comparison, arm: Arm, cell: Store, managed_group: bool = False) -> Iterator[int]:
     port = port_number()
     argv = server_arguments(spec, arm, port)
     cell.atomic(
@@ -37,11 +39,11 @@ def session(spec: Comparison, arm: Arm, cell: Store) -> Iterator[int]:
     )
     with (cell.root / "server.log").open("wb") as log:
         process = subprocess.Popen(
-            argv,
+            [sys.executable, "-B", "-m", "benchmarks.server_child", str(os.getpid()), *argv],
             env=native_environment(spec.binary.path.parent),
             stdout=log,
             stderr=subprocess.STDOUT,
-            start_new_session=True,
+            start_new_session=not managed_group,
         )
         try:
             deadline = now() + 180

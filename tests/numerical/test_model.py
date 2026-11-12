@@ -764,8 +764,9 @@ class TestNumerical(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "content"):
                 load_capture(spec, 128 * 1024, hidden=4)
 
-    def fixture_worker(self, identity: str) -> TensorWorker:
+    def fixture_worker(self, identity: str, device: str = "cpu") -> TensorWorker:
         model, features = self.tiny_model()
+        model.to(device)
         window = Window("fixture", 2, tuple(range(3, 18)))
         capture = Capture(tuple(range(20)), features, (window,))
 
@@ -776,6 +777,63 @@ class TestNumerical(unittest.TestCase):
                 return capture, window
 
         return TensorWorker(model, Source(), identity)
+
+    def test_offload_preserves_optimizer_rng_and_refuses_mutation(self) -> None:
+        worker = self.fixture_worker("offload")
+        worker.run(Monotonic(), Budget(1, 60, 1), lambda: False)
+        before = torch.get_rng_state().clone()
+        parameters = {
+            name: value.detach().clone() for name, value in worker.model.named_parameters()
+        }
+        optimizer = {
+            key: {
+                name: value.clone() if torch.is_tensor(value) else value
+                for name, value in state.items()
+            }
+            for key, state in worker.optimizer.state_dict()["state"].items()
+        }
+        with worker.offload() as info:
+            self.assertEqual(info["cuda_allocated_bytes"], 0)
+            self.assertFalse(worker.ready)
+            torch.manual_seed(99)
+            torch.rand(100, generator=torch.Generator().manual_seed(99))
+            with self.assertRaises(ValueError):
+                worker.step(worker.cursor)
+        self.assertTrue(worker.ready)
+        self.assertTrue(torch.equal(before, torch.get_rng_state()))
+        for name, value in worker.model.named_parameters():
+            self.assertTrue(torch.equal(value, parameters[name]))
+        for key, state in worker.optimizer.state_dict()["state"].items():
+            for name, value in state.items():
+                self.assertTrue(torch.equal(value, optimizer[key][name]))
+        with tempfile.TemporaryDirectory(prefix="binary-offload-") as directory:
+            saved = worker.checkpoint(Store(Path(directory)), 4 * 1024 * 1024)
+            expected = self.fixture_worker("offload")
+            expected.restore(saved, 4 * 1024 * 1024)
+            with worker.offload(
+                release_gradients=True, retain_frozen=True, publication=saved
+            ) as info:
+                self.assertTrue(info["retained_frozen"])
+                self.assertEqual(info["backing_state"], saved.artifact.sha256)
+                self.assertTrue(all(value.grad is None for value in worker.model.parameters()))
+            expected.run(Monotonic(), Budget(2, 60, 2), lambda: False)
+            worker.run(Monotonic(), Budget(2, 60, 2), lambda: False)
+            self.assertEqual(worker.progress.last_loss, expected.progress.last_loss)
+            for name, value in worker.model.named_parameters():
+                self.assertTrue(torch.equal(value, dict(expected.model.named_parameters())[name]))
+            for key, state in worker.optimizer.state_dict()["state"].items():
+                for name, value in state.items():
+                    self.assertTrue(
+                        torch.equal(value, expected.optimizer.state_dict()["state"][key][name])
+                    )
+            with self.assertRaisesRegex(ValueError, "current durable"):
+                with worker.offload(release_gradients=True, retain_frozen=True, publication=saved):
+                    pass
+        bad = self.fixture_worker("offload-mutation")
+        with self.assertRaisesRegex(ValueError, "frozen"):
+            with bad.offload():
+                bad.model.vocabulary.add_(1)
+        self.assertFalse(bad.ready)
 
     def test_tensor_resume_next_update_and_branch(self) -> None:
         with tempfile.TemporaryDirectory(prefix="binary-resume-") as directory:

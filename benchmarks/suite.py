@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from benchmarks.campaign_segments import verify_initial_export
 from benchmarks.comparison import Comparison
 from benchmarks.native import file_reference
 from benchmarks.runner import compare
@@ -7,7 +8,7 @@ from benchmarks.workflows import live
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, number, record
 from w1a1_eagle.identity import source_identity
-from w1a1_eagle.lifecycle import Journal, Ownership
+from w1a1_eagle.lifecycle import Ownership
 from w1a1_eagle.records import artifact, canonical, read
 
 
@@ -152,16 +153,11 @@ def suite(specification: Path, output: Path) -> Record:
                     execution = artifact(bound["execution"], ref.path.parent)
                     for item in (state, drafter, execution):
                         item.verify()
-                    report = Journal(execution.path.parent).report()
-                    worker = record(report["worker"])
-                    if (
-                        report["operational"] != "terminal"
-                        or worker["state"] != state.sha256
-                        or worker["export"] != drafter.sha256
-                    ):
+                    if execution.path != drafter.path.parent.parent / "events.jsonl":
                         raise ValueError(
-                            "candidate state/export binding disagrees with completed execution"
+                            "candidate binding must retain its actual producer journal"
                         )
+                    verify_initial_export(state, drafter)
                     request_spec = Comparison.load(
                         artifact(specs["requests"], specification.resolve().parent).path
                     )

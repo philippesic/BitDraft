@@ -69,6 +69,7 @@ def report(root: Path) -> Record:
         "progress": progress,
         "development": diagnostics,
         "native_evaluations": evaluations,
+        "historical_initial_evaluation": status.get("initial_evaluation"),
         "interruptions": interruptions(root),
         "exposure": {
             "selected_window_attempts": sum(visits.values()),
@@ -106,28 +107,25 @@ def interruptions(root: Path) -> list[Record]:
             for row in events
             if row.get("kind") == "started"
         }
-        ready = next((row for row in events if row.get("kind") == "training-ready"), None)
-        if ready is not None and previous is not None:
-            same_boot = ready["boot"] == previous["boot"] and controllers.get(
-                string(ready["attempt"])
-            ) == previous.get("controller")
-            elapsed = (
-                number(ready["monotonic"]) - number(previous["monotonic"]) if same_boot else None
-            )
-            if elapsed is not None and elapsed < 0:
-                raise ValueError("training interruption clock moved backwards")
-            values.append(
-                {
-                    "resumed_segment": path.name,
-                    "seconds": elapsed,
-                    "scope": "last update through checkpoint/export/evaluation and next sample readiness"
-                    if same_boot
-                    else "unavailable across reboot/controller recovery; not continuous benchmark overhead",
-                }
-            )
-        previous = next(
-            (row for row in reversed(events) if row.get("kind") == "training-boundary"), None
-        )
-        if previous is not None:
-            previous = {**previous, "controller": controllers.get(string(previous["attempt"]))}
+        for row in events:
+            if row.get("kind") == "training-boundary":
+                previous = {**row, "controller": controllers.get(string(row["attempt"]))}
+            elif row.get("kind") == "training-ready" and previous is not None:
+                same = row["boot"] == previous["boot"] and controllers.get(
+                    string(row["attempt"])
+                ) == previous.get("controller")
+                elapsed = number(row["monotonic"]) - number(previous["monotonic"]) if same else None
+                if elapsed is not None and elapsed < 0:
+                    raise ValueError("training interruption clock moved backwards")
+                values.append(
+                    {
+                        "resumed_segment": path.name,
+                        "seconds": elapsed,
+                        "reason": previous.get("outcome"),
+                        "scope": "last update through checkpoint/export/evaluation and next sample readiness"
+                        if same
+                        else "unavailable across reboot/controller recovery; not continuous benchmark overhead",
+                    }
+                )
+                previous = None
     return values

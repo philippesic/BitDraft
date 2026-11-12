@@ -48,8 +48,12 @@ CUDA also takes a host-wide lease after checking existing compute processes.
 Each attempt freezes source/intent and records loaded Python/native identities, checked
 again at exit. Checkout edits cannot alter it. A bootstrap arms an OS timer before Torch;
 the controller owns the worker process group by boot/start identity. CPU hides CUDA.
-V2 campaigns omit the duplicate preflight subprocess between segments; the worker still
-performs full data admission before model allocation. Public CPU preflight remains available.
+V2 campaigns keep one supervised worker through native checks. It releases completed
+gradients, maps trainable tensors and Adam moments from its current durable checkpoint,
+retains frozen GPU buffers, then restores devices and CPU/CUDA RNG before another update. Tensor identities
+and mutation versions are checked. Native child servers die with their evaluator parent.
+The worker performs full data admission before model allocation; public CPU preflight
+remains available. Journal-capacity rotation preserves global attempt/update/wall guards.
 
 Failed attempts retain cost; there is no automatic retry. An uninitialized same-recipe
 retry may reuse its root. After initialization, recovery needs explicit parent/resume.

@@ -17,7 +17,13 @@ class ProcessIdentity:
 
     def alive(self) -> bool:
         try:
-            return self == self.read(self.pid)
+            text = Path(f"/proc/{self.pid}/stat").read_text()
+            tail = text[text.rfind(")") + 2 :].split()
+            return (
+                tail[0] not in {"Z", "X"}
+                and tail[19] == self.birth
+                and Path("/proc/sys/kernel/random/boot_id").read_text().strip() == self.boot
+            )
         except (OSError, IndexError):
             return False
 

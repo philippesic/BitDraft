@@ -66,6 +66,35 @@ def test_cached_acceptance_selection_ignores_historical_speed() -> None:
         select(result, leader, "new", "export", {})
 
 
+def test_boundary_export_preserves_valid_state_after_later_failure(tmp_path: Path) -> None:
+    from benchmarks.campaign_segments import verify_initial_export
+    from w1a1_eagle.checkpoints.store import Store
+    from w1a1_eagle.lifecycle import Journal
+    from w1a1_eagle.records import reference
+
+    state = Store(tmp_path / "states").commit(b"state", "recipe", 17)
+    exported = Store(tmp_path / "exports").commit(b"export", "recipe", 17)
+    journal = Journal(tmp_path)
+    journal.append({"kind": "started", "attempt": "one"})
+    journal.append(
+        {
+            "kind": "boundary-publication",
+            "attempt": "one",
+            "updates": 17,
+            "state": reference(state.artifact),
+            "drafter": reference(exported.artifact),
+        }
+    )
+    journal.append({"kind": "terminal", "attempt": "one", "outcome": "failed", "wall_seconds": 1.0})
+    verify_initial_export(state.artifact, exported.artifact)
+    wrong = Store(tmp_path / "exports").commit(b"wrong export", "recipe", 17)
+    with pytest.raises(ValueError, match="producer"):
+        verify_initial_export(state.artifact, wrong.artifact)
+    changed_counter = Store(tmp_path / "exports").commit(b"export", "recipe", 18)
+    with pytest.raises(ValueError, match="producer"):
+        verify_initial_export(state.artifact, changed_counter.artifact)
+
+
 def test_interruption_clock_excludes_controller_recovery_gaps(tmp_path: Path) -> None:
     from benchmarks.reporting import interruptions
     from w1a1_eagle.lifecycle import Journal
@@ -105,6 +134,70 @@ def test_native_deadline_reaps_context_without_replacing_other_timer() -> None:
                 pass
     finally:
         signal.setitimer(signal.ITIMER_REAL, 0)
+    signal.setitimer(signal.ITIMER_REAL, 60)
+    try:
+        with pytest.raises(ValueError, match="exceeded"):
+            with deadline(1, nested=True):
+                signal.raise_signal(signal.SIGALRM)
+        assert 0 < signal.getitimer(signal.ITIMER_REAL)[0] <= 60
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+
+
+def test_resident_interruption_clock_pairs_multiple_checks_in_one_worker(tmp_path: Path) -> None:
+    from benchmarks.reporting import interruptions
+    from w1a1_eagle.lifecycle import Journal
+
+    journal = Journal(tmp_path / "0001-training")
+    journal.append({"kind": "started", "attempt": "test", "controller": {"pid": 1}})
+    for kind, timestamp in (
+        ("training-ready", 10),
+        ("training-boundary", 20),
+        ("training-ready", 95),
+        ("training-boundary", 100),
+        ("training-ready", 180),
+    ):
+        journal.append({"kind": kind, "attempt": "test", "boot": "boot", "monotonic": timestamp})
+    assert [row["seconds"] for row in interruptions(tmp_path)] == [75, 80]
+
+
+def test_native_server_dies_with_its_parent(tmp_path: Path) -> None:
+    import select
+    import signal
+    import subprocess
+    import sys
+
+    from benchmarks.measurement import now, pause
+    from w1a1_eagle.processes import ProcessIdentity
+
+    code = "import subprocess,sys,os\np=subprocess.Popen([sys.executable,'-B','-m','benchmarks.server_child',str(os.getpid()),sys.executable,'-c',\"import time;print('ready',flush=True);time.sleep(30)\"],stdout=subprocess.PIPE,text=True,start_new_session=True)\nprint(p.pid,flush=True)\nprint(p.stdout.readline(),flush=True)\nsys.stdin.read()"
+    parent = subprocess.Popen(
+        [sys.executable, "-c", code], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True
+    )
+    child: ProcessIdentity | None = None
+    try:
+        assert parent.stdout is not None
+        poll = select.poll()
+        poll.register(parent.stdout, select.POLLIN)
+        assert poll.poll(5000)
+        child = ProcessIdentity.read(int(parent.stdout.readline()))
+        assert parent.stdout.readline().strip() == "ready"
+        parent.terminate()
+        parent.wait(timeout=5)
+        until = now() + 5
+        while child.alive() and now() < until:
+            pause(0.01)
+        assert not child.alive()
+    finally:
+        if parent.poll() is None:
+            parent.kill()
+        parent.wait(timeout=5)
+        if parent.stdin is not None:
+            parent.stdin.close()
+        if parent.stdout is not None:
+            parent.stdout.close()
+        if child is not None and child.alive():
+            child.signal_group(signal.SIGKILL)
 
 
 def test_grouped_blocks_balance_arm_positions_and_preserve_every_request(tmp_path: Path) -> None:
