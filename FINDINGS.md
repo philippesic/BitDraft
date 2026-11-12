@@ -146,6 +146,9 @@ failure recovery preserved exact state and reused historical controls.
 
 ## Capture storage
 
+[The frozen 6K TRAIN bank is fully captured](results/frozen-train-bank-capture/result.md):
+all 6,000 records passed product validation and metadata admission; FP16 arrays use about 230 GiB.
+
 [Early rounding screen](results/fp16-feature-screen/result.md), followed by
 [matched training/native adoption](results/fp16-storage-adoption/result.md).
 

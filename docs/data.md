@@ -32,6 +32,12 @@ legacy identities and exact tokenized prefixes, solves category/length and outpu
 quotas, and forecasts maximum feature bytes. It does not generate captures or establish
 semantic difficulty. Inspect source quality before production acquisition.
 
+The frozen 6K bank's [completed FP16 corpus](../results/frozen-train-bank-capture/result.md)
+is indexed at `/home/philip/binary-eagle-artifacts/datasets/train-bank-v8-fp16-01/corpus.json`.
+It references the existing supplement and both new capture shards; preserve every
+supporting root, including its Windows files. This is TRAIN data with recorded prior
+exposure, not independent evaluation data or a new training allocation.
+
 ## Prompt identity and roles
 
 A prompt is identified by its source revision and license, canonical messages,

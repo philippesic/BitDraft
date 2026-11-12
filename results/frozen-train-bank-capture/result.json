@@ -1,0 +1,137 @@
+{
+  "schema": 1,
+  "status": "complete",
+  "decision": "retain",
+  "target_name": "Qwen3.5-4B Q4_K_M",
+  "target": {
+    "bytes": 2834975040,
+    "path": "/home/philip/binary-eagle-artifacts/models/qwen35-4b-q4km.gguf",
+    "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+  },
+  "hardware": "RTX 5080",
+  "feature_dtype": "float16",
+  "training_materialization": "float32",
+  "counts": {
+    "records": 6000,
+    "reused_records": 2000,
+    "new_records": 4000,
+    "supervision_windows": 2283089,
+    "maximum_capture_tokens": 13471,
+    "prompt_tokens": 3749966,
+    "generated_tokens": 2277089
+  },
+  "eligible_records": 6000,
+  "storage_bytes": {
+    "features": 246868172800,
+    "referenced_record_files": 247218907914
+  },
+  "category_counts": {
+    "code": 1500,
+    "conversation": 1000,
+    "documents": 1250,
+    "reasoning": 1000,
+    "structured": 750,
+    "writing": 500
+  },
+  "input_length_bands": {
+    "0": 3720,
+    "1": 1800,
+    "2": 420,
+    "3": 60
+  },
+  "output_caps": {
+    "1024": 3000,
+    "2048": 1200,
+    "256": 1800
+  },
+  "stop_counts": {
+    "eos": 4401,
+    "limit": 1599
+  },
+  "prior_use": {
+    "historical-training": 2248,
+    "unknown": 3752
+  },
+  "supporting_roots": [
+    "/home/philip/binary-eagle-artifacts/datasets/he4broad-supplement-01",
+    "/home/philip/binary-eagle-artifacts/datasets/train-bank-v8-fp16-01/linux-captures",
+    "/mnt/c/binary-eagle-artifacts/train-bank-v8-fp16-01/captures"
+  ],
+  "executed_sources": [
+    {
+      "path": "/home/philip/binary-eagle-artifacts/datasets/he4broad-supplement-01/sources/4180f38fc819d2bfbf0e3a56b24420a3c20d0a2e0b8fb071fa3078e0126357a7",
+      "source_sha256": "4180f38fc819d2bfbf0e3a56b24420a3c20d0a2e0b8fb071fa3078e0126357a7",
+      "result": {
+        "path": "/home/philip/binary-eagle-artifacts/datasets/he4broad-supplement-01/result.json",
+        "sha256": "eb549391f59772a05f1324ed970784fb996ed208d08ce9e5fa6cb79b5e792d99",
+        "bytes": 407
+      }
+    },
+    {
+      "path": "/home/philip/binary-eagle-artifacts/datasets/train-bank-v8-fp16-01/linux-captures/sources/87c67efbcc8a6dd88fd6d8f5116403cd9872e39e5d9850a16b902c4dd988aa7c",
+      "source_sha256": "87c67efbcc8a6dd88fd6d8f5116403cd9872e39e5d9850a16b902c4dd988aa7c",
+      "result": {
+        "path": "/home/philip/binary-eagle-artifacts/datasets/train-bank-v8-fp16-01/linux-captures/result.json",
+        "sha256": "f2de7b917bbb78bcc0853d3a4435745c548a58c6aaf339943cede9019f0dcc95",
+        "bytes": 421
+      }
+    },
+    {
+      "path": "/mnt/c/binary-eagle-artifacts/train-bank-v8-fp16-01/captures/sources/87c67efbcc8a6dd88fd6d8f5116403cd9872e39e5d9850a16b902c4dd988aa7c",
+      "source_sha256": "87c67efbcc8a6dd88fd6d8f5116403cd9872e39e5d9850a16b902c4dd988aa7c",
+      "result": {
+        "path": "/mnt/c/binary-eagle-artifacts/train-bank-v8-fp16-01/captures/result.json",
+        "sha256": "a6cac60ff869cba8a82489c8e253e12ac06cf8b83029386bff89bb1d6ab86a1a",
+        "bytes": 400
+      }
+    }
+  ],
+  "evidence": {
+    "result": {
+      "path": "/home/philip/binary-eagle-artifacts/datasets/train-bank-v8-fp16-01/result.json",
+      "sha256": "4db2a56a0068a27ec1037998374a06b50830c903ff9c61f52a23f0bb7fdc5f23",
+      "bytes": 737
+    },
+    "corpus": {
+      "path": "/home/philip/binary-eagle-artifacts/datasets/train-bank-v8-fp16-01/corpus.json",
+      "sha256": "3fbc013583cc832aa5b0cfb0211a3780d5889cef840efee2f83fc798505c8843",
+      "bytes": 20867738
+    },
+    "plan": {
+      "path": "/home/philip/binary-eagle-artifacts/datasets/train-bank-v8-fp16-01/plan.json",
+      "sha256": "ee5cf3cff61d57ba5f66088211f4b86d73d6c5631d3329789ab61398ee19af92",
+      "bytes": 2535
+    },
+    "verification": {
+      "path": "/home/philip/binary-eagle-artifacts/datasets/train-bank-v8-fp16-01/final-verification.json",
+      "sha256": "29595f659a5458fc009c72a2a7600abf9c98df4e5590a78621449a72c3628d7d",
+      "bytes": 1683
+    },
+    "product_admission": {
+      "path": "/home/philip/binary-eagle-artifacts/datasets/train-bank-v8-fp16-01/product-admission.json",
+      "sha256": "17a8b3e284bb61e2c3c0e3efed07e81b092f8a6da0dbcacb4bf10855763ab2f1",
+      "bytes": 625
+    },
+    "failed_observer": {
+      "path": "/home/philip/binary-eagle-artifacts/datasets/train-bank-v8-fp16-01/controller-progress-failure.json",
+      "sha256": "107436a51f0d37c7aece594b36dd27cbd67554929cf0430ec8dfc087e019432e",
+      "bytes": 211
+    },
+    "recovery": {
+      "path": "/home/philip/binary-eagle-artifacts/datasets/train-bank-v8-fp16-01/recovery-launch.json",
+      "sha256": "2b53020cd804d2d7d45028414fffa0d057265377b376ca1c9a33b221a6466ace",
+      "bytes": 632
+    },
+    "coordinator_source": {
+      "path": "/home/philip/binary-eagle-artifacts/datasets/train-bank-v8-fp16-01/executed-controller.py",
+      "sha256": "ebc15b67c3d96e742581c9374a62573eb79f4e01d30ca9c53167cdeede449e01",
+      "bytes": 4972
+    }
+  },
+  "limits": [
+    "Product validation ran for every record at capture; final metadata/receipt authentication and actual Corpus indexing passed. Raw arrays are authenticated again when consumed.",
+    "2248 IDs have recorded historical training exposure; other public-source exposure is unknown. This is a TRAIN corpus, not independent confirmation or evidence that 6,000 prevents overfitting.",
+    "No new training or native-serving comparison ran during finalization. Original220095 and the original 15,647-record corpus remain separate and preserved.",
+    "The recovered coordinator result.wall_seconds measures finalization recovery, not total generation time. The failed observer and both completed native attempts remain preserved."
+  ]
+}
