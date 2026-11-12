@@ -47,8 +47,8 @@ the original run/data now live under
 `closeout-reports-preservation.json` verifies the copied reports. This includes the
 220095-update,15647-capture run, distinct from the November8 forty-sequence namesake.
 
-The bundles are verified local preservation, not an off-machine backup. No remote is
-configured for this project. The archive lives under ignored `artifacts/archive`; include it when moving the whole
+Source history is published to [BitDraft](https://github.com/philippesic/BitDraft).
+The ignored bundles and large artifacts remain local; a Git push does not back them up. The archive lives under ignored `artifacts/archive`; include it when moving the whole
 project or backing up artifacts. Deleting the whole checkout deletes these local bytes. Neither archive adoption nor the document cleanup authorizes deleting live
 jobs, original model inputs or ignored execution records.
 
@@ -101,7 +101,10 @@ checkout paths are absent. The remaining legacy main tree is quarantined under
 `/home/philip/BitDraft/artifacts/archive/legacy-checkout-pending-delete` until Philip confirms
 its deletion. It contains no required current data input. Delete only that owned
 quarantine, without following its compatibility links into other retained evidence/data.
-This remains a local-only project with no configured remote or upstream.
+`origin` is the user-owned `git@github.com:philippesic/BitDraft.git`. Main preserves
+legacy main ancestry; `archive/legacy-main` and `archive/pre-bitdraft` preserve the
+original legacy tip and the original port history. Publication keeps existing repository
+visibility; it does not upload ignored datasets, model files or supporting archives.
 
 ## Windows artifact archives
 

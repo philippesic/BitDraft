@@ -1,5 +1,9 @@
 # BitDraft
 
+![BitDraft](assets/bitdraft.svg)
+
+[GitHub repository](https://github.com/philippesic/BitDraft).
+
 BitDraft investigates whether a small, low-precision drafter can make a larger
 language model answer faster. The drafter proposes several tokens; the target model
 verifies them. Success means faster complete requests with the target's output

@@ -6,8 +6,7 @@ heldout24 and its aliases never enter training, calibration or selection.
 
 Checkout: `/home/philip/BitDraft` on the RTX5080 host.
 All project artifacts live in ignored `artifacts/`; [storage](docs/storage.md) maps the folders.
-This checkout is local-only with no
-remote configured; publication and the license remain undecided.
+Remote: `git@github.com:philippesic/BitDraft.git` (`origin`). The license remains undecided.
 
 ## Navigation
 
