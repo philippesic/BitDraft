@@ -24,15 +24,26 @@ Legacy directory remains quarantined pending the requested final confirmation.
 
 ## State
 
-Owner: this thread. Checkout `/home/philip/binary-eagle-decoding-next`, initial HEAD d6052de.
-No active GPU clients at initial check. Legacy checkout has roughly250GiB,35 linked worktrees
-(16 external,4 locked), two native worktrees with uncommitted changes. All registered
-project HEADs exist in the independent final archive; native WIP still needs preservation.
-Audit: `/home/philip/binary-eagle-artifacts/qualification/old-repo-deletion-audit/`.
-Current datasets and original final are already external. Historical B0/foundation bytes
-still need a dependency/value decision; prior protection is not fresh qualification.
+Owner: this thread, main, local-only. Compact closeout and retirement entry committed
+as3d19a49. All34 inactive linked checkouts retired after independent project/native source,
+compact evidence and exact WIP recovery; both dirty native checkouts restored exactly.
+All16881 reviewed large legacy files are confirmed absent (217473674938 unique physical
+bytes), plus three obsolete Windows optimizer archives. All five obsolete historical
+states are retired; the previous registry is now evidence rather than active policy.
+A read-only-directory failure is preserved and repaired; the same plan/journal completed.
+
+[Closeout](../results/legacy-artifact-closeout/result.md) records evidence, scientific
+limits and disposition. Current original220095 raw/normalized parents and corpus metadata
+were rehashed. Original/6K data and current model/runtime/reference roots remain untouched.
+Prompt-bank/source locators have authenticated external derivatives and relocation maps.
+BitDraft text/package metadata is prepared; physical checkout and history have not moved.
+Recent quick gate104 tests passed; final full gate remains required. Evidence:
+`/home/philip/binary-eagle-evidence/legacy-closeout-20261112/`.
 
 ## Next
 
-Finish artifact inventory; implement a tested closeout receipt gate and compact legacy
-evidence before authorized disposal. Preserve worktree WIP before changing Git ownership.
+Commit this verified milestone, then rebase exact current snapshots onto archived legacy
+main with a verified pre-rebase bundle and old/new commit mapping. Rename physical
+checkout and T3 project to BitDraft, quarantine the old root, and run public input/model/
+benchmark admission plus the full gate without it. Final deletion waits for Philip's
+confirmation; no new capture/training/publication is authorized.

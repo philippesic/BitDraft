@@ -36,8 +36,9 @@ hybrid-dataset qualification before adopting either for continued training.
 original next-update state and migration receipts remain under
 `/home/philip/binary-eagle-artifacts/migration/` and
 `/home/philip/binary-eagle-artifacts/qualification/`. The original frozen source is
-`/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01/source-update8h-20261110-01`.
-Drivers and exact input identities are retained in the external qualification directory.
+`/home/philip/binary-eagle-artifacts/datasets/retained-he4broad-original/source-update8h-20261110-01`.
+The November12 relocation preserved those source bytes; original driver records keep
+their historical path. Drivers and exact input identities are retained in the external qualification directory.
 Reproduction runs the legacy driver first, then the new driver against the imported state;
 GPU ownership must be exclusive. The earlier mismatching attempt remains in its log.
 

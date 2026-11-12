@@ -12,6 +12,11 @@ Use a descriptive title followed by these sections in order:
   rewrite instead of appending. Distinguish decisions from pending proposals.
 - `Next`: the next useful action and any input it depends on.
 
+Before creating raw artifacts, record their purpose, required inputs and disposal point
+in the task or existing run recipe. Closeout retains verified compact evidence and
+needed inputs, then retires obsolete outputs through [the retirement command](../docs/results.md#retirement-command).
+An unexplained pile of raw outputs does not satisfy completion.
+
 Read relevant current docs and [FINDINGS](../FINDINGS.md) before investigating. Put durable
 learning in [results](../docs/results.md), not in a task diary. Update current docs as
 behavior changes. Invoke [close-results](../skills/close-results/SKILL.md) when closing an

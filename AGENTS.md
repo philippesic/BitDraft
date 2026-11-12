@@ -1,11 +1,11 @@
-# Binary Eagle
+# BitDraft
 
 Trains and exports HE4 drafters for speculative decoding: W1A4 weights, A8 down
 projection, Q4K head. The central boundary is data roles: heldout24 and its aliases
 never enter training, calibration or selection. Names and metrics: [domain](docs/domain.md).
 
-Checkout: `/home/philip/binary-eagle-decoding-next` on the RTX5080 host. The original
-`binary-eagle-decoding` checkout is historical source with different instructions.
+Checkout: `/home/philip/BitDraft` on the RTX5080 host. Legacy source/evidence
+is independent of the retired original checkout; see [evidence](docs/evidence.md).
 Artifacts: `/home/philip/binary-eagle-artifacts`; tasks name owners and scope.
 
 ## Where things are
@@ -61,7 +61,7 @@ Artifacts: `/home/philip/binary-eagle-artifacts`; tasks name owners and scope.
 
 ## Evidence and reporting
 
-- Keep weights, captures and run outputs out of Git.
+- Keep weights, captures and run outputs out of Git; closeout decides their disposal.
 - [Support](docs/support.md) scopes qualification. Report operational and scientific
   health separately; CPU checks do not qualify native execution or performance.
 - Never mix clocks, eras or workloads in a comparison.

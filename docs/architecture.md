@@ -38,6 +38,7 @@ From [boundaries](../policy/boundaries.toml), enforced by the architecture stage
 | `w1a1_eagle.data` | Prompt roles and consumption |
 | `w1a1_eagle.checkpoints.store` | Tensor states, manifests, latest pointer |
 | `w1a1_eagle.lifecycle` | Event journal and controller identity |
+| `tools.retention` | Explicit external artifact retirement journal |
 
 Environment variables are read only in `w1a1_eagle/config.py` and `tools/config.py`.
 Operational time comes from `w1a1_eagle/clock.py`; benchmark request timing is owned

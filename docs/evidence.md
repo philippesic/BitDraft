@@ -51,3 +51,37 @@ The bundles are verified local preservation, not an off-machine backup. No remot
 configured for this project. Preserve the external archive when moving or deleting a
 checkout. Neither archive adoption nor the document cleanup authorizes deleting live
 jobs, original model inputs or ignored execution records.
+
+## Compact legacy artifact evidence
+
+The [legacy closeout](../results/legacy-artifact-closeout/result.md) records the later
+explicitly authorized artifact retirement. Its exact receipts supersede older statements
+that every historical checkpoint or raw run remains available. Historical measurements
+and source identities are unchanged; discarded optimizer states cannot be resumed and
+raw tensors/events not retained cannot be recomputed from a hash.
+
+`/home/philip/binary-eagle-evidence/legacy-closeout-20261112/` contains deduplicated compact
+support, source snapshots, training-curve aggregates, failure diagnostics and exact
+worktree WIP patches. Compressed indexes map the original path to `objects/SHA256` in the
+corresponding tar archive. The tracked closeout receipt authenticates these files. Look up
+the relevant old path in the index, then read just that object, for example:
+
+```sh
+tar -xOzf /home/philip/binary-eagle-evidence/legacy-closeout-20261112/compact-support.tar.gz objects/SHA256
+```
+
+`compact-support` preserves reports, per-request measurements and supporting tables;
+`native-source-support` preserves source/header/build snapshots. `external-worktree-support`
+adds compact records from retired external checkouts. Native uncommitted changes were
+restored in independent checkouts to verify the preserved staged/unstaged patches and
+untracked files. `training-series.jsonl.gz` stores256-row descriptive aggregates, not the
+full optimization stream; it cannot support new per-example or uncertainty claims.
+`failure-diagnostics.jsonl.gz` preserves matching failure excerpts with source identities;
+text matches are diagnostic evidence, not newly classified scientific outcomes.
+
+Current model files, reusable benchmark controls and their required request/source
+closure, original220095, the original teacher corpus and frozen6K FP16 corpus remain at
+their external artifact homes. Historical absolute locators can be resolved through the
+closeout relocation receipts; retained originals are not silently rewritten. The external
+storage roots keep their established names to preserve authenticated identities. BitDraft
+is the current project name; old names inside immutable receipts identify historical runs.

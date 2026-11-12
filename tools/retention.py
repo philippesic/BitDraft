@@ -33,7 +33,7 @@ def inspect(plan: Path) -> tuple[Record, list[Artifact], list[Artifact]]:
     root = Path(string(raw["root"]))
     if not root.is_absolute() or root.is_symlink() or root.resolve() != root:
         raise ValueError("retirement root must be an absolute physical directory")
-    if root == Path(root.anchor) or not root.is_dir():
+    if root == Path(root.anchor) or ".git" in root.parts or not root.is_dir():
         raise ValueError("invalid retirement root")
     protected = [Path(string(v)).resolve() for v in sequence(raw["protected"])]
     kept = [artifact(v, plan.parent, resolve=False) for v in sequence(raw["retained"])]
@@ -81,6 +81,8 @@ def execute(plan: Path, receipt: Path, apply: str | None = None) -> Record:
         raise ValueError("plan and receipt must survive retired root")
     if apply is not None and apply != plan_pin.sha256:
         raise ValueError("apply requires the inspected plan SHA-256")
+    if any(a.path.exists() and not os.access(a.path.parent, os.W_OK) for a in removed):
+        raise ValueError("retirement parent is read-only; unlock only owned retired directories")
     clients = active_clients(root)
     if clients:
         raise ValueError("retirement root has active process dependencies: " + str(clients))
