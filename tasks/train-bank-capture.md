@@ -23,6 +23,7 @@ actually completes; starting the job is not a completed dataset.
 
 ## State
 
+Owner: this thread's existing RTX5080 capture allocation; project branch `main`.
 Artifact root `/home/philip/binary-eagle-artifacts`. The detached controller under
 `datasets/train-bank-v8-fp16-01` reauthenticated the completed 2,000-record supplement
 and is generating the remaining 4,000 through public `benchmarks capture` entry points.

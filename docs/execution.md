@@ -11,9 +11,9 @@ provisional leader uses acceptance. Historical speed remains descriptive. See
 ## Commands
 
 ```sh
-python -m w1a1_eagle preflight INTENT
-python -m w1a1_eagle run INTENT OUTPUT --scope TASK
-python -m w1a1_eagle report OUTPUT
+uv run --locked --no-sync --offline python -m w1a1_eagle preflight INTENT
+uv run --locked --no-sync --offline python -m w1a1_eagle run INTENT OUTPUT --scope TASK
+uv run --locked --no-sync --offline python -m w1a1_eagle report OUTPUT
 ```
 
 `--json` before/after the subcommand selects structured output. Preflight checks inputs
@@ -87,6 +87,15 @@ must match. Mutation guards are not a sandbox. No mode silently imports trained 
 Without `retention`, state history remains. Explicit states/exports bounds preserve latest
 and an in-store parent; global campaign retention also protects selected/recovery states.
 Retirement receipts remain. Capacity is rechecked on writes, not reserved in advance.
+
+Before cleanup, resolve the inputs and state references used by live jobs and selected
+results. Preserve the teacher corpus, initialization/vocabulary, frozen executed source,
+latest recoverable Adam/RNG state, selected states/exports and raw execution receipts
+needed by the assigned task. A readable result or ignored path does not make these
+bytes disposable. Closed unselected states can be retired only within authorized scope,
+using Store retirement receipts before removal. Record when an exact retired resume
+point is no longer available. Keep shared caches until their ownership and dependencies
+are known; an upstream cleanup default is not evidence they are disposable.
 
 ## Sampling and clocks
 

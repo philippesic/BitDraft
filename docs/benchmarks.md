@@ -111,6 +111,22 @@ truncation manufactures coverage. Exact inputs/caps set the maximum, EOS the act
 These are dataset planning ceilings, not global disk limits. [Data](data.md) owns formats,
 partial tails, mixtures and ancestry.
 
+Capture resumes the exact specification in its existing output: authenticate completed
+`progress.json` records and skip their IDs. Keep incomplete attempt directories and
+failure receipts. Before restarting, inspect `attempt-N/owner.json` against process
+birth/boot and actual GPU clients; a missing controller or tool session does not prove
+the native process ended. Preserve healthy owned work. A changed bank, selection, target,
+precision or policy needs a new specification/output rather than editing the old one.
+Use the recorded source when recovering an interrupted execution; checkout edits do
+not replace its provenance.
+
+Unattended execution needs a persistent host session or detached process with a recorded
+controller identity and owned log. Verify the native owner and advancing validated
+records before handoff. Read-only inspection does not require launching another teacher.
+Completion requires the terminal result, exact requested IDs and product validation;
+an existing data directory or a live process alone is insufficient. A user cancellation
+ends the allocation; old specifications do not authorize restarting it.
+
 [`capture`](../benchmarks/capture.py) binds teacher/runtime/tokenizer, bank/IDs, dtype,
 context, byte ceiling, exclusions and supervision policy. Every new record passes the
 bounded product loader before publication: hashes, geometry, finite values, token/label

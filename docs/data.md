@@ -110,7 +110,9 @@ entry points. A combined corpus is complete only when every requested ID is pres
 all product validations passed. Storage can span host filesystems; record physical roots
 and preserve their references. Reusing captures does not make previously seen data fresh.
 
-`python -m w1a1_eagle.numerical.conversion SPEC OUTPUT` converts a schema-1 F32 corpus to
+Use the configured numerical interpreter reported by the doctor for
+`python -m w1a1_eagle.numerical.conversion SPEC OUTPUT`; the check-only environment
+does not contain its numerical dependencies. It converts a schema-1 F32 corpus to
 F16 in a new external root. The spec binds `corpus`, `maximum_relative_l2` and
 `capture_limit_bytes` under schema 1. It checks all finite values and overflow, streams
 bounded chunks through atomic assets, preserves labels/roles and supporting metadata,

@@ -310,7 +310,8 @@ def main() -> int:
             receipt = root / ".venv/foundation-verification.json"
             receipt.write_text(json.dumps(report, sort_keys=True) + "\n")
         print(
-            "10 qualification: native/runtime verify/source parity/benchmark UNAVAILABLE; foundation only"
+            "10 qualification: native/runtime verify/source parity/benchmark UNAVAILABLE"
+            " in this CPU gate; see docs/support.md for scoped execution evidence"
         )
         print(
             "Authority: verification is CPU evidence; it grants no approval for runs or policy changes"

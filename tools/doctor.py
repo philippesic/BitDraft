@@ -40,9 +40,9 @@ def diagnose(root: Path) -> dict[str, object]:
         "symlink_escapes": escapes,
         "capabilities": {
             "CPU": "run full gate for current evidence",
-            "GPU": "unqualified",
-            "native": "unqualified",
-            "benchmark": "deferred",
+            "GPU": "not assessed by this CPU diagnostic; see docs/support.md",
+            "native": "not assessed by this CPU diagnostic; see docs/support.md",
+            "benchmark": "available through python -m benchmarks; execution not assessed",
         },
         "authority": "diagnostics and hashes do not authorize a run",
     }
