@@ -60,3 +60,5 @@ state. It does not establish better throughput or application performance. Full-
 selection, live outcomes and the latest recovery checkpoint remain separate. Invalid,
 incomplete or nonfinite evaluations cannot select. DEV loss/top1 remain diagnostics;
 repeated DEV selection is not unseen confirmation.
+An incumbent ranked against saved timings is descriptive. A tiny historical lead does
+not establish that training improved speed; close decisions need fresh matched trials.

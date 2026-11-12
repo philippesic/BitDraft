@@ -52,6 +52,9 @@ V2 campaigns keep one supervised worker through native checks. It releases compl
 gradients, maps trainable tensors and Adam moments from its current durable checkpoint,
 retains frozen GPU buffers, then restores devices and CPU/CUDA RNG before another update. Tensor identities
 and mutation versions are checked. Native child servers die with their evaluator parent.
+Training capture caches are released before evaluation; the next sample is materialized
+before the resume clock closes. Acceptance selection remains pending until that pause
+passes its budget. Recovering a final screen at the update guard does not repeat it.
 The worker performs full data admission before model allocation; public CPU preflight
 remains available. Journal-capacity rotation preserves global attempt/update/wall guards.
 

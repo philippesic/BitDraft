@@ -197,6 +197,9 @@ class Evaluations:
             for row in pauses
         ):
             raise ValueError("resident training interruption exceeded budget; recovery preserved")
+        if "pending_selection" in self.status:
+            self.status["provisional_fast_leader"] = self.status.pop("pending_selection")
+            self.save()
 
     def start(self, worker: TensorWorker) -> None:
         current = (
@@ -228,7 +231,9 @@ class Evaluations:
                     self.template.state_bytes,
                     self.template.memory_bytes,
                 )
-                self.check(worker, state, exported.artifact)
+                self.check(
+                    worker, state, exported.artifact, worker.updates >= self.template.budget.updates
+                )
             else:
                 state = worker.checkpoint(
                     Store(self.training / "states"), self.template.state_bytes
@@ -237,6 +242,7 @@ class Evaluations:
                     worker,
                     state,
                     artifact(self.status["latest_drafter"], self.store.root),
+                    worker.updates >= self.template.budget.updates,
                 )
 
     def limit(self) -> float:
@@ -245,7 +251,7 @@ class Evaluations:
     def protected(self, kind: str) -> tuple[str, ...]:
         return tuple(
             artifact(record(self.status[key])[kind], self.store.root).sha256
-            for key in ("provisional_fast_leader", "full_dev_incumbent")
+            for key in ("provisional_fast_leader", "full_dev_incumbent", "pending_selection")
             if self.status.get(key) is not None
         )
 
@@ -259,13 +265,21 @@ class Evaluations:
             + worker.accounting.failed_update_seconds,
         )
         if outcome in {"model-update-time", "update-budget"}:
+            if (
+                outcome == "update-budget"
+                and self.status.get("last_evaluated_updates") == worker.updates
+            ):
+                self.save()
+                return
             self.status["phase"] = "evaluate"
             self.save()
-            self.check(worker, state, exported.artifact)
+            self.check(worker, state, exported.artifact, outcome == "update-budget")
         else:
             self.save()
 
-    def check(self, worker: TensorWorker, state: StateRef, drafter: Artifact) -> None:
+    def check(
+        self, worker: TensorWorker, state: StateRef, drafter: Artifact, final: bool = False
+    ) -> None:
         evaluation = integer(self.status["evaluation"])
         prefix = str(evaluation).zfill(4)
         path = self.store.root / (prefix + "-evaluation")
@@ -317,7 +331,20 @@ class Evaluations:
                     record(selected)["reference"] = register(
                         registration, self.store.root / "references"
                     )["reference"]
-            self.status["provisional_fast_leader"] = selected
+            if final:
+                boundaries = [
+                    row
+                    for row in Journal(self.training).events()
+                    if row.get("kind") == "training-boundary" and row.get("attempt") == self.attempt
+                ]
+                final_began = number(boundaries[-1]["monotonic"]) if boundaries else began
+                if now() - final_began > number(self.raw["maximum_pause_seconds"]):
+                    raise ValueError("final training boundary exceeded budget; selection withheld")
+                self.status["provisional_fast_leader"] = selected
+                self.status.pop("pending_selection", None)
+            else:
+                self.status["pending_selection"] = selected
+            self.status["last_evaluated_updates"] = worker.updates
             self.status["completed_evaluations"] = [
                 *sequence(self.status["completed_evaluations"]),
                 evidence,

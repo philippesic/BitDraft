@@ -753,6 +753,9 @@ class TestNumerical(unittest.TestCase):
             for index in range(5):
                 cache.get(CaptureSpec(str(index), spec.metadata, spec.files))
                 self.assertEqual(len(cache.entries), 1)
+            cache.clear()
+            self.assertEqual(len(cache.entries), 0)
+            self.assertTrue(torch.equal(cache.get(spec).features, capture.features))
             cast(list[int], metadata["greedy_ids"])[0] = 1000
             path.write_text(json.dumps(metadata))
             with self.assertRaisesRegex(ValueError, "disagreement"):
@@ -834,6 +837,48 @@ class TestNumerical(unittest.TestCase):
             with bad.offload():
                 bad.model.vocabulary.add_(1)
         self.assertFalse(bad.ready)
+
+    def test_native_leader_waits_for_full_resume_budget(self) -> None:
+        from benchmarks.resident import Evaluations
+
+        with tempfile.TemporaryDirectory(prefix="binary-promotion-") as directory:
+            for seconds in (121.0, 100.0):
+                root = Path(directory) / str(int(seconds))
+                hook = object.__new__(Evaluations)
+                hook.store = Store(root)
+                hook.raw = {"maximum_pause_seconds": 120}
+                hook.status = {
+                    "provisional_fast_leader": {"state": "old"},
+                    "pending_selection": {"state": "new"},
+                }
+                journal = Journal(root / "0001-training")
+                journal.append({"kind": "started", "attempt": "test", "controller": {"pid": 1}})
+                journal.append(
+                    {
+                        "kind": "training-boundary",
+                        "attempt": "test",
+                        "boot": "boot",
+                        "monotonic": 0.0,
+                        "outcome": "model-update-time",
+                    }
+                )
+                journal.append(
+                    {
+                        "kind": "training-ready",
+                        "attempt": "test",
+                        "boot": "boot",
+                        "monotonic": seconds,
+                    }
+                )
+                if seconds > 120:
+                    with self.assertRaisesRegex(ValueError, "exceeded budget"):
+                        hook.resumed()
+                    self.assertEqual(hook.status["provisional_fast_leader"], {"state": "old"})
+                    self.assertIn("pending_selection", hook.status)
+                else:
+                    hook.resumed()
+                    self.assertEqual(hook.status["provisional_fast_leader"], {"state": "new"})
+                    self.assertNotIn("pending_selection", hook.status)
 
     def test_tensor_resume_next_update_and_branch(self) -> None:
         with tempfile.TemporaryDirectory(prefix="binary-resume-") as directory:

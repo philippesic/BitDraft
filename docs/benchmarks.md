@@ -49,6 +49,8 @@ minimal/coding/tools. Eight measured application histories remain in request cov
 `prepare-checks` accepts schema1 with authenticated `requests`, `harness`, `live`
 comparison specifications, producing workloads and multi-arm `*-establish.json` specs.
 Use them to establish missing controls, then bind references for candidate-only execution.
+One-time multi-arm control establishment is timed separately; the120-second screen
+deadline applies to routine candidate-only execution and complete training interruptions.
 The [bank definition](../benchmarks/definitions/prompt-bank-v1.json) owns source identities
 and the6K TRAIN bank; smaller evals do not change training data. Targets remain Qwen3.5
 4B Q4KM/NVFP4, with separate reference records.
@@ -183,7 +185,11 @@ publishes a reusable reference; later checks compare with that record without re
 its model. Exact ties keep the earlier state. Invalid/partial evaluations never select.
 Adam/RNG/cursor restore exactly; changed recipes/data require explicit continuation.
 `training-boundary` and next `training-ready` journal events measure save/export, evaluation,
-selection bookkeeping and restoration through next sample readiness. Boot changes make
+selection bookkeeping and restoration through next sample readiness.
+The next sample must be materialized before readiness is
+recorded; its cold data-loading cost counts in the pause. Capture caches are released
+before native evaluation. A proposed leader stays pending until the full pause passes.
+Boot/controller changes make
 that interval unavailable. The campaign records interruption budgets and refuses continued
 budget qualification after an overrun; final evaluation has no subsequent resume interval.
 Initial startup is separate. Preserve all costs and incomplete attempts.
@@ -192,10 +198,20 @@ screen; it does not require another initial inference pass. Recovery retries a w
 incomplete candidate screen in a new output directory, retaining the failed attempt.
 Normal repeated checks use one training worker. Journal capacity may rotate it into a
 new supervised worker while preserving global budgets and durable recovery.
+Recovery of a final check at the update guard reuses its completed evaluation and does
+not launch another identical screen.
 `initial_drafter` must match a completed producer bound to the durable parent, or a
 zero-update export derived from that parent. An arbitrary same-name GGUF cannot seed a
 campaign. V2's compatibility field `provisional_fast_leader` records an acceptance score;
 it is not a throughput verdict. Completed campaigns return idempotently without new runs.
+
+For production, bind an authorized training intent, matching initial export, saved
+60-request comparison and optional initial reference. Omit `pilot`, set cadence to1800
+optimizer seconds, `maximum_pause_seconds` to120 and `evaluation_failure` to `stop`.
+Run `campaign-preflight SPEC` before `campaign SPEC NEW_OUTPUT`; inspect with
+`campaign-report OUTPUT`. Qualification recipes deliberately stop after a few updates;
+copying their budgets does not create a production allocation. A new target precision
+also needs matching teacher data and its own qualified controls.
 
 Latest recovery, provisional fast leader and full-DEV incumbent are distinct.
 [`suite`](../benchmarks/suite.py) prevalidates matching runtime/settings/role/target/arms.
@@ -204,6 +220,14 @@ reuses complete matching specifications, never partial blocks.
 `candidate_bindings` references state/drafter/execution journals; completed producer or
 boundary-publication receipts must bind the state to the evaluated export. Highest full-request score selects the experimental incumbent,
 with earlier-update ties. Workflow/harness evidence stays separate; no deployment promotion.
+Bindings may include a saved `prior-leader` as well as newly executed candidates. Each
+must match that panel's authenticated model identity and retain its producer journal.
+A ranking containing historical candidates is explicitly descriptive; close speed decisions
+require fresh matched trials. Preserving a prior reference does not rerun its model.
+The V2 suite's `targets` maps each precision to authenticated `requests`, `harness` and
+`live` specifications, with optional `candidate_bindings` and `completed_panels`.
+Use one greedy pass and the saved controls for every panel. Inspect individual outcomes
+before interpreting an aggregate or recording an incumbent.
 
 Diagnostics preserve RNG and report category loss/top1 on120 fixed role-safe DEV windows.
 They are not acceptance. Measure the complete training interruption against the short
@@ -211,7 +235,9 @@ wall budget; do not stretch the training interval to accommodate an oversized ch
 Keep model/data/evaluation/checkpoint clocks separate.
 `campaign-report OUTPUT` needs no GPU: liveness, pointers, journals, learning/native scores,
 costs/exposure. Attempts include retries; unique positions use actual label widths;
-lifetime history stays unknown. Inspect ownership/failures before restarting. After code
+lifetime history stays unknown. Failed native attempts and controller failures remain
+visible after recovery; a retained `failure.json` alone does not describe current health.
+Inspect status, actual ownership and terminal journals before restarting. After code
 changes, read `OUTPUT/binding.json` and run from its code snapshot under
 `OUTPUT.parent/executed-sources/IDENTITY`, using the configured numerical interpreter:
 
@@ -238,3 +264,6 @@ is excluded. Follow [results/retention](results.md) and
 [close-results](../skills/close-results/SKILL.md): compact measurements with conclusions,
 raw execution externally, unfavorable outcomes intact, full local checks before commits.
 Ignored files are not automatically disposable.
+
+[Measured qualification](../results/reusable-acceptance-checks/result.md) covers complete
+training pauses, exact recovery, both target precisions and reused-reference comparisons.

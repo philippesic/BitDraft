@@ -156,9 +156,12 @@ def test_resident_interruption_clock_pairs_multiple_checks_in_one_worker(tmp_pat
         ("training-ready", 95),
         ("training-boundary", 100),
         ("training-ready", 180),
+        ("training-boundary", 200),
+        ("training-boundary", 240),
+        ("training-ready", 280),
     ):
         journal.append({"kind": kind, "attempt": "test", "boot": "boot", "monotonic": timestamp})
-    assert [row["seconds"] for row in interruptions(tmp_path)] == [75, 80]
+    assert [row["seconds"] for row in interruptions(tmp_path)] == [75, 80, 80]
 
 
 def test_native_server_dies_with_its_parent(tmp_path: Path) -> None:

@@ -365,18 +365,6 @@ def run_leased(
     class RecordedSamples:
         def sample(self, cursor: int) -> tuple[Capture, Supervision]:
             nonlocal resumed
-            if not resumed:
-                journal.append(
-                    {
-                        "kind": "training-ready",
-                        "attempt": attempt,
-                        "monotonic": clock.now(),
-                        "boot": owner.boot,
-                    }
-                )
-                if boundary is not None:
-                    boundary.resumed()
-                resumed = True
             journal.append(
                 {
                     "kind": "update-attempt",
@@ -397,6 +385,18 @@ def run_leased(
                     "labels": len(window.labels),
                 }
             )
+            if not resumed:
+                journal.append(
+                    {
+                        "kind": "training-ready",
+                        "attempt": attempt,
+                        "monotonic": clock.now(),
+                        "boot": owner.boot,
+                    }
+                )
+                if boundary is not None:
+                    boundary.resumed()
+                resumed = True
             return capture, window
 
     worker.samples = RecordedSamples()
@@ -483,6 +483,7 @@ def run_leased(
             }
         )
         if boundary is not None:
+            corpus.cache.clear()
             boundary.evaluate(worker, reference, exported, result)
         if boundary is None or result != "model-update-time":
             break
