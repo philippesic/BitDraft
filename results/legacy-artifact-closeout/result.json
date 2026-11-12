@@ -182,5 +182,134 @@
       "bytes": 14265698
     }
   ],
-  "scope": "Historical compaction and retirement, not new model/acceptance/performance qualification. No training started. Exact retired optimizer/tensor/event replay unavailable. Backups local, not off-machine."
+  "scope": "Historical compaction and retirement, not new model/acceptance/performance qualification. No training started. Exact retired optimizer/tensor/event replay unavailable. Backups local, not off-machine.",
+  "transition": {
+    "current_checkout": "/home/philip/BitDraft",
+    "quarantined_legacy_checkout": "/home/philip/.local/share/BitDraft/legacy-checkout-pending-delete",
+    "legacy_deletion": "awaiting Philip confirmation",
+    "replayed_commits": 52,
+    "exact_trees_preserved": true,
+    "source_ids_preserved": "archive/pre-bitdraft and independently verified bundle/reader",
+    "full_gate_cpu_tests": 105,
+    "rule_bad_control_pairs": 92,
+    "current_full6k_admitted_records": 6000,
+    "retained_original_admitted_records": 15647,
+    "comparison_input_panels_verified": 6,
+    "gpu_experiments_rerun": false,
+    "training_launched": false,
+    "remote": null,
+    "proofs": [
+      {
+        "path": "/home/philip/binary-eagle-artifacts/qualification/old-repo-deletion-audit/relocated-full6k-admission.json",
+        "bytes": 308,
+        "sha256": "e5545cb7d5fd1723a8f7e57b782ab03a08febefa207caeec4ac1093d7feb5587"
+      },
+      {
+        "path": "/home/philip/binary-eagle-artifacts/qualification/old-repo-deletion-audit/relocated-benchmark-verification.json",
+        "bytes": 2628,
+        "sha256": "2bcb7b72d4bd66eabd069c6480c52dcc3cc563556bd617eb323f932d4e1aab5f"
+      },
+      {
+        "path": "/home/philip/binary-eagle-artifacts/qualification/old-repo-deletion-audit/relocated-native-version.json",
+        "bytes": 363,
+        "sha256": "d2abc8f11aff4eacfd956190e4f6baf41a21220394efc55cdc09ebb87b118bf1"
+      },
+      {
+        "path": "/home/philip/binary-eagle-artifacts/qualification/old-repo-deletion-audit/relocated-product-payloads.json",
+        "bytes": 2231,
+        "sha256": "4395585d86dd9b61ee0bd4e870f0f882d7819f1d66ea999db2f567f90adc7694"
+      },
+      {
+        "path": "/home/philip/binary-eagle-artifacts/qualification/old-repo-deletion-audit/relocated-full-gate.log",
+        "bytes": 836,
+        "sha256": "a796b3013b48b8f88b66a3646629dfc60a252c2367d57731e6c386b26464040d"
+      },
+      {
+        "path": "/home/philip/binary-eagle-artifacts/qualification/old-repo-deletion-audit/original-preflight-source-pin.json",
+        "bytes": 575,
+        "sha256": "c8fa848b134934ca8202945a12ce49033b280892d9425ff60f037c965eb08503"
+      },
+      {
+        "path": "/home/philip/binary-eagle-artifacts/qualification/old-repo-deletion-audit/current-source-original-admission-intent.json",
+        "bytes": 2261,
+        "sha256": "ee984fdd86bfc2b181d90f453b6e165843c2785ccae55887b01feaa31a72c1b6"
+      },
+      {
+        "path": "/home/philip/binary-eagle-artifacts/qualification/old-repo-deletion-audit/current-source-original-admission.log",
+        "bytes": 2321,
+        "sha256": "ff35ecd37da1615d408bf655c7bec5eb295b47c2cdef8e8158b8927c0f96a573"
+      },
+      {
+        "path": "/home/philip/binary-eagle-artifacts/qualification/old-repo-deletion-audit/relocated-original-preflight.log",
+        "bytes": 95,
+        "sha256": "93d16650f92f53f9c466400008fd11a2bbd005ad123d29a5f2d23259edd752e2"
+      },
+      {
+        "path": "/home/philip/binary-eagle-artifacts/qualification/old-repo-deletion-audit/relocated-benchmark-retry.log",
+        "bytes": 212,
+        "sha256": "83649242fc8f2bf702ec7af61ef738ff79b301b6977bcfde6d0c89cd82974884"
+      },
+      {
+        "path": "/home/philip/binary-eagle-artifacts/qualification/old-repo-deletion-audit/bitdraft-fsck.log",
+        "bytes": 1155,
+        "sha256": "7856d77321973522a9bd71829abb963d3e1defa432e605457e6dcb64c36dd79b"
+      },
+      {
+        "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/history-rebase.json",
+        "bytes": 10735,
+        "sha256": "f543443f5a4aa063b8f67602d2e26ccce67c918f67eedb9d65dd8cd2d19d1ace"
+      },
+      {
+        "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/checkout-relocation.json",
+        "bytes": 10536,
+        "sha256": "cc31130ec648df5e93809b294650d751656fa020a5a713705893679a6cea154d"
+      },
+      {
+        "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/activation-locator-repair.json",
+        "bytes": 3318,
+        "sha256": "a543d5de65e779b01ed60708334d99e2510093d1c3cb2902d95f7513e49965a5"
+      },
+      {
+        "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/transition-producer-identities.json",
+        "bytes": 1338,
+        "sha256": "83d24d78ab9ecaa16114f6425c65e8879212dd4fb985b25f013bf69e705d4467"
+      },
+      {
+        "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/t3-project-before.json",
+        "bytes": 504,
+        "sha256": "54bdca0dafb4d4ee3484b5e4d8faed23c2d31ea6efdd365cbf1a3336f846eca7"
+      },
+      {
+        "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/t3-project-after.json",
+        "bytes": 467,
+        "sha256": "5de2a15bd1a590061848a609bb1f8c9f5951d8f2b48f20ee381a5a5fe28b8e01"
+      },
+      {
+        "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/pre-bitdraft.bundle",
+        "bytes": 1151537,
+        "sha256": "ab5955c03cd5c5e77835e64ae7d3ec25c5260299ef6f2db5a21e44887d1277db"
+      },
+      {
+        "path": "/home/philip/binary-eagle-artifacts/qualification/old-repo-deletion-audit/relocated-symlink-audit.json",
+        "bytes": 7683,
+        "sha256": "ea93ba73d5796d9b68aa2b4035b3d7ee2ccc728498ccc9f89e610e2c5e434e43"
+      },
+      {
+        "path": "/home/philip/binary-eagle-artifacts/qualification/old-repo-deletion-audit/retired-pytest-links.json",
+        "bytes": 10277,
+        "sha256": "227bb8edbaf89da9c804a3a2a223931cfdb23a1fe8c1ec26e9f41eb798c79cce"
+      },
+      {
+        "path": "/home/philip/binary-eagle-artifacts/qualification/old-repo-deletion-audit/relocated-symlink-audit-final.json",
+        "bytes": 271,
+        "sha256": "4aa683960f4d51fe2cd91cf88e9f1c9602c8c6e52d5849e4a67e429df6482740"
+      },
+      {
+        "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/deletion-readiness.json",
+        "bytes": 799,
+        "sha256": "8a3702f5e31de8b88bd0175efdeff36a90d27d25589a9b05dc6543bff0111239"
+      }
+    ],
+    "old_checkout_symlink_targets": 0
+  }
 }

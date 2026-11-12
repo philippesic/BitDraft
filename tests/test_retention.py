@@ -66,6 +66,11 @@ def test_retirement_is_exact_journaled_resumable_and_preserves_other_files(tmp_p
 def test_retirement_rejects_protection_escape_links_and_changed_payload(tmp_path: Path) -> None:
     plan, payload, receipt = plan_for(tmp_path)
     document = read(plan)
+    document["schema"] = True
+    plan.write_text(json.dumps(document))
+    with pytest.raises(ValueError, match="unsupported"):
+        inspect(plan)
+    document["schema"] = 1
     document["protected"] = [str(payload)]
     plan.write_text(json.dumps(document))
     with pytest.raises(ValueError, match="protected"):

@@ -24,26 +24,35 @@ Legacy directory remains quarantined pending the requested final confirmation.
 
 ## State
 
-Owner: this thread, main, local-only. Compact closeout and retirement entry committed
-as3d19a49. All34 inactive linked checkouts retired after independent project/native source,
-compact evidence and exact WIP recovery; both dirty native checkouts restored exactly.
-All16881 reviewed large legacy files are confirmed absent (217473674938 unique physical
-bytes), plus three obsolete Windows optimizer archives. All five obsolete historical
-states are retired; the previous registry is now evidence rather than active policy.
-A read-only-directory failure is preserved and repaired; the same plan/journal completed.
+Owner: this thread; main in `/home/philip/BitDraft`, local-only/no remote. Compact evidence,
+authenticated retirement and all34 inactive linked-checkout retirements are complete.
+[Closeout](../results/legacy-artifact-closeout/result.md) and its structured receipt preserve
+scope, lost replay/resume capabilities, WIP restoration, source and exact deletion receipts.
+Original220095 raw/normalized parents, original teacher corpus and frozen6K FP16 corpus
+remain intact. No training/capture was launched; old schedules stay disabled.
 
-[Closeout](../results/legacy-artifact-closeout/result.md) records evidence, scientific
-limits and disposition. Current original220095 raw/normalized parents and corpus metadata
-were rehashed. Original/6K data and current model/runtime/reference roots remain untouched.
-Prompt-bank/source locators have authenticated external derivatives and relocation maps.
-BitDraft text/package metadata is prepared; physical checkout and history have not moved.
-Recent quick gate104 tests passed; final full gate remains required. Evidence:
-`/home/philip/binary-eagle-evidence/legacy-closeout-20261112/`.
+Current main now includes final legacy main followed by52 replayed implementation
+snapshots; every tree/message matches its original. Original revisions remain available
+through `archive/pre-bitdraft` and verified external bundle/reader. T3 title/root and
+project references now use BitDraft. Owned virtualenv entry/activation locators were
+repaired with backups. Both former checkout paths are absent.
+
+With old paths absent: full gate105 tests/92 proof pairs passed; all6000 current corpus
+records admitted; original corpus15647 records admitted through public preflight with a
+separate current-source admission-only pin; original historical source-pin refusal retained.
+Three representative payloads loaded through the actual product reader, one per supporting
+root. All six saved comparison definitions/controls authenticated across Q4KM/NVFP4;
+native library/version startup passed with CUDA hidden. No new GPU qualification claim.
+
+The remaining old tree is quarantined at
+`/home/philip/.local/share/BitDraft/legacy-checkout-pending-delete` (about39GiB).
+Its final deletion is the only pending action and requires Philip's requested confirmation.
+Full evidence: `/home/philip/binary-eagle-evidence/legacy-closeout-20261112/`; command/check
+logs remain under the artifact root's `qualification/old-repo-deletion-audit/`.
 
 ## Next
 
-Commit this verified milestone, then rebase exact current snapshots onto archived legacy
-main with a verified pre-rebase bundle and old/new commit mapping. Rename physical
-checkout and T3 project to BitDraft, quarantine the old root, and run public input/model/
-benchmark admission plus the full gate without it. Final deletion waits for Philip's
-confirmation; no new capture/training/publication is authorized.
+Await Philip's final deletion confirmation. After he confirms, recheck process ownership/dependencies and remove only the owned quarantine
+without traversing its symlinks. Preserve current corpora/parent, external evidence,
+BitDraft source and its Git history. Update the closeout availability and delete this task
+when final deletion is verified. No new training, capture, transfer or publication.

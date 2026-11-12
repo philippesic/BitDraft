@@ -25,6 +25,7 @@ def inspect(plan: Path) -> tuple[Record, list[Artifact], list[Artifact]]:
             "retained",
             "remove",
         }
+        or type(raw["schema"]) is not int
         or raw["schema"] != 1
     ):
         raise ValueError("unsupported retirement plan")

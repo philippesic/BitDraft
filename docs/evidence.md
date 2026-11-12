@@ -85,3 +85,19 @@ their external artifact homes. Historical absolute locators can be resolved thro
 closeout relocation receipts; retained originals are not silently rewritten. The external
 storage roots keep their established names to preserve authenticated identities. BitDraft
 is the current project name; old names inside immutable receipts identify historical runs.
+
+## BitDraft source identities
+
+Current main includes the final legacy main history, followed by the current project's
+implementation snapshots. The 52 replayed commits retain identical trees and messages.
+Original current-project revisions are reachable through `archive/pre-bitdraft` in this
+checkout and the independent `pre-bitdraft.bundle`/`pre-bitdraft.git` under the closeout
+archive. `history-rebase.json` maps old/new IDs; keep original IDs in immutable execution
+records. Relocation changes a locator, not a measured result or its source identity.
+
+The canonical checkout is `/home/philip/BitDraft`; the T3 project points there. Both old
+checkout paths are absent. The remaining legacy main tree is quarantined under
+`/home/philip/.local/share/BitDraft/legacy-checkout-pending-delete` until Philip confirms
+its deletion. It contains no required current data input. Delete only that owned
+quarantine, without following its compatibility links into external evidence/data.
+This remains a local-only project with no configured remote or upstream.
