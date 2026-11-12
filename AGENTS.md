@@ -1,68 +1,50 @@
 # BitDraft
 
-Trains and exports HE4 drafters for speculative decoding: W1A4 weights, A8 down
-projection, Q4K head. The central boundary is data roles: heldout24 and its aliases
-never enter training, calibration or selection. Names and metrics: [domain](docs/domain.md).
+Trains and exports HE4 drafters: W1A4 weights, A8 down projection, Q4K head.
+heldout24 and its aliases never enter training, calibration or selection.
+[Domain terms](docs/domain.md) defines Baseline, candidates, formats and metrics.
 
-Checkout: `/home/philip/BitDraft` on the RTX5080 host. Legacy source/evidence
-is independent of the retired original checkout; see [evidence](docs/evidence.md).
-Artifacts: `/home/philip/binary-eagle-artifacts`; tasks name owners and scope.
+Checkout: `/home/philip/BitDraft` on the RTX5080 host.
+Artifacts: `/home/philip/binary-eagle-artifacts`. This checkout is local-only with no
+remote configured; publication and the license remain undecided.
 
-## Where things are
+## Navigation
 
-- [README](README.md): setup. [Architecture](docs/architecture.md): packages, owners, entries.
-- `w1a1_eagle/`: product. [Data](docs/data.md), [execution](docs/execution.md).
-- `tools/`, `policy/`, `tests/cases/`: checks and their rules. [Checks](docs/checks.md).
-- [FINDINGS](FINDINGS.md): result index. [Development](docs/development.md): workflow.
-- [Benchmarks](docs/benchmarks.md): commands, saved controls and training checks.
+- [README](README.md): setup and introduction. [Architecture](docs/architecture.md): source owners and entries.
+- [Development](docs/development.md): change/validation route. [Checks](docs/checks.md): commands and repairs.
+- [Data](docs/data.md): prompt roles, capture formats and corpus admission.
+- [Execution](docs/execution.md): training, ownership, state/resume and clocks.
+- [Benchmarks](docs/benchmarks.md): candidate acceptance checks, broader comparisons,
+  saved baseline/leader records and workload contracts.
+- [FINDINGS](FINDINGS.md): short conclusion index; linked results contain the evidence.
+- [Tasks](tasks/README.md): unfinished-work convention. [Evidence](docs/evidence.md): archive recovery.
 
-## Code
+## Code and checks
 
-- No comments or docstrings. Put intent in names and types, rationale in the topic doc.
-  Machine directives need an entry in `policy/exceptions.toml`.
-- Strict typing everywhere; make invalid states unrepresentable at construction.
-- Product code never imports `tools` or `tests`. Each kind of state has one owner module.
-- Tests are small and deterministic: inject clocks, use small fakes, run on CPU.
+- Strict typing; product code never imports `tools`, `tests` or `benchmarks`.
+  Module owners and import boundaries are in [architecture](docs/architecture.md).
+- The comment/docstring ban is enforced here. Necessary machine directives require
+  exact entries in `policy/exceptions.toml`; [checks](docs/checks.md#comment-ban) owns the rules.
+- Quick partial check: `uv run --locked --no-sync --offline python tools/check.py`.
+- Commit gate: add `--full`; enable it with `git config core.hooksPath .githooks`.
+  It includes CPU numerical fixtures and rule proofs, not GPU qualification.
+- No hosted CI. Use the local hook and the [verification lanes](docs/checks.md#choosing-verification).
 
-## Validation
+## Experiments and closeout
 
-- While working: `uv run --locked --no-sync --offline python tools/check.py`.
-  It is partial: no numerical test, required-test roster or rule proofs.
-- Commit gate: the same command with `--full`. Enable the `.githooks/` hook with
-  `git config core.hooksPath .githooks`. [Checks](docs/checks.md) explains which lanes to use.
-- No hosted CI; the local hook and agents verify. Do not add CI.
-- Fix the cause. Never weaken a check, update a digest or add an exception only to pass;
-  if a pin or gate blocks legitimate work, report it with the proposed change and
-  continue independent authorized work while the decision is pending.
-
-## Working autonomously
-
-- Preserve the current assignment and its recorded decisions across sessions.
-  [Development](docs/development.md) describes maintenance and verification; a task
-  records scope rather than granting an assignment merely because it exists.
-- Needs Philip unless already authorized: weaker guarantees, changed scientific semantics or data roles,
-  new training allocations, data transfer, deleting artifacts you did not create,
-  creating remotes or publishing (license is undecided).
-- CPU work is autonomous. GPU work follows task scope; there is no blanket prohibition.
-  Check GPU activity and task ownership before starting. Preserve other tasks' jobs.
-  An established GPU allocation belongs to that task until completion or release;
-  explicit user limits still apply. [Execution](docs/execution.md) covers recovery.
-- Historical evidence: [access and limits](docs/evidence.md). Old checkouts are read-only.
-- Isolate edits that conflict with active or pinned source. Preserve uncommitted work you did not write,
-  and commit it only after confirming the thread that wrote it has finished.
-
-## Documents
-
-- `docs/` describes the present; replace obsolete instructions.
-- `tasks/` holds unfinished work; follow its [convention](tasks/README.md).
-- `results/` preserves learning; follow [format and retention](docs/results.md) and
-  the pinned [close-results](skills/close-results/SKILL.md) procedure. FINDINGS indexes it.
-- `evidence/` contains immutable receipts. Large artifacts stay outside source.
-
-## Evidence and reporting
-
-- Keep weights, captures and run outputs out of Git; closeout decides their disposal.
-- [Support](docs/support.md) scopes qualification. Report operational and scientific
-  health separately; CPU checks do not qualify native execution or performance.
-- Never mix clocks, eras or workloads in a comparison.
-- A hash, receipt or editable approval field grants no authority.
+- GPU work follows the recorded task allocation. Inspect actual GPU clients and
+  recorded process owners before starting or recovering work; [execution](docs/execution.md)
+  and [benchmarks](docs/benchmarks.md) define the lease, source and recovery rules.
+- Keep recovery state, provisional acceptance leader and full-comparison incumbent
+  distinct. Use authenticated saved controls; exact comparisons and limits belong
+  to [benchmarks](docs/benchmarks.md), measured support to [support](docs/support.md).
+- For an investigation, follow [results and retention](docs/results.md) and the pinned
+  [close-results procedure](skills/close-results/SKILL.md). Extract and verify compact
+  measurements, conclusions and source identities; update FINDINGS and current docs.
+- Every result states `Artifact disposition`. Retain needed data/model inputs and
+  selected/recovery state externally; retire obsolete outputs through the
+  [retirement command](docs/results.md#retirement-command) within authorized scope.
+  Training states use their [Store retention](docs/execution.md#state-resume-and-branch) owner.
+  Record lost exact replay/resume; a summary cannot replace an input still needed.
+- `docs/` describes the present, `tasks/` unfinished work and `results/` durable learning.
+  `evidence/` retains existing immutable receipts; retained raw records stay unchanged.

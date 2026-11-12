@@ -27,6 +27,8 @@ not one folder per run, commit or session. Basic sections are:
    or already decided. A decision in a document does not itself authorize execution.
 5. `Evidence and reproduction`: measurements, executed source, dependencies and artifact
    references needed to assess the claim or repeat the work; state missing information.
+6. `Artifact disposition`: retained inputs/evidence, discarded outputs, and any lost exact
+   replay/resume. This section is required by the repository check.
 
 Use `result.json` for structured facts and figure inputs only when useful. Small tables
 and optional `chart.svg` assets stay beside the result. Retain numerical data and an
@@ -64,8 +66,8 @@ a diary. Retain tools and tests only while they still serve the project.
 Before removing implementation or artifacts, identify paths, ownership, recoverable source,
 dependent inputs, evidence, backup location and verification, and regeneration limits.
 Preserve what the result needs before deleting anything. Existing authorization governs
-cleanup; a local commit alone is not a remote backup. Artifact deletion still needs an authorized scope; a retention plan is a record, not
-permission. Git history changes require a separate explicit instruction.
+cleanup; a local commit alone is not a remote backup. Artifact deletion still needs an
+authorized scope; a retention plan is a record, not permission. Git history changes require a separate explicit instruction.
 
 ### Compact evidence is the default
 
@@ -90,6 +92,11 @@ imported findings describe historical observations; they do not promise all raw 
 
 ### Retirement command
 
+Training checkpoint stores use their owner's retention and selected/recovery protections,
+described in [execution](execution.md#state-resume-and-branch). The generic command below
+is for other closed raw artifacts, including standalone legacy archives; do not bypass
+Store retention by unlinking checkpoint payloads through a generic cleanup.
+
 Use `uv run --locked --no-sync --offline python -m tools.retention PLAN RECEIPT`
 to verify a proposed cleanup without deleting. The explicit apply form adds
 `--apply PLAN_SHA256`. Plans contain schema1, owner, the actual authorization, result path,
@@ -97,15 +104,16 @@ limitations, an absolute physical root, protected path roots, authenticated reta
 and an exact authenticated `remove` file list. Retained evidence and the plan/receipt must
 live outside that root. Review the exact plan and dependency closure before applying it.
 
-The command verifies preserved evidence, file identities, ownership, writable retired parents, hardlink closure,
-protected roots and observed process dependencies. It refuses symlinks and Git metadata,
+The command verifies preserved evidence, file identities, ownership, writable retired
+parents, hardlink closure, protected roots and observed process dependencies. It refuses symlinks and Git metadata,
 journals each intent with fsync before removal and resumes only journaled missing files.
 Do not use a recursive deletion as a shortcut. Git/worktree retirement is separate because
 it must preserve unpublished commits, staged/unstaged edits and submodule objects first.
 The tool cannot infer scientific value or grant authorization, detect every remote reader,
 or enforce behavior of arbitrary shell commands. Agents must follow this closeout route.
 
-Raw execution records remain immutable while retained. Correct a result explicitly with a dated note;
+Raw execution records remain immutable while retained. Correct a result explicitly with
+a dated note;
 a materially changed question or body of evidence gets a new result linked to the earlier
 one. FINDINGS points to the current conclusion while conflicting evidence stays discoverable.
 

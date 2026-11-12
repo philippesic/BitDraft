@@ -154,7 +154,8 @@ not user approval; a successful check does not require a new policy approval.
 | `DEP*`, `DEAD_CODE`, `UNUSED_TOOL` | Inspect the dependency tool output; declare a direct dependency in its proper group or remove the unused import, code or declaration |
 | `EXCEPTION_*` | Remove a broad, stale or duplicate exception; necessary machine directives require an exact reasoned entry in `policy/exceptions.toml` |
 | `INSTRUCTIONS_ROOT`, `CLAUDE_POINTER` | Keep the sole authority in root AGENTS.md and make CLAUDE.md contain only `@AGENTS.md` followed by a newline |
-| `REPO_OUTPUTS`, `REPO_LARGE` | Keep generated outputs and large artifacts outside tracked source; preserve valuable files before changing their Git tracking |
+| `REPO_OUTPUTS` | Keep raw outputs outside tracked source; each result page needs an explicit `## Artifact disposition` section; preserve valuable files before changing tracking |
+| `REPO_LARGE` | Keep large artifacts outside tracked source; individual authored-file limits are described above |
 | `REPO_SECRET` | Remove the credential from authored source without printing it; report any credential already committed so it can be revoked |
 | `REPO_IGNORED` | Remove the ignore or symlink escape hiding authored source; preserve secrets and generated artifacts outside authored paths |
 | `RULE_PAIR`, `PROOF_*` | Inspect the named specimen and actual diagnostic; restore missing tools or fixtures and repair the validator without accepting unrelated failures |

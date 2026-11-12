@@ -22,8 +22,7 @@ learning in [results](../docs/results.md), not in a task diary. Update current d
 behavior changes. Invoke [close-results](../skills/close-results/SKILL.md) when closing an
 investigation. Delete a task once its criteria are satisfied; Git retains its history.
 
-After interruption, reconcile this state with the latest user instruction and actual
-process ownership before acting. Preserve the prior allocation rather than inventing a
-new budget or silently resetting counters. Questions and status requests do not cancel
-the assignment; an explicit cancellation does. A finished attempt is not necessarily a
-finished task. Keep unfinished work and the concrete next action visible.
+For a long job, keep the executed source, owner/birth/boot receipt, allocation and consumed
+clocks in `State`. The [execution](../docs/execution.md) and [benchmark](../docs/benchmarks.md)
+guides define the recovery commands and guards. Keep only the current state and concrete
+next action; Git preserves earlier task versions.

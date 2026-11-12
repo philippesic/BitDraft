@@ -279,10 +279,13 @@ and neural GPU requests are separate evidence. `reduce-trace` only checks suppli
 
 `profile-native` owns/verifies/stops/reaps Nsight and checks expected/forbidden kernels and
 layer counts. Integer/packing activation needs positive/negative controls; profiler time
-is excluded. Follow [results/retention](results.md) and
-[close-results](../skills/close-results/SKILL.md): compact measurements with conclusions,
-raw execution externally, unfavorable outcomes intact, full local checks before commits.
-Ignored files are not automatically disposable.
+is excluded. Follow [results/retention](results.md) and the pinned
+[close-results procedure](../skills/close-results/SKILL.md). Extract and verify compact
+measurements, figure inputs, failure denominators and executed-source identities before
+retiring obsolete raw outputs. Update FINDINGS; record artifact disposition and lost
+replay/resume. Reusable references keep the request/source records their authenticated
+readers require. Current data/model inputs and recovery/selected states retain their
+dependency closure. An ignored path or finished run does not establish disposal readiness.
 
 [Measured qualification](../results/reusable-acceptance-checks/result.md) covers complete
 training pauses, exact recovery, both target precisions and reused-reference comparisons.
