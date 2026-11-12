@@ -44,3 +44,10 @@ The receipt gives bundle locations and hashes. Restoring each bundle into an ind
 bare repository and running `git fsck --full` passed. Selected source bytes were recovered
 from that restored repository, not from a live mutable checkout. No historical experiment
 was rerun and no original model, capture, source file or run record was deleted.
+
+## Artifact disposition
+
+Retain the linked compact reports, measurements and independently archived source.
+These imported findings do not promise raw checkpoint, capture or runtime availability.
+Current availability and later authorized disposals are recorded in
+[the evidence guide](../../docs/evidence.md); historical observations stay unchanged.

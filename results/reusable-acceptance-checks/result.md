@@ -102,3 +102,10 @@ Recorded qualification specifications deliberately limit training to three updat
 Resume their exact frozen source and recipe; never turn them into production budgets.
 The state-parity receipt compares every model/Adam tensor in bounded chunks and checks
 RNG, loss, gradients and exposure, excluding source/clock metadata that should differ.
+
+## Artifact disposition
+
+Retain the compact measurements and executed source linked above. Reusable saved
+controls and active data/model inputs retain their dependency closure outside source.
+Qualification-only descendants are disposable after their measurements and failure
+receipts are verified; exact retired states cannot be resumed.

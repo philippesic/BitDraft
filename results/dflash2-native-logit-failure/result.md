@@ -24,3 +24,10 @@ migration. Complete executed-source, dependency and artifact availability have n
 been reverified. [Evidence access](../../docs/evidence.md) describes archive recovery and remaining
 raw-input limits; report revisions alone are not execution provenance. No original source,
 checkpoint or capture was deleted.
+
+## Artifact disposition
+
+Retain the linked compact reports, measurements and independently archived source.
+These imported findings do not promise raw checkpoint, capture or runtime availability.
+Current availability and later authorized disposals are recorded in
+[the evidence guide](../../docs/evidence.md); historical observations stay unchanged.

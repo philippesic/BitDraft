@@ -167,3 +167,8 @@ not user approval; a successful check does not require a new policy approval.
 | `DISK_*` | Supply separate current filesystem and backing-space observations and satisfy the run's declared capacity requirement |
 | `SELECTION_*` | Preserve the earlier durable valid serving best until a complete, comparable serving result improves it |
 | `COMPARE_*` | Match the declared machine, target, workload, controls and evidence before computing a comparison; retain incompatible results separately |
+
+Result pages must state `Artifact disposition`: the retained inputs/evidence and the
+outputs discarded after verification. `REPO_OUTPUTS` rejects a missing disposition.
+The public retirement command checks exact files before authorized removal; see
+[closeout and retirement](results.md#retirement-command).

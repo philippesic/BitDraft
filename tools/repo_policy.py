@@ -41,6 +41,10 @@ def validate_files(files: dict[str, str], escapes: list[str] | None = None) -> l
             or re.search(r"(?i)generated (?:code|source)|do not edit.*generated", text[:500])
         ):
             result.add(Diagnostic("REPO_OUTPUTS", path))
+        if re.fullmatch(r"results/[^/]+/result\.md", path):
+            disposition = text.partition("\n## Artifact disposition\n")[2].split("\n## ", 1)[0]
+            if not disposition.strip():
+                result.add(Diagnostic("REPO_OUTPUTS", path))
         if "\x00" in text or len(text.encode()) > (1048576 if path == "uv.lock" else 262144):
             result.add(Diagnostic("REPO_LARGE", path))
         if re.search(

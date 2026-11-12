@@ -6,7 +6,7 @@
     "AGENTS.md": "# Instructions\n",
     "CLAUDE.md": "@AGENTS.md\n",
     "tools/a.py": "x = 1\n",
-    "results/example/result.md": "# A durable conclusion\n",
+    "results/example/result.md": "# A durable conclusion\n\n## Artifact disposition\n\nNo raw artifacts; measurements are beside this result.\n",
     "results/example/result.json": "{\"value\": 1}\n"
   },
   "exit": 0,

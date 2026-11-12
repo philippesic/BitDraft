@@ -51,3 +51,10 @@ screen implementation; raw transferred source and inputs remain under
 The later screen revision adds a 32 MiB input limit and expresses L2 reduction using
 explicit tensor operations; it was not the executed remote revision. Preserve the remote
 source with the execution record. No figure or model-selection claim is made.
+
+## Artifact disposition
+
+Retain the compact measurements and executed source linked above. Reusable saved
+controls and active data/model inputs retain their dependency closure outside source.
+Qualification-only descendants are disposable after their measurements and failure
+receipts are verified; exact retired states cannot be resumed.

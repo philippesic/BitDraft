@@ -19,3 +19,10 @@ Retain the opt-in runtime finding; do not treat it as universal serving capacity
 
 Imported reported measurements, not rerun. [Evidence access](../../docs/evidence.md)
 describes independent source recovery and the remaining raw-artifact limits.
+
+## Artifact disposition
+
+Retain the linked compact reports, measurements and independently archived source.
+These imported findings do not promise raw checkpoint, capture or runtime availability.
+Current availability and later authorized disposals are recorded in
+[the evidence guide](../../docs/evidence.md); historical observations stay unchanged.
