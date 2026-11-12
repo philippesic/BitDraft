@@ -1,6 +1,6 @@
-# Binary Eagle
+# BitDraft
 
-Binary Eagle investigates whether a small, low-precision drafter can make a larger
+BitDraft investigates whether a small, low-precision drafter can make a larger
 language model answer faster. The drafter proposes several tokens; the target model
 verifies them. Success means faster complete requests with the target's output
 semantics preserved. Fast draft kernels or good training loss alone do not establish it.

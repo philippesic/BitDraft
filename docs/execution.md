@@ -88,6 +88,10 @@ Without `retention`, state history remains. Explicit states/exports bounds prese
 and an in-store parent; global campaign retention also protects selected/recovery states.
 Retirement receipts remain. Capacity is rechecked on writes, not reserved in advance.
 
+At task completion, follow [compact closeout and retirement](results.md#compact-evidence-is-the-default).
+Keep only the assigned task's needed inputs, recovery/selected state and compact evidence;
+record the explicit disposition and loss of exact replay for obsolete outputs.
+
 Before cleanup, resolve the inputs and state references used by live jobs and selected
 results. Preserve the teacher corpus, initialization/vocabulary, frozen executed source,
 latest recoverable Adam/RNG state, selected states/exports and raw execution receipts

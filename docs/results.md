@@ -1,6 +1,6 @@
 # Results and closeout
 
-This file defines Binary Eagle's result presentation and retention rules. The reusable
+This file defines BitDraft's result presentation and retention rules. The reusable
 procedure is [close-results](../skills/close-results/SKILL.md). Read it when closing an
 investigation; it grants no additional run, publication or deletion authority.
 
@@ -97,7 +97,7 @@ limitations, an absolute physical root, protected path roots, authenticated reta
 and an exact authenticated `remove` file list. Retained evidence and the plan/receipt must
 live outside that root. Review the exact plan and dependency closure before applying it.
 
-The command verifies preserved evidence, file identities, ownership, hardlink closure,
+The command verifies preserved evidence, file identities, ownership, writable retired parents, hardlink closure,
 protected roots and observed process dependencies. It refuses symlinks and Git metadata,
 journals each intent with fsync before removal and resumes only journaled missing files.
 Do not use a recursive deletion as a shortcut. Git/worktree retirement is separate because

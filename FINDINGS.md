@@ -48,7 +48,8 @@ No. [Result](results/binary-method-comparison/result.md).
 
 ### F010: Which retained training states survived the November 6 cleanup?
 
-34 optimizer archives were deliberately retired, and five protected full states survived. [Result](results/retained-training-states/result.md).
+34 archives were retired and five survived November6; those five obsolete states were
+retired November12 after compact evidence preservation. [Result](results/retained-training-states/result.md).
 
 ### F011: Does the retained modern index reconcile?
 
@@ -156,3 +157,7 @@ all 6,000 records passed product validation and metadata admission; FP16 arrays 
 
 - [Earlier bounded capture qualification](results/fp16-capture-qualification/result.md):
   superseded for adoption by the matched 1,024-update study above.
+
+[Legacy artifact closeout](results/legacy-artifact-closeout/result.md): compact evidence
+and independent source/WIP recovery replace obsolete large raw run trees. Current corpora
+and the original HE4broad continuation parent remain intact.

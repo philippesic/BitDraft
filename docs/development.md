@@ -4,8 +4,8 @@ Start with [setup](../README.md#setup), [architecture](architecture.md), [suppor
 docs and [FINDINGS](../FINDINGS.md). The findings index leads to prior results; it does
 not contain their full evidence. Read the linked result before reusing a conclusion.
 
-Confirm this checkout and the assignment before changing files. The original checkout
-has different instructions and historical state. Read the relevant task, topic and result;
+Confirm this checkout and the assignment before changing files. Legacy source is available from the independent archives described in [evidence](evidence.md);
+it does not require the old checkout. Read the relevant task, topic and result;
 the findings index and architecture map are entrances, not a requirement to load every
 document. For multi-session work, use the [task convention](../tasks/README.md). Existing
 tasks are context, not new assignments. Latest user steering overrides a stale task.

@@ -1,0 +1,186 @@
+{
+  "schema": 1,
+  "decision": "discard obsolete legacy raw artifacts after compact evidence verification; retain current inputs",
+  "authorization": "Philip, November12,2026, current thread",
+  "retired_large_files": 16881,
+  "legacy_root_unique_physical_bytes": 217473674938,
+  "legacy_root_logical_unlink_bytes": 251484703599,
+  "retired_windows_files": 3,
+  "windows_bytes": 12740433615,
+  "retired_inactive_worktrees": 34,
+  "legacy_states_retired": [
+    "B0",
+    "foundation",
+    "HE4",
+    "Csmallbroad",
+    "Csmallbroad accepted continuation"
+  ],
+  "shared_large_library_aliases_excluded_from_file_plan": 75,
+  "retained_inputs": [
+    "original220095 raw and normalized parent",
+    "original15647-record teacher corpus",
+    "frozen6000-record FP16 corpus and all supporting roots",
+    "current targets/drafters/initializers/native runtime",
+    "saved comparison controls with request/source dependency closure",
+    "independent project/native Git archives",
+    "exact unpublished native edits and untracked files"
+  ],
+  "support": [
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/compact-support-verification.json",
+      "sha256": "63098ec3d6b806d937b8a58578f615268529ec96c8128142e3e3e3ae9f9531a0",
+      "bytes": 1055
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/native-source-support-verification.json",
+      "sha256": "6c2d669b881b447eb350402ed49406ec4a9c98fcd8bcd6d23fd11e06cfe14aa1",
+      "bytes": 713
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/external-worktree-support-verification.json",
+      "sha256": "b1975548c8aa9dbd51843442b8e53f2838c9a559ef3fe342eea805ee406d5b83",
+      "bytes": 803
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/series-verification.json",
+      "sha256": "57965abf8c1b6e0e1378345def1efc16b08a2984f861a726885e078e67589225",
+      "bytes": 1036
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/worktree-preservation.json",
+      "sha256": "4915b1393aeaad377cb158eb29cd71e236dff1cd392ac553c06b07cfd6301bfe",
+      "bytes": 280453
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/wip-restore-verification.json",
+      "sha256": "62bb4b591c0461b19d94b0690b08f1b49d9561080f08efdc26e0d69a2df73b27",
+      "bytes": 489
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/external-worktree-retirement.jsonl",
+      "sha256": "58905c0c84fc5b8535c88de69c4478c1c640b6b7e6a19d2d1e111545ba1d8846",
+      "bytes": 10372
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/internal-worktree-retirement.jsonl",
+      "sha256": "ae49e6b971e2279abd30c1b3d83684f38afbc2d66458b02a291dad7bcbf3728e",
+      "bytes": 9806
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/large-retirement-plan-summary.json",
+      "sha256": "24f6f8f3f3ccdb64fe3dad7fdf9561d86a819aafac3ef97be3211adfb8208935",
+      "bytes": 2584
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/large-retirement-plan.json",
+      "sha256": "d9424ea57b5a845d7866f1b39b5057a07c01caa05652e5eaa0aeab71afb3e856",
+      "bytes": 3922842
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/large-retirement.jsonl",
+      "sha256": "2473af993b29c49580779f8d1a23a00f437c22e5bc45efd4b2accbd8d254fb88",
+      "bytes": 6976020
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/windows-retirement-0.json",
+      "sha256": "924bb2b69f49d51313c097b586043f7be968e1bb447b88d71e093ba8a41b2c40",
+      "bytes": 1745
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/windows-retirement-0.jsonl",
+      "sha256": "d3b204d7417f1beb39b516817f13fa2d8d2dbe248bf8100c81ed4cc1a9077b3f",
+      "bytes": 835
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/windows-retirement-1.json",
+      "sha256": "5b2ec6c7d8bf024b86cd2963eda985326bdab9ae8543234b2dcfe315f72333de",
+      "bytes": 1563
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/windows-retirement-1.jsonl",
+      "sha256": "077fae8bf6cd1bf88ac3d56ed3fa0b8b43b6cc8208f17e0aa4794018bcbae95e",
+      "bytes": 502
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/retired-legacy-states.json",
+      "sha256": "cfb169ca42abf3980339d7023b9cdb2b82a3a7934d3cd13cc07e9c6329b48f55",
+      "bytes": 2518
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/retirement-permission-repair.json",
+      "sha256": "e84b5d790ca448075b14630707172733f4c3b323595350d09047a2d699c286db",
+      "bytes": 419
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/current-input-preservation.json",
+      "sha256": "7b0ca15a133586f83fd7521634cbec8174bddcfa0814c6c3c3995672d3e805eb",
+      "bytes": 2980
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/artifact-relocations.json",
+      "sha256": "71d91e33070ca46dba571477e418a6b147dd3cbedf80a3b7bc1e0f81f4758406",
+      "bytes": 59290
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/prompt-bank-relocation.json",
+      "sha256": "f0481a87588d95f6ac077cf7a7b782f81e4bd0593cdf11b4a246261cf9ed7a89",
+      "bytes": 1477
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/prompt-source-preservation.json",
+      "sha256": "e73b81c82f5587af16f65519cdd48ab70fc8d25de1bfa73cf727b6a45e3748d8",
+      "bytes": 18144
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/producer-identities.json",
+      "sha256": "1a64c97c3bf5a84e8d340fa67fdb37971889de1adb167c7e0330539e8dbeaaf8",
+      "bytes": 2868
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/compact-support.tar.gz",
+      "sha256": "51e5cc34f551c9be3294e92652999791bfaa9926d47ef11f2e80ca1621e65d81",
+      "bytes": 65825253
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/compact-support-index.json.gz",
+      "sha256": "8d05e17382c010c231482ddcc8bd12a0517a41e1bc42f0bd5d21f4adb516c98e",
+      "bytes": 7830800
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/native-source-support.tar.gz",
+      "sha256": "29205373525053fb524b9317f7b68251c8b5bf3ddbf7823a94e0e828c5ef1cde",
+      "bytes": 65847887
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/native-source-support-index.json.gz",
+      "sha256": "5451db1cfd4889c855b38cc673c5783fcd1640aa8e919a007353ef6cd6fb6c75",
+      "bytes": 7508551
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/external-worktree-support.tar.gz",
+      "sha256": "e93d18397751270a4be98378dcf051ba880fac854e4dd396d47aa9af32a3dade",
+      "bytes": 9246004
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/external-worktree-support-index.json.gz",
+      "sha256": "1c785b4452f4383b32bd9278d620928ee51acd0c4fc1cc40b377db12c6446c5c",
+      "bytes": 1139748
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/training-series.jsonl.gz",
+      "sha256": "b8e652b2c4a07f6afafeb58a89e1b66ede2b3b62ac41ca18da0716f7e451a043",
+      "bytes": 625601
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/failure-diagnostics.jsonl.gz",
+      "sha256": "cac7df2d8cbe8e0687ae7732839313b28a04bc92f5219e786fa5ad37ff2df15b",
+      "bytes": 201786
+    },
+    {
+      "path": "/home/philip/binary-eagle-evidence/legacy-closeout-20261112/large-summaries.jsonl.gz",
+      "sha256": "8ce58f3d3208798597791e508845ef4fecc60a0139c70ffd45b6166667bbbb0c",
+      "bytes": 14265698
+    }
+  ],
+  "scope": "Historical compaction and retirement, not new model/acceptance/performance qualification. No training started. Exact retired optimizer/tensor/event replay unavailable. Backups local, not off-machine."
+}

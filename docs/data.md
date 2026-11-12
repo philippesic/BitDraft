@@ -38,6 +38,12 @@ It references the existing supplement and both new capture shards; preserve ever
 supporting root, including its Windows files. This is TRAIN data with recorded prior
 exposure, not independent evaluation data or a new training allocation.
 
+The prompt-bank bodies and role/ID selections remain under `bank/v8`. Portable curation
+metadata is under `bank/v8-relocated-01`; its relocation receipt changes only the old
+exclusion-file locator. Historical admission/specification files remain byte-identical.
+The legacy prompt text and opaque role indexes used by curation are preserved under
+`prompt-sources/legacy-freeze-002` outside source.
+
 ## Prompt identity and roles
 
 A prompt is identified by its source revision and license, canonical messages,
