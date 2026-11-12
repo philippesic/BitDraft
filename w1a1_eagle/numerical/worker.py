@@ -2,8 +2,9 @@ import hashlib
 import math
 import threading
 import zipfile
+from contextlib import contextmanager
 from dataclasses import asdict
-from typing import BinaryIO, Callable, Literal, Protocol, cast
+from typing import BinaryIO, Callable, Iterator, Literal, Protocol, cast
 
 import numpy as np
 import torch
@@ -11,7 +12,7 @@ from torch import Tensor
 
 from w1a1_eagle.checkpoints.store import StateRef, Store
 from w1a1_eagle.clock import Clock, Monotonic
-from w1a1_eagle.contracts import integer, number, record, sequence, string
+from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
 from w1a1_eagle.data import Supervision
 from w1a1_eagle.device import DeviceClock
 from w1a1_eagle.model import HE4, Projection
@@ -51,6 +52,7 @@ class TensorWorker:
         self.progress = Progress()
         self.lineage: tuple[str, ...] = ()
         self.ready = True
+        self.last_publication: StateRef | None = None
         self.lock = threading.RLock()
         rates = {
             "sign": 1e-3,
@@ -110,12 +112,116 @@ class TensorWorker:
             self.ready = False
             raise ValueError("frozen source or vocabulary changed after construction")
 
+    @contextmanager
+    def offload(
+        self,
+        release_gradients: bool = False,
+        retain_frozen: bool = False,
+        publication: StateRef | None = None,
+    ) -> Iterator[Record]:
+        with self.lock:
+            if not self.ready or self.progress.needs_recovery:
+                raise ValueError("offload requires a complete update")
+            self.verify_frozen()
+            if release_gradients:
+                self.optimizer.zero_grad(set_to_none=True)
+            parameters = list(self.model.parameters())
+            tensors = parameters + (list(self.model.buffers()) if not retain_frozen else [])
+            tensors += [p.grad for p in parameters if p.grad is not None]
+            optimizer = cast(dict[str, object], self.optimizer.state_dict())
+            states = cast(dict[object, object], optimizer["state"])
+            tensors.extend(
+                value
+                for state in states.values()
+                for value in record(state).values()
+                if torch.is_tensor(value)
+            )
+            unique = {id(value): value for value in tensors}
+            backing: dict[int, Tensor] = {}
+            if publication is not None:
+                if publication is not self.last_publication or publication.updates != self.updates:
+                    raise ValueError("offload requires this worker's current durable publication")
+                if not release_gradients or not retain_frozen:
+                    raise ValueError("mapped offload releases gradients and retains frozen buffers")
+                publication.artifact.verify()
+                saved = record(
+                    cast(
+                        object,
+                        torch.load(
+                            publication.artifact.path,
+                            map_location="cpu",
+                            weights_only=True,
+                            mmap=True,
+                        ),
+                    )
+                )
+                if saved["config"] != self.identity or saved["cursor"] != self.cursor:
+                    raise ValueError("mapped offload publication identity differs")
+                saved_parameters = record(saved["model"])
+                for name, parameter in self.model.named_parameters():
+                    source = saved_parameters[name]
+                    if not torch.is_tensor(source):
+                        raise ValueError("mapped offload requires tensor parameters")
+                    backing[id(parameter)] = source
+                saved_states = cast(dict[object, object], record(saved["optimizer"])["state"])
+                for key, state in states.items():
+                    for name, value in record(state).items():
+                        if torch.is_tensor(value):
+                            source = record(saved_states[key])[name]
+                            if not torch.is_tensor(source):
+                                raise ValueError("mapped offload requires tensor optimizer state")
+                            backing[id(value)] = source
+                if any(
+                    source.shape != unique[key].shape or source.dtype != unique[key].dtype
+                    for key, source in backing.items()
+                ):
+                    raise ValueError("mapped offload tensor geometry differs")
+            versions = {key: value._version for key, value in unique.items()}
+            moved = [
+                (value, value.device) for value in unique.values() if value.device.type == "cuda"
+            ]
+            cpu_rng = torch.get_rng_state()
+            cuda_rng = torch.cuda.get_rng_state_all() if moved else None
+            self.ready = False
+            try:
+                for value, _ in moved:
+                    value.data = (
+                        backing[id(value)] if publication is not None else value.detach().to("cpu")
+                    )
+                if moved:
+                    self.update_clock.now()
+                    torch.cuda.empty_cache()
+                    self.update_clock.now()
+                yield {
+                    "cpu_tensors": len(unique),
+                    "offloaded_tensors": len(moved),
+                    "cuda_allocated_bytes": torch.cuda.memory_allocated() if moved else 0,
+                    "cuda_reserved_bytes": torch.cuda.memory_reserved() if moved else 0,
+                    "cpu_tensor_bytes": sum(
+                        value.numel() * value.element_size() for value in unique.values()
+                    ),
+                    "retained_frozen": retain_frozen,
+                    "backing_state": publication.artifact.sha256 if publication else None,
+                }
+            finally:
+                for value, device in moved:
+                    value.data = value.detach().to(device)
+                torch.set_rng_state(cpu_rng)
+                if cuda_rng is not None:
+                    torch.cuda.set_rng_state_all(cuda_rng)
+                    self.update_clock.now()
+                self.verify_frozen()
+                if any(value._version != versions[key] for key, value in unique.items()):
+                    raise ValueError("training tensors changed during offload")
+                self.ready = True
+
     def step(self, cursor: int) -> float:
         with self.lock:
             if not self.ready or cursor != self.cursor:
                 raise ValueError("worker requires exact cursor or durable recovery")
             self.verify_frozen()
             self.ready = False
+            self.last_publication = None
             started = self.clock.now()
             try:
                 capture, window = self.samples.sample(cursor)
@@ -182,7 +288,9 @@ class TensorWorker:
 
     def checkpoint(self, store: Store, max_bytes: int) -> StateRef:
         with self.lock:
-            return store.commit_with(self.write_snapshot, self.identity, self.updates, max_bytes)
+            result = store.commit_with(self.write_snapshot, self.identity, self.updates, max_bytes)
+            self.last_publication = result
+            return result
 
     def write_snapshot(self, output: BinaryIO) -> None:
         with self.lock:
@@ -230,6 +338,7 @@ class TensorWorker:
     ) -> None:
         with self.lock:
             self.ready = False
+            self.last_publication = None
             if (
                 mode not in {"resume", "branch", "continue"}
                 or reference.artifact.size > memory_budget_bytes

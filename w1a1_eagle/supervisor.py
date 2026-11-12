@@ -24,6 +24,9 @@ def execute(
     scope: str,
     emit: Callable[[Record], None] | None = None,
     worker_preflight: bool = False,
+    worker_module: str = "w1a1_eagle.numerical.entry",
+    worker_arguments: tuple[str, ...] = (),
+    maximum_seconds: float | None = None,
 ) -> Record:
     intent = Intent.load(intent_path)
     if scope != intent.raw["authority_scope"]:
@@ -88,6 +91,12 @@ def execute(
         initialized = (root / "states/latest.json").exists() or any(
             row.get("kind") == "update-attempt" for row in events
         )
+        if any(
+            row.get("worker_module", "w1a1_eagle.numerical.entry") != worker_module
+            or row.get("worker_arguments", []) != list(worker_arguments)
+            for row in starts
+        ):
+            raise ValueError("worker entry differs from recorded attempt")
         if starts and (
             (intent.mode == "fresh" and initialized)
             or any(row["recipe"] != intent.recipe for row in starts)
@@ -97,6 +106,8 @@ def execute(
             )
         spent = sum(number(row["wall_seconds"]) for row in terminals)
         remaining = intent.budget.wall_seconds - spent
+        if maximum_seconds is not None:
+            remaining = min(remaining, number(maximum_seconds))
         if remaining <= 0:
             raise ValueError("cumulative wall budget exhausted, including failed attempts")
         frozen_root = freeze_source(
@@ -116,6 +127,8 @@ def execute(
                 "intent_receipt": str(sealed_intent),
                 "controller": cast(Record, asdict(controller)),
                 "wall_budget": remaining,
+                "worker_module": worker_module,
+                "worker_arguments": list(worker_arguments),
                 "admission": "worker before model allocation"
                 if worker_preflight
                 else "separate CPU process and worker",
@@ -176,10 +189,13 @@ def execute(
                             "-m",
                             "w1a1_eagle.bootstrap",
                             str(runtime_remaining),
+                            "--entrypoint",
+                            worker_module,
                             str(sealed_intent),
                             str(root.resolve()),
                             attempt,
                             str(runtime_remaining),
+                            *worker_arguments,
                         ],
                         cwd=frozen_root,
                         env=environment,

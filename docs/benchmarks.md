@@ -171,7 +171,14 @@ initial drafter, optimizer-time cadence, failure policy and `maximum_pause_secon
 `campaign-preflight` validates roles, model/data/source and saved controls on CPU. V1 is
 legacy-pilot-only. V2 pilots accelerate cadence for tests while retaining all60 prompts.
 
-Boundary/final checks unload training and run the candidate once. A new acceptance leader
+Boundary/final checks keep the same trainer and Adam/RNG state alive. Completed gradients
+are released; trainable parameters and optimizer moments use a CPU mapping of that
+worker's just-published checkpoint while frozen model buffers remain on GPU. File-backed
+pages can be reclaimed instead of retaining another anonymous-memory model copy.
+The candidate runs under the same owned GPU lease,
+then trainable state returns before the next update. This avoids reconstructing the trainer.
+GPU memory and host paging still require measured qualification for a new model/hardware.
+A new acceptance leader
 publishes a reusable reference; later checks compare with that record without rerunning
 its model. Exact ties keep the earlier state. Invalid/partial evaluations never select.
 Adam/RNG/cursor restore exactly; changed recipes/data require explicit continuation.
@@ -180,6 +187,11 @@ selection bookkeeping and restoration through next sample readiness. Boot change
 that interval unavailable. The campaign records interruption budgets and refuses continued
 budget qualification after an overrun; final evaluation has no subsequent resume interval.
 Initial startup is separate. Preserve all costs and incomplete attempts.
+An optional authenticated `initial_reference` reuses the exact initial drafter's compatible
+screen; it does not require another initial inference pass. Recovery retries a whole
+incomplete candidate screen in a new output directory, retaining the failed attempt.
+Normal repeated checks use one training worker. Journal capacity may rotate it into a
+new supervised worker while preserving global budgets and durable recovery.
 `initial_drafter` must match a completed producer bound to the durable parent, or a
 zero-update export derived from that parent. An arbitrary same-name GGUF cannot seed a
 campaign. V2's compatibility field `provisional_fast_leader` records an acceptance score;
@@ -189,8 +201,8 @@ Latest recovery, provisional fast leader and full-DEV incumbent are distinct.
 [`suite`](../benchmarks/suite.py) prevalidates matching runtime/settings/role/target/arms.
 `full-suite-v2` uses the lean one-pass panels and saved controls. `completed_panels`
 reuses complete matching specifications, never partial blocks.
-`candidate_bindings` references state/drafter/execution journals; workers must bind state
-to the evaluated export. Highest full-request score selects the experimental incumbent,
+`candidate_bindings` references state/drafter/execution journals; completed producer or
+boundary-publication receipts must bind the state to the evaluated export. Highest full-request score selects the experimental incumbent,
 with earlier-update ties. Workflow/harness evidence stays separate; no deployment promotion.
 
 Diagnostics preserve RNG and report category loss/top1 on120 fixed role-safe DEV windows.

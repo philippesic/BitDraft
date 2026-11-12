@@ -29,10 +29,12 @@ Candidate-only execution, immutable reference registry, CPU preflight and accept
 selection are implemented. Lean cohorts:60×128-token screen; broader120 requests,18 prefix
 variants and12 live tasks, one pass. Wrong/missing/partial references are refused. Historical
 speed is descriptive; native outputs still match saved target signatures.
-GPU qualification is active under qualification/lean-checks. Initial60-prompt controls
-completed; candidate inference about54seconds. Earlier complete pauses exceeded120seconds
-and remain as failed qualification attempts. Materialized initialization, frozen export
-codes and removal of redundant initialization work are being measured before adoption.
+GPU qualification is active under qualification/lean-checks. Campaign10 completed three
+native screens and resumed twice in75.8/83.6seconds, preserving one trainer with mapped
+checkpoint/Adam state and frozen GPU buffers. Earlier oversized/anonymous-memory handoffs
+remain failed evidence. Exact tiny CUDA next-update parity passed. Final-source deliberate
+native failure/recovery is being exercised in campaign12. Q4 broader controls were adopted
+from complete historical panels; NV controls and cached broader execution remain to run.
 Original220095,15647-record corpus and selected controls remain preserved. Original data
 physically lives in datasets/retained-he4broad-original; old locator is a symlink. FP16
 storage passed scoped qualification. No production supplement or hybrid training has begun.

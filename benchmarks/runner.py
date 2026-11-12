@@ -61,7 +61,9 @@ def execution_blocks(
     return blocks
 
 
-def compare_leased(specification: Path, output: Path, spec: Comparison) -> Record:
+def compare_leased(
+    specification: Path, output: Path, spec: Comparison, managed_group: bool = False
+) -> Record:
     began_panel = now()
     store = Store(output)
     store.atomic(store.root / "gpu.txt", cuda_identity().encode())
@@ -101,7 +103,7 @@ def compare_leased(specification: Path, output: Path, spec: Comparison) -> Recor
                     )
                 )
                 responses: list[Record] = []
-                with session(spec, arm, cell) as port:
+                with session(spec, arm, cell, managed_group) as port:
                     tasks = [selected[i % len(selected)] for i in range(spec.warmups)] + list(
                         selected
                     )

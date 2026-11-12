@@ -5,12 +5,12 @@ import signal
 import sys
 from dataclasses import asdict
 from pathlib import Path
-from typing import cast
+from typing import Protocol, cast
 
 import torch
 
 from w1a1_eagle.capacity import backing_available
-from w1a1_eagle.checkpoints.store import Store
+from w1a1_eagle.checkpoints.store import StateRef, Store
 from w1a1_eagle.clock import Monotonic
 from w1a1_eagle.contracts import Record, integer, number, record
 from w1a1_eagle.data import Supervision
@@ -29,6 +29,16 @@ from w1a1_eagle.numerical.weights import load_he4
 from w1a1_eagle.numerical.worker import TensorWorker, checkpoint_accounting
 from w1a1_eagle.processes import ProcessIdentity
 from w1a1_eagle.records import artifact
+
+
+class Boundary(Protocol):
+    def start(self, worker: TensorWorker) -> None: ...
+    def limit(self) -> float: ...
+    def protected(self, kind: str) -> tuple[str, ...]: ...
+    def evaluate(
+        self, worker: TensorWorker, state: StateRef, exported: StateRef, outcome: str
+    ) -> None: ...
+    def resumed(self) -> None: ...
 
 
 def admission(intent: Intent, corpus: Corpus) -> Record:
@@ -82,6 +92,7 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
         "starting_identity": intent.parent.sha256 if intent.parent else intent.source.sha256,
         "starting_name": intent.parent.path.name if intent.parent else intent.source.path.name,
         "mode": intent.mode,
+        "cpu_threads": intent.cpu_threads,
         "mechanism": "HE4 W1A4/A8/Q4_K weighted CE using each capture’s declared supervision policy",
         "exposure": exposure,
         "prior_use_warning": "Prior training is marked for "
@@ -134,18 +145,20 @@ def read_corpus(intent: Intent, hidden: int) -> Corpus:
     return Corpus(source, intent.seed, intent.memory_bytes, hidden, intent.sampling)
 
 
-def run(intent_path: Path, root: Path, attempt: str) -> None:
+def run(intent_path: Path, root: Path, attempt: str, boundary: Boundary | None = None) -> None:
     device = str(Intent.load_sealed(intent_path).raw["device"])
     with device_lease(device):
-        run_leased(intent_path, root, attempt)
+        run_leased(intent_path, root, attempt, boundary)
 
 
-def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
+def run_leased(
+    intent_path: Path, root: Path, attempt: str, boundary: Boundary | None = None
+) -> None:
     intent = Intent.load_sealed(intent_path)
     code_root = Path(__file__).resolve().parents[2]
     if source_identity(code_root) != intent.raw["code_sha256"]:
         raise ValueError("source changed between controller admission and worker load")
-    torch.set_num_threads(2)
+    torch.set_num_threads(intent.cpu_threads)
     torch.manual_seed(intent.seed)
     geometry = record(intent.raw["geometry"])
     cfg = Geometry(**{key: integer(value) for key, value in geometry.items()})
@@ -246,7 +259,10 @@ def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
     def retain_states() -> None:
         if "retention" in intent.raw:
             keep = integer(record(intent.raw["retention"])["states"])
-            retired = states.prune(keep, (intent.parent.sha256,) if intent.parent else ())
+            pinned = ((intent.parent.sha256,) if intent.parent else ()) + (
+                boundary.protected("state") if boundary else ()
+            )
+            retired = states.prune(keep, pinned)
             if retired:
                 journal.append(
                     {"kind": "retention", "attempt": attempt, "retired_states": list(retired)}
@@ -277,11 +293,18 @@ def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
                 }
             )
             last_progress_updates = worker.updates
+        update_limit = (
+            boundary.limit()
+            if boundary
+            else number(intent.raw["model_update_seconds"])
+            if "model_update_seconds" in intent.raw
+            else None
+        )
         if (
-            "model_update_seconds" in intent.raw
+            update_limit is not None
             and worker.accounting.successful_update_seconds
             + worker.accounting.failed_update_seconds
-            >= number(intent.raw["model_update_seconds"])
+            >= update_limit
         ):
             stop_reason = "model-update-time"
             return True
@@ -351,6 +374,8 @@ def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
                         "boot": owner.boot,
                     }
                 )
+                if boundary is not None:
+                    boundary.resumed()
                 resumed = True
             journal.append(
                 {
@@ -377,56 +402,94 @@ def run_leased(intent_path: Path, root: Path, attempt: str) -> None:
     worker.samples = RecordedSamples()
     if intent.parent is None:
         worker.checkpoint(states, intent.state_bytes)
-    try:
-        result = worker.run(clock, intent.budget, stop)
-        if result == "stopped" and stop_reason:
-            result = stop_reason
-    except BaseException:
+    if boundary is not None:
+        boundary.start(worker)
+    while True:
+        try:
+            result = worker.run(clock, intent.budget, stop)
+            if result == "stopped" and stop_reason:
+                result = stop_reason
+        except BaseException:
+            journal.append(
+                {
+                    "kind": "worker-failure",
+                    "attempt": attempt,
+                    "progress": cast(Record, asdict(worker.progress)),
+                }
+            )
+            raise
         journal.append(
             {
-                "kind": "worker-failure",
+                "kind": "training-boundary",
                 "attempt": attempt,
-                "progress": cast(Record, asdict(worker.progress)),
+                "monotonic": clock.now(),
+                "boot": owner.boot,
+                "outcome": result,
             }
         )
-        raise
-    journal.append(
-        {
-            "kind": "training-boundary",
-            "attempt": attempt,
-            "monotonic": clock.now(),
-            "boot": owner.boot,
-        }
-    )
-    reference = worker.checkpoint(states, intent.state_bytes)
-    phase("checkpoint-complete")
-    retain_states()
-    export_store = Store(root / "exports", intent.disk_reserve_bytes)
-    exported = export_he4(
-        worker,
-        intent.source,
-        intent.vocabulary,
-        export_store,
-        intent.state_bytes,
-        intent.memory_bytes,
-    )
-    phase("export-complete")
-    if "retention" in intent.raw:
-        retired_exports = export_store.prune(integer(record(intent.raw["retention"])["exports"]))
-        if retired_exports:
-            journal.append(
-                {"kind": "retention", "attempt": attempt, "retired_exports": list(retired_exports)}
+        reference = worker.checkpoint(states, intent.state_bytes)
+        phase("checkpoint-complete")
+        retain_states()
+        export_store = Store(root / "exports", intent.disk_reserve_bytes)
+        exported = export_he4(
+            worker,
+            intent.source,
+            intent.vocabulary,
+            export_store,
+            intent.state_bytes,
+            intent.memory_bytes,
+        )
+        phase("export-complete")
+        if source_identity(code_root) != intent.raw["code_sha256"]:
+            raise ValueError("executable source drifted before boundary publication")
+        if "retention" in intent.raw:
+            retired_exports = export_store.prune(
+                integer(record(intent.raw["retention"])["exports"]),
+                boundary.protected("drafter") if boundary else (),
             )
-    journal.append(
-        {
-            "kind": "export",
-            "attempt": attempt,
-            "artifact": exported.artifact.sha256,
-            "source": intent.source.sha256,
-            "vocabulary": intent.vocabulary.sha256,
-            "scope": "GGUF producer/reader conformance; native loading unqualified",
-        }
-    )
+            if retired_exports:
+                journal.append(
+                    {
+                        "kind": "retention",
+                        "attempt": attempt,
+                        "retired_exports": list(retired_exports),
+                    }
+                )
+        journal.append(
+            {
+                "kind": "export",
+                "attempt": attempt,
+                "artifact": exported.artifact.sha256,
+                "source": intent.source.sha256,
+                "vocabulary": intent.vocabulary.sha256,
+                "scope": "GGUF producer/reader conformance; native loading unqualified",
+            }
+        )
+        journal.append(
+            {
+                "kind": "boundary-publication",
+                "attempt": attempt,
+                "updates": worker.updates,
+                "state": {
+                    "path": str(reference.artifact.path),
+                    "sha256": reference.artifact.sha256,
+                    "bytes": reference.artifact.size,
+                },
+                "drafter": {
+                    "path": str(exported.artifact.path),
+                    "sha256": exported.artifact.sha256,
+                    "bytes": exported.artifact.size,
+                },
+            }
+        )
+        if boundary is not None:
+            boundary.evaluate(worker, reference, exported, result)
+        if boundary is None or result != "model-update-time":
+            break
+        resumed = False
+        stop_reason = ""
+        last_checkpoint_updates = worker.updates
+        last_checkpoint_seconds = clock.now()
     if source_identity(code_root) != intent.raw["code_sha256"]:
         raise ValueError("executable source drifted during this attempt; qualification refused")
     final_loaded = loaded_identity(loaded_cache)
