@@ -105,6 +105,9 @@ historical update to new data. Workers publish accounting every100 updates.
 
 Optional `development` binds120 fixed DEV windows and cadence; diagnostics preserve RNG
 and report category loss/top1. `model_update_seconds` bounds synchronized optimizer work.
+In V2 campaigns it is the cumulative optimizer-time stop, independently of evaluation
+cadence. Stop at a complete update, publish state/export and perform the final screen.
+Resume retains the consumed clock; successful and failed update seconds both count.
 See [benchmarks](benchmarks.md) for native cadence, selection and health reporting.
 
 ## Export

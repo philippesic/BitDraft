@@ -116,6 +116,34 @@ def test_interruption_clock_excludes_controller_recovery_gaps(tmp_path: Path) ->
     assert values[0]["seconds"] == 75.0 and values[1]["seconds"] is None
 
 
+def test_live_campaign_cost_uses_worker_progress_before_next_evaluation(tmp_path: Path) -> None:
+    from benchmarks.native import file_reference
+    from benchmarks.reporting import report
+    from w1a1_eagle.lifecycle import Journal
+    from w1a1_eagle.records import canonical
+
+    specification = tmp_path / "specification.json"
+    specification.write_bytes(canonical({"schema": "fixture"}))
+    (tmp_path / "binding.json").write_bytes(
+        canonical({"specification": file_reference(specification)})
+    )
+    (tmp_path / "status.json").write_bytes(
+        canonical({"status": "running", "completed_evaluations": [], "model_update_seconds": 0.0})
+    )
+    journal = Journal(tmp_path / "0001-training")
+    journal.append({"kind": "started", "attempt": "test", "controller": {"pid": 1}})
+    journal.append(
+        {
+            "kind": "training-progress",
+            "attempt": "test",
+            "updates": 100,
+            "accounting": {"successful_update_seconds": 120.0, "failed_update_seconds": 3.0},
+        }
+    )
+    summary = report(tmp_path)
+    assert record(summary["cost"])["recorded_optimizer_seconds"] == 123.0
+
+
 def test_native_deadline_reaps_context_without_replacing_other_timer() -> None:
     import signal
 

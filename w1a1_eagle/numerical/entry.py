@@ -101,6 +101,7 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
         + str(exposure["unknown_prior_use_sequences"])
         + ". Visit estimates are additional to this run, not lifetime counts. Fresh initialization does not mean unused data.",
         "budget": intent.raw["budget"],
+        "model_update_seconds": intent.raw.get("model_update_seconds"),
         "peak_new_bytes_upper_bound": intent.peak_new_bytes,
         "checkpoint_updates": intent.checkpoint_updates,
         "checkpoint_seconds": intent.checkpoint_seconds,
@@ -300,13 +301,23 @@ def run_leased(
             if "model_update_seconds" in intent.raw
             else None
         )
+        if boundary is not None and "model_update_seconds" in intent.raw:
+            update_limit = min(boundary.limit(), number(intent.raw["model_update_seconds"]))
         if (
             update_limit is not None
             and worker.accounting.successful_update_seconds
             + worker.accounting.failed_update_seconds
             >= update_limit
         ):
-            stop_reason = "model-update-time"
+            stop_reason = (
+                "model-update-budget"
+                if boundary is not None
+                and "model_update_seconds" in intent.raw
+                and worker.accounting.successful_update_seconds
+                + worker.accounting.failed_update_seconds
+                >= number(intent.raw["model_update_seconds"])
+                else "model-update-time"
+            )
             return True
         if journal.path.stat().st_size >= 56 * 1024 * 1024:
             stop_reason = "journal-capacity"

@@ -707,6 +707,69 @@ class TestNumerical(unittest.TestCase):
             )
             self.assertEqual(record(indexed_report["worker"])["updates"], 1)
 
+            import os
+            import signal
+            from dataclasses import asdict
+
+            from w1a1_eagle.checkpoints.store import StateRef
+            from w1a1_eagle.numerical.entry import run_leased
+            from w1a1_eagle.processes import ProcessIdentity
+
+            intent.update(
+                model_update_seconds=1e-12,
+                budget={"updates": 3, "wall_seconds": 60, "attempts": 4, "retries": 0},
+            )
+            intent_path.write_bytes(canonical(intent))
+            bounded = root / "bounded-campaign"
+            admitted = Intent.load(intent_path)
+            bounded_receipt = admitted.seal(bounded / "intents")
+            journal = Journal(bounded)
+            journal.append(
+                {
+                    "kind": "started",
+                    "attempt": "test",
+                    "intent": admitted.sha256,
+                    "controller": cast(Record, asdict(ProcessIdentity.read(os.getppid()))),
+                }
+            )
+            journal.append(
+                {
+                    "kind": "process",
+                    "attempt": "test",
+                    "owner": cast(Record, asdict(ProcessIdentity.read(os.getpid()))),
+                }
+            )
+            outcomes: list[str] = []
+
+            class NativeBoundary:
+                def start(self, worker: TensorWorker) -> None:
+                    self.ready = worker.ready
+
+                def limit(self) -> float:
+                    return 1000.0
+
+                def protected(self, kind: str) -> tuple[str, ...]:
+                    return ()
+
+                def evaluate(
+                    self, worker: TensorWorker, state: StateRef, exported: StateRef, outcome: str
+                ) -> None:
+                    outcomes.append(outcome)
+
+                def resumed(self) -> None:
+                    pass
+
+            handlers = {value: signal.getsignal(value) for value in (signal.SIGINT, signal.SIGTERM)}
+            try:
+                run_leased(bounded_receipt, bounded, "test", NativeBoundary())
+            finally:
+                for value, handler in handlers.items():
+                    signal.signal(value, handler)
+            self.assertEqual(outcomes, ["model-update-budget"])
+            final = record(journal.report()["worker"])
+            self.assertEqual(final["updates"], 1)
+            self.assertGreater(number(record(final["accounting"])["successful_update_seconds"]), 0)
+
     def test_capture_tail_budget_and_corruption(self) -> None:
         with tempfile.TemporaryDirectory(prefix="binary-capture-") as directory:
             root = Path(directory)
