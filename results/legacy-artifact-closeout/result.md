@@ -82,13 +82,13 @@ The historical original-data recipe correctly refused its old executable-source 
 Its original remains unchanged; a separate admission-only copy with the current source
 identity passed. No allocation was exercised and no training or capture was launched.
 The original parent files and corpus identities remain unchanged. The old main checkout
-is quarantined at `/home/philip/.local/share/BitDraft/legacy-checkout-pending-delete`.
+is quarantined at `/home/philip/BitDraft/artifacts/archive/legacy-checkout-pending-delete`.
 Final deletion awaits Philip's requested confirmation.
 
 ## Artifact disposition
 
 Retain compact measurements, figures' inputs where present, useful diagnostics, source,
-WIP recovery and retirement receipts outside source, with this result and index in Git.
+WIP recovery and retirement receipts under ignored `artifacts/archive/`, with this result and index in Git.
 Retain original 220095 in raw and normalized form, the original teacher corpus, the full 6K
 FP16 corpus including its reused supplement and Windows shard, current models/runtime,
 and saved controls with their required request/source records. Those are working inputs,
@@ -107,5 +107,17 @@ Windows optimizer archives. It did not complete whole-project cleanup or physica
 containment. The separate artifact store still held roughly120GiB of qualification runs,
 including test checkpoints and capture fixtures whose conclusions were largely already
 summarized. Those require their own disposition/dependency review and retirement. Current
-working datasets and model inputs also remained outside the checkout. Remaining work is
-recorded in the current transition task; source-history independence alone did not finish it.
+working datasets and model inputs also remained outside the checkout. Source-history independence alone did not finish physical containment. See the later
+containment correction below.
+
+## Storage containment correction, November 12, 2026
+
+The retained datasets, model inputs, qualification runs, source/evidence archives and
+legacy quarantine now live under ignored `artifacts/` in `/home/philip/BitDraft`.
+The Windows shard was copied with per-file source/destination SHA-256 checks before
+removing its former location. Historical record bytes remain unchanged; maintained
+readers translate the old absolute locators. New public execution roots default here
+and reject destinations outside the checkout. [Storage](../../docs/storage.md) maps the
+folders; relocation and verification receipts live in
+`artifacts/receipts/storage-containment/`. This correction establishes containment,
+not retirement of all remaining qualification payloads or new GPU qualification.

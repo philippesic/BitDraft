@@ -17,6 +17,7 @@
 | `native/` | Authored tokenizer and capture helpers for the pinned runtime |
 | `benchmarks/` | Frozen-source native comparisons, live tools, harness panels and campaign coordination |
 | `typings/` | Minimal typed interfaces for untyped external APIs |
+| `artifacts/` | Ignored project inputs, outputs, archives and caches; [storage map](storage.md) |
 | `tasks/` | Open multi-session work; context, resumed only when asked |
 
 The [model](model.md) describes the current numerical graph and trainable state.
@@ -38,7 +39,11 @@ From [boundaries](../policy/boundaries.toml), enforced by the architecture stage
 | `w1a1_eagle.data` | Prompt roles and consumption |
 | `w1a1_eagle.checkpoints.store` | Tensor states, manifests, latest pointer |
 | `w1a1_eagle.lifecycle` | Event journal and controller identity |
-| `tools.retention` | Explicit external artifact retirement journal |
+| `tools.retention` | Explicit artifact retirement journal |
+
+`w1a1_eagle.storage` owns checkout discovery, historical locator translation and public
+output containment. New execution roots stay inside ignored `artifacts/`. Archived records
+retain their byte identities; [storage](storage.md) describes the physical locations.
 
 Environment variables are read only in `w1a1_eagle/config.py` and `tools/config.py`.
 Operational time comes from `w1a1_eagle/clock.py`; benchmark request timing is owned

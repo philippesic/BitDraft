@@ -47,6 +47,7 @@ def test_live_fixtures_reject_original_accept_repair_and_reset(tmp_path: Path) -
         "w1a1_eagle/__init__.py",
         "w1a1_eagle/contracts.py",
         "w1a1_eagle/data.py",
+        "w1a1_eagle/storage.py",
         "w1a1_eagle/records.py",
         "w1a1_eagle/json_stream.py",
         "w1a1_eagle/capacity.py",

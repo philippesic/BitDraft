@@ -60,7 +60,7 @@ the supplement remains a dependency even though hybrid training was cancelled.
 frozen bank, exact capture specifications, source snapshots, native execution outputs,
 record validation, CPU admission and failed observer/recovery.
 The collection is indexed at
-`/home/philip/binary-eagle-artifacts/datasets/train-bank-v8-fp16-01/corpus.json`.
+`/home/philip/BitDraft/artifacts/datasets/train-bank-v8-fp16-01/corpus.json`.
 The Windows shard physically resides under
 `/mnt/c/binary-eagle-artifacts/train-bank-v8-fp16-01/captures`.
 

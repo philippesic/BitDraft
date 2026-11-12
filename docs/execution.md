@@ -12,7 +12,7 @@ provisional leader uses acceptance. Historical speed remains descriptive. See
 
 ```sh
 uv run --locked --no-sync --offline python -m w1a1_eagle preflight INTENT
-uv run --locked --no-sync --offline python -m w1a1_eagle run INTENT OUTPUT --scope TASK
+uv run --locked --no-sync --offline python -m w1a1_eagle run INTENT [OUTPUT] --scope TASK
 uv run --locked --no-sync --offline python -m w1a1_eagle report OUTPUT
 ```
 
@@ -35,7 +35,7 @@ and immutable native codes from `benchmarks prepare-initialization INTENT OUTPUT
 Origin, geometry, coverage, dtype, finiteness and byte budgets are checked before use.
 The reusable basis avoids repeated dequantization; its identity enters the recipe.
 Frozen codes are bound to model construction and guarded against replacement. Exports
-retain tensor readback. This is an external derived artifact, not a training capture.
+retain tensor readback. This is a derived artifact under `artifacts/models/`, not a training capture.
 Retain its producer evidence and qualify tensor/export/update parity when adopting it.
 
 The [store](../w1a1_eagle/checkpoints/store.py) owns states/manifests; the
@@ -68,7 +68,7 @@ when its owner is gone rather than guessing elapsed time.
 Updates and exposure are journaled before execution. State publication uses a temporary
 file, fsync, checksum and atomic latest-pointer replacement. Process crashes preserve a
 complete parent or child; power-loss durability is not established.
-Continuations retain their external durable parent rather than rewriting an identical
+Continuations retain their separately stored durable parent rather than rewriting an identical
 initial state in every segment. Fresh initialization still publishes its first state.
 
 - Fresh authenticates initialization and has no optimizer history.

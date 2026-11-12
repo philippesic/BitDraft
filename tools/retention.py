@@ -8,6 +8,7 @@ from typing import cast
 from w1a1_eagle.contracts import Record, integer, record, sequence, string
 from w1a1_eagle.data import Artifact
 from w1a1_eagle.records import artifact, read, reference
+from w1a1_eagle.storage import output_path, relocated
 
 
 def inspect(plan: Path) -> tuple[Record, list[Artifact], list[Artifact]]:
@@ -169,7 +170,12 @@ def main() -> int:
     try:
         print(
             json.dumps(
-                execute(args.plan.resolve(), args.receipt.resolve(), args.apply), sort_keys=True
+                execute(
+                    relocated(args.plan).resolve(),
+                    output_path(args.receipt, "receipts", args.plan.stem),
+                    args.apply,
+                ),
+                sort_keys=True,
             )
         )
         return 0

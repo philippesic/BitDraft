@@ -33,16 +33,16 @@ quotas, and forecasts maximum feature bytes. It does not generate captures or es
 semantic difficulty. Inspect source quality before production acquisition.
 
 The frozen 6K bank's [completed FP16 corpus](../results/frozen-train-bank-capture/result.md)
-is indexed at `/home/philip/binary-eagle-artifacts/datasets/train-bank-v8-fp16-01/corpus.json`.
-It references the existing supplement and both new capture shards; preserve every
-supporting root, including its Windows files. This is TRAIN data with recorded prior
+is indexed at `/home/philip/BitDraft/artifacts/datasets/train-bank-v8-fp16-01/corpus.json`.
+It references the existing supplement and both capture shards; every supporting root
+is now inside `artifacts/datasets/`, including the copied Windows-produced files. This is TRAIN data with recorded prior
 exposure, not independent evaluation data or a new training allocation.
 
 The prompt-bank bodies and role/ID selections remain under `bank/v8`. Portable curation
 metadata is under `bank/v8-relocated-01`; its relocation receipt changes only the old
 exclusion-file locator. Historical admission/specification files remain byte-identical.
 The legacy prompt text and opaque role indexes used by curation are preserved under
-`prompt-sources/legacy-freeze-002` outside source.
+`artifacts/prompt-sources/legacy-freeze-002`, outside tracked source.
 
 ## Prompt identity and roles
 
@@ -125,7 +125,7 @@ and preserve their references. Reusing captures does not make previously seen da
 Use the configured numerical interpreter reported by the doctor for
 `python -m w1a1_eagle.numerical.conversion SPEC OUTPUT`; the check-only environment
 does not contain its numerical dependencies. It converts a schema-1 F32 corpus to
-F16 in a new external root. The spec binds `corpus`, `maximum_relative_l2` and
+F16 in a new `artifacts/datasets/` root. The spec binds `corpus`, `maximum_relative_l2` and
 `capture_limit_bytes` under schema 1. It checks all finite values and overflow, streams
 bounded chunks through atomic assets, preserves labels/roles and supporting metadata,
 and records per-array errors. It never deletes the original. Conversion success is a

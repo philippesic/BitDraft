@@ -92,7 +92,7 @@ source_modules = ["tools.contracts"]
 forbidden_modules = ["tools.config", "tools.check", "tools.repo_files", "tools.self_test"]
 
 [tool.deptry]
-exclude = ["^\\.git/", "^\\.venv/", "^\\.uv-cache/"]
+exclude = ["^\\.git/", "^\\.venv/", "^\\.uv-cache/", "^artifacts/"]
 extend_exclude = []
 ignore = []
 per_rule_ignores = {}

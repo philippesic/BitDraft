@@ -6,6 +6,7 @@ from typing import cast
 from w1a1_eagle.contracts import Record, integer, record, string
 from w1a1_eagle.data import Artifact
 from w1a1_eagle.json_stream import invalid_constant, unique
+from w1a1_eagle.storage import relocated
 
 
 def canonical(value: object) -> bytes:
@@ -17,6 +18,7 @@ def identity(value: object) -> str:
 
 
 def read(path: Path, limit: int = 16 * 1024 * 1024) -> Record:
+    path = relocated(path)
     if path.stat().st_size > limit:
         raise ValueError("record byte limit exceeded")
 
@@ -35,7 +37,7 @@ def artifact(value: object, root: Path, resolve: bool = True) -> Artifact:
     if set(raw) != {"path", "sha256", "bytes"}:
         raise ValueError("unsupported artifact record")
     path = Path(string(raw["path"]))
-    selected = root / path
+    selected = relocated(root / path)
     return Artifact(
         selected.resolve() if resolve else selected, string(raw["sha256"]), integer(raw["bytes"])
     )

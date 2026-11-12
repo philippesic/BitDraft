@@ -9,6 +9,8 @@ import tarfile
 from pathlib import Path, PurePosixPath
 from typing import BinaryIO, cast
 
+from w1a1_eagle.storage import output_path, relocated
+
 
 def object_record(value: object) -> dict[str, object]:
     if not isinstance(value, dict) or not all(isinstance(key, str) for key in value):
@@ -102,7 +104,7 @@ def pack(
 
 
 def unpack(archive_path: Path, destination: Path, expected: str, maximum: int) -> dict[str, object]:
-    destination.mkdir(mode=0o700)
+    destination.mkdir(mode=0o700, parents=True)
     destination = destination.resolve()
     total = count = 0
     seen: set[str] = set()
@@ -179,7 +181,12 @@ def main() -> int:
         )
         print(json.dumps(result, sort_keys=True), file=sys.stderr)
     else:
-        result = unpack(args.archive, args.destination, args.expected, args.maximum)
+        result = unpack(
+            relocated(args.archive),
+            output_path(args.destination, "datasets", args.archive.stem),
+            args.expected,
+            args.maximum,
+        )
         print(json.dumps(result, sort_keys=True))
     return 0
 

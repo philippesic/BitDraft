@@ -10,11 +10,12 @@ from w1a1_eagle.contracts import Record, integer, number, record, string
 from w1a1_eagle.json_stream import invalid_constant, unique
 from w1a1_eagle.processes import ProcessIdentity
 from w1a1_eagle.records import canonical, identity, read
+from w1a1_eagle.storage import relocated
 
 
 class Journal:
     def __init__(self, root: Path) -> None:
-        self.root = root.resolve()
+        self.root = relocated(root).resolve()
         self.path = self.root / "events.jsonl"
         self.cache: list[Record] = []
         self.length = -1

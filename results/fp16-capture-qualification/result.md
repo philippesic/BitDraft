@@ -47,8 +47,8 @@ own checks. Failed and inconclusive checks remain evidence.
 ## Evidence and reproduction
 
 [Compact measurements](result.json). Full drivers, inputs, states, exports and raw native
-responses remain under `/home/philip/binary-eagle-artifacts/qualification/` and
-`/home/philip/binary-eagle-artifacts/benchmarks/precision-pilot-native-02/`. Executed
+responses remain under `/home/philip/BitDraft/artifacts/qualification/` and
+`/home/philip/BitDraft/artifacts/benchmarks/precision-pilot-native-02/`. Executed
 source snapshots are beside each training attempt. Native serving used the complete
 rebuild; artifact identities and commands are retained in the comparison specification.
 The initial capture verification attempt expected serving to omit EOS; the corrected

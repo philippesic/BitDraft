@@ -11,6 +11,7 @@ from typing import BinaryIO, Callable, cast
 from w1a1_eagle.capacity import require
 from w1a1_eagle.contracts import record
 from w1a1_eagle.data import Artifact
+from w1a1_eagle.storage import relocated
 
 
 @dataclass(frozen=True)
@@ -26,7 +27,7 @@ class StateRef:
 
 class Store:
     def __init__(self, root: Path, reserve_bytes: int = 0) -> None:
-        self.root = root.resolve()
+        self.root = relocated(root).resolve()
         if type(reserve_bytes) is not int or reserve_bytes < 0:
             raise ValueError("invalid store disk reserve")
         self.reserve_bytes = reserve_bytes

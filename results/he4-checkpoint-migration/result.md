@@ -34,9 +34,9 @@ hybrid-dataset qualification before adopting either for continued training.
 
 [Compact measured comparison](result.json). Raw checkpoint, original and new drivers,
 original next-update state and migration receipts remain under
-`/home/philip/binary-eagle-artifacts/migration/` and
-`/home/philip/binary-eagle-artifacts/qualification/`. The original frozen source is
-`/home/philip/binary-eagle-artifacts/datasets/retained-he4broad-original/source-update8h-20261110-01`.
+`/home/philip/BitDraft/artifacts/migration/` and
+`/home/philip/BitDraft/artifacts/qualification/`. The original frozen source is
+`/home/philip/BitDraft/artifacts/datasets/retained-he4broad-original/source-update8h-20261110-01`.
 The November12 relocation preserved those source bytes; original driver records keep
 their historical path. Drivers and exact input identities are retained in the external qualification directory.
 Reproduction runs the legacy driver first, then the new driver against the imported state;
@@ -48,7 +48,7 @@ A zero-update export now matches all 118 original tensor payloads and operationa
 metadata. GPU evaluation of export-time exponentials had introduced one-ULP differences
 in 12 gain tensors; CPU FP32 restores original export arithmetic. Training is unchanged.
 Both the failed check and corrected proof remain under
-`/home/philip/binary-eagle-artifacts/qualification/original-export-canonical-equivalence.json`.
+`/home/philip/BitDraft/artifacts/qualification/original-export-canonical-equivalence.json`.
 The corrected state/export and producer journal are retained in `original-zero-export-02/`
 there; informational headers differ. This adds export evidence to the update proof above.
 

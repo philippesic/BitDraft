@@ -14,7 +14,8 @@ from w1a1_eagle.data import (
     windows,
 )
 from w1a1_eagle.json_stream import ArrayRows
-from w1a1_eagle.records import artifact, canonical, read
+from w1a1_eagle.records import canonical, read
+from w1a1_eagle.storage import relocated
 
 TAPS = (2, 6, 10, 14, 18, 22, 26, 30)
 
@@ -27,17 +28,22 @@ class Mount:
     def __post_init__(self) -> None:
         if not self.logical.is_absolute() or ".." in self.logical.parts:
             raise ValueError("logical input root must be absolute")
-        object.__setattr__(self, "physical", self.physical.absolute())
+        object.__setattr__(self, "physical", relocated(self.physical).absolute())
 
     def map(self, value: object) -> Artifact:
-        raw = artifact(value, self.logical, resolve=False)
-        if ".." in raw.path.parts:
+        raw = record(value)
+        if set(raw) != {"path", "sha256", "bytes"}:
+            raise ValueError("unsupported artifact record")
+        logical_path = self.logical / Path(string(raw["path"]))
+        if ".." in logical_path.parts:
             raise ValueError("input reference escaped its declared logical mount")
         try:
-            relative = raw.path.relative_to(self.logical)
+            relative = logical_path.relative_to(self.logical)
         except ValueError as error:
             raise ValueError("input reference escaped its declared logical mount") from error
-        return Artifact(self.physical / relative, raw.sha256, raw.size, self.physical)
+        return Artifact(
+            self.physical / relative, string(raw["sha256"]), integer(raw["bytes"]), self.physical
+        )
 
 
 @dataclass(frozen=True)

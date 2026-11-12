@@ -5,6 +5,8 @@ import uuid
 from pathlib import Path
 from typing import cast
 
+from w1a1_eagle.storage import project_root
+
 
 def numerical_python(root: Path) -> str:
     explicit = os.environ.get("BINARY_NUMERICAL_PYTHON")
@@ -21,12 +23,34 @@ def numerical_python(root: Path) -> str:
     return str(local) if local.is_file() else sys.executable
 
 
-def cpu_environment() -> dict[str, str]:
+def artifact_environment() -> dict[str, str]:
     environment = dict(os.environ)
-    environment["CUDA_VISIBLE_DEVICES"] = ""
     environment["PYTHONDONTWRITEBYTECODE"] = "1"
-    environment["TMPDIR"] = "/tmp"
-    environment["PYTHONPYCACHEPREFIX"] = "/tmp/binary-no-bytecode-" + uuid.uuid4().hex
+    cache = project_root() / "artifacts/cache"
+    temporary = cache / "tmp"
+    temporary.mkdir(parents=True, exist_ok=True)
+    environment["TMPDIR"] = str(temporary)
+    environment["PYTHONPYCACHEPREFIX"] = str(temporary / ("bytecode-" + uuid.uuid4().hex))
+    for key, folder in (
+        ("XDG_CACHE_HOME", "xdg"),
+        ("HF_HOME", "huggingface"),
+        ("HF_HUB_CACHE", "huggingface/hub"),
+        ("HUGGINGFACE_HUB_CACHE", "huggingface/hub"),
+        ("HF_DATASETS_CACHE", "huggingface/datasets"),
+        ("TORCH_HOME", "torch"),
+        ("TORCH_EXTENSIONS_DIR", "torch/extensions"),
+        ("PYTORCH_KERNEL_CACHE_PATH", "torch/kernels"),
+        ("TORCHINDUCTOR_CACHE_DIR", "inductor"),
+        ("TRITON_CACHE_DIR", "triton"),
+        ("CUDA_CACHE_PATH", "cuda"),
+    ):
+        environment[key] = str(cache / folder)
+    return environment
+
+
+def cpu_environment() -> dict[str, str]:
+    environment = artifact_environment()
+    environment["CUDA_VISIBLE_DEVICES"] = ""
     return environment
 
 
@@ -35,9 +59,7 @@ def execution_environment(device: str) -> dict[str, str]:
         return cpu_environment()
     if device != "cuda":
         raise ValueError("unsupported execution device")
-    environment = dict(os.environ)
-    environment["PYTHONDONTWRITEBYTECODE"] = "1"
-    return environment
+    return artifact_environment()
 
 
 def native_environment(libraries: Path, device: str = "cuda") -> dict[str, str]:
@@ -45,8 +67,9 @@ def native_environment(libraries: Path, device: str = "cuda") -> dict[str, str]:
         raise ValueError("native device must be cpu or cuda")
     environment = {
         key: value
-        for key, value in os.environ.items()
-        if not key.startswith(("GGML_", "W1A8_", "LLAMA_", "CUDA_", "LD_", "OMP_"))
+        for key, value in artifact_environment().items()
+        if key == "CUDA_CACHE_PATH"
+        or not key.startswith(("GGML_", "W1A8_", "LLAMA_", "CUDA_", "LD_", "OMP_"))
     }
     environment.update(
         LD_LIBRARY_PATH=str(libraries),

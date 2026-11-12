@@ -16,6 +16,7 @@ from w1a1_eagle.numerical.weights import load_he4
 from w1a1_eagle.numerical.worker import TensorWorker
 from w1a1_eagle.processes import ProcessIdentity
 from w1a1_eagle.records import artifact, canonical, read, reference
+from w1a1_eagle.storage import output_path, relocated
 
 
 def migrate(specification: Path, output: Path) -> Record:
@@ -81,8 +82,10 @@ class Arguments(argparse.Namespace):
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("specification", type=Path)
-    parser.add_argument("output", type=Path)
+    parser.add_argument("output", type=Path, nargs="?")
     args = parser.parse_args(namespace=Arguments())
+    args.specification = relocated(args.specification).resolve()
+    args.output = output_path(args.output, "migration", args.specification.stem)
     print(json.dumps(migrate(args.specification, args.output), indent=2))
 
 

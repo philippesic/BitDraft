@@ -17,6 +17,14 @@ export, native request comparisons, tool workflows and periodic acceptance check
 Released DFlash Q4KM remains the external comparator. Read [findings](FINDINGS.md)
 before interpreting a candidate score as a serving improvement.
 
+## Project storage
+
+Datasets, models, checkpoints, benchmark records, archived evidence and project caches
+live inside this checkout under ignored `artifacts/`. [Storage](docs/storage.md) maps the
+folders and commands. Omitted run outputs use the appropriate folder automatically;
+explicit output paths must remain inside `artifacts/`. Git tracks source and compact
+results, so a Git backup alone does not preserve these artifact bytes.
+
 ## Setup
 
 Requires CPython 3.11.15 and uv 0.11.32 on Linux x86_64; exact archive identities are in

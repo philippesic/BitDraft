@@ -21,7 +21,7 @@ claiming closeout; do not invent scientific or retention policy.
    Outcome, Scope and limitations, Decision, Evidence and reproduction. Follow the
    project's presentation rules. Add charts, JSON and supporting tables only when useful;
    retain compact figure data and regeneration inputs. Archive reports under
-   `results/sources/` only when necessary. Reference required large inputs at their external home. Extract compact measurements
+   `results/sources/` only when necessary. Reference required large inputs at the project artifact location. Extract compact measurements
    and figure inputs from outputs while their source is available; preserve all arms,
    unfavorable outcomes and failure denominators. Verify the extracted facts against raw
    records before deciding their disposal.

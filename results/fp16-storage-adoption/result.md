@@ -61,7 +61,7 @@ All outputs/stops matched. FP16/FP32 throughput was 1.0053, with paired 95% inte
 −0.2750–+0.2526. Every original qualification gate still passed. Earlier executions above
 remain unchanged; serial timing does not establish a storage-caused speed effect.
 Raw results and stratified bootstrap are in
-`/home/philip/binary-eagle-artifacts/qualification/precision-canonical-paired.json`.
+`/home/philip/BitDraft/artifacts/qualification/precision-canonical-paired.json`.
 
 ## Artifact disposition
 

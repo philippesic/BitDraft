@@ -18,7 +18,7 @@ result for measured hardware coverage.
 
 The plain command runs every static stage and the ordinary CPU tests and labels itself
 partial. It skips the numerical test (about 37 s), the required-test roster and the
-rule proofs, keeps a type-check cache of about 300 MB in `/tmp`, writes no receipt and
+rule proofs, keeps a type-check cache of about 300 MB in `.venv/check-temp`, writes no receipt and
 is never a commit result. `--full` runs everything portable and writes the receipt.
 
 There is no hosted CI. Verification is the local hook plus the checks agents run.
@@ -27,7 +27,7 @@ The hook is `.githooks/pre-commit`. Enable it once per clone with
 
 For one file: `.venv/bin/ruff check PATH`, `.venv/bin/ruff format --check PATH`, or
 `.venv/bin/python -B -m pytest tests/test_training.py`. The numerical tests run in the
-numerical interpreter: `CUDA_VISIBLE_DEVICES= TMPDIR=/tmp /absolute/path/to/numerical/bin/python -B -m unittest
+numerical interpreter: `CUDA_VISIBLE_DEVICES= TMPDIR=artifacts/cache/tmp /absolute/path/to/numerical/bin/python -B -m unittest
 tests.numerical.test_model -v`.
 
 ## Choosing verification
@@ -81,7 +81,7 @@ Its qualification line describes lanes unavailable in that CPU run; it does not
 declare the project's maintained commands absent or invalidate retained scoped evidence.
 
 Authored source and documentation have no aggregate byte cap. Individual file limits
-and external runtime-snapshot limits still apply.
+and runtime source-snapshot limits still apply.
 
 ## Comment ban
 
@@ -117,7 +117,8 @@ Tests and checker modules may import declared check dependencies; product module
 The required-test list lives only in `policy/cpu-tests.toml`.
 
 The proof corpus tests project-authored validators, with one rejecting and one
-accepting specimen per rule. Ruff, mypy, Vulture and Deptry run on the actual source;
+accepting specimen per rule. Ignored `artifacts/` is excluded from dependency discovery so archived sources and
+environments cannot become authored project inputs. Ruff, mypy, Vulture and Deptry run on the actual source;
 the corpus does not retest their built-in error codes on toy programs.
 
 Hashes still authenticate frozen source evidence, model/data artifacts, exact machine

@@ -27,8 +27,10 @@ class Settings:
 
 
 def settings(root: Path) -> Settings:
-    temporary = Path("/tmp") / (
-        "binary-check-" + hashlib.sha256(str(root.resolve()).encode()).hexdigest()[:16]
+    temporary = (
+        root.resolve()
+        / ".venv/check-temp"
+        / ("check-" + hashlib.sha256(str(root.resolve()).encode()).hexdigest()[:16])
     )
     environment = dict(os.environ)
     environment.update(

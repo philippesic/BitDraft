@@ -9,6 +9,10 @@ pause before production. Request scores and whole application tasks stay separat
 uv run --locked --no-sync --offline python -m benchmarks COMMAND INPUT [OUTPUT]
 ```
 
+Writing commands default to the matching folder under ignored `artifacts/` and reject
+destinations outside it. [Storage](storage.md#new-output-locations) defines relative names,
+explicit paths and the shared saved-reference registry.
+
 | Commands | Purpose |
 | --- | --- |
 | `plan`, `verify-inputs` | Native comparison units/warmups; optional model/runtime hashing |
@@ -75,7 +79,7 @@ It authenticates whole source-panel completeness, selected raw responses/counter
 exact unchanged task definitions. Projection from a larger complete panel is explicit;
 partial/invalid panels cannot establish references. Changed caps require new evidence.
 
-The external registry keys records by protocol and model content identity. Its first
+The `artifacts/benchmarks/references` registry keys records by protocol and model content identity. Its first
 canonical observation is reused, never overwritten. Separate observations remain under
 `observations/`; deliberate repeats cannot silently replace the reference. Raw result,
 specification and response/transcript receipts remain attached. Model identities persist
@@ -130,7 +134,7 @@ ends the allocation; old specifications do not authorize restarting it.
 [`capture`](../benchmarks/capture.py) binds teacher/runtime/tokenizer, bank/IDs, dtype,
 context, byte ceiling, exclusions and supervision policy. Every new record passes the
 bounded product loader before publication: hashes, geometry, finite values, token/label
-arrays and EOG. Validation receipts and partial attempts stay with external raw data.
+arrays and EOG. Validation receipts and partial attempts stay with ignored raw data under `artifacts/`.
 [FP16 adoption](../results/fp16-storage-adoption/result.md) qualifies HE4/Q4KM storage;
 training materializes FP32. It does not establish lifetime/other-family equivalence.
 

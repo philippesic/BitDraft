@@ -46,9 +46,11 @@ rounded summary values do not supply per-bar error bars.
 Small immutable provenance and execution receipts already in `evidence/` retain their
 identities and links. New compact result measurements belong beside their result;
 archived supporting reports belong in `results/sources/`. Neither is a raw-run store.
-Large logs, datasets, weights and frozen execution environments belong in an external
-artifact location identified precisely by the result. The ignored `artifacts/` directory
-is for disposable local previews and caches, not the sole home of valuable evidence.
+Large logs, datasets, weights, frozen execution source and archived supporting evidence
+live under ignored `artifacts/` inside this checkout, following [storage](storage.md).
+Results identify their exact paths and content identities. Persistent inputs and valuable
+evidence belong there as well as disposable caches; being ignored does not make a file
+disposable. All project-owned storage stays in the checkout, outside tracked source.
 
 Check claims against source records. Label imported, recomputed, rerun and unverified
 claims accurately. Link the exact executed source, including dirty changes and runtime
@@ -86,7 +88,7 @@ weights are discarded, record that exact replay/resume is unavailable. Unknown o
 active jobs, unresolved dependencies and unpreserved unique source block that disposal;
 record the specific exception rather than quietly keeping an entire run forever.
 
-Keep retained raw inputs outside source. No investigation is closed while its raw-output
+Keep retained raw inputs in `artifacts/`, outside tracked source. No investigation is closed while its raw-output
 disposition is undecided. A successful run alone does not complete closeout. Existing
 imported findings describe historical observations; they do not promise all raw bytes.
 

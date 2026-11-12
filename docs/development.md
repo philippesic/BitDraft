@@ -39,5 +39,5 @@ is installed; the link makes discovery independent of automatic skill loading.
 The specification defines extraction of compact measurements, figure inputs and source
 identities, result sections, FINDINGS updates and explicit artifact disposition. The
 [retirement command](results.md#retirement-command) verifies retained evidence and exact
-removal paths before authorized cleanup. Needed data/model inputs remain external;
+removal paths before authorized cleanup. Needed data/model inputs remain in ignored `artifacts/`;
 discarded states lose exact resume/replay. Routine repairs normally need no result page.

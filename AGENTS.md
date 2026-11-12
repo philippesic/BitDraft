@@ -5,7 +5,8 @@ heldout24 and its aliases never enter training, calibration or selection.
 [Domain terms](docs/domain.md) defines Baseline, candidates, formats and metrics.
 
 Checkout: `/home/philip/BitDraft` on the RTX5080 host.
-Artifacts: `/home/philip/binary-eagle-artifacts`. This checkout is local-only with no
+All project artifacts live in ignored `artifacts/`; [storage](docs/storage.md) maps the folders.
+This checkout is local-only with no
 remote configured; publication and the license remain undecided.
 
 ## Navigation
@@ -42,7 +43,7 @@ remote configured; publication and the license remain undecided.
   [close-results procedure](skills/close-results/SKILL.md). Extract and verify compact
   measurements, conclusions and source identities; update FINDINGS and current docs.
 - Every result states `Artifact disposition`. Retain needed data/model inputs and
-  selected/recovery state externally; retire obsolete outputs through the
+  selected/recovery state in `artifacts/`; retire obsolete outputs through the
   [retirement command](docs/results.md#retirement-command) within authorized scope.
   Training states use their [Store retention](docs/execution.md#state-resume-and-branch) owner.
   Record lost exact replay/resume; a summary cannot replace an input still needed.

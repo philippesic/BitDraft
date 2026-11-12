@@ -142,7 +142,7 @@ def validate_policy(project: Record, stages: Record, rules: Record) -> list[Diag
             or uv.get("no-build") is not True
             or uv.get("default-groups") != ["check"]
             or any(deptry.get(key) for key in ("ignore", "per_rule_ignores", "extend_exclude"))
-            or deptry.get("exclude") != ["^\\.git/", "^\\.venv/", "^\\.uv-cache/"]
+            or deptry.get("exclude") != ["^\\.git/", "^\\.venv/", "^\\.uv-cache/", "^artifacts/"]
             or set(sequence(deptry["known_first_party"])) != {"tools", "tests", "w1a1_eagle"}
             or set(sequence(imports["root_packages"])) != {"tools", "tests", "w1a1_eagle"}
             or imports.get("include_external_packages") is not True

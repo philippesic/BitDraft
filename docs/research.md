@@ -24,7 +24,7 @@ repetitions reduce timing noise without creating independent quality examples.
 
 ## Using the evidence
 
-Useful reports are local under `results/sources/`; the independent external archive
+Useful reports are local under `results/sources/`; the independent archive under `artifacts/archive/`
 preserves their supporting history and implementation. See [evidence access](evidence.md).
 Old runbooks and proposal records are not current instructions or authorizations.
 Some states were deliberately retired; a readable finding does not guarantee that its

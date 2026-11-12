@@ -13,12 +13,14 @@ from w1a1_eagle.config import benchmark_environment, numerical_python
 from w1a1_eagle.contracts import Record, sequence
 from w1a1_eagle.identity import freeze_source, source_identity
 from w1a1_eagle.records import read
+from w1a1_eagle.storage import output_path, relocated
 
 
 class Arguments(argparse.Namespace):
     command: str
     input: Path
     output: Path
+    requested_output: Path | None
     frozen: bool
 
 
@@ -53,9 +55,26 @@ def main() -> int:
     ):
         comparison = commands.add_parser(name)
         comparison.add_argument("input", type=Path)
-        comparison.add_argument("output", type=Path)
+        comparison.add_argument("requested_output", metavar="OUTPUT", type=Path, nargs="?")
     args = parser.parse_args(namespace=Arguments())
     try:
+        args.input = relocated(args.input).resolve()
+        if hasattr(args, "requested_output"):
+            categories = {
+                "capture": "datasets",
+                "curate": "bank",
+                "admit-bank": "bank",
+                "native-build": "native",
+                "native-helpers": "native",
+                "campaign": "training",
+                "record-reference": "benchmarks",
+                "prepare-initialization": "models",
+            }
+            if args.command == "record-reference" and args.requested_output is None:
+                args.requested_output = Path("artifacts/benchmarks/references")
+            args.output = output_path(
+                args.requested_output, categories.get(args.command, "benchmarks"), args.input.stem
+            )
         if not args.frozen and args.command == "campaign-preflight":
             root = Path(__file__).resolve().parents[1]
             return subprocess.run(

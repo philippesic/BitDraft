@@ -8,6 +8,7 @@ from w1a1_eagle.contracts import Record, integer, number, record, string
 from w1a1_eagle.data import Artifact
 from w1a1_eagle.index import IndexSpec, Mount
 from w1a1_eagle.records import artifact, canonical, identity, read
+from w1a1_eagle.storage import relocated
 from w1a1_eagle.training import Budget
 
 
@@ -225,9 +226,12 @@ class Intent:
             logical = Path(string(values["logical_root"]))
             if not logical.is_absolute():
                 raise ValueError("index logical root must be absolute")
-            mount = Mount(logical, (root / string(values["metadata_root"])).resolve())
+            mount = Mount(logical, relocated(root / string(values["metadata_root"])).resolve())
             data_mount = Mount(
-                logical, (root / string(values.get("data_root", values["metadata_root"]))).resolve()
+                logical,
+                relocated(
+                    root / string(values.get("data_root", values["metadata_root"]))
+                ).resolve(),
             )
             adapter = IndexSpec(
                 string(values["manifest_sha256"]),

@@ -13,6 +13,7 @@ from w1a1_eagle.contracts import Record, integer, number, record, sequence, stri
 from w1a1_eagle.identity import freeze_source, source_identity
 from w1a1_eagle.numerical.captures import TAPS, FloatArray, HalfArray
 from w1a1_eagle.records import artifact, canonical, read, reference
+from w1a1_eagle.storage import output_path, relocated
 
 
 def convert(specification: Path, output: Path) -> Record:
@@ -166,8 +167,10 @@ class Arguments(argparse.Namespace):
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("specification", type=Path)
-    parser.add_argument("output", type=Path)
+    parser.add_argument("output", type=Path, nargs="?")
     args = parser.parse_args(namespace=Arguments())
+    args.specification = relocated(args.specification).resolve()
+    args.output = output_path(args.output, "datasets", args.specification.stem)
     try:
         print(json.dumps(convert(args.specification, args.output), indent=2))
         return 0

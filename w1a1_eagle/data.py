@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Literal
 
 from w1a1_eagle.contracts import components
+from w1a1_eagle.storage import relocated
 
 Role = Literal["train", "dev", "calibration", "heldout"]
 PriorUse = Literal["unobserved", "historical-training", "unknown"]
@@ -66,7 +67,7 @@ class Artifact:
 
     @classmethod
     def capture(cls, path: Path) -> "Artifact":
-        path = path.resolve()
+        path = relocated(path).resolve()
         if not path.is_file():
             raise ValueError("artifact must be a regular file")
         before = file_identity(path.stat())
@@ -76,6 +77,10 @@ class Artifact:
         return cls(path, digest, before[2])
 
     def __post_init__(self) -> None:
+        if isinstance(self.path, Path):
+            object.__setattr__(self, "path", relocated(self.path))
+        if isinstance(self.boundary, Path):
+            object.__setattr__(self, "boundary", relocated(self.boundary))
         if (
             not isinstance(self.path, Path)
             or type(self.size) is not int

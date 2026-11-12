@@ -94,7 +94,7 @@ execution records remain preserved; exact retired checkpoint blobs are unavailab
 
 [Compact measurements and authenticated raw references](result.json) identify the
 campaigns, comparison panels, assertions and exact executed snapshots. Raw artifacts
-live under `/home/philip/binary-eagle-artifacts/qualification/lean-checks`.
+live under `/home/philip/BitDraft/artifacts/qualification/lean-checks`.
 
 Use the maintained [benchmark commands](../../docs/benchmarks.md): `prepare-checks`,
 `record-reference`, `campaign-preflight`, `campaign`, `campaign-report` and `suite`.

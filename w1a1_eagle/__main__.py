@@ -6,6 +6,7 @@ from pathlib import Path
 from w1a1_eagle.config import cpu_environment, numerical_python
 from w1a1_eagle.contracts import Record, record
 from w1a1_eagle.lifecycle import Journal
+from w1a1_eagle.storage import output_path, relocated
 from w1a1_eagle.supervisor import execute
 
 
@@ -47,6 +48,7 @@ class Arguments(argparse.Namespace):
     as_json: bool
     intent: Path
     output: Path
+    requested_output: Path | None
     scope: str
 
 
@@ -56,7 +58,7 @@ def main() -> int:
     commands = parser.add_subparsers(dest="command", required=True)
     run = commands.add_parser("run")
     run.add_argument("intent", type=Path)
-    run.add_argument("output", type=Path)
+    run.add_argument("requested_output", metavar="OUTPUT", type=Path, nargs="?")
     run.add_argument("--scope", required=True)
     report_parser = commands.add_parser("report")
     report_parser.add_argument("output", type=Path)
@@ -68,7 +70,13 @@ def main() -> int:
         )
     arguments = parser.parse_args(namespace=Arguments())
     try:
+        if arguments.command == "run":
+            arguments.intent = relocated(arguments.intent).resolve()
+            arguments.output = output_path(
+                arguments.requested_output, "training", arguments.intent.stem
+            )
         if arguments.command == "preflight":
+            arguments.intent = relocated(arguments.intent).resolve()
             result = subprocess.run(
                 [
                     numerical_python(Path(__file__).resolve().parent.parent),
