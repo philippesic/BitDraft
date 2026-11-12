@@ -66,6 +66,11 @@ def test_legacy_artifacts_read_without_old_directories_or_record_rewriting(
     loaded.verify()
     assert loaded.path == payload and metadata.read_bytes() == raw
     assert Artifact.capture(Path(old)).sha256 == loaded.sha256
+    screen = tmp_path / "artifacts/qualification/precision-screen/result.json"
+    screen.parent.mkdir(parents=True)
+    screen.write_bytes(raw)
+    previous = Path("/home/philip/binary-eagle-artifacts/precision-screen/result.json")
+    assert Artifact.capture(previous).path == screen
     mount = Mount(Path("/home/philip/binary-eagle-artifacts/datasets/example"), root)
     assert mount.map(document).path == payload
     document["path"] = old + "/../../outside"
