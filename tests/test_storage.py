@@ -66,6 +66,9 @@ def test_legacy_artifacts_read_without_old_directories_or_record_rewriting(
     loaded.verify()
     assert loaded.path == payload and metadata.read_bytes() == raw
     assert Artifact.capture(Path(old)).sha256 == loaded.sha256
+    canonical = Path("/home/philip/BitDraft/artifacts/datasets/example/features")
+    assert Artifact.capture(canonical).path == payload
+    assert storage.relocated(storage.relocated(canonical)) == payload
     screen = tmp_path / "artifacts/qualification/precision-screen/result.json"
     screen.parent.mkdir(parents=True)
     screen.write_bytes(raw)

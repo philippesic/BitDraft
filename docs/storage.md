@@ -64,6 +64,7 @@ adjacent `.index.jsonl` mapping original paths to archive members and SHA-256 va
 These are historical supporting bytes;
 the complete current Windows-produced TRAIN shard is unpacked in `datasets/`, ready to load.
 See [archive access](evidence.md#windows-artifact-archives) for selective recovery.
+Collection manifests identify multi-archive groups and their separate link records.
 
 ## Retention and moving the project
 

@@ -40,13 +40,15 @@ def relocated(path: Path, root: Path | None = None) -> Path:
         ("/home/philip/binary-eagle-artifacts", "artifacts"),
         ("/home/philip/binary-eagle-evidence", "artifacts/archive"),
         ("/home/philip/binary-eagle-decoding-next", "."),
+        ("/home/philip/BitDraft", "."),
         ("/home/philip/binary-eagle-decoding", "artifacts/archive/legacy-checkout-pending-delete"),
     )
-    for legacy, destination in prefixes:
-        prefix = Path(legacy)
-        if path.is_relative_to(prefix):
-            path = checkout / destination / path.relative_to(prefix)
-            break
+    if not path.is_relative_to(checkout):
+        for legacy, destination in prefixes:
+            prefix = Path(legacy)
+            if path.is_relative_to(prefix):
+                path = checkout / destination / path.relative_to(prefix)
+                break
     for previous, destination in (
         ("artifacts/precision-screen", "artifacts/qualification/precision-screen"),
         ("artifacts/storage-audit-01", "artifacts/receipts/storage-inventory-01"),

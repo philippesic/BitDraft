@@ -111,6 +111,9 @@ user directory are contained in `artifacts/archive/windows-legacy/`. Adjacent
 Search the indexes
 for a former path before opening a large archive; the receipt collection under
 `artifacts/receipts/storage-containment/` records archive identities and verification.
+The `binary-eagle-decoding-artifacts` collection includes its main archive and retained
+numbered parts; consult its collection manifest and all matching indexes. Its separate
+`.links.json` preserves symbolic-link targets, including broken historical locators.
 
 On this host, Python3.14 reads these archives with standard-library
 `tarfile`, including `python -m tarfile --list ARCHIVE.tar.zst`. Recover only required
