@@ -46,13 +46,36 @@ native library/version startup passed with CUDA hidden. No new GPU qualification
 
 The remaining old tree is quarantined at
 `/home/philip/.local/share/BitDraft/legacy-checkout-pending-delete` (about39GiB).
-Its final deletion is the only pending action and requires Philip's requested confirmation.
+Final deletion still requires Philip's requested confirmation. The prior statement that
+this was the only remaining work was incomplete: whole-project artifact containment and
+closeout of the external qualification stores were omitted.
 Full evidence: `/home/philip/binary-eagle-evidence/legacy-closeout-20261112/`; command/check
 logs remain under the artifact root's `qualification/old-repo-deletion-audit/`.
 
+### Whole-project storage correction
+
+Philip clarified that all project-owned assets should be contained in this checkout,
+with obsolete raw artifacts converted to compact results and retired, not merely stored
+outside Git. The current external layout has not fulfilled that requirement. No current
+training or capture is running. A read-only inventory is under
+`artifacts/storage-audit-01/`; it does not grant deletion authority or establish cleanup.
+
+The original/new training feature arrays total about523GiB and remain working inputs.
+The119.5GiB qualification store contains about99.7GiB of other probe states, exports and
+feature captures needing closeout/dependency review, rather than a permanent collection
+of real developed candidates. Roughly10.5GiB binds currently saved comparison states/
+exports,5.4GiB is reusable initialization and3.3GiB is separate DEV data. Historical
+original-run exports/logs and a copied teacher model need a separate duplicate review.
+Most qualification conclusions are already in results; retirement and containment remain
+unfinished. Preserve original220095, original/6K corpora and current saved-control closure.
+
 ## Next
 
-Await Philip's final deletion confirmation. After he confirms, recheck process ownership/dependencies and remove only the owned quarantine
+Complete the dependency/disposition audit, compact and retire obsolete qualification
+payloads through their owners, then consolidate retained project storage inside an ignored
+project-local artifact directory with verified relocation of existing references. Do not
+silently rewrite immutable records or change data roles. The final old-tree deletion still
+awaits Philip's confirmation. After he confirms, recheck process ownership/dependencies and remove only the owned quarantine
 without traversing its symlinks. Preserve current corpora/parent, external evidence,
 BitDraft source and its Git history. Update the closeout availability and delete this task
 when final deletion is verified. No new training, capture, transfer or publication.

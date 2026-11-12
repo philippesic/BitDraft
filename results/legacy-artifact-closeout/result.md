@@ -99,3 +99,13 @@ when read; the entire feature corpus was not reread for this cleanup.
 The obsolete raw files and inactive checkouts above are discarded. The remaining old
 main checkout will be quarantined for independent operation checks and Philip's final
 deletion confirmation; neither the current corpora nor external evidence lives in it.
+
+## Scope correction, November 12, 2026
+
+This result covers retirement from the legacy checkout and the identified historical
+Windows optimizer archives. It did not complete whole-project cleanup or physical
+containment. The separate artifact store still held roughly120GiB of qualification runs,
+including test checkpoints and capture fixtures whose conclusions were largely already
+summarized. Those require their own disposition/dependency review and retirement. Current
+working datasets and model inputs also remained outside the checkout. Remaining work is
+recorded in the current transition task; source-history independence alone did not finish it.
