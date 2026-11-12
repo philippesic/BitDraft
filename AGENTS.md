@@ -10,8 +10,8 @@ Remote: `git@github.com:philippesic/BitDraft.git` (`origin`). The license remain
 
 ## Navigation
 
-- [README](README.md): setup and introduction. [Architecture](docs/architecture.md): source owners and entries.
-- [Development](docs/development.md): change/validation route. [Checks](docs/checks.md): commands and repairs.
+- [README](README.md): public project overview. [Architecture](docs/architecture.md): source owners and entries.
+- [Development](docs/development.md): setup, entry points and change/validation route. [Checks](docs/checks.md): commands and repairs.
 - [Data](docs/data.md): prompt roles, capture formats and corpus admission.
 - [Execution](docs/execution.md): training, ownership, state/resume and clocks.
 - [Benchmarks](docs/benchmarks.md): candidate acceptance checks, broader comparisons,

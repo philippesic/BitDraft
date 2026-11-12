@@ -6,7 +6,7 @@ investigation; it grants no additional run, publication or deletion authority.
 
 ## Document roles
 
-- `AGENTS.md`: rules every agent needs; `README.md`: introduction, setup and navigation.
+- `AGENTS.md`: rules every agent needs; `README.md`: public introduction, status and getting started.
 - `docs/`: how the project works now and how to change it. Replace obsolete instructions.
 - `tasks/`: unfinished multi-session work, following the [task convention](../tasks/README.md).
 - `results/`: durable conclusions, comparisons and decisions, including negative and
