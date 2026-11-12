@@ -2,17 +2,32 @@ from pathlib import Path
 
 from benchmarks.campaign_segments import verify_initial_export
 from benchmarks.comparison import Comparison
+from benchmarks.measurement import now
 from benchmarks.native import file_reference
 from benchmarks.runner import compare
 from benchmarks.workflows import live
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, number, record
+from w1a1_eagle.data import Artifact
 from w1a1_eagle.identity import source_identity
 from w1a1_eagle.lifecycle import Ownership
 from w1a1_eagle.records import artifact, canonical, read
 
 
+def evaluated_drafter(comparison: Comparison, name: str) -> Artifact:
+    if name in {"target", "baseline"}:
+        raise ValueError("incumbent must be an experimental arm")
+    for arm in comparison.arms:
+        if arm.name == name and arm.drafter is not None:
+            return arm.drafter
+    cached = comparison.cached()
+    if name in cached and cached[name]["drafter"] is not None:
+        return artifact(cached[name]["drafter"], comparison.workload.path.parent)
+    raise ValueError("incumbent must be an evaluated experimental drafter")
+
+
 def suite(specification: Path, output: Path) -> Record:
+    began = now()
     raw = read(specification)
     if set(raw) != {"schema", "targets"} or raw["schema"] not in {"full-suite-v1", "full-suite-v2"}:
         raise ValueError("unsupported full suite specification")
@@ -78,6 +93,16 @@ def suite(specification: Path, output: Path) -> Record:
                 "suite inputs/source differ; preserve this attempt and use a new output"
             )
         store.atomic(binding, canonical(bound))
+        if (store.root / "result.json").exists():
+            completed = read(store.root / "result.json", 64 * 1024 * 1024)
+            if (
+                read(store.root / "status.json", 64 * 1024 * 1024) != completed
+                or completed["status"] != "complete"
+            ):
+                raise ValueError(
+                    "completed suite publication disagrees with status; preserve and inspect"
+                )
+            return completed
         results: Record = {}
         for name, value in targets.items():
             if not name.replace("-", "").replace("_", "").isalnum():
@@ -161,12 +186,7 @@ def suite(specification: Path, output: Path) -> Record:
                     request_spec = Comparison.load(
                         artifact(specs["requests"], specification.resolve().parent).path
                     )
-                    if not any(
-                        item.name == arm
-                        and item.drafter is not None
-                        and item.drafter.sha256 == drafter.sha256
-                        for item in request_spec.arms
-                    ):
+                    if evaluated_drafter(request_spec, arm).sha256 != drafter.sha256:
                         raise ValueError("incumbent drafter differs from evaluated arm")
                     selections[arm] = {
                         **bound,
@@ -174,6 +194,9 @@ def suite(specification: Path, output: Path) -> Record:
                             "tokens_per_second"
                         ],
                         "updates": Store(state.path.parent).describe(state).updates,
+                        "execution": record(record(request_result["summary"])[arm]).get(
+                            "execution", "measured"
+                        ),
                     }
                 if not selections:
                     raise ValueError("at least one state-bound candidate required")
@@ -188,12 +211,17 @@ def suite(specification: Path, output: Path) -> Record:
                     "arm": winner,
                     **record(selections[winner]),
                     "evidence": cells["requests"],
-                    "scope": "full DEV request-selected experimental state; workflow/harness outcomes remain separate, no deployment promotion",
+                    "scope": "descriptive historical throughput ranking; close decisions require fresh matched trials; workflow/harness outcomes remain separate, no deployment promotion"
+                    if any(
+                        record(value)["execution"] == "historical" for value in selections.values()
+                    )
+                    else "full DEV request-selected experimental state; workflow/harness outcomes remain separate, no deployment promotion",
                 }
         result = {
             "status": "complete",
             "targets": results,
             "code_sha256": code,
+            "elapsed_seconds": now() - began,
             "scope": "complete greedy panels with matching declared roles; live failures retained; no automatic unseen-confirmation or deployment claim",
         }
         store.atomic(store.root / "result.json", canonical(result))

@@ -123,6 +123,9 @@ class CaptureCache:
         self.hidden = hidden
         self.entries: OrderedDict[str, Capture] = OrderedDict()
 
+    def clear(self) -> None:
+        self.entries.clear()
+
     def get(self, spec: CaptureSpec) -> Capture:
         key = (
             spec.identity
@@ -134,7 +137,7 @@ class CaptureCache:
         if key in self.entries:
             self.entries.move_to_end(key)
             return self.entries[key]
-        self.entries.clear()
+        self.clear()
         capture = load_capture(spec, self.byte_budget, self.hidden)
         self.entries[key] = capture
         return capture

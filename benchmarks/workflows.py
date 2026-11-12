@@ -5,6 +5,7 @@ from typing import cast
 
 from benchmarks.comparison import Comparison
 from benchmarks.measurement import now, request
+from benchmarks.metrics import totals
 from benchmarks.runner import native_counts, reconcile, signature, valid_sample, verify_generation
 from benchmarks.runtime_policy import LIVE_SECONDS, LIVE_TURNS, payload
 from benchmarks.sandbox import TOOLS, Sandbox
@@ -80,6 +81,7 @@ def live(specification: Path, output: Path) -> Record:
 def live_leased(
     specification: Path, output: Path, spec: Comparison, fixtures: dict[str, Record]
 ) -> Record:
+    began_panel = now()
     store = Store(output)
     store.atomic(store.root / "gpu.txt", cuda_identity().encode())
     code_root = Path(__file__).resolve().parents[1]
@@ -177,12 +179,14 @@ def live_leased(
         historical_rows = [
             record(row) for value in cached.values() for row in sequence(value["rows"])
         ]
+        names = [arm.name for arm in spec.arms] + list(cached)
         result: Record = {
             "status": "complete",
             "protocol": spec.reference_protocol(),
             "role": spec.role,
             "tier": spec.tier,
             "rows": rows,
+            "elapsed_seconds": now() - began_panel,
             "historical_references": {name: value["reference"] for name, value in cached.items()},
             "summary": {
                 arm.name: {
@@ -199,7 +203,17 @@ def live_leased(
                 for name, value in cached.items()
             },
             "code_sha256": code,
-            "by_category": partitions(rows, "category", summarize),
+            "by_category": partitions(
+                rows + historical_rows,
+                "category",
+                lambda values: {
+                    name: {
+                        **summarize([row for row in values if row["arm"] == name]),
+                        "execution": "historical" if name in cached else "measured",
+                    }
+                    for name in names
+                },
+            ),
             "historical_timing_scope": "separate executions; descriptive timings only"
             if cached
             else None,
@@ -347,6 +361,7 @@ def execute(
 
 
 def summarize(rows: list[Record]) -> Record:
+    counters = totals(rows)
     seconds = sum(number(row["wall_seconds"]) for row in rows)
     completed = sum(row["completed"] is True for row in rows)
     return {
@@ -358,4 +373,8 @@ def summarize(rows: list[Record]) -> Record:
         "model_seconds": sum(number(row["model_seconds"]) for row in rows),
         "tool_seconds": sum(number(row["tool_seconds"]) for row in rows),
         "correct": all(row["correct"] is True for row in rows),
+        "tokens": counters["tokens"],
+        "proposed": counters["proposed"],
+        "accepted": counters["accepted"],
+        "acceptance": counters["acceptance"],
     }

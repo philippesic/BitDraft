@@ -167,6 +167,20 @@ def test_references_deduplicate_validate_raw_and_preserve_historical_scope(tmp_p
         references=tuple((name, artifact(ref, tmp_path)) for name, ref in refs),
     )
     cached = spec.cached()
+    from benchmarks.comparison import Arm
+    from benchmarks.suite import evaluated_drafter
+
+    model = artifact(file_reference(tmp_path / "drafter"), tmp_path)
+    with_previous = replace(
+        spec,
+        arms=(Arm("candidate", model),),
+        references=(*spec.references, ("prior-leader", spec.references[1][1])),
+    )
+    assert evaluated_drafter(with_previous, "prior-leader") == model
+    assert evaluated_drafter(with_previous, "candidate") == model
+    for forbidden in ("target", "baseline", "missing"):
+        with pytest.raises(ValueError, match="experimental"):
+            evaluated_drafter(with_previous, forbidden)
     assert record(cached["target"]["signatures"])["0"] == signature(
         read(tmp_path / "0-0-target/0-response.json")
     )
@@ -174,6 +188,8 @@ def test_references_deduplicate_validate_raw_and_preserve_historical_scope(tmp_p
     comparison = record(historical_comparisons(rows, cached)["candidate/baseline"])
     assert comparison["acceptance_difference"] == 0
     assert "speed_ratio_95_interval" not in comparison and "historical_speed_ratio" in comparison
+    subset = record(historical_comparisons(rows[:1], cached)["candidate/baseline"])
+    assert subset["groups"] == 1 and subset["acceptance_difference"] == 0
     for broken in (
         replace(spec, depth=3),
         replace(spec, tasks=({**spec.tasks[0], "output_cap": 3}, *spec.tasks[1:])),

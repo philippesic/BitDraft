@@ -69,6 +69,14 @@ def report(root: Path) -> Record:
         "progress": progress,
         "development": diagnostics,
         "native_evaluations": evaluations,
+        "failed_native_attempts": [
+            {"output": str(path.parent), "failure": read(path)}
+            for path in sorted(root.glob("*-evaluation*/failure.json"))
+        ],
+        "retained_controller_failure": read(root / "failure.json")
+        if (root / "failure.json").exists()
+        else None,
+        "failure_scope": "failed attempts remain evidence after recovery; operational/status and terminal journals describe current health",
         "historical_initial_evaluation": status.get("initial_evaluation"),
         "interruptions": interruptions(root),
         "exposure": {
@@ -109,7 +117,8 @@ def interruptions(root: Path) -> list[Record]:
         }
         for row in events:
             if row.get("kind") == "training-boundary":
-                previous = {**row, "controller": controllers.get(string(row["attempt"]))}
+                if previous is None:
+                    previous = {**row, "controller": controllers.get(string(row["attempt"]))}
             elif row.get("kind") == "training-ready" and previous is not None:
                 same = row["boot"] == previous["boot"] and controllers.get(
                     string(row["attempt"])

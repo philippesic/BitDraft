@@ -40,7 +40,7 @@ def compare(specification: Path, output: Path) -> Record:
     spec.verify()
     if output.exists():
         raise ValueError("comparison output must be new; preserve prior attempts")
-    with deadline(120 if spec.tier == "screen" else None), device_lease("cuda"):
+    with deadline(120 if spec.tier == "screen" and spec.references else None), device_lease("cuda"):
         return compare_leased(specification, output, spec)
 
 
@@ -265,24 +265,32 @@ def compare_leased(
                 for arm in spec.arms[2:]
             },
             "by_harness": partitions(
-                rows,
+                all_rows,
                 "harness",
                 lambda values: {
                     "summary": {
-                        arm.name: totals([row for row in values if row["arm"] == arm.name])
-                        for arm in spec.arms
+                        name: {
+                            **totals([row for row in values if row["arm"] == name]),
+                            "execution": "historical" if name in cached else "measured",
+                        }
+                        for name in names
                     },
                     "paired_against_baseline": {}
-                    if spec.sampling.temperature
+                    if spec.sampling.temperature or cached
                     else {
                         arm.name: paired(
                             values, arm.name, spec.arms[1].name, family=len(spec.arms) - 2
                         )
                         for arm in spec.arms[2:]
                     },
+                    "historical_comparisons": historical_comparisons(
+                        [row for row in values if row["arm"] not in cached], cached
+                    )
+                    if cached
+                    else {},
                 },
             )
-            if spec.tier in {"harness", "prefix"} and not cached
+            if spec.tier in {"harness", "prefix"}
             else {},
             "code_sha256": code_identity,
             "scientific": "sampled descriptive robustness; unequal outputs cannot rank checkpoints by throughput"
@@ -305,7 +313,8 @@ def historical_comparisons(rows: list[Record], cached: dict[str, Record]) -> Rec
         for name, value in cached.items():
             if name == "target":
                 continue
-            old = [record(row) for row in sequence(value["rows"])]
+            tasks = {row["task"] for row in rows if row["arm"] == arm}
+            old = [record(row) for row in sequence(value["rows"]) if record(row)["task"] in tasks]
             statistics = paired(rows + old, arm, name)
             output[arm + "/" + name] = {
                 key: item for key, item in statistics.items() if "speed" not in key

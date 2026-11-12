@@ -64,6 +64,8 @@ see [execution](docs/execution.md).
 For intermittent acceptance checks, use `python -m benchmarks campaign-preflight SPEC`
 before `campaign SPEC OUTPUT`. The [benchmark guide](docs/benchmarks.md) explains60-prompt
 candidate checks, reusable baseline/leader records and complete interruption budgets.
+The [qualification result](results/reusable-acceptance-checks/result.md) records measured
+pause/comparison costs, exact recovery and the limits of historical comparisons.
 
 ## More
 

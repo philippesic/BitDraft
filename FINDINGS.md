@@ -137,6 +137,13 @@ No general binary-acceleration claim followed. [Result](results/binary-pipeline-
 
 [Historical reports and committed source are independently recoverable](results/archive-preservation/result.md); raw-artifact limits remain explicit.
 
+## Development benchmarks
+
+[Saved controls and resident checks](results/reusable-acceptance-checks/result.md):
+complete 60-request training pauses took 77–81 seconds including cold data materialization.
+Candidate-only 120-request/18-prefix/12-live comparisons took 6–7 minutes per precision;
+failure recovery preserved exact state and reused historical controls.
+
 ## Capture storage
 
 [Early rounding screen](results/fp16-feature-screen/result.md), followed by

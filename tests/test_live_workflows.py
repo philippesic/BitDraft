@@ -7,6 +7,37 @@ from benchmarks.workflows import calls
 from w1a1_eagle.contracts import sequence
 
 
+def test_live_summary_keeps_model_failures_and_aggregate_acceptance() -> None:
+    from benchmarks.workflows import summarize
+    from w1a1_eagle.contracts import Record
+
+    rows: list[Record] = [
+        {
+            "wall_seconds": 2.0,
+            "model_seconds": 1.0,
+            "tool_seconds": 0.5,
+            "tokens": 10,
+            "native": {"accepted": 8, "proposed": 10},
+            "correct": True,
+            "completed": True,
+        },
+        {
+            "wall_seconds": 8.0,
+            "model_seconds": 7.0,
+            "tool_seconds": 0.5,
+            "tokens": 20,
+            "native": {"accepted": 1, "proposed": 10},
+            "correct": True,
+            "completed": False,
+        },
+    ]
+    summary = summarize(rows)
+    assert summary["tasks"] == 2 and summary["completed"] == 1
+    assert summary["completion_rate"] == 0.5 and summary["seconds_per_assigned_task"] == 5
+    assert summary["acceptance"] == 0.45 and summary["tokens"] == 30
+    assert summary["correct"] is True
+
+
 def test_live_fixtures_reject_original_accept_repair_and_reset(tmp_path: Path) -> None:
     from benchmarks.native import file_reference
     from benchmarks.project_workflows import prepare
