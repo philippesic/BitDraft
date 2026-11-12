@@ -64,6 +64,7 @@ def main() -> int:
                 "capture": "datasets",
                 "curate": "bank",
                 "admit-bank": "bank",
+                "select-supplement": "bank",
                 "native-build": "native",
                 "native-helpers": "native",
                 "campaign": "training",

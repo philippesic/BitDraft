@@ -121,3 +121,11 @@ and reject destinations outside the checkout. [Storage](../../docs/storage.md) m
 folders; relocation and verification receipts live in
 `artifacts/receipts/storage-containment/`. This correction establishes containment,
 not retirement of all remaining qualification payloads or new GPU qualification.
+
+The final physical-source check also found6,492 deeply nested Windows files omitted
+by the first nonextended enumeration. Those received their own source/member checks.
+The complete historical Windows user-folder collection preserves149,234 regular files
+and its link records; the physical source folder was verified empty and removed. Its
+collection manifest and per-archive indexes are under `artifacts/archive/windows-legacy/`.
+This is lossless containment of the remaining bytes, including incomplete/unfavorable
+records, rather than retirement of all qualification payloads or an off-machine backup.

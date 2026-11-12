@@ -75,3 +75,7 @@ back up artifact bytes separately when they are needed. Move the whole checkout 
 its current artifact paths; the maintained readers locate the owning checkout rather than
 requiring the old external directories. Host interpreter settings in `.host.toml` may need
 to be updated after a checkout move.
+
+For Windows storage audits, enumerate from an extended path such as `\\?\C:\...` so
+deep descendants are included. Require the physical source folder to contain no files
+or unrecorded links before removing it; a complete initial inventory alone is insufficient.
