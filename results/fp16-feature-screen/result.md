@@ -46,8 +46,11 @@ adopting FP16 captures. Loader support and successful rounding alone are insuffi
 
 [Array measurements and authenticated input identities](result.json) and
 [executed batch driver](executed-screen.txt) and [executed numerical screen](executed-precision.txt). The driver called the initial numerical
-screen implementation; raw transferred source and inputs remain under
+screen implementation. The original remote location was
 `pstack-2080:/home/philip/binary-eagle-benchmark-qualification-20261110/`.
+Executed source, reports and source capsules are now preserved in the
+[2080 Ti archive](../../docs/evidence.md#historical-2080-ti-records). The obsolete remote
+runtime and raw probe inputs are not required to remain available for exact replay.
 The later screen revision adds a 32 MiB input limit and expresses L2 reduction using
 explicit tensor operations; it was not the executed remote revision. Preserve the remote
 source with the execution record. No figure or model-selection claim is made.

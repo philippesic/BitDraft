@@ -106,6 +106,21 @@ legacy main ancestry; `archive/legacy-main` and `archive/pre-bitdraft` preserve 
 original legacy tip and the original port history. Publication keeps existing repository
 visibility; it does not upload ignored datasets, model files or supporting archives.
 
+## Historical 2080 Ti records
+
+`artifacts/archive/2080-closeout-20261112/` preserves the old 2080 Ti checkout's compact
+reports, diagnostics and source, plus larger source capsules and JSON reports/indexes.
+Each archive contains `preservation-index.json`; adjacent preservation receipts record
+source/member SHA-256 verification. Original paths are archive members without the leading
+slash. All 11 registered checkout HEADs and all seven project refs are already reachable
+from this checkout; the main native submodule revision is independently archived too.
+
+The old 20671-update checkpoint series, model copies, environments, build outputs and raw
+profiles are obsolete historical artifacts, not current training inputs. Their exact
+resume/runtime replay is not retained by these compact archives. The original220095 parent
+and current corpora remain separately preserved in this checkout. This inventory and
+preservation pass did not delete the remote directories or stop the unrelated GPU job.
+
 ## Windows artifact archives
 
 Historical run folders and transfer deliveries formerly scattered under the Windows
