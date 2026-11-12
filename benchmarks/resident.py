@@ -90,7 +90,6 @@ def campaign(specification: Path, output: Path) -> Record:
             root = store.root / (str(segment).zfill(4) + "-training")
             parent = artifact(status["latest_state"], store.root)
             recipe = template.raw
-            recipe.pop("model_update_seconds", None)
             recipe.update(
                 parent=reference(parent), mode=template.mode if segment == 1 else "resume"
             )
@@ -135,11 +134,11 @@ def campaign(specification: Path, output: Path) -> Record:
                 store.atomic(status_path, canonical(status))
                 retain(store.root, status)
                 continue
-            if worker["outcome"] != "update-budget":
+            if worker["outcome"] not in {"update-budget", "model-update-budget"}:
                 raise ValueError(
                     "resident worker stopped before update guard: " + string(worker["outcome"])
                 )
-            status.update(status="complete", active_training=None)
+            status.update(status="complete", active_training=None, stop_reason=worker["outcome"])
             store.atomic(status_path, canonical(status))
             store.atomic(store.root / "result.json", canonical(status))
             return status
@@ -183,6 +182,14 @@ class Evaluations:
 
     def save(self) -> None:
         self.store.atomic(self.store.root / "status.json", canonical(self.status))
+
+    def finished(self, worker: TensorWorker) -> bool:
+        return worker.updates >= self.template.budget.updates or (
+            "model_update_seconds" in self.template.raw
+            and worker.accounting.successful_update_seconds
+            + worker.accounting.failed_update_seconds
+            >= number(self.template.raw["model_update_seconds"])
+        )
 
     def resumed(self) -> None:
         pauses = interruptions(self.store.root)
@@ -231,9 +238,7 @@ class Evaluations:
                     self.template.state_bytes,
                     self.template.memory_bytes,
                 )
-                self.check(
-                    worker, state, exported.artifact, worker.updates >= self.template.budget.updates
-                )
+                self.check(worker, state, exported.artifact, self.finished(worker))
             else:
                 state = worker.checkpoint(
                     Store(self.training / "states"), self.template.state_bytes
@@ -242,7 +247,7 @@ class Evaluations:
                     worker,
                     state,
                     artifact(self.status["latest_drafter"], self.store.root),
-                    worker.updates >= self.template.budget.updates,
+                    self.finished(worker),
                 )
 
     def limit(self) -> float:
@@ -264,16 +269,21 @@ class Evaluations:
             model_update_seconds=worker.accounting.successful_update_seconds
             + worker.accounting.failed_update_seconds,
         )
-        if outcome in {"model-update-time", "update-budget"}:
+        if outcome in {"model-update-time", "update-budget", "model-update-budget"}:
             if (
-                outcome == "update-budget"
+                outcome in {"update-budget", "model-update-budget"}
                 and self.status.get("last_evaluated_updates") == worker.updates
             ):
                 self.save()
                 return
             self.status["phase"] = "evaluate"
             self.save()
-            self.check(worker, state, exported.artifact, outcome == "update-budget")
+            self.check(
+                worker,
+                state,
+                exported.artifact,
+                outcome in {"update-budget", "model-update-budget"},
+            )
         else:
             self.save()
 

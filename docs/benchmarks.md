@@ -208,6 +208,9 @@ it is not a throughput verdict. Completed campaigns return idempotently without 
 For production, bind an authorized training intent, matching initial export, saved
 60-request comparison and optional initial reference. Omit `pilot`, set cadence to1800
 optimizer seconds, `maximum_pause_seconds` to120 and `evaluation_failure` to `stop`.
+An intent's optional `model_update_seconds` sets a separate cumulative time allowance:
+7200 requests two hours of optimizer work. `model-update-budget` is a complete campaign
+stop with a final screen; the update-count guard still applies if reached first.
 Run `campaign-preflight SPEC` before `campaign SPEC NEW_OUTPUT`; inspect with
 `campaign-report OUTPUT`. Qualification recipes deliberately stop after a few updates;
 copying their budgets does not create a production allocation. A new target precision

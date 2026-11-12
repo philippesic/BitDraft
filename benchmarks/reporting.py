@@ -92,7 +92,14 @@ def report(root: Path) -> Record:
                 number(record(segment["report"])["cumulative_attempt_seconds"])
                 for segment in segments
             ),
-            "recorded_optimizer_seconds": status["model_update_seconds"],
+            "recorded_optimizer_seconds": max(
+                [number(status["model_update_seconds"])]
+                + [
+                    number(record(row["accounting"])["successful_update_seconds"])
+                    + number(record(row["accounting"])["failed_update_seconds"])
+                    for row in progress
+                ]
+            ),
             "clock_scope": "optimizer accounting excludes model/data loading, evaluation and checkpoint I/O; these are separate clocks",
         },
         "selection_scope": "latest recovery, provisional fast DEV and full DEV pointers have distinct roles; no automatic deployment promotion",
