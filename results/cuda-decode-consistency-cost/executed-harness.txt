@@ -1,0 +1,171 @@
+import hashlib
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+from benchmarks.measurement import now, pause, port_number, ready, request
+from benchmarks.metrics import valid_sample, verify_generation
+from benchmarks.runtime_policy import arguments, payload
+from w1a1_eagle.config import native_environment
+from w1a1_eagle.device import cuda_identity, device_lease
+from w1a1_eagle.records import identity
+
+SEED = 8101
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1 << 24), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def run_arm(plan: dict, run: dict, tasks: list[dict], output: Path) -> dict:
+    cell = output / run["name"]
+    if cell.exists():
+        attempt = 1
+        while (output / (run["name"] + ".failed-" + str(attempt))).exists():
+            attempt += 1
+        cell.rename(output / (run["name"] + ".failed-" + str(attempt)))
+    cell.mkdir(parents=True)
+    binary_dir = Path(plan["binaries"][run["binary"]])
+    drafter = Path(run["drafter"]) if run.get("drafter") else None
+    port = port_number()
+    argv = arguments(
+        binary_dir / "llama-server",
+        Path(plan["target"]),
+        drafter,
+        int(plan["context"]),
+        int(run.get("depth", 2)),
+        port,
+    )
+    environment = native_environment(binary_dir)
+    environment["GGML_CUDA_DECODE_CONSISTENT"] = "32" if run["consistent"] else "0"
+    (cell / "command.json").write_text(
+        json.dumps({"argv": argv, "consistent": environment["GGML_CUDA_DECODE_CONSISTENT"]})
+    )
+    records = []
+    with (cell / "server.log").open("wb") as log:
+        process = subprocess.Popen(
+            [sys.executable, "-B", "-m", "benchmarks.server_child", str(os.getpid()), *argv],
+            env=environment,
+            stdout=log,
+            stderr=subprocess.STDOUT,
+            start_new_session=True,
+        )
+        try:
+            deadline = now() + 180
+            while not ready(port):
+                if process.poll() is not None or now() >= deadline:
+                    raise ValueError("server startup failed: " + run["name"])
+                pause(0.25)
+            maps = Path(f"/proc/{process.pid}/maps").read_text()
+            if str(binary_dir) not in maps:
+                raise ValueError("server did not map the requested runtime libraries")
+            selected = tasks[: int(run.get("tasks", len(tasks)))]
+            for index, task in enumerate([selected[0], *selected]):
+                rendered = request(
+                    port,
+                    "apply-template",
+                    {"messages": task["messages"], "tools": task.get("tools", [])},
+                )
+                tokens = request(
+                    port,
+                    "tokenize",
+                    {"content": rendered["prompt"], "add_special": True, "parse_special": True},
+                )["tokens"]
+                ancestry = task.get("ancestry", {})
+                if "token_sha256" in ancestry and identity({"tokens": tokens}) != ancestry["token_sha256"]:
+                    raise ValueError("tokenizer/template differs from the frozen workload")
+                query = payload(tokens, int(task["output_cap"]), 0.0, 1.0, 0, 0.0, SEED)
+                if run.get("n_probs"):
+                    query["n_probs"] = int(run["n_probs"])
+                began = now()
+                response = request(port, "completion", query)
+                elapsed = now() - began
+                verify_generation(response, query, drafter is not None)
+                if not valid_sample(response, int(task["output_cap"])):
+                    raise ValueError("invalid native tokens or stopping")
+                timings = response["timings"]
+                row = {
+                    "index": index - 1,
+                    "task": task["id"],
+                    "category": task["category"],
+                    "group": task["group"],
+                    "input_tokens": len(tokens),
+                    "tokens": response["tokens"],
+                    "content_sha256": hashlib.sha256(response["content"].encode()).hexdigest(),
+                    "stop_type": response["stop_type"],
+                    "wall_seconds": elapsed,
+                    "prompt_ms": timings.get("prompt_ms"),
+                    "predicted_ms": timings.get("predicted_ms"),
+                    "draft_n": timings.get("draft_n", 0),
+                    "draft_n_accepted": timings.get("draft_n_accepted", 0),
+                }
+                if run.get("n_probs"):
+                    row["top"] = [
+                        [[entry["id"], entry["logprob"]] for entry in step["top_logprobs"]]
+                        for step in response["completion_probabilities"]
+                    ]
+                if index == 0:
+                    (cell / "warmup.json").write_text(json.dumps(row))
+                else:
+                    records.append(row)
+        finally:
+            if process.poll() is None:
+                process.terminate()
+            try:
+                process.wait(timeout=30)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait(timeout=15)
+    with (cell / "records.jsonl").open("w") as stream:
+        for row in records:
+            stream.write(json.dumps(row) + "\n")
+    tokens = sum(len(row["tokens"]) for row in records)
+    seconds = sum(row["wall_seconds"] for row in records)
+    summary = {
+        "name": run["name"],
+        "requests": len(records),
+        "tokens": tokens,
+        "wall_seconds": seconds,
+        "tokens_per_second": tokens / seconds,
+        "proposed": sum(row["draft_n"] for row in records),
+        "accepted": sum(row["draft_n_accepted"] for row in records),
+        "predicted_ms": sum(row["predicted_ms"] or 0 for row in records),
+        "prompt_ms": sum(row["prompt_ms"] or 0 for row in records),
+        "returncode": process.returncode,
+    }
+    (cell / "summary.json").write_text(json.dumps(summary))
+    return summary
+
+
+def main() -> int:
+    plan_path, output = Path(sys.argv[1]), Path(sys.argv[2])
+    plan = json.loads(plan_path.read_text())
+    only = set(sys.argv[3].split(",")) if len(sys.argv) > 3 else None
+    tasks = json.loads(Path(plan["workload"]).read_text())["tasks"]
+    if any(task.get("role") != "dev" for task in tasks):
+        raise ValueError("DEV-role workload required")
+    output.mkdir(parents=True, exist_ok=True)
+    with device_lease("cuda"):
+        (output / "gpu.txt").write_text(cuda_identity())
+        for run in plan["runs"]:
+            if only is not None and run["name"] not in only:
+                continue
+            if (output / run["name"] / "summary.json").exists():
+                continue
+            began = now()
+            summary = run_arm(plan, run, tasks, output)
+            summary["arm_seconds"] = now() - began
+            print(json.dumps(summary), flush=True)
+            with (output / "summaries.jsonl").open("a") as stream:
+                stream.write(json.dumps(summary) + "\n")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

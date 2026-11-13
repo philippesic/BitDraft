@@ -167,7 +167,9 @@ arms, workload, repeats/warmups, context/depth, role and tier. References use `p
 Keep external baselines and candidates distinct. Server/libs must match their build.
 
 Greedy arms must match target token IDs, text and stopping; actual returned generation
-settings are checked. Accepted/proposed counters reconcile with independent native logs;
+settings are checked. Native servers set `GGML_CUDA_DECODE_CONSISTENT=32` so verification
+batches of up to 32 tokens use one-token arithmetic; without it greedy outputs differ after
+near-ties. Its cost and depth limit are [measured](../results/cuda-decode-consistency-cost/result.md). Accepted/proposed counters reconcile with independent native logs;
 fallback-only arms are refused. Correction/bonus tokens are not accepted drafts. Zero
 proposals make acceptance unavailable.
 

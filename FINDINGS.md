@@ -86,6 +86,17 @@ a 4× sign step to match it (53.3%; 50.4% at the old step). All arms beat the ol
 46.4% on that screen; Baseline scores 69.6%. Arm D's state is kept for continuation. One seed.
 [Result](results/step-size-schedule-latent-scale/result.md).
 
+### F017: What does exact speculative verification cost, and is it causing problems?
+
+`GGML_CUDA_DECODE_CONSISTENT=32` costs every arm about 4–6% of decoding (19% for target-only
+at 8K–16K inputs). It makes rounds jump 28% beyond depth 3, so exact Baseline decodes fastest
+at depth 3: +6.6% over depth 2 on the 120-request panel (217.7 vs 204.3 tok/s), within 3% of
+the best inexact setting. Without it, outputs differ only through near-tie flips (logit margin
+≤0.40, always the target's second choice). Speculative runs differ from target-only in 55% of
+panel requests at depth 4, and target-only itself changes in 62%. No wrongly accepted draft
+occurred in 11,055 traced rounds. Keep exactness.
+[Result](results/cuda-decode-consistency-cost/result.md).
+
 ## Earlier experiments and durable lessons
 
 ### Packed low-bit paths did not beat ordinary EAGLE in the Turing suite

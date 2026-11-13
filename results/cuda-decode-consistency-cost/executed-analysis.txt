@@ -1,0 +1,222 @@
+import json
+import re
+import sys
+from pathlib import Path
+
+from benchmarks.coverage import length_band
+from benchmarks.verifier import reduce_verifier_trace
+
+STATS = re.compile(
+    r"statistics\s+draft-dflash: #calls\(b,g,a\) = +(\d+) +(\d+) +(\d+), #gen drafts = +(\d+), "
+    r"#acc drafts = +(\d+), #gen tokens = +(\d+), #acc tokens = +(\d+)"
+    r"(?:, #mean acc len = +([\d.]+), #acc rate/pos = \(([^)]*)\))?"
+    r"(?:, dur\(b,g,a\) = ([\d.]+), ([\d.]+), ([\d.]+) ms)?"
+)
+
+
+def load(cell: Path) -> list[dict]:
+    return [json.loads(line) for line in (cell / "records.jsonl").read_text().splitlines()]
+
+
+def stats_lines(cell: Path) -> list[dict]:
+    rows = []
+    for line in (cell / "server.log").read_text(errors="replace").splitlines():
+        match = STATS.search(line)
+        if not match:
+            continue
+        g = match.groups()
+        rates = [float(v) for v in g[8].split(",")] if g[8] else []
+        rows.append(
+            {
+                "calls_accept": int(g[2]),
+                "gen_tokens": int(g[5]),
+                "acc_tokens": int(g[6]),
+                "per_position_counts": [r * int(g[2]) for r in rates],
+                "begin_ms": float(g[9]) if g[9] else None,
+                "draft_ms": float(g[10]) if g[10] else None,
+                "accept_ms": float(g[11]) if g[11] else None,
+            }
+        )
+    return rows
+
+
+def lifetime_minus_warmup(cell: Path) -> dict | None:
+    rows = stats_lines(cell)
+    if len(rows) < 2:
+        return None
+    first, last = rows[0], rows[-1]
+    rounds = last["calls_accept"] - first["calls_accept"]
+    counts = [
+        b - a
+        for a, b in zip(
+            first["per_position_counts"] + [0.0] * 32, last["per_position_counts"], strict=False
+        )
+    ]
+    survive = [c / rounds for c in counts]
+    conditional = [
+        survive[i] / (survive[i - 1] if i else 1.0) if (survive[i - 1] if i else 1.0) else None
+        for i in range(len(survive))
+    ]
+    out = {
+        "rounds": rounds,
+        "accepted": last["acc_tokens"] - first["acc_tokens"],
+        "proposed": last["gen_tokens"] - first["gen_tokens"],
+        "reach_position": [round(v, 4) for v in survive],
+        "conditional_position": [round(v, 4) if v is not None else None for v in conditional],
+    }
+    if last["draft_ms"] is not None and first["draft_ms"] is not None:
+        out["drafter_begin_ms"] = last["begin_ms"] - first["begin_ms"]
+        out["drafter_draft_ms"] = last["draft_ms"] - first["draft_ms"]
+        out["drafter_accept_ms"] = last["accept_ms"] - first["accept_ms"]
+    return out
+
+
+def divergence(rows: list[dict], reference: dict[str, dict]) -> dict:
+    differing = []
+    compared = 0
+    for row in rows:
+        ref = reference[row["task"]]
+        a, b = row["tokens"], ref["tokens"]
+        k = next((i for i, (x, y) in enumerate(zip(a, b, strict=False)) if x != y), None)
+        if k is None and (len(a) != len(b) or row["stop_type"] != ref["stop_type"]):
+            k = min(len(a), len(b))
+        if k is None:
+            compared += len(a)
+            continue
+        compared += k + 1
+        differing.append(
+            {
+                "task": row["task"],
+                "category": row["category"],
+                "input_tokens": row["input_tokens"],
+                "first_difference": k,
+                "length": len(a),
+                "reference_length": len(b),
+                "token": a[k] if k < len(a) else None,
+                "reference_token": b[k] if k < len(b) else None,
+            }
+        )
+    return {
+        "requests": len(rows),
+        "requests_differing": len(differing),
+        "tokens_until_difference_or_end": compared,
+        "first_differences_per_1000_tokens": 1000 * len(differing) / compared if compared else None,
+        "differences": differing,
+    }
+
+
+def margin_at(probs_rows: dict[str, dict], task: str, k: int) -> dict | None:
+    row = probs_rows.get(task)
+    if row is None or k >= len(row["top"]):
+        return None
+    top = row["top"][k]
+    if len(top) < 2:
+        return None
+    return {
+        "top1": top[0][0],
+        "top2": top[1][0],
+        "margin_logit": top[0][1] - top[1][1],
+    }
+
+
+def summary(rows: list[dict]) -> dict:
+    tokens = sum(len(r["tokens"]) for r in rows)
+    seconds = sum(r["wall_seconds"] for r in rows)
+    proposed = sum(r["draft_n"] for r in rows)
+    accepted = sum(r["draft_n_accepted"] for r in rows)
+    predicted = sum(r["predicted_ms"] for r in rows)
+    prompt = sum(r["prompt_ms"] for r in rows)
+    out = {
+        "requests": len(rows),
+        "tokens": tokens,
+        "wall_seconds": round(seconds, 3),
+        "tokens_per_second": round(tokens / seconds, 3),
+        "server_prompt_seconds": round(prompt / 1000, 3),
+        "server_prediction_seconds": round(predicted / 1000, 3),
+        "decode_tokens_per_second": round((tokens - len(rows)) / (predicted / 1000), 3),
+        "cap_hits": sum(r["stop_type"] == "limit" for r in rows),
+    }
+    if proposed:
+        rounds = tokens - accepted - len(rows)
+        out.update(
+            {
+                "proposed": proposed,
+                "accepted": accepted,
+                "acceptance": round(accepted / proposed, 4),
+                "derived_rounds": rounds,
+                "accepted_per_round": round(accepted / rounds, 4),
+                "proposed_per_round": round(proposed / rounds, 4),
+                "decode_ms_per_round": round(predicted / rounds, 4),
+            }
+        )
+    else:
+        out["decode_ms_per_token"] = round(predicted / (tokens - len(rows)), 4)
+    return out
+
+
+def bands(rows: list[dict]) -> dict:
+    out: dict[str, dict] = {}
+    for band in sorted({length_band(r["input_tokens"]) for r in rows}):
+        selected = [r for r in rows if length_band(r["input_tokens"]) == band]
+        predicted = sum(r["predicted_ms"] for r in selected)
+        out[band] = {
+            "requests": len(selected),
+            "tokens_per_second": round(
+                sum(len(r["tokens"]) for r in selected) / sum(r["wall_seconds"] for r in selected), 3
+            ),
+            "decode_tokens_per_second": round(
+                (sum(len(r["tokens"]) for r in selected) - len(selected)) / (predicted / 1000), 3
+            ),
+        }
+    return out
+
+
+def main() -> int:
+    root = Path(sys.argv[1])
+    cells = sorted(
+        p for p in root.iterdir() if p.is_dir() and (p / "summary.json").exists() and ".failed" not in p.name
+    )
+    data = {c.name: load(c) for c in cells}
+    by_task = {name: {r["task"]: r for r in rows} for name, rows in data.items()}
+    references = {}
+    for mode in ("c", "n"):
+        for name in (f"target-{mode}-r0", f"target-{mode}-r1", f"target-{mode}-r0-probs"):
+            if name in by_task:
+                references[mode] = by_task[name]
+                break
+    probs = {mode: by_task.get(f"target-{mode}-r0-probs", {}) for mode in ("c", "n")}
+    out: dict[str, dict] = {}
+    for c in cells:
+        rows = data[c.name]
+        entry: dict = {"summary": summary(rows), "length_bands": bands(rows)}
+        stats = lifetime_minus_warmup(c)
+        if stats:
+            entry["drafter_statistics"] = stats
+        for mode, reference in references.items():
+            div = divergence(rows, reference)
+            for item in div["differences"]:
+                for pm, pr in probs.items():
+                    m = margin_at(pr, item["task"], item["first_difference"])
+                    if m:
+                        item["target_" + pm + "_margin"] = m
+                own = by_task[c.name][item["task"]]
+                if "top" in own:
+                    m = margin_at({item["task"]: own}, item["task"], item["first_difference"])
+                    if m:
+                        item["own_margin"] = m
+            entry["versus_target_" + mode] = div
+        log = c / "server.log"
+        text = log.read_text(errors="replace")
+        if "BINARY_VERIFIER_TRACE" in text:
+            try:
+                entry["verifier_trace"] = reduce_verifier_trace(text.splitlines())
+                entry["verifier_trace"]["status"] = "passed"
+            except ValueError as error:
+                entry["verifier_trace"] = {"status": "failed", "error": str(error)}
+        out[c.name] = entry
+    json.dump(out, sys.stdout, indent=1)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

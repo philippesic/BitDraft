@@ -1,0 +1,105 @@
+import hashlib
+import json
+import statistics
+import sys
+from pathlib import Path
+
+root = Path(sys.argv[1])
+screen = json.loads(Path(sys.argv[2]).read_text())
+panel = json.loads(Path(sys.argv[3]).read_text())
+out = Path(sys.argv[4])
+
+
+def sha(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def arm(name: str) -> dict:
+    parts = name.split("-")
+    depth = next((int(p[1:]) for p in parts if p.startswith("d") and p[1:].isdigit()), None)
+    return {"arm": parts[0], "mode": "consistent" if parts[1] == "c" else "normal", "depth": depth}
+
+
+def compact_divergence(div: dict, ref: str) -> dict:
+    margins = []
+    second = 0
+    for item in div["differences"]:
+        m = item.get("target_" + ref + "_margin")
+        if m:
+            margins.append(round(m["margin_logit"], 5))
+            second += m["top2"] == item["token"]
+    return {
+        "requests_differing": div["requests_differing"],
+        "requests": div["requests"],
+        "first_differences_per_1000_tokens": round(div["first_differences_per_1000_tokens"], 3),
+        "first_difference_positions": [d["first_difference"] for d in div["differences"]],
+        "reference_logit_margins_at_first_difference": sorted(margins),
+        "alternative_was_reference_second_choice": second,
+        "margins_observed": len(margins),
+    }
+
+
+def runs(analysis: dict, batch_of: dict) -> list[dict]:
+    rows = []
+    for name, v in sorted(analysis.items()):
+        row = {"run": name, "batch": batch_of.get(name), **arm(name), **v["summary"]}
+        if name.startswith("target") or "-d2-" in name or name.endswith("-d4-r0"):
+            row["length_bands"] = v["length_bands"]
+        st = v.get("drafter_statistics")
+        if st:
+            row["drafter_draft_ms_per_round"] = round(st["drafter_draft_ms"] / st["rounds"], 4)
+            row["reach_position"] = st["reach_position"]
+            row["conditional_position"] = st["conditional_position"]
+        for ref in ("c", "n"):
+            if "versus_target_" + ref in v:
+                row["versus_target_" + ("consistent" if ref == "c" else "normal")] = compact_divergence(
+                    v["versus_target_" + ref], ref
+                )
+        if "verifier_trace" in v:
+            row["verifier_trace"] = {k: v["verifier_trace"][k] for k in ("status", "rounds", "proposed", "accepted")}
+        rows.append(row)
+    return rows
+
+
+batch_of = {}
+for batch in ("a", "b", "c", "d", "e"):
+    for cell in (root / ("screen-" + batch)).iterdir():
+        if cell.is_dir() and ".failed" not in cell.name:
+            batch_of.setdefault(cell.name, []).append(batch)
+screen_batch = {k: [b for b in v if b in "abc"][0] for k, v in batch_of.items() if any(b in "abc" for b in v)}
+panel_batch = {k: [b for b in v if b in "de"][0] for k, v in batch_of.items() if any(b in "de" for b in v)}
+
+probs = [json.loads(line) for line in (root / "screen-c" / "target-c-r0-probs" / "records.jsonl").read_text().splitlines()]
+margins = [t[0][1] - t[1][1] for r in probs for t in r["top"] if len(t) > 1]
+
+result = {
+    "schema": 1,
+    "question": "Cost and failure modes of GGML_CUDA_DECODE_CONSISTENT=32 on the Q4KM target",
+    "hardware": (root / "screen-a" / "gpu.txt").read_text().strip(),
+    "inputs": {
+        "target": {"path": "artifacts/models/qwen35-4b-q4km.gguf", "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"},
+        "baseline": {"path": "artifacts/models/dflash-4b-q4km.gguf", "sha256": "83586a63eab58b4ef9dd1d72de667738fcedb289e97d98d01d8df66f23df610f"},
+        "he4": {"path": "artifacts/qualification/original-zero-export-02/exports/99d2be79f956f6ccde483b960d4a31b939eeda86e4530e813929a3452c14fc1e.bin", "sha256": "99d2be79f956f6ccde483b960d4a31b939eeda86e4530e813929a3452c14fc1e"},
+        "runtime": {"server_sha256": "c83a7965756407895146dafd2b1c0fe4a366788e529b6625d90aefb228c02832", "libggml_cuda_sha256": "91c582b237d4c4f3b6b6e1b367ced63194eaf0d6553ae04e65b0f2c398797a72", "path": "artifacts/native/runtime-v5"},
+        "trace_runtime": {"server_sha256": "27ebd0b7b8e144128a523f8c71d458ee2a7198c08a37f58ffd58fca346825a31", "libggml_cuda_sha256": "4c71c8accf9163a9dccdebc04d743609aff31896363e8550c693e25eb2cb1ccb", "path": "artifacts/native/verifier-trace-runtime-01"},
+        "screen_workload": {"path": "artifacts/qualification/lean-checks/q4km/screen-workload.json", "sha256": "feaeeae0049bef15b827d7f49c2079b7de19a827343a047033169f8f65cee3e5", "requests": 60, "role": "dev"},
+        "panel_workload": {"path": "artifacts/qualification/lean-checks/q4km/requests-workload.json", "sha256": "f25c750415006c383e1f22791fdd56f2b8c2c12a9ea0e1ae33ca03b10491e905", "requests": 120, "role": "dev"},
+    },
+    "protocol": {
+        "server": "benchmarks.runtime_policy.arguments: context 32768, F16 KV, flash attention, greedy, one warmup request, pretokenized requests, empty caches",
+        "modes": {"consistent": "GGML_CUDA_DECODE_CONSISTENT=32 (maintained default)", "normal": "GGML_CUDA_DECODE_CONSISTENT=0"},
+        "timing": "complete-request tokens/s = total emitted tokens / total HTTP wall time; decode tokens/s = (emitted - requests) / server predicted_ms; rounds = emitted - accepted - requests",
+        "drafter_clock": "host-traced drafting wall time from the runtime's statistics line (dur g), lifetime minus the warmup request",
+        "reach_position": "fraction of rounds whose first i drafts were all accepted, from the runtime's acc rate/pos line (3-decimal rates times round count), minus the warmup",
+        "plans": {b: json.loads((root / ("plan-" + b + ".json")).read_text())["runs"] for b in "abcde"},
+        "script_sha256": {n: sha(root / n) for n in ("harness.py", "analyze.py", "build_result.py")},
+    },
+    "screen_runs": runs(screen, screen_batch),
+    "panel_runs": runs(panel, panel_batch),
+    "consistent_target_margin_distribution": {
+        "positions": len(margins),
+        "share_below": {str(t): round(sum(m < t for m in margins) / len(margins), 5) for t in (0.01, 0.05, 0.1, 0.25, 0.5)},
+        "median": round(statistics.median(margins), 4),
+    },
+}
+out.write_text(json.dumps(result, indent=1) + "\n")
