@@ -482,7 +482,7 @@ struct common_prompt_checkpoint {
                                 __func__, rc, (int) n_chunk, (int) offset);
                         return false;
                     }
-                    llama_synchronize(ctx_dft);
+                    llama_embeddings_layer_inp_consumed(ctx_tgt, ctx_dft);
                     continue;
                 }
 
@@ -983,6 +983,29 @@ void llama_context::set_embeddings_layer_inp_device(bool enable) {
     ctx_layer_inp_dev.reset();
 }
 
+void llama_context::embeddings_layer_inp_consumed(llama_context * consumer) {
+    if (t_layer_inp_dev == nullptr) {
+        return;
+    }
+    ggml_backend_dev_t dev = ggml_backend_buft_get_device(ggml_backend_buffer_get_type(buf_layer_inp_dev.get()));
+    ggml_backend_t backend = nullptr;
+    for (auto & cur : consumer->backends) {
+        if (dev != nullptr && ggml_backend_get_device(cur.get()) == dev) {
+            backend = cur.get();
+            break;
+        }
+    }
+    if (backend != nullptr && !layer_inp_event) {
+        layer_inp_event.reset(ggml_backend_event_new(dev));
+    }
+    if (backend == nullptr || !layer_inp_event) {
+        consumer->synchronize();
+        return;
+    }
+    ggml_backend_event_record(layer_inp_event.get(), backend);
+    layer_inp_event_pending = true;
+}
+
 void llama_context::set_embeddings_layer_inp(uint32_t lid, bool enable) {
     LLAMA_LOG_DEBUG("%s: lid = %d, enable = %d\n", __func__, lid, enable);
 
@@ -1078,6 +1101,11 @@ bool llama_context::extract_layer_inputs(const llm_graph_result * res, size_t to
 
         ggml_reset(ctx_layer_inp_views.get());
 
+        if (layer_inp_event_pending) {
+            ggml_backend_event_wait(backend, layer_inp_event.get());
+            layer_inp_event_pending = false;
+        }
+
         for (size_t k = 0; k < lids.size(); ++k) {
             ggml_tensor * t = res->get_layer_inp((int) lids[k]);
             GGML_ASSERT(t != nullptr && t->type == GGML_TYPE_F32 && ggml_is_contiguous(t));
@@ -1117,6 +1145,10 @@ bool llama_set_sampler(llama_context * ctx, llama_seq_id seq_id, llama_sampler *
 
 void llama_set_embeddings_layer_inp_device(llama_context * ctx, bool value) {
     ctx->set_embeddings_layer_inp_device(value);
+}
+
+void llama_embeddings_layer_inp_consumed(llama_context * ctx, llama_context * consumer) {
+    ctx->embeddings_layer_inp_consumed(consumer);
 }
 
 const ggml_tensor * llama_get_embeddings_layer_inp_device(llama_context * ctx) {
@@ -1169,6 +1201,7 @@ bool llama_set_sampler(llama_context * ctx, llama_seq_id seq_id, llama_sampler *
     void set_embeddings_nextn(bool value, bool masked);
     void set_embeddings_layer_inp(uint32_t lid, bool enable);
     void set_embeddings_layer_inp_device(bool enable);
+    void embeddings_layer_inp_consumed(llama_context * consumer);
     void set_nextn_layer_offset(int32_t offset);
     void set_causal_attn(bool value);
     void set_warmup(bool value);
@@ -1195,6 +1228,8 @@ bool llama_set_sampler(llama_context * ctx, llama_seq_id seq_id, llama_sampler *
     ggml_context_ptr        ctx_layer_inp_views;
     ggml_backend_buffer_ptr buf_layer_inp_dev;
     ggml_tensor *           t_layer_inp_dev = nullptr;
+    ggml_backend_event_ptr  layer_inp_event;
+    bool                    layer_inp_event_pending = false;
 
     struct sampling_info {
         // !samplers.empty() to check if any samplers are active
@@ -1220,6 +1255,8 @@ LLAMA_API float * llama_get_embeddings_layer_inp(struct llama_context * ctx, uin
 LLAMA_API void llama_set_embeddings_layer_inp_device(struct llama_context * ctx, bool value);
 
 LLAMA_API const struct ggml_tensor * llama_get_embeddings_layer_inp_device(struct llama_context * ctx);
+
+LLAMA_API void llama_embeddings_layer_inp_consumed(struct llama_context * ctx, struct llama_context * consumer);
 
 LLAMA_API int32_t llama_batch_ext_add_embd_device(struct llama_batch_ext * batch, llama_seq_id seq_id);
 
