@@ -3,6 +3,7 @@ import subprocess
 import tarfile
 from pathlib import Path
 
+from benchmarks.runtime_edits import SOURCE_EDITS
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.config import native_environment
 from w1a1_eagle.contracts import Record, integer, sequence, string
@@ -35,6 +36,18 @@ def repair_sampling(source: Path) -> None:
         "            result.push_back(draft[i]);\n            if (llama_vocab_is_eog(vocab, draft[i]) && i + 1 < draft.size()) break;\n            continue;",
     )
     owner.atomic(path, (text[:start] + body + text[end:]).encode())
+
+
+def apply_source_edits(source: Path, name: str) -> None:
+    if name not in SOURCE_EDITS:
+        raise ValueError("unknown runtime source edit: " + name)
+    for relative, old, new in SOURCE_EDITS[name]:
+        path = source / relative
+        owner = Store(path.parent)
+        text = path.read_text()
+        if text.count(old) != 1:
+            raise ValueError("runtime source edit does not match the pinned runtime: " + name)
+        owner.atomic(path, text.replace(old, new).encode())
 
 
 def unpack_bundle(bundle: Path, destination: Path, maximum: int) -> None:
@@ -71,7 +84,7 @@ def unpack_bundle(bundle: Path, destination: Path, maximum: int) -> None:
 def build(specification: Path, output: Path) -> Record:
     raw = read(specification)
     if (
-        set(raw) - {"verification_trace"}
+        set(raw) - {"verification_trace", "source_edits"}
         != {"schema", "bundle", "cuda_compiler", "architecture", "jobs", "unpacked_bytes"}
         or raw["schema"] != 1
     ):
@@ -84,6 +97,9 @@ def build(specification: Path, output: Path) -> Record:
     jobs, bound = integer(raw["jobs"]), integer(raw["unpacked_bytes"])
     if not architecture.isalnum() or not 1 <= jobs <= 8 or not 1 <= bound <= 1024**3:
         raise ValueError("native build bounds invalid")
+    edits = [string(name) for name in sequence(raw.get("source_edits", []))]
+    if len(set(edits)) != len(edits) or any(name not in SOURCE_EDITS for name in edits):
+        raise ValueError("source_edits must name distinct known runtime source edits")
     if output.exists():
         raise ValueError("native build output must be new; no reused objects")
     store = Store(output)
@@ -94,6 +110,8 @@ def build(specification: Path, output: Path) -> Record:
     unpack_bundle(bundle.path, store.root, bound)
     source, compiled = store.root / "source", store.root / "build"
     repair_sampling(source)
+    for name in edits:
+        apply_source_edits(source, name)
     diagnostic = raw.get("verification_trace", False)
     if type(diagnostic) is not bool:
         raise ValueError("verification_trace must be an explicit boolean")
@@ -174,7 +192,7 @@ def build(specification: Path, output: Path) -> Record:
             "artifacts": files,
             "objects_reused": False,
             "verification_trace": diagnostic,
-            "runtime_repairs": ["rejection_eog_boundary_v1"],
+            "runtime_repairs": ["rejection_eog_boundary_v1", *edits],
             "qualification": "build only; serving/capture must be exercised on this hardware",
         }
         store.atomic(store.root / "result.json", canonical(result))

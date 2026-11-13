@@ -227,6 +227,34 @@ def test_native_bundle_refuses_paths_and_links(tmp_path: Path) -> None:
             unpack_bundle(path, tmp_path / "output", 1024)
 
 
+def test_runtime_source_edits_apply_exactly_once(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from pathlib import PurePosixPath
+
+    import benchmarks.native as native
+    from benchmarks.runtime_edits import SOURCE_EDITS
+
+    for edits in SOURCE_EDITS.values():
+        for relative, old, new in edits:
+            parts = PurePosixPath(relative).parts
+            assert relative == PurePosixPath(relative).as_posix() and ".." not in parts
+            assert not relative.startswith("/") and old and old != new
+    monkeypatch.setattr(native, "SOURCE_EDITS", {"fix": (("src/a.cpp", "int a;\n", "int b;\n"),)})
+    source = tmp_path / "source"
+    (source / "src").mkdir(parents=True)
+    (source / "src/a.cpp").write_text("x\nint a;\ny\n")
+    native.apply_source_edits(source, "fix")
+    assert (source / "src/a.cpp").read_text() == "x\nint b;\ny\n"
+    with pytest.raises(ValueError, match="does not match"):
+        native.apply_source_edits(source, "fix")
+    (source / "src/a.cpp").write_text("int a;\nint a;\n")
+    with pytest.raises(ValueError, match="does not match"):
+        native.apply_source_edits(source, "fix")
+    with pytest.raises(ValueError, match="unknown"):
+        native.apply_source_edits(source, "other")
+
+
 def test_fixed_cohort_rejects_narrow_categories_lengths_and_related_groups() -> None:
     from benchmarks.comparison import require_cohort
     from benchmarks.coverage import SHORT
