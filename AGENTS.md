@@ -4,7 +4,7 @@ Trains and exports HE4 drafters: W1A4 weights, A8 down projection, Q4K head.
 heldout24 and its aliases never enter training, calibration or selection.
 [Domain terms](docs/domain.md) defines Baseline, candidates, formats and metrics.
 
-Checkout: `/home/philip/BitDraft` on the RTX5080 host.
+Checkout: `/home/philip/BitDraft` on the RTX 5080 host.
 All project artifacts live in ignored `artifacts/`; [storage](docs/storage.md) maps the folders.
 Remote: `git@github.com:philippesic/BitDraft.git` (`origin`). The license remains undecided.
 

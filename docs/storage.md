@@ -9,7 +9,7 @@ Shared host tools, drivers, global agent policy and the machine GPU lease are ho
 
 | Location | Contents |
 | --- | --- |
-| `artifacts/datasets/` | Original teacher corpus, supplemental captures and the complete6K FP16 corpus |
+| `artifacts/datasets/` | Original teacher corpus, supplemental captures and the complete 6K FP16 corpus |
 | `artifacts/models/` | Target/drafter inputs, vocabulary and reusable model assets |
 | `artifacts/training/` | Training specifications, campaign runs and health records |
 | `artifacts/benchmarks/` | Comparison definitions, workloads, results and saved reference registry |
@@ -22,10 +22,10 @@ Shared host tools, drivers, global agent policy and the machine GPU lease are ho
 | `artifacts/cache/`, `.venv/` | Project scratch/cache data and local Python environments |
 
 The complete new corpus is `artifacts/datasets/train-bank-v8-fp16-01/corpus.json`.
-Its reused2K component lives at `artifacts/datasets/he4broad-supplement-01` and its remaining
+Its reused 2K component lives at `artifacts/datasets/he4broad-supplement-01` and its remaining
 Linux/Windows-produced records at `linux-captures/` and `windows-captures/` under the full
-corpus folder. All three are physical project-local storage. The original15647-record
-corpus is `artifacts/datasets/retained-he4broad-original`; its original final220095 archive
+corpus folder. All three are physical project-local storage. The original 15,647-record
+corpus is `artifacts/datasets/retained-he4broad-original`; its original final 220095 archive
 and `artifacts/migration/import-01/states/` parent remain distinct from probe descendants.
 Use [data](data.md) for roles/identity and [execution](execution.md) for state restoration.
 

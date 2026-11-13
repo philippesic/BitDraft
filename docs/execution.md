@@ -3,7 +3,7 @@
 Use [`benchmarks campaign`](benchmarks.md) for training with intermittent native
 acceptance checks. It coordinates the supervisor below, keeping recovery, provisional
 fast leader and full-DEV incumbent distinct. Loss/top1 diagnostics do not measure acceptance.
-Campaign V2 executes60 candidate-only requests against authenticated saved controls;
+Campaign V2 executes 60 candidate-only requests against authenticated saved controls;
 `benchmarks campaign-preflight SPEC` enforces their existence and compatibility. The
 provisional leader uses acceptance. Historical speed remains descriptive. See
 [reference records and pause budgets](benchmarks.md#reusable-references).
@@ -22,7 +22,7 @@ is read-only. Private entries are listed in [commands](../policy/commands.toml).
 
 ## Intent
 
-Schema2 (`w1a1_eagle/intent.py`) binds objective/hypothesis/decision/risk/scope, authenticated
+Schema 2 (`w1a1_eagle/intent.py`) binds objective/hypothesis/decision/risk/scope, authenticated
 initializer/vocabulary/corpus/parent, mode, geometry/seed/device, budgets, checkpoints and
 data/reuse policy. Unknown fields are refused. Artifact references contain `path`,
 `sha256`, `bytes`; relative paths resolve from their document. See [data](data.md) for
@@ -79,8 +79,8 @@ initial state in every segment. Fresh initialization still publishes its first s
 - Branch resets optimizer/cursor while retaining lineage/cost/aggregate exposure.
   Changed recipes do not provide a per-position lifetime ledger.
 
-Tensor payload4 fingerprints frozen buffers and stores trainable/Adam/RNG state,
-accounting and dataset exposure origin. Reader also accepts3 with unknown new accounting;
+Tensor payload 4 fingerprints frozen buffers and stores trainable/Adam/RNG state,
+accounting and dataset exposure origin. Reader also accepts 3 with unknown new accounting;
 1/2 are refused. Frozen buffers rebuild from authenticated initializer/vocabulary and
 must match. Mutation guards are not a sandbox. No mode silently imports trained weights.
 
@@ -103,7 +103,7 @@ are known; an upstream cleanup default is not evidence they are disposable.
 
 ## Sampling and clocks
 
-Optional authenticated `sampling` uses schema1, `task-position-v1`, burst1–64, positive
+Optional authenticated `sampling` uses schema 1, `task-position-v1`, burst 1–64, positive
 stratum weights and an exact task-ID→stratum mapping. Choose stratum, uniform task,
 uniform eligible position; bursts reuse the task with varying positions. Replacement
 sampling gives window-equivalents, not completed epochs. Omission retains seeded window
@@ -114,7 +114,7 @@ with CUDA synchronization. Successful/failed update clocks are separate. Data ti
 sampling/materialization. Startup, checkpoint, export, diagnostics and native evaluation
 stay separate; controller wall time is an operational budget. Legacy clocks cannot be
 reconstructed. Dataset exposure starts from known lineage rather than charging every
-historical update to new data. Workers publish accounting every100 updates.
+historical update to new data. Workers publish accounting every 100 updates.
 
 Optional `development` binds 120 fixed DEV windows and cadence; diagnostics preserve RNG
 and report category loss/top1 over all fifteen positions. `leading_positions` adds top-1
@@ -129,22 +129,22 @@ See [benchmarks](benchmarks.md) for native cadence, selection and health reporti
 
 ## Export
 
-Final complete states export through the store to W1Ax metadata2 in GGUF3, with original Q4K vocabulary
+Final complete states export through the store to W1Ax metadata 2 in GGUF 3, with original Q4K vocabulary
 codes, frozen-operand checks and tensor readback. Export-time exponentials use CPU FP32
-to match original arithmetic. Sign words are little-endian32-bit, nonnegative zero is1,
-unused bits0. Bounded readback checks metadata, tensor names/types/shapes, nonoverlapping
+to match original arithmetic. Sign words are little-endian 32-bit, nonnegative zero is 1,
+unused bits 0. Bounded readback checks metadata, tensor names/types/shapes, nonoverlapping
 aligned offsets and every payload hash. Independent SDK and native checks qualify it;
 format conformance alone does not establish useful serving performance.
 
 ## Journal
 
-Events stop at56MiB of the64MiB envelope, leaving room for final publication. This storage
+Events stop at 56 MiB of the 64 MiB envelope, leaving room for final publication. This storage
 stop is not completion. A torn tail is saved in an incident receipt and reconciled only
 after owner checks; no complete event is dropped. Corrupt complete records are refused.
 
 ## Supported formats
 
-Intent2, corpus1, tensor payload4/3, store1, event envelope1, W1Ax metadata2/GGUF3. Other tensor/intent
+Intent 2, corpus 1, tensor payload 4/3, store 1, event envelope 1, W1Ax metadata 2/GGUF 3. Other tensor/intent
 schemas need explicit migration with verified lineage; preserve originals.
 
 ## Limits

@@ -12,7 +12,7 @@ rule specimens. Numerical dependencies install independently from the old checko
 CPU passes do not certify hardware, native outputs, useful learning or performance.
 [Checks](checks.md) names each lane; GPU evidence lives with its result and frozen source.
 
-Separate RTX5080 measurements establish original HE4broad next-update parity and scoped
+Separate RTX 5080 measurements establish original HE4broad next-update parity and scoped
 [FP16 adoption](../results/fp16-storage-adoption/result.md). Native greedy outputs/stopping,
 CPU sampler controls with neural GPU requests, CUDA kernel activation, tool trajectories,
 train/eval recovery and retention have execution receipts. Read each cohort and condition;
@@ -24,8 +24,8 @@ one successful path does not qualify arbitrary inputs or configurations.
 | --- | --- |
 | Models | Current HE4/DFlash/Qwen3.5-4B family. Q4KM and NVFP4 targets have separate identities. New families need graph, taps, vocabulary, checkpoint and native qualification; no model plug-in registry exists. |
 | Storage | FP16 teacher features qualified for HE4/Q4KM; training materializes FP32. NVFP4 capture and bounded continuation used FP32; its FP16 storage needs separate evidence. |
-| Hardware | GPU evidence is RTX5080 with the pinned toolchain. Other hosts/devices are unqualified; the numerical wheel does not support the2080Ti's sm75. |
-| Context | Real13974/14651-token inputs passed bounded CUDA updates. Protocol limits are not proof of every length or workload. |
+| Hardware | GPU evidence is RTX 5080 with the pinned toolchain. Other hosts/devices are unqualified; the numerical wheel does not support the 2080 Ti's sm_75. |
+| Context | Real 13,974/14,651-token inputs passed bounded CUDA updates. Protocol limits are not proof of every length or workload. |
 | Selection | Short DEV leader, full-request experimental incumbent and latest recovery are separate. Workflow/harness regressions cannot be hidden by a request score. No automatic deployment promotion. |
 | Generalization | Public source exposure is unknown. Fixed DEV mixtures and one-project workflows do not prove real-traffic prevalence or unseen application transfer. Independent confirmation needs new curation and access receipts. |
 | Exposure | Dataset-local counters and lineage survive; per-position lifetime history across changed recipes/corpora is incomplete. |

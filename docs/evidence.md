@@ -39,13 +39,13 @@ model states were intentionally retired before adoption. Source-linked raw paths
 historical locators, not verified current availability. Experimental reruns require their
 own input/dependency verification; the archive does not establish GPU or native parity.
 
-The initial November10 archive retains interim records. Final committed history is
+The initial November 10 archive retains interim records. Final committed history is
 independently preserved under `/home/philip/BitDraft/artifacts/archive/legacy-final-20261111/`
 with its own `preservation.json` and verified bare reader. Final working reports and
 the original run/data now live under
 `/home/philip/BitDraft/artifacts/datasets/retained-he4broad-original/`; its
 `closeout-reports-preservation.json` verifies the copied reports. This includes the
-220095-update,15647-capture run, distinct from the November8 forty-sequence namesake.
+220,095-update, 15,647-capture run, distinct from the November 8 forty-sequence namesake.
 
 Source history is published to [BitDraft](https://github.com/philippesic/BitDraft).
 The ignored bundles and large artifacts remain local; a Git push does not back them up. The archive lives under ignored `artifacts/archive`; include it when moving the whole
@@ -74,13 +74,13 @@ tar -xOzf /home/philip/BitDraft/artifacts/archive/legacy-closeout-20261112/compa
 `native-source-support` preserves source/header/build snapshots. `external-worktree-support`
 adds compact records from retired external checkouts. Native uncommitted changes were
 restored in independent checkouts to verify the preserved staged/unstaged patches and
-untracked files. `training-series.jsonl.gz` stores256-row descriptive aggregates, not the
+untracked files. `training-series.jsonl.gz` stores 256-row descriptive aggregates, not the
 full optimization stream; it cannot support new per-example or uncertainty claims.
 `failure-diagnostics.jsonl.gz` preserves matching failure excerpts with source identities;
 text matches are diagnostic evidence, not newly classified scientific outcomes.
 
 Current model files, reusable benchmark controls and their required request/source
-closure, original220095, the original teacher corpus and frozen6K FP16 corpus live under
+closure, original 220095, the original teacher corpus and frozen 6K FP16 corpus live under
 `artifacts/` inside the checkout. Historical absolute locators can be resolved through the
 closeout relocation receipts; retained originals are not silently rewritten. The retained
 records keep their original bytes and names. The maintained readers translate old
@@ -121,7 +121,7 @@ from this checkout; the main native submodule revision is independently archived
 
 The old 20671-update checkpoint series, model copies, environments, build outputs and raw
 profiles are obsolete historical artifacts, not current training inputs. Their exact
-resume/runtime replay is not retained by these compact archives. The original220095 parent
+resume/runtime replay is not retained by these compact archives. The original 220095 parent
 and current corpora remain separately preserved in this checkout. The four old project
 directories and obsolete project host/hook settings have been removed. Verified source,
 receipts and shared-file preservation checks live under
@@ -167,7 +167,7 @@ pair to find the preserved record. Other independent source-history and native W
 archives retain their original recovery procedures.
 
 Authentication, metric recomputation, dependency decisions, exact retirement plans and
-journals live in `artifacts/receipts/artifact-closeout-20261113/`. The current6K TRAIN
+journals live in `artifacts/receipts/artifact-closeout-20261113/`. The current 6K TRAIN
 corpus remains physical data under `artifacts/datasets/`. The original continuation parent,
 models, diagnostic DEV data and current comparison exports remain available. Retired old
 weights, capture tensors, profiler timelines and raw process/event replay do not.

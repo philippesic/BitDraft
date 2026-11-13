@@ -25,7 +25,7 @@ for their limits.
 ## Requirements
 
 - Linux x86-64, Python 3.11.15 and uv.
-- An RTX5080 for the currently tested GPU configuration.
+- An RTX 5080 for the currently tested GPU configuration.
 - Compatible target/drafter weights and the project's pinned native runtime.
 
 Model weights, compiled runtimes and training datasets are not bundled with the source.

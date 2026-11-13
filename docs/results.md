@@ -101,7 +101,7 @@ Store retention by unlinking checkpoint payloads through a generic cleanup.
 
 Use `uv run --locked --no-sync --offline python -m tools.retention PLAN RECEIPT`
 to verify a proposed cleanup without deleting. The explicit apply form adds
-`--apply PLAN_SHA256`. Plans contain schema1, owner, the actual authorization, result path,
+`--apply PLAN_SHA256`. Plans contain schema 1, owner, the actual authorization, result path,
 limitations, an absolute physical root, protected path roots, authenticated retained files
 and an exact authenticated `remove` file list. Retained evidence and the plan/receipt must
 live outside that root. Review the exact plan and dependency closure before applying it.

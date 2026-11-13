@@ -61,7 +61,7 @@ intent and data on CPU before allocation; [execution](execution.md) defines run,
 and reporting commands.
 
 For training with periodic acceptance checks, use `python -m benchmarks campaign-preflight
-SPEC` before `campaign SPEC [OUTPUT]`. [Benchmarks](benchmarks.md) owns the60-prompt candidate
+SPEC` before `campaign SPEC [OUTPUT]`. [Benchmarks](benchmarks.md) owns the 60-prompt candidate
 checks, saved baseline/leader references and interruption budgets. The
 [qualification result](../results/reusable-acceptance-checks/result.md) records measured
 costs and limits. Agent instructions start in [AGENTS.md](../AGENTS.md); task conventions

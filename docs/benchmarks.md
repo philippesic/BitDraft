@@ -2,7 +2,7 @@
 
 Native runs measure acceptance/speed; loss/top1 diagnose learning. Routine training
 checks execute only the candidate against saved target/baseline/leader records. The
-complete pause must fit120seconds every1800–3600 optimizer seconds; qualify the actual
+complete pause must fit 120 seconds every 1800–3600 optimizer seconds; qualify the actual
 pause before production. Request scores and whole application tasks stay separate.
 
 ```sh
@@ -90,7 +90,7 @@ as structured requests without the project harness. None of these is measured us
 
 ## Reusable references
 
-`record-reference REGISTRATION REGISTRY` accepts schema1 with authenticated `comparison`
+`record-reference REGISTRATION REGISTRY` accepts schema 1 with authenticated `comparison`
 (the desired cohort) and completed `result`, plus source `arm` and zero-based `rep`.
 It authenticates whole source-panel completeness, selected raw responses/counters and
 exact unchanged task definitions. Projection from a larger complete panel is explicit;
@@ -122,12 +122,12 @@ incidental context words. Tool stages are explicit; translations name a destinat
 Optional `development_replays` retains eight first-file-read histories from measured
 project trials, including failures, once per source group. Actual tools/messages and
 transcript identities remain attached. Optional `harnesses` adds the intended `tools`
-prefix to100 TRAIN code-edit and100 TRAIN tool groups. Preserve their ancestry/roles;
+prefix to 100 TRAIN code-edit and 100 TRAIN tool groups. Preserve their ancestry/roles;
 the alternate `coding` prefix stays outside TRAIN.
 
 Selection keeps category/subtype/length marginals and required examples. It can choose
-shorter complete records within cells to fit399 decimal GB of maximum raw FP16 features,
-leaving about1GB for metadata under400GB. FP32 raw features are twice that. No padding/
+shorter complete records within cells to fit 399 decimal GB of maximum raw FP16 features,
+leaving about 1 GB for metadata under 400 GB. FP32 raw features are twice that. No padding/
 truncation manufactures coverage. Exact inputs/caps set the maximum, EOS the actual size.
 These are dataset planning ceilings, not global disk limits. [Data](data.md) owns formats,
 partial tails, mixtures and ancestry.
@@ -156,7 +156,7 @@ arrays and EOG. Validation receipts and partial attempts stay with ignored raw d
 training materializes FP32. It does not establish lifetime/other-family equivalence.
 
 `plan COMPARISON.json` reports native units/warmups; `verify-inputs` hashes models/runtime.
-The older schema1 [metadata example](../tests/fixtures/benchmark-plan.json) remains supported.
+The older schema 1 [metadata example](../tests/fixtures/benchmark-plan.json) remains supported.
 Training CPU preflight is in [execution](execution.md). Neither grants authority.
 
 ## Native comparison
@@ -201,14 +201,14 @@ ranking by throughput.
 ## Live application and instructions
 
 `prepare-project-workflows` freezes source/recipes and verifies broken, repaired and
-followup controls in real project modules. `prepare-panels` creates live inputs and30
-fixed-history groups; `prepare-checks` selects6 of those groups under `minimal`, `coding`, `tools`. Record instruction origins;
+followup controls in real project modules. `prepare-panels` creates live inputs and 30
+fixed-history groups; `prepare-checks` selects 6 of those groups under `minimal`, `coding`, `tools`. Record instruction origins;
 identify authored alternatives. Treatments replace system messages, retaining task facts.
 
 `live` executes list/read/replace/write/test tools in isolated copies. Bubblewrap protects
 checks and excludes network, credentials and host source. Reads support ranges; edits
 require unique matches; truncation is explicit. Reset each task; count both initial and
-followup phases. Limits:16 turns/900seconds per task,1024 tokens per call. Retain warmups
+followup phases. Limits: 16 turns/900 seconds per task, 1024 tokens per call. Retain warmups
 outside primary totals and reconcile their counters. All failures/timeouts stay denominated.
 Report completion, whole-task/model/tool/overhead time and greedy trajectory/filesystem
 agreement, including shared failures. Faster incomplete work is not a win. Deployment
@@ -219,7 +219,7 @@ claims need trials in the intended application/configuration.
 [`training-campaign-v2`](../benchmarks/campaign.py) binds intent, candidate-only screen,
 initial drafter, optimizer-time cadence, failure policy and `maximum_pause_seconds` ≤120.
 `campaign-preflight` validates roles, model/data/source and saved controls on CPU. V1 is
-legacy-pilot-only. V2 pilots accelerate cadence for tests while retaining all60 prompts.
+legacy-pilot-only. V2 pilots accelerate cadence for tests while retaining all 60 prompts.
 
 Boundary/final checks keep the same trainer and Adam/RNG state alive. Completed gradients
 are released; trainable parameters and optimizer moments use a CPU mapping of that
@@ -254,8 +254,8 @@ campaign. V2's compatibility field `provisional_fast_leader` records an acceptan
 it is not a throughput verdict. Completed campaigns return idempotently without new runs.
 
 For production, bind an authorized training intent, matching initial export, saved
-60-request comparison and optional initial reference. Omit `pilot`, set cadence to1800
-optimizer seconds, `maximum_pause_seconds` to120 and `evaluation_failure` to `stop`.
+60-request comparison and optional initial reference. Omit `pilot`, set cadence to 1800
+optimizer seconds, `maximum_pause_seconds` to 120 and `evaluation_failure` to `stop`.
 An intent's optional `model_update_seconds` sets a separate cumulative time allowance:
 7200 requests two hours of optimizer work. `model-update-budget` is a complete campaign
 stop with a final screen; the update-count guard still applies if reached first.

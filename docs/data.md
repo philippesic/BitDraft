@@ -18,7 +18,7 @@ Training data enters through a typed ledger. Admission reads metadata, checks ro
 and counts, and refuses before any training starts. Raw tensors are authenticated when
 they are read, not at admission. Terms are defined in [domain](domain.md).
 Authentication can reuse a SHA256 within one process for unchanged device/inode, size,
-mtime and ctime, under a bounded1024-entry cache. Reads check identity before/after hashing;
+mtime and ctime, under a bounded 1024-entry cache. Reads check identity before/after hashing;
 edits and replacements invalidate reuse. New processes hash independently. This assumes
 ordinary filesystem metadata integrity, not a hostile kernel or filesystem. No persistent
 receipt or caller-declared digest substitutes for authentication.
