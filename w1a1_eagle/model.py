@@ -150,6 +150,25 @@ class Projection(nn.Module):
         return native.detach() + (surrogate - surrogate.detach())
 
 
+def bound_latents(model: nn.Module, multiple: float) -> None:
+    with torch.no_grad():
+        for module in model.modules():
+            if isinstance(module, Projection):
+                latent = module.latent_sign
+                mean = latent.abs().mean(-1, keepdim=True)
+                bounded = (latent / torch.where(mean > 0, mean * multiple, 1.0)).clamp(-1, 1)
+                if not torch.equal(bounded >= 0, latent >= 0):
+                    raise ValueError("bounded latent scale changed a sign")
+                latent.copy_(bounded)
+
+
+def clamp_latents(model: nn.Module) -> None:
+    with torch.no_grad():
+        for module in model.modules():
+            if isinstance(module, Projection):
+                module.latent_sign.clamp_(-1, 1)
+
+
 class Layer(nn.Module):
     def __init__(self, tensors: dict[str, Tensor], prefix: str, geometry: Geometry) -> None:
         super().__init__()

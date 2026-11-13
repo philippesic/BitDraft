@@ -20,7 +20,17 @@ from w1a1_eagle.data import Artifact, Supervision, TailWindow, Window
 from w1a1_eagle.identity import source_identity
 from w1a1_eagle.intent import Intent
 from w1a1_eagle.lifecycle import Journal
-from w1a1_eagle.model import HE4, Geometry, Layer, Projection, cache_storage, hard_sign, rms, rope
+from w1a1_eagle.model import (
+    HE4,
+    Geometry,
+    Layer,
+    Projection,
+    bound_latents,
+    cache_storage,
+    hard_sign,
+    rms,
+    rope,
+)
 from w1a1_eagle.numerical.captures import Capture, CaptureCache, CaptureSpec, load_capture
 from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.entry import admission
@@ -29,7 +39,7 @@ from w1a1_eagle.numerical.weights import load_he4, shapes
 from w1a1_eagle.numerical.worker import TensorWorker
 from w1a1_eagle.records import artifact, canonical, read, reference
 from w1a1_eagle.supervisor import execute
-from w1a1_eagle.training import Budget, Grouping
+from w1a1_eagle.training import Budget, Grouping, Optimization, Schedule, default_step_sizes
 
 
 class TestNumerical(unittest.TestCase):
@@ -708,6 +718,68 @@ class TestNumerical(unittest.TestCase):
                 intent_path.write_bytes(canonical(grouped))
                 with self.assertRaises(ValueError):
                     Intent.load(intent_path)
+            self.assertEqual(sealed.optimization, Optimization())
+            optimized = dict(intent)
+            settings: Record = {
+                "step_sizes": default_step_sizes(),
+                "schedule": {
+                    "decay": "constant",
+                    "warmup_updates": 0,
+                    "start_update": 0,
+                    "final_update": None,
+                },
+                "latent_scale": {"kind": "raw"},
+            }
+            optimized["optimization"] = settings
+            intent_path.write_bytes(canonical(optimized))
+            self.assertEqual(Intent.load(intent_path).recipe, sealed.recipe)
+            settings = {
+                "step_sizes": {**default_step_sizes(), "sign": 4e-3},
+                "schedule": {
+                    "decay": "cosine",
+                    "warmup_updates": 0,
+                    "start_update": 0,
+                    "final_update": 1,
+                },
+                "latent_scale": {"kind": "row", "multiple": 3},
+            }
+            optimized["optimization"] = settings
+            intent_path.write_bytes(canonical(optimized))
+            parsed = Intent.load(intent_path)
+            self.assertEqual(
+                parsed.optimization,
+                Optimization(
+                    {**default_step_sizes(), "sign": 4e-3}, Schedule("cosine", 0, 0, 1), 3.0
+                ),
+            )
+            self.assertNotEqual(parsed.recipe, sealed.recipe)
+            self.assertEqual(
+                record(admission(parsed, corpus)["optimization"])["latent_multiple"], 3.0
+            )
+            bounded_report = execute(intent_path, root / "bounded", "disposable-CPU-test")
+            self.assertEqual(record(bounded_report["latest"])["outcome"], "complete")
+            bounded_state = Store(root / "bounded/states").latest(parsed.recipe)
+            saved_latent = torch.load(bounded_state.artifact.path, weights_only=True)["model"][
+                "blocks.0.gate.latent_sign"
+            ]
+            self.assertLess(float((saved_latent - 1 / 3).abs().max()), 5e-3)
+            for broken in (
+                {**settings, "latent_scale": {"kind": "column", "multiple": 3}},
+                {**settings, "latent_scale": {"kind": "row"}},
+                {**settings, "schedule": {**record(settings["schedule"]), "final_update": 0}},
+                {**settings, "schedule": {**record(settings["schedule"]), "decay": "linear"}},
+                {**settings, "step_sizes": {"sign": 1e-3}},
+                {key: value for key, value in settings.items() if key != "schedule"},
+            ):
+                optimized["optimization"] = broken
+                intent_path.write_bytes(canonical(optimized))
+                with self.assertRaises(ValueError):
+                    Intent.load(intent_path)
+            optimized["optimization"] = settings
+            optimized["budget"] = {"updates": 2, "wall_seconds": 60, "attempts": 2, "retries": 0}
+            intent_path.write_bytes(canonical(optimized))
+            with self.assertRaisesRegex(ValueError, "final update"):
+                admission(Intent.load(intent_path), corpus)
             intent_path.write_bytes(canonical(intent))
             editable = sealed.raw
             editable["authority_scope"] = "altered"
@@ -944,7 +1016,9 @@ class TestNumerical(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "content"):
                 load_capture(spec, 128 * 1024, hidden=4)
 
-    def fixture_worker(self, identity: str, device: str = "cpu") -> TensorWorker:
+    def fixture_worker(
+        self, identity: str, device: str = "cpu", optimization: Optimization | None = None
+    ) -> TensorWorker:
         model, features = self.tiny_model()
         model.to(device)
         windows: tuple[Supervision, ...] = (
@@ -960,7 +1034,9 @@ class TestNumerical(unittest.TestCase):
                     raise ValueError("negative cursor")
                 return capture, windows[cursor % 2 :]
 
-        return TensorWorker(model, Source(), identity)
+        if optimization is not None and optimization.latent_multiple is not None:
+            bound_latents(model, optimization.latent_multiple)
+        return TensorWorker(model, Source(), identity, optimization=optimization)
 
     def test_offload_preserves_optimizer_rng_and_refuses_mutation(self) -> None:
         worker = self.fixture_worker("offload")
@@ -1172,6 +1248,145 @@ class TestNumerical(unittest.TestCase):
                 resumed = self.fixture_worker("grouped-recipe")
                 resumed.restore(child, 8 * 1024 * 1024)
                 self.assertEqual(resumed.cursor, 2)
+
+    def test_schedule_multiplier_values_and_refusals(self) -> None:
+        self.assertEqual([Schedule().multiplier(u) for u in (0, 1, 10**6)], [1.0, 1.0, 1.0])
+        warm = Schedule("constant", 4, 10)
+        self.assertEqual([warm.multiplier(u) for u in range(10, 16)], [0.25, 0.5, 0.75, 1, 1, 1])
+        cosine = Schedule("cosine", 2, 0, 6)
+        values = [cosine.multiplier(u) for u in range(6)]
+        self.assertEqual(values[:3], [0.5, 1.0, 1.0])
+        self.assertAlmostEqual(values[4], 0.5)
+        self.assertTrue(all(b < a for a, b in zip(values[2:], values[3:], strict=False)))
+        self.assertGreater(values[5], 0)
+        for updates in (6, 7):
+            with self.assertRaisesRegex(ValueError, "final update"):
+                cosine.multiplier(updates)
+        with self.assertRaisesRegex(ValueError, "start"):
+            warm.multiplier(9)
+        for invalid in (
+            lambda: Schedule("cosine", 2, 0, 2),
+            lambda: Schedule("cosine", 0, 5, None),
+            lambda: Schedule("constant", 0, 0, 5),
+            lambda: Schedule("constant", -1),
+            lambda: Optimization({**default_step_sizes(), "sign": 0.0}),
+            lambda: Optimization({"sign": 1e-3}),
+            lambda: Optimization(latent_multiple=0.0),
+        ):
+            with self.assertRaises(ValueError):
+                invalid()
+
+    def test_scheduled_step_sizes_resume_exactly_and_continue_with_new_rates(self) -> None:
+        rates = {**default_step_sizes(), "sign": 2e-3, "norm": 3e-5}
+        recipe = Optimization(rates, Schedule("cosine", 1, 0, 4))
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            original = self.fixture_worker("scheduled", optimization=recipe)
+            observed: list[dict[str, float]] = []
+            for updates in range(1, 4):
+                original.run(Monotonic(), Budget(updates, 60, updates), lambda: False)
+                observed.append(
+                    {str(g["name"]): float(g["lr"]) for g in original.optimizer.param_groups}
+                )
+                if updates == 1:
+                    parent = original.checkpoint(Store(root / "scheduled"), 4 * 1024 * 1024)
+            for index, rates_now in enumerate(observed):
+                factor = recipe.schedule.multiplier(index)
+                self.assertEqual(rates_now, {k: v * factor for k, v in rates.items()})
+            self.assertLess(observed[2]["sign"], observed[1]["sign"])
+            expected = {k: v.detach().clone() for k, v in original.model.named_parameters()}
+            resumed = self.fixture_worker("scheduled", optimization=recipe)
+            resumed.restore(parent, 8 * 1024 * 1024)
+            resumed.run(Monotonic(), Budget(3, 60, 3), lambda: False)
+            self.assertEqual(resumed.progress.last_loss, original.progress.last_loss)
+            for name, value in resumed.model.named_parameters():
+                self.assertTrue(torch.equal(value, expected[name]), name)
+            with self.assertRaisesRegex(ValueError, "final update"):
+                original.run(Monotonic(), Budget(5, 60, 5), lambda: False)
+
+            default = self.fixture_worker("default")
+            default.run(Monotonic(), Budget(1, 60, 1), lambda: False)
+            old = default.checkpoint(Store(root / "default"), 4 * 1024 * 1024)
+            changed = Optimization({**default_step_sizes(), "sign": 4e-3})
+            for mode in ("continue", "branch"):
+                worker = self.fixture_worker("changed-rates", optimization=changed)
+                worker.restore(old, 8 * 1024 * 1024, mode=mode)
+                worker.run(Monotonic(), Budget(2, 60, 2), lambda: False)
+                sign = next(g for g in worker.optimizer.param_groups if g["name"] == "sign")
+                self.assertEqual(sign["lr"], 4e-3)
+                child = worker.checkpoint(Store(root / mode), 4 * 1024 * 1024)
+                again = self.fixture_worker("changed-rates", optimization=changed)
+                again.restore(child, 8 * 1024 * 1024)
+                self.assertEqual(again.updates, 2)
+
+    def test_bounded_latents_keep_initial_outputs_and_stay_clamped(self) -> None:
+        raw, features = self.tiny_model()
+        bounded, _ = self.tiny_model()
+        bound_latents(bounded, 3.0)
+        tokens = tuple(range(20))
+        with torch.no_grad():
+            self.assertTrue(
+                torch.equal(raw.forward(features, tokens, 2), bounded.forward(features, tokens, 2))
+            )
+            self.assertTrue(
+                torch.equal(
+                    raw.group_hidden(features, tokens, (2, 9)),
+                    bounded.group_hidden(features, tokens, (2, 9)),
+                )
+            )
+        for (name, before), after in zip(raw.named_parameters(), bounded.parameters(), strict=True):
+            if name.endswith("latent_sign"):
+                self.assertEqual(
+                    packed_signs(before).tobytes(), packed_signs(after).tobytes(), name
+                )
+                self.assertLessEqual(float(after.detach().abs().max()), 1.0)
+                row_mean = before.abs().mean(-1, keepdim=True)
+                expected = (before / (3 * row_mean)).clamp(-1, 1)
+                self.assertTrue(torch.equal(after, expected), name)
+            else:
+                self.assertTrue(torch.equal(before, after), name)
+        projection = Projection(
+            torch.tensor([[0.0, -0.0, 2.0, -14.0], [0.0, 0.0, 0.0, 0.0]]),
+            4,
+            nn.Parameter(torch.zeros(4)),
+            nn.Parameter(torch.tensor(0.0)),
+        )
+        bound_latents(projection, 2.0)
+        self.assertEqual(projection.latent_sign.tolist(), [[0.0, -0.0, 0.25, -1.0], [0.0] * 4])
+        self.assertEqual(hard_sign(projection.latent_sign).tolist(), [[1, 1, 1, -1], [1] * 4])
+
+        large = {**default_step_sizes(), "sign": 0.5}
+        unclamped = self.fixture_worker("raw-large", optimization=Optimization(large))
+        clamped = self.fixture_worker(
+            "bounded-large", optimization=Optimization(large, latent_multiple=3.0)
+        )
+        for worker in (unclamped, clamped):
+            worker.run(Monotonic(), Budget(4, 60, 4), lambda: False)
+        latents = [
+            module.latent_sign
+            for module in clamped.model.modules()
+            if isinstance(module, Projection)
+        ]
+        values = torch.cat([value.detach().flatten() for value in latents])
+        self.assertLessEqual(float(values.abs().max()), 1.0)
+        self.assertTrue(bool((values.abs() == 1).any()))
+        raw_values = torch.cat(
+            [
+                module.latent_sign.detach().flatten()
+                for module in unclamped.model.modules()
+                if isinstance(module, Projection)
+            ]
+        )
+        self.assertGreater(float(raw_values.abs().max()), 1.0)
+        clamped.optimizer.zero_grad(set_to_none=True)
+        capture, windows = clamped.samples.sample(0)
+        clamped.group_loss(capture, windows)
+        endpoint = [
+            (value.grad[value.abs() == 1] != 0).any()
+            for value in latents
+            if value.grad is not None and bool((value.abs() == 1).any())
+        ]
+        self.assertTrue(bool(torch.stack(endpoint).any()))
 
     def test_plain_grouping_covers_each_window_once_per_pass(self) -> None:
         from dataclasses import replace

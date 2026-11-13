@@ -1,9 +1,10 @@
 import math
-from dataclasses import dataclass
-from typing import Callable, Protocol
+from dataclasses import dataclass, field
+from typing import Callable, Literal, Protocol
 
 from w1a1_eagle.clock import Clock
 
+PARAMETER_GROUPS = ("sign", "scale", "midpoint", "gain", "clip", "norm")
 ROW_COPIES = 15.0
 ROW_TOKEN_COPIES = 1.25
 CONTEXT_COPIES = 1.0
@@ -46,6 +47,68 @@ class Grouping:
         shared = CONTEXT_COPIES * (shape.taps + shape.layers) * shape.hidden * context
         available = int((self.activation_bytes - 4 * shared) // (4 * shape.slots * row))
         return max(1, min(self.max_windows, available))
+
+
+def default_step_sizes() -> dict[str, float]:
+    return {"sign": 1e-3, "scale": 1e-5, "midpoint": 1e-5, "gain": 1e-5, "clip": 1e-5, "norm": 1e-5}
+
+
+@dataclass(frozen=True)
+class Schedule:
+    decay: Literal["constant", "cosine"] = "constant"
+    warmup_updates: int = 0
+    start_update: int = 0
+    final_update: int | None = None
+
+    def __post_init__(self) -> None:
+        if self.decay not in ("constant", "cosine"):
+            raise ValueError("schedule decay must be constant or cosine")
+        if any(
+            type(value) is not int or value < 0
+            for value in (self.warmup_updates, self.start_update)
+        ):
+            raise ValueError("schedule start and warm-up must be nonnegative update counts")
+        if self.decay == "constant" and self.final_update is not None:
+            raise ValueError("a constant schedule has no final update")
+        if self.decay == "cosine" and (
+            type(self.final_update) is not int
+            or self.final_update <= self.start_update + self.warmup_updates
+        ):
+            raise ValueError("cosine decay requires a final update after its warm-up")
+
+    def multiplier(self, updates: int) -> float:
+        if type(updates) is not int or updates < self.start_update:
+            raise ValueError("update precedes the schedule start")
+        elapsed = updates - self.start_update
+        if elapsed < self.warmup_updates:
+            return (elapsed + 1) / self.warmup_updates
+        if self.final_update is None:
+            return 1.0
+        span = self.final_update - self.start_update - self.warmup_updates
+        progress = (elapsed - self.warmup_updates) / span
+        if progress >= 1:
+            raise ValueError("update is at or beyond the schedule's final update")
+        return 0.5 * (1 + math.cos(math.pi * progress))
+
+
+@dataclass(frozen=True)
+class Optimization:
+    step_sizes: dict[str, float] = field(default_factory=default_step_sizes)
+    schedule: Schedule = Schedule()
+    latent_multiple: float | None = None
+
+    def __post_init__(self) -> None:
+        if tuple(sorted(self.step_sizes)) != tuple(sorted(PARAMETER_GROUPS)) or any(
+            type(value) is not float or not math.isfinite(value) or value <= 0
+            for value in self.step_sizes.values()
+        ):
+            raise ValueError("positive finite step sizes required for every parameter group")
+        if self.latent_multiple is not None and (
+            type(self.latent_multiple) is not float
+            or not math.isfinite(self.latent_multiple)
+            or self.latent_multiple <= 0
+        ):
+            raise ValueError("bounded latent scale requires a positive finite multiple")
 
 
 @dataclass(frozen=True)

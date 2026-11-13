@@ -15,11 +15,11 @@ from w1a1_eagle.clock import Clock, Monotonic
 from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
 from w1a1_eagle.data import Supervision
 from w1a1_eagle.device import DeviceClock
-from w1a1_eagle.model import HE4, Projection
+from w1a1_eagle.model import HE4, Projection, clamp_latents
 from w1a1_eagle.numerical.accounting import Accounting
 from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.records import canonical
-from w1a1_eagle.training import Budget, Progress, train
+from w1a1_eagle.training import PARAMETER_GROUPS, Budget, Optimization, Progress, train
 
 HEAD_ROWS = 128
 FINITE_SCAN_UPDATES = 32
@@ -38,7 +38,9 @@ def label_weights(lengths: tuple[int, ...]) -> Tensor:
 
 
 def optimizer_options(group: object) -> Record:
-    return {key: value for key, value in record(group).items() if key not in {"foreach", "fused"}}
+    return {
+        key: value for key, value in record(group).items() if key not in {"foreach", "fused", "lr"}
+    }
 
 
 class TensorWorker:
@@ -49,6 +51,7 @@ class TensorWorker:
         identity: str,
         dataset: str | None = None,
         clock: Clock | None = None,
+        optimization: Optimization | None = None,
     ) -> None:
         if not identity or model.geometry.slots != 16:
             raise ValueError("explicit HE4 recipe and sixteen slots required")
@@ -69,14 +72,8 @@ class TensorWorker:
         self.ready = True
         self.last_publication: StateRef | None = None
         self.lock = threading.RLock()
-        rates = {
-            "sign": 1e-3,
-            "scale": 1e-5,
-            "midpoint": 1e-5,
-            "gain": 1e-5,
-            "clip": 1e-5,
-            "norm": 1e-5,
-        }
+        self.optimization = optimization or Optimization()
+        rates = self.optimization.step_sizes
         suffixes = {
             "latent_sign": "sign",
             "scale": "scale",
@@ -84,7 +81,7 @@ class TensorWorker:
             "log_gain": "gain",
             "log_clip": "clip",
         }
-        groups: dict[str, list[Tensor]] = {key: [] for key in rates}
+        groups: dict[str, list[Tensor]] = {key: [] for key in PARAMETER_GROUPS}
         for name, parameter in model.named_parameters():
             if parameter.requires_grad:
                 groups[suffixes.get(name.rsplit(".", 1)[-1], "norm")].append(parameter)
@@ -309,15 +306,20 @@ class TensorWorker:
 
     def update(self, capture: Capture, windows: tuple[Supervision, ...]) -> float:
         feature_version = capture.features._version
+        multiplier = self.optimization.schedule.multiplier(self.updates)
         self.optimizer.zero_grad(set_to_none=True)
         loss = self.group_loss(capture, windows)
         norm = torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0, error_if_nonfinite=True)
         self.last_gradient_norm = float(norm)
+        for group in cast(list[dict[str, object]], self.optimizer.param_groups):
+            group["lr"] = self.optimization.step_sizes[str(group["name"])] * multiplier
         self.optimizer.step()
         with torch.no_grad():
             for module in self.model.modules():
                 if isinstance(module, Projection):
                     module.scale.clamp_(min=0)
+        if self.optimization.latent_multiple is not None:
+            clamp_latents(self.model)
         if (self.updates + 1) % FINITE_SCAN_UPDATES == 0:
             self.verify_finite()
         self.verify_frozen()

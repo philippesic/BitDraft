@@ -25,7 +25,7 @@ is read-only. Private entries are listed in [commands](../policy/commands.toml).
 
 Schema 2 (`w1a1_eagle/intent.py`) binds objective/hypothesis/decision/risk/scope, authenticated
 initializer/vocabulary/corpus/parent, mode, geometry/seed/device, budgets, checkpoints,
-grouping and data/reuse policy. Unknown fields are refused. Artifact references contain `path`,
+grouping, optimization and data/reuse policy. Unknown fields are refused. Artifact references contain `path`,
 `sha256`, `bytes`; relative paths resolve from their document. See [data](data.md) for
 corpus/index/mixture formats. Editable manifests establish neither provenance nor authority.
 
@@ -148,7 +148,8 @@ reconstructed. Dataset exposure starts from known lineage rather than charging e
 historical update to new data. Workers publish accounting every 100 updates.
 
 Optional `development` binds 120 fixed DEV windows and cadence; diagnostics preserve RNG
-and report category loss/top1 over all fifteen positions. `leading_positions` adds top-1
+and report category loss/top1 over all fifteen positions. A run that ends also measures
+its final update unless the cadence already did; a campaign's intermediate boundaries do not. `leading_positions` adds top-1
 and prefix survival (positions 1 through k all correct) for the first three positions,
 the only ones a depth-2 or depth-3 server proposes. They use all sixteen training slots,
 whereas the runtime builds depth+1 slots per round, so they are not native acceptance.
@@ -157,6 +158,38 @@ In V2 campaigns it is the cumulative optimizer-time stop, independently of evalu
 cadence. Stop at a complete update, publish state/export and perform the final screen.
 Resume retains the consumed clock; successful and failed update seconds both count.
 See [benchmarks](benchmarks.md) for native cadence, selection and health reporting.
+
+## Optimization
+
+Optional `optimization` requires exactly `step_sizes`, `schedule` and `latent_scale`; its
+effective values always enter recipe identity, so a stated default has the same identity
+as an omitted field. Without it training uses today's defaults.
+
+```json
+"optimization": {
+  "step_sizes": {"sign": 0.001, "scale": 1e-05, "midpoint": 1e-05, "gain": 1e-05, "clip": 1e-05, "norm": 1e-05},
+  "schedule": {"decay": "cosine", "warmup_updates": 156, "start_update": 0, "final_update": 7800},
+  "latent_scale": {"kind": "row", "multiple": 3}
+}
+```
+
+- `step_sizes` gives every AdamW group a positive base step size.
+- `schedule` multiplies all of them by a pure function of the absolute update count `u`:
+  (u − start + 1) / warmup during the first `warmup_updates` after `start_update`, then 1
+  (`constant`, `final_update` null) or a cosine from 1 to 0 at `final_update` (`cosine`).
+  Admission refuses a run that starts before `start_update` or whose update budget passes
+  `final_update`. The defaults are `constant`, no warm-up, start 0.
+- `latent_scale` is `{"kind": "raw"}` (default) or `{"kind": "row", "multiple": m}`: fresh
+  initialization sets latents to clamp(weight / (m × row mean |weight|), -1, 1) and every
+  update clamps them back into [-1, 1] ([model](model.md#what-changes-during-training)).
+  Continue and branch keep the parent's latent values; under `row` only the clamp applies.
+
+Because the multiplier depends only on `u` and the recipe, resume repeats it exactly. The
+schedule never stretches implicitly: a continuation that changes the planned length is a
+new recipe whose schedule is restated in absolute updates, and from its first update the
+multiplier follows that new schedule (for example, restating a finished 7,800-update cosine
+as ending at 15,600 resumes at the multiplier of update 7,800 on the longer curve, about 0.5).
+Continue and branch accept changed step sizes; continue keeps the Adam moments.
 
 ## Export
 

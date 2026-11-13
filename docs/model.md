@@ -38,6 +38,12 @@ The forward path uses hard binary signs and quantized activations. Backward uses
 surrogate derivative so the continuous latent parameters can receive gradients.
 Sign zero is positive; the sign surrogate is active at both endpoints of [-1, 1].
 Changing these boundaries changes the training recipe and requires explicit review.
+A latent starts as the source weight (`raw`) or, with the bounded row scale, as
+clamp(weight / (multiple × mean |weight| of its row), -1, 1), and is then clamped back
+into [-1, 1] after every optimizer step. Row scales and midpoints start the same way under
+both, so the initial signs and model outputs are identical; only the distance each sign
+must travel before it flips changes. Latents outside [-1, 1] receive no gradient, so
+without the clamp a latent that drifts past either end stops learning.
 A custom autograd function computes the sign and saves only the latent itself, so the
 surrogate mask is not stored for backward.
 
@@ -59,9 +65,10 @@ the same size as running the single-window path on CPU instead of GPU; see
 [grouped updates](../results/grouped-updates/result.md).
 
 The worker uses separate fused AdamW groups for sign, scale, midpoint, gain, clipping and
-normalization parameters. Current grouping and rates live in
-`w1a1_eagle/numerical/worker.py`; they are implementation settings, not evidence of an
-optimal recipe; step sizes were chosen for one window per update. A nonfinite loss or
+normalization parameters, without weight decay. Their step sizes, a step-size schedule and
+the latent scale are recipe settings ([execution](execution.md#optimization)). The defaults,
+1e-3 for signs and 1e-5 for the rest at a constant rate with raw latents, were chosen for
+one window per update; they are not evidence of an optimal recipe. A nonfinite loss or
 gradient fails the update immediately. The all-parameters-finite scan runs every 32
 updates and before every checkpoint and export. Frozen operands are fingerprinted and
 checked before publication.

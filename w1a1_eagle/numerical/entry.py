@@ -19,7 +19,7 @@ from w1a1_eagle.identity import loaded_identity, source_identity
 from w1a1_eagle.index import IndexReader
 from w1a1_eagle.intent import Intent
 from w1a1_eagle.lifecycle import Journal, control
-from w1a1_eagle.model import Geometry
+from w1a1_eagle.model import Geometry, bound_latents
 from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.diagnostics import Diagnostics
@@ -66,6 +66,11 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
             known_prior = True
         elif intent.mode == "resume":
             prior_labels = starting_updates * 15
+    schedule = intent.optimization.schedule
+    if starting_updates < schedule.start_update:
+        raise ValueError("training starts before its step-size schedule")
+    if schedule.final_update is not None and intent.budget.updates > schedule.final_update:
+        raise ValueError("update budget extends beyond the step-size schedule's final update")
     planned_updates = max(0, intent.budget.updates - starting_updates)
     planned_attempts = max(0, intent.budget.attempts - starting_updates)
     exposure = corpus.exposure(planned_updates)
@@ -98,6 +103,7 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
         "cpu_threads": intent.cpu_threads,
         "mechanism": "HE4 W1A4/A8/Q4_K weighted CE using each capture’s declared supervision policy",
         "grouping": cast(Record, asdict(intent.grouping)),
+        "optimization": cast(Record, asdict(intent.optimization)),
         "exposure": exposure,
         "prior_use_warning": "Prior training is marked for "
         + str(exposure["historical_training_sequences"])
@@ -228,7 +234,11 @@ def run_leased(
     loaded_cache: dict[tuple[int, int, int, int, int], str] = {}
     initial_loaded = loaded_identity(loaded_cache)
     journal.append({"kind": "loaded", "attempt": attempt, "identity": initial_loaded})
-    worker = TensorWorker(model, corpus, intent.recipe, intent.corpus.sha256)
+    if intent.parent is None and intent.optimization.latent_multiple is not None:
+        bound_latents(model, intent.optimization.latent_multiple)
+    worker = TensorWorker(
+        model, corpus, intent.recipe, intent.corpus.sha256, optimization=intent.optimization
+    )
     diagnostics = (
         Diagnostics(artifact(intent.raw["development"], intent.base), corpus, intent.memory_bytes)
         if "development" in intent.raw
@@ -289,6 +299,23 @@ def run_leased(
     last_checkpoint_seconds = clock.now()
     last_diagnostic_updates = -1
     last_progress_updates = -1
+
+    def diagnose(diagnostics: Diagnostics) -> None:
+        nonlocal last_diagnostic_updates
+        worker.verify_frozen()
+        began = clock.now()
+        result = diagnostics.measure(model)
+        worker.verify_frozen()
+        journal.append(
+            {
+                "kind": "development-diagnostic",
+                "attempt": attempt,
+                "updates": worker.updates,
+                "seconds": clock.now() - began,
+                "result": result,
+            }
+        )
+        last_diagnostic_updates = worker.updates
 
     def stop() -> bool:
         nonlocal \
@@ -355,20 +382,7 @@ def run_leased(
             and worker.cursor % integer(intent.raw.get("development_cadence_updates", 250)) == 0
             and worker.updates != last_diagnostic_updates
         ):
-            worker.verify_frozen()
-            began = clock.now()
-            result = diagnostics.measure(model)
-            worker.verify_frozen()
-            journal.append(
-                {
-                    "kind": "development-diagnostic",
-                    "attempt": attempt,
-                    "updates": worker.updates,
-                    "seconds": clock.now() - began,
-                    "result": result,
-                }
-            )
-            last_diagnostic_updates = worker.updates
+            diagnose(diagnostics)
         if (
             worker.updates - last_checkpoint_updates >= intent.checkpoint_updates
             or clock.now() - last_checkpoint_seconds >= intent.checkpoint_seconds
@@ -445,6 +459,12 @@ def run_leased(
                 }
             )
             raise
+        if (
+            diagnostics is not None
+            and (boundary is None or result != "model-update-time")
+            and worker.updates != last_diagnostic_updates
+        ):
+            diagnose(diagnostics)
         journal.append(
             {
                 "kind": "training-boundary",

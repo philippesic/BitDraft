@@ -9,7 +9,35 @@ from w1a1_eagle.data import Artifact
 from w1a1_eagle.index import IndexSpec, Mount
 from w1a1_eagle.records import artifact, canonical, identity, read
 from w1a1_eagle.storage import relocated
-from w1a1_eagle.training import Budget, Grouping
+from w1a1_eagle.training import Budget, Grouping, Optimization, Schedule
+
+
+def optimization(value: object) -> Optimization:
+    raw = record(value)
+    if set(raw) != {"step_sizes", "schedule", "latent_scale"}:
+        raise ValueError("optimization requires step_sizes, schedule and latent_scale")
+    schedule = record(raw["schedule"])
+    if set(schedule) != {"decay", "warmup_updates", "start_update", "final_update"}:
+        raise ValueError("schedule requires decay, warmup_updates, start_update and final_update")
+    if schedule["decay"] not in ("constant", "cosine"):
+        raise ValueError("schedule decay must be constant or cosine")
+    latent = record(raw["latent_scale"])
+    if latent == {"kind": "raw"}:
+        multiple = None
+    elif set(latent) == {"kind", "multiple"} and latent["kind"] == "row":
+        multiple = number(latent["multiple"])
+    else:
+        raise ValueError("latent_scale is {kind: raw} or {kind: row, multiple}")
+    return Optimization(
+        {key: number(value) for key, value in record(raw["step_sizes"]).items()},
+        Schedule(
+            "cosine" if schedule["decay"] == "cosine" else "constant",
+            integer(schedule["warmup_updates"]),
+            integer(schedule["start_update"]),
+            None if schedule["final_update"] is None else integer(schedule["final_update"]),
+        ),
+        multiple,
+    )
 
 
 def grouping(value: object) -> Grouping:
@@ -125,6 +153,7 @@ class Intent:
                 "initialization",
                 "cpu_threads",
                 "grouping",
+                "optimization",
             }
             != required
             or type(raw["schema"]) is not int
@@ -186,6 +215,8 @@ class Intent:
             raise ValueError("positive diagnostic cadence requires an explicit DEV specification")
         if "grouping" in raw:
             grouping(raw["grouping"])
+        if "optimization" in raw:
+            optimization(raw["optimization"])
         if "model_update_seconds" in raw and number(raw["model_update_seconds"]) <= 0:
             raise ValueError("positive cumulative model-update time limit required")
         budget = record(raw["budget"])
@@ -299,6 +330,12 @@ class Intent:
         return grouping(self.raw["grouping"]) if "grouping" in self.raw else Grouping()
 
     @property
+    def optimization(self) -> Optimization:
+        return (
+            optimization(self.raw["optimization"]) if "optimization" in self.raw else Optimization()
+        )
+
+    @property
     def cpu_threads(self) -> int:
         return integer(self.raw.get("cpu_threads", 2))
 
@@ -335,6 +372,7 @@ class Intent:
                 else self.initialization.sha256,
                 "cpu_threads": self.cpu_threads,
                 "grouping": cast(Record, asdict(self.grouping)),
+                "optimization": cast(Record, asdict(self.optimization)),
                 "sampling": None
                 if self.sampling is None
                 else {"sha256": self.sampling.sha256, "bytes": self.sampling.size},
