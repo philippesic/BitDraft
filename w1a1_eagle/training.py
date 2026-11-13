@@ -1,10 +1,12 @@
 import math
+import random
 from dataclasses import dataclass, field
-from typing import Callable, Literal, Protocol
+from typing import Callable, Literal, Protocol, Sequence
 
 from w1a1_eagle.clock import Clock
 
 PARAMETER_GROUPS = ("sign", "scale", "midpoint", "gain", "clip", "norm")
+MAXIMUM_SLOTS = 16
 ROW_COPIES = 15.0
 ROW_TOKEN_COPIES = 1.25
 CONTEXT_COPIES = 1.0
@@ -39,14 +41,68 @@ class Grouping:
         if type(self.device_bytes) is not int or self.device_bytes < self.activation_bytes:
             raise ValueError("device memory limit must cover the activation budget")
 
-    def windows(self, shape: Shape, context: int) -> int:
+    def windows(self, shape: Shape, context: int, slots: int | None = None) -> int:
         if type(context) is not int or context < 0:
             raise ValueError("nonnegative context length required")
+        block = shape.slots if slots is None else slots
+        if type(block) is not int or not 1 <= block <= shape.slots:
+            raise ValueError("block size must be between one slot and the model's slots")
         row = ROW_COPIES * (shape.hidden + shape.intermediate) * shape.layers
         row += ROW_TOKEN_COPIES * shape.heads * shape.layers * context
         shared = CONTEXT_COPIES * (shape.taps + shape.layers) * shape.hidden * context
-        available = int((self.activation_bytes - 4 * shared) // (4 * shape.slots * row))
-        return max(1, min(self.max_windows, available))
+        available = int((self.activation_bytes - 4 * shared) // (4 * block * row))
+        return max(1, min(self.max_windows * shape.slots // block, available))
+
+
+@dataclass(frozen=True)
+class Blocks:
+    slots: dict[int, float] = field(default_factory=lambda: {MAXIMUM_SLOTS: 1.0})
+    position_weights: Literal["decay", "reach"] = "decay"
+
+    def __post_init__(self) -> None:
+        if not self.slots or any(
+            type(size) is not int
+            or not 2 <= size <= MAXIMUM_SLOTS
+            or type(weight) is not float
+            or not math.isfinite(weight)
+            or weight <= 0
+            for size, weight in self.slots.items()
+        ):
+            raise ValueError("block sizes must be 2-16 slots with positive finite weights")
+        if self.position_weights not in ("decay", "reach"):
+            raise ValueError("position weights must be decay or reach")
+
+    @property
+    def sizes(self) -> tuple[int, ...]:
+        return tuple(sorted(self.slots))
+
+    @property
+    def fixed(self) -> int | None:
+        return self.sizes[0] if len(self.slots) == 1 else None
+
+    def draw(self, generator: random.Random) -> int:
+        sizes = self.sizes
+        return generator.choices(sizes, [self.slots[size] for size in sizes])[0]
+
+    def encode(self) -> dict[str, object]:
+        return {
+            "slots": {str(size): self.slots[size] for size in self.sizes},
+            "position_weights": self.position_weights,
+        }
+
+
+def reach_weights(windows: Sequence[int], survivors: Sequence[int]) -> tuple[float, ...]:
+    if (
+        len(windows) != MAXIMUM_SLOTS - 1
+        or len(survivors) != len(windows)
+        or any(type(v) is not int or v < 0 for v in (*windows, *survivors))
+        or any(alive > count for alive, count in zip(survivors, windows, strict=True))
+    ):
+        raise ValueError("reach weights need survivor and window counts for 15 positions")
+    weights = [1.0]
+    for alive, count in zip(survivors[:-1], windows[:-1], strict=True):
+        weights.append((alive + 1) / (count + 2))
+    return tuple(weights)
 
 
 def default_step_sizes() -> dict[str, float]:

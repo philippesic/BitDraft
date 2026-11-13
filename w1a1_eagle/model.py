@@ -211,11 +211,12 @@ class Layer(nn.Module):
         key = rope(rms(key, self.k_norm, cfg.epsilon), positions, cfg.theta)
         key = torch.cat((context[0], cache_storage(key)), 0)
         value = torch.cat((context[1], cache_storage(value)), 0)
-        query = query.view(cfg.slots, cfg.kv_heads, cfg.heads // cfg.kv_heads, cfg.head_dim)
+        slots = positions.shape[0]
+        query = query.view(slots, cfg.kv_heads, cfg.heads // cfg.kv_heads, cfg.head_dim)
         scores = torch.einsum("qhgd,khd->hgqk", query, key) / math.sqrt(cfg.head_dim)
         scores = scores.masked_fill(~allowed[None, None], -torch.inf)
         attended = torch.einsum("hgqk,khd->qhgd", functional.softmax(scores, -1), value)
-        residual = state + self.output.forward(attended.reshape(cfg.slots, -1))
+        residual = state + self.output.forward(attended.reshape(slots, -1))
         norm = rms(residual, self.ffn_norm, cfg.epsilon)
         return residual + self.down.forward(
             functional.silu(self.gate.forward(norm)) * self.up.forward(norm)
@@ -230,7 +231,7 @@ class Layer(nn.Module):
         slot_allowed: Tensor | None,
     ) -> Tensor:
         cfg = self.geometry
-        count, slots, length = positions.shape[0], cfg.slots, context[0].shape[0]
+        count, slots, length = positions.shape[0], positions.shape[1], context[0].shape[0]
         groups, heads = cfg.heads // cfg.kv_heads, cfg.kv_heads
         flat = positions.reshape(-1)
         norm = rms(state, self.attn_norm, cfg.epsilon)
@@ -319,18 +320,29 @@ class HE4(nn.Module):
         ):
             raise ValueError("invalid model inputs")
 
+    def block(self, slots: int | None) -> int:
+        size = self.geometry.slots if slots is None else slots
+        if type(size) is not int or not 1 <= size <= self.geometry.slots:
+            raise ValueError("block size must be between one slot and the model's slots")
+        return size
+
     def group_hidden(
-        self, features: Tensor, tokens: tuple[int, ...], anchors: tuple[int, ...]
+        self,
+        features: Tensor,
+        tokens: tuple[int, ...],
+        anchors: tuple[int, ...],
+        slots: int | None = None,
     ) -> Tensor:
         self.check(features, tokens, anchors)
         cfg = self.geometry
+        size = self.block(slots)
         device = self.vocabulary.device
         starts = torch.tensor(anchors, device=device)
-        offsets = torch.arange(cfg.slots, device=device)
+        offsets = torch.arange(size, device=device)
         positions = starts[:, None] + offsets[None, :]
         last = max(anchors)
         context_positions = torch.arange(last, device=device)
-        identifiers = torch.full((len(anchors), cfg.slots), self.mask, device=device)
+        identifiers = torch.full((len(anchors), size), self.mask, device=device)
         first: list[int] = [tokens[anchor] for anchor in anchors]
         identifiers[:, 0] = torch.tensor(first, device=device)
         state = functional.embedding(identifiers.reshape(-1), self.vocabulary)
@@ -352,19 +364,20 @@ class HE4(nn.Module):
                 visible if final else local,
                 None if final else slot_local,
             )
-        return rms(state, self.output_norm, cfg.epsilon).view(len(anchors), cfg.slots, cfg.hidden)
+        return rms(state, self.output_norm, cfg.epsilon).view(len(anchors), size, cfg.hidden)
 
-    def forward(self, features: Tensor, tokens: tuple[int, ...], anchor: int) -> Tensor:
+    def forward(
+        self, features: Tensor, tokens: tuple[int, ...], anchor: int, slots: int | None = None
+    ) -> Tensor:
         cfg = self.geometry
         if type(anchor) is not int:
             raise ValueError("invalid model inputs")
         self.check(features, tokens, (anchor,))
+        size = self.block(slots)
         device = self.vocabulary.device
-        positions = torch.arange(anchor, anchor + cfg.slots, device=device)
+        positions = torch.arange(anchor, anchor + size, device=device)
         context_positions = torch.arange(anchor, device=device)
-        identifiers = torch.tensor(
-            (tokens[anchor],) + (self.mask,) * (cfg.slots - 1), device=device
-        )
+        identifiers = torch.tensor((tokens[anchor],) + (self.mask,) * (size - 1), device=device)
         state = functional.embedding(identifiers, self.vocabulary)
         encoded = rms(
             self.fusion.forward(features[:anchor].to(device).float()),
@@ -374,7 +387,7 @@ class HE4(nn.Module):
         keys = torch.cat((context_positions, positions))
         for index, module in enumerate(self.blocks):
             block = cast(Layer, module)
-            allowed = torch.ones((cfg.slots, anchor + cfg.slots), dtype=torch.bool, device=device)
+            allowed = torch.ones((size, anchor + size), dtype=torch.bool, device=device)
             if index < cfg.layers - 1:
                 allowed &= (positions[:, None] - keys[None, :]).abs() < cfg.window
             state = block.forward(

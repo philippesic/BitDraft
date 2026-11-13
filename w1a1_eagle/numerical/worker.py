@@ -19,7 +19,16 @@ from w1a1_eagle.model import HE4, Projection, clamp_latents
 from w1a1_eagle.numerical.accounting import Accounting
 from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.records import canonical
-from w1a1_eagle.training import PARAMETER_GROUPS, Budget, Optimization, Progress, train
+from w1a1_eagle.training import (
+    MAXIMUM_SLOTS,
+    PARAMETER_GROUPS,
+    Blocks,
+    Budget,
+    Optimization,
+    Progress,
+    reach_weights,
+    train,
+)
 
 HEAD_ROWS = 128
 FINITE_SCAN_UPDATES = 32
@@ -29,12 +38,27 @@ class Samples(Protocol):
     def sample(self, cursor: int) -> tuple[Capture, tuple[Supervision, ...]]: ...
 
 
-def label_weights(lengths: tuple[int, ...]) -> Tensor:
+def label_weights(lengths: tuple[int, ...], positions: tuple[float, ...] | None = None) -> Tensor:
     parts = []
     for length in lengths:
-        weights = torch.exp(-torch.arange(length) / 7)
+        weights = (
+            torch.exp(-torch.arange(length) / 7)
+            if positions is None
+            else torch.tensor(positions[:length], dtype=torch.float32)
+        )
         parts.append(weights / weights.sum() / len(lengths))
     return torch.cat(parts)
+
+
+def position_weights(value: object) -> tuple[float, ...] | None:
+    if value is None:
+        return None
+    weights = tuple(number(item) for item in sequence(value))
+    if len(weights) != MAXIMUM_SLOTS - 1 or any(
+        not math.isfinite(weight) or weight <= 0 for weight in weights
+    ):
+        raise ValueError("position weights need 15 positive finite values")
+    return weights
 
 
 def optimizer_options(group: object) -> Record:
@@ -52,9 +76,19 @@ class TensorWorker:
         dataset: str | None = None,
         clock: Clock | None = None,
         optimization: Optimization | None = None,
+        blocks: Blocks | None = None,
+        block_slots: Callable[[int], int] | None = None,
     ) -> None:
-        if not identity or model.geometry.slots != 16:
+        if not identity or model.geometry.slots != MAXIMUM_SLOTS:
             raise ValueError("explicit HE4 recipe and sixteen slots required")
+        self.blocks = blocks or Blocks()
+        fixed = self.blocks.fixed
+        if block_slots is None and fixed is None:
+            raise ValueError("random block sizes require the sampler's block size per cursor")
+        self.block_slots: Callable[[int], int] = (
+            block_slots if block_slots is not None else lambda _: cast(int, fixed)
+        )
+        self.position_weights: tuple[float, ...] | None = None
         self.accounting = Accounting(dataset=dataset)
         self.accounting.validate()
         self.clock = clock or Monotonic()
@@ -236,15 +270,16 @@ class TensorWorker:
             self.last_publication = None
             started = self.clock.now()
             try:
+                slots = self.block_slots(cursor)
                 capture, windows = self.samples.sample(cursor)
             finally:
                 self.accounting.data_seconds += self.elapsed(started)
             began = self.update_clock.now()
             complete = False
             try:
-                loss = self.update(capture, windows)
+                loss = self.update(capture, windows, slots)
                 complete = True
-                labels = sum(len(window.labels) for window in windows)
+                labels = sum(min(len(window.labels), slots - 1) for window in windows)
                 self.accounting.dataset_labels += labels
                 self.accounting.observed_labels += labels
                 return loss
@@ -268,24 +303,47 @@ class TensorWorker:
             self.ready = False
             raise ValueError("nonfinite post-update state")
 
-    def group_loss(self, capture: Capture, windows: tuple[Supervision, ...]) -> Tensor:
+    def refresh_position_weights(self, measured: Record) -> tuple[float, ...]:
+        positions = record(measured["positions"])
+        weights = reach_weights(
+            tuple(integer(value) for value in sequence(positions["windows"])),
+            tuple(integer(value) for value in sequence(positions["survivors"])),
+        )
+        self.position_weights = weights
+        return weights
+
+    def group_loss(
+        self, capture: Capture, windows: tuple[Supervision, ...], slots: int | None = None
+    ) -> Tensor:
         if not windows or any(not window.labels for window in windows):
             raise ValueError("an update requires supervised windows")
         model = self.model
         device = model.vocabulary.device
-        slots = model.geometry.slots
+        size = model.block(slots)
+        if size < 2:
+            raise ValueError("an update requires at least one drafted position")
+        positions: tuple[float, ...] | None = None
+        if self.blocks.position_weights == "reach":
+            if self.position_weights is None:
+                raise ValueError("reach weights require a development refresh before updating")
+            positions = self.position_weights
         hidden = model.group_hidden(
-            capture.features, capture.tokens, tuple(window.anchor for window in windows)
+            capture.features, capture.tokens, tuple(window.anchor for window in windows), size
         )
+        lengths = tuple(min(len(window.labels), size - 1) for window in windows)
         indices: list[int] = [
-            index * slots + 1 + offset
-            for index, window in enumerate(windows)
-            for offset in range(len(window.labels))
+            index * size + 1 + offset
+            for index, length in enumerate(lengths)
+            for offset in range(length)
         ]
-        targets: list[int] = [label for window in windows for label in window.labels]
+        targets: list[int] = [
+            label
+            for window, length in zip(windows, lengths, strict=True)
+            for label in window.labels[:length]
+        ]
         rows = torch.tensor(indices, device=device)
         labels = torch.tensor(targets, dtype=torch.int64, device=device)
-        weights = label_weights(tuple(len(window.labels) for window in windows)).to(device)
+        weights = label_weights(lengths, positions).to(device)
         selected = hidden.view(-1, hidden.shape[-1]).index_select(0, rows)
         head = selected.detach().requires_grad_()
         total = torch.zeros((), device=device)
@@ -304,11 +362,13 @@ class TensorWorker:
         torch.autograd.backward(selected, head.grad)
         return total
 
-    def update(self, capture: Capture, windows: tuple[Supervision, ...]) -> float:
+    def update(
+        self, capture: Capture, windows: tuple[Supervision, ...], slots: int | None = None
+    ) -> float:
         feature_version = capture.features._version
         multiplier = self.optimization.schedule.multiplier(self.updates)
         self.optimizer.zero_grad(set_to_none=True)
-        loss = self.group_loss(capture, windows)
+        loss = self.group_loss(capture, windows, slots)
         norm = torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0, error_if_nonfinite=True)
         self.last_gradient_norm = float(norm)
         for group in cast(list[dict[str, object]], self.optimizer.param_groups):
@@ -356,7 +416,10 @@ class TensorWorker:
             self.verify_finite()
             self.progress.validate()
             state: dict[str, object] = {
-                "schema": 4,
+                "schema": 5,
+                "position_weights": None
+                if self.position_weights is None
+                else list(self.position_weights),
                 "accounting": self.accounting.encode(),
                 "config": self.identity,
                 "updates": self.updates,
@@ -428,11 +491,14 @@ class TensorWorker:
                 "frozen_sha256",
             }
             schema = integer(state["schema"])
-            if schema not in {3, 4} or set(state) != (
-                required | {"accounting"} if schema == 4 else required
+            if schema not in {3, 4, 5} or set(state) != (
+                required
+                | ({"accounting"} if schema >= 4 else set())
+                | ({"position_weights"} if schema == 5 else set())
             ):
                 raise ValueError("unsupported tensor state schema")
-            accounting = Accounting.parse(state["accounting"]) if schema == 4 else Accounting()
+            accounting = Accounting.parse(state["accounting"]) if schema >= 4 else Accounting()
+            saved_weights = position_weights(state["position_weights"]) if schema == 5 else None
             dataset = self.accounting.dataset
             if (
                 mode == "resume"
@@ -644,6 +710,9 @@ class TensorWorker:
             self.last_gradient_norm = number(state["gradient_norm"])
             if self.last_gradient_norm < 0:
                 raise ValueError("invalid gradient norm")
+            self.position_weights = (
+                saved_weights if self.blocks.position_weights == "reach" else None
+            )
             self.updates = updates
             self.ready = True
 
@@ -666,7 +735,7 @@ def checkpoint_accounting(reference: StateRef, memory_budget_bytes: int) -> Acco
     schema = integer(state["schema"])
     if schema == 3:
         return None
-    if schema != 4:
+    if schema not in {4, 5}:
         raise ValueError("unsupported checkpoint accounting schema")
     result = Accounting.parse(state["accounting"])
     if result.dataset_start_updates > reference.updates:

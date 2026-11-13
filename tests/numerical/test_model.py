@@ -37,10 +37,17 @@ from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.entry import admission
 from w1a1_eagle.numerical.export import export_he4, packed_signs
 from w1a1_eagle.numerical.weights import load_he4, shapes
-from w1a1_eagle.numerical.worker import TensorWorker
+from w1a1_eagle.numerical.worker import TensorWorker, label_weights
 from w1a1_eagle.records import artifact, canonical, read, reference
 from w1a1_eagle.supervisor import execute
-from w1a1_eagle.training import Budget, Grouping, Optimization, Schedule, default_step_sizes
+from w1a1_eagle.training import (
+    Blocks,
+    Budget,
+    Grouping,
+    Optimization,
+    Schedule,
+    default_step_sizes,
+)
 
 
 def tiny_model(window: int = 4096) -> tuple[HE4, torch.Tensor]:
@@ -504,6 +511,49 @@ class TestNumerical(unittest.TestCase):
             model.group_hidden(features, tokens, ())
         with self.assertRaisesRegex(ValueError, "inputs"):
             model.group_hidden(features, tokens, (20,))
+        with self.assertRaisesRegex(ValueError, "block size"):
+            model.group_hidden(features, tokens, (2,), 17)
+
+    def test_short_block_is_the_full_block_without_later_slots(self) -> None:
+        model, features = self.tiny_model(5)
+        cfg = model.geometry
+        tokens = tuple(range(20))
+        with torch.no_grad():
+            for size in (2, 3, 4):
+                grouped = torch.nn.functional.linear(
+                    model.group_hidden(features, tokens, (2, 7, 12), size), model.vocabulary
+                )
+                for index, anchor in enumerate((2, 7, 12)):
+                    positions = torch.arange(anchor, anchor + cfg.slots)
+                    context = torch.arange(anchor)
+                    keys = torch.cat((context, positions))
+                    state = torch.nn.functional.embedding(
+                        torch.tensor((tokens[anchor],) + (model.mask,) * (cfg.slots - 1)),
+                        model.vocabulary,
+                    )
+                    encoded = rms(
+                        model.fusion.forward(features[:anchor].float()),
+                        model.encoder_norm,
+                        cfg.epsilon,
+                    )
+                    for layer, module in enumerate(model.blocks):
+                        block = cast(Layer, module)
+                        allowed = (keys[None, :] < anchor + size) | (
+                            keys[None, :] == positions[:, None]
+                        )
+                        if layer < cfg.layers - 1:
+                            allowed &= (positions[:, None] - keys[None, :]).abs() < cfg.window
+                        state = block.forward(
+                            state, block.context(encoded, context), positions, allowed
+                        )
+                    masked = torch.nn.functional.linear(
+                        rms(state, model.output_norm, cfg.epsilon), model.vocabulary
+                    )[:size]
+                    single = model.forward(features, tokens, anchor, size)
+                    torch.testing.assert_close(single, masked, rtol=0, atol=1e-5)
+                    torch.testing.assert_close(grouped[index], single, rtol=0, atol=1e-5)
+                full = model.forward(features, tokens, 7)[:size]
+                self.assertFalse(torch.allclose(full, model.forward(features, tokens, 7, size)))
 
     def test_group_gradient_is_mean_of_window_gradients(self) -> None:
         worker = self.fixture_worker("gradient")
@@ -727,6 +777,28 @@ class TestNumerical(unittest.TestCase):
             ):
                 grouped["grouping"] = invalid
                 intent_path.write_bytes(canonical(grouped))
+                with self.assertRaises(ValueError):
+                    Intent.load(intent_path)
+            self.assertEqual(sealed.blocks, Blocks())
+            stated = dict(intent)
+            for value, same in (
+                ({"slots": {"16": 1.0}, "position_weights": "decay"}, True),
+                ({"slots": {"3": 2.0, "16": 1.0}, "position_weights": "decay"}, False),
+            ):
+                stated["blocks"] = value
+                intent_path.write_bytes(canonical(stated))
+                self.assertEqual(Intent.load(intent_path).recipe == sealed.recipe, same)
+            self.assertEqual(Intent.load(intent_path).blocks, Blocks({3: 2.0, 16: 1.0}))
+            for broken_blocks in (
+                {"slots": {"1": 1.0}, "position_weights": "decay"},
+                {"slots": {"03": 1.0}, "position_weights": "decay"},
+                {"slots": {"4": 0.0}, "position_weights": "decay"},
+                {"slots": {}, "position_weights": "decay"},
+                {"slots": {"4": 1.0}, "position_weights": "reach"},
+                {"slots": {"4": 1.0}},
+            ):
+                stated["blocks"] = broken_blocks
+                intent_path.write_bytes(canonical(stated))
                 with self.assertRaises(ValueError):
                     Intent.load(intent_path)
             self.assertEqual(sealed.optimization, Optimization())
@@ -1039,7 +1111,12 @@ class TestNumerical(unittest.TestCase):
                 load_capture(spec, 128 * 1024, hidden=4)
 
     def fixture_worker(
-        self, identity: str, device: str = "cpu", optimization: Optimization | None = None
+        self,
+        identity: str,
+        device: str = "cpu",
+        optimization: Optimization | None = None,
+        blocks: Blocks | None = None,
+        sizes: tuple[int, ...] | None = None,
     ) -> TensorWorker:
         model, features = self.tiny_model()
         model.to(device)
@@ -1058,7 +1135,54 @@ class TestNumerical(unittest.TestCase):
 
         if optimization is not None and optimization.latent_multiple is not None:
             bound_latents(model, optimization.latent_multiple)
-        return TensorWorker(model, Source(), identity, optimization=optimization)
+        return TensorWorker(
+            model,
+            Source(),
+            identity,
+            optimization=optimization,
+            blocks=blocks,
+            block_slots=None if sizes is None else lambda cursor: sizes[cursor % len(sizes)],
+        )
+
+    def test_random_blocks_and_reach_weights_resume_exactly(self) -> None:
+        blocks = Blocks({3: 1.0, 5: 1.0, 16: 1.0}, "reach")
+        sizes = (3, 16, 5)
+
+        def measured(alive: int) -> Record:
+            survivors = [max(0, alive - 9 * index) for index in range(15)]
+            return {"positions": {"windows": [120] * 15, "survivors": survivors}}
+
+        self.assertTrue(
+            torch.equal(label_weights((2,), (1.0, 0.5) + (0.1,) * 13), torch.tensor([2 / 3, 1 / 3]))
+        )
+        with self.assertRaisesRegex(ValueError, "sampler"):
+            self.fixture_worker("reach", blocks=blocks)
+        unrefreshed = self.fixture_worker("reach", blocks=blocks, sizes=sizes)
+        with self.assertRaisesRegex(ValueError, "refresh"):
+            unrefreshed.run(Monotonic(), Budget(1, 60, 1), lambda: False)
+        with tempfile.TemporaryDirectory() as directory:
+            original = self.fixture_worker("reach", blocks=blocks, sizes=sizes)
+            original.refresh_position_weights(measured(110))
+            original.run(Monotonic(), Budget(1, 60, 1), lambda: False)
+            weights = original.refresh_position_weights(measured(60))
+            self.assertEqual(weights[:3], (1.0, 61 / 122, 52 / 122))
+            original.run(Monotonic(), Budget(2, 60, 2), lambda: False)
+            parent = original.checkpoint(Store(Path(directory) / "states"), 4 * 1024 * 1024)
+            original.run(Monotonic(), Budget(4, 60, 4), lambda: False)
+            self.assertEqual(original.accounting.observed_labels, 6 + 17 + 10 + 4)
+            resumed = self.fixture_worker("reach", blocks=blocks, sizes=sizes)
+            resumed.restore(parent, 8 * 1024 * 1024)
+            self.assertEqual(resumed.position_weights, weights)
+            resumed.run(Monotonic(), Budget(4, 60, 4), lambda: False)
+            expected = dict(original.model.named_parameters())
+            for name, value in resumed.model.named_parameters():
+                self.assertTrue(torch.equal(value, expected[name]), name)
+            moments = original.optimizer.state_dict()["state"]
+            for key, state in resumed.optimizer.state_dict()["state"].items():
+                self.assertTrue(torch.equal(state["exp_avg_sq"], moments[key]["exp_avg_sq"]))
+            decay = self.fixture_worker("decay")
+            decay.restore(parent, 8 * 1024 * 1024, mode="branch")
+            self.assertIsNone(decay.position_weights)
 
     def test_offload_preserves_optimizer_rng_and_refuses_mutation(self) -> None:
         worker = self.fixture_worker("offload")
@@ -1206,21 +1330,24 @@ class TestNumerical(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "incomplete"):
                 broken.checkpoint(Store(Path(directory) / "invalid"), 4 * 1024 * 1024)
             state = torch.load(parent.artifact.path, map_location="cpu", weights_only=True)
-            self.assertEqual(state["schema"], 4)
+            self.assertEqual((state["schema"], state["position_weights"]), (5, None))
             self.assertNotIn("vocabulary", state["model"])
             self.assertNotIn("fusion.operand", state["model"])
             self.assertEqual(state["frozen_sha256"], original.frozen_sha256)
             legacy_state = dict(state)
-            legacy_state.pop("accounting")
-            legacy_state["schema"] = 3
-            legacy_reference = Store(Path(directory) / "schema-three").commit_with(
-                lambda output: torch.save(legacy_state, output), "recipe", 1, 4 * 1024 * 1024
-            )
-            legacy_worker = self.fixture_worker("recipe")
-            legacy_worker.restore(legacy_reference, 8 * 1024 * 1024)
-            legacy_worker.run(Monotonic(), Budget(2, 60, 2), lambda: False)
-            for name, value in legacy_worker.model.named_parameters():
-                self.assertTrue(torch.equal(value, expected[name]), name)
+            legacy_state.pop("position_weights")
+            for schema in (4, 3):
+                if schema == 3:
+                    legacy_state.pop("accounting")
+                legacy_state["schema"] = schema
+                legacy_reference = Store(Path(directory) / f"schema-{schema}").commit_with(
+                    lambda output: torch.save(legacy_state, output), "recipe", 1, 4 * 1024 * 1024
+                )
+                legacy_worker = self.fixture_worker("recipe")
+                legacy_worker.restore(legacy_reference, 8 * 1024 * 1024)
+                legacy_worker.run(Monotonic(), Budget(2, 60, 2), lambda: False)
+                for name, value in legacy_worker.model.named_parameters():
+                    self.assertTrue(torch.equal(value, expected[name]), name)
             first_state = next(iter(state["optimizer"]["state"].values()))
             first_state["exp_avg"] = torch.zeros((1,))
             malformed = Store(Path(directory) / "malformed").commit_with(
@@ -1244,7 +1371,7 @@ class TestNumerical(unittest.TestCase):
             previous.run(Monotonic(), Budget(1, 60, 1), lambda: False)
             parent = previous.checkpoint(Store(root / "previous"), 4 * 1024 * 1024)
             saved = torch.load(parent.artifact.path, weights_only=True)
-            self.assertEqual(saved["schema"], 4)
+            self.assertEqual(saved["schema"], 5)
             self.assertEqual(
                 {
                     (group["foreach"], group["fused"])
@@ -1449,6 +1576,29 @@ class TestNumerical(unittest.TestCase):
             self.assertEqual(
                 sorted(len(corpus.locate(cursor)[1]) for cursor in range(7)), [1, 2, 3, 3, 4, 4, 4]
             )
+            self.assertEqual({corpus.slots(cursor) for cursor in range(7)}, {16})
+            corpus.blocks = Blocks({4: 1.0})
+            corpus._index(5, 32 * 1024 * 1024, 4, 0)
+            self.assertEqual(corpus.limits, (5, 1, 12, 1, 3))
+            self.assertEqual((corpus.groups_per_pass, corpus.labels_per_update), (4, 36))
+            corpus.grouping = Grouping(8)
+            corpus.blocks = Blocks({2: 1.0, 16: 2.0})
+            corpus._index(5, 32 * 1024 * 1024, 4, 0)
+            self.assertEqual(corpus.block_limits[2], (5, 1, 12, 1, 3))
+            plan = [(corpus.slots(c), corpus.locate(c)) for c in range(corpus.groups_per_pass)]
+            self.assertEqual({slots for slots, _ in plan}, {2, 16})
+            seen = []
+            for slots, (row, anchors) in plan:
+                limit = corpus.block_limits[slots][corpus.rows.index(row)]
+                self.assertTrue(1 <= len(anchors) <= limit)
+                seen.extend((row.prompt.identity, anchor) for anchor in anchors)
+            self.assertEqual(sorted(seen), sorted(expected))
+            again = Corpus.__new__(Corpus)
+            again.__dict__.update(corpus.__dict__)
+            again._index(5, 32 * 1024 * 1024, 4, 0)
+            self.assertEqual(again.group_slots, corpus.group_slots)
+            self.assertEqual(again.locate(3), corpus.locate(3))
+            self.assertEqual(corpus.slots(corpus.groups_per_pass + 1), corpus.slots(1))
 
     def test_continuation_keeps_optimizer_and_dataset_exposure_origin(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -1533,8 +1683,11 @@ class TestNumerical(unittest.TestCase):
         self.assertEqual(
             record(groups["code"])["mean_loss"], record(groups["writing"])["mean_loss"]
         )
-        leading = record(result["leading_positions"])
-        self.assertEqual(leading["windows"], [120, 120, 120])
+        leading = record(result["positions"])
+        self.assertEqual(leading["windows"], [120] * 15)
+        self.assertEqual(
+            record(diagnostics.measure(model, 3)["positions"])["windows"], [120, 120] + [0] * 13
+        )
         top1 = [number(value) for value in sequence(leading["top1"])]
         survival = [number(value) for value in sequence(leading["prefix_survival"])]
         self.assertEqual(survival[0], top1[0])

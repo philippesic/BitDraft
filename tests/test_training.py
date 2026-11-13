@@ -4,7 +4,7 @@ import subprocess
 import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import cast
+from typing import Literal, cast
 
 import pytest
 
@@ -292,6 +292,36 @@ def test_group_size_follows_context_memory_rule() -> None:
     for invalid in ((0, 1, 1), (65, 1, 1), (8, 0, 1), (8, 2, 1)):
         with pytest.raises(ValueError):
             Grouping(*invalid)
+    assert rule.windows(Shape(), 0, 16) == rule.max_windows
+    assert rule.windows(Shape(), 0, 4) == 4 * rule.max_windows
+    for context in (4000, 13471):
+        assert rule.windows(Shape(), context, 4) // 4 == rule.windows(Shape(), context) > 1
+    for slots in (0, 17):
+        with pytest.raises(ValueError, match="block size"):
+            rule.windows(Shape(), 0, slots)
+
+
+def test_block_sizes_and_reach_weights() -> None:
+    import random
+
+    from w1a1_eagle.training import Blocks, reach_weights
+
+    assert (Blocks().fixed, Blocks({4: 1.0}).fixed, Blocks({3: 1.0, 9: 1.0}).fixed) == (16, 4, None)
+    weighted = Blocks({3: 9.0, 16: 1.0})
+    draws = [weighted.draw(random.Random(seed)) for seed in range(400)]
+    assert draws == [weighted.draw(random.Random(seed)) for seed in range(400)]
+    assert 300 < draws.count(3) < 400 and set(draws) == {3, 16}
+    assert weighted.encode() == {"slots": {"3": 9.0, "16": 1.0}, "position_weights": "decay"}
+    for slots in ({1: 1.0}, {17: 1.0}, {4: 0.0}, {}):
+        with pytest.raises(ValueError):
+            Blocks(slots)
+    with pytest.raises(ValueError):
+        Blocks({4: 1.0}, cast(Literal["decay", "reach"], "flat"))
+    reach = reach_weights([120] * 14 + [0], [118, 60] + [0] * 13)
+    assert reach[:4] == (1.0, 119 / 122, 61 / 122, 1 / 122) and reach[-1] == 1 / 122
+    for windows, survivors in (([120] * 14, [0] * 14), ([1] * 15, [2] * 15)):
+        with pytest.raises(ValueError):
+            reach_weights(windows, survivors)
 
 
 def test_streamed_assets_and_retention_preserve_recoverable_states(tmp_path: Path) -> None:

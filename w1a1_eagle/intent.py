@@ -9,7 +9,7 @@ from w1a1_eagle.data import Artifact
 from w1a1_eagle.index import IndexSpec, Mount
 from w1a1_eagle.records import artifact, canonical, identity, read
 from w1a1_eagle.storage import relocated
-from w1a1_eagle.training import Budget, Grouping, Optimization, Schedule
+from w1a1_eagle.training import Blocks, Budget, Grouping, Optimization, Schedule
 
 
 def optimization(value: object) -> Optimization:
@@ -46,6 +46,22 @@ def grouping(value: object) -> Grouping:
         raise ValueError("grouping requires max_windows, activation_bytes and device_bytes")
     return Grouping(
         integer(raw["max_windows"]), integer(raw["activation_bytes"]), integer(raw["device_bytes"])
+    )
+
+
+def blocks(value: object) -> Blocks:
+    raw = record(value)
+    if set(raw) != {"slots", "position_weights"}:
+        raise ValueError("blocks require slots and position_weights")
+    sizes = record(raw["slots"])
+    if any(not key.isdigit() or str(int(key)) != key for key in sizes):
+        raise ValueError("block sizes are decimal slot counts")
+    weights = raw["position_weights"]
+    if weights not in ("decay", "reach"):
+        raise ValueError("position weights must be decay or reach")
+    return Blocks(
+        {int(key): number(value) for key, value in sizes.items()},
+        "reach" if weights == "reach" else "decay",
     )
 
 
@@ -154,6 +170,7 @@ class Intent:
                 "cpu_threads",
                 "grouping",
                 "optimization",
+                "blocks",
             }
             != required
             or type(raw["schema"]) is not int
@@ -217,6 +234,10 @@ class Intent:
             grouping(raw["grouping"])
         if "optimization" in raw:
             optimization(raw["optimization"])
+        if "blocks" in raw and (
+            blocks(raw["blocks"]).position_weights == "reach" and "development" not in raw
+        ):
+            raise ValueError("reach position weights require a DEV specification")
         if "model_update_seconds" in raw and number(raw["model_update_seconds"]) <= 0:
             raise ValueError("positive cumulative model-update time limit required")
         budget = record(raw["budget"])
@@ -336,6 +357,10 @@ class Intent:
         )
 
     @property
+    def blocks(self) -> Blocks:
+        return blocks(self.raw["blocks"]) if "blocks" in self.raw else Blocks()
+
+    @property
     def cpu_threads(self) -> int:
         return integer(self.raw.get("cpu_threads", 2))
 
@@ -373,6 +398,7 @@ class Intent:
                 "cpu_threads": self.cpu_threads,
                 "grouping": cast(Record, asdict(self.grouping)),
                 "optimization": cast(Record, asdict(self.optimization)),
+                "blocks": self.blocks.encode(),
                 "sampling": None
                 if self.sampling is None
                 else {"sha256": self.sampling.sha256, "bytes": self.sampling.size},

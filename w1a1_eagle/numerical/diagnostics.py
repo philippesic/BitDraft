@@ -6,8 +6,7 @@ from w1a1_eagle.model import HE4
 from w1a1_eagle.numerical.captures import CaptureCache
 from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.records import artifact, read
-
-SERVING_POSITIONS = 3
+from w1a1_eagle.training import MAXIMUM_SLOTS
 
 
 class Diagnostics:
@@ -78,12 +77,13 @@ class Diagnostics:
         self.specs = specs
         self.cache = CaptureCache(byte_budget)
 
-    def measure(self, model: HE4) -> Record:
+    def measure(self, model: HE4, slots: int = MAXIMUM_SLOTS) -> Record:
+        size = model.block(slots)
         cpu_rng = torch.get_rng_state()
         cuda_rng = torch.cuda.get_rng_state_all() if model.vocabulary.device.type == "cuda" else []
         losses: list[float] = []
         matched = labels_count = 0
-        leading = [[0, 0, 0] for _ in range(SERVING_POSITIONS)]
+        positions = [[0, 0, 0] for _ in range(MAXIMUM_SLOTS - 1)]
         categories: dict[str, list[tuple[float, int, int]]] = {}
         with torch.no_grad():
             for name, anchor in self.windows:
@@ -92,12 +92,15 @@ class Diagnostics:
                 if len(selected) != 1:
                     raise ValueError("diagnostic anchor is not eligible in authenticated capture")
                 window = selected[0]
-                logits = model.forward(capture.features, capture.tokens, anchor)[
-                    1 : 1 + len(window.labels)
+                length = min(len(window.labels), size - 1)
+                logits = model.forward(capture.features, capture.tokens, anchor, size)[
+                    1 : 1 + length
                 ]
-                labels = torch.tensor(window.labels, device=logits.device, dtype=torch.int64)
+                labels = torch.tensor(
+                    window.labels[:length], device=logits.device, dtype=torch.int64
+                )
                 loss = torch.nn.functional.cross_entropy(logits, labels, reduction="none")
-                weights = torch.exp(-torch.arange(len(window.labels), device=logits.device) / 7)
+                weights = torch.exp(-torch.arange(length, device=logits.device) / 7)
                 value = (loss * weights).sum() / weights.sum()
                 if not bool(torch.isfinite(value)):
                     raise ValueError("nonfinite diagnostic loss")
@@ -105,16 +108,16 @@ class Diagnostics:
                 hits = logits.argmax(dim=-1) == labels
                 correct = int(hits.sum())
                 survived = 1
-                for position in range(min(SERVING_POSITIONS, len(window.labels))):
+                for position in range(length):
                     hit = int(hits[position])
                     survived *= hit
-                    leading[position][0] += 1
-                    leading[position][1] += hit
-                    leading[position][2] += survived
+                    positions[position][0] += 1
+                    positions[position][1] += hit
+                    positions[position][2] += survived
                 matched += correct
-                labels_count += len(window.labels)
+                labels_count += length
                 categories.setdefault(self.categories[name], []).append(
-                    (float(value), correct, len(window.labels))
+                    (float(value), correct, length)
                 )
         if not torch.equal(cpu_rng, torch.get_rng_state()) or any(
             not torch.equal(a, b)
@@ -137,11 +140,16 @@ class Diagnostics:
                 }
                 for name, values in categories.items()
             },
-            "leading_positions": {
-                "windows": [value[0] for value in leading],
-                "top1": [value[1] / value[0] if value[0] else None for value in leading],
-                "prefix_survival": [value[2] / value[0] if value[0] else None for value in leading],
-                "scope": "first draft positions measured with all training slots; serving drafts fewer slots per round",
+            "slots": size,
+            "positions": {
+                "windows": [value[0] for value in positions],
+                "hits": [value[1] for value in positions],
+                "survivors": [value[2] for value in positions],
+                "top1": [value[1] / value[0] if value[0] else None for value in positions],
+                "prefix_survival": [
+                    value[2] / value[0] if value[0] else None for value in positions
+                ],
+                "scope": "draft positions 1-15 measured in one block of this many slots; serving builds depth+1 slots per round",
             },
             "scope": "teacher-forced hard-label diagnostic; not native acceptance",
         }

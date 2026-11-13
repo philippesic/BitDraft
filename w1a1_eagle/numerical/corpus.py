@@ -20,7 +20,7 @@ from w1a1_eagle.model import Geometry
 from w1a1_eagle.numerical.captures import TAPS, Capture, CaptureCache, CaptureSpec
 from w1a1_eagle.records import artifact, read
 from w1a1_eagle.sampling import TaskSampler
-from w1a1_eagle.training import Grouping, Shape
+from w1a1_eagle.training import Blocks, Grouping, Shape
 
 
 class Corpus:
@@ -33,6 +33,7 @@ class Corpus:
         sampling: Artifact | None = None,
         grouping: Grouping = Grouping(),
         shape: Shape | None = None,
+        blocks: Blocks = Blocks(),
     ) -> None:
         if type(byte_budget) is not int or byte_budget < 1 or type(seed) is not int or seed < 0:
             raise ValueError("positive memory budget and nonnegative seed required")
@@ -40,6 +41,11 @@ class Corpus:
         if self.shape.hidden != hidden:
             raise ValueError("corpus feature width and model geometry differ")
         self.grouping = grouping
+        self.blocks = blocks
+        if blocks.sizes[-1] > self.shape.slots:
+            raise ValueError("block sizes exceed the model's slots")
+        if blocks.fixed is None and sampling is not None:
+            raise ValueError("random block sizes require plain shuffled groups")
         self.sampling = sampling
         self.task_sampler: TaskSampler | None = None
         if isinstance(manifest, Dataset):
@@ -175,22 +181,41 @@ class Corpus:
             raise ValueError("sampler metadata exceeds memory budget")
         self.cache = CaptureCache(byte_budget - metadata_bytes, hidden)
         self.seed = seed
-        self.limits = tuple(
-            min(len(row.anchors), self.grouping.windows(self.shape, row.anchors[-1]))
-            if row.anchors
-            else 1
-            for row in self.rows
-        )
-        self.groups_per_pass = sum(
-            math.ceil(len(row.anchors) / limit)
-            for row, limit in zip(self.rows, self.limits, strict=True)
-        )
-        self.windows_per_update = max(
-            limit for row, limit in zip(self.rows, self.limits, strict=True) if row.anchors
-        )
+        self.block_limits = {
+            size: tuple(
+                min(len(row.anchors), self.grouping.windows(self.shape, row.anchors[-1], size))
+                if row.anchors
+                else 1
+                for row in self.rows
+            )
+            for size in self.blocks.sizes
+        }
+        self.limits = self.block_limits[self.blocks.sizes[-1]]
         self.order: list[int] = []
         self.members: list[int] = []
         self.starts: list[int] = []
+        self.group_slots: list[int] = []
+        fixed = self.blocks.fixed
+        if fixed is None:
+            self.partition()
+            self.groups_per_pass = len(self.order)
+        else:
+            self.limits = self.block_limits[fixed]
+            self.groups_per_pass = sum(
+                math.ceil(len(row.anchors) / limit)
+                for row, limit in zip(self.rows, self.limits, strict=True)
+            )
+        self.windows_per_update = max(
+            limit
+            for limits in self.block_limits.values()
+            for row, limit in zip(self.rows, limits, strict=True)
+            if row.anchors
+        )
+        self.labels_per_update = max(
+            (size - 1)
+            * max(limit for row, limit in zip(self.rows, limits, strict=True) if row.anchors)
+            for size, limits in self.block_limits.items()
+        )
         if self.sampling is not None:
             self.sampling.verify()
             configuration = read(self.sampling.path)
@@ -217,9 +242,13 @@ class Corpus:
             self.windows_per_update = max(
                 self.task_sampler.size(index) for index, row in enumerate(self.rows) if row.anchors
             )
+            self.labels_per_update = (self.blocks.sizes[-1] - 1) * self.windows_per_update
 
     def partition(self) -> None:
         generator = random.Random(self.seed)
+        if self.blocks.fixed is None:
+            self.plan(generator)
+            return
         start = 0
         for row, limit in zip(self.rows, self.limits, strict=True):
             count = len(row.anchors)
@@ -233,6 +262,34 @@ class Corpus:
         self.starts.append(len(self.members))
         self.order = list(range(self.groups_per_pass))
         generator.shuffle(self.order)
+
+    def plan(self, generator: random.Random) -> None:
+        start = 0
+        for index, row in enumerate(self.rows):
+            count = len(row.anchors)
+            members = list(range(start, start + count))
+            generator.shuffle(members)
+            taken = 0
+            while taken < count:
+                slots = self.blocks.draw(generator)
+                remaining = count - taken
+                size = math.ceil(remaining / math.ceil(remaining / self.block_limits[slots][index]))
+                self.starts.append(len(self.members))
+                self.members.extend(members[taken : taken + size])
+                self.group_slots.append(slots)
+                taken += size
+            start += count
+        self.starts.append(len(self.members))
+        self.order = list(range(len(self.group_slots)))
+        generator.shuffle(self.order)
+
+    def slots(self, cursor: int) -> int:
+        if type(cursor) is not int or cursor < 0:
+            raise ValueError("nonnegative sampler cursor required")
+        fixed = self.blocks.fixed
+        if fixed is not None:
+            return fixed
+        return self.group_slots[self.order[cursor % self.groups_per_pass]]
 
     def locate(self, cursor: int) -> tuple[CaptureRow, tuple[int, ...]]:
         if type(cursor) is not int or cursor < 0:
@@ -264,10 +321,6 @@ class Corpus:
         upcoming, _ = self.locate(cursor + 1)
         self.cache.prefetch(upcoming.capture)
         return capture, tuple(windows)
-
-    @property
-    def labels_per_update(self) -> int:
-        return 15 * self.windows_per_update
 
     def exposure(self, updates: int) -> dict[str, int | float]:
         if type(updates) is not int or updates < 0:

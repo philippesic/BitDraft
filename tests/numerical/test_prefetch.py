@@ -17,7 +17,7 @@ import torch
 from tests.numerical.test_model import gguf_fixture, tiny_model
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.clock import Monotonic
-from w1a1_eagle.contracts import Record, record
+from w1a1_eagle.contracts import Record, integer, record, sequence
 from w1a1_eagle.data import Artifact, Supervision
 from w1a1_eagle.identity import source_identity
 from w1a1_eagle.intent import Intent
@@ -28,7 +28,7 @@ from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.entry import run_leased
 from w1a1_eagle.numerical.worker import TensorWorker
 from w1a1_eagle.processes import ProcessIdentity
-from w1a1_eagle.records import canonical, reference
+from w1a1_eagle.records import canonical, read, reference
 from w1a1_eagle.training import Budget, Grouping
 
 BUDGET = 32 * 1024 * 1024
@@ -370,14 +370,20 @@ class TestPrefetchEntry(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             intent = self.prepare(root)
+            raw = read(intent)
+            raw["blocks"] = {"slots": {"2": 1.0, "4": 1.0, "16": 1.0}, "position_weights": "decay"}
+            intent.write_bytes(canonical(raw))
             original = TensorWorker.update
 
             def failing(
-                worker: TensorWorker, capture: Capture, windows: tuple[Supervision, ...]
+                worker: TensorWorker,
+                capture: Capture,
+                windows: tuple[Supervision, ...],
+                slots: int | None = None,
             ) -> float:
                 if worker.updates == 2:
                     raise ValueError("injected update failure")
-                return original(worker, capture, windows)
+                return original(worker, capture, windows, slots)
 
             outcomes = []
             for prefetch in (True, False):
@@ -402,6 +408,7 @@ class TestPrefetchEntry(unittest.TestCase):
                         row.get("trajectory"),
                         row.get("anchors"),
                         row.get("labels"),
+                        row.get("slots"),
                     )
                     for row in events
                     if row["kind"] in {"update-attempt", "exposure", "checkpoint"}
@@ -429,5 +436,10 @@ class TestPrefetchEntry(unittest.TestCase):
                 self.assertTrue(torch.equal(value, without[3][name]), name)
             journaled_cursors = {row[1] for row in with_prefetch[0] if row[0] == "update-attempt"}
             self.assertEqual(journaled_cursors, {0, 1, 2})
+            exposures = [row for row in with_prefetch[0] if row[0] == "exposure"]
+            self.assertEqual([row[5] for row in exposures], [16, 2, 4])
+            for row in exposures:
+                widths = [integer(value) for value in sequence(row[4])]
+                self.assertTrue(all(1 <= width < integer(row[5]) for width in widths))
             self.assertTrue(with_prefetch[4])
             self.assertFalse(without[4])

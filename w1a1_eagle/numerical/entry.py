@@ -104,6 +104,7 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
         "mechanism": "HE4 W1A4/A8/Q4_K weighted CE using each capture’s declared supervision policy",
         "grouping": cast(Record, asdict(intent.grouping)),
         "optimization": cast(Record, asdict(intent.optimization)),
+        "blocks": intent.blocks.encode(),
         "exposure": exposure,
         "prior_use_warning": "Prior training is marked for "
         + str(exposure["historical_training_sequences"])
@@ -161,6 +162,7 @@ def read_corpus(intent: Intent) -> Corpus:
         intent.sampling,
         intent.grouping,
         cfg,
+        intent.blocks,
     )
 
 
@@ -237,7 +239,13 @@ def run_leased(
     if intent.parent is None and intent.optimization.latent_multiple is not None:
         bound_latents(model, intent.optimization.latent_multiple)
     worker = TensorWorker(
-        model, corpus, intent.recipe, intent.corpus.sha256, optimization=intent.optimization
+        model,
+        corpus,
+        intent.recipe,
+        intent.corpus.sha256,
+        optimization=intent.optimization,
+        blocks=intent.blocks,
+        block_slots=corpus.slots,
     )
     diagnostics = (
         Diagnostics(artifact(intent.raw["development"], intent.base), corpus, intent.memory_bytes)
@@ -300,12 +308,17 @@ def run_leased(
     last_diagnostic_updates = -1
     last_progress_updates = -1
 
-    def diagnose(diagnostics: Diagnostics) -> None:
+    def diagnose(diagnostics: Diagnostics, refresh: bool) -> None:
         nonlocal last_diagnostic_updates
         worker.verify_frozen()
         began = clock.now()
         result = diagnostics.measure(model)
         worker.verify_frozen()
+        weights = (
+            list(worker.refresh_position_weights(result))
+            if refresh and intent.blocks.position_weights == "reach"
+            else None
+        )
         journal.append(
             {
                 "kind": "development-diagnostic",
@@ -313,6 +326,7 @@ def run_leased(
                 "updates": worker.updates,
                 "seconds": clock.now() - began,
                 "result": result,
+                **({"position_weights": weights} if weights is not None else {}),
             }
         )
         last_diagnostic_updates = worker.updates
@@ -382,7 +396,7 @@ def run_leased(
             and worker.cursor % integer(intent.raw.get("development_cadence_updates", 250)) == 0
             and worker.updates != last_diagnostic_updates
         ):
-            diagnose(diagnostics)
+            diagnose(diagnostics, True)
         if (
             worker.updates - last_checkpoint_updates >= intent.checkpoint_updates
             or clock.now() - last_checkpoint_seconds >= intent.checkpoint_seconds
@@ -415,6 +429,7 @@ def run_leased(
                 }
             )
             capture, windows = corpus.sample(cursor)
+            slots = corpus.slots(cursor)
             journal.append(
                 {
                     "kind": "exposure",
@@ -422,8 +437,9 @@ def run_leased(
                     "attempts": worker.progress.attempts,
                     "cursor": cursor,
                     "trajectory": windows[0].trajectory,
+                    "slots": slots,
                     "anchors": [window.anchor for window in windows],
-                    "labels": [len(window.labels) for window in windows],
+                    "labels": [min(len(window.labels), slots - 1) for window in windows],
                 }
             )
             if not resumed:
@@ -465,7 +481,7 @@ def run_leased(
             and (boundary is None or result != "model-update-time")
             and worker.updates != last_diagnostic_updates
         ):
-            diagnose(diagnostics)
+            diagnose(diagnostics, False)
         journal.append(
             {
                 "kind": "training-boundary",
