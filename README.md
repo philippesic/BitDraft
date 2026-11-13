@@ -18,7 +18,7 @@ including checks during training and evaluations with workflows that use tools.
 Current work focuses on HE4 drafters with one-bit feed-forward weights and Qwen3.5-4B
 targets. Other model components retain higher precision. The current HE4 checkpoint
 generates faster than the target alone on request benchmarks but slower than the released
-DFlash drafter, and no drafter has yet sped up the tested tool-using tasks. See
+DFlash drafter, and no drafter has yet measurably sped up the tested tool-using tasks. See
 [findings](FINDINGS.md) for measured results and [supported configurations](docs/support.md)
 for their limits.
 

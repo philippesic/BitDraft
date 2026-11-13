@@ -72,8 +72,9 @@ Baseline. [Result](results/he4broad-final-standing/result.md).
 
 ### F015: Does any drafter speed up the live tool tasks?
 
-No. Target-only took 7.40 s per assigned task, Baseline 7.49 and HE4 7.99; each drafter
-doubled prompt processing, cancelling its decoding gain. Twelve tasks from one project.
+Not measurably. Over 36 task runs target-only took 7.40 s per assigned task, Baseline 7.49
+and HE4 7.99; each drafter doubled prompt processing, cancelling its decoding gain.
+Twelve tasks from one project.
 [Result](results/he4broad-final-standing/result.md).
 
 

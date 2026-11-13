@@ -47,7 +47,10 @@ per prompt token with either drafter, against 0.11 ms without one.
 
 Each live arm made 363 model calls and evaluated 233,682 new prompt tokens to generate
 33,402 tokens. Both drafters cut prediction time, but each doubled prompt processing.
-Baseline therefore only broke even, and HE4 was about 8% slower than target-only.
+Baseline therefore only broke even, and HE4 was about 8% slower than target-only. In the
+12-task lean panel, with a three-update descendant, Baseline was 0.6% faster than
+target-only and HE4 9% slower. Baseline's sign flips between the two panels, so its
+difference from target-only is smaller than the observed variation.
 
 The run's own three-prompt training panel (five timing repetitions) showed the same
 ordering. The final state reached 46.94% acceptance and 199.5 tok/s, against 228.4 for
