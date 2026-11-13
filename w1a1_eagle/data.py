@@ -105,6 +105,31 @@ class Artifact:
         if digest != self.sha256:
             raise ValueError("artifact content mismatch")
 
+    def read_verified(self, destination: memoryview) -> None:
+        if self.boundary is not None and not self.path.resolve().is_relative_to(
+            self.boundary.resolve()
+        ):
+            raise ValueError("artifact escaped its declared input boundary")
+        if destination.nbytes != self.size or destination.readonly:
+            raise ValueError("artifact destination size mismatch")
+        target = destination.cast("B")
+        with self.path.open("rb", buffering=0) as source:
+            before = file_identity(os.fstat(source.fileno()))
+            if before[2] != self.size:
+                raise ValueError("artifact size or existence mismatch")
+            filled = 0
+            while filled < self.size:
+                count = source.readinto(target[filled:])
+                if not count:
+                    raise ValueError("artifact ended before its recorded size")
+                filled += count
+            if source.read(1):
+                raise ValueError("artifact exceeds its recorded size")
+            if file_identity(os.fstat(source.fileno())) != before:
+                raise ValueError("artifact changed during authentication")
+        if hashlib.sha256(target).hexdigest() != self.sha256:
+            raise ValueError("artifact content mismatch")
+
 
 @dataclass(frozen=True)
 class Prompt:

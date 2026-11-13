@@ -1,5 +1,6 @@
 import json
 from collections import OrderedDict
+from concurrent.futures import Future, ThreadPoolExecutor, wait
 from dataclasses import dataclass
 from typing import TypeAlias, cast
 
@@ -16,6 +17,7 @@ FloatArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.float32]]"
 IntArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.int32]]"
 
 TAPS = (2, 6, 10, 14, 18, 22, 26, 30)
+READERS = 4
 
 
 @dataclass(frozen=True)
@@ -29,7 +31,20 @@ class Capture:
         return self.features.numel() * self.features.element_size()
 
 
-def load_capture(spec: CaptureSpec, byte_budget: int, hidden: int = 2560) -> Capture:
+def finite(values: "HalfArray | FloatArray") -> bool:
+    if values.dtype == np.float16:
+        half = values.view(np.uint16)
+        return not bool(((half >= 0x7C00) & (half < 0x8000) | (half >= 0xFC00)).any())
+    single = values.view(np.uint32)
+    return not bool(((single >= 0x7F800000) & (single < 0x80000000) | (single >= 0xFF800000)).any())
+
+
+def load_capture(
+    spec: CaptureSpec,
+    byte_budget: int,
+    hidden: int = 2560,
+    readers: ThreadPoolExecutor | None = None,
+) -> Capture:
     if type(byte_budget) is not int or byte_budget < 1 or hidden < 1:
         raise ValueError("explicit capture byte budget required")
     if spec.metadata.size > min(16 * 1024 * 1024, byte_budget // 32):
@@ -73,8 +88,10 @@ def load_capture(spec: CaptureSpec, byte_budget: int, hidden: int = 2560) -> Cap
         ref = files.get(f"layer-{tap}.{suffix}")
         if ref is None or ref.size != n * hidden * storage_size:
             raise ValueError("capture feature geometry mismatch")
+    feature_names = {f"layer-{tap}.{suffix}" for tap in TAPS}
     for ref in spec.files:
-        ref.verify()
+        if ref.path.name not in feature_names:
+            ref.verify()
     for name, expected in (
         ("inputs.npy", tokens),
         ("label_positions.npy", positions),
@@ -88,19 +105,35 @@ def load_capture(spec: CaptureSpec, byte_budget: int, hidden: int = 2560) -> Cap
                 or tuple(integer(v) for v in sequence(cast(object, array.tolist()))) != expected
             ):
                 raise ValueError("capture array metadata disagreement")
-    arrays: list[FloatArray] = []
-    for tap in TAPS:
-        path = files[f"layer-{tap}.{suffix}"].path
-        if storage_size == 2:
-            mapped = cast(HalfArray, np.memmap(path, dtype="<f2", mode="r", shape=(n, hidden)))
-            arrays.append(mapped.astype(np.float32))
-        else:
-            arrays.append(
-                cast(FloatArray, np.memmap(path, dtype="<f4", mode="r", shape=(n, hidden)))
-            )
-    features = torch.from_numpy(cast(FloatArray, np.concatenate(arrays, axis=1)))
-    if not bool(torch.isfinite(features).all()):
+    shape = (len(TAPS), n, hidden)
+    taps: HalfArray | FloatArray = (
+        np.empty(shape, dtype=np.float16)
+        if storage_size == 2
+        else np.empty(shape, dtype=np.float32)
+    )
+    raw = taps.data.cast("B")
+    size = n * hidden * storage_size
+    parts = [
+        (files[f"layer-{tap}.{suffix}"], raw[index * size : (index + 1) * size])
+        for index, tap in enumerate(TAPS)
+    ]
+    del raw
+    if readers is None:
+        for ref, part in parts:
+            ref.read_verified(part)
+    else:
+        reads = [readers.submit(ref.read_verified, part) for ref, part in parts]
+        wait(reads)
+        for read in reads:
+            read.result()
+    del parts
+    if not finite(taps):
         raise ValueError("nonfinite teacher features")
+    stored = torch.from_numpy(taps)
+    features = torch.empty((n, len(TAPS), hidden), dtype=stored.dtype)
+    features.copy_(stored.permute(1, 0, 2))
+    del stored, taps
+    features = features.view(n, len(TAPS) * hidden)
     return Capture(tokens, features, selected)
 
 
@@ -122,22 +155,60 @@ class CaptureCache:
         self.byte_budget = byte_budget
         self.hidden = hidden
         self.entries: OrderedDict[str, Capture] = OrderedDict()
+        self.loader: ThreadPoolExecutor | None = None
+        self.readers: ThreadPoolExecutor | None = None
+        self.pending: tuple[str, Future[Capture]] | None = None
 
-    def clear(self) -> None:
-        self.entries.clear()
-
-    def get(self, spec: CaptureSpec) -> Capture:
-        key = (
+    @staticmethod
+    def key(spec: CaptureSpec) -> str:
+        return (
             spec.identity
             + ":"
             + spec.metadata.sha256
             + ":"
             + ":".join(ref.sha256 for ref in spec.files)
         )
+
+    def clear(self) -> None:
+        self.discard()
+        self.entries.clear()
+
+    def discard(self) -> None:
+        if self.pending is not None:
+            _, future = self.pending
+            self.pending = None
+            future.cancel()
+            wait((future,))
+
+    def load(self, spec: CaptureSpec) -> Capture:
+        if self.readers is None:
+            self.readers = ThreadPoolExecutor(READERS, "capture-read")
+        return load_capture(spec, self.byte_budget, self.hidden, self.readers)
+
+    def get(self, spec: CaptureSpec) -> Capture:
+        key = self.key(spec)
         if key in self.entries:
             self.entries.move_to_end(key)
             return self.entries[key]
+        future = None
+        if self.pending is not None and self.pending[0] == key:
+            future = self.pending[1]
+            self.pending = None
         self.clear()
-        capture = load_capture(spec, self.byte_budget, self.hidden)
+        capture = None
+        if future is not None and future.exception() is None:
+            capture = future.result()
+        del future
+        if capture is None:
+            capture = self.load(spec)
         self.entries[key] = capture
         return capture
+
+    def prefetch(self, spec: CaptureSpec) -> None:
+        key = self.key(spec)
+        if key in self.entries or (self.pending is not None and self.pending[0] == key):
+            return
+        self.discard()
+        if self.loader is None:
+            self.loader = ThreadPoolExecutor(1, "capture-prefetch")
+        self.pending = key, self.loader.submit(self.load, spec)

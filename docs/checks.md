@@ -17,7 +17,7 @@ inspect GPU jobs or qualify native execution. Read [support](support.md) and the
 result for measured hardware coverage.
 
 The plain command runs every static stage and the ordinary CPU tests and labels itself
-partial. It skips the numerical test (about 37 s), the required-test roster and the
+partial. It skips the numerical test (about 45 s), the required-test roster and the
 rule proofs, keeps a type-check cache of about 300 MB in `.venv/check-temp`, writes no receipt and
 is never a commit result. `--full` runs everything portable and writes the receipt.
 

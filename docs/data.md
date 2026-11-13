@@ -2,7 +2,8 @@
 
 For the scoped Qwen3.5-4B Q4KM/HE4 recipe, FP16 feature storage passed the
 [production qualification](../results/fp16-storage-adoption/result.md). It changes file
-storage only; training still materializes FP32 features. Other targets need separate checks.
+storage only: the loader keeps features in FP16 and the model converts them to FP32 on the
+training device, an exact conversion. Other targets need separate checks.
 
 An intent with `corpus_format: corpus-mixture-v1` binds a compact mixture artifact rather
 than copying feature arrays. Its fields are `schema: corpus-mixture-v1`, `target_sha256`
@@ -17,7 +18,9 @@ explicit same-target mixtures, not automatic transfer between models.
 Training data enters through a typed ledger. Admission reads metadata, checks roles
 and counts, and refuses before any training starts. Raw tensors are authenticated when
 they are read, not at admission. Terms are defined in [domain](domain.md).
-Authentication can reuse a SHA256 within one process for unchanged device/inode, size,
+Feature arrays are read once into memory and hashed from those exact bytes, with file
+identity checked before and after the read; they never reuse a digest. Other files
+can reuse a SHA256 within one process for unchanged device/inode, size,
 mtime and ctime, under a bounded 1024-entry cache. Reads check identity before/after hashing;
 edits and replacements invalidate reuse. New processes hash independently. This assumes
 ordinary filesystem metadata integrity, not a hostile kernel or filesystem. No persistent
@@ -76,9 +79,9 @@ also admits shorter terminal windows, normalizing the same decay weights over av
 labels. It retains short answers and EOS without inventing padding or post-EOS labels.
 
 The reader handles modern eight-tap F32 and explicitly declared FP16 storage and optional pinned int32 NPY copies.
-It authenticates files before use, bounds how many features it materializes, and
-reconstructs the seeded grouping order from the saved cursor, repeating it each pass
-([groups](execution.md#sampling-and-clocks)). Historical DSpark captures are not modern HE4 teacher data.
+It authenticates files before use, keeps features in their stored precision, bounds how many
+features it materializes, and reconstructs the seeded grouping order from the saved cursor,
+repeating it each pass ([groups and prefetch](execution.md#sampling-and-clocks)). Historical DSpark captures are not modern HE4 teacher data.
 
 ## The modern index
 

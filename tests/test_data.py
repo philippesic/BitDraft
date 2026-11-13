@@ -40,6 +40,29 @@ def test_artifact_hash_reuse_detects_same_size_edits_restored_mtime_and_replacem
     assert captured == Artifact.capture(path)
 
 
+def test_verified_read_hashes_the_bytes_it_returns(tmp_path: Path) -> None:
+    path = tmp_path / "features"
+    path.write_bytes(b"original")
+    captured = Artifact.capture(path)
+    destination = bytearray(8)
+    captured.read_verified(memoryview(destination))
+    assert destination == b"original"
+    for wrong in (bytearray(7), bytes(8)):
+        with pytest.raises(ValueError, match="destination"):
+            captured.read_verified(memoryview(wrong))
+    path.write_bytes(b"changed!")
+    with pytest.raises(ValueError, match="content mismatch"):
+        captured.read_verified(memoryview(bytearray(8)))
+    path.write_bytes(b"original+")
+    with pytest.raises(ValueError, match="size"):
+        captured.read_verified(memoryview(bytearray(8)))
+    path.write_bytes(b"original")
+    captured.verify()
+    path.write_bytes(b"changed!")
+    with pytest.raises(ValueError, match="content mismatch"):
+        captured.read_verified(memoryview(bytearray(8)))
+
+
 def test_null_topics_and_role_aliases() -> None:
     first = Prompt("a", "source", "one", None, (), "train", "verified")
     second = Prompt("b", "source", "two", None, (), "dev", "verified")

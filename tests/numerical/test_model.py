@@ -1,3 +1,4 @@
+import gc
 import hashlib
 import importlib.metadata
 import json
@@ -40,6 +41,74 @@ from w1a1_eagle.numerical.worker import TensorWorker
 from w1a1_eagle.records import artifact, canonical, read, reference
 from w1a1_eagle.supervisor import execute
 from w1a1_eagle.training import Budget, Grouping, Optimization, Schedule, default_step_sizes
+
+
+def tiny_model(window: int = 4096) -> tuple[HE4, torch.Tensor]:
+    torch.set_num_threads(1)
+    cfg = Geometry(hidden=4, intermediate=8, heads=2, kv_heads=1, head_dim=2, window=window)
+    generator = torch.Generator().manual_seed(17)
+    tensors = {
+        "fc.weight": torch.randn((4, 32), generator=generator) * 0.1,
+        "enc.output_norm.weight": torch.ones(4),
+        "output_norm.weight": torch.ones(4),
+    }
+    for index in range(6):
+        for name, shape in {
+            "attn_norm": (4,),
+            "attn_q_norm": (2,),
+            "attn_k_norm": (2,),
+            "ffn_norm": (4,),
+            "attn_q": (4, 4),
+            "attn_k": (2, 4),
+            "attn_v": (2, 4),
+            "attn_output": (4, 4),
+            "ffn_gate": (8, 4),
+            "ffn_up": (8, 4),
+            "ffn_down": (4, 8),
+        }.items():
+            tensors[f"blk.{index}.{name}.weight"] = (
+                torch.ones(shape)
+                if len(shape) == 1
+                else torch.randn(shape, generator=generator) * 0.1
+            )
+    model = HE4(tensors, torch.randn((20, 4), generator=generator), 19, cfg)
+    features = torch.randn((20, 32), generator=generator)
+    return model, features
+
+
+def gguf_fixture(root: Path, cfg: Geometry) -> tuple[Artifact, Artifact]:
+    source = root / "source.gguf"
+    writer = gguf.GGUFWriter(str(source), "dflash")
+    writer.add_array("dflash.target_layers", [2, 6, 10, 14, 18, 22, 26, 30])
+    writer.add_uint32("tokenizer.ggml.mask_token_id", 19)
+    for name, shape in shapes(cfg).items():
+        data = np.ones(shape, dtype=np.float32)
+        encoded = gguf.quantize(data, gguf.GGMLQuantizationType.BF16)
+        writer.add_tensor(name, encoded, raw_dtype=gguf.GGMLQuantizationType.BF16)
+    writer.write_header_to_file()
+    writer.write_kv_data_to_file()
+    writer.write_tensors_to_file()
+    writer.close()
+    vocabulary = root / "vocabulary.gguf"
+    writer = gguf.GGUFWriter(str(vocabulary), "qwen35")
+    writer.add_tensor(
+        "token_embd.weight",
+        np.zeros((20, 144), dtype=np.uint8),
+        raw_dtype=gguf.GGMLQuantizationType.Q4_K,
+    )
+    writer.write_header_to_file()
+    writer.write_kv_data_to_file()
+    writer.write_tensors_to_file()
+    writer.close()
+    source_ref = Artifact(
+        source, hashlib.sha256(source.read_bytes()).hexdigest(), source.stat().st_size
+    )
+    vocabulary_ref = Artifact(
+        vocabulary,
+        hashlib.sha256(vocabulary.read_bytes()).hexdigest(),
+        vocabulary.stat().st_size,
+    )
+    return source_ref, vocabulary_ref
 
 
 class TestNumerical(unittest.TestCase):
@@ -112,7 +181,8 @@ class TestNumerical(unittest.TestCase):
                 original.identity, self.reference(original.metadata.path), tuple(files)
             )
             actual = load_capture(spec, 32 * 1024 * 1024, 8)
-            self.assertTrue(torch.equal(actual.features, expected.features.half().float()))
+            self.assertEqual(actual.features.dtype, torch.float16)
+            self.assertTrue(torch.equal(actual.features, expected.features.half()))
             self.assertEqual(actual.windows, expected.windows)
             files[0].path.write_bytes(b"broken")
             with self.assertRaises(ValueError):
@@ -415,36 +485,7 @@ class TestNumerical(unittest.TestCase):
             )
 
     def tiny_model(self, window: int = 4096) -> tuple[HE4, torch.Tensor]:
-        torch.set_num_threads(1)
-        cfg = Geometry(hidden=4, intermediate=8, heads=2, kv_heads=1, head_dim=2, window=window)
-        generator = torch.Generator().manual_seed(17)
-        tensors = {
-            "fc.weight": torch.randn((4, 32), generator=generator) * 0.1,
-            "enc.output_norm.weight": torch.ones(4),
-            "output_norm.weight": torch.ones(4),
-        }
-        for index in range(6):
-            for name, shape in {
-                "attn_norm": (4,),
-                "attn_q_norm": (2,),
-                "attn_k_norm": (2,),
-                "ffn_norm": (4,),
-                "attn_q": (4, 4),
-                "attn_k": (2, 4),
-                "attn_v": (2, 4),
-                "attn_output": (4, 4),
-                "ffn_gate": (8, 4),
-                "ffn_up": (8, 4),
-                "ffn_down": (4, 8),
-            }.items():
-                tensors[f"blk.{index}.{name}.weight"] = (
-                    torch.ones(shape)
-                    if len(shape) == 1
-                    else torch.randn(shape, generator=generator) * 0.1
-                )
-        model = HE4(tensors, torch.randn((20, 4), generator=generator), 19, cfg)
-        features = torch.randn((20, 32), generator=generator)
-        return model, features
+        return tiny_model(window)
 
     def test_group_forward_matches_single_windows(self) -> None:
         for window in (4096, 5):
@@ -553,37 +594,7 @@ class TestNumerical(unittest.TestCase):
         cfg = Geometry(hidden=256, intermediate=256, heads=4, kv_heads=1, head_dim=8, layers=1)
         with tempfile.TemporaryDirectory(prefix="binary-loader-") as directory:
             root = Path(directory)
-            source = root / "source.gguf"
-            writer = gguf.GGUFWriter(str(source), "dflash")
-            writer.add_array("dflash.target_layers", [2, 6, 10, 14, 18, 22, 26, 30])
-            writer.add_uint32("tokenizer.ggml.mask_token_id", 19)
-            for name, shape in shapes(cfg).items():
-                data = np.ones(shape, dtype=np.float32)
-                encoded = gguf.quantize(data, gguf.GGMLQuantizationType.BF16)
-                writer.add_tensor(name, encoded, raw_dtype=gguf.GGMLQuantizationType.BF16)
-            writer.write_header_to_file()
-            writer.write_kv_data_to_file()
-            writer.write_tensors_to_file()
-            writer.close()
-            vocabulary = root / "vocabulary.gguf"
-            writer = gguf.GGUFWriter(str(vocabulary), "qwen35")
-            writer.add_tensor(
-                "token_embd.weight",
-                np.zeros((20, 144), dtype=np.uint8),
-                raw_dtype=gguf.GGMLQuantizationType.Q4_K,
-            )
-            writer.write_header_to_file()
-            writer.write_kv_data_to_file()
-            writer.write_tensors_to_file()
-            writer.close()
-            source_ref = Artifact(
-                source, hashlib.sha256(source.read_bytes()).hexdigest(), source.stat().st_size
-            )
-            vocabulary_ref = Artifact(
-                vocabulary,
-                hashlib.sha256(vocabulary.read_bytes()).hexdigest(),
-                vocabulary.stat().st_size,
-            )
+            source_ref, vocabulary_ref = gguf_fixture(root, cfg)
             with self.assertRaisesRegex(ValueError, "memory"):
                 load_he4(source_ref, vocabulary_ref, 0, cfg)
             model = load_he4(source_ref, vocabulary_ref, 64 * 1024 * 1024, cfg)
@@ -926,6 +937,7 @@ class TestNumerical(unittest.TestCase):
                 }
             )
             outcomes: list[str] = []
+            live: list[int] = []
 
             class NativeBoundary:
                 def start(self, worker: TensorWorker) -> None:
@@ -940,6 +952,8 @@ class TestNumerical(unittest.TestCase):
                 def evaluate(
                     self, worker: TensorWorker, state: StateRef, exported: StateRef, outcome: str
                 ) -> None:
+                    gc.collect()
+                    live.append(sum(type(item) is Capture for item in gc.get_objects()))
                     outcomes.append(outcome)
 
                 def resumed(self) -> None:
@@ -952,6 +966,7 @@ class TestNumerical(unittest.TestCase):
                 for value, handler in handlers.items():
                     signal.signal(value, handler)
             self.assertEqual(outcomes, ["model-update-budget"])
+            self.assertEqual(live, [0])
             final = record(journal.report()["worker"])
             self.assertEqual(final["updates"], 1)
             self.assertGreater(number(record(final["accounting"])["successful_update_seconds"]), 0)

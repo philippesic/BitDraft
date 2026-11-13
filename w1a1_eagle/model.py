@@ -310,6 +310,7 @@ class HE4(nn.Module):
             not anchors
             or any(type(anchor) is not int or not 0 <= anchor < len(tokens) for anchor in anchors)
             or features.ndim != 2
+            or features.dtype not in (torch.float16, torch.float32)
             or features.shape != (len(tokens), cfg.taps * cfg.hidden)
             or any(
                 type(token) is not int or not 0 <= token < self.vocabulary.shape[0]
@@ -334,7 +335,7 @@ class HE4(nn.Module):
         identifiers[:, 0] = torch.tensor(first, device=device)
         state = functional.embedding(identifiers.reshape(-1), self.vocabulary)
         encoded = rms(
-            self.fusion.forward(features[:last].to(device)), self.encoder_norm, cfg.epsilon
+            self.fusion.forward(features[:last].to(device).float()), self.encoder_norm, cfg.epsilon
         )
         visible = context_positions[None, None, :] < starts[:, None, None]
         local = visible & (
@@ -366,7 +367,9 @@ class HE4(nn.Module):
         )
         state = functional.embedding(identifiers, self.vocabulary)
         encoded = rms(
-            self.fusion.forward(features[:anchor].to(device)), self.encoder_norm, cfg.epsilon
+            self.fusion.forward(features[:anchor].to(device).float()),
+            self.encoder_norm,
+            cfg.epsilon,
         )
         keys = torch.cat((context_positions, positions))
         for index, module in enumerate(self.blocks):

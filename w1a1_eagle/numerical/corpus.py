@@ -261,6 +261,8 @@ class Corpus:
             if window.anchor != anchor:
                 raise ValueError("admitted and materialized window disagreement")
             windows.append(window)
+        upcoming, _ = self.locate(cursor + 1)
+        self.cache.prefetch(upcoming.capture)
         return capture, tuple(windows)
 
     @property
