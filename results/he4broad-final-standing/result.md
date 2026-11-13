@@ -59,6 +59,29 @@ at 48.85% and 222.1 tok/s, against 248.7 and 184.4. The 120-request lean panel f
 three-update descendant agrees ([checks](../reusable-acceptance-checks/result.md)):
 40.8% and 174.5 tok/s on Q4KM; 40.4% and 181.1 on NVFP4.
 
+A 2026-11-12 rerun of this state itself on that 120-request Q4KM panel, candidate-only
+against the saved controls, gave 40.85% acceptance (20,384 of 49,899), 0.82 accepted drafts
+per round and 175.3 tok/s: 1.06× the saved target-only record (164.6) and 0.86× Baseline
+(204.9, 63.87%). Its tokens and counters equal the saved record of the same weights
+exactly; speed differs by 0.3%. The server spent 34.1 s processing prompts and 212.2 s
+predicting tokens within 259.5 s of request time.
+
+| 120 requests, HE4 rerun | Acceptance | Tok/s | Target-only | Baseline | Prompt s | Prediction s |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Code, 30 | 75.8% | 224.7 | 162.9 | 241.7 | 4.1 | 23.4 |
+| Conversation, 20 | 35.9% | 178.7 | 172.6 | 215.0 | 4.2 | 48.2 |
+| Documents, 25 | 45.7% | 105.3 | 117.5 | 121.3 | 21.3 | 27.9 |
+| Reasoning, 20 | 37.3% | 203.8 | 184.9 | 244.8 | 1.1 | 71.9 |
+| Structured, 15 | 59.1% | 135.6 | 122.2 | 129.5 | 2.7 | 4.8 |
+| Writing, 10 | 27.2% | 180.9 | 180.7 | 222.7 | 0.6 | 35.9 |
+| Input < 512, 60 | 40.9% | 206.0 | 180.1 | 243.8 | 4.0 | 132.5 |
+| 512–2,047, 36 | 37.7% | 172.0 | 165.4 | 200.7 | 6.8 | 51.3 |
+| 2,048–8,191, 18 | 49.2% | 118.1 | 125.4 | 132.5 | 13.5 | 20.4 |
+| 8,192–16,384, 6 | 40.8% | 69.4 | 87.1 | 80.9 | 9.9 | 8.0 |
+
+Target-only and Baseline columns are their saved tokens/s, so these speed comparisons
+are descriptive rather than paired timing.
+
 ## Scope and limitations
 
 These are reused DEV prompts, already consumed for selection; they are not unseen
@@ -89,6 +112,10 @@ and input-length strata, live timing partitions and the identity of each source.
   (`q4km-requests`, `q4km-harness`, `q4km-live`), specification
   `artifacts/benchmarks/full-qualification-spec.json`. The operator stopped the suite
   during NVFP4; its `operator-stop.json` is retained.
+- The 120-request rerun used spec `lean-checks/q4km-requests-cached-spec.json` with its
+  candidate replaced by the `original-zero-export-02` export; source `a7747d24…`. Its output
+  is `artifacts/benchmarks/he4-220095-q4km-requests-01/` in the worktree that ran it;
+  `lean_requests_rerun` in [result.json](result.json) holds its compact values.
 - The HE4 arm is `original-zero-export-02`, a zero-update re-export of the original final
   state. `artifacts/qualification/original-export-canonical-equivalence.json` confirms
   its tensors match the original final export.
@@ -110,3 +137,5 @@ panels and authenticate those raw records. The original 220,095 state, its re-ex
 the compact archive also stay. The earlier ad hoc breakdowns in `artifacts/qualification/`
 (`benchmark-runtime-breakdown-q4km.json`, `live-q4km-*-breakdown.json`) match these
 values and are superseded by `result.json`. Nothing was deleted.
+The 5.8 MB rerun output was not copied into the main checkout. Its compact values are
+in `result.json`, and the retained export and saved controls can reproduce it.

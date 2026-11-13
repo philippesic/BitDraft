@@ -184,8 +184,9 @@ so a round proposes at most two tokens; 64% acceptance means about 1.3 accepted 
 Summaries therefore add `derived_rounds` (emitted − accepted − requests: each round emits
 its accepted drafts plus one target token, and the first token comes from prompt processing)
 with proposed, accepted and emitted tokens per round. On the 1,200-request Q4KM panel this
-matched the native round counters within 0.1%; a request ending inside accepted drafts can
-differ by one round. `speed_vs_target` and `speed_vs_baseline` divide each arm's tokens/s by
+matched the native round counters within 0.1%. Requests ending at EOS match exactly; a
+request stopped by its token cap can count one round more than the runtime's draft-round
+counter, consistent with a final capped token emitted without a draft. `speed_vs_target` and `speed_vs_baseline` divide each arm's tokens/s by
 that control's; against historical controls they are descriptive, not paired timing.
 `server_prompt_seconds` and `server_prediction_seconds` sum the native server's own
 prompt-processing and token-prediction partitions (null when a historical row predates

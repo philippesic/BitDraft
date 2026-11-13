@@ -577,6 +577,470 @@
   }
  },
  "hardware": "RTX 5080",
+ "lean_requests_rerun": {
+  "by_category": {
+   "code": {
+    "HE4broad": {
+     "acceptance": 0.7576367294677154,
+     "accepted_per_round": 1.512783053323594,
+     "requests": 30,
+     "server_prediction_seconds": 23.410261,
+     "server_prompt_seconds": 4.05987,
+     "tokens_per_second": 224.68594751228272
+    },
+    "baseline": {
+     "acceptance": 0.9232837055417701,
+     "accepted_per_round": 1.8488612836438922,
+     "requests": 30,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 241.73057590027284
+    },
+    "saved_HE4broad_record": {
+     "acceptance": 0.7576367294677154,
+     "accepted_per_round": 1.512783053323594,
+     "requests": 30,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 224.10129381241777
+    },
+    "target": {
+     "acceptance": null,
+     "accepted_per_round": null,
+     "requests": 30,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 162.88391346435282
+    }
+   },
+   "conversation": {
+    "HE4broad": {
+     "acceptance": 0.3585650381545478,
+     "accepted_per_round": 0.7163132994568074,
+     "requests": 20,
+     "server_prediction_seconds": 48.205732000000005,
+     "server_prompt_seconds": 4.238669000000001,
+     "tokens_per_second": 178.6840788147043
+    },
+    "baseline": {
+     "acceptance": 0.5876471895134414,
+     "accepted_per_round": 1.174250832408435,
+     "requests": 20,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 215.03931049217982
+    },
+    "saved_HE4broad_record": {
+     "acceptance": 0.3585650381545478,
+     "accepted_per_round": 0.7163132994568074,
+     "requests": 20,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 179.9838205146061
+    },
+    "target": {
+     "acceptance": null,
+     "accepted_per_round": null,
+     "requests": 20,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 172.5858877157312
+    }
+   },
+   "documents": {
+    "HE4broad": {
+     "acceptance": 0.4565705404938698,
+     "accepted_per_round": 0.9120386340117281,
+     "requests": 25,
+     "server_prediction_seconds": 27.947334,
+     "server_prompt_seconds": 21.347495999999992,
+     "tokens_per_second": 105.27931337318599
+    },
+    "baseline": {
+     "acceptance": 0.7152564664620781,
+     "accepted_per_round": 1.431140350877193,
+     "requests": 25,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 121.26510281139255
+    },
+    "saved_HE4broad_record": {
+     "acceptance": 0.4565705404938698,
+     "accepted_per_round": 0.9120386340117281,
+     "requests": 25,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 106.79134478853062
+    },
+    "target": {
+     "acceptance": null,
+     "accepted_per_round": null,
+     "requests": 25,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 117.46366896109414
+    }
+   },
+   "reasoning": {
+    "HE4broad": {
+     "acceptance": 0.37273719901155106,
+     "accepted_per_round": 0.7444049122001607,
+     "requests": 20,
+     "server_prediction_seconds": 71.94399499999999,
+     "server_prompt_seconds": 1.1141560000000004,
+     "tokens_per_second": 203.83968840396437
+    },
+    "baseline": {
+     "acceptance": 0.5969093009820913,
+     "accepted_per_round": 1.1922688590797634,
+     "requests": 20,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 244.83447152888934
+    },
+    "saved_HE4broad_record": {
+     "acceptance": 0.37273719901155106,
+     "accepted_per_round": 0.7444049122001607,
+     "requests": 20,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 203.2892292885529
+    },
+    "target": {
+     "acceptance": null,
+     "accepted_per_round": null,
+     "requests": 20,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 184.93446102532724
+    }
+   },
+   "structured": {
+    "HE4broad": {
+     "acceptance": 0.5908256880733945,
+     "accepted_per_round": 1.181651376146789,
+     "requests": 15,
+     "server_prediction_seconds": 4.769966,
+     "server_prompt_seconds": 2.7106500000000002,
+     "tokens_per_second": 135.64653118947155
+    },
+    "baseline": {
+     "acceptance": 0.7795698924731183,
+     "accepted_per_round": 1.5625,
+     "requests": 15,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 129.4964206003033
+    },
+    "saved_HE4broad_record": {
+     "acceptance": 0.5908256880733945,
+     "accepted_per_round": 1.181651376146789,
+     "requests": 15,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 123.59995407517502
+    },
+    "target": {
+     "acceptance": null,
+     "accepted_per_round": null,
+     "requests": 15,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 122.19088333807801
+    }
+   },
+   "writing": {
+    "HE4broad": {
+     "acceptance": 0.2720310892673448,
+     "accepted_per_round": 0.54337899543379,
+     "requests": 10,
+     "server_prediction_seconds": 35.941537999999994,
+     "server_prompt_seconds": 0.6337959999999999,
+     "tokens_per_second": 180.9244036029581
+    },
+    "baseline": {
+     "acceptance": 0.5157799819657349,
+     "accepted_per_round": 1.03125,
+     "requests": 10,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 222.7080026912922
+    },
+    "saved_HE4broad_record": {
+     "acceptance": 0.2720310892673448,
+     "accepted_per_round": 0.54337899543379,
+     "requests": 10,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 176.80799956048762
+    },
+    "target": {
+     "acceptance": null,
+     "accepted_per_round": null,
+     "requests": 10,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 180.7488672429747
+    }
+   }
+  },
+  "by_length_band": {
+   "0": {
+    "HE4broad": {
+     "acceptance": 0.40903403403403404,
+     "accepted_per_round": 0.8168415792103948,
+     "requests": 60,
+     "server_prediction_seconds": 132.48211000000003,
+     "server_prompt_seconds": 3.9631830000000003,
+     "tokens_per_second": 205.99614225231593
+    },
+    "baseline": {
+     "acceptance": 0.6376369327073552,
+     "accepted_per_round": 1.2746754262474582,
+     "requests": 60,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 243.77890770279066
+    },
+    "saved_HE4broad_record": {
+     "acceptance": 0.40903403403403404,
+     "accepted_per_round": 0.8168415792103948,
+     "requests": 60,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 204.23344435265543
+    },
+    "target": {
+     "acceptance": null,
+     "accepted_per_round": null,
+     "requests": 60,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 180.0797802528863
+    }
+   },
+   "1": {
+    "HE4broad": {
+     "acceptance": 0.37749546279491836,
+     "accepted_per_round": 0.7543686119353775,
+     "requests": 36,
+     "server_prediction_seconds": 51.289021000000005,
+     "server_prompt_seconds": 6.767925999999999,
+     "tokens_per_second": 171.97513165786376
+    },
+    "baseline": {
+     "acceptance": 0.6025906735751295,
+     "accepted_per_round": 1.2046819970996478,
+     "requests": 36,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 200.6734463635443
+    },
+    "saved_HE4broad_record": {
+     "acceptance": 0.37749546279491836,
+     "accepted_per_round": 0.7543686119353775,
+     "requests": 36,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 171.39074675826933
+    },
+    "target": {
+     "acceptance": null,
+     "accepted_per_round": null,
+     "requests": 36,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 165.380680035498
+    }
+   },
+   "2": {
+    "HE4broad": {
+     "acceptance": 0.4916897506925208,
+     "accepted_per_round": 0.9820193637621023,
+     "requests": 18,
+     "server_prediction_seconds": 20.437903,
+     "server_prompt_seconds": 13.46463,
+     "tokens_per_second": 118.09977230018063
+    },
+    "baseline": {
+     "acceptance": 0.7247863247863248,
+     "accepted_per_round": 1.4495726495726495,
+     "requests": 18,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 132.48599956947032
+    },
+    "saved_HE4broad_record": {
+     "acceptance": 0.4916897506925208,
+     "accepted_per_round": 0.9820193637621023,
+     "requests": 18,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 118.4141064224981
+    },
+    "target": {
+     "acceptance": null,
+     "accepted_per_round": null,
+     "requests": 18,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 125.37949454545678
+    }
+   },
+   "3": {
+    "HE4broad": {
+     "acceptance": 0.4075829383886256,
+     "accepted_per_round": 0.8146143437077131,
+     "requests": 6,
+     "server_prediction_seconds": 8.009792000000001,
+     "server_prompt_seconds": 9.908897999999999,
+     "tokens_per_second": 69.41421675172731
+    },
+    "baseline": {
+     "acceptance": 0.7050359712230215,
+     "accepted_per_round": 1.40754039497307,
+     "requests": 6,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 80.87949330381474
+    },
+    "saved_HE4broad_record": {
+     "acceptance": 0.4075829383886256,
+     "accepted_per_round": 0.8146143437077131,
+     "requests": 6,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 71.10926556945735
+    },
+    "target": {
+     "acceptance": null,
+     "accepted_per_round": null,
+     "requests": 6,
+     "server_prediction_seconds": null,
+     "server_prompt_seconds": null,
+     "tokens_per_second": 87.12424521692874
+    }
+   }
+  },
+  "code_sha256": "a7747d244a22c5379ccf4d0f841591d188fa414109ffaf7d412d779a2c8b88b9",
+  "date": "2026-11-12",
+  "elapsed_seconds": 272.86900059098843,
+  "historical_comparisons": {
+   "candidate/baseline": {
+    "acceptance_difference": -0.2302023913370282,
+    "acceptance_difference_95_interval": {
+     "lower": -0.23895051802388168,
+     "upper": -0.2204858144603301
+    },
+    "groups": 120,
+    "historical_speed_ratio": 0.8554024988013151
+   },
+   "candidate/prior-leader": {
+    "acceptance_difference": 0.0,
+    "acceptance_difference_95_interval": {
+     "lower": 0.0,
+     "upper": 0.0
+    },
+    "groups": 120,
+    "historical_speed_ratio": 1.003364486474544
+   }
+  },
+  "native_round_check": {
+   "cap_requests": 36,
+   "cap_requests_one_round_over": 22,
+   "derived_rounds": 24982,
+   "eos_requests_matching": 84,
+   "server_draft_rounds_excluding_warmup": 24960
+  },
+  "panel": "120-request Q4KM DEV broader requests, one greedy pass, candidate-only against saved controls",
+  "result": {
+   "bytes": 989123,
+   "path": "/home/philip/.t3/worktrees/BitDraft/t3-6826c671/artifacts/benchmarks/he4-220095-q4km-requests-01/result.json",
+   "sha256": "9ba6913b3e750d34a9b2228862761e38cc02cc5c73de35cf753d3a376a4555f2"
+  },
+  "specification": {
+   "bytes": 3788,
+   "sha256": "3b1f7cd4a85cbab54984e568f9f27a2e84a1e2400e988cd5890898411806bdf0"
+  },
+  "summary": {
+   "HE4broad": {
+    "acceptance": 0.4085051804645384,
+    "accepted": 20384,
+    "accepted_per_round": 0.8159474821871747,
+    "cap_hits": 36,
+    "derived_rounds": 24982,
+    "emitted_per_round": 1.8159474821871748,
+    "eos_stops": 84,
+    "execution": "measured",
+    "proposed": 49899,
+    "requests": 120,
+    "server_prediction_seconds": 212.21882600000004,
+    "server_prompt_seconds": 34.104637000000004,
+    "speed_vs_baseline": 0.8554024988013151,
+    "speed_vs_target": 1.0646168797908926,
+    "tokens": 45486,
+    "tokens_per_second": 175.26443719316757,
+    "wall_seconds": 259.52783535810886
+   },
+   "baseline": {
+    "acceptance": 0.6387075718015666,
+    "accepted": 25441,
+    "accepted_per_round": 1.2768381430363864,
+    "cap_hits": 36,
+    "derived_rounds": 19925,
+    "emitted_per_round": 2.2768381430363864,
+    "eos_stops": 84,
+    "execution": "historical",
+    "proposed": 39832,
+    "requests": 120,
+    "server_prediction_seconds": null,
+    "server_prompt_seconds": null,
+    "speed_vs_baseline": 1.0,
+    "speed_vs_target": 1.2445800442280117,
+    "tokens": 45486,
+    "tokens_per_second": 204.89119150197425,
+    "wall_seconds": 222.00075887382263
+   },
+   "saved_HE4broad_record": {
+    "acceptance": 0.4085051804645384,
+    "accepted": 20384,
+    "accepted_per_round": 0.8159474821871747,
+    "cap_hits": 36,
+    "derived_rounds": 24982,
+    "emitted_per_round": 1.8159474821871748,
+    "eos_stops": 84,
+    "execution": "historical",
+    "proposed": 49899,
+    "requests": 120,
+    "server_prediction_seconds": null,
+    "server_prompt_seconds": null,
+    "speed_vs_baseline": 0.8525341591537557,
+    "speed_vs_target": 1.061047001505472,
+    "tokens": 45486,
+    "tokens_per_second": 174.67673966514675,
+    "wall_seconds": 260.40101324993884
+   },
+   "target": {
+    "acceptance": null,
+    "accepted": 0,
+    "accepted_per_round": null,
+    "cap_hits": 36,
+    "derived_rounds": null,
+    "emitted_per_round": null,
+    "eos_stops": 84,
+    "execution": "historical",
+    "proposed": 0,
+    "requests": 120,
+    "server_prediction_seconds": null,
+    "server_prompt_seconds": null,
+    "speed_vs_baseline": 0.8034838776643572,
+    "speed_vs_target": 1.0,
+    "tokens": 45486,
+    "tokens_per_second": 164.62676904727667,
+    "wall_seconds": 276.2977142978343
+   }
+  }
+ },
  "question": "Where does the final 220,095-update HE4broad state stand against target-only and Baseline?",
  "schema": 1,
  "state": {
