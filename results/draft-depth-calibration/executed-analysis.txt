@@ -1,0 +1,164 @@
+import json
+import sys
+from pathlib import Path
+
+ROOT = Path(sys.argv[1])
+REPO = Path(sys.argv[2])
+fair = json.loads((REPO / "results/draft-depth-fairness/result.json").read_text())
+sweep = json.loads((REPO / "results/cuda-decode-consistency-cost/result.json").read_text())
+
+
+def measured_panel(arm: str) -> dict[int, dict[str, float]]:
+    out: dict[int, list[dict]] = {}
+    for run in fair["runs"]:
+        if run["arm"] == arm and run["mode"] == "consistent":
+            out.setdefault(run["depth"], []).append(run)
+    return {
+        depth: {
+            "complete": sum(r["tokens_per_second"] for r in runs) / len(runs),
+            "decode": sum(r["decode_tokens_per_second"] for r in runs) / len(runs),
+            "emitted_per_round": 1 + runs[0]["accepted_per_round"],
+            "ms_per_round": sum(r["decode_ms_per_round"] for r in runs) / len(runs),
+        }
+        for depth, runs in out.items()
+    }
+
+
+def measured_screen(arm: str) -> dict[int, dict[str, float]]:
+    out: dict[int, list[dict]] = {}
+    for run in sweep["screen_runs"]:
+        if run["arm"] == arm and run["mode"] == "consistent" and run.get("depth"):
+            out.setdefault(run["depth"], []).append(run)
+    return {
+        depth: {
+            "complete": sum(r["tokens_per_second"] for r in runs) / len(runs),
+            "decode": sum(r["decode_tokens_per_second"] for r in runs) / len(runs),
+            "emitted_per_round": 1 + runs[0]["accepted_per_round"],
+            "ms_per_round": sum(r["decode_ms_per_round"] for r in runs) / len(runs),
+        }
+        for depth, runs in out.items()
+    }
+
+
+def compare(name: str, measured: dict[int, dict[str, float]]) -> dict:
+    path = ROOT / name / "calibration.json"
+    if not path.exists():
+        return {"missing": name}
+    record = json.loads(path.read_text())
+    predicted = {row["depth"]: row for row in record["predictions"]}
+    depths = sorted(measured)
+    anchor = depths[0]
+    rows = []
+    for depth in depths:
+        m, p = measured[depth], predicted[depth]
+        rows.append(
+            {
+                "depth": depth,
+                "measured_complete": round(m["complete"], 1),
+                "predicted_complete": round(p["complete_tokens_per_second"], 1),
+                "measured_decode": round(m["decode"], 1),
+                "predicted_decode": round(p["decode_tokens_per_second"], 1),
+                "measured_complete_vs_anchor": round(m["complete"] / measured[anchor]["complete"], 4),
+                "predicted_complete_vs_anchor": round(
+                    p["complete_tokens_per_second"] / predicted[anchor]["complete_tokens_per_second"], 4
+                ),
+                "measured_decode_vs_anchor": round(m["decode"] / measured[anchor]["decode"], 4),
+                "predicted_decode_vs_anchor": round(
+                    p["decode_tokens_per_second"] / predicted[anchor]["decode_tokens_per_second"], 4
+                ),
+                "measured_emitted_per_round": round(m["emitted_per_round"], 3),
+                "predicted_emitted_per_round": round(p["tokens_per_round"], 3),
+                "measured_ms_per_round": round(m["ms_per_round"], 3),
+                "predicted_ms_per_round": round(p["ms_per_round"], 3),
+            }
+        )
+    best_measured = max(depths, key=lambda d: measured[d]["complete"])
+    best_predicted_among = max(depths, key=lambda d: predicted[d]["complete_tokens_per_second"])
+    return {
+        "calibration": name,
+        "anchor_depth": anchor,
+        "rows": rows,
+        "measured_best_among_measured_depths": best_measured,
+        "predicted_best_among_measured_depths": best_predicted_among,
+        "recommendation": record["recommendation"],
+        "elapsed_seconds": round(record["elapsed_seconds"], 1),
+        "survival_seconds": round(record["survival_seconds"], 1),
+        "cost_seconds": round(sum(c["seconds"] for c in record["costs"]), 1),
+        "survival_ms_per_round_vs_cost_session": round(
+            record["survival"]["ms_per_round"]
+            / next(c for c in record["costs"] if c["depth"] == record["settings"]["max_depth"])["ms_per_round"],
+            4,
+        ),
+        "by_category": {k: {"depth": v["depth"], "near_best": v["near_best"], "drafted_rounds": v["drafted_rounds"]} for k, v in record["by_category"].items()},
+    }
+
+
+report = [
+    compare("panel-baseline", measured_panel("baseline")),
+    compare("panel-baseline-r1", measured_panel("baseline")),
+    compare("panel-he4", measured_panel("he4")),
+    compare("panel-armd", measured_panel("armd")),
+    compare("screen-baseline", measured_screen("baseline")),
+    compare("screen-he4", measured_screen("he4")),
+]
+json.dump(report, sys.stdout, indent=1)
+
+
+import json, sys
+from pathlib import Path
+repo=Path(sys.argv[1]); root=Path(sys.argv[2])
+r=json.load(open(repo/'results/draft-depth-fairness/result.json'))
+ids=[q[0] for q in r['requests']]
+ARMS=('baseline','he4','armd','baseline-r1')
+out={}
+for arm in ARMS:
+    cal=json.load(open(root/f'panel-{arm}/calibration.json'))
+    subset=set(cal['settings']['tasks'])
+    pred={p['depth']:p for p in cal['predictions']}
+    res={}
+    for depth in (2,3):
+        runs=[x for x in r['runs'] if x['arm']==arm.split('-')[0] and x['mode']=='consistent' and x['depth']==depth]
+        vals=[]
+        for x in runs:
+            rows=[row for i,row in enumerate(x['requests_rows']) if ids[row[0]] in subset]
+            tok=sum(w[1] for w in rows); n=len(rows); wall=sum(w[3] for w in rows); pm=sum(w[5] for w in rows); acc=sum(w[7] for w in rows)
+            vals.append(dict(complete=tok/wall, decode=(tok-n)/(pm/1000), emitted=(tok-n)/(tok-acc-n), ms=pm/(tok-acc-n)))
+        m={k:sum(v[k] for v in vals)/len(vals) for k in vals[0]}
+        res[depth]={'subset_measured':{k:round(v,3) for k,v in m.items()},'predicted':{'complete':round(pred[depth]['complete_tokens_per_second'],3),'decode':round(pred[depth]['decode_tokens_per_second'],3),'emitted':round(pred[depth]['tokens_per_round'],3),'ms':round(pred[depth]['ms_per_round'],3)},'runs':len(vals)}
+    out[arm]=res
+json.dump(out,sys.stdout,indent=1)
+print()
+for arm in ARMS:
+    cal=json.load(open(root/f'panel-{arm}/calibration.json'))
+    subset=set(cal['settings']['tasks']); O=cal['survival']['overhead_seconds']
+    pred={p['depth']:p for p in cal['predictions']}
+    for depth in (2,3):
+        x=[x for x in r['runs'] if x['arm']==arm.split('-')[0] and x['mode']=='consistent' and x['depth']==depth][0]
+        rows=[row for row in x['requests_rows'] if ids[row[0]] in subset]
+        T=sum(w[1] for w in rows); n=len(rows); Om=sum(w[3]-w[5]/1000 for w in rows)
+        p=pred[depth]
+        full=T/(O+(T-n)/p['tokens_per_round']*p['ms_per_round']/1000)
+        print(arm, depth, 'measured overhead s', round(Om,2), 'calibration overhead s', round(O,2), 'complete predicted for full-length outputs', round(full,1))
+
+
+import hashlib, json
+from pathlib import Path
+root=Path('artifacts/benchmarks/depth-calibration')
+t=open('artifacts/depth-calibration/subset.out').read()
+j,rest=t.split('\n}\n',1); subset=json.loads(j+'\n}')
+full={}
+for line in rest.strip().splitlines():
+    w=line.split(); full.setdefault(w[0],{})[w[1]]={'measured_overhead_seconds':float(w[5]),'calibration_overhead_seconds':float(w[9]),'predicted_complete_full_length':float(w[-1])}
+cals={}
+for n in ('panel-baseline','panel-baseline-r1','panel-he4','panel-armd','screen-baseline','screen-he4'):
+    raw=(root/n/'calibration.json').read_bytes()
+    c=json.loads(raw)
+    c['record_sha256']=hashlib.sha256(raw).hexdigest()
+    cals[n]=c
+out={'schema':1,'question':'Does a minutes-long per-deployment calibration predict the best serving draft depth and the speed ratios between depths measured on full panels?',
+ 'calibrations':cals,
+ 'comparison_with_measured':json.load(open('artifacts/depth-calibration/compare.json')),
+ 'panel_subset_matched':subset,'panel_subset_full_length_complete':full,
+ 'notes':'Measured values come from results/draft-depth-fairness/result.json (panel, 120 requests) and results/cuda-decode-consistency-cost/result.json screen_runs (screen, 60 requests). panel-baseline ran during concurrent CPU load from another agent; panel-baseline-r1 repeats it.'}
+Path('results/draft-depth-calibration/result.json').write_text(json.dumps(out,indent=1)+'\n')
+print(len(json.dumps(out)))

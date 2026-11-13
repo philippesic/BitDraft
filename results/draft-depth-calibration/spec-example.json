@@ -1,0 +1,19 @@
+{
+ "schema": "depth-calibration-v1",
+ "comparison": {
+  "path": "/home/philip/BitDraft/artifacts/qualification/lean-checks/q4km/requests-establish.json",
+  "sha256": "f61916f662ea7b88b871a16740cc27c7b87e8832da7c1d05effd3a0de3f981a4",
+  "bytes": 3280
+ },
+ "drafter": {
+  "path": "/home/philip/BitDraft/artifacts/qualification/original-zero-export-02/exports/99d2be79f956f6ccde483b960d4a31b939eeda86e4530e813929a3452c14fc1e.bin",
+  "sha256": "99d2be79f956f6ccde483b960d4a31b939eeda86e4530e813929a3452c14fc1e",
+  "bytes": 541022016
+ },
+ "tasks": 24,
+ "cost_tasks": 4,
+ "survival_cap": 512,
+ "cost_cap": 256,
+ "max_depth": 15,
+ "exact": true
+}

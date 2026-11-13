@@ -344,3 +344,61 @@ def test_native_comparison_refuses_server_not_produced_by_declared_build(tmp_pat
     from dataclasses import replace
 
     replace(spec, source=artifact(file_reference(source), tmp_path)).verify()
+
+
+def test_depth_calibration_splits_deep_rounds_and_picks_fastest_depth() -> None:
+    from benchmarks.calibration import predict, round_cost, tokens_per_round
+    from benchmarks.metrics import draft_statistics
+
+    line = (
+        "statistics draft-dflash: #calls(b,g,a) =    2     40     40, #gen drafts = 40, "
+        "#acc drafts = 30, #gen tokens = 80, #acc tokens = 30, #mean acc len = 1.75, "
+        "#acc rate/pos = (0.500, 0.250), dur(b,g,a) = 0.001, 60.000, 0.000 ms"
+    )
+    assert draft_statistics(line) == [
+        {"rounds": 40, "accepted": 30, "reached": [20, 10], "draft_ms": 60.0}
+    ]
+    assert tokens_per_round([0.5, 0.25], 0) == 1.0
+    assert tokens_per_round([0.5, 0.25], 1) == pytest.approx(1.4)
+    assert tokens_per_round([0.5, 0.25], 2) == pytest.approx(1.75)
+
+    def row(category: str, reached: list[int]) -> Record:
+        return {
+            "category": category,
+            "tokens": sum(reached) + 101,
+            "accepted": sum(reached),
+            "wall_seconds": 1.0,
+            "predicted_ms": 500.0,
+            "draft_rounds": 100,
+            "draft_ms": 100.0,
+            "reached": reached,
+        }
+
+    def cost(depth: int, milliseconds: float) -> Record:
+        timing = {"draft_ms": 100.0} if depth else {}
+        return round_cost(
+            {
+                "depth": depth,
+                "seconds": 1.0,
+                "rows": [
+                    {
+                        "tokens": 101,
+                        "accepted": 0,
+                        "wall_seconds": 1.2,
+                        "predicted_ms": milliseconds * 100,
+                        **timing,
+                    }
+                ],
+            }
+        )
+
+    model = predict(
+        [row("code", [60, 40]), row("writing", [40, 10])],
+        [cost(0, 5.0), cost(1, 8.0), cost(2, 9.5)],
+        2,
+    )
+    categories = record(model["by_category"])
+    assert record(model["survival"])["share_reaching_position"] == [0.5, 0.25]
+    assert record(model["recommendation"])["depth"] == 2
+    assert record(categories["code"])["depth"] == 2
+    assert record(categories["writing"])["depth"] == 1

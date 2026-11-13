@@ -28,19 +28,29 @@ def server_arguments(spec: Comparison, arm: Arm, port: int) -> list[str]:
 
 
 @contextmanager
-def session(spec: Comparison, arm: Arm, cell: Store, managed_group: bool = False) -> Iterator[int]:
+def session(
+    spec: Comparison, arm: Arm, cell: Store, managed_group: bool = False, consistent: bool = True
+) -> Iterator[int]:
     port = port_number()
     argv = server_arguments(spec, arm, port)
+    environment = native_environment(spec.binary.path.parent)
+    if not consistent:
+        environment["GGML_CUDA_DECODE_CONSISTENT"] = "0"
     cell.atomic(
         cell.root / "command.json",
         canonical(
-            {"argv": argv, "binary": reference(spec.binary), "target": reference(spec.target)}
+            {
+                "argv": argv,
+                "binary": reference(spec.binary),
+                "target": reference(spec.target),
+                "decode_consistent": environment["GGML_CUDA_DECODE_CONSISTENT"],
+            }
         ),
     )
     with (cell.root / "server.log").open("wb") as log:
         process = subprocess.Popen(
             [sys.executable, "-B", "-m", "benchmarks.server_child", str(os.getpid()), *argv],
-            env=native_environment(spec.binary.path.parent),
+            env=environment,
             stdout=log,
             stderr=subprocess.STDOUT,
             start_new_session=not managed_group,

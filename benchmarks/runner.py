@@ -114,31 +114,9 @@ def compare_leased(
                         selected
                     )
                     for index, task in enumerate(tasks):
-                        rendered = request(
-                            port,
-                            "apply-template",
-                            {"messages": task["messages"], "tools": task.get("tools", [])},
+                        identifiers = prompt_tokens(
+                            port, task, integer(task["output_cap"]), spec.context
                         )
-                        prompt = string(rendered["prompt"])
-                        identifiers = sequence(
-                            request(
-                                port,
-                                "tokenize",
-                                {"content": prompt, "add_special": True, "parse_special": True},
-                            )["tokens"]
-                        )
-                        ancestry = record(task.get("ancestry", {}))
-                        if (
-                            "token_sha256" in ancestry
-                            and identity({"tokens": identifiers}) != ancestry["token_sha256"]
-                        ):
-                            raise ValueError(
-                                "native serving template/tokenizer differs from the frozen workload"
-                            )
-                        if len(identifiers) + integer(task["output_cap"]) > spec.context:
-                            raise ValueError(
-                                "task exceeds context; preserve workload and revise explicitly"
-                            )
                         query = payload(
                             identifiers,
                             integer(task["output_cap"]),
@@ -316,6 +294,27 @@ def compare_leased(
             canonical({"status": "failed", "error": str(error), "completed_requests": len(rows)}),
         )
         raise
+
+
+def prompt_tokens(port: int, task: Record, cap: int, context: int) -> list[object]:
+    rendered = request(
+        port,
+        "apply-template",
+        {"messages": task["messages"], "tools": task.get("tools", [])},
+    )
+    identifiers = sequence(
+        request(
+            port,
+            "tokenize",
+            {"content": string(rendered["prompt"]), "add_special": True, "parse_special": True},
+        )["tokens"]
+    )
+    ancestry = record(task.get("ancestry", {}))
+    if "token_sha256" in ancestry and identity({"tokens": identifiers}) != ancestry["token_sha256"]:
+        raise ValueError("native serving template/tokenizer differs from the frozen workload")
+    if len(identifiers) + cap > context:
+        raise ValueError("task exceeds context; preserve workload and revise explicitly")
+    return identifiers
 
 
 def historical_comparisons(rows: list[Record], cached: dict[str, Record]) -> Record:

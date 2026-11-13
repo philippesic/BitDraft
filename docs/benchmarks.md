@@ -27,6 +27,7 @@ explicit paths and the shared saved-reference registry.
 | `suite` | Broader panels and optional state selection |
 | `verify-greedy`, `verify-sampler`, `profile-native` | Independent decisions, distributions, kernel activation |
 | `reduce-trace` | Structural round accounting, not an independent verifier |
+| `calibrate-depth` | Serving draft depth for one target, drafter, runtime and GPU |
 
 Execution commands freeze source and use [the numerical environment](development.md)
 where needed. Preserve inputs, logs, ownership and failures. Comparison outputs must be
@@ -208,6 +209,41 @@ targets, without pooling away regressions or mixing absolute scores across chang
 Sampled mode declares temperature/top-p/top-k/min-p, three seeds and target/runtime-bound
 qualification. Unequal paths get descriptive robustness, not greedy equality or checkpoint
 ranking by throughput.
+
+## Depth calibration
+
+`calibrate-depth SPEC [OUTPUT]` picks the draft depth to serve a trained drafter with on a
+given target, runtime and GPU, in two to four minutes. It is separate from training and
+from the fixed benchmark depth. Schema `depth-calibration-v1` names an authenticated
+greedy DEV `comparison` (runtime build, server, libraries, target, workload, context),
+the `drafter`, `tasks` and `cost_tasks` counts, `survival_cap` and `cost_cap` output
+caps, `max_depth` (2–15) and `exact` (exact verification, `GGML_CUDA_DECODE_CONSISTENT=32`;
+false sets 0). Example: [panel calibration](../results/draft-depth-calibration/spec-example.json).
+
+It runs under the GPU lease:
+
+1. A survival run drafts at `max_depth` on `tasks` requests spread over categories and
+   input lengths. The server's per-position counters give the share of rounds whose first
+   *i* drafts were all accepted.
+2. Short cost sessions at every depth from 0 (target only) to `max_depth` run `cost_tasks`
+   requests chosen across input lengths. Each gives decode milliseconds per round, split
+   into the drafter's own forward (server `dur` counter) and the rest (target verification
+   and round overhead). The target cannot verify a batch without a drafter in this
+   runtime, so the target part is measured through the drafting path.
+3. The model predicts tokens per round at each depth by splitting each deep round's
+   accepted run into rounds of the shallower depth. Summing per-position shares instead
+   undercounts accepted drafts per round at shallow depths by up to 14%. It combines this with the round cost
+   into decode and complete-request tokens/s. Complete time keeps the survival run's
+   per-request prompt and request overhead, scaled by the measured ratio for target only.
+
+`calibration.json` in the output records identities (build, server, libraries, target,
+drafter, workload, GPU, code), settings, the cost curve, survival shares, predictions,
+the best depth, depths within 2% of it, the gain over target only and per-category best
+depths. Other per-request rows and server logs stay in the session folders. Cite the
+record by its path and hash. Measured accuracy against panels is in
+[the result](../results/draft-depth-calibration/result.md). Predictions are for the
+calibration's own capped requests; outputs do not check exactness, which remains the
+benchmarks' job. Category recommendations rest on few rounds.
 
 ## Live application and instructions
 

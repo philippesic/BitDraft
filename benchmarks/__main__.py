@@ -52,6 +52,7 @@ def main() -> int:
         "record-reference",
         "prepare-checks",
         "prepare-initialization",
+        "calibrate-depth",
     ):
         comparison = commands.add_parser(name)
         comparison.add_argument("input", type=Path)
@@ -137,6 +138,10 @@ def main() -> int:
             from benchmarks.campaign import preflight
 
             result = preflight(args.input)
+        elif args.command == "calibrate-depth":
+            from benchmarks.calibration import calibrate
+
+            result = calibrate(args.input, args.output)
         elif args.command == "prepare-initialization":
             from w1a1_eagle.contracts import integer, record
             from w1a1_eagle.intent import Intent

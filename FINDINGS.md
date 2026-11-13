@@ -126,6 +126,16 @@ drafter at its best exact depth (arm D: 0.88 vs 0.82), about 7–10% too favoura
 unchanged and does not systematically favour HE4. Depth 3 is proposed as the shared default.
 [Result](results/draft-depth-fairness/result.md).
 
+### F020: Can a drafter's serving depth be chosen per deployment without a panel sweep?
+
+Yes, on the measured Q4KM/runtime-v5 deployment. `benchmarks calibrate-depth` takes 2–4 GPU
+minutes. It combines one depth-15 survival run with short cost sessions at depths 0–15 and
+recommended each drafter's measured best panel depth: Baseline 3, HE4 220,095 2 (3 within
+2%), arm D 3 (2 within 2%). Predicted depth-3/depth-2 ratios were within 1.5% on the
+complete-request clock and 2.5% on decode; screen decode ratios at depths 2–15 within 1–3%. Absolute speeds vary about ±5% between
+sessions. Summing per-position acceptance instead of splitting deep rounds undercounts
+shallow depths by up to 14%. [Result](results/draft-depth-calibration/result.md).
+
 ## Earlier experiments and durable lessons
 
 ### Packed low-bit paths did not beat ordinary EAGLE in the Turing suite

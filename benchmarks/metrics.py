@@ -1,4 +1,5 @@
 import re
+from typing import cast
 
 from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
 
@@ -144,6 +145,30 @@ def relative_speed(summaries: Record) -> Record:
         }
         for arm, value in summaries.items()
     }
+
+
+def draft_statistics(log: str) -> list[Record]:
+    pattern = (
+        r"#calls\(b,g,a\) =\s*\d+\s+\d+\s+(\d+),.*?#acc tokens =\s*(\d+)"
+        r"(?:, #mean acc len =\s*[\d.]+, #acc rate/pos = \(([^)]*)\))?"
+        r"(?:, dur\(b,g,a\) = [\d.]+, ([\d.]+), [\d.]+ ms)?"
+    )
+    rows: list[Record] = []
+    for match in re.finditer(pattern, log):
+        calls, accepted, shares, drafting = cast(
+            tuple[str, str, str | None, str | None], match.groups()
+        )
+        rounds = int(calls)
+        rates = [float(value) for value in shares.split(",")] if shares else []
+        rows.append(
+            {
+                "rounds": rounds,
+                "accepted": int(accepted),
+                "reached": [round(rate * rounds) for rate in rates],
+                "draft_ms": float(drafting) if drafting else None,
+            }
+        )
+    return rows
 
 
 def reconcile(log: str, responses: list[Record]) -> None:
