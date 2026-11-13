@@ -17,6 +17,7 @@ FloatArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.float32]]"
 IntArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.int32]]"
 
 TAPS = (2, 6, 10, 14, 18, 22, 26, 30)
+READERS = 4
 
 
 @dataclass(frozen=True)
@@ -38,7 +39,12 @@ def finite(values: "HalfArray | FloatArray") -> bool:
     return not bool(((single >= 0x7F800000) & (single < 0x80000000) | (single >= 0xFF800000)).any())
 
 
-def load_capture(spec: CaptureSpec, byte_budget: int, hidden: int = 2560) -> Capture:
+def load_capture(
+    spec: CaptureSpec,
+    byte_budget: int,
+    hidden: int = 2560,
+    readers: ThreadPoolExecutor | None = None,
+) -> Capture:
     if type(byte_budget) is not int or byte_budget < 1 or hidden < 1:
         raise ValueError("explicit capture byte budget required")
     if spec.metadata.size > min(16 * 1024 * 1024, byte_budget // 32):
@@ -107,9 +113,20 @@ def load_capture(spec: CaptureSpec, byte_budget: int, hidden: int = 2560) -> Cap
     )
     raw = taps.data.cast("B")
     size = n * hidden * storage_size
-    for index, tap in enumerate(TAPS):
-        files[f"layer-{tap}.{suffix}"].read_verified(raw[index * size : (index + 1) * size])
+    parts = [
+        (files[f"layer-{tap}.{suffix}"], raw[index * size : (index + 1) * size])
+        for index, tap in enumerate(TAPS)
+    ]
     del raw
+    if readers is None:
+        for ref, part in parts:
+            ref.read_verified(part)
+    else:
+        reads = [readers.submit(ref.read_verified, part) for ref, part in parts]
+        wait(reads)
+        for read in reads:
+            read.result()
+    del parts
     if not finite(taps):
         raise ValueError("nonfinite teacher features")
     stored = torch.from_numpy(taps)
@@ -139,6 +156,7 @@ class CaptureCache:
         self.hidden = hidden
         self.entries: OrderedDict[str, Capture] = OrderedDict()
         self.loader: ThreadPoolExecutor | None = None
+        self.readers: ThreadPoolExecutor | None = None
         self.pending: tuple[str, Future[Capture]] | None = None
 
     @staticmethod
@@ -163,7 +181,9 @@ class CaptureCache:
             wait((future,))
 
     def load(self, spec: CaptureSpec) -> Capture:
-        return load_capture(spec, self.byte_budget, self.hidden)
+        if self.readers is None:
+            self.readers = ThreadPoolExecutor(READERS, "capture-read")
+        return load_capture(spec, self.byte_budget, self.hidden, self.readers)
 
     def get(self, spec: CaptureSpec) -> Capture:
         key = self.key(spec)

@@ -141,7 +141,8 @@ updates × largest group × 15, so update budgets and visit policies sized for o
 per update need re-planning.
 
 While an update runs, one background thread loads and authenticates the sequence of the
-next cursor's group, which depends only on seed and cursor. It writes no journal event and
+next cursor's group, which depends only on seed and cursor; four reader threads read and
+hash its eight feature files in parallel. It writes no journal event and
 changes no counter, cursor or RNG: the next update still journals its attempt and exposure
 before receiving that sequence. A failed background load is discarded and the update loads
 synchronously, so errors surface as they would without prefetching. Host memory holds at
