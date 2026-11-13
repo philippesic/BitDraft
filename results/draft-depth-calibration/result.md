@@ -192,8 +192,8 @@ smoke run exposed an off-by-one in counter pairing, which was fixed before any r
   frozen executed source are in the executing worktree's ignored
   `artifacts/benchmarks/depth-calibration/`. result.json holds every `calibration.json`
   in full with its hash, and the comparisons need nothing else. Server logs and
-  per-request rows are lost when the worktree is removed. The two smoke runs are
-  disposable now.
+  per-request rows are lost when the worktree is removed. The two smoke runs' outputs
+  were deleted after the fix.
 - **Read-only inputs.** No models, saved references, runtimes or benchmark defaults were
   created, changed or deleted. The temporary links into the main checkout are removed
   with the worktree.
