@@ -1,0 +1,1053 @@
+{
+ "schema": 1,
+ "question": "Where does the extra server prompt-processing time go when a DFlash-style drafter is attached, and what could remove it?",
+ "hardware": "0, NVIDIA GeForce RTX 5080, GPU-44ceb8b5-b67a-a317-fee3-f01c9201994e, 617.42, 16303 MiB",
+ "runtime": {
+  "binary": "/home/philip/BitDraft/artifacts/native/runtime-v5/build/bin/llama-server",
+  "binary_sha256": "c83a7965756407895146dafd2b1c0fe4a366788e529b6625d90aefb228c02832",
+  "libllama_common_sha256": "069027f282c7c854eecd7d6d67880c38760f4d81b1fab18d5e8da2d21aa55c40",
+  "libllama_server_impl_sha256": "2d0252c5e9f0cd54307626de5fce333e3d0fb50f635106c563878c47e92369e0"
+ },
+ "models": {
+  "target": {
+   "path": "artifacts/models/qwen35-4b-q4km.gguf",
+   "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+  },
+  "baseline": {
+   "path": "artifacts/models/dflash-4b-q4km.gguf"
+  },
+  "he4": {
+   "path": "artifacts/qualification/original-zero-export-02/exports/99d2be79\u2026.bin",
+   "sha256": "99d2be79f956f6ccde483b960d4a31b939eeda86e4530e813929a3452c14fc1e"
+  }
+ },
+ "geometry": {
+  "drafter_feature_layers": 8,
+  "target_hidden": 2560,
+  "feature_bytes_per_token_fp32": 81920,
+  "drafter_sliding_window": 4096,
+  "drafter_sliding_layers": 5,
+  "drafter_full_layers": 1,
+  "drafter_kv_bytes_per_token_f16": {
+   "sliding_layers": 20480,
+   "full_layer": 4096
+  },
+  "target_recurrent_state_MiB_per_checkpoint": 50.251,
+  "checkpoint_MiB_with_drafter_at_4096_plus_context": 130.298
+ },
+ "stored_requests": {
+  "source": "/home/philip/BitDraft/artifacts/benchmarks/full-qualification-01/q4km-requests (600 DEV requests x 2 repeats, raw response timings)",
+  "arms": {
+   "target": {
+    "requests": 1212,
+    "prompt_tokens": 1648470,
+    "prompt_seconds": 178.2,
+    "ms_per_token": 0.1081,
+    "fit_ms": {
+     "intercept": 32.3,
+     "per_token": 0.0844
+    },
+    "bands": [
+     {
+      "input_tokens": [
+       0,
+       512
+      ],
+      "requests": 602,
+      "mean_prompt_ms": 45.5,
+      "ms_per_token": 0.2535
+     },
+     {
+      "input_tokens": [
+       512,
+       2048
+      ],
+      "requests": 370,
+      "mean_prompt_ms": 110.5,
+      "ms_per_token": 0.129
+     },
+     {
+      "input_tokens": [
+       2048,
+       4096
+      ],
+      "requests": 140,
+      "mean_prompt_ms": 246.1,
+      "ms_per_token": 0.0943
+     },
+     {
+      "input_tokens": [
+       4096,
+       8192
+      ],
+      "requests": 40,
+      "mean_prompt_ms": 505.2,
+      "ms_per_token": 0.0883
+     },
+     {
+      "input_tokens": [
+       8192,
+       17000
+      ],
+      "requests": 60,
+      "mean_prompt_ms": 921.1,
+      "ms_per_token": 0.0878
+     }
+    ]
+   },
+   "baseline": {
+    "requests": 1212,
+    "prompt_tokens": 1648470,
+    "prompt_seconds": 302.7,
+    "ms_per_token": 0.1836,
+    "fit_ms": {
+     "intercept": 49.8,
+     "per_token": 0.147
+    },
+    "bands": [
+     {
+      "input_tokens": [
+       0,
+       512
+      ],
+      "requests": 602,
+      "mean_prompt_ms": 62.7,
+      "ms_per_token": 0.3492
+     },
+     {
+      "input_tokens": [
+       512,
+       2048
+      ],
+      "requests": 370,
+      "mean_prompt_ms": 191.6,
+      "ms_per_token": 0.2239
+     },
+     {
+      "input_tokens": [
+       2048,
+       4096
+      ],
+      "requests": 140,
+      "mean_prompt_ms": 448.8,
+      "ms_per_token": 0.1719
+     },
+     {
+      "input_tokens": [
+       4096,
+       8192
+      ],
+      "requests": 40,
+      "mean_prompt_ms": 933.8,
+      "ms_per_token": 0.1631
+     },
+     {
+      "input_tokens": [
+       8192,
+       17000
+      ],
+      "requests": 60,
+      "mean_prompt_ms": 1564.5,
+      "ms_per_token": 0.1492
+     }
+    ]
+   },
+   "he4broad": {
+    "requests": 1212,
+    "prompt_tokens": 1648470,
+    "prompt_seconds": 304.7,
+    "ms_per_token": 0.1848,
+    "fit_ms": {
+     "intercept": 51.8,
+     "per_token": 0.1467
+    },
+    "bands": [
+     {
+      "input_tokens": [
+       0,
+       512
+      ],
+      "requests": 602,
+      "mean_prompt_ms": 64.0,
+      "ms_per_token": 0.3566
+     },
+     {
+      "input_tokens": [
+       512,
+       2048
+      ],
+      "requests": 370,
+      "mean_prompt_ms": 193.1,
+      "ms_per_token": 0.2256
+     },
+     {
+      "input_tokens": [
+       2048,
+       4096
+      ],
+      "requests": 140,
+      "mean_prompt_ms": 458.4,
+      "ms_per_token": 0.1756
+     },
+     {
+      "input_tokens": [
+       4096,
+       8192
+      ],
+      "requests": 40,
+      "mean_prompt_ms": 915.8,
+      "ms_per_token": 0.16
+     },
+     {
+      "input_tokens": [
+       8192,
+       17000
+      ],
+      "requests": 60,
+      "mean_prompt_ms": 1565.2,
+      "ms_per_token": 0.1493
+     }
+    ]
+   }
+  }
+ },
+ "stored_live": {
+  "source": "/home/philip/BitDraft/artifacts/benchmarks/full-qualification-01/q4km-live (12 tasks x 3 repeats, transcript timings)",
+  "arms": {
+   "target": {
+    "calls": 363,
+    "new_prompt_tokens": 233682,
+    "prompt_seconds": 39.7,
+    "mean_cached_tokens": 4104
+   },
+   "baseline": {
+    "calls": 363,
+    "new_prompt_tokens": 233682,
+    "prompt_seconds": 82.2,
+    "mean_cached_tokens": 4104
+   },
+   "he4broad": {
+    "calls": 363,
+    "new_prompt_tokens": 233682,
+    "prompt_seconds": 82.0,
+    "mean_cached_tokens": 4104
+   }
+  },
+  "paired_extra_fit_ms": {
+   "baseline": {
+    "per_call": 45.6,
+    "per_new_token": 0.0801,
+    "per_cached_token": 0.00485
+   },
+   "he4": {
+    "per_call": 43.6,
+    "per_new_token": 0.0781,
+    "per_cached_token": 0.0055
+   }
+  },
+  "calls_under_64_new_tokens": {
+   "calls": 51,
+   "mean_new": 27,
+   "mean_cached": 4807,
+   "target_ms": 67.4,
+   "baseline_ms": 138.7,
+   "he4_ms": 139.6
+  },
+  "cache_reuse_repeat0": {
+   "followup_calls": 109,
+   "exact_extension": 80,
+   "diverged": 29,
+   "median_tokens_back": 327
+  }
+ },
+ "stored_prompt_cache_save_gap_ms_mean": {
+  "target": 92.4,
+  "baseline": 105.3,
+  "he4": 106.6,
+  "note": "server log gap between slot selection and task launch, outside prompt_ms, 1,186 requests per arm"
+ },
+ "clean_timing": {
+  "note": "one server per configuration, warmup request then 3 repeats of synthetic token prompts with cache_prompt false and n_predict 1; sessions: base context then 4 cached calls each adding the previous 8 generated tokens plus NEW synthetic tokens (median of calls 2-4); prompt_ms is the server's prompt partition",
+  "configs": {
+   "target": "benchmark arguments, no drafter",
+   "baseline": "benchmark arguments + DFlash Q4KM",
+   "he4": "benchmark arguments + HE4 220,095",
+   "*-ckpt0": "--ctx-checkpoints 0",
+   "*-ub2048": "-b 2048 -ub 2048",
+   "*-fusion": "GGML_CUDA_DECODE_CONSISTENT unset"
+  },
+  "results": {
+   "baseline": {
+    "requests": {
+     "512": {
+      "prompt_ms_median": 91.2,
+      "prompt_ms_all": [
+       113.4,
+       89.6,
+       91.2
+      ]
+     },
+     "2048": {
+      "prompt_ms_median": 360.7,
+      "prompt_ms_all": [
+       350.0,
+       360.7,
+       360.9
+      ]
+     },
+     "4096": {
+      "prompt_ms_median": 667.7,
+      "prompt_ms_all": [
+       666.8,
+       667.7,
+       671.3
+      ]
+     },
+     "8192": {
+      "prompt_ms_median": 1243.7,
+      "prompt_ms_all": [
+       1243.7,
+       1242.2,
+       1244.5
+      ]
+     },
+     "16000": {
+      "prompt_ms_median": 2422.1,
+      "prompt_ms_all": [
+       2453.6,
+       2422.1,
+       2419.9
+      ]
+     }
+    },
+    "request_fit_ms": {
+     "intercept": 38.261,
+     "per_token": 0.1494
+    },
+    "sessions": {
+     "4096+32": {
+      "prompt_ms_median_steps_1_3": 223.3,
+      "prompt_ms_all": [
+       169.8,
+       227.9,
+       223.3,
+       192.8
+      ],
+      "prompt_n": 33
+     },
+     "4096+512": {
+      "prompt_ms_median_steps_1_3": 182.8,
+      "prompt_ms_all": [
+       181.5,
+       182.8,
+       182.7,
+       234.7
+      ],
+      "prompt_n": 513
+     },
+     "12000+32": {
+      "prompt_ms_median_steps_1_3": 162.8,
+      "prompt_ms_all": [
+       137.2,
+       162.8,
+       130.0,
+       188.5
+      ],
+      "prompt_n": 33
+     },
+     "12000+512": {
+      "prompt_ms_median_steps_1_3": 193.2,
+      "prompt_ms_all": [
+       192.7,
+       191.6,
+       193.2,
+       209.7
+      ],
+      "prompt_n": 513
+     }
+    }
+   },
+   "baseline-ckpt0": {
+    "requests": {
+     "512": {
+      "prompt_ms_median": 70.2,
+      "prompt_ms_all": [
+       70.4,
+       67.2,
+       70.2
+      ]
+     },
+     "2048": {
+      "prompt_ms_median": 280.1,
+      "prompt_ms_all": [
+       280.1,
+       279.7,
+       280.1
+      ]
+     },
+     "4096": {
+      "prompt_ms_median": 563.4,
+      "prompt_ms_all": [
+       557.0,
+       565.3,
+       563.4
+      ]
+     },
+     "8192": {
+      "prompt_ms_median": 1142.7,
+      "prompt_ms_all": [
+       1150.0,
+       1136.3,
+       1142.7
+      ]
+     },
+     "16000": {
+      "prompt_ms_median": 2309.4,
+      "prompt_ms_all": [
+       2342.3,
+       2309.4,
+       2308.3
+      ]
+     }
+    },
+    "request_fit_ms": {
+     "intercept": -22.7341,
+     "per_token": 0.1455
+    },
+    "sessions": {
+     "4096+32": {
+      "prompt_ms_median_steps_1_3": 19.7,
+      "prompt_ms_all": [
+       17.6,
+       20.0,
+       19.7,
+       17.0
+      ],
+      "prompt_n": 33
+     },
+     "4096+512": {
+      "prompt_ms_median_steps_1_3": 87.9,
+      "prompt_ms_all": [
+       84.6,
+       85.2,
+       89.5,
+       87.9
+      ],
+      "prompt_n": 513
+     },
+     "12000+32": {
+      "prompt_ms_median_steps_1_3": 18.1,
+      "prompt_ms_all": [
+       17.0,
+       17.2,
+       18.1,
+       18.2
+      ],
+      "prompt_n": 33
+     },
+     "12000+512": {
+      "prompt_ms_median_steps_1_3": 93.6,
+      "prompt_ms_all": [
+       94.0,
+       93.6,
+       93.5,
+       94.9
+      ],
+      "prompt_n": 513
+     }
+    }
+   },
+   "baseline-fusion": {
+    "requests": {
+     "512": {
+      "prompt_ms_median": 86.5,
+      "prompt_ms_all": [
+       107.8,
+       86.5,
+       74.0
+      ]
+     },
+     "2048": {
+      "prompt_ms_median": 344.2,
+      "prompt_ms_all": [
+       344.2,
+       312.6,
+       345.9
+      ]
+     },
+     "4096": {
+      "prompt_ms_median": 643.7,
+      "prompt_ms_all": [
+       653.2,
+       620.1,
+       643.7
+      ]
+     },
+     "8192": {
+      "prompt_ms_median": 1178.3,
+      "prompt_ms_all": [
+       1264.7,
+       1177.9,
+       1178.3
+      ]
+     },
+     "16000": {
+      "prompt_ms_median": 2295.3,
+      "prompt_ms_all": [
+       2367.0,
+       2284.3,
+       2295.3
+      ]
+     }
+    },
+    "request_fit_ms": {
+     "intercept": 35.9789,
+     "per_token": 0.1428
+    }
+   },
+   "baseline-ub2048": {
+    "requests": {
+     "512": {
+      "prompt_ms_median": 107.5,
+      "prompt_ms_all": [
+       108.9,
+       102.6,
+       107.5
+      ]
+     },
+     "2048": {
+      "prompt_ms_median": 330.0,
+      "prompt_ms_all": [
+       397.4,
+       329.7,
+       330.0
+      ]
+     },
+     "4096": {
+      "prompt_ms_median": 663.0,
+      "prompt_ms_all": [
+       752.9,
+       648.4,
+       663.0
+      ]
+     },
+     "8192": {
+      "prompt_ms_median": 1265.7,
+      "prompt_ms_all": [
+       1394.2,
+       1236.2,
+       1265.7
+      ]
+     },
+     "16000": {
+      "prompt_ms_median": 2394.6,
+      "prompt_ms_all": [
+       2471.9,
+       2383.8,
+       2394.6
+      ]
+     }
+    },
+    "request_fit_ms": {
+     "intercept": 55.0194,
+     "per_token": 0.1487
+    }
+   },
+   "he4": {
+    "requests": {
+     "512": {
+      "prompt_ms_median": 91.5,
+      "prompt_ms_all": [
+       112.0,
+       90.3,
+       91.5
+      ]
+     },
+     "2048": {
+      "prompt_ms_median": 359.3,
+      "prompt_ms_all": [
+       347.3,
+       361.3,
+       359.3
+      ]
+     },
+     "4096": {
+      "prompt_ms_median": 664.5,
+      "prompt_ms_all": [
+       659.4,
+       668.4,
+       664.5
+      ]
+     },
+     "8192": {
+      "prompt_ms_median": 1249.4,
+      "prompt_ms_all": [
+       1260.2,
+       1248.0,
+       1249.4
+      ]
+     },
+     "16000": {
+      "prompt_ms_median": 2436.3,
+      "prompt_ms_all": [
+       2483.0,
+       2436.3,
+       2396.1
+      ]
+     }
+    },
+    "request_fit_ms": {
+     "intercept": 36.2569,
+     "per_token": 0.15
+    },
+    "sessions": {
+     "4096+32": {
+      "prompt_ms_median_steps_1_3": 228.2,
+      "prompt_ms_all": [
+       178.6,
+       204.8,
+       228.2,
+       234.4
+      ],
+      "prompt_n": 33
+     },
+     "4096+512": {
+      "prompt_ms_median_steps_1_3": 184.4,
+      "prompt_ms_all": [
+       182.9,
+       183.3,
+       184.4,
+       231.4
+      ],
+      "prompt_n": 513
+     },
+     "12000+32": {
+      "prompt_ms_median_steps_1_3": 162.2,
+      "prompt_ms_all": [
+       140.1,
+       162.2,
+       133.7,
+       234.0
+      ],
+      "prompt_n": 33
+     },
+     "12000+512": {
+      "prompt_ms_median_steps_1_3": 197.5,
+      "prompt_ms_all": [
+       195.4,
+       197.5,
+       194.9,
+       220.9
+      ],
+      "prompt_n": 513
+     }
+    }
+   },
+   "target": {
+    "requests": {
+     "512": {
+      "prompt_ms_median": 60.8,
+      "prompt_ms_all": [
+       63.1,
+       60.1,
+       60.8
+      ]
+     },
+     "2048": {
+      "prompt_ms_median": 191.1,
+      "prompt_ms_all": [
+       187.6,
+       191.3,
+       191.1
+      ]
+     },
+     "4096": {
+      "prompt_ms_median": 358.5,
+      "prompt_ms_all": [
+       358.5,
+       356.6,
+       358.6
+      ]
+     },
+     "8192": {
+      "prompt_ms_median": 702.2,
+      "prompt_ms_all": [
+       702.2,
+       701.8,
+       705.0
+      ]
+     },
+     "16000": {
+      "prompt_ms_median": 1419.8,
+      "prompt_ms_all": [
+       1417.1,
+       1419.8,
+       1424.6
+      ]
+     }
+    },
+    "request_fit_ms": {
+     "intercept": 5.2497,
+     "per_token": 0.0877
+    },
+    "sessions": {
+     "4096+32": {
+      "prompt_ms_median_steps_1_3": 83.7,
+      "prompt_ms_all": [
+       95.5,
+       97.9,
+       80.9,
+       83.7
+      ],
+      "prompt_n": 33
+     },
+     "4096+512": {
+      "prompt_ms_median_steps_1_3": 84.3,
+      "prompt_ms_all": [
+       84.8,
+       84.3,
+       85.4,
+       84.2
+      ],
+      "prompt_n": 513
+     },
+     "12000+32": {
+      "prompt_ms_median_steps_1_3": 60.4,
+      "prompt_ms_all": [
+       66.2,
+       63.7,
+       60.4,
+       59.9
+      ],
+      "prompt_n": 33
+     },
+     "12000+512": {
+      "prompt_ms_median_steps_1_3": 91.5,
+      "prompt_ms_all": [
+       90.4,
+       89.7,
+       91.5,
+       94.5
+      ],
+      "prompt_n": 513
+     }
+    }
+   },
+   "target-ckpt0": {
+    "requests": {
+     "512": {
+      "prompt_ms_median": 43.7,
+      "prompt_ms_all": [
+       45.2,
+       43.7,
+       43.7
+      ]
+     },
+     "2048": {
+      "prompt_ms_median": 166.0,
+      "prompt_ms_all": [
+       165.7,
+       166.0,
+       167.1
+      ]
+     },
+     "4096": {
+      "prompt_ms_median": 335.2,
+      "prompt_ms_all": [
+       335.2,
+       337.1,
+       333.4
+      ]
+     },
+     "8192": {
+      "prompt_ms_median": 680.6,
+      "prompt_ms_all": [
+       680.6,
+       681.2,
+       680.4
+      ]
+     },
+     "16000": {
+      "prompt_ms_median": 1399.0,
+      "prompt_ms_all": [
+       1399.0,
+       1399.9,
+       1398.0
+      ]
+     }
+    },
+    "request_fit_ms": {
+     "intercept": -15.6155,
+     "per_token": 0.0876
+    },
+    "sessions": {
+     "4096+32": {
+      "prompt_ms_median_steps_1_3": 14.7,
+      "prompt_ms_all": [
+       23.4,
+       16.1,
+       14.7,
+       13.9
+      ],
+      "prompt_n": 33
+     },
+     "4096+512": {
+      "prompt_ms_median_steps_1_3": 55.4,
+      "prompt_ms_all": [
+       54.8,
+       55.2,
+       55.4,
+       57.5
+      ],
+      "prompt_n": 513
+     },
+     "12000+32": {
+      "prompt_ms_median_steps_1_3": 15.8,
+      "prompt_ms_all": [
+       15.6,
+       15.8,
+       16.0,
+       15.5
+      ],
+      "prompt_n": 33
+     },
+     "12000+512": {
+      "prompt_ms_median_steps_1_3": 62.4,
+      "prompt_ms_all": [
+       60.2,
+       62.4,
+       62.8,
+       62.4
+      ],
+      "prompt_n": 513
+     }
+    }
+   },
+   "target-fusion": {
+    "requests": {
+     "512": {
+      "prompt_ms_median": 55.9,
+      "prompt_ms_all": [
+       64.0,
+       55.9,
+       55.5
+      ]
+     },
+     "2048": {
+      "prompt_ms_median": 177.8,
+      "prompt_ms_all": [
+       174.2,
+       178.1,
+       177.8
+      ]
+     },
+     "4096": {
+      "prompt_ms_median": 335.5,
+      "prompt_ms_all": [
+       335.5,
+       336.6,
+       331.2
+      ]
+     },
+     "8192": {
+      "prompt_ms_median": 648.3,
+      "prompt_ms_all": [
+       657.7,
+       648.3,
+       647.6
+      ]
+     },
+     "16000": {
+      "prompt_ms_median": 1309.5,
+      "prompt_ms_all": [
+       1317.4,
+       1309.5,
+       1307.6
+      ]
+     }
+    },
+    "request_fit_ms": {
+     "intercept": 7.4884,
+     "per_token": 0.0809
+    }
+   },
+   "target-ub2048": {
+    "requests": {
+     "512": {
+      "prompt_ms_median": 62.8,
+      "prompt_ms_all": [
+       61.6,
+       62.8,
+       63.2
+      ]
+     },
+     "2048": {
+      "prompt_ms_median": 184.6,
+      "prompt_ms_all": [
+       186.0,
+       184.6,
+       183.8
+      ]
+     },
+     "4096": {
+      "prompt_ms_median": 360.8,
+      "prompt_ms_all": [
+       360.6,
+       360.8,
+       368.4
+      ]
+     },
+     "8192": {
+      "prompt_ms_median": 697.2,
+      "prompt_ms_all": [
+       704.3,
+       697.2,
+       693.8
+      ]
+     },
+     "16000": {
+      "prompt_ms_median": 1380.3,
+      "prompt_ms_all": [
+       1377.3,
+       1380.3,
+       1381.0
+      ]
+     }
+    },
+    "request_fit_ms": {
+     "intercept": 12.7694,
+     "per_token": 0.0851
+    }
+   }
+  }
+ },
+ "trace_log": {
+  "baseline-trace": {
+   "checkpoints": {
+    "count": 67,
+    "MiB_max": 130.298,
+    "MiB_mean": 121.17401492537313
+   },
+   "prompt_cache_update_ms": {
+    "count": 18,
+    "median": 216.20999999999998,
+    "max": 1282.78
+   },
+   "prompt_cache_saves": [
+    [
+     512,
+     78.274,
+     12.012
+    ],
+    [
+     2048,
+     162.345,
+     48.047
+    ],
+    [
+     4096,
+     274.438,
+     96.094
+    ],
+    [
+     8192,
+     418.579,
+     112.141
+    ],
+    [
+     16000,
+     693.347,
+     142.73
+    ],
+    [
+     6183,
+     347.881,
+     104.27
+    ]
+   ]
+  },
+  "target-trace": {
+   "checkpoints": {
+    "count": 67,
+    "MiB_max": 50.251,
+    "MiB_mean": 50.251
+   },
+   "prompt_cache_update_ms": {
+    "count": 18,
+    "median": 166.82999999999998,
+    "max": 518.27
+   },
+   "prompt_cache_saves": [
+    [
+     512,
+     66.263,
+     0.0
+    ],
+    [
+     2048,
+     114.298,
+     0.0
+    ],
+    [
+     4096,
+     178.345,
+     0.0
+    ],
+    [
+     8192,
+     306.438,
+     0.0
+    ],
+    [
+     16000,
+     550.617,
+     0.0
+    ],
+    [
+     6183,
+     243.611,
+     0.0
+    ]
+   ]
+  },
+  "checkpoint_creation_ms_4096_plus_32_session": {
+   "target": "18-27 per checkpoint (50 MiB)",
+   "baseline": "74-108 per checkpoint (130 MiB)"
+  }
+ },
+ "nsys_16000_prefill": {
+  "note": "one profiled 16,000-token prefill per arm after one warmup; Nsight CUDA+OS runtime trace, timings inflated by tracing",
+  "target": {
+   "wall_ms": 1466.8,
+   "gpu_busy_ms": 1303.2,
+   "target_kernel_ms": 1274.3,
+   "main_thread_host_gaps_over_2ms": {
+    "count": 33,
+    "ms": 142.1
+   }
+  },
+  "baseline": {
+   "wall_ms": 2430.2,
+   "gpu_busy_ms": 1386.2,
+   "target_kernel_ms": 1269.4,
+   "drafter_kernel_ms": 28.6,
+   "feature_upload_MB": 2067.8,
+   "feature_upload_ms": 46.8,
+   "feature_download_MB": 1311.7,
+   "feature_download_ms": 23.1,
+   "main_thread_host_gaps_over_2ms": {
+    "count": 69,
+    "ms": 826.9
+   }
+  },
+  "baseline_per_512_token_batch_ms": {
+   "period": 70,
+   "target_kernels": "38-41",
+   "host_gap_after_target_sync": 18.3,
+   "feature_upload_gpu": 1.2,
+   "drafter_kernels": 0.9,
+   "common_host_gap_before_next_batch": 4.6
+  }
+ },
+ "gpu_minutes": 4.3
+}

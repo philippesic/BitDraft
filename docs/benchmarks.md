@@ -193,7 +193,11 @@ that control's; against historical controls they are descriptive, not paired tim
 `server_prompt_seconds` and `server_prediction_seconds` sum the native server's own
 prompt-processing and token-prediction partitions (null when a historical row predates
 them). Drafters add prompt work, so keep the split visible: in the live panel it cancelled
-the decoding gain ([standing](../results/he4broad-final-standing/result.md)). Paired group bootstraps preserve category composition and keep repeats/
+the decoding gain ([standing](../results/he4broad-final-standing/result.md)). That extra time is
+runtime overhead shared by every DFlash-style drafter: host-side feature copies and larger
+context checkpoints, not drafter compute ([prefill overhead](../results/speculative-prefill-overhead/result.md)).
+Request wall time also includes the server's RAM prompt-cache save of the previous request in
+every arm, outside `server_prompt_seconds`. Paired group bootstraps preserve category composition and keep repeats/
 variants together. Sparse strata make intervals unavailable; multiple candidates also
 receive adjusted intervals. Wide intervals are inconclusive. Compare matched arms within
 targets, without pooling away regressions or mixing absolute scores across changed eras.

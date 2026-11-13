@@ -97,6 +97,15 @@ panel requests at depth 4, and target-only itself changes in 62%. No wrongly acc
 occurred in 11,055 traced rounds. Keep exactness.
 [Result](results/cuda-decode-consistency-cost/result.md).
 
+### F018: Why does any drafter double prompt processing?
+
+Runtime overhead around the drafter, the same for Baseline and HE4. About 0.057 ms per
+prompt token is the GPU idling while target features are copied through host memory.
+Target kernels are unchanged and drafter kernels are about 2%. The drafters' 4,096-token
+sliding window also grows each context checkpoint from 50 to 130 MiB, about 100–140 ms
+per short cached call. Fixes that keep target outputs exact are proposed, not built.
+[Result](results/speculative-prefill-overhead/result.md).
+
 ## Earlier experiments and durable lessons
 
 ### Packed low-bit paths did not beat ordinary EAGLE in the Turing suite

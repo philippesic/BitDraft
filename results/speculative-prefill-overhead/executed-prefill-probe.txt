@@ -1,0 +1,176 @@
+import json
+import os
+import random
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+from benchmarks.measurement import pause, port_number, ready, request
+from benchmarks.runtime_policy import arguments
+from w1a1_eagle.config import native_environment
+from w1a1_eagle.device import cuda_identity, device_lease
+
+MAIN = Path("/home/philip/BitDraft/artifacts")
+BINARY = MAIN / "native/runtime-v5/build/bin/llama-server"
+TARGET = MAIN / "models/qwen35-4b-q4km.gguf"
+DRAFTERS = {
+    "target": None,
+    "baseline": MAIN / "models/dflash-4b-q4km.gguf",
+    "he4": MAIN
+    / "qualification/original-zero-export-02/exports/99d2be79f956f6ccde483b960d4a31b939eeda86e4530e813929a3452c14fc1e.bin",
+}
+NSYS = Path("/usr/local/cuda-13.1/bin/nsys")
+LENGTHS = (512, 2048, 4096, 8192, 16000)
+REPEATS = 3
+
+
+def tokens(count: int, seed: int) -> list[int]:
+    generator = random.Random(seed)
+    return [generator.randrange(100, 100000) for _ in range(count)]
+
+
+def complete(port: int, prompt: list[int], cache: bool, predict: int) -> dict:
+    start = time.perf_counter()
+    response = request(
+        port,
+        "completion",
+        {
+            "prompt": prompt,
+            "n_predict": predict,
+            "temperature": 0.0,
+            "seed": 8101,
+            "cache_prompt": cache,
+            "return_tokens": True,
+        },
+    )
+    wall = time.perf_counter() - start
+    timing = response["timings"]
+    return {
+        "wall_ms": wall * 1000,
+        "prompt_ms": timing["prompt_ms"],
+        "prompt_n": timing["prompt_n"],
+        "cache_n": timing.get("cache_n", 0),
+        "predicted_ms": timing["predicted_ms"],
+        "predicted_n": timing["predicted_n"],
+        "tokens": response.get("tokens", []),
+    }
+
+
+def requests_test(port: int) -> list[dict]:
+    rows = []
+    complete(port, tokens(2048, 1), False, 1)
+    for repeat in range(REPEATS):
+        for length in LENGTHS:
+            row = complete(port, tokens(length, 100 + length), False, 1)
+            row.pop("tokens")
+            rows.append({"test": "request", "length": length, "repeat": repeat, **row})
+    return rows
+
+
+def session_test(port: int, context: int, new: int) -> list[dict]:
+    rows = []
+    prompt = tokens(context, 7 + context)
+    first = complete(port, prompt, True, 8)
+    prompt = prompt + first["tokens"]
+    for step in range(4):
+        prompt = prompt + tokens(new, 1000 * step + new + context)
+        row = complete(port, prompt, True, 8)
+        prompt = prompt + row.pop("tokens")
+        rows.append({"test": "session", "context": context, "new": new, "step": step, **row})
+    return rows
+
+
+def run(name: str, arm: str, extra: list[str], unset: list[str], tests: str, out: Path, profile: bool) -> None:
+    cell = out / name
+    cell.mkdir(parents=True)
+    port = port_number()
+    argv = arguments(BINARY, TARGET, DRAFTERS[arm], 32768, 2, port) + extra
+    environment = native_environment(BINARY.parent)
+    for key in unset:
+        environment.pop(key, None)
+    session_name = "prefill-probe-" + name
+    if profile:
+        argv = [str(NSYS), "launch", "--session-new=" + session_name, "--trace=cuda,osrt", "--cuda-graph-trace=node", *argv]
+    (cell / "command.json").write_text(json.dumps({"argv": argv, "unset": unset}, indent=1))
+    rows: list[dict] = []
+    with (cell / "server.log").open("wb") as log:
+        process = subprocess.Popen(
+            argv if profile else [sys.executable, "-B", "-m", "benchmarks.server_child", str(os.getpid()), *argv],
+            env=environment,
+            stdout=log,
+            stderr=subprocess.STDOUT,
+            start_new_session=True,
+        )
+        try:
+            deadline = time.monotonic() + 180
+            while not ready(port):
+                if process.poll() is not None or time.monotonic() > deadline:
+                    raise ValueError("server startup failed: " + name)
+                pause(0.25)
+            if profile:
+                complete(port, tokens(2048, 1), False, 1)
+                subprocess.run(
+                    [str(NSYS), "start", "--session=" + session_name, "--sample=none", "--cpuctxsw=none", "--output=" + str(cell / "trace")],
+                    stdout=log, stderr=subprocess.STDOUT, env=environment, timeout=30, check=True,
+                )
+                row = complete(port, tokens(16000, 116000), False, 1)
+                row.pop("tokens")
+                rows.append({"test": "request", "length": 16000, "repeat": 0, **row})
+                rows += session_test(port, 4096, 32)
+                subprocess.run(
+                    [str(NSYS), "stop", "--session=" + session_name],
+                    stdout=log, stderr=subprocess.STDOUT, env=environment, timeout=180, check=True,
+                )
+            else:
+                if "r" in tests:
+                    rows += requests_test(port)
+                if "s" in tests:
+                    for context, new in ((4096, 32), (4096, 512), (12000, 32), (12000, 512)):
+                        rows += session_test(port, context, new)
+        finally:
+            if profile:
+                subprocess.run(
+                    [str(NSYS), "shutdown", "--session=" + session_name, "--kill=sigterm"],
+                    stdout=log, stderr=subprocess.STDOUT, env=environment, timeout=60, check=False,
+                )
+            if process.poll() is None:
+                process.terminate()
+            try:
+                process.wait(timeout=60)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait(timeout=15)
+    (cell / "rows.json").write_text(json.dumps(rows, indent=1))
+    print(name, "done", len(rows), flush=True)
+
+
+CONFIGS = {
+    "target": ("target", [], [], "rs"),
+    "baseline": ("baseline", [], [], "rs"),
+    "he4": ("he4", [], [], "rs"),
+    "target-ckpt0": ("target", ["--ctx-checkpoints", "0"], [], "rs"),
+    "baseline-ckpt0": ("baseline", ["--ctx-checkpoints", "0"], [], "rs"),
+    "target-ub2048": ("target", ["-b", "2048", "-ub", "2048"], [], "r"),
+    "baseline-ub2048": ("baseline", ["-b", "2048", "-ub", "2048"], [], "r"),
+    "target-fusion": ("target", [], ["GGML_CUDA_DECODE_CONSISTENT"], "r"),
+    "baseline-fusion": ("baseline", [], ["GGML_CUDA_DECODE_CONSISTENT"], "r"),
+    "target-trace": ("target", ["-lv", "4"], [], "rs"),
+    "baseline-trace": ("baseline", ["-lv", "4"], [], "rs"),
+}
+
+
+def main() -> None:
+    out = Path(sys.argv[1])
+    names = sys.argv[2].split(",")
+    profile = len(sys.argv) > 3 and sys.argv[3] == "profile"
+    out.mkdir(parents=True, exist_ok=True)
+    with device_lease("cuda"):
+        (out / ("gpu-" + ("profile" if profile else "clean") + ".txt")).write_text(cuda_identity())
+        for name in names:
+            arm, extra, unset, tests = CONFIGS[name]
+            run(name + ("-nsys" if profile else ""), arm, extra, unset, tests, out, profile)
+
+
+if __name__ == "__main__":
+    main()

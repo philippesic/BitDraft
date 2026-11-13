@@ -1,0 +1,191 @@
+=== analyze.py
+import json
+import re
+import statistics
+import sys
+from collections import defaultdict
+from pathlib import Path
+
+
+def fit(points):
+    n = len(points)
+    mx = sum(x for x, _ in points) / n
+    my = sum(y for _, y in points) / n
+    sxx = sum((x - mx) ** 2 for x, _ in points)
+    slope = sum((x - mx) * (y - my) for x, y in points) / sxx
+    return my - slope * mx, slope
+
+
+def main():
+    root = Path(sys.argv[1])
+    summary = {}
+    for cell in sorted(p for p in root.iterdir() if (p / "rows.json").is_file()):
+        rows = json.loads((cell / "rows.json").read_text())
+        requests = defaultdict(list)
+        sessions = defaultdict(list)
+        for row in rows:
+            if row["test"] == "request":
+                requests[row["length"]].append(row)
+            else:
+                sessions[(row["context"], row["new"])].append(row)
+        entry = {"requests": {}, "sessions": {}}
+        points = []
+        for length, items in sorted(requests.items()):
+            entry["requests"][length] = {
+                "prompt_ms_median": statistics.median(r["prompt_ms"] for r in items),
+                "prompt_ms_all": [round(r["prompt_ms"], 1) for r in items],
+                "outside_ms_median": statistics.median(r["wall_ms"] - r["prompt_ms"] - r["predicted_ms"] for r in items),
+                "prompt_n": items[0]["prompt_n"],
+            }
+            points += [(r["prompt_n"], r["prompt_ms"]) for r in items]
+        if len(points) > 2:
+            entry["request_fit_ms"] = dict(zip(("intercept", "per_token"), fit(points)))
+        for key, items in sorted(sessions.items()):
+            later = items[1:]
+            entry["sessions"][f"{key[0]}+{key[1]}"] = {
+                "prompt_ms_median": statistics.median(r["prompt_ms"] for r in later),
+                "prompt_ms_all": [round(r["prompt_ms"], 1) for r in items],
+                "prompt_n": [r["prompt_n"] for r in items],
+                "cache_n": [r["cache_n"] for r in items],
+                "outside_ms_median": statistics.median(r["wall_ms"] - r["prompt_ms"] - r["predicted_ms"] for r in later),
+            }
+        log = (cell / "server.log").read_text(errors="replace")
+        sizes = [float(x) for x in re.findall(r"created context checkpoint .*?size = ([0-9.]+) MiB", log)]
+        updates = [float(x) for x in re.findall(r"prompt cache update took ([0-9.]+) ms", log)]
+        saves = re.findall(r"saving prompt with length (\d+), total state size = ([0-9.]+) MiB \(draft: ([0-9.]+) MiB\)", log)
+        if sizes:
+            entry["checkpoints"] = {"count": len(sizes), "MiB_max": max(sizes), "MiB_mean": sum(sizes) / len(sizes)}
+        if updates:
+            entry["prompt_cache_update_ms"] = {"count": len(updates), "median": statistics.median(updates), "max": max(updates)}
+        if saves:
+            entry["prompt_cache_saves"] = [[int(a), float(b), float(c)] for a, b, c in saves[-6:]]
+        summary[cell.name] = entry
+    print(json.dumps(summary, indent=1))
+
+
+if __name__ == "__main__":
+    main()
+=== trace_summary.py
+import json
+import sqlite3
+import sys
+from collections import defaultdict
+
+MEMORY = {0: "unknown", 1: "pageable", 2: "pinned", 3: "device", 4: "array", 5: "managed", 6: "device-static", 7: "managed-static"}
+COPY = {1: "HtoD", 2: "DtoH", 3: "HtoA", 4: "AtoH", 5: "AtoA", 6: "AtoD", 7: "DtoA", 8: "DtoD", 9: "HtoH", 10: "PtoP"}
+
+
+def union(intervals):
+    total = 0
+    end = None
+    start = None
+    for s, e in sorted(intervals):
+        if end is None or s > end:
+            if end is not None:
+                total += end - start
+            start, end = s, e
+        else:
+            end = max(end, e)
+    if end is not None:
+        total += end - start
+    return total
+
+
+def bursts(intervals, gap):
+    out = []
+    for s, e in sorted(intervals):
+        if out and s - out[-1][1] <= gap:
+            out[-1][1] = max(out[-1][1], e)
+        else:
+            out.append([s, e])
+    return out
+
+
+def main():
+    db = sqlite3.connect(sys.argv[1])
+    names = dict(db.execute("select id, value from StringIds"))
+    kernels = [(s, e, stream, names.get(n, "?")) for s, e, stream, n in db.execute("select start, end, streamId, shortName from CUPTI_ACTIVITY_KIND_KERNEL")]
+    copies = list(db.execute("select start, end, streamId, bytes, copyKind, srcKind, dstKind from CUPTI_ACTIVITY_KIND_MEMCPY"))
+    gpu = [(s, e) for s, e, *_ in kernels] + [(s, e) for s, e, *_ in copies]
+    windows = bursts(gpu, 40_000_000)
+    report = []
+    for index, (ws, we) in enumerate(windows):
+        k = [x for x in kernels if ws <= x[0] <= we]
+        c = [x for x in copies if ws <= x[0] <= we]
+        streams = defaultdict(lambda: [0, 0])
+        for s, e, stream, _ in k:
+            streams[stream][0] += e - s
+            streams[stream][1] += 1
+        copy_rows = defaultdict(lambda: [0, 0, 0])
+        for s, e, stream, size, kind, src, dst in c:
+            key = f"{COPY.get(kind, kind)} {MEMORY.get(src, src)}->{MEMORY.get(dst, dst)} stream {stream}"
+            copy_rows[key][0] += e - s
+            copy_rows[key][1] += size
+            copy_rows[key][2] += 1
+        top = defaultdict(lambda: [0, 0])
+        for s, e, stream, name in k:
+            top[(stream, name)][0] += e - s
+            top[(stream, name)][1] += 1
+        report.append({
+            "window": index,
+            "wall_ms": (we - ws) / 1e6,
+            "gpu_busy_ms": union([(s, e) for s, e, *_ in k] + [(s, e) for s, e, *_ in c]) / 1e6,
+            "kernel_busy_ms": union([(s, e) for s, e, *_ in k]) / 1e6,
+            "kernel_ms_by_stream": {str(st): {"ms": v[0] / 1e6, "count": v[1]} for st, v in streams.items()},
+            "copies": {key: {"ms": v[0] / 1e6, "MB": v[1] / 1e6, "count": v[2]} for key, v in sorted(copy_rows.items(), key=lambda x: -x[1][0])},
+            "top_kernels": [{"stream": st, "name": n[:80], "ms": v[0] / 1e6, "count": v[1]} for (st, n), v in sorted(top.items(), key=lambda x: -x[1][0])[:25]],
+        })
+    runtime = defaultdict(lambda: [0, 0])
+    for s, e, n in db.execute("select start, end, nameId from CUPTI_ACTIVITY_KIND_RUNTIME"):
+        runtime[names.get(n, "?")][0] += e - s
+        runtime[names.get(n, "?")][1] += 1
+    try:
+        osrt = defaultdict(lambda: [0, 0])
+        for s, e, n in db.execute("select start, end, nameId from OSRT_API"):
+            osrt[names.get(n, "?")][0] += e - s
+            osrt[names.get(n, "?")][1] += 1
+    except sqlite3.OperationalError:
+        osrt = {}
+    out = {
+        "windows": report,
+        "runtime_api": {n: {"ms": v[0] / 1e6, "count": v[1]} for n, v in sorted(runtime.items(), key=lambda x: -x[1][0])[:20]},
+        "osrt_api": {n: {"ms": v[0] / 1e6, "count": v[1]} for n, v in sorted(osrt.items(), key=lambda x: -x[1][0])[:20]},
+    }
+    print(json.dumps(out, indent=1))
+
+
+if __name__ == "__main__":
+    main()
+=== host_breakdown.py
+import sqlite3, sys, json
+from collections import defaultdict
+db = sqlite3.connect(sys.argv[1])
+names = dict(db.execute("select id, value from StringIds"))
+gpu = sorted(list(db.execute("select start,end from CUPTI_ACTIVITY_KIND_KERNEL")) + list(db.execute("select start,end from CUPTI_ACTIVITY_KIND_MEMCPY")))
+ws, we = gpu[0][0], None
+end = gpu[0][1]
+for s, e in gpu:
+    if s - end > 40_000_000:
+        break
+    end = max(end, e)
+we = end
+rows = list(db.execute("select start,end,nameId,globalTid from CUPTI_ACTIVITY_KIND_RUNTIME where start>=? and start<=?", (ws, we)))
+by_tid = defaultdict(list)
+for s, e, n, t in rows:
+    by_tid[t].append((s, e, names.get(n, '?')))
+out = {"window_ms": (we - ws) / 1e6}
+for t, calls in by_tid.items():
+    calls.sort()
+    agg = defaultdict(lambda: [0, 0])
+    for s, e, n in calls:
+        agg[n][0] += e - s
+        agg[n][1] += 1
+    api = sum(v[0] for v in agg.values())
+    out[str(t)] = {"calls": len(calls), "api_ms": api / 1e6,
+                   "top": {n: [round(v[0] / 1e6, 1), v[1]] for n, v in sorted(agg.items(), key=lambda x: -x[1][0])[:8]}}
+gaps = []
+main = max(by_tid, key=lambda t: len(by_tid[t]))
+calls = sorted(by_tid[main])
+long_gaps = [(calls[i + 1][0] - calls[i][1]) / 1e6 for i in range(len(calls) - 1) if calls[i + 1][0] - calls[i][1] > 2_000_000]
+out["main_thread_gaps_over_2ms"] = {"count": len(long_gaps), "total_ms": round(sum(long_gaps), 1), "largest": sorted(round(g, 1) for g in long_gaps)[-8:]}
+print(json.dumps(out, indent=1))
