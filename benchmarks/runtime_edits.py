@@ -1,26 +1,9 @@
 SOURCE_EDITS: dict[str, tuple[tuple[str, str, str], ...]] = {
-    "checkpoint_pinned_buffers_v1": (
+    "checkpoint_warm_buffers_v1": (
         (
             "common/common.cpp",
-            r"""#include "ggml.h"
-#include "ggml-cpp.h"
-#include "gguf.h"
-
-#include "build-info.h"
-#include "common.h"
-""",
-            r"""#include "ggml.h"
-#include "ggml-cpp.h"
-#include "ggml-backend.h"
-#include "gguf.h"
-
-#include "build-info.h"
-#include "common.h"
-""",
-        ),
-        (
-            "common/common.cpp",
-            r"""#include <cmath>
+            r"""#include <climits>
+#include <cmath>
 #include <chrono>
 #include <cstdarg>
 #include <cstring>
@@ -29,16 +12,41 @@ SOURCE_EDITS: dict[str, tuple[tuple[str, str, str], ...]] = {
 #include <fstream>
 #include <iostream>
 """,
-            r"""#include <cmath>
+            r"""#include <climits>
+#include <cmath>
 #include <chrono>
 #include <cstdarg>
+#include <condition_variable>
 #include <cstring>
+#include <map>
 #include <mutex>
 #include <unordered_map>
 #include <ctime>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+""",
+        ),
+        (
+            "common/common.cpp",
+            r"""#include <fcntl.h>
+#include <io.h>
+#else
+#include <sys/ioctl.h>
+#include <unistd.h>
+#endif
+
+#if !defined(_WIN32)
+""",
+            r"""#include <fcntl.h>
+#include <io.h>
+#else
+#include <sys/ioctl.h>
+#include <sys/mman.h>
+#include <unistd.h>
+#endif
+
+#if !defined(_WIN32)
 """,
         ),
         (
@@ -57,18 +65,14 @@ size_t common_prompt_checkpoint::size() const {
 }
 
 struct common_state_pool {
-    struct block {
-        ggml_backend_buffer_t buf;
-        size_t                cap;
-        bool                  in_use;
-    };
-
     std::mutex mtx;
-    std::unordered_map<void *, block> blocks;
-    size_t total = 0;
-    size_t limit = 0;
-    bool   initialized = false;
-    ggml_backend_buffer_type_t buft = nullptr;
+    std::condition_variable cv;
+    std::multimap<size_t, void *> idle;
+    std::unordered_map<void *, size_t> caps;
+    size_t idle_bytes = 0;
+    size_t recent[4] = { 0, 0, 0, 0 };
+    size_t n_recent = 0;
+    bool   worker = false;
 };
 
 static common_state_pool & common_state_pool_get() {
@@ -76,73 +80,120 @@ static common_state_pool & common_state_pool_get() {
     return *pool;
 }
 
-static constexpr size_t COMMON_STATE_PINNED_MIN = 1u << 20;
+static constexpr size_t COMMON_STATE_POOL_MIN  = 1u << 20;
+static constexpr size_t COMMON_STATE_POOL_ALGN = 2u << 20;
+static constexpr size_t COMMON_STATE_IDLE_MAX  = (size_t) 2 << 30;
+static constexpr size_t COMMON_STATE_RESERVE   = 4;
 
-void * common_state_alloc(size_t size, bool pinned) {
-    if (pinned && size >= COMMON_STATE_PINNED_MIN) {
-        auto & pool = common_state_pool_get();
-        std::lock_guard<std::mutex> lock(pool.mtx);
-        if (!pool.initialized) {
-            pool.initialized = true;
-            const char * limit_mib = std::getenv("LLAMA_STATE_PINNED_MIB");
-            pool.limit = (size_t) (limit_mib ? std::max(0, std::atoi(limit_mib)) : 4096) << 20;
-            for (size_t i = 0; i < ggml_backend_dev_count() && pool.buft == nullptr; ++i) {
-                ggml_backend_dev_t dev = ggml_backend_dev_get(i);
-                if (ggml_backend_dev_type(dev) == GGML_BACKEND_DEVICE_TYPE_GPU) {
-                    pool.buft = ggml_backend_dev_host_buffer_type(dev);
-                }
-            }
-        }
-        if (pool.buft != nullptr) {
-            void * best = nullptr;
-            size_t best_cap = SIZE_MAX;
-            for (auto & [ptr, blk] : pool.blocks) {
-                if (!blk.in_use && blk.cap >= size && blk.cap < best_cap) {
-                    best     = ptr;
-                    best_cap = blk.cap;
-                }
-            }
-            if (best != nullptr) {
-                pool.blocks[best].in_use = true;
-                return best;
-            }
-            const size_t cap = GGML_PAD(size + size/8, COMMON_STATE_PINNED_MIN);
-            while (pool.total + cap > pool.limit) {
-                auto it = std::find_if(pool.blocks.begin(), pool.blocks.end(), [](const auto & kv) { return !kv.second.in_use; });
-                if (it == pool.blocks.end()) {
-                    break;
-                }
-                pool.total -= it->second.cap;
-                ggml_backend_buffer_free(it->second.buf);
-                pool.blocks.erase(it);
-            }
-            if (pool.total + cap <= pool.limit) {
-                ggml_backend_buffer_t buf = ggml_backend_buft_alloc_buffer(pool.buft, cap);
-                if (buf != nullptr && ggml_backend_buffer_is_host(buf)) {
-                    void * base = ggml_backend_buffer_get_base(buf);
-                    pool.blocks[base] = { buf, cap, true };
-                    pool.total += cap;
-                    return base;
-                }
-                if (buf != nullptr) {
-                    ggml_backend_buffer_free(buf);
-                }
-            }
-        }
+static void * common_state_map(size_t cap) {
+#if defined(__linux__)
+    void * ptr = mmap(nullptr, cap, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+    if (ptr == MAP_FAILED) {
+        throw std::bad_alloc();
     }
-    return ::operator new(size);
+    return ptr;
+#else
+    return ::operator new(cap);
+#endif
+}
+
+static void common_state_unmap(void * ptr, size_t cap) {
+#if defined(__linux__)
+    munmap(ptr, cap);
+#else
+    GGML_UNUSED(cap);
+    ::operator delete(ptr);
+#endif
+}
+
+static size_t common_state_reserve_cap(const common_state_pool & pool) {
+    size_t cap = 0;
+    for (size_t i = 0; i < std::min<size_t>(pool.n_recent, 4); ++i) {
+        cap = std::max(cap, pool.recent[i]);
+    }
+    return cap;
+}
+
+static size_t common_state_reserve_count(const common_state_pool & pool, size_t cap) {
+    size_t count = 0;
+    for (auto it = pool.idle.lower_bound(cap); it != pool.idle.end(); ++it) {
+        count++;
+    }
+    return count;
+}
+
+static void common_state_reserve_loop() {
+    auto & pool = common_state_pool_get();
+    std::unique_lock<std::mutex> lock(pool.mtx);
+    while (true) {
+        pool.cv.wait(lock, [&] {
+            const size_t cap = common_state_reserve_cap(pool);
+            return cap > 0 && common_state_reserve_count(pool, cap) < COMMON_STATE_RESERVE &&
+                   pool.idle_bytes + cap <= COMMON_STATE_IDLE_MAX;
+        });
+        const size_t cap = common_state_reserve_cap(pool);
+        lock.unlock();
+        void * ptr = nullptr;
+        try {
+            ptr = common_state_map(cap);
+            std::memset(ptr, 0, cap);
+        } catch (const std::bad_alloc &) {
+            ptr = nullptr;
+        }
+        lock.lock();
+        if (ptr == nullptr) {
+            pool.n_recent = 0;
+            continue;
+        }
+        pool.caps[ptr] = cap;
+        pool.idle.emplace(cap, ptr);
+        pool.idle_bytes += cap;
+    }
+}
+
+void * common_state_alloc(size_t size, bool pooled) {
+    if (!pooled || size < COMMON_STATE_POOL_MIN) {
+        return ::operator new(size);
+    }
+    auto & pool = common_state_pool_get();
+    std::lock_guard<std::mutex> lock(pool.mtx);
+    const size_t cap = GGML_PAD(size + size/8, COMMON_STATE_POOL_ALGN);
+    pool.recent[pool.n_recent++ % 4] = cap;
+    if (!pool.worker) {
+        pool.worker = true;
+        std::thread(common_state_reserve_loop).detach();
+    }
+    void * ptr = nullptr;
+    auto it = pool.idle.lower_bound(size);
+    if (it != pool.idle.end() && it->first <= 2*cap) {
+        ptr = it->second;
+        pool.idle_bytes -= it->first;
+        pool.idle.erase(it);
+    } else {
+        ptr = common_state_map(cap);
+        pool.caps[ptr] = cap;
+    }
+    pool.cv.notify_one();
+    return ptr;
 }
 
 void common_state_free(void * ptr, size_t size) {
     if (ptr == nullptr) {
         return;
     }
-    if (size >= COMMON_STATE_PINNED_MIN) {
+    if (size >= COMMON_STATE_POOL_MIN) {
         auto & pool = common_state_pool_get();
         std::lock_guard<std::mutex> lock(pool.mtx);
-        auto it = pool.blocks.find(ptr);
-        if (it != pool.blocks.end()) {
-            it->second.in_use = false;
+        auto it = pool.caps.find(ptr);
+        if (it != pool.caps.end()) {
+            const size_t cap = it->second;
+            if (pool.idle_bytes + cap <= COMMON_STATE_IDLE_MAX) {
+                pool.idle.emplace(cap, ptr);
+                pool.idle_bytes += cap;
+            } else {
+                pool.caps.erase(it);
+                common_state_unmap(ptr, cap);
+            }
             return;
         }
     }
@@ -194,7 +245,7 @@ struct common_prompt_checkpoint {
 // prompt utils
 //
 
-void * common_state_alloc(size_t size, bool pinned);
+void * common_state_alloc(size_t size, bool pooled);
 void   common_state_free(void * ptr, size_t size);
 
 template <typename T>
@@ -205,14 +256,14 @@ struct common_state_allocator {
     using propagate_on_container_swap            = std::true_type;
     using is_always_equal                        = std::true_type;
 
-    bool pinned = true;
+    bool pooled = true;
 
     common_state_allocator() = default;
-    explicit common_state_allocator(bool pinned) : pinned(pinned) {}
+    explicit common_state_allocator(bool pooled) : pooled(pooled) {}
     template <typename U>
-    common_state_allocator(const common_state_allocator<U> & other) : pinned(other.pinned) {}
+    common_state_allocator(const common_state_allocator<U> & other) : pooled(other.pooled) {}
 
-    T * allocate(size_t n) { return static_cast<T *>(common_state_alloc(n * sizeof(T), pinned)); }
+    T * allocate(size_t n) { return static_cast<T *>(common_state_alloc(n * sizeof(T), pooled)); }
     void deallocate(T * ptr, size_t n) { common_state_free(ptr, n * sizeof(T)); }
 
     template <typename U>
