@@ -78,6 +78,14 @@ Twelve tasks from one project.
 [Result](results/he4broad-final-standing/result.md).
 
 
+### F016: Which step-size recipe should fresh grouped HE4 training use?
+
+Over 7,800 fresh updates (the old 8-hour run's 3.3M labels), decaying the step size raised
+60-request screen acceptance from 51.4% to 53.3%. A bounded clamped row latent scale needed
+a 4× sign step to match it (53.3%; 50.4% at the old step). All arms beat the old state's
+46.4% on that screen; Baseline scores 69.6%. Arm D's state is kept for continuation. One seed.
+[Result](results/step-size-schedule-latent-scale/result.md).
+
 ## Earlier experiments and durable lessons
 
 ### Packed low-bit paths did not beat ordinary EAGLE in the Turing suite

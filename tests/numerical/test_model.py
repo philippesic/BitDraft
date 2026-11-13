@@ -767,13 +767,6 @@ class TestNumerical(unittest.TestCase):
             self.assertEqual(
                 record(admission(parsed, corpus)["optimization"])["latent_multiple"], 3.0
             )
-            bounded_report = execute(intent_path, root / "bounded", "disposable-CPU-test")
-            self.assertEqual(record(bounded_report["latest"])["outcome"], "complete")
-            bounded_state = Store(root / "bounded/states").latest(parsed.recipe)
-            saved_latent = torch.load(bounded_state.artifact.path, weights_only=True)["model"][
-                "blocks.0.gate.latent_sign"
-            ]
-            self.assertLess(float((saved_latent - 1 / 3).abs().max()), 5e-3)
             for broken in (
                 {**settings, "latent_scale": {"kind": "column", "multiple": 3}},
                 {**settings, "latent_scale": {"kind": "row"}},
@@ -791,6 +784,16 @@ class TestNumerical(unittest.TestCase):
             intent_path.write_bytes(canonical(optimized))
             with self.assertRaisesRegex(ValueError, "final update"):
                 admission(Intent.load(intent_path), corpus)
+            intent["optimization"] = {
+                "step_sizes": default_step_sizes(),
+                "schedule": {
+                    "decay": "constant",
+                    "warmup_updates": 0,
+                    "start_update": 0,
+                    "final_update": None,
+                },
+                "latent_scale": {"kind": "row", "multiple": 3},
+            }
             intent_path.write_bytes(canonical(intent))
             editable = sealed.raw
             editable["authority_scope"] = "altered"
@@ -864,6 +867,10 @@ class TestNumerical(unittest.TestCase):
                 str(record(report["admission"])["recipe"])
             )
             self.assertEqual(latest.updates, 1)
+            saved_latent = torch.load(latest.artifact.path, weights_only=True)["model"][
+                "blocks.0.gate.latent_sign"
+            ]
+            self.assertLess(float((saved_latent - 1 / 3).abs().max()), 2e-3)
             intent["mode"] = "resume"
             intent["parent"] = reference(latest.artifact)
             intent["budget"] = {"updates": 3, "wall_seconds": 60, "attempts": 4, "retries": 0}
