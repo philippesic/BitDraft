@@ -4,9 +4,9 @@ from typing import Callable, Protocol
 
 from w1a1_eagle.clock import Clock
 
-ROW_COPIES = 14
-ROW_TOKEN_COPIES = 3
-CONTEXT_COPIES = 4
+ROW_COPIES = 15.0
+ROW_TOKEN_COPIES = 1.25
+CONTEXT_COPIES = 1.0
 
 
 class Shape(Protocol):
@@ -28,12 +28,15 @@ class Shape(Protocol):
 class Grouping:
     max_windows: int = 32
     activation_bytes: int = 3 * 1024**3
+    device_bytes: int = 14 * 1024**3
 
     def __post_init__(self) -> None:
         if type(self.max_windows) is not int or not 1 <= self.max_windows <= 64:
             raise ValueError("windows per update must be between 1 and 64")
         if type(self.activation_bytes) is not int or self.activation_bytes < 1:
             raise ValueError("positive activation byte budget required")
+        if type(self.device_bytes) is not int or self.device_bytes < self.activation_bytes:
+            raise ValueError("device memory limit must cover the activation budget")
 
     def windows(self, shape: Shape, context: int) -> int:
         if type(context) is not int or context < 0:
@@ -41,7 +44,7 @@ class Grouping:
         row = ROW_COPIES * (shape.hidden + shape.intermediate) * shape.layers
         row += ROW_TOKEN_COPIES * shape.heads * shape.layers * context
         shared = CONTEXT_COPIES * (shape.taps + shape.layers) * shape.hidden * context
-        available = (self.activation_bytes - 4 * shared) // (4 * shape.slots * row)
+        available = int((self.activation_bytes - 4 * shared) // (4 * shape.slots * row))
         return max(1, min(self.max_windows, available))
 
 

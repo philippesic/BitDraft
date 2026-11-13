@@ -25,7 +25,7 @@ one successful path does not qualify arbitrary inputs or configurations.
 | Models | Current HE4/DFlash/Qwen3.5-4B family. Q4KM and NVFP4 targets have separate identities. New families need graph, taps, vocabulary, checkpoint and native qualification; no model plug-in registry exists. |
 | Storage | FP16 teacher features qualified for HE4/Q4KM; training materializes FP32. NVFP4 capture and bounded continuation used FP32; its FP16 storage needs separate evidence. |
 | Hardware | GPU evidence is RTX 5080 with the pinned toolchain. Other hosts/devices are unqualified; the numerical wheel does not support the 2080 Ti's sm_75. |
-| Context | Real 13,974/14,651-token inputs passed bounded CUDA updates. Protocol limits are not proof of every length or workload. |
+| Context | Real 13,974/14,651-token inputs passed bounded CUDA updates; grouped updates were measured up to 13,470 tokens under the memory rule. Protocol limits are not proof of every length or workload. |
 | Selection | Short DEV leader, full-request experimental incumbent and latest recovery are separate. Workflow/harness regressions cannot be hidden by a request score. No automatic deployment promotion. |
 | Generalization | Public source exposure is unknown. Fixed DEV mixtures and one-project workflows do not prove real-traffic prevalence or unseen application transfer. Independent confirmation needs new curation and access receipts. |
 | Exposure | Dataset-local counters and lineage survive; per-position lifetime history across changed recipes/corpora is incomplete. |

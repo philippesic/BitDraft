@@ -38,12 +38,33 @@ The forward path uses hard binary signs and quantized activations. Backward uses
 surrogate derivative so the continuous latent parameters can receive gradients.
 Sign zero is positive; the sign surrogate is active at both endpoints of [-1, 1].
 Changing these boundaries changes the training recipe and requires explicit review.
+A custom autograd function computes the sign and saves only the latent itself, so the
+surrogate mask is not stored for backward.
 
-The worker uses separate AdamW groups for sign, scale, midpoint, gain, clipping and
-normalization parameters. It computes hard-label cross-entropy with decreasing weights
-across the fifteen positions. Current grouping and rates live in
+## One optimizer update
+
+An update trains on a group of windows from one sequence, not on one window.
+`HE4.group_hidden` fuses the context once and computes each layer's context keys and
+values once. Each window attends only to context before its own anchor (with the same
+local-window rule) and to its own sixteen slots, never another window's slots.
+`HE4.forward` remains the single-window path used by diagnostics and evaluation.
+
+The loss is the mean over the group's windows of each window's decay-weighted hard-label
+cross-entropy, including shorter terminal `up-to-15` windows. Vocabulary logits are
+computed and backpropagated in 128-row chunks, then the accumulated gradient passes
+through the body once. Each window's logits match the single-window path to within the
+model's rounding sensitivity: the activation quantizers turn last-bit differences between
+equivalent kernels into occasional changed codes. On full-size weights that difference is
+the same size as running the single-window path on CPU instead of GPU; see
+[grouped updates](../results/grouped-updates/result.md).
+
+The worker uses separate fused AdamW groups for sign, scale, midpoint, gain, clipping and
+normalization parameters. Current grouping and rates live in
 `w1a1_eagle/numerical/worker.py`; they are implementation settings, not evidence of an
-optimal recipe. Frozen operands are fingerprinted and checked before publication.
+optimal recipe; step sizes were chosen for one window per update. A nonfinite loss or
+gradient fails the update immediately. The all-parameters-finite scan runs every 32
+updates and before every checkpoint and export. Frozen operands are fingerprinted and
+checked before publication.
 
 ## What has been established
 

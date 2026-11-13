@@ -164,6 +164,13 @@ complete 60-request training pauses took 77–81 seconds including cold data mat
 Candidate-only 120-request/18-prefix/12-live comparisons took 6–7 minutes per precision;
 failure recovery preserved exact state and reused historical controls.
 
+## Training throughput
+
+[Grouped updates](results/grouped-updates/result.md): training one group of windows per
+update raised RTX 5080 update throughput from about 90 to about 2,100 labels/s at typical
+context within a 14 GiB device cap; disk loading limits end-to-end training to about 970
+labels/s, and step sizes still need retuning.
+
 ## Capture storage
 
 [The frozen 6K TRAIN bank is fully captured](results/frozen-train-bank-capture/result.md):

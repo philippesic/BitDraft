@@ -219,6 +219,11 @@ def run_leased(
         intent.source, intent.vocabulary, intent.memory_bytes, cfg, intent.initialization
     )
     model.to(str(intent.raw["device"]))
+    if model.vocabulary.device.type == "cuda":
+        total = torch.cuda.get_device_properties(model.vocabulary.device).total_memory
+        torch.cuda.set_per_process_memory_fraction(
+            min(1.0, intent.grouping.device_bytes / total), model.vocabulary.device
+        )
     phase("model-load-complete")
     loaded_cache: dict[tuple[int, int, int, int, int], str] = {}
     initial_loaded = loaded_identity(loaded_cache)

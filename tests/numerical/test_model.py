@@ -695,11 +695,15 @@ class TestNumerical(unittest.TestCase):
             sealed = Intent.load(intent_path)
             self.assertEqual(sealed.grouping, Grouping())
             grouped = dict(intent)
-            grouped["grouping"] = {"max_windows": 1, "activation_bytes": 1}
+            grouped["grouping"] = {"max_windows": 1, "activation_bytes": 1, "device_bytes": 2}
             intent_path.write_bytes(canonical(grouped))
-            self.assertEqual(Intent.load(intent_path).grouping, Grouping(1, 1))
+            self.assertEqual(Intent.load(intent_path).grouping, Grouping(1, 1, 2))
             self.assertNotEqual(Intent.load(intent_path).recipe, sealed.recipe)
-            for invalid in ({"max_windows": 0, "activation_bytes": 1}, {"max_windows": 1}):
+            for invalid in (
+                {"max_windows": 0, "activation_bytes": 1, "device_bytes": 1},
+                {"max_windows": 1, "activation_bytes": 2, "device_bytes": 1},
+                {"max_windows": 1, "activation_bytes": 1},
+            ):
                 grouped["grouping"] = invalid
                 intent_path.write_bytes(canonical(grouped))
                 with self.assertRaises(ValueError):

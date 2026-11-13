@@ -289,7 +289,7 @@ def test_group_size_follows_context_memory_rule() -> None:
     assert sizes[-1] == 1
     assert Grouping(4, rule.activation_bytes).windows(Shape(), 0) == 4
     assert Grouping(32, 1).windows(Shape(), 0) == 1
-    for invalid in ((0, 1), (65, 1), (8, 0)):
+    for invalid in ((0, 1, 1), (65, 1, 1), (8, 0, 1), (8, 2, 1)):
         with pytest.raises(ValueError):
             Grouping(*invalid)
 

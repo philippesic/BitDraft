@@ -14,9 +14,11 @@ from w1a1_eagle.training import Budget, Grouping
 
 def grouping(value: object) -> Grouping:
     raw = record(value)
-    if set(raw) != {"max_windows", "activation_bytes"}:
-        raise ValueError("grouping requires max_windows and activation_bytes")
-    return Grouping(integer(raw["max_windows"]), integer(raw["activation_bytes"]))
+    if set(raw) != {"max_windows", "activation_bytes", "device_bytes"}:
+        raise ValueError("grouping requires max_windows, activation_bytes and device_bytes")
+    return Grouping(
+        integer(raw["max_windows"]), integer(raw["activation_bytes"]), integer(raw["device_bytes"])
+    )
 
 
 @dataclass(frozen=True)

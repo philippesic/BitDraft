@@ -77,8 +77,8 @@ labels. It retains short answers and EOS without inventing padding or post-EOS l
 
 The reader handles modern eight-tap F32 and explicitly declared FP16 storage and optional pinned int32 NPY copies.
 It authenticates files before use, bounds how many features it materializes, and
-reconstructs the original seeded permutation from the saved cursor, repeating it each
-pass. Historical DSpark captures are not modern HE4 teacher data.
+reconstructs the seeded grouping order from the saved cursor, repeating it each pass
+([groups](execution.md#sampling-and-clocks)). Historical DSpark captures are not modern HE4 teacher data.
 
 ## The modern index
 

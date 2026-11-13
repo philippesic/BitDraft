@@ -24,8 +24,8 @@ is read-only. Private entries are listed in [commands](../policy/commands.toml).
 ## Intent
 
 Schema 2 (`w1a1_eagle/intent.py`) binds objective/hypothesis/decision/risk/scope, authenticated
-initializer/vocabulary/corpus/parent, mode, geometry/seed/device, budgets, checkpoints and
-data/reuse policy. Unknown fields are refused. Artifact references contain `path`,
+initializer/vocabulary/corpus/parent, mode, geometry/seed/device, budgets, checkpoints,
+grouping and data/reuse policy. Unknown fields are refused. Artifact references contain `path`,
 `sha256`, `bytes`; relative paths resolve from their document. See [data](data.md) for
 corpus/index/mixture formats. Editable manifests establish neither provenance nor authority.
 
@@ -76,6 +76,8 @@ initial state in every segment. Fresh initialization still publishes its first s
 - Resume restores parameters/aliases, Adam moments/counters, RNG, cursor, clocks,
   exposure and lineage. Recipe/dataset must match; next-update parity is required.
 - Continue explicitly changes recipe/data while retaining Adam/RNG/clocks/lineage.
+  States written before grouped updates (one window per update, unfused Adam) still
+  load for continue and branch; their recipe cannot be resumed exactly.
   A changed dataset starts its own exposure counter; sampling restarts at cursor zero.
 - Branch resets optimizer/cursor while retaining lineage/cost/aggregate exposure.
   Changed recipes do not provide a per-position lifetime ledger.
@@ -104,11 +106,39 @@ are known; an upstream cleanup default is not evidence they are disposable.
 
 ## Sampling and clocks
 
+One update is one group of windows from one sequence ([model](model.md#one-optimizer-update)).
+`updates` counts optimizer steps and `cursor` counts groups consumed since the current
+sampling stream began; both advance by one per update. Labels and exposure are counted
+per window. The exposure journal event lists each group's anchors and per-window labels.
+
+Optional `grouping` sets `max_windows` (1–64, default 32), `activation_bytes` (default
+3 GiB) and `device_bytes` (default 14 GiB). Its effective values always enter recipe
+identity. `device_bytes` caps the CUDA worker's memory: at the cap PyTorch releases cached
+blocks before failing, so varying group shapes cannot grow cached memory into WSL's
+slow shared-memory spill. Without the cap, 300 real updates reserved 16.8 GiB while
+allocating only 12.5 GiB. A sequence's group limit is
+the largest window count whose estimated activation memory at that sequence's largest
+anchor fits `activation_bytes`, capped by `max_windows` and never below one. The estimate
+in `w1a1_eagle/training.py` was fitted on the RTX 5080: about 4.2 MB per slot row plus
+0.9 KB per row per context token and 117 KB per context token, on top of about 9.7 GiB
+of resident state and gradients. The default keeps measured peak allocation near 12.7 GiB, below the
+cap and the roughly 14.3 GiB where WSL spills into slow shared memory. On the frozen bank it allows 32 windows up to about 1,600 context tokens,
+20 at 4,100 and 4 at the longest sequence (13,470); see
+[grouped updates](../results/grouped-updates/result.md).
+
+Without `sampling`, each pass shuffles every sequence's windows with the seed, splits
+them into near-equal groups within that sequence's limit, then shuffles the groups. Every
+window appears once per pass; passes repeat the same order.
+
 Optional authenticated `sampling` uses schema 1, `task-position-v1`, burst 1–64, positive
-stratum weights and an exact task-ID→stratum mapping. Choose stratum, uniform task,
-uniform eligible position; bursts reuse the task with varying positions. Replacement
-sampling gives window-equivalents, not completed epochs. Omission retains seeded window
-permutation. Recipe identity binds the sampler.
+stratum weights and an exact task-ID→stratum mapping. Each group chooses a stratum, a
+uniform task and distinct uniform eligible positions; the group size is the smallest of
+burst, the sequence's group limit and its eligible count, so the retained burst-8 hybrid
+specification gives at most 8 windows per update. Groups are deterministic from seed and
+cursor. Replacement sampling gives window-equivalents, not completed epochs.
+Recipe identity binds the sampler. Admission bounds planned label exposures by
+updates × largest group × 15, so update budgets and visit policies sized for one window
+per update need re-planning.
 
 Model-update time includes input transfer, forward/backward, optimizer and validation,
 with CUDA synchronization. Successful/failed update clocks are separate. Data time covers
