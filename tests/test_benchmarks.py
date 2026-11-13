@@ -100,7 +100,7 @@ def test_acceptance_excludes_target_correction_and_bonus() -> None:
 
 
 def test_summary_reports_rounds_and_speed_relative_to_controls() -> None:
-    from benchmarks.metrics import relative_speed, totals
+    from benchmarks.metrics import relative_speed, server_seconds, totals
 
     def row(tokens: int, proposed: int, accepted: int) -> Record:
         return {
@@ -109,6 +109,7 @@ def test_summary_reports_rounds_and_speed_relative_to_controls() -> None:
             "correct": True,
             "stop_type": "eos",
             "native": {"proposed": proposed, "accepted": accepted},
+            **server_seconds([{"timings": {"prompt_ms": 250.0, "predicted_ms": 500.0}}]),
         }
 
     drafted = totals([row(11, 8, 6), row(9, 8, 2)])
@@ -116,6 +117,14 @@ def test_summary_reports_rounds_and_speed_relative_to_controls() -> None:
     assert drafted["proposed_per_round"] == 1.6
     assert drafted["accepted_per_round"] == 0.8
     assert drafted["emitted_per_round"] == 1.8
+    assert drafted["server_prompt_seconds"] == 0.5
+    assert drafted["server_prediction_seconds"] == 1.0
+    mixed = [
+        row(11, 8, 6),
+        {key: value for key, value in row(9, 8, 2).items() if "server" not in key},
+    ]
+    assert totals(mixed)["server_prompt_seconds"] is None
+    assert server_seconds([{"timings": {"predicted_ms": 1.0}}]) == {}
     plain = totals([row(5, 0, 0)])
     assert plain["derived_rounds"] is None and plain["accepted_per_round"] is None
     summaries = relative_speed(

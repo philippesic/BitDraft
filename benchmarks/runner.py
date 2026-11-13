@@ -16,6 +16,9 @@ from benchmarks.metrics import (
     relative_speed as relative_speed,
 )
 from benchmarks.metrics import (
+    server_seconds as server_seconds,
+)
+from benchmarks.metrics import (
     signature as signature,
 )
 from benchmarks.metrics import (
@@ -195,6 +198,7 @@ def compare_leased(
                                 "wall_seconds": elapsed,
                                 "correct": correct,
                                 "native": metrics,
+                                **server_seconds([response]),
                             }
                             rows.append(row)
                             store.atomic(store.root / "progress.json", canonical({"rows": rows}))

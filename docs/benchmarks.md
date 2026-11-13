@@ -169,7 +169,11 @@ its accepted drafts plus one target token, and the first token comes from prompt
 with proposed, accepted and emitted tokens per round. On the 1,200-request Q4KM panel this
 matched the native round counters within 0.1%; a request ending inside accepted drafts can
 differ by one round. `speed_vs_target` and `speed_vs_baseline` divide each arm's tokens/s by
-that control's; against historical controls they are descriptive, not paired timing. Paired group bootstraps preserve category composition and keep repeats/
+that control's; against historical controls they are descriptive, not paired timing.
+`server_prompt_seconds` and `server_prediction_seconds` sum the native server's own
+prompt-processing and token-prediction partitions (null when a historical row predates
+them). Drafters add prompt work, so keep the split visible: in the live panel it cancelled
+the decoding gain ([standing](../results/he4broad-final-standing/result.md)). Paired group bootstraps preserve category composition and keep repeats/
 variants together. Sparse strata make intervals unavailable; multiple candidates also
 receive adjusted intervals. Wide intervals are inconclusive. Compare matched arms within
 targets, without pooling away regressions or mixing absolute scores across changed eras.

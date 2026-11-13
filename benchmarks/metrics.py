@@ -89,6 +89,25 @@ def totals(rows: list[Record]) -> Record:
         "cap_hits": sum(row.get("stop_type") == "limit" for row in rows),
         "eos_stops": sum(row.get("stop_type") == "eos" for row in rows),
         **rounds(len(rows), tokens, proposed, accepted),
+        **server_totals(rows),
+    }
+
+
+def server_seconds(responses: list[Record]) -> Record:
+    timings = [record(response["timings"]) for response in responses]
+    if any("prompt_ms" not in value or "predicted_ms" not in value for value in timings):
+        return {}
+    return {
+        "server_prompt_seconds": sum(number(value["prompt_ms"]) for value in timings) / 1000,
+        "server_prediction_seconds": sum(number(value["predicted_ms"]) for value in timings) / 1000,
+    }
+
+
+def server_totals(rows: list[Record]) -> Record:
+    complete = all("server_prompt_seconds" in row for row in rows)
+    return {
+        name: sum(number(row[name]) for row in rows) if complete else None
+        for name in ("server_prompt_seconds", "server_prediction_seconds")
     }
 
 

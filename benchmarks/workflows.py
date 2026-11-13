@@ -5,7 +5,7 @@ from typing import cast
 
 from benchmarks.comparison import Comparison
 from benchmarks.measurement import now, request
-from benchmarks.metrics import totals
+from benchmarks.metrics import server_seconds, totals
 from benchmarks.runner import native_counts, reconcile, signature, valid_sample, verify_generation
 from benchmarks.runtime_policy import LIVE_SECONDS, LIVE_TURNS, payload
 from benchmarks.sandbox import TOOLS, Sandbox
@@ -354,6 +354,7 @@ def execute(
             "tool_seconds": tool_seconds,
             "overhead_seconds": max(0.0, elapsed - model_seconds - tool_seconds),
             "native": {"proposed": proposed, "accepted": accepted},
+            **server_seconds(responses),
         },
         messages,
         responses,
@@ -377,4 +378,6 @@ def summarize(rows: list[Record]) -> Record:
         "proposed": counters["proposed"],
         "accepted": counters["accepted"],
         "acceptance": counters["acceptance"],
+        "server_prompt_seconds": counters["server_prompt_seconds"],
+        "server_prediction_seconds": counters["server_prediction_seconds"],
     }
