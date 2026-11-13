@@ -53,7 +53,7 @@ V2 campaigns keep one supervised worker through native checks. It releases compl
 gradients, maps trainable tensors and Adam moments from its current durable checkpoint,
 retains frozen GPU buffers, then restores devices and CPU/CUDA RNG before another update. Tensor identities
 and mutation versions are checked. Native child servers die with their evaluator parent.
-Training capture caches are released before evaluation; the next sample is materialized
+Training capture caches and background loads are released before evaluation; the next sample is materialized
 before the resume clock closes. Acceptance selection remains pending until that pause
 passes its budget. Recovering a final screen at the update guard does not repeat it.
 The worker performs full data admission before model allocation; public CPU preflight
@@ -140,9 +140,21 @@ Recipe identity binds the sampler. Admission bounds planned label exposures by
 updates × largest group × 15, so update budgets and visit policies sized for one window
 per update need re-planning.
 
-Model-update time includes input transfer, forward/backward, optimizer and validation,
-with CUDA synchronization. Successful/failed update clocks are separate. Data time covers
-sampling/materialization. Startup, checkpoint, export, diagnostics and native evaluation
+While an update runs, one background thread loads and authenticates the sequence of the
+next cursor's group, which depends only on seed and cursor. It writes no journal event and
+changes no counter, cursor or RNG: the next update still journals its attempt and exposure
+before receiving that sequence. A failed background load is discarded and the update loads
+synchronously, so errors surface as they would without prefetching. Host memory holds at
+most the current sequence and one upcoming sequence, both in storage precision. When
+training stops for checkpoint, export or evaluation the worker releases both, waiting for
+a load in progress.
+
+Model-update time includes input transfer (features move in storage precision and become
+FP32 on the device), forward/backward, optimizer and validation,
+with CUDA synchronization. Successful/failed update clocks are separate. Data time is how
+long an update waits for its sample: locating the group, waiting for or performing its
+sequence load and selecting windows; background loading during the previous update is
+not counted in any clock. Startup, checkpoint, export, diagnostics and native evaluation
 stay separate; controller wall time is an operational budget. Legacy clocks cannot be
 reconstructed. Dataset exposure starts from known lineage rather than charging every
 historical update to new data. Workers publish accounting every 100 updates.

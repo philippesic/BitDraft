@@ -445,6 +445,7 @@ def run_leased(
                 }
             )
             raise
+        corpus.cache.clear()
         journal.append(
             {
                 "kind": "training-boundary",
@@ -510,7 +511,6 @@ def run_leased(
             }
         )
         if boundary is not None:
-            corpus.cache.clear()
             boundary.evaluate(worker, reference, exported, result)
         if boundary is None or result != "model-update-time":
             break

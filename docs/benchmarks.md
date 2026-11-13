@@ -153,7 +153,7 @@ context, byte ceiling, exclusions and supervision policy. Every new record passe
 bounded product loader before publication: hashes, geometry, finite values, token/label
 arrays and EOG. Validation receipts and partial attempts stay with ignored raw data under `artifacts/`.
 [FP16 adoption](../results/fp16-storage-adoption/result.md) qualifies HE4/Q4KM storage;
-training materializes FP32. It does not establish lifetime/other-family equivalence.
+training converts it to FP32 on the device. It does not establish lifetime/other-family equivalence.
 
 `plan COMPARISON.json` reports native units/warmups; `verify-inputs` hashes models/runtime.
 The older schema 1 [metadata example](../tests/fixtures/benchmark-plan.json) remains supported.
@@ -238,8 +238,8 @@ Adam/RNG/cursor restore exactly; changed recipes/data require explicit continuat
 `training-boundary` and next `training-ready` journal events measure save/export, evaluation,
 selection bookkeeping and restoration through next sample readiness.
 The next sample must be materialized before readiness is
-recorded; its cold data-loading cost counts in the pause. Capture caches are released
-before native evaluation. A proposed leader stays pending until the full pause passes.
+recorded; its cold data-loading cost counts in the pause. Capture caches and background
+loads are released before native evaluation. A proposed leader stays pending until the full pause passes.
 Boot/controller changes make
 that interval unavailable. The campaign records interruption budgets and refuses continued
 budget qualification after an overrun; final evaluation has no subsequent resume interval.
