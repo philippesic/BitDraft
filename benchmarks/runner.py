@@ -13,6 +13,9 @@ from benchmarks.metrics import (
     reconcile as reconcile,
 )
 from benchmarks.metrics import (
+    relative_speed as relative_speed,
+)
+from benchmarks.metrics import (
     signature as signature,
 )
 from benchmarks.metrics import (
@@ -222,13 +225,15 @@ def compare_leased(
         ]
         all_rows = rows + historical_rows
         names = [arm.name for arm in spec.arms] + list(cached)
-        aggregate: Record = {
-            name: {
-                **totals([row for row in all_rows if row["arm"] == name]),
-                "execution": "historical" if name in cached else "measured",
+        aggregate: Record = relative_speed(
+            {
+                name: {
+                    **totals([row for row in all_rows if row["arm"] == name]),
+                    "execution": "historical" if name in cached else "measured",
+                }
+                for name in names
             }
-            for name in names
-        }
+        )
         result: Record = {
             "status": "complete",
             "protocol": spec.reference_protocol(),
@@ -268,13 +273,15 @@ def compare_leased(
                 all_rows,
                 "harness",
                 lambda values: {
-                    "summary": {
-                        name: {
-                            **totals([row for row in values if row["arm"] == name]),
-                            "execution": "historical" if name in cached else "measured",
+                    "summary": relative_speed(
+                        {
+                            name: {
+                                **totals([row for row in values if row["arm"] == name]),
+                                "execution": "historical" if name in cached else "measured",
+                            }
+                            for name in names
                         }
-                        for name in names
-                    },
+                    ),
                     "paired_against_baseline": {}
                     if spec.sampling.temperature or cached
                     else {

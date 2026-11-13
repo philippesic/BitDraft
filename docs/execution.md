@@ -116,8 +116,12 @@ stay separate; controller wall time is an operational budget. Legacy clocks cann
 reconstructed. Dataset exposure starts from known lineage rather than charging every
 historical update to new data. Workers publish accounting every100 updates.
 
-Optional `development` binds120 fixed DEV windows and cadence; diagnostics preserve RNG
-and report category loss/top1. `model_update_seconds` bounds synchronized optimizer work.
+Optional `development` binds 120 fixed DEV windows and cadence; diagnostics preserve RNG
+and report category loss/top1 over all fifteen positions. `leading_positions` adds top-1
+and prefix survival (positions 1 through k all correct) for the first three positions,
+the only ones a depth-2 or depth-3 server proposes. They use all sixteen training slots,
+whereas the runtime builds depth+1 slots per round, so they are not native acceptance.
+`model_update_seconds` bounds synchronized optimizer work.
 In V2 campaigns it is the cumulative optimizer-time stop, independently of evaluation
 cadence. Stop at a complete update, publish state/export and perform the final screen.
 Resume retains the consumed clock; successful and failed update seconds both count.

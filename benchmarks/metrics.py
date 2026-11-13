@@ -88,6 +88,42 @@ def totals(rows: list[Record]) -> Record:
         "correct": all(row["correct"] is True for row in rows),
         "cap_hits": sum(row.get("stop_type") == "limit" for row in rows),
         "eos_stops": sum(row.get("stop_type") == "eos" for row in rows),
+        **rounds(len(rows), tokens, proposed, accepted),
+    }
+
+
+def rounds(requests: int, tokens: int, proposed: int, accepted: int) -> Record:
+    derived = tokens - accepted - requests
+    if not proposed or derived <= 0:
+        return {
+            "derived_rounds": None,
+            "proposed_per_round": None,
+            "accepted_per_round": None,
+            "emitted_per_round": None,
+        }
+    return {
+        "derived_rounds": derived,
+        "proposed_per_round": proposed / derived,
+        "accepted_per_round": accepted / derived,
+        "emitted_per_round": (accepted + derived) / derived,
+    }
+
+
+def relative_speed(summaries: Record) -> Record:
+    references = {
+        name: number(record(summaries[name])["tokens_per_second"])
+        for name in ("target", "baseline")
+        if name in summaries
+    }
+    return {
+        arm: {
+            **record(value),
+            **{
+                "speed_vs_" + name: number(record(value)["tokens_per_second"]) / speed
+                for name, speed in references.items()
+            },
+        }
+        for arm, value in summaries.items()
     }
 
 

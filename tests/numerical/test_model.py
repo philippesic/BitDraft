@@ -1096,4 +1096,12 @@ class TestNumerical(unittest.TestCase):
         self.assertEqual(
             record(groups["code"])["mean_loss"], record(groups["writing"])["mean_loss"]
         )
+        leading = record(result["leading_positions"])
+        self.assertEqual(leading["windows"], [120, 120, 120])
+        top1 = [number(value) for value in sequence(leading["top1"])]
+        survival = [number(value) for value in sequence(leading["prefix_survival"])]
+        self.assertEqual(survival[0], top1[0])
+        self.assertTrue(all(0 <= value <= 1 for value in top1 + survival))
+        self.assertTrue(all(b <= a for a, b in zip(survival, survival[1:], strict=False)))
+        self.assertTrue(all(alive <= top for alive, top in zip(survival, top1, strict=True)))
         self.assertTrue(torch.equal(before, torch.get_rng_state()))

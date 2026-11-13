@@ -162,7 +162,14 @@ commands, loaded libraries and ownership receipts identify execution. The lease 
 other tasks' jobs.
 
 Reports use total tokens/total time, acceptance totals, EOS/cap counts and category/length/
-harness breakdowns. Paired group bootstraps preserve category composition and keep repeats/
+harness breakdowns. Current panels draft at depth 2 for both targets (`--spec-draft-n-max`),
+so a round proposes at most two tokens; 64% acceptance means about 1.3 accepted per round.
+Summaries therefore add `derived_rounds` (emitted − accepted − requests: each round emits
+its accepted drafts plus one target token, and the first token comes from prompt processing)
+with proposed, accepted and emitted tokens per round. On the 1,200-request Q4KM panel this
+matched the native round counters within 0.1%; a request ending inside accepted drafts can
+differ by one round. `speed_vs_target` and `speed_vs_baseline` divide each arm's tokens/s by
+that control's; against historical controls they are descriptive, not paired timing. Paired group bootstraps preserve category composition and keep repeats/
 variants together. Sparse strata make intervals unavailable; multiple candidates also
 receive adjusted intervals. Wide intervals are inconclusive. Compare matched arms within
 targets, without pooling away regressions or mixing absolute scores across changed eras.
@@ -252,7 +259,8 @@ The V2 suite's `targets` maps each precision to authenticated `requests`, `harne
 Use one greedy pass and the saved controls for every panel. Inspect individual outcomes
 before interpreting an aggregate or recording an incumbent.
 
-Diagnostics preserve RNG and report category loss/top1 on120 fixed role-safe DEV windows.
+Diagnostics preserve RNG and report category loss/top1 on 120 fixed role-safe DEV windows,
+plus first-position top-1/prefix survival ([execution](execution.md#sampling-and-clocks)).
 They are not acceptance. Measure the complete training interruption against the short
 wall budget; do not stretch the training interval to accommodate an oversized check.
 Keep model/data/evaluation/checkpoint clocks separate.

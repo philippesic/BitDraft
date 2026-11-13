@@ -5,7 +5,7 @@ import pytest
 
 from benchmarks.acceptance import reduce_rounds
 from benchmarks.specification import CaptureContract, Specification
-from w1a1_eagle.contracts import Record
+from w1a1_eagle.contracts import Record, record
 
 
 def contract() -> Record:
@@ -97,6 +97,34 @@ def test_acceptance_excludes_target_correction_and_bonus() -> None:
     assert result["emitted"] == 5
     with pytest.raises(ValueError, match="emitted tokens"):
         reduce_rounds([{"proposed": [10], "accepted": 1, "target_tokens": [], "emitted": [99]}])
+
+
+def test_summary_reports_rounds_and_speed_relative_to_controls() -> None:
+    from benchmarks.metrics import relative_speed, totals
+
+    def row(tokens: int, proposed: int, accepted: int) -> Record:
+        return {
+            "tokens": tokens,
+            "wall_seconds": 1.0,
+            "correct": True,
+            "stop_type": "eos",
+            "native": {"proposed": proposed, "accepted": accepted},
+        }
+
+    drafted = totals([row(11, 8, 6), row(9, 8, 2)])
+    assert drafted["derived_rounds"] == 10
+    assert drafted["proposed_per_round"] == 1.6
+    assert drafted["accepted_per_round"] == 0.8
+    assert drafted["emitted_per_round"] == 1.8
+    plain = totals([row(5, 0, 0)])
+    assert plain["derived_rounds"] is None and plain["accepted_per_round"] is None
+    summaries = relative_speed(
+        {"target": plain, "baseline": totals([row(40, 8, 8)]), "candidate": drafted}
+    )
+    assert record(summaries["candidate"])["speed_vs_target"] == 2.0
+    assert record(summaries["candidate"])["speed_vs_baseline"] == 0.25
+    assert record(summaries["target"])["speed_vs_target"] == 1.0
+    assert "speed_vs_baseline" not in record(relative_speed({"candidate": drafted})["candidate"])
 
 
 def test_fallback_has_no_acceptance_denominator() -> None:
