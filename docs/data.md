@@ -98,7 +98,7 @@ Admission estimates position visits for the current corpus and supplied run budg
 accounting for overlapping windows. These are not measured lifetime per-position counts.
 Same-recipe resume restores the sampler cursor and aggregate exposure counters. Branching
 keeps aggregate counters and parent lineage but resets the cursor and optimizer; its
-recipe, seed or corpus may change. Payload 4 preserves exact observed label totals and dataset identity/origin for the
+recipe, seed or corpus may change. Payloads 4 and 5 preserve exact observed label totals and dataset identity/origin for the
 new pipeline. No per-position lifetime exposure ledger is retained
 across those changes. Exposure limits and minimum-data policies are caller inputs; test
 values are examples, not approved scientific thresholds.

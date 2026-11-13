@@ -8,21 +8,26 @@ state and execution behavior are in [execution](execution.md).
 ## What the CPU model computes
 
 The implementation is `w1a1_eagle/model.py`. Its default geometry has six layers,
-eight target-feature taps and sixteen draft slots. Geometry can be reduced for
+eight target-feature taps and at most sixteen draft slots. Geometry can be reduced for
 CPU tests; a passing tiny test does not establish full-size behavior.
 
 1. Captured target features are fused into the drafter's context. The feature
    contract and anchor determine which preceding positions may be attended to.
-2. One anchor token and fifteen mask tokens initialize the sixteen draft slots.
+2. One anchor token and k−1 mask tokens initialize a block of k draft slots (2 ≤ k ≤ 16).
 3. Each layer applies grouped attention, rotary position encoding and a gated
-   feed-forward block. Cached keys and values explicitly round through F16.
+   feed-forward block. Cached keys and values explicitly round through F16. Slots attend
+   to every slot of their own block in both directions, so a slot's output depends on
+   the block size.
 4. The final normalized state is projected through the frozen vocabulary matrix.
-   The worker trains on the fifteen prediction slots after the anchor.
+   The worker trains on the k−1 prediction slots after the anchor.
 
-The native runtime uses the same anchor-plus-mask layout but builds only depth+1 slots
-per round (`artifacts/native/runtime-v5/source/common/speculative.cpp`). At the
-benchmark depth of 2 it proposes the first two predictions from a three-slot block, while
-training and its diagnostics use all sixteen slots.
+The native runtime uses the same anchor-plus-mask layout and non-causal attention and
+builds depth+1 slots per round (`artifacts/native/runtime-v5/source/common/speculative.cpp`):
+at depth 2 it proposes the first two predictions from a three-slot block. A block of k
+slots in training is exactly that layout (tested against a sixteen-slot pass whose later
+slots are hidden). The recipe chooses the training block sizes; the default is sixteen
+slots for every update ([execution](execution.md#block-sizes-and-position-weights)). The
+export keeps a block size of sixteen, the most a server may request.
 
 The CPU implementation simulates quantized arithmetic with floating-point tensors.
 It does not demonstrate binary hardware execution or native inference speed.
@@ -52,11 +57,15 @@ surrogate mask is not stored for backward.
 An update trains on a group of windows from one sequence, not on one window.
 `HE4.group_hidden` fuses the context once and computes each layer's context keys and
 values once. Each window attends only to context before its own anchor (with the same
-local-window rule) and to its own sixteen slots, never another window's slots.
+local-window rule) and to its own block's slots, never another window's slots. All
+windows of one update use the same block size.
 `HE4.forward` remains the single-window path used by diagnostics and evaluation.
 
-The loss is the mean over the group's windows of each window's decay-weighted hard-label
-cross-entropy, including shorter terminal `up-to-15` windows. Vocabulary logits are
+The loss is the mean over the group's windows of each window's position-weighted hard-label
+cross-entropy over its first k−1 labels, including shorter terminal `up-to-15` windows.
+Each window's weights are normalized to sum to one; they are either the fixed decay
+exp(−i/7) for zero-based position i or the reach weights described in
+[execution](execution.md#block-sizes-and-position-weights). Vocabulary logits are
 computed and backpropagated in 128-row chunks, then the accumulated gradient passes
 through the body once. Each window's logits match the single-window path to within the
 model's rounding sensitivity: the activation quantizers turn last-bit differences between

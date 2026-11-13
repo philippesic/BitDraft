@@ -82,8 +82,9 @@ initial state in every segment. Fresh initialization still publishes its first s
 - Branch resets optimizer/cursor while retaining lineage/cost/aggregate exposure.
   Changed recipes do not provide a per-position lifetime ledger.
 
-Tensor payload 4 fingerprints frozen buffers and stores trainable/Adam/RNG state,
-accounting and dataset exposure origin. Reader also accepts 3 with unknown new accounting;
+Tensor payload 5 fingerprints frozen buffers and stores trainable/Adam/RNG state,
+accounting, dataset exposure origin and the reach position weights in force (null for
+decay). Reader also accepts 4 without position weights and 3 with unknown new accounting;
 1/2 are refused. Frozen buffers rebuild from authenticated initializer/vocabulary and
 must match. Mutation guards are not a sandbox. No mode silently imports trained weights.
 
@@ -109,7 +110,8 @@ are known; an upstream cleanup default is not evidence they are disposable.
 One update is one group of windows from one sequence ([model](model.md#one-optimizer-update)).
 `updates` counts optimizer steps and `cursor` counts groups consumed since the current
 sampling stream began; both advance by one per update. Labels and exposure are counted
-per window. The exposure journal event lists each group's anchors and per-window labels.
+per window. The exposure journal event lists each group's block size (`slots`), anchors
+and per-window trained labels (at most `slots` − 1 each).
 
 Optional `grouping` sets `max_windows` (1–64, default 32), `activation_bytes` (default
 3 GiB) and `device_bytes` (default 14 GiB). Its effective values always enter recipe
@@ -118,7 +120,10 @@ blocks before failing, so varying group shapes cannot grow cached memory into WS
 slow shared-memory spill. Without the cap, 300 real updates reserved 16.8 GiB while
 allocating only 12.5 GiB. A sequence's group limit is
 the largest window count whose estimated activation memory at that sequence's largest
-anchor fits `activation_bytes`, capped by `max_windows` and never below one. The estimate
+anchor fits `activation_bytes`, capped by `max_windows` and never below one. Memory and
+time grow with windows × slots, so a block of k slots scales both the estimate and the cap:
+the limit is computed for k-slot rows and capped at `max_windows` × 16 / k (128 windows for
+four slots, 170 for three). The device cap is unchanged. The estimate
 in `w1a1_eagle/training.py` was fitted on the RTX 5080: about 4.2 MB per slot row plus
 0.9 KB per row per context token and 117 KB per context token, on top of about 9.7 GiB
 of resident state and gradients. The default keeps measured peak allocation near 12.7 GiB, below the
@@ -128,7 +133,11 @@ cap and the roughly 14.3 GiB where WSL spills into slow shared memory. On the fr
 
 Without `sampling`, each pass shuffles every sequence's windows with the seed, splits
 them into near-equal groups within that sequence's limit, then shuffles the groups. Every
-window appears once per pass; passes repeat the same order.
+window appears once per pass; passes repeat the same order. With random block sizes the
+same seeded generator draws each group's block size before cutting it: the group takes
+an even share of the sequence's remaining windows under that size's limit. The plan,
+including every group's size, depends only on the seed, so a cursor determines its
+group and block size. Random block sizes cannot be combined with `sampling`.
 
 Optional authenticated `sampling` uses schema 1, `task-position-v1`, burst 1–64, positive
 stratum weights and an exact task-ID→stratum mapping. Each group chooses a stratum, a
@@ -137,8 +146,8 @@ burst, the sequence's group limit and its eligible count, so the retained burst-
 specification gives at most 8 windows per update. Groups are deterministic from seed and
 cursor. Replacement sampling gives window-equivalents, not completed epochs.
 Recipe identity binds the sampler. Admission bounds planned label exposures by
-updates × largest group × 15, so update budgets and visit policies sized for one window
-per update need re-planning.
+updates × the largest (k − 1) × group limit over the recipe's block sizes, so update
+budgets and visit policies sized for one window per update need re-planning.
 
 While an update runs, one background thread loads and authenticates the sequence of the
 next cursor's group, which depends only on seed and cursor; four reader threads read and
@@ -163,15 +172,45 @@ historical update to new data. Workers publish accounting every 100 updates.
 
 Optional `development` binds 120 fixed DEV windows and cadence; diagnostics preserve RNG
 and report category loss/top1 over all fifteen positions. A run that ends also measures
-its final update unless the cadence already did; a campaign's intermediate boundaries do not. `leading_positions` adds top-1
-and prefix survival (positions 1 through k all correct) for the first three positions,
-the only ones a depth-2 or depth-3 server proposes. They use all sixteen training slots,
-whereas the runtime builds depth+1 slots per round, so they are not native acceptance.
+its final update unless the cadence already did; a campaign's intermediate boundaries do not.
+`positions` adds, for each of positions 1–15, the windows reaching it, top-1 hits, and
+prefix survivors (positions 1 through i all correct) with their rates. Training
+diagnostics use one sixteen-slot block; `Diagnostics.measure` takes another block size
+for the depth+1 blocks a server builds. Teacher-forced top-1 is not native acceptance.
 `model_update_seconds` bounds synchronized optimizer work.
 In V2 campaigns it is the cumulative optimizer-time stop, independently of evaluation
 cadence. Stop at a complete update, publish state/export and perform the final screen.
 Resume retains the consumed clock; successful and failed update seconds both count.
 See [benchmarks](benchmarks.md) for native cadence, selection and health reporting.
+
+## Block sizes and position weights
+
+Optional `blocks` requires exactly `slots` and `position_weights`; its effective values
+always enter recipe identity, and the default is today's fixed sixteen slots with decay.
+
+```json
+"blocks": {
+  "slots": {"3": 0.5, "4": 0.333333, "5": 0.25, "16": 0.066667},
+  "position_weights": "reach"
+}
+```
+
+- `slots` maps block sizes from 2 to 16 slots (1 to 15 drafted positions) to positive
+  relative weights. One entry trains every update at that size; several entries draw a
+  size per group as described under [sampling](#sampling-and-clocks). All windows of an
+  update use the drawn size and train on their first k − 1 labels.
+- `position_weights` is `decay` (exp(−i/7) for zero-based position i) or `reach`. Reach
+  weights are proportional to how often each position is reached when serving: position 1
+  has weight 1 and position i the drafter's measured prefix survival through position
+  i − 1 on the DEV diagnostic windows, smoothed as (survivors + 1) / (windows + 2) so no
+  position's weight reaches zero. `reach` requires `development`; the weights refresh at
+  each cadence diagnostic, including the one at cursor 0 before the first update, but not
+  at a run's final measurement. The diagnostic journal event records the weights it set.
+
+Reach weights are part of the trained state: tensor payload 5 stores the weights in force,
+and resume restores them. A resumed run that starts on a cadence boundary measures again
+and obtains the same weights from the same parameters. Continue and branch restart the
+cursor at zero, so their first diagnostic refreshes the weights for the new recipe.
 
 ## Optimization
 
@@ -222,7 +261,7 @@ after owner checks; no complete event is dropped. Corrupt complete records are r
 
 ## Supported formats
 
-Intent 2, corpus 1, tensor payload 4/3, store 1, event envelope 1, W1Ax metadata 2/GGUF 3. Other tensor/intent
+Intent 2, corpus 1, tensor payload 5/4/3, store 1, event envelope 1, W1Ax metadata 2/GGUF 3. Other tensor/intent
 schemas need explicit migration with verified lineage; preserve originals.
 
 ## Limits
