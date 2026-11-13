@@ -115,6 +115,10 @@ were sampled, not run-to-run noise. Production selection uses the same rule. Thi
 recomputes nothing; the values are in each evaluation's `historical_comparisons` under
 `/home/philip/BitDraft/artifacts/qualification/lean-checks/campaign-*/`. No policy changed.
 
+Follow-up, 2026-11-12: selection now keeps the leader unless that interval's lower bound
+is above zero ([selection](../../docs/domain.md#selection)); under it, neither replacement
+above would have happened.
+
 ## Artifact disposition
 
 Retain the compact measurements and executed source linked above. Reusable saved

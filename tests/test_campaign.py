@@ -6,26 +6,53 @@ import pytest
 from benchmarks.campaign import select
 from benchmarks.comparison import Arm, Comparison
 from benchmarks.runner import execution_blocks
-from w1a1_eagle.contracts import Record, record
+from w1a1_eagle.contracts import Record, number, record
 from w1a1_eagle.data import Artifact, position_count
 
 
-def test_selection_keeps_earlier_ties_and_refuses_partial_or_invalid() -> None:
-    leader: Record = {"state": "earlier", "score": 200.0}
+def live_rows(candidate_seconds: list[float]) -> list[Record]:
+    rows: list[Record] = []
+    for index, seconds in enumerate(candidate_seconds):
+        name = "group" + str(index)
+        for arm, wall in (("candidate", seconds), ("prior-leader", 2.0)):
+            rows.append(
+                {
+                    "category": "code" if index % 2 else "writing",
+                    "arm": arm,
+                    "group": name,
+                    "task": name,
+                    "rep": 0,
+                    "tokens": 10,
+                    "wall_seconds": wall,
+                    "native": {"accepted": 1, "proposed": 2},
+                }
+            )
+    return rows
+
+
+def test_live_selection_requires_resolved_speed_lead_and_refuses_partial_or_invalid() -> None:
+    leader: Record = {"state": "earlier", "score": 5.0}
     result: Record = {
         "status": "complete",
+        "rows": live_rows([2.0, 2.0, 2.0, 2.0]),
         "summary": {
-            "candidate": {"correct": True, "tokens_per_second": 200.0},
-            "prior-leader": {"correct": True, "tokens_per_second": 200.0},
+            "candidate": {"correct": True, "tokens_per_second": 5.0},
+            "prior-leader": {"correct": True, "tokens_per_second": 5.0},
         },
     }
     assert select(result, leader, "new-state", "new-export", {}) is leader
+    result["rows"] = live_rows([1.0, 1.0, 4.0, 1.5])
     result["summary"] = {
-        "candidate": {"correct": True, "tokens_per_second": 201.0},
-        "prior-leader": {"correct": True, "tokens_per_second": 200.0},
+        "candidate": {"correct": True, "tokens_per_second": 5.3},
+        "prior-leader": {"correct": True, "tokens_per_second": 5.0},
     }
-    selected = select(result, leader, "new-state", "new-export", {})
-    assert record(selected)["state"] == "new-state"
+    assert select(result, leader, "new-state", "new-export", {}) is leader
+    result["rows"] = live_rows([1.0, 1.5, 1.0, 1.5])
+    selected = record(select(result, leader, "new-state", "new-export", {}))
+    assert selected["state"] == "new-state"
+    assert number(record(record(selected["resolution"])["interval_95"])["lower"]) > 1
+    first = record(select(result, None, "first-state", "first-export", {}))
+    assert first["state"] == "first-state" and "resolution" not in first
     with pytest.raises(ValueError, match="partial"):
         select({"status": "incomplete"}, None, "state", "export", {})
     with pytest.raises(ValueError, match="invalid"):
@@ -47,23 +74,49 @@ def test_mixed_partial_windows_count_actual_positions() -> None:
         position_count((10,), (16,))
 
 
-def test_cached_acceptance_selection_ignores_historical_speed() -> None:
-    leader: Record = {"state": "earlier", "score": 0.5}
-    result: Record = {
+def cached_screen(candidate: object, lower: float, available: bool = True) -> Record:
+    comparison: Record = {
+        "groups": 30,
+        "acceptance_difference": 0.01,
+        "interval_available": available,
+    }
+    if available:
+        comparison["acceptance_difference_95_interval"] = {"lower": lower, "upper": lower + 0.02}
+    return {
         "status": "complete",
-        "historical_references": {"baseline": {}},
+        "historical_references": {"baseline": {}, "prior-leader": {}},
+        "historical_comparisons": {"candidate/prior-leader": comparison},
         "summary": {
-            "candidate": {"correct": True, "tokens_per_second": 999.0, "acceptance": 0.4},
+            "candidate": {"correct": True, "tokens_per_second": 999.0, "acceptance": candidate},
             "prior-leader": {"correct": True, "tokens_per_second": 1.0, "acceptance": 0.5},
         },
     }
-    assert select(result, leader, "new", "export", {}) is leader
-    record(record(result["summary"])["candidate"])["acceptance"] = 0.6
-    selected = record(select(result, leader, "new", "export", {}))
+
+
+def test_cached_acceptance_selection_ignores_historical_speed() -> None:
+    leader: Record = {"state": "earlier", "score": 0.5}
+    assert select(cached_screen(0.4, 0.001), leader, "new", "export", {}) is leader
+    selected = record(select(cached_screen(0.6, 0.001), leader, "new", "export", {}))
     assert selected["score"] == 0.6 and selected["metric"] == "acceptance"
-    record(record(result["summary"])["candidate"])["acceptance"] = None
     with pytest.raises(ValueError):
-        select(result, leader, "new", "export", {})
+        select(cached_screen(None, 0.001), leader, "new", "export", {})
+
+
+def test_cached_acceptance_lead_inside_the_paired_interval_keeps_the_leader() -> None:
+    leader: Record = {"state": "earlier", "score": 0.5}
+    assert select(cached_screen(0.5, 0.001), leader, "new", "export", {}) is leader
+    assert select(cached_screen(0.5016, -0.001), leader, "new", "export", {}) is leader
+    assert select(cached_screen(0.5016, 0.0), leader, "new", "export", {}) is leader
+    assert select(cached_screen(0.6, 0.0, False), leader, "new", "export", {}) is leader
+    missing = cached_screen(0.6, 0.001)
+    missing["historical_comparisons"] = {}
+    assert select(missing, leader, "new", "export", {}) is leader
+    selected = record(select(cached_screen(0.6, 0.001), leader, "new", "export", {}))
+    resolution = record(selected["resolution"])
+    assert resolution["interval_95"] == {"lower": 0.001, "upper": 0.021}
+    assert resolution["against"] == "prior-leader"
+    first = record(select(cached_screen(0.3, -0.5), None, "first", "export", {}))
+    assert first["state"] == "first" and first["score"] == 0.3
 
 
 def test_boundary_export_preserves_valid_state_after_later_failure(tmp_path: Path) -> None:

@@ -7,6 +7,7 @@ from benchmarks.native import file_reference
 from benchmarks.references import register
 from benchmarks.reporting import controller_record, interruptions
 from benchmarks.runner import compare
+from benchmarks.statistics import paired
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
 from w1a1_eagle.data import Artifact
@@ -435,17 +436,49 @@ def select(
     if any(record(value)["correct"] is not True for value in summaries.values()):
         raise ValueError("invalid evaluation cannot select a checkpoint")
     candidate = record(summaries["candidate"])
-    prior = record(summaries["prior-leader"]) if leader is not None else None
-    metric = "acceptance" if result.get("historical_references") else "tokens_per_second"
-    if prior is not None and number(candidate[metric]) <= number(prior[metric]):
-        return leader
-    return {
+    cached = bool(result.get("historical_references"))
+    metric = "acceptance" if cached else "tokens_per_second"
+    score = number(candidate[metric])
+    selected: Record = {
         "state": state,
         "drafter": drafter,
-        "score": candidate[metric],
+        "score": score,
         "metric": metric,
         "evidence": evidence,
         "status": "provisional DEV leader; acceptance is a progress diagnostic, not deployment qualification",
+    }
+    if leader is None:
+        return selected
+    if score <= number(record(summaries["prior-leader"])[metric]):
+        return leader
+    resolution = leader_resolution(result, cached)
+    if resolution is None:
+        return leader
+    selected["resolution"] = resolution
+    return selected
+
+
+def leader_resolution(result: Record, cached: bool) -> Record | None:
+    if cached:
+        comparisons = record(result.get("historical_comparisons", {}))
+        if "candidate/prior-leader" not in comparisons:
+            return None
+        statistics = record(comparisons["candidate/prior-leader"])
+        name, threshold = "acceptance_difference", 0.0
+    else:
+        rows = [record(row) for row in sequence(result["rows"])]
+        statistics = paired(rows, "candidate", "prior-leader")
+        name, threshold = "speed_ratio", 1.0
+    if statistics.get("interval_available") is not True:
+        return None
+    bounds = record(statistics[name + "_95_interval"])
+    if bounds.get("available") is False or number(bounds["lower"]) <= threshold:
+        return None
+    return {
+        "against": "prior-leader",
+        name: statistics[name],
+        "interval_95": {"lower": bounds["lower"], "upper": bounds["upper"]},
+        "groups": statistics["groups"],
     }
 
 

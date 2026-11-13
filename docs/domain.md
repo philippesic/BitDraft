@@ -58,9 +58,15 @@ requires new controls. Keep failures and unfavorable observations.
 ## Selection
 
 A valid complete 60-request screen can select a provisional acceptance leader attached
-to a durable state/export. Higher accepted/proposed wins; exact ties retain the earlier
-state. Leaders have changed on differences far inside the screen's paired prompt-sampling
-interval; see the [screen resolution note](../results/reusable-acceptance-checks/result.md#screen-resolution-note-2026-11-12). It does not establish better throughput or application performance. Full-request
+to a durable state/export. A candidate replaces the current leader only when its
+accepted/proposed is higher and the lower bound of the paired source-group 95% interval
+for its acceptance difference against that leader is above zero. A lead inside that
+prompt-sampling interval, an exact tie, or an unavailable interval (a category stratum
+with fewer than two source groups) keeps the earlier state; the
+[screen resolution note](../results/reusable-acceptance-checks/result.md#screen-resolution-note-2026-11-12)
+shows why. With no leader yet, the first valid complete screen becomes the leader. The
+new leader records the interval as `resolution`. A leader does not establish better
+throughput or application performance. Full-request
 selection, live outcomes and the latest recovery checkpoint remain separate. Invalid,
 incomplete or nonfinite evaluations cannot select. DEV loss/top1 remain diagnostics;
 repeated DEV selection is not unseen confirmation.

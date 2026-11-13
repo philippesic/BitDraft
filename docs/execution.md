@@ -5,7 +5,8 @@ acceptance checks. It coordinates the supervisor below, keeping recovery, provis
 fast leader and full-DEV incumbent distinct. Loss/top1 diagnostics do not measure acceptance.
 Campaign V2 executes 60 candidate-only requests against authenticated saved controls;
 `benchmarks campaign-preflight SPEC` enforces their existence and compatibility. The
-provisional leader uses acceptance. Historical speed remains descriptive. See
+provisional leader changes only on an acceptance lead beyond the screen's paired
+prompt-sampling interval ([selection](domain.md#selection)). Historical speed remains descriptive. See
 [reference records and pause budgets](benchmarks.md#reusable-references).
 
 ## Commands

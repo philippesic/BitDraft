@@ -230,7 +230,9 @@ then trainable state returns before the next update. This avoids reconstructing 
 GPU memory and host paging still require measured qualification for a new model/hardware.
 A new acceptance leader
 publishes a reusable reference; later checks compare with that record without rerunning
-its model. Exact ties keep the earlier state. Invalid/partial evaluations never select.
+its model. The candidate must beat that leader by more than the paired source-group
+interval in `historical_comparisons["candidate/prior-leader"]`; otherwise the earlier
+state stays leader ([selection](domain.md#selection)). Invalid/partial evaluations never select.
 Adam/RNG/cursor restore exactly; changed recipes/data require explicit continuation.
 `training-boundary` and next `training-ready` journal events measure save/export, evaluation,
 selection bookkeeping and restoration through next sample readiness.
@@ -251,7 +253,9 @@ not launch another identical screen.
 `initial_drafter` must match a completed producer bound to the durable parent, or a
 zero-update export derived from that parent. An arbitrary same-name GGUF cannot seed a
 campaign. V2's compatibility field `provisional_fast_leader` records an acceptance score;
-it is not a throughput verdict. Completed campaigns return idempotently without new runs.
+it is not a throughput verdict. Pilot V1 campaigns measure every arm live and select on
+tokens/s, requiring the lower bound of the paired candidate/prior-leader speed-ratio
+interval to exceed one. Completed campaigns return idempotently without new runs.
 
 For production, bind an authorized training intent, matching initial export, saved
 60-request comparison and optional initial reference. Omit `pilot`, set cadence to 1800
