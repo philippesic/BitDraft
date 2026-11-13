@@ -38,25 +38,25 @@ qualification. Run [local checks](development.md); there is no hosted CI.
 
 | Panel | Units per candidate/target | Execution |
 | --- | ---: | --- |
-| Training screen |60 requests,128-token caps |One candidate pass; saved controls |
-| Broader requests |120 requests, existing longer caps |One pass |
-| Prefix sensitivity |6 groups ×3 prefixes =18 requests |One pass |
-| Live |12 tasks, two per family |One round; failures stay denominated |
+| Training screen | 60 requests, 128-token caps | One candidate pass; saved controls |
+| Broader requests | 120 requests, existing longer caps | One pass |
+| Prefix sensitivity | 6 groups × 3 prefixes = 18 requests | One pass |
+| Live | 12 tasks, two per family | One round; failures stay denominated |
 
-Screen categories:15 code,12 documents,10 reasoning,10 conversation,8 structured/tool,
-5 writing. Input bands:30 below512 tokens,18 at512–2047,9 at2048–8191,3 at8192–16384.
+Screen categories: 15 code, 12 documents, 10 reasoning, 10 conversation, 8 structured/tool,
+5 writing. Input bands: 30 below 512 tokens, 18 at 512–2047, 9 at 2048–8191, 3 at 8192–16384.
 The early-answer cap makes this a progress indicator; broader requests retain longer
-answers. Category estimates are noisy. Broader categories30/25/20/20/15/10 and input
-bands60/36/18/6 preserve breadth. Prefix groups split3 code/3 structured, each under
+answers. Category estimates are noisy. Broader categories 30/25/20/20/15/10 and input
+bands 60/36/18/6 preserve breadth. Prefix groups split 3 code/3 structured, each under
 minimal/coding/tools. Eight measured application histories remain in request coverage.
 
-`prepare-checks` accepts schema1 with authenticated `requests`, `harness`, `live`
+`prepare-checks` accepts schema 1 with authenticated `requests`, `harness`, `live`
 comparison specifications, producing workloads and multi-arm `*-establish.json` specs.
 Use them to establish missing controls, then bind references for candidate-only execution.
-One-time multi-arm control establishment is timed separately; the120-second screen
+One-time multi-arm control establishment is timed separately; the 120-second screen
 deadline applies to routine candidate-only execution and complete training interruptions.
 The [bank definition](../benchmarks/definitions/prompt-bank-v1.json) owns source identities
-and the6K TRAIN bank; smaller evals do not change training data. Targets remain Qwen3.5
+and the 6K TRAIN bank; smaller evals do not change training data. Targets remain Qwen3.5
 4B Q4KM/NVFP4, with separate reference records.
 
 Legacy short120/full600/harness90/live×3/sample120×3 evidence keeps its original meaning;
@@ -68,8 +68,25 @@ access receipts; a new label supplies no unseen data. Never consume heldout24 al
 Public dialogue is partly synthetic, planning dominates non-arithmetic reasoning, and
 long inputs are mostly papers. Length is not difficulty; this is not measured traffic.
 One-project trials cannot establish universal transfer. Workflow regressions cannot be
-rescued by request scores. Broader candidate runtime aims for15–20minutes/precision;
+rescued by request scores. Broader candidate runtime aims for 15–20 minutes/precision;
 measure it rather than treating that estimate as qualification.
+
+### What each panel resembles
+
+Measured on the Q4KM target-only arm; the training column is the frozen 6K TRAIN bank.
+The current 220,095-update state was trained on the earlier 15,647-capture corpus.
+
+| Property | 6K TRAIN bank | Training screen | DEV requests | Live tasks |
+| --- | ---: | ---: | ---: | ---: |
+| Mean input tokens | 625 | 1,556 | 1,366 | 4,747 context, 644 new per call |
+| Inputs of 2,048 tokens or more | 8% | 20% | 20% | 87% of calls |
+| Output per request | to EOS or 256–2,048 cap | 110 mean; 47 of 60 hit 128 | 400 mean | 92 per call, 1,024 cap |
+| Project `tools` harness prefix | 200 of 6,000 groups | none | none; harness panel separate | every call |
+
+The screen sees only answer openings, and inputs there are longer than in training. Live
+calls reuse a cached context and evaluate about seven new prompt tokens per generated
+token, so drafter prompt cost matters most there. Function-calling prompts (Glaive) count
+as structured requests without the project harness. None of these is measured user traffic.
 
 ## Reusable references
 

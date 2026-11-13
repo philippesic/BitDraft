@@ -103,6 +103,18 @@ Resume their exact frozen source and recipe; never turn them into production bud
 The state-parity receipt compares every model/Adam tensor in bounded chunks and checks
 RNG, loss, gradients and exposure, excluding source/clock metadata that should differ.
 
+## Screen resolution note, 2026-11-12
+
+The 60-request screen is deterministic for a fixed state. The original 220,095 state
+scored 3,123 accepted of 6,737 proposed in all eight screens that measured it, and other
+repeated states also matched exactly. One accepted draft moves acceptance by about 0.015
+points. Two qualification campaigns nevertheless replaced the leader on tiny differences:
+campaign-10 at +0.157 points (paired source-group 95% interval −0.098 to +0.415) and
+campaign-13 at +0.042 points (−0.177 to +0.260). These intervals describe which prompts
+were sampled, not run-to-run noise. Production selection uses the same rule. This note
+recomputes nothing; the values are in each evaluation's `historical_comparisons` under
+`/home/philip/BitDraft/artifacts/qualification/lean-checks/campaign-*/`. No policy changed.
+
 ## Artifact disposition
 
 Retain the compact measurements and executed source linked above. Reusable saved
