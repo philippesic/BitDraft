@@ -131,29 +131,43 @@ ignored and access-restricted in the archive, rather than entering Git.
 
 ## Windows artifact archives
 
-Historical run folders and transfer deliveries formerly scattered under the Windows
-user directory are contained in `artifacts/archive/windows-legacy/`. Adjacent
-`.index.jsonl` files record each original path, archive member, byte length and SHA-256.
-Search the indexes
-for a former path before opening a large archive; the receipt collection under
-`artifacts/receipts/storage-containment/` records archive identities and verification.
-The `binary-eagle-decoding-artifacts` collection spans numbered archives; consult
-its collection manifest and all matching indexes. Its separate
-`.links.json` preserves symbolic-link targets, including broken historical locators.
+The remaining historical Windows raw-output archives have been converted to compact
+evidence and retired. Start with the [retirement result](../results/historical-output-retirement/result.md),
+its folder catalog and imported observations. Existing topic results remain the scientific
+entrance; the conversion does not pool old workloads or certify producer verdicts.
 
-On this host, Python3.14 reads these archives with standard-library
-`tarfile`, including `python -m tarfile --list ARCHIVE.tar.zst`. Recover only required
-members beneath `artifacts/archive/windows-legacy/unpacked/`, preserving the member's
-original directory prefix. Use the index's `restore` path when present; native Windows
-members can carry an extra `Users/philip/` prefix. Archived checkout links point to that recovery location.
-Verify recovered bytes against the adjacent index. Preserve symlink entries as historical
-locators rather than following them into former external directories.
-The locked numerical environment also supplies `zstandard`: its decompressor's
-`stream_reader` can feed `tarfile.open(fileobj=reader, mode="r|")` on Python3.11.
+`artifacts/archive/development-history/` contains `windows-support.tar` and
+`qualification-support.tar`. Their members are individually gzipped, content-addressed
+report, source, configuration and diagnostic records. `windows-measurements.jsonl.gz`
+provides numerical/status fields; original report rows remain in support for statistics.
+The `*.index.jsonl.gz` files map original source paths to SHA-256 values and disposition.
+Nested source paths use `::` to separate archive members; repeated path versions retain
+their separate content identities. `windows-metadata.tar.gz` preserves original indexes,
+collection manifests and historical link records.
 
-Each source file and its decompressed archive member were checked against the same
-SHA-256 before the external copy was removed. Repeated identical large files
-may use tar hardlinks; their member identities remain in the index. This is lossless
-relocation and compression, not a new scientific result or retirement of those bytes.
-The current6K TRAIN corpus uses physical files in `artifacts/datasets/` and does not
-depend on extracting this archive.
+To recover a retained record, find its source path and `sha256` in an index. Open the
+appropriate support tar with Python's `tarfile`, read the member named `SHA256.gz`,
+decompress it with `gzip.decompress`, and check the decompressed bytes with
+`hashlib.sha256` before writing to a separate recovery directory. Preserve link records
+as locators rather than following old external paths. A `discard-raw` or `discard-output`
+entry without support identifies intentionally unavailable bytes; an index or hash cannot
+restore them. Qualification indexes also identify files retained at their development paths.
+
+The original qualification index records disposition at the first retirement.
+`current-development-catalog.jsonl.gz` records current retained paths, including small
+specifications restored for upcoming checkpoint evaluation. Its support references name
+the retained tar and member; the older index's absolute blob paths describe temporary
+extraction staging that has been removed. The [result](../results/historical-output-retirement/result.md)
+identifies the retired historical checkpoint bindings in the original loss recipe.
+
+`older-source-support.tar.gz` and `older-source-index.jsonl.gz` replace two earlier
+metadata/source archives that still contained obsolete model/capture/runtime payloads.
+They use the same `SHA256.gz` member convention; use the index's original archive/member
+pair to find the preserved record. Other independent source-history and native WIP
+archives retain their original recovery procedures.
+
+Authentication, metric recomputation, dependency decisions, exact retirement plans and
+journals live in `artifacts/receipts/artifact-closeout-20261113/`. The current6K TRAIN
+corpus remains physical data under `artifacts/datasets/`. The original continuation parent,
+models, diagnostic DEV data and current comparison exports remain available. Retired old
+weights, capture tensors, profiler timelines and raw process/event replay do not.

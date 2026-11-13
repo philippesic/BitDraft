@@ -1,0 +1,36 @@
+import gzip
+import hashlib
+import json
+import tarfile
+from pathlib import Path
+
+ROOT=Path('/home/philip/BitDraft')
+SOURCE=ROOT/'artifacts/archive/windows-legacy'
+SUPPORT=ROOT/'artifacts/archive/development-history'
+RECEIPTS=ROOT/'artifacts/receipts/artifact-closeout-20261113'
+
+def ref(p):
+    with p.open('rb') as source:sha=hashlib.file_digest(source,'sha256').hexdigest()
+    return {'path':str(p),'sha256':sha,'bytes':p.stat().st_size}
+
+files=sorted(p for p in SOURCE.rglob('*') if p.is_file())
+if any(p.is_symlink() for p in SOURCE.rglob('*')):raise ValueError('symlink in Windows retirement root')
+metadata=[p for p in files if not p.name.endswith('.tar.zst')]
+archive=SUPPORT/'windows-metadata.tar.gz'
+with tarfile.open(archive,'w:gz') as out:
+    for p in metadata:out.add(p,arcname=str(p.relative_to(SOURCE)),recursive=False)
+with tarfile.open(archive,'r:gz') as bundle:
+    for member in bundle:
+        data=bundle.extractfile(member).read()
+        assert hashlib.sha256(data).hexdigest()==ref(SOURCE/member.name)['sha256']
+remove=[]
+for p in files:
+    if p.name.endswith('.tar.zst'):
+        r=json.loads((RECEIPTS/('windows-'+p.name+'.json')).read_text())
+        assert r['archive']==str(p) and r['bytes']==p.stat().st_size
+        remove.append({key:r[key] for key in ['sha256','bytes']}|{'path':str(p)})
+    else:remove.append(ref(p))
+kept=[SUPPORT/'windows-support.tar',SUPPORT/'windows-metadata.tar.gz',SUPPORT/'windows-measurements.jsonl.gz',SUPPORT/'windows-nested.index.jsonl.gz',RECEIPTS/'nested-evidence-verification.json',RECEIPTS/'windows-evidence-verification.json',ROOT/'results/historical-output-retirement/windows-families.csv',ROOT/'results/historical-output-retirement/windows-observations.json']
+plan={'schema':1,'owner':'BitDraft historical-output-retirement','authorization':'Philip explicitly authorized evidence/result conversion and disposal of obsolete historical archives and qualification outputs in the current conversation, November 12 2026. Retain active development inputs and current dependencies.','result':'results/historical-output-retirement/result.md','limitations':'Obsolete Windows weights, feature tensors, profiler/raw process timelines and complete old runtime replay are discarded. Reports, report rows, source/configuration, diagnostics and historical path/content identities survive in verified compact support. Current active datasets/models do not depend on these archives.','root':str(SOURCE),'protected':[],'retained':[ref(p) for p in kept],'remove':remove}
+p=RECEIPTS/'windows-final-plan.json';p.write_text(json.dumps(plan,indent=2)+'\n')
+print('Windows root files',len(remove),'GiB',sum(r['bytes'] for r in remove)/2**30,'plan SHA256',ref(p)['sha256'],'compact metadata bytes',archive.stat().st_size)

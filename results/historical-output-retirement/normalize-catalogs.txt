@@ -1,0 +1,16 @@
+import hashlib
+import json
+from pathlib import Path
+
+root=Path('/home/philip/BitDraft')
+receipts=root/'artifacts/receipts/artifact-closeout-20261113'
+records=[]
+for name in ['qualification.csv','windows-families.csv']:
+    source=root/'results/historical-output-retirement'/name
+    before=source.read_bytes()
+    preserved=receipts/('authenticated-'+name)
+    preserved.write_bytes(before)
+    after=before.replace(b'\r\n',b'\n')
+    source.write_bytes(after)
+    records.append({'path':str(source),'normalization':'CRLF to LF only; cells and ordering unchanged','before_sha256':hashlib.sha256(before).hexdigest(),'after_sha256':hashlib.sha256(after).hexdigest(),'authenticated_prior_bytes':str(preserved)})
+(receipts/'catalog-formatting.json').write_text(json.dumps(records,indent=2)+'\n')

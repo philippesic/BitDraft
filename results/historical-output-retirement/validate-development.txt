@@ -1,0 +1,58 @@
+import gc
+import gzip
+import hashlib
+import json
+import sys
+from collections import Counter
+from pathlib import Path
+sys.path.insert(0,'/home/philip/BitDraft')
+from benchmarks.comparison import Comparison
+from w1a1_eagle.data import Artifact
+from w1a1_eagle.intent import Intent
+from w1a1_eagle.numerical.entry import read_corpus
+from w1a1_eagle.numerical.captures import validate_capture
+from w1a1_eagle.numerical.corpus import Corpus
+from w1a1_eagle.numerical.diagnostics import Diagnostics
+
+ROOT=Path('/home/philip/BitDraft')
+RECEIPTS=ROOT/'artifacts/receipts/artifact-closeout-20261113'
+results=[]
+for relative in ['artifacts/datasets/train-bank-v8-fp16-01/corpus.json','artifacts/datasets/retained-he4broad-original/corpus.json']:
+    if 'retained-he4broad-original' in relative:
+        intent=Intent.load(ROOT/'artifacts/receipts/final-old-directories-20261112/current-source-original-admission-intent.json')
+        manifest=intent.corpus
+        corpus=read_corpus(intent,2560)
+        relative=str(manifest.path.relative_to(ROOT))
+    else:
+        manifest=Artifact.capture(ROOT/relative)
+        corpus=Corpus(manifest,8101,8*1024**3)
+    samples={}
+    for row in corpus.rows:
+        parts=str(row.capture.metadata.path)
+        key='supplement' if '/he4broad-supplement-01/' in parts else 'windows' if '/windows-captures/' in parts else 'linux' if '/linux-captures/' in parts else 'original'
+        samples.setdefault(key,row.capture)
+    validations={key:validate_capture(spec,8*1024**3) for key,spec in samples.items()}
+    diagnostics=None
+    if 'train-bank' in relative:
+        diagnostic=Diagnostics(Artifact.capture(ROOT/'artifacts/qualification/training-diagnostics-spec.json'),corpus,8*1024**3)
+        diagnostic_sample=next(iter(diagnostic.specs.values()))
+        diagnostics={'windows':len(diagnostic.windows),'tasks':len(diagnostic.specs),'sample':validate_capture(diagnostic_sample,8*1024**3)}
+    result={'corpus':relative,'sha256':manifest.sha256,'sequences':len(corpus.rows),'samples':validations,'diagnostics':diagnostics}
+    results.append(result);print(json.dumps(result),flush=True)
+    del corpus
+    gc.collect()
+comparisons=[]
+for path in sorted((ROOT/'artifacts/qualification/lean-checks').glob('*cached-spec.json')):
+    comparison=Comparison.load(path)
+    comparison.verify()
+    comparisons.append({'path':str(path),'tier':comparison.tier,'requests':len(comparison.tasks),'references':len(comparison.references)})
+    print('COMPARISON_AUTHENTICATED',path.name,flush=True)
+index=ROOT/'artifacts/archive/development-history/qualification-index.jsonl.gz'
+protected=[]
+for row in (json.loads(line) for line in gzip.open(index,'rt')):
+    if row['disposition']=='retain-development':
+        Artifact(Path(row['path']),row['sha256'],row['bytes']).verify()
+        protected.append(row)
+result={'corpora':results,'comparisons':comparisons,'protected_files_authenticated':len(protected),'protected_bytes':sum(row['bytes'] for row in protected),'gpu_execution':False}
+(RECEIPTS/'development-validation.json').write_text(json.dumps(result,indent=2)+'\n')
+print('DEVELOPMENT_VALIDATION_COMPLETE',len(comparisons),len(protected),flush=True)

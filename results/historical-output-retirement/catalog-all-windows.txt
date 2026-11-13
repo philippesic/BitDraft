@@ -1,0 +1,75 @@
+import csv
+import gzip
+import hashlib
+import json
+from collections import Counter, defaultdict
+from pathlib import Path
+
+ROOT=Path('/home/philip/BitDraft')
+SUPPORT=ROOT/'artifacts/archive/development-history'
+RESULT=ROOT/'results/historical-output-retirement'
+RECEIPTS=ROOT/'artifacts/receipts/artifact-closeout-20261113'
+families=defaultdict(Counter)
+seen={}; report_hashes=set(); records=[]; all_rows=[]
+
+def scalar_leaves(value, prefix=''):
+    if isinstance(value,dict):
+        result={}
+        for key,item in value.items():
+            if key in {'rows','tasks','samples','requests','responses','traces','files','artifacts','environment'}:continue
+            result.update(scalar_leaves(item,prefix+'.'+key if prefix else key))
+        return result
+    if isinstance(value,(int,float,bool)) or value is None:
+        return {prefix:value}
+    if isinstance(value,str) and len(value)<500 and prefix.split('.')[-1] in {'status','outcome','reason','decision','scope','error','kind','objective','hypothesis','scientific'}:
+        return {prefix:value}
+    return {}
+
+for p in sorted([*SUPPORT.glob('*.tar.zst.index.jsonl.gz'), SUPPORT/'windows-nested.index.jsonl.gz']):
+    for line in gzip.open(p,'rt'):
+        row=json.loads(line)
+        all_rows.append(row)
+        source=row['source']
+        version=(source,row['sha256'])
+        if version in seen:continue
+        seen[version]=row['sha256']
+        relative=source.removeprefix('/mnt/c/Users/philip/')
+        pieces=relative.split('/')
+        family='/'.join(pieces[:2]) if pieces[0]=='binary-eagle-decoding-artifacts' else pieces[0]
+        family_counts=families[family]
+        family_counts['files']+=1
+        family_counts['original_bytes']+=row['bytes']
+        family_counts[row['disposition']+'_files']+=1
+        family_counts[row['disposition']+'_bytes']+=row['bytes']
+        name=Path(source).name.lower()
+        if row['disposition']!='compact-support' or row['sha256'] in report_hashes or not name.endswith('.json') or not any(word in name for word in ['result','report','summary','metric','evaluation','failure']):continue
+        blob=SUPPORT/'blobs'/(row['sha256']+'.gz')
+        data=gzip.decompress(blob.read_bytes())
+        assert hashlib.sha256(data).hexdigest()==row['sha256']
+        try:d=json.loads(data)
+        except (json.JSONDecodeError,UnicodeDecodeError):continue
+        if not isinstance(d,dict):continue
+        measurements=scalar_leaves(d)
+        if not measurements:continue
+        report_hashes.add(row['sha256'])
+        family_counts['measurement_records']+=1
+        family_counts['numeric_or_status_fields']+=len(measurements)
+        records.append({'source':source,'sha256':row['sha256'],'family':family,'measurements':measurements,'rows_preserved_in_support':len(d.get('rows',[])) if isinstance(d.get('rows'),list) else None,'status':d.get('status',d.get('outcome','unreported'))})
+fields=['family','files','original_bytes','compact-support_files','compact-support_bytes','discard-raw_files','discard-raw_bytes','measurement_records','numeric_or_status_fields']
+with (RESULT/'windows-families.csv').open('w') as out:
+    writer=csv.DictWriter(out,fieldnames=fields,extrasaction='ignore');writer.writeheader()
+    for family,counters in sorted(families.items()):writer.writerow({'family':family,**counters})
+with gzip.open(SUPPORT/'windows-measurements.jsonl.gz','wt') as out:
+    for row in records:out.write(json.dumps(row,separators=(',',':'))+'\n')
+archive=SUPPORT/'windows-support.tar'
+blobs=sorted({row['sha256'] for row in all_rows if row['disposition']=='compact-support'})
+import tarfile
+with tarfile.open(archive,'w') as out:
+    for sha in blobs:out.add(SUPPORT/'blobs'/(sha+'.gz'),arcname=sha+'.gz',recursive=False)
+with tarfile.open(archive,'r') as bundle:
+    for member in bundle:
+        data=bundle.extractfile(member).read()
+        assert hashlib.sha256(gzip.decompress(data)).hexdigest()==Path(member.name).stem
+summary={'archives_verified':len(list(RECEIPTS.glob('windows-*.tar.zst.json'))),'unique_original_paths':len({source for source,sha in seen}),'unique_path_versions':len(seen),'member_occurrences_including_nested':len(all_rows),'families':len(families),'measurement_records':len(records),'numeric_or_status_fields':sum(r['numeric_or_status_fields'] for r in families.values()),'support_unique_blobs':len(blobs),'support_archive_bytes':archive.stat().st_size,'discarded_raw_logical_bytes_including_nested':sum(r['discard-raw_bytes'] for r in families.values()),'preserved_report_source_logical_bytes_including_nested':sum(r['compact-support_bytes'] for r in families.values())}
+(RECEIPTS/'windows-evidence-verification.json').write_text(json.dumps(summary,indent=2)+'\n')
+print(json.dumps(summary,indent=2))

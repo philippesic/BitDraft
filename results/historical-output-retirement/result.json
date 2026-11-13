@@ -1,0 +1,267 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-11-13T03:47:13.764712+00:00",
+  "scope": "Authorized historical archive and closed qualification evidence conversion; no training, capture or GPU benchmarking. Current corpora/models/native inputs and original continuation state remain.",
+  "footprint_bytes": {
+    "before": {
+      "archive": 186023677952,
+      "qualification": 128438996992
+    },
+    "after": {
+      "archive": 4130213888,
+      "qualification": 16116129792
+    }
+  },
+  "net_archive_qualification_bytes_reclaimed": 294216331264,
+  "filesystem_after": {
+    "total_bytes": 1081101176832,
+    "available_bytes": 352077770752,
+    "used_bytes": 718011514880
+  },
+  "retirements": {
+    "windows-final-applied.json": {
+      "files": 945,
+      "bytes": 182624158693,
+      "receipt": {
+        "path": "artifacts/receipts/artifact-closeout-20261113/windows-final-applied.json",
+        "sha256": "2e1f59e116ff8e9873907d7c115efd894e9069ae5a7aa39eeca798dd9de737f2",
+        "bytes": 1875
+      }
+    },
+    "qualification-final-applied.json": {
+      "files": 22455,
+      "bytes": 19996127361,
+      "receipt": {
+        "path": "artifacts/receipts/artifact-closeout-20261113/qualification-final-applied.json",
+        "sha256": "a0100beb14075d80f33012a5dd63fdd363b1f39c800856b8333430deaaa6cf64",
+        "bytes": 1289
+      }
+    },
+    "qualification-store-retirement.json": {
+      "files": 61,
+      "bytes": 92275942815,
+      "receipt": {
+        "path": "artifacts/receipts/artifact-closeout-20261113/qualification-store-retirement.json",
+        "sha256": "2ba39c694cce368e3edfdaa6421c36ff93402dbc7018ccd991d903309a6a0ff7",
+        "bytes": 408
+      }
+    },
+    "older-support-applied.json": {
+      "files": 2,
+      "bytes": 510394510,
+      "receipt": {
+        "path": "artifacts/receipts/artifact-closeout-20261113/older-support-applied.json",
+        "sha256": "3f4befbe5cc04e82e9bccb70878628472f3204012f7569de44449310e7e82603",
+        "bytes": 683
+      }
+    },
+    "staging-applied.json": {
+      "files": 137898,
+      "bytes": 806866341,
+      "receipt": {
+        "path": "artifacts/receipts/artifact-closeout-20261113/staging-applied.json",
+        "sha256": "2981507f838d31a858171fe921f34a761b5221c2d142b10482947ee9a23c8430",
+        "bytes": 678
+      }
+    }
+  },
+  "windows_evidence": {
+    "archives_verified": 422,
+    "unique_original_paths": 337136,
+    "unique_path_versions": 337137,
+    "member_occurrences_including_nested": 337137,
+    "families": 1175,
+    "measurement_records": 1809,
+    "numeric_or_status_fields": 89368,
+    "support_unique_blobs": 132116,
+    "support_archive_bytes": 1008537600,
+    "discarded_raw_logical_bytes_including_nested": 257118447008,
+    "preserved_report_source_logical_bytes_including_nested": 10437233313
+  },
+  "older_archive_cleanup": {
+    "members": 51483,
+    "support_unique_members": 26004,
+    "new_compressed_bytes": 136750531,
+    "retired_archives_bytes": 510394510,
+    "discarded_raw_member_bytes": 466525087,
+    "plan_sha256": "20fac9fb001a5624f1a5437a7888acd5cc963308f4f49303384e1304fb9f2fc6"
+  },
+  "qualification_evidence": {
+    "catalog_rows": 229,
+    "measured_arms_recomputed": 97,
+    "failure_records": 18,
+    "campaign_states": 16
+  },
+  "development": {
+    "corpora": [
+      {
+        "corpus": "artifacts/datasets/train-bank-v8-fp16-01/corpus.json",
+        "sha256": "3fbc013583cc832aa5b0cfb0211a3780d5889cef840efee2f83fc798505c8843",
+        "sequences": 6000,
+        "samples": {
+          "supplement": {
+            "status": "passed",
+            "checks": "product loader: authenticated arrays, geometry, finite values, tokens, labels and EOG",
+            "supervision_windows": 257,
+            "materialized_bytes": 51773440
+          },
+          "linux": {
+            "status": "passed",
+            "checks": "product loader: authenticated arrays, geometry, finite values, tokens, labels and EOG",
+            "supervision_windows": 257,
+            "materialized_bytes": 156221440
+          },
+          "windows": {
+            "status": "passed",
+            "checks": "product loader: authenticated arrays, geometry, finite values, tokens, labels and EOG",
+            "supervision_windows": 58,
+            "materialized_bytes": 22282240
+          }
+        },
+        "diagnostics": {
+          "windows": 120,
+          "tasks": 32,
+          "sample": {
+            "status": "passed",
+            "checks": "product loader: authenticated arrays, geometry, finite values, tokens, labels and EOG",
+            "supervision_windows": 257,
+            "materialized_bytes": 46940160
+          }
+        }
+      },
+      {
+        "corpus": "artifacts/datasets/retained-he4broad-original/archive-mount/index.json",
+        "sha256": "d703d61f47eee8e695bbd09293c15bbae57184d078b98931ff4a2d5828bdbd73",
+        "sequences": 15647,
+        "samples": {
+          "original": {
+            "status": "passed",
+            "checks": "product loader: authenticated arrays, geometry, finite values, tokens, labels and EOG",
+            "supervision_windows": 114,
+            "materialized_bytes": 19087360
+          }
+        },
+        "diagnostics": null
+      }
+    ],
+    "cached_comparisons_authenticated": 10,
+    "registry_records_authenticated": 52,
+    "registry_authenticated_file_occurrences": 2960,
+    "candidate_comparisons_authenticated": 11,
+    "files_authenticated": 1749,
+    "bytes": 16111015183,
+    "no_reference_dependency_on_deleted_qualification_full_root": true,
+    "benchmark_full_qualification_authenticated_occurrences": 978,
+    "historical_comparison_failures": [
+      {
+        "path": "/home/philip/BitDraft/artifacts/qualification/lean-checks/q4km-screen-candidate.json",
+        "reason": "reference protocol/target/workload differs or is incomplete: baseline",
+        "scope": "preserved historical candidate specification; current cached definitions passed separately"
+      }
+    ],
+    "historical_loss_spec_limitation": "broad-dev-loss-spec.json retains its original two historical qualification-state bindings, whose weights have been retired; bind upcoming checkpoint states for new offline scoring. Its DEV data and training identity manifest remain present."
+  },
+  "compact_support": [
+    {
+      "path": "artifacts/archive/development-history/windows-support.tar",
+      "sha256": "6d6fec83416ccbaadd96ea300b6c1a027a5eb5c9781d6db6d6e3c22d1fbc4f00",
+      "bytes": 1008537600
+    },
+    {
+      "path": "artifacts/archive/development-history/qualification-support.tar",
+      "sha256": "3eac690ac281be2751b696914f8463b9ff1c2314edc58f505ac37551d5a96d1b",
+      "bytes": 47912960
+    },
+    {
+      "path": "artifacts/archive/development-history/older-source-support.tar.gz",
+      "sha256": "8631c6d2bbab744bbee33afc71b05a4e4d1991819f8cc99dd3156b1c9c3755c5",
+      "bytes": 136750531
+    },
+    {
+      "path": "artifacts/archive/development-history/windows-metadata.tar.gz",
+      "sha256": "5f5e902e2c56db9bbebd93388ec1d722d559944ad70146a712f65ad9d3bb3ad1",
+      "bytes": 27478844
+    },
+    {
+      "path": "artifacts/archive/development-history/windows-nested.index.jsonl.gz",
+      "sha256": "d68977b373f423232b4f7213b1c3281e7ad6b25748423b8eb7fc25ce66a5c6a5",
+      "bytes": 8756715
+    },
+    {
+      "path": "artifacts/archive/development-history/windows-measurements.jsonl.gz",
+      "sha256": "8f71a77ba0403f7d05915b8e5b88be4450c631b8c49982701e19997dc8fca788",
+      "bytes": 526309
+    },
+    {
+      "path": "artifacts/archive/development-history/qualification-index.jsonl.gz",
+      "sha256": "497c13fe9f87240ef11bdf7fc4913c7970369d73eb916f4b0e382faba31a70f3",
+      "bytes": 1315374
+    },
+    {
+      "path": "artifacts/archive/development-history/current-development-catalog.jsonl.gz",
+      "sha256": "297a28c91e952cc8499eee79e1d76c114d57e2e8bba999ca72604647cf07e744",
+      "bytes": 97271
+    },
+    {
+      "path": "artifacts/archive/development-history/older-source-index.jsonl.gz",
+      "sha256": "60a1f981d904461559c8c443dcfc73515137857ee6bdf514ac34344d7d6f85fe",
+      "bytes": 1929111
+    }
+  ],
+  "operational_receipts": [
+    {
+      "path": "artifacts/receipts/artifact-closeout-20261113/windows-final-plan.json",
+      "sha256": "c28997933eac91bfad24277a33301b54adeec816fa03eaa7607c47b5ee75780e",
+      "bytes": 224647
+    },
+    {
+      "path": "artifacts/receipts/artifact-closeout-20261113/qualification-final-plan.json",
+      "sha256": "d8335333ea72d93b09fef41f4720ca0302638a678362a0510acbc46b6ced443c",
+      "bytes": 6575014
+    },
+    {
+      "path": "artifacts/receipts/artifact-closeout-20261113/qualification-store-plan.json",
+      "sha256": "555bbc13b05bdd37c967666e8055e041fb2dcf4cd15d33885f920b6b88007e74",
+      "bytes": 223268
+    },
+    {
+      "path": "artifacts/receipts/artifact-closeout-20261113/older-support-plan.json",
+      "sha256": "20fac9fb001a5624f1a5437a7888acd5cc963308f4f49303384e1304fb9f2fc6",
+      "bytes": 1800
+    },
+    {
+      "path": "artifacts/receipts/artifact-closeout-20261113/staging-plan.json",
+      "sha256": "7aec7f196ddec1ee1384ead52e542de098de5fc9b5f8e790294e1c8a89e64637",
+      "bytes": 36895130
+    },
+    {
+      "path": "artifacts/receipts/artifact-closeout-20261113/development-validation.json",
+      "sha256": "ffe7a1e0ebde4e26fd63fdc4dd00b737ef6d9fc299011c1008fec63f86829590",
+      "bytes": 3867
+    },
+    {
+      "path": "artifacts/receipts/artifact-closeout-20261113/coordinated-dependency-scope.json",
+      "sha256": "a1e18c641db08a428d1af8ff2c9afda788c9121369ac79cb7779368d98d01b1e",
+      "bytes": 3559
+    },
+    {
+      "path": "artifacts/receipts/artifact-closeout-20261113/catalog-formatting.json",
+      "sha256": "cc2a3b5c401f5a56088afc967a9d16481439881bc15dae88b7d86a9abfdc22c7",
+      "bytes": 975
+    }
+  ],
+  "catalog_note": "CSV cell values and ordering are unchanged; LF formatting replaces CRLF. Authenticated pre-format catalog bytes remain in the receipt directory. Initial retirement indexes preserve their original disposition; the current-development catalog includes later byte-identical restorations.",
+  "retained_exceptions": [
+    "Original220095 corrected state/export and independently retained migration parent",
+    "32-task DEV capture corpus and 120-window diagnostic recipe; offline scoring/capture specs",
+    "Reusable initializer and two current campaign10 comparison exports",
+    "Saved-reference measurements, response/transcript receipts, workloads and candidate-only comparison definitions",
+    "Independent project/native Git histories, exact unique native WIP recovery and associated small upstream vocabulary fixtures",
+    "Compact historical report/source/configuration/diagnostic records and authenticated retirement receipts"
+  ],
+  "lost_replay": [
+    "Closed historical qualification optimizer states and unused exports",
+    "Obsolete Windows and shortlisted model states and feature tensors",
+    "Raw profiler/process/event timelines and old compiled runtime/cache replay"
+  ]
+}

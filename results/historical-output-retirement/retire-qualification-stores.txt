@@ -1,0 +1,37 @@
+import hashlib
+import json
+import sys
+from pathlib import Path
+sys.path.insert(0, '/home/philip/BitDraft')
+from tools.retention import active_clients
+from w1a1_eagle.checkpoints.store import Store
+from w1a1_eagle.data import Artifact
+
+ROOT=Path('/home/philip/BitDraft')
+RECEIPTS=ROOT/'artifacts/receipts/artifact-closeout-20261113'
+plan=json.loads((RECEIPTS/'qualification-store-plan.json').read_text())
+clients=active_clients(ROOT/'artifacts/qualification')
+if clients:raise ValueError(('active qualification dependencies',clients))
+for row in plan['retained']:
+    Artifact(Path(row['path']),row['sha256'],row['bytes']).verify()
+recovery=Artifact.capture(Path(plan['recovery']))
+protected=frozenset(Path(p) for p in plan['protected'])
+expected={Path(row['path']) for row in plan['remove']}
+stores=sorted({p.parent for p in expected})
+for store in stores:
+    observed={p for p in store.glob('*.bin') if p not in protected}
+    if observed!=expected.intersection(observed|set(store.glob('*.bin'))):
+        raise ValueError(('unreviewed store payload',str(store),observed-expected))
+for store in stores:
+    before={p.stem for p in store.glob('*.bin') if p in expected}
+    retired=Store(store).retire_closed(protected,recovery)
+    if set(retired)!=before:raise ValueError(('store retirement differs from plan',store,retired,before))
+    for digest in retired:
+        source=store/('retirement-'+digest+'.json')
+        destination=RECEIPTS/'store-retirements'/str(store.relative_to(ROOT/'artifacts/qualification'))/source.name
+        destination.parent.mkdir(parents=True,exist_ok=True)
+        destination.write_bytes(source.read_bytes())
+    print('RETIRED_STORE',store,len(retired),flush=True)
+missing=[str(p) for p in expected if p.exists()]
+if missing:raise ValueError(('planned store payloads remain',missing))
+(RECEIPTS/'qualification-store-retirement.json').write_text(json.dumps({'phase':'complete','files':len(expected),'bytes':sum(row['bytes'] for row in plan['remove']),'recovery':{'path':str(recovery.path),'sha256':recovery.sha256,'bytes':recovery.size},'exact_old_pilot_resumes_available':False,'protected_files':len(protected)},indent=2)+'\n')

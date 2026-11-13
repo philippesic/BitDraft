@@ -1,0 +1,38 @@
+import gzip
+import hashlib
+import json
+import tarfile
+from pathlib import Path
+
+ROOT = Path('/home/philip/BitDraft')
+SUPPORT = ROOT / 'artifacts/archive/development-history'
+RECEIPTS = ROOT / 'artifacts/receipts/artifact-closeout-20261113'
+rows = [json.loads(line) for line in gzip.open(SUPPORT / 'qualification-index.jsonl.gz','rt')]
+blobs = sorted({Path(row['support']) for row in rows if row['support']})
+archive = SUPPORT / 'qualification-support.tar'
+with tarfile.open(archive,'w') as out:
+    for blob in blobs:
+        out.add(blob,arcname=blob.name,recursive=False)
+with tarfile.open(archive,'r') as source:
+    for member in source:
+        data = source.extractfile(member).read()
+        assert hashlib.sha256(gzip.decompress(data)).hexdigest()==Path(member.name).stem
+
+def ref(path):
+    with path.open('rb') as stream:
+        digest=hashlib.file_digest(stream,'sha256').hexdigest()
+    return {'path':str(path),'sha256':digest,'bytes':path.stat().st_size}
+
+kept = [ref(archive),ref(SUPPORT/'qualification-index.jsonl.gz'),ref(ROOT/'results/historical-output-retirement/qualification.csv'),ref(ROOT/'results/historical-output-retirement/qualification-campaigns.json'),ref(RECEIPTS/'qualification-metrics-verification.json')]
+store_files=[]; generic=[]
+for row in rows:
+    if row['disposition']!='discard-output':continue
+    path=Path(row['path'])
+    if path.parent.name in {'states','exports'} and path.suffix=='.bin' and len(path.stem)==64:
+        store_files.append(row)
+    else:generic.append({key:row[key] for key in ['path','sha256','bytes']})
+plan={'schema':1,'owner':'BitDraft historical-output-retirement','authorization':'Philip explicitly authorized evidence/result conversion and disposal of obsolete historical archives and qualification outputs in the current conversation, November 12 2026. Retain active development inputs and current dependencies.','result':'results/historical-output-retirement/result.md','limitations':'Historical closed pilot optimizer points, raw captures, raw profiler traces and event replay are unavailable after disposal. Current corpora, original220095, native/model inputs, diagnostic DEV data, initializer and active comparison exports remain protected.','root':str(ROOT/'artifacts/qualification'),'protected':[row['path'] for row in rows if row['disposition']=='retain-development'],'retained':kept,'remove':generic}
+(RECEIPTS/'qualification-plan.json').write_text(json.dumps(plan,indent=2)+'\n')
+(RECEIPTS/'qualification-store-plan.json').write_text(json.dumps({'protected':[row['path'] for row in rows if row['disposition']=='retain-development'],'retained':kept,'recovery':str(ROOT/'artifacts/migration/import-01/states/e1d96b587dd8ec45afa0a6918da7b9c27c2b4d21a3955ef35dc70a56ffefde6f.bin'),'remove':store_files},indent=2)+'\n')
+print('qualification compact support bytes',archive.stat().st_size,'blobs',len(blobs),'store payloads',len(store_files),'store GiB',sum(row['bytes'] for row in store_files)/2**30,'other files',len(generic),'other GiB',sum(row['bytes'] for row in generic)/2**30)
+print('generic plan SHA256',ref(RECEIPTS/'qualification-plan.json')['sha256'])

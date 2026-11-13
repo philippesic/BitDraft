@@ -1,0 +1,46 @@
+import gzip
+import hashlib
+import io
+import json
+import tarfile
+from pathlib import Path
+
+ROOT=Path('/home/philip/BitDraft')
+SUPPORT=ROOT/'artifacts/archive/development-history'
+RECEIPTS=ROOT/'artifacts/receipts/artifact-closeout-20261113'
+sources=[ROOT/'artifacts/archive/retirement-20261111/downloaded-shortlist-models/reports-source-download-metadata.tar.gz',ROOT/'artifacts/archive/retirement-20261111/obsolete-recovery/metadata-and-source.tar.gz']
+text={'.json','.jsonl','.md','.txt','.log','.csv','.tsv','.toml','.yaml','.yml','.py','.sh','.cpp','.cc','.c','.h','.hpp','.cu','.cuh','.patch','.diff','.cmake','.ps1','.js','.ts','.svelte','.html','.svg','.cl','.in','.rst'}
+seen=set();rows=[]
+output=SUPPORT/'older-source-support.tar.gz'
+with tarfile.open(output,'w:gz') as sink:
+    for path in sources:
+        with tarfile.open(path,'r:gz') as bundle:
+            for member in bundle:
+                if member.isdir():continue
+                if not member.isfile():
+                    rows.append({'archive':str(path),'member':member.name,'link':member.linkname,'disposition':'historical-link'})
+                    continue
+                keep=(Path(member.name).suffix.lower() in text or Path(member.name).name in {'uv.lock','Makefile','CMakeLists.txt','LICENSE','COPYING'}) and member.size<=64*1024*1024
+                source=bundle.extractfile(member);digest=hashlib.sha256();chunks=[]
+                while chunk:=source.read(4*1024*1024):
+                    digest.update(chunk)
+                    if keep:chunks.append(chunk)
+                sha=digest.hexdigest()
+                if keep and sha not in seen:
+                    data=gzip.compress(b''.join(chunks),compresslevel=6,mtime=0)
+                    entry=tarfile.TarInfo(sha+'.gz');entry.size=len(data)
+                    sink.addfile(entry,io.BytesIO(data));seen.add(sha)
+                rows.append({'archive':str(path),'member':member.name,'sha256':sha,'bytes':member.size,'disposition':'compact-support' if keep else 'discard-raw'})
+with tarfile.open(output,'r:gz') as bundle:
+    for member in bundle:
+        assert hashlib.sha256(gzip.decompress(bundle.extractfile(member).read())).hexdigest()==Path(member.name).stem
+index=SUPPORT/'older-source-index.jsonl.gz'
+with gzip.open(index,'wt') as out:
+    for row in rows:out.write(json.dumps(row,separators=(',',':'))+'\n')
+def ref(path):
+    with path.open('rb') as source:sha=hashlib.file_digest(source,'sha256').hexdigest()
+    return {'path':str(path),'sha256':sha,'bytes':path.stat().st_size}
+plan={'schema':1,'owner':'BitDraft historical-output-retirement','authorization':'Philip authorized converting historical evidence to compact results and deleting obsolete raw outputs in the current conversation. This additional pass removes raw model/capture/runtime payloads embedded in two earlier supporting archives after preserving their reports and source.','result':'results/historical-output-retirement/result.md','limitations':'Old shortlisted weights, qualification feature arrays, compiled runtime/build caches and raw runtime replay are unavailable; compact report/measurement/source records remain. Current models, corpora and development dependencies are outside this plan.','root':str(ROOT/'artifacts/archive/retirement-20261111'),'protected':[],'retained':[ref(output),ref(index)],'remove':[ref(path) for path in sources]}
+p=RECEIPTS/'older-support-plan.json';p.write_text(json.dumps(plan,indent=2)+'\n')
+(RECEIPTS/'older-support-verification.json').write_text(json.dumps({'members':len(rows),'support_unique_members':len(seen),'new_compressed_bytes':output.stat().st_size,'retired_archives_bytes':sum(path.stat().st_size for path in sources),'discarded_raw_member_bytes':sum(row.get('bytes',0) for row in rows if row['disposition']=='discard-raw'),'plan_sha256':hashlib.sha256(p.read_bytes()).hexdigest()},indent=2)+'\n')
+print((RECEIPTS/'older-support-verification.json').read_text())

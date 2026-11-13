@@ -58,13 +58,19 @@ The old 5080 checkout and its `legacy-checkout-pending-delete` quarantine have b
 Historical source, useful measurements and unpublished edits remain independently archived;
 current training and capture use the artifact locations above, without an old checkout.
 
-Older Windows run folders, checkpoints and transfer deliveries are preserved as verified
-compressed archives under `artifacts/archive/windows-legacy/`. Each `.tar.zst` has an
-adjacent `.index.jsonl` mapping original paths to archive members and SHA-256 values.
-These are historical supporting bytes;
-the complete current Windows-produced TRAIN shard is unpacked in `datasets/`, ready to load.
-See [archive access](evidence.md#windows-artifact-archives) for selective recovery.
-Collection manifests identify multi-archive groups and their separate link records.
+Historical Windows runs and transfer deliveries have compact report, measurement,
+diagnostic and source support under `artifacts/archive/development-history/`.
+The old lossless raw-output archives are retired after member authentication and nested
+archive inspection. Current Windows-produced TRAIN data remains physical data under
+`datasets/`; it does not depend on historical archive extraction. See
+[historical evidence access](evidence.md#windows-artifact-archives) and the
+[retirement result](../results/historical-output-retirement/result.md).
+
+Qualification storage retains the diagnostic DEV corpus, reusable initialization,
+corrected original state/export, current comparison exports and authenticated saved-control
+dependencies. Closed pilot checkpoints, unused exports, capture fixtures and raw profiles
+are retired after compact evidence preservation. A completed historical pilot's selected
+state is not an active production recovery requirement.
 
 ## Retention and moving the project
 

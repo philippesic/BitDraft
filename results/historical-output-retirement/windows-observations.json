@@ -1197,6 +1197,708 @@
       "measurements": {
         "throughput_claim": false
       }
+    },
+    {
+      "source": "/mnt/c/Users/philip/precision-precision-transfer01/precision-005.tar.gz::combo-smoke01/summary.json",
+      "sha256": "30fc3fc6a6ed5427740dc9742deb4ee7b921d21fc898ad0e0c58b5a896140d14",
+      "family": "precision-precision-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.40796963946869,
+        "cells.down14.acceptance_percent": 37.25352112676056,
+        "cells.selective15.acceptance_percent": 35.79234972677595,
+        "cells.down1.acceptance_percent": 39.500734214390604,
+        "cells.down0.acceptance_percent": 38.88081395348837,
+        "cells.combo_down1.acceptance_percent": 40.9811320754717,
+        "cells.combo_down0.acceptance_percent": 39.603232916972814
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/precision-precision-transfer01/precision-088.tar.gz::selective-clean01/summary.json",
+      "sha256": "a1e104e0667a25eddb4a8e02e2b69f46a52a3b253c0c490b4d7ccd38197893e5",
+      "family": "precision-precision-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.87577639751553,
+        "cells.down14.acceptance_percent": 39.98075072184793,
+        "cells.selective15.acceptance_percent": 38.32525177172697,
+        "cells.down1.acceptance_percent": 39.289783516900876,
+        "cells.down0.acceptance_percent": 39.81961235847246,
+        "cells.combo_down1.acceptance_percent": 42.520636198912825,
+        "cells.combo_down0.acceptance_percent": 41.462450592885375
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/precision-precision-transfer01/precision-112.tar.gz::selective-smoke01/summary.json",
+      "sha256": "3df4cae7ab709d6704b124edf5b49de275958da36a9616674770b975cc55bee6",
+      "family": "precision-precision-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.selective15.acceptance_percent": 35.79234972677595,
+        "cells.down14.acceptance_percent": 37.25352112676056,
+        "cells.q4_k_m.acceptance_percent": 55.40796963946869,
+        "cells.down4_v4.acceptance_percent": 37.25352112676056,
+        "cells.down0.acceptance_percent": 38.88081395348837,
+        "cells.down1.acceptance_percent": 39.500734214390604,
+        "cells.down2.acceptance_percent": 37.402964008468594,
+        "cells.down3.acceptance_percent": 36.69214732453092,
+        "cells.gate4.acceptance_percent": 37.14887640449438,
+        "cells.up4.acceptance_percent": 35.58282208588957,
+        "cells.gate0.acceptance_percent": 37.94579172610556,
+        "cells.up0.acceptance_percent": 38.544668587896254
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/precision-prefix-transfer01/prefix-063.tar.gz::prefix-clean01/summary.json",
+      "sha256": "f4931b6c0968abc536880fe1924fa2aa56fdec74938c2018b45f0f812f7644cd",
+      "family": "precision-prefix-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.down14.acceptance_percent": 39.98075072184793,
+        "cells.down14_d5.acceptance_percent": 50.248880039820804,
+        "cells.selective15.acceptance_percent": 38.32525177172697,
+        "cells.selective15_d5.acceptance_percent": 48.61516034985423,
+        "cells.q4_k_m.acceptance_percent": 55.87577639751553,
+        "cells.q4_k_m_d5.acceptance_percent": 65.40556900726392
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/precision-prefix-transfer01/prefix-081.tar.gz::prefix-smoke01/summary.json",
+      "sha256": "db6c9204f6350d2567fc840d508470ffa04c6763eee5bb73b77ba7d00e012c40",
+      "family": "precision-prefix-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.down14.acceptance_percent": 37.25352112676056,
+        "cells.down14_d5.acceptance_percent": 47.2910927456382,
+        "cells.selective15.acceptance_percent": 35.79234972677595,
+        "cells.selective15_d5.acceptance_percent": 45.204262877442275,
+        "cells.q4_k_m.acceptance_percent": 55.40796963946869,
+        "cells.q4_k_m_d5.acceptance_percent": 64.85549132947978
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/residual30-final-evidence01/evidence.tar::residual30-eval-05/result.json",
+      "sha256": "749c292383842fc7ea9be97bf2ce3310c65c9635ea6f0f72f0b8166aff30bf0e",
+      "family": "residual30-final-evidence01",
+      "status": "MILESTONE_NATIVE_EVALUATION_COMPLETE",
+      "measurements": {
+        "no_throughput_claim": true
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/residual30-final-evidence01/evidence.tar::residual30-eval-15/result.json",
+      "sha256": "247c7e7b305e6b4c4a9b1a73367b4c34b1fb16a3b9297fe118625550ed38e321",
+      "family": "residual30-final-evidence01",
+      "status": "MILESTONE_NATIVE_EVALUATION_COMPLETE",
+      "measurements": {
+        "no_throughput_claim": true
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/residual30-final-evidence01/evidence.tar::residual30-eval-30-recovery01/result.json",
+      "sha256": "6851d9ad7170cc0db07eb96ff4e39f44a55973bff2634c14bf060c6278bc40e0",
+      "family": "residual30-final-evidence01",
+      "status": "MILESTONE_NATIVE_EVALUATION_COMPLETE",
+      "measurements": {
+        "no_throughput_claim": true
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-approx-kd200-transfer01/approxkd20001-005.tar.gz::approx-kd20002/native-20-smoke/summary.json",
+      "sha256": "dc2dc8d5e1416e649cfbfd6bd234679a15b6f73841c86ce82582c1a6aec8b423",
+      "family": "w1a8-algorithms-approx-kd200-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 64.85549132947978,
+        "cells.control_20.acceptance_percent": 50.48076923076923,
+        "cells.kd_20.acceptance_percent": 50.82125603864734
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-approx-kd200-transfer01/approxkd20001-015.tar.gz::approx-kd20002/native-200-panel/summary.json",
+      "sha256": "f25517aab3f56d725ae25d663dee2e3146bb72421e9147c92a3a8159fb73c5a9",
+      "family": "w1a8-algorithms-approx-kd200-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "cells.old_c0.acceptance_percent": 52.65054040144107,
+        "cells.control_200.acceptance_percent": 53.08130502330399,
+        "cells.kd_200.acceptance_percent": 53.735632183908045
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-approx-kd200-transfer01/approxkd20001-016.tar.gz::approx-kd20002/result.json",
+      "sha256": "d437924ba86035122fd68a7a2e545ed5784efff223bec07ccc641bba29f2c24f",
+      "family": "w1a8-algorithms-approx-kd200-transfer01",
+      "status": "PAIRED_APPROX_KD200_TASK_COMPLETE_NO_MORE_EXPERIMENTS",
+      "measurements": {
+        "development24.cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "development24.cells.old_c0.acceptance_percent": 52.65054040144107,
+        "development24.cells.control_200.acceptance_percent": 53.08130502330399,
+        "development24.cells.kd_200.acceptance_percent": 53.735632183908045
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-diverse-transfer01/diverse01-067.tar.gz::diverse-norm-clean01/summary.json",
+      "sha256": "0d5a348b7fb71839a1336a61016d0a32959e29a4e110460301b709f5fa09157c",
+      "family": "w1a8-algorithms-diverse-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.87577639751553,
+        "cells.old_c0.acceptance_percent": 42.520636198912825,
+        "cells.stock_down0124.acceptance_percent": 44.21205218471733,
+        "cells.diverse_norm_final.acceptance_percent": 42.101058518074694,
+        "cells.norm_final.acceptance_percent": 43.47114203847728
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-diverse-transfer01/diverse01-071.tar.gz::diverse-norm-native-smoke01/summary.json",
+      "sha256": "9376ec58caa15e258364c790b090e5b01b705e4e6f64867c28b6d41226f5cbd6",
+      "family": "w1a8-algorithms-diverse-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.40796963946869,
+        "cells.old_c0.acceptance_percent": 40.9811320754717,
+        "cells.stock_down0124.acceptance_percent": 43.65642237982664,
+        "cells.diverse_norm_final.acceptance_percent": 42.62422360248447,
+        "cells.norm_final.acceptance_percent": 44.32
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-firsterror-pilot-transfer01/firsterrorpilot01-043.tar.gz::firsterror-pilot-native-panel01/summary.json",
+      "sha256": "c5a88faf1e75261cd6f080424028a20885d514559f2a0f876469b6a05c2b5835",
+      "family": "w1a8-algorithms-firsterror-pilot-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 56.17669079111555,
+        "cells.old_c0.acceptance_percent": 42.41206030150754,
+        "cells.control_250.acceptance_percent": 41.862315957023476,
+        "cells.control_500.acceptance_percent": 42.1937550040032,
+        "cells.control_final.acceptance_percent": 41.94577352472089,
+        "cells.margin_250.acceptance_percent": 41.89565909996018,
+        "cells.margin_500.acceptance_percent": 42.60343087790111,
+        "cells.margin_final.acceptance_percent": 42.007583316703254
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-firsterror-smoke-transfer01/firsterrorsmoke01-011.tar.gz::firsterror-smoke-native-panel01/summary.json",
+      "sha256": "55122a49f038451c34ca66ebb490547c0250ef16c9e216e17d49119da7ed405b",
+      "family": "w1a8-algorithms-firsterror-smoke-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 56.17669079111555,
+        "cells.old_c0.acceptance_percent": 42.41206030150754,
+        "cells.firsterror_control20.acceptance_percent": 42.0810864789295,
+        "cells.firsterror_margin20.acceptance_percent": 42.002393298763465
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-followup-transfer02/followup02-003.tar.gz::calibration13-native-smoke01/summary.json",
+      "sha256": "8506a30e428cc9777d441e82a71951688cdfeefdf82441c3433b683c0db79602",
+      "family": "w1a8-algorithms-followup-transfer02",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.40796963946869,
+        "cells.new_c0.acceptance_percent": 40.9811320754717,
+        "cells.scale1000.acceptance_percent": 41.571319603356216,
+        "cells.joint1000.acceptance_percent": 41.056603773584904
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-followup-transfer02/followup02-058.tar.gz::followup-clean01/summary.json",
+      "sha256": "b4c702966bb923e8f52d00c3cedd05b60a69d06b6ba0390a74e3213ce54a1878",
+      "family": "w1a8-algorithms-followup-transfer02",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.87577639751553,
+        "cells.new_c0.acceptance_percent": 42.520636198912825,
+        "cells.scale1000.acceptance_percent": 42.32390126429861,
+        "cells.joint1000.acceptance_percent": 42.101058518074694,
+        "cells.stock_down0124.acceptance_percent": 44.21205218471733
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-followup-transfer02/followup02-060.tar.gz::quality-diagnostic01/summary.json",
+      "sha256": "f202b8748fb525218b20185544f38a3a0094902304e92f014a0abbbfcf48d64b",
+      "family": "w1a8-algorithms-followup-transfer02",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 72.10884353741497,
+        "cells.target_only.acceptance_percent": null
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-followup-transfer02/followup02-068.tar.gz::stock-subsets-smoke01/summary.json",
+      "sha256": "64a8920fc213ab2e115edeee3939878e4ba30b0244996a5b07dc3e03a29d6b2c",
+      "family": "w1a8-algorithms-followup-transfer02",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.40796963946869,
+        "cells.parent13.acceptance_percent": 41.571319603356216,
+        "cells.stock_down014.acceptance_percent": 42.21879815100154,
+        "cells.stock_down124.acceptance_percent": 41.711229946524064,
+        "cells.stock_down134.acceptance_percent": 42.05679201841903,
+        "cells.stock_down0124.acceptance_percent": 43.65642237982664,
+        "cells.stock_down0134.acceptance_percent": 42.28395061728395,
+        "cells.stock_down1234.acceptance_percent": 43.013270882123344,
+        "cells.stock_down01234.acceptance_percent": 43.40659340659341
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-group-rotate-transfer01/grouprotate01-055.tar.gz::group-rotate-eval01/clean/summary.json",
+      "sha256": "0747fa4f74f7642b6bc45145a29406c28014f91379be862adc6f2acb54d74915",
+      "family": "w1a8-algorithms-group-rotate-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "cells.old_c0.acceptance_percent": 52.65054040144107,
+        "cells.equal_groups.acceptance_percent": 52.34555242245578,
+        "cells.group128.acceptance_percent": 52.5706940874036,
+        "cells.group128_r512.acceptance_percent": 51.91034131431483
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-group-rotate-transfer01/grouprotate01-069.tar.gz::group-rotate-eval01/panel/summary.json",
+      "sha256": "a76d33900c6d9ab526f67a06e916d558d17ab53eeff1584a8aafbb321cb6f6c4",
+      "family": "w1a8-algorithms-group-rotate-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "cells.old_c0.acceptance_percent": 52.65054040144107,
+        "cells.equal_groups.acceptance_percent": 52.34555242245578,
+        "cells.group128.acceptance_percent": 52.5706940874036,
+        "cells.group128_r512.acceptance_percent": 51.91034131431483
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-joint48-bf16-pilot-transfer01/jointbf16pilot01-009.tar.gz::joint48-pilot-bf16-panel01/summary.json",
+      "sha256": "80ea02fac906444faef1826496bea7bb06eb3ca8669eaeb868766c0250c19e5a",
+      "family": "w1a8-algorithms-joint48-bf16-pilot-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 56.17669079111555,
+        "cells.old_c0.acceptance_percent": 42.41206030150754,
+        "cells.joint_bf16_250.acceptance_percent": 40.36004645760743,
+        "cells.joint_bf16_final.acceptance_percent": 41.00705329153605
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-joint48-c0-pilot-transfer01/jointc0pilot01-009.tar.gz::joint48-pilot-c0-panel01/summary.json",
+      "sha256": "9dfa4658de2a16740b44204d3f0a28fc2baeafd131bbb58f20993c623b2cbec3",
+      "family": "w1a8-algorithms-joint48-c0-pilot-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 56.17669079111555,
+        "cells.old_c0.acceptance_percent": 42.41206030150754,
+        "cells.joint_c0_250.acceptance_percent": 41.862315957023476,
+        "cells.joint_c0_final.acceptance_percent": 42.27837946249499
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-joint48-screen-transfer01/jointscreen01-007.tar.gz::joint48-smoke-screen01/summary.json",
+      "sha256": "ae302dcea794e91999df54b434703f7e4900c80229cc87e7ee02aa71433bce2d",
+      "family": "w1a8-algorithms-joint48-screen-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 56.17669079111555,
+        "cells.old_c0.acceptance_percent": 42.41206030150754,
+        "cells.joint_c0_20.acceptance_percent": 42.0810864789295,
+        "cells.joint_bf16_zero.acceptance_percent": 40.104166666666664,
+        "cells.joint_bf16_20.acceptance_percent": 40.25522041763341
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-large-step-transfer01/large-step01-003.tar.gz::large-step-native-smoke01/summary.json",
+      "sha256": "495579df6941b99b708b4c3cbb020c09d257a018d9f726a0c367e793dbb815d4",
+      "family": "w1a8-algorithms-large-step-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.40796963946869,
+        "cells.old_c0.acceptance_percent": 40.9811320754717,
+        "cells.stock_down0124.acceptance_percent": 43.65642237982664,
+        "cells.large_joint1000.acceptance_percent": 36.59722222222222
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-native-transfer01/native-053.tar.gz::algorithm-clean01/summary.json",
+      "sha256": "72036b0356eedb1a52e322a8b11c2d56317e3ea129c0e2e9fe98cb05c024d56a",
+      "family": "w1a8-algorithms-native-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.87577639751553,
+        "cells.token7_combo.acceptance_percent": 42.520636198912825,
+        "cells.planes_combo.acceptance_percent": 42.520636198912825,
+        "cells.lut4_combo.acceptance_percent": 42.520636198912825,
+        "cells.imma_combo.acceptance_percent": 42.520636198912825
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-native-transfer01/native-057.tar.gz::algorithm-smoke01/summary.json",
+      "sha256": "ebc9564e02205a6386aaa1c230e565f87b4efec3860c5e55a5e82c47cd950689",
+      "family": "w1a8-algorithms-native-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.40796963946869,
+        "cells.token7_combo.acceptance_percent": 40.9811320754717,
+        "cells.planes_combo.acceptance_percent": 40.9811320754717,
+        "cells.lut4_combo.acceptance_percent": 40.9811320754717,
+        "cells.imma_combo.acceptance_percent": 40.9811320754717
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-nativeactor-transfer01/nativeactor01-005.tar.gz::nativeactor-norm-native-smoke01/summary.json",
+      "sha256": "bcc6ce043f2844c683a1a88768b1f1851718a085a905b847cbd7e53cc58c2acd",
+      "family": "w1a8-algorithms-nativeactor-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.40796963946869,
+        "cells.old_c0.acceptance_percent": 40.9811320754717,
+        "cells.stock_down0124.acceptance_percent": 43.65642237982664,
+        "cells.nativeactor_norm_final.acceptance_percent": 42.72373540856031,
+        "cells.norm_final.acceptance_percent": 44.32,
+        "cells.diverse_norm_final.acceptance_percent": 42.62422360248447
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-nativeactor-transfer01/nativeactor01-019.tar.gz::nativeactor-panel01/summary.json",
+      "sha256": "a799f55af386798887f01ad116eb638c7cad35e4859034841c4fa0d49a7cfd51",
+      "family": "w1a8-algorithms-nativeactor-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.87577639751553,
+        "cells.old_c0.acceptance_percent": 42.520636198912825,
+        "cells.stock_down0124.acceptance_percent": 44.21205218471733,
+        "cells.nativeactor_norm_final.acceptance_percent": 41.84566428003182,
+        "cells.norm_final.acceptance_percent": 43.47114203847728,
+        "cells.diverse_norm_final.acceptance_percent": 42.101058518074694
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-norm-transfer01/norm01-054.tar.gz::norm-clean01/summary.json",
+      "sha256": "8e4754979798b436cc3c942909390a492ececb3e1655a92f2481bbd97636ada2",
+      "family": "w1a8-algorithms-norm-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.87577639751553,
+        "cells.old_c0.acceptance_percent": 42.520636198912825,
+        "cells.stock_down0124.acceptance_percent": 44.21205218471733,
+        "cells.norm_final.acceptance_percent": 43.47114203847728,
+        "cells.large_joint1000.acceptance_percent": 36.458520784596004
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-norm-transfer01/norm01-058.tar.gz::norm-native-smoke01/summary.json",
+      "sha256": "a99c38a78b728284e7c1e0c101b08b55485aed91d8960882968aa436357c47af",
+      "family": "w1a8-algorithms-norm-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.40796963946869,
+        "cells.old_c0.acceptance_percent": 40.9811320754717,
+        "cells.stock_down0124.acceptance_percent": 43.65642237982664,
+        "cells.norm_final.acceptance_percent": 44.32
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-prefix-middle-transfer01/prefixmiddle01-013.tar.gz::prefix-middle01/summary.json",
+      "sha256": "d51ffdcd508bbb94a644c2a5ca7a35591630249211db498a694a996d50ee9e27",
+      "family": "w1a8-algorithms-prefix-middle-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "cells.c0_d5.acceptance_percent": 52.65054040144107,
+        "cells.q4_d4.acceptance_percent": 72.28335625859697,
+        "cells.c0_d4.acceptance_percent": 58.82527439928805,
+        "cells.q4_d6.acceptance_percent": 60.66831005204054,
+        "cells.c0_d6.acceptance_percent": 46.84968496849685
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-prefix-repeat-transfer01/prefixrepeat01-044.tar.gz::prefix-repeat01/summary.json",
+      "sha256": "6b68cf57f36ff65ba23ddf2c6220987cc1f540917d821b4be2e639480b197387",
+      "family": "w1a8-algorithms-prefix-repeat-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 56.17669079111555,
+        "cells.c0_d7.acceptance_percent": 42.41206030150754,
+        "cells.q4_d5.acceptance_percent": 65.44518473652332,
+        "cells.c0_d5.acceptance_percent": 52.65054040144107
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-prefix-repeat-transfer02/prefixrepeat02-044.tar.gz::prefix-repeat02/summary.json",
+      "sha256": "14c1f10c39ca446e8cd3a4ccf28669b395c35d51c3b03ee9966af76c46a8e76a",
+      "family": "w1a8-algorithms-prefix-repeat-transfer02",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "cells.c0_d5.acceptance_percent": 52.65054040144107,
+        "cells.q4_d6.acceptance_percent": 60.66831005204054,
+        "cells.c0_d6.acceptance_percent": 46.84968496849685
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-prefix-sweep-transfer01/prefixsweep01-017.tar.gz::prefix-sweep01/summary.json",
+      "sha256": "52cae8ca9dd61452a8207d953d4be234cbdea55b74bd25c8b37e07a270fa61f4",
+      "family": "w1a8-algorithms-prefix-sweep-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 56.17669079111555,
+        "cells.c0_d7.acceptance_percent": 42.41206030150754,
+        "cells.q4_d5.acceptance_percent": 65.44518473652332,
+        "cells.c0_d5.acceptance_percent": 52.65054040144107,
+        "cells.q4_d3.acceptance_percent": 77.14285714285714,
+        "cells.c0_d3.acceptance_percent": 65.33892382948987,
+        "cells.q4_d1.acceptance_percent": 89.01540522438044,
+        "cells.c0_d1.acceptance_percent": 82.97734627831716
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-ptq-transfer01/ptq01-008.tar.gz::data-aware-groups-smoke01/summary.json",
+      "sha256": "34eaa2a5bf8c64e838802700d82e107b5f549689fbc7992b2e9900ecf8db22b2",
+      "family": "w1a8-algorithms-ptq-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.40796963946869,
+        "cells.old_c0.acceptance_percent": 40.9811320754717,
+        "cells.data_aware.acceptance_percent": 39.24142961342086,
+        "cells.ptq_gate.acceptance_percent": 40.902255639097746,
+        "cells.ptq_up.acceptance_percent": 39.22571219868517,
+        "cells.ptq_down.acceptance_percent": 41.69854628921193,
+        "cells.ptq_gate_up.acceptance_percent": 38.40631730078966,
+        "cells.ptq_gate_down.acceptance_percent": 39.400584795321635,
+        "cells.ptq_up_down.acceptance_percent": 39.881831610044316,
+        "cells.stock_down0124.acceptance_percent": 43.65642237982664
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-ptq-transfer01/ptq01-011.tar.gz::data-aware-sign-native-smoke01/summary.json",
+      "sha256": "36dc34c75b12bead942d5a598804a8468ddf240f8eb3aed67dd0eae3bb9f27dc",
+      "family": "w1a8-algorithms-ptq-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.40796963946869,
+        "cells.old_c0.acceptance_percent": 40.9811320754717,
+        "cells.data_aware.acceptance_percent": 39.24142961342086
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-stock-broad-transfer01/stockbroad01-020.tar.gz::stock-broad-smoke01/summary.json",
+      "sha256": "6c4cb17034334aad9cc8ea8f4330ec294eb03d40804dcdc34fdc6a857318269b",
+      "family": "w1a8-algorithms-stock-broad-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.40796963946869,
+        "cells.old_c0.acceptance_percent": 40.9811320754717,
+        "cells.stock_down0124.acceptance_percent": 43.65642237982664,
+        "cells.restore_l0_down.acceptance_percent": 41.807044410413475,
+        "cells.restore_l0_gate.acceptance_percent": 42.361111111111114,
+        "cells.restore_l0_up.acceptance_percent": 41.807044410413475,
+        "cells.restore_l1_gate.acceptance_percent": 41.9478527607362,
+        "cells.restore_l1_up.acceptance_percent": 41.02564102564103,
+        "cells.restore_l2_down.acceptance_percent": 41.807044410413475,
+        "cells.restore_l2_gate.acceptance_percent": 41.50799695354151,
+        "cells.restore_l2_up.acceptance_percent": 41.851568477429225,
+        "cells.restore_l3_down.acceptance_percent": 42.361111111111114,
+        "cells.restore_l3_gate.acceptance_percent": 41.7557251908397,
+        "cells.restore_l3_up.acceptance_percent": 41.132075471698116,
+        "cells.restore_l4_gate.acceptance_percent": 41.839080459770116,
+        "cells.restore_l4_up.acceptance_percent": 41.52091254752852,
+        "cells.restore_all_gate.acceptance_percent": 47.7195945945946,
+        "cells.restore_all_up.acceptance_percent": 45.78214578214578,
+        "cells.restore_gateup_l0.acceptance_percent": 42.10931485758275,
+        "cells.restore_gateup_l1.acceptance_percent": 40.735183795948984,
+        "cells.restore_gateup_l2.acceptance_percent": 42.07692307692308,
+        "cells.restore_gateup_l3.acceptance_percent": 43.00234558248632,
+        "cells.restore_gateup_l4.acceptance_percent": 42.05679201841903,
+        "cells.restore_all_down.acceptance_percent": 43.09133489461358
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-stock-combinations-transfer01/stockcomb01-031.tar.gz::stock-combinations-panel01/summary.json",
+      "sha256": "e817b7d167d09431751841ed3766937524179e9a3b1448a9db7afe340779e810",
+      "family": "w1a8-algorithms-stock-combinations-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.87577639751553,
+        "cells.old_c0.acceptance_percent": 42.520636198912825,
+        "cells.stock_down0124.acceptance_percent": 44.21205218471733,
+        "cells.restore_all_gate.acceptance_percent": 46.73584089926502,
+        "cells.restore_all_up.acceptance_percent": 46.20822622107969,
+        "cells.gate_down02.acceptance_percent": 49.10233393177738,
+        "cells.up_down02.acceptance_percent": 48.92665474060823,
+        "cells.gate_alldown.acceptance_percent": 51.58582089552239,
+        "cells.up_alldown.acceptance_percent": 49.977252047315744,
+        "cells.gate_allup.acceptance_percent": 51.325581395348834,
+        "cells.gate_up_down0.acceptance_percent": 53.45489443378119,
+        "cells.only_binary_down3.acceptance_percent": 54.23440912399903,
+        "cells.only_binary_down0.acceptance_percent": 55.063913470993114,
+        "cells.only_binary_down2.acceptance_percent": 53.75903614457831
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-supplement-transfer01/supplement01-002.tar.gz::fresh13-scales-smoke01/summary.json",
+      "sha256": "57a0dca00970ca003f65f246a1268c0fc8f81b3f18b3abc42f070814fc699fec",
+      "family": "w1a8-algorithms-supplement-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.40796963946869,
+        "cells.old_c0.acceptance_percent": 40.9811320754717,
+        "cells.fresh13.acceptance_percent": 40.34302759134974
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-supplement-transfer01/supplement01-004.tar.gz::quality-trace01/summary.json",
+      "sha256": "f4ce2421413b05a0892fdabf5b6aa6e1ef80cb5525075341de2d86afa3390db4",
+      "family": "w1a8-algorithms-supplement-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.new_c0.acceptance_percent": 64.59627329192547,
+        "cells.q4_k_m.acceptance_percent": 72.10884353741497,
+        "cells.target_only.acceptance_percent": null
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-training-transfer01/training-002.tar.gz::aligned13-native-smoke01/summary.json",
+      "sha256": "99303b35a4dd402e741db2c5c52e57d80cfc1fbda3e6fa383fedb136a9c8bb67",
+      "family": "w1a8-algorithms-training-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.40796963946869,
+        "cells.historical_c0.acceptance_percent": 40.9811320754717,
+        "cells.new_c0.acceptance_percent": 40.9811320754717,
+        "cells.joint20.acceptance_percent": 40.690690690690694
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-width-server-silent-transfer01/widthsilent01-055.tar.gz::width-server-silent-clean01/summary.json",
+      "sha256": "653191b7f4e034a4a39299227ee3385b2645af82c9c573c8618242664a4587f5",
+      "family": "w1a8-algorithms-width-server-silent-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 56.17669079111555,
+        "cells.old_c0.acceptance_percent": 42.41206030150754,
+        "cells.stock_down0124.acceptance_percent": 44.03385631709331,
+        "cells.gate_alldown.acceptance_percent": 51.60989267382175,
+        "cells.only_binary_down0.acceptance_percent": 55.962160816529746
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-width-server-silent-transfer01/widthsilent01-066.tar.gz::width-server-silent-panel01/summary.json",
+      "sha256": "754aa406fcb6d9a18707797b4defbad85673c83b21446beba2dcf243f016382c",
+      "family": "w1a8-algorithms-width-server-silent-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 56.17669079111555,
+        "cells.old_c0.acceptance_percent": 42.41206030150754,
+        "cells.stock_down0124.acceptance_percent": 44.03385631709331,
+        "cells.gate_alldown.acceptance_percent": 51.60989267382175,
+        "cells.only_binary_down0.acceptance_percent": 55.962160816529746
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-width-server-silent-transfer01/widthsilent01-068.tar.gz::width-server-silent-route01/summary.json",
+      "sha256": "b105769f3f26e41a4e92dfda33f636dc74f9ab16ef7c3f1b8126c6f0f1852019",
+      "family": "w1a8-algorithms-width-server-silent-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 53.191489361702125,
+        "cells.old_c0.acceptance_percent": 44.18604651162791,
+        "cells.stock_down0124.acceptance_percent": 44.85981308411215,
+        "cells.gate_alldown.acceptance_percent": 53.763440860215056,
+        "cells.only_binary_down0.acceptance_percent": 53.763440860215056
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-width-server-transfer01/widthserver01-063.tar.gz::width-server-clean01/summary.json",
+      "sha256": "0cb776ec60a1eb4283e4525127b665a7c10e13da61581e3e690c6aea9cf1df3f",
+      "family": "w1a8-algorithms-width-server-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 56.17669079111555,
+        "cells.old_c0.acceptance_percent": 42.41206030150754,
+        "cells.stock_down0124.acceptance_percent": 44.03385631709331,
+        "cells.gate_alldown.acceptance_percent": 51.60989267382175,
+        "cells.only_binary_down0.acceptance_percent": 55.962160816529746
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-width-server-transfer01/widthserver01-066.tar.gz::width-server-off-panel01/summary.json",
+      "sha256": "4dde68065728515b5b2ce56bda252d3cba2417fa7349e7ef3ae582cad53ea08a",
+      "family": "w1a8-algorithms-width-server-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.87577639751553
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-width-server-transfer01/widthserver01-077.tar.gz::width-server-on-panel01/summary.json",
+      "sha256": "75c1219c709ce83c67f8437229d3b7b9a4afaca5d06817f6152c42c6da05d079",
+      "family": "w1a8-algorithms-width-server-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 56.17669079111555,
+        "cells.old_c0.acceptance_percent": 42.41206030150754,
+        "cells.stock_down0124.acceptance_percent": 44.03385631709331,
+        "cells.gate_alldown.acceptance_percent": 51.60989267382175,
+        "cells.only_binary_down0.acceptance_percent": 55.962160816529746
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-algorithms-width-server-transfer01/widthserver01-078.tar.gz::width-server-route01/summary.json",
+      "sha256": "9a18ea35706ec110e484377029e53deeaacc3679d600486fcd68e3fdb150a085",
+      "family": "w1a8-algorithms-width-server-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 53.191489361702125,
+        "cells.old_c0.acceptance_percent": 44.18604651162791,
+        "cells.stock_down0124.acceptance_percent": 44.85981308411215,
+        "cells.gate_alldown.acceptance_percent": 53.763440860215056,
+        "cells.only_binary_down0.acceptance_percent": 53.763440860215056
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-campaign-capacity-source01.tar::proxy01/result.json",
+      "sha256": "e5e83e932fcbf613c416fa5ec762b22973b3ddb6d146b9e60443a60a0fa66d2b",
+      "family": "w1a8-campaign-capacity-source01.tar::proxy01",
+      "status": "PROXY_PASS_NATIVE_UNQUALIFIED",
+      "measurements": {
+        "acceptance": null
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-fused-r8-component-source01.tar.gz::component_screen01/result.json",
+      "sha256": "92c3a2a2ea057a66b653503091a80544722a178ff95e40e3fb328efbfcde546b",
+      "family": "w1a8-fused-r8-component-source01.tar.gz::component_screen01",
+      "status": "SEALED_SOURCE_READY_ROOT_CUDA_PENDING",
+      "measurements": {
+        "request_throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-speed-transfer01/speed-054.tar.gz::speed-clean01/summary.json",
+      "sha256": "afb8724114479499f5cca9549c49ff04091a90ea64342c43a21b13245e7a546e",
+      "family": "w1a8-speed-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.87577639751553,
+        "cells.combo_down1.acceptance_percent": 42.520636198912825,
+        "cells.token7_combo.acceptance_percent": 42.520636198912825,
+        "cells.q4_plain.acceptance_percent": 55.87577639751553,
+        "cells.combo_plain.acceptance_percent": 42.520636198912825
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/w1a8-speed-transfer01/speed-063.tar.gz::speed-smoke01/summary.json",
+      "sha256": "cb0516f7708baaea03d807a32a4049ad6aa977685231bcbe426b69f964a85201",
+      "family": "w1a8-speed-transfer01",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.q4_k_m.acceptance_percent": 55.40796963946869,
+        "cells.combo_down1.acceptance_percent": 40.9811320754717,
+        "cells.token7_combo.acceptance_percent": 40.9811320754717,
+        "cells.selective15.acceptance_percent": 35.79234972677595,
+        "cells.token7_selective15.acceptance_percent": 35.79234972677595
+      }
     }
   ]
 }

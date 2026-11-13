@@ -1,0 +1,48 @@
+import gzip
+import hashlib
+import json
+import sys
+from pathlib import Path
+sys.path.insert(0,'/home/philip/BitDraft')
+from benchmarks.comparison import Comparison
+from w1a1_eagle.data import Artifact
+from w1a1_eagle.records import artifact
+
+ROOT=Path('/home/philip/BitDraft')
+RECEIPTS=ROOT/'artifacts/receipts/artifact-closeout-20261113'
+SUPPORT=ROOT/'artifacts/archive/development-history'
+registry=[]; required_full=[]
+for path in sorted((ROOT/'artifacts/benchmarks/references').rglob('*.json')):
+    record=json.loads(path.read_text())
+    if record.get('schema')!='benchmark-reference-v1':continue
+    files=[]
+    for item in [record['result'],record['specification'],*record['raw']]:
+        ref=artifact(item,path.parent)
+        ref.verify();files.append(str(ref.path))
+        if '/artifacts/qualification/full-qualification-01/' in str(ref.path):required_full.append(str(ref.path))
+    source=artifact(record['result'],path.parent)
+    assert (source.path.parent/'gpu.txt').read_text()==record['gpu']
+    registry.append({'path':str(path),'authenticated_files':len(files)})
+comparisons=[]; historical_comparison_failures=[]
+for path in sorted((ROOT/'artifacts/qualification/lean-checks').glob('*.json')):
+    value=json.loads(path.read_text())
+    if value.get('schema')=='native-comparison-v1' and len(value.get('arms',[]))==1 and value.get('references') and path.name.startswith(('q4km-','nvfp4-')):
+        comparison=Comparison.load(path)
+        try:
+            comparison.verify()
+        except ValueError as error:
+            if path.name.endswith('cached-spec.json'):raise
+            historical_comparison_failures.append({'path':str(path),'reason':str(error),'scope':'preserved historical candidate specification; current cached definitions passed separately'})
+            continue
+        comparisons.append({'path':str(path),'tier':comparison.tier,'requests':len(comparison.tasks),'references':len(comparison.references)})
+current=[]
+for row in (json.loads(line) for line in gzip.open(SUPPORT/'qualification-index.jsonl.gz','rt')):
+    path=Path(row['path'])
+    if not path.exists():continue
+    Artifact(path,row['sha256'],row['bytes']).verify()
+    current.append({**row,'disposition':'retain-development','support':{'archive':str(SUPPORT/'qualification-support.tar'),'member':row['sha256']+'.gz'} if row['support'] else None})
+with gzip.open(SUPPORT/'current-development-catalog.jsonl.gz','wt') as out:
+    for row in current:out.write(json.dumps(row,separators=(',',':'))+'\n')
+result={'registry_records_authenticated':len(registry),'registry_required_file_occurrences':sum(row['authenticated_files'] for row in registry),'full_qualification_required_paths':required_full,'candidate_only_comparisons':comparisons,'historical_comparison_failures':historical_comparison_failures,'development_files_authenticated':len(current),'development_bytes':sum(row['bytes'] for row in current),'explicit_specifications':[str(ROOT/'artifacts/qualification'/name) for name in ['broad-precision-dev-spec.json','broad-dev-loss-spec.json','original-export-canonical-equivalence.json']],'historical_loss_spec_limitation':'broad-dev-loss-spec.json retains its original two historical qualification-state bindings, whose weights have been retired; bind upcoming checkpoint states for new offline scoring. Its DEV data and training identity manifest remain present.','registry_scope':'Authentication follows result/specification/raw receipts and GPU identity, matching the maintained saved-reference reader. Historical model content identities do not require retired executing weights.'}
+(RECEIPTS/'coordinated-dependency-validation.json').write_text(json.dumps(result,indent=2)+'\n')
+print(json.dumps({'registry_records':len(registry),'authenticated_reference_occurrences':result['registry_required_file_occurrences'],'full_qualification_dependencies':len(required_full),'candidate_comparisons':len(comparisons),'retained_files':len(current),'retained_GiB':result['development_bytes']/2**30}))

@@ -1,0 +1,55 @@
+import gzip
+import hashlib
+import json
+import sys
+import tarfile
+from pathlib import Path
+sys.path.insert(0,'/home/philip/BitDraft')
+from w1a1_eagle.storage import relocated
+
+ROOT=Path('/home/philip/BitDraft')
+SUPPORT=ROOT/'artifacts/archive/development-history'
+RECEIPTS=ROOT/'artifacts/receipts/artifact-closeout-20261113'
+rows=[json.loads(line) for line in gzip.open(SUPPORT/'qualification-index.jsonl.gz','rt')]
+by_path={Path(row['path']):row for row in rows}
+explicit={'broad-precision-dev-spec.json','broad-dev-loss-spec.json','original-export-canonical-equivalence.json'}
+restored=[]; visited=set(); queue=[]; unavailable=[]
+with tarfile.open(SUPPORT/'qualification-support.tar','r') as bundle:
+    def payload(row):
+        data=gzip.decompress(bundle.extractfile(row['sha256']+'.gz').read())
+        assert hashlib.sha256(data).hexdigest()==row['sha256']
+        return data
+    def restore(path):
+        if path.exists():return
+        row=by_path.get(path)
+        if row is None or not row['support']:raise ValueError(('needed input is not compact text',str(path)))
+        data=payload(row)
+        path.parent.mkdir(parents=True,exist_ok=True)
+        path.write_bytes(data)
+        restored.append({'path':str(path),'sha256':row['sha256'],'bytes':row['bytes']})
+    for path,row in by_path.items():
+        relative=path.relative_to(ROOT/'artifacts/qualification')
+        if path.name in explicit or relative.parts[:2] in {('lean-checks','q4km'),('lean-checks','nvfp4')}:
+            restore(path);queue.append(path)
+        elif relative.parts[0]=='lean-checks' and len(relative.parts)==2 and path.suffix=='.json' and path.name.startswith(('q4km-','nvfp4-')) and row['support']:
+            data=json.loads(payload(row))
+            if data.get('schema')=='native-comparison-v1' and len(data.get('arms',[]))==1 and data.get('references'):
+                restore(path);queue.append(path)
+    def references(value,owner):
+        if isinstance(value,dict):
+            if {'path','sha256','bytes'} <= value.keys() and isinstance(value['path'],str):
+                path=Path(value['path']);path=relocated(path if path.is_absolute() else owner.parent/path).resolve()
+                if path in by_path and by_path[path]['support']:
+                    restore(path);queue.append(path)
+                elif path in by_path and not path.exists():
+                    unavailable.append({'path':str(path),'owner':str(owner),'reason':'historical qualification payload was retired before coordination; compact evidence survives; new checkpoint bindings are needed for new evaluation'})
+            for item in value.values():references(item,owner)
+        elif isinstance(value,list):
+            for item in value:references(item,owner)
+    while queue:
+        path=queue.pop()
+        if path in visited or path.suffix!='.json':continue
+        visited.add(path)
+        references(json.loads(path.read_text()),path)
+(RECEIPTS/'restored-development-specifications.json').write_text(json.dumps({'reason':'Philip supplied upcoming training dependencies after historical retirement; original data, state/export and saved-control dependencies were already retained. Small specifications and equivalence evidence are restored byte-for-byte from authenticated compact support.','restored':restored,'metadata_visited':len(visited),'historical_unavailable_bindings':unavailable},indent=2)+'\n')
+print('Restored named development records',len(restored),'bytes',sum(row['bytes'] for row in restored))

@@ -69,3 +69,10 @@ Retain the compact measurements and executed source linked above. Reusable saved
 controls and active data/model inputs retain their dependency closure outside source.
 Qualification-only descendants are disposable after their measurements and failure
 receipts are verified; exact retired states cannot be resumed.
+
+November13,2026 disposition: [historical-output retirement](../historical-output-retirement/result.md)
+keeps the recorded comparison arms, per-request measurements, diagnostics and executed
+source while retiring qualification-only optimizer states, unused exports and capture
+fixtures. Current original/6K corpora and the separate DEV corpus used by training
+diagnostics remain physical inputs. Exact discarded qualification-state resumes are
+unavailable; historical measurements and their scope are unchanged.

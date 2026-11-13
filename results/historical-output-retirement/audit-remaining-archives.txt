@@ -1,0 +1,21 @@
+import json
+import tarfile
+from collections import Counter
+from pathlib import Path
+
+ROOT=Path('/home/philip/BitDraft')
+records=[]
+for path in sorted((ROOT/'artifacts/archive').rglob('*')):
+    if not path.is_file() or 'development-history' in path.parts or not path.name.endswith(('.tar.gz','.tgz','.tar')):continue
+    types=Counter(); large=[]; payloads=[]
+    with tarfile.open(path,'r:*') as bundle:
+        for member in bundle:
+            if not member.isfile():continue
+            suffix=Path(member.name).suffix.lower();types[suffix]+=member.size
+            if member.size>16*1024*1024:large.append({'member':member.name,'bytes':member.size})
+            if suffix in {'.pt','.gguf','.f32','.f16','.npz','.npy','.safetensors'} and member.size>1024*1024:payloads.append({'member':member.name,'bytes':member.size})
+    records.append({'archive':str(path),'bytes':path.stat().st_size,'logical_bytes_by_suffix':dict(types),'large_members':large,'raw_payload_members':payloads})
+(ROOT/'artifacts/receipts/artifact-closeout-20261113/remaining-archives-audit.json').write_text(json.dumps(records,indent=2)+'\n')
+print('Remaining compact/source archives inspected',len(records),'compressed_GiB',sum(row['bytes'] for row in records)/2**30)
+for row in records:
+    if row['raw_payload_members']:print('REVIEW_RAW_PAYLOADS',row['archive'],row['raw_payload_members'])

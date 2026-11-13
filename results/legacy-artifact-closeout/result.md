@@ -167,3 +167,12 @@ and its link records; the physical source folder was verified empty and removed.
 collection manifest and per-archive indexes are under `artifacts/archive/windows-legacy/`.
 This is lossless containment of the remaining bytes, including incomplete/unfavorable
 records, rather than retirement of all qualification payloads or an off-machine backup.
+
+## Subsequent raw-output retirement, November 13, 2026
+
+The [historical-output retirement](../historical-output-retirement/result.md) completes
+the remaining Windows archive and closed qualification disposal described above. It
+authenticates original members, inspects nested transfers, preserves compact measurements,
+reports, diagnostics and source, and retires obsolete large outputs. Current development
+dependencies remain explicit. The lossless Windows archives described in the earlier
+containment correction are no longer retained; use the compact evidence guide instead.

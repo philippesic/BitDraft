@@ -138,6 +138,11 @@ No general binary-acceleration claim followed. [Result](results/binary-pipeline-
 
 [Historical reports and committed source are independently recoverable](results/archive-preservation/result.md); raw-artifact limits remain explicit.
 
+[Historical raw outputs are replaced by compact evidence](results/historical-output-retirement/result.md):
+Windows archives and closed qualification payloads are retired after report/source
+preservation, member authentication and comparison-total verification; current development
+inputs and saved-control dependencies remain.
+
 ## Development benchmarks
 
 [Saved controls and resident checks](results/reusable-acceptance-checks/result.md):

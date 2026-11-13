@@ -1,0 +1,53 @@
+import datetime
+import gzip
+import hashlib
+import json
+import os
+import subprocess
+import tarfile
+from pathlib import Path
+
+ROOT=Path('/home/philip/BitDraft')
+RESULT=ROOT/'results/historical-output-retirement'
+RECEIPTS=ROOT/'artifacts/receipts/artifact-closeout-20261113'
+SUPPORT=ROOT/'artifacts/archive/development-history'
+
+def ref(path):
+    with path.open('rb') as source:sha=hashlib.file_digest(source,'sha256').hexdigest()
+    return {'path':str(path.relative_to(ROOT)),'sha256':sha,'bytes':path.stat().st_size}
+
+def disk(path):
+    return int(subprocess.check_output(['du','-x','-B1','-s',str(path)],text=True).split()[0])
+
+retirements={}
+for name in ['windows-final-applied.json','qualification-final-applied.json','qualification-store-retirement.json','older-support-applied.json','staging-applied.json']:
+    path=RECEIPTS/name;record=json.loads(path.read_text())
+    assert record['phase']=='complete',(name,record)
+    retirements[name]={'files':record['files'],'bytes':record['bytes'],'receipt':ref(path)}
+assert not (ROOT/'artifacts/archive/windows-legacy').exists()
+assert not (SUPPORT/'blobs').exists()
+for plan_name in ['windows-final-plan.json','qualification-final-plan.json','older-support-plan.json']:
+    plan=json.loads((RECEIPTS/plan_name).read_text())
+    restored_catalog={str(Path(row['path'])) for row in (json.loads(line) for line in gzip.open(SUPPORT/'current-development-catalog.jsonl.gz','rt'))}
+    for item in plan['remove']:
+        path=Path(item['path'])
+        assert not path.exists() or str(path) in restored_catalog,(plan_name,str(path))
+validation=json.loads((RECEIPTS/'development-validation.json').read_text())
+coordinated=json.loads((RECEIPTS/'coordinated-dependency-scope.json').read_text())
+archives=[]
+for name,mode in [('windows-support.tar','r'),('qualification-support.tar','r'),('older-source-support.tar.gz','r:gz')]:
+    path=SUPPORT/name
+    with tarfile.open(path,mode) as bundle:
+        for member in list(bundle)[:3]:
+            assert hashlib.sha256(gzip.decompress(bundle.extractfile(member).read())).hexdigest()==Path(member.name).stem
+    archives.append(ref(path))
+for name in ['windows-metadata.tar.gz','windows-nested.index.jsonl.gz','windows-measurements.jsonl.gz','qualification-index.jsonl.gz','current-development-catalog.jsonl.gz','older-source-index.jsonl.gz']:
+    archives.append(ref(SUPPORT/name))
+state=os.statvfs(ROOT)
+footprints={'before':{'archive':186023677952,'qualification':128438996992},'after':{'archive':disk(ROOT/'artifacts/archive'),'qualification':disk(ROOT/'artifacts/qualification')}}
+net=sum(footprints['before'].values())-sum(footprints['after'].values())
+result={'schema':1,'recorded_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'scope':'Authorized historical archive and closed qualification evidence conversion; no training, capture or GPU benchmarking. Current corpora/models/native inputs and original continuation state remain.','footprint_bytes':footprints,'net_archive_qualification_bytes_reclaimed':net,'filesystem_after':{'total_bytes':state.f_blocks*state.f_frsize,'available_bytes':state.f_bavail*state.f_frsize,'used_bytes':(state.f_blocks-state.f_bfree)*state.f_frsize},'retirements':retirements,'windows_evidence':json.loads((RECEIPTS/'windows-evidence-verification.json').read_text()),'older_archive_cleanup':json.loads((RECEIPTS/'older-support-verification.json').read_text()),'qualification_evidence':{'catalog_rows':229,'measured_arms_recomputed':97,'failure_records':18,'campaign_states':16},'development':{'corpora':validation['corpora'],'cached_comparisons_authenticated':len(validation['comparisons']),'registry_records_authenticated':coordinated['registry_records_authenticated'],'registry_authenticated_file_occurrences':coordinated['registry_required_file_occurrences'],'candidate_comparisons_authenticated':len(coordinated['candidate_only_comparisons']),'files_authenticated':coordinated['development_files_authenticated'],'bytes':coordinated['development_bytes'],'no_reference_dependency_on_deleted_qualification_full_root':not coordinated['full_qualification_required_paths'],'benchmark_full_qualification_authenticated_occurrences':coordinated['benchmark_full_qualification_authenticated_occurrences'],'historical_comparison_failures':coordinated['historical_comparison_failures'],'historical_loss_spec_limitation':coordinated['historical_loss_spec_limitation']},'compact_support':archives,'operational_receipts':[ref(RECEIPTS/name) for name in ['windows-final-plan.json','qualification-final-plan.json','qualification-store-plan.json','older-support-plan.json','staging-plan.json','development-validation.json','coordinated-dependency-scope.json','catalog-formatting.json']],'catalog_note':'CSV cell values and ordering are unchanged; LF formatting replaces CRLF. Authenticated pre-format catalog bytes remain in the receipt directory. Initial retirement indexes preserve their original disposition; the current-development catalog includes later byte-identical restorations.','retained_exceptions':['Original220095 corrected state/export and independently retained migration parent','32-task DEV capture corpus and 120-window diagnostic recipe; offline scoring/capture specs','Reusable initializer and two current campaign10 comparison exports','Saved-reference measurements, response/transcript receipts, workloads and candidate-only comparison definitions','Independent project/native Git histories, exact unique native WIP recovery and associated small upstream vocabulary fixtures','Compact historical report/source/configuration/diagnostic records and authenticated retirement receipts'],'lost_replay':['Closed historical qualification optimizer states and unused exports','Obsolete Windows and shortlisted model states and feature tensors','Raw profiler/process/event timelines and old compiled runtime/cache replay']}
+(RESULT/'result.json').write_text(json.dumps(result,indent=2)+'\n')
+summary={'before_GiB':sum(footprints['before'].values())/2**30,'after_GiB':sum(footprints['after'].values())/2**30,'net_reclaimed_GiB':net/2**30,'free_GiB':result['filesystem_after']['available_bytes']/2**30,'archive_GiB':footprints['after']['archive']/2**30,'qualification_GiB':footprints['after']['qualification']/2**30}
+(RECEIPTS/'final-accounting-summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+print(json.dumps(summary,indent=2))
