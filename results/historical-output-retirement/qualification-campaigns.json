@@ -1,0 +1,162 @@
+[
+  {
+    "path": "campaign-failure-01/status.json",
+    "sha256": "03e45032cb1fa81818346f8599f00b5046deaa1e6faf368364bb936cae345ed9",
+    "status": "complete",
+    "scope": "pilot only",
+    "model_update_seconds": 1.3949097080039792,
+    "last_native_interruption_seconds": null,
+    "last_evaluated_updates": null,
+    "provisional_score": 76.98992070596032
+  },
+  {
+    "path": "campaign-final-01/status.json",
+    "sha256": "7252f1e8b43875ccc4b106dc68f532223d7d178d7d59e3c2525b7c2140f7964a",
+    "status": "complete",
+    "scope": "pilot only",
+    "model_update_seconds": 0.5565065029659308,
+    "last_native_interruption_seconds": null,
+    "last_evaluated_updates": null,
+    "provisional_score": 83.91612235850279
+  },
+  {
+    "path": "campaign-pilot-01/status.json",
+    "sha256": "af80e1c495bf5adb5f6ecf8bcbd8af93d106c0856e4a403bbc4786ec14de6258",
+    "status": "complete",
+    "scope": "pilot only",
+    "model_update_seconds": 2.5237713109818287,
+    "last_native_interruption_seconds": null,
+    "last_evaluated_updates": null,
+    "provisional_score": 100.19462031992921
+  },
+  {
+    "path": "campaign-retention-01/status.json",
+    "sha256": "9b53d4b23b474d39a509fe7f11ac55cb740c6c4e650a4cb028abec649c8cdb39",
+    "status": "complete",
+    "scope": "pilot only",
+    "model_update_seconds": 9.516147943912074,
+    "last_native_interruption_seconds": null,
+    "last_evaluated_updates": null,
+    "provisional_score": 96.14968351394432
+  },
+  {
+    "path": "lean-checks/campaign-01/status.json",
+    "sha256": "16b485f645d3bb43c707343114b4c3e54cab88553ec3ba10434759dcb54c2378",
+    "status": "running",
+    "scope": "pilot only",
+    "model_update_seconds": 0.0,
+    "last_native_interruption_seconds": null,
+    "last_evaluated_updates": null,
+    "provisional_score": 0.4635594478254416
+  },
+  {
+    "path": "lean-checks/campaign-02/status.json",
+    "sha256": "e80932e81191a915e60fcbc358d2926f65de02e4f8363bc72a30344fd9f8e7f7",
+    "status": "running",
+    "scope": "pilot only",
+    "model_update_seconds": 1.2154736199881881,
+    "last_native_interruption_seconds": null,
+    "last_evaluated_updates": null,
+    "provisional_score": 0.4635594478254416
+  },
+  {
+    "path": "lean-checks/campaign-03/status.json",
+    "sha256": "af2291a35470b88e0b9d7627484b7e2208c169c798c6dcb838089442d70cb183",
+    "status": "running",
+    "scope": "pilot only",
+    "model_update_seconds": 1.5668132860446349,
+    "last_native_interruption_seconds": null,
+    "last_evaluated_updates": null,
+    "provisional_score": 0.4635594478254416
+  },
+  {
+    "path": "lean-checks/campaign-04/status.json",
+    "sha256": "95f73f41bbed389d6ebb6d1784f0373a241ee6a941e1bb4580419dd6e254a9af",
+    "status": "running",
+    "scope": "pilot only",
+    "model_update_seconds": 1.721236139012035,
+    "last_native_interruption_seconds": null,
+    "last_evaluated_updates": null,
+    "provisional_score": 0.4635594478254416
+  },
+  {
+    "path": "lean-checks/campaign-05/status.json",
+    "sha256": "4ce1d573c1ed7d76f5724a19be5cdb07fbc837e0b886cb87084cf9ccc2180513",
+    "status": "running",
+    "scope": "pilot only",
+    "model_update_seconds": 1.9070647340267897,
+    "last_native_interruption_seconds": null,
+    "last_evaluated_updates": null,
+    "provisional_score": 0.4635594478254416
+  },
+  {
+    "path": "lean-checks/campaign-06/status.json",
+    "sha256": "583426c43bba7d91389885a468f205940d7730d82953927172fa7c7aedfc7345",
+    "status": "running",
+    "scope": "pilot only",
+    "model_update_seconds": 1.8908074109931476,
+    "last_native_interruption_seconds": null,
+    "last_evaluated_updates": null,
+    "provisional_score": 0.4635594478254416
+  },
+  {
+    "path": "lean-checks/campaign-07/status.json",
+    "sha256": "7743e3274dc680ad22d65a94e7a1dd0d146fd859198fe212f6755e27c447e504",
+    "status": "running",
+    "scope": "pilot only",
+    "model_update_seconds": 2.2087008339585736,
+    "last_native_interruption_seconds": null,
+    "last_evaluated_updates": null,
+    "provisional_score": 0.4635594478254416
+  },
+  {
+    "path": "lean-checks/campaign-08/status.json",
+    "sha256": "63c7c61a78183569143ac2a812984ccded28ad301bcb76e144985797a83e4997",
+    "status": "running",
+    "scope": "60-request DEV acceptance; no deployment or training-success claim",
+    "model_update_seconds": 0.35906807298306376,
+    "last_native_interruption_seconds": null,
+    "last_evaluated_updates": null,
+    "provisional_score": 0.4635594478254416
+  },
+  {
+    "path": "lean-checks/campaign-09/status.json",
+    "sha256": "7a3e791e5acdc4852e44e0954ec80416ad3e34141be5dbb0ea82274421db18f3",
+    "status": "running",
+    "scope": "60-request DEV acceptance; no deployment or training-success claim",
+    "model_update_seconds": 0.3537697439896874,
+    "last_native_interruption_seconds": 106.07930742600001,
+    "last_evaluated_updates": null,
+    "provisional_score": 0.4635594478254416
+  },
+  {
+    "path": "lean-checks/campaign-10/status.json",
+    "sha256": "35c8612e40ab79d8faa0d640d8225bb349b2d962aecf7f74d608fdeb767e5ff4",
+    "status": "complete",
+    "scope": "60-request DEV acceptance; no deployment or training-success claim",
+    "model_update_seconds": 0.8445296129211783,
+    "last_native_interruption_seconds": 65.71911664499203,
+    "last_evaluated_updates": null,
+    "provisional_score": 0.46513011152416356
+  },
+  {
+    "path": "lean-checks/campaign-12/status.json",
+    "sha256": "a5578f968ad9bde7e0a36c6a4e805068e9e53711bea44b4ed885e3a892bad9ed",
+    "status": "complete",
+    "scope": "60-request DEV acceptance; no deployment or training-success claim",
+    "model_update_seconds": 2.0422793529578485,
+    "last_native_interruption_seconds": 65.4079738840228,
+    "last_evaluated_updates": null,
+    "provisional_score": 0.46513011152416356
+  },
+  {
+    "path": "lean-checks/campaign-13/status.json",
+    "sha256": "8796c6523a6345133ac172399595d40dae234fdec5d924af545becc0d24f212f",
+    "status": "complete",
+    "scope": "60-request DEV acceptance; no deployment or training-success claim",
+    "model_update_seconds": 1.186140384990722,
+    "last_native_interruption_seconds": 62.45601050800178,
+    "last_evaluated_updates": 220098,
+    "provisional_score": 0.46398336551314423
+  }
+]

@@ -1,0 +1,92 @@
+import gzip
+import hashlib
+import io
+import json
+import tarfile
+from collections import Counter
+from pathlib import Path
+
+ROOT = Path('/home/philip/BitDraft')
+SOURCE = ROOT / 'artifacts/archive/windows-legacy'
+DEST = ROOT / 'artifacts/archive/development-history'
+RECEIPTS = ROOT / 'artifacts/receipts/artifact-closeout-20261113'
+TEXT = {'.json', '.jsonl', '.md', '.txt', '.log', '.csv', '.tsv', '.toml', '.yaml', '.yml', '.py', '.sh', '.cpp', '.cc', '.c', '.h', '.hpp', '.cu', '.cuh', '.patch', '.diff', '.cmake', '.ps1'}
+
+class HashedReader(io.RawIOBase):
+    def __init__(self, stream):
+        self.stream = stream
+        self.digest = hashlib.sha256()
+    def readable(self):
+        return True
+    def readinto(self, target):
+        data = self.stream.read(len(target))
+        target[:len(data)] = data
+        self.digest.update(data)
+        return len(data)
+
+for number, archive in enumerate(sorted(SOURCE.glob('*.tar.zst')), 1):
+    receipt = RECEIPTS / ('windows-' + archive.name + '.json')
+    if receipt.exists():
+        continue
+    index = archive.with_name(archive.name.removesuffix('.tar.zst') + '.index.jsonl')
+    entries = {d['member']: d for line in index.open() if (d := json.loads(line))}
+    checked = {}
+    rows = []
+    counts = Counter()
+    with archive.open('rb') as raw:
+        reader = HashedReader(raw)
+        buffered = io.BufferedReader(reader, 4 * 1024 * 1024)
+        with tarfile.open(fileobj=buffered, mode='r|zst') as bundle:
+            for member in bundle:
+                if member.isdir():
+                    continue
+                row = entries.get(member.name)
+                if row is None:
+                    raise ValueError(('unindexed member', archive.name, member.name))
+                suffix = Path(member.name).suffix.lower()
+                keep = suffix in TEXT and row['bytes'] <= 64 * 1024 * 1024 and Path(member.name).name != 'process-lineage.json'
+                if member.issym():
+                    rows.append({**row, 'archive': archive.name, 'disposition': 'historical-link'})
+                    continue
+                if member.islnk():
+                    digest, size = checked[member.linkname]
+                    payload = None
+                else:
+                    stream = bundle.extractfile(member)
+                    digestor = hashlib.sha256()
+                    size = 0
+                    chunks = []
+                    while chunk := stream.read(4 * 1024 * 1024):
+                        digestor.update(chunk)
+                        size += len(chunk)
+                        if keep:
+                            chunks.append(chunk)
+                    digest = digestor.hexdigest()
+                    payload = b''.join(chunks) if keep else None
+                if digest != row['sha256'] or size != row['bytes']:
+                    raise ValueError(('member authentication failed', archive.name, member.name, digest, size, row))
+                checked[member.name] = (digest, size)
+                if keep:
+                    blob = DEST / 'blobs' / (digest + '.gz')
+                    if not blob.exists():
+                        if payload is None:
+                            raise ValueError(('missing preserved hardlink target', member.name))
+                        blob.write_bytes(gzip.compress(payload, compresslevel=6, mtime=0))
+                    if hashlib.sha256(gzip.decompress(blob.read_bytes())).hexdigest() != digest:
+                        raise ValueError(('compact blob readback failed', member.name))
+                disposition = 'compact-support' if keep else 'discard-raw'
+                rows.append({**row, 'archive': archive.name, 'disposition': disposition})
+                counts[disposition + '_files'] += 1
+                counts[disposition + '_bytes'] += size
+        while buffered.read(4 * 1024 * 1024):
+            pass
+        archive_sha = reader.digest.hexdigest()
+    if len(rows) != len(entries):
+        raise ValueError(('missing indexed members', archive.name, len(rows), len(entries)))
+    output_index = DEST / (archive.name + '.index.jsonl.gz')
+    with gzip.open(output_index, 'wt') as output:
+        for row in rows:
+            output.write(json.dumps(row, separators=(',', ':')) + '\n')
+    receipt.write_text(json.dumps({'archive': str(archive), 'sha256': archive_sha, 'bytes': archive.stat().st_size, 'index': str(output_index), 'members_verified': len(rows), **counts}, indent=2) + '\n')
+    print(json.dumps({'archive_number': number, 'archive': archive.name, **counts}), flush=True)
+print('WINDOWS_EXTRACTION_COMPLETE', flush=True)

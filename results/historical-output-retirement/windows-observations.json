@@ -1,0 +1,1202 @@
+{
+  "scope": "Imported historical request/performance fields from all matching preserved reports; different cohorts and timing definitions are not pooled; producer status is not independent scientific certification. Full conditions and report bytes are in content-addressed compact support.",
+  "records": [
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-a8-takeover-20261015-packet-01/contents/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-fresh-scale-only-12h-20261015-04/lane/attempts/dda7c207cdf24e0cb74802319a14d8d7/evaluations/28297c1604b44297b74ed8391d6ee63d/evaluation/report.json",
+      "sha256": "3f06a76517b229dbedeb5855f700f31f7d280c7834c77f43b37fa28027f6a9ea",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "unreported",
+      "measurements": {
+        "cells.dspark_a8.acceptance_rate": 0.1583423035522067,
+        "cells.dspark_a8.acceptance_vs_original_eagle_q4": 0.8320242788483628,
+        "cells.dspark_a8.mean_request_latency_s": 1.088907648775057,
+        "cells.dspark_a8.native_counts.accepted": 7355,
+        "cells.dspark_a8.native_counts.proposed": 46450,
+        "cells.dspark_a8.output_tokens": 14290,
+        "cells.dspark_a8.request_seconds": 130.66891785300686,
+        "cells.dspark_a8.request_tokens_per_second": 109.36036078660437,
+        "cells.eagle_q4.acceptance_rate": 0.264938923737207,
+        "cells.eagle_q4.mean_request_latency_s": 0.8444517229407211,
+        "cells.eagle_q4.native_counts.accepted": 8025,
+        "cells.eagle_q4.native_counts.proposed": 30290,
+        "cells.eagle_q4.output_tokens": 14290,
+        "cells.eagle_q4.request_seconds": 101.33420675288653,
+        "cells.eagle_q4.request_tokens_per_second": 141.01852136512576,
+        "cells.initial.acceptance_rate": 0.14328144203195411,
+        "cells.initial.acceptance_vs_original_eagle_q4": 0.7519288663012179,
+        "cells.initial.mean_request_latency_s": 1.1354990809091154,
+        "cells.initial.native_counts.accepted": 6995,
+        "cells.initial.native_counts.proposed": 48820,
+        "cells.initial.output_tokens": 14290,
+        "cells.initial.request_seconds": 136.25988970909384,
+        "cells.initial.request_tokens_per_second": 104.87312172722463,
+        "cells.target_only.mean_request_latency_s": 1.2791242891510288,
+        "cells.target_only.output_tokens": 14290,
+        "cells.target_only.request_seconds": 153.49491469812347,
+        "cells.target_only.request_tokens_per_second": 93.0975467695719
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-resume-20261010/dflash-evaluation-01/inputs/native04-evaluation-report-final.json",
+      "sha256": "857b679a2d3c4a3156dde9587aa84000cf2e54bffa4d21bb49343823cf5171ac",
+      "family": "binary-eagle-decoding-artifacts/5080-resume-20261010",
+      "status": "unreported",
+      "measurements": {
+        "cells.dflash_a8.acceptance_rate": 0.024058514175179836,
+        "cells.dflash_a8.acceptance_vs_original_eagle_q4": 0.12624372244510923,
+        "cells.dflash_a8.mean_request_latency_s": 1.672236478633325,
+        "cells.dflash_a8.native_counts.accepted": 1990,
+        "cells.dflash_a8.native_counts.proposed": 82715,
+        "cells.dflash_a8.output_tokens": 14290,
+        "cells.dflash_a8.request_seconds": 200.668377435999,
+        "cells.dflash_a8.request_tokens_per_second": 71.21201747174959,
+        "cells.eagle_q4.acceptance_rate": 0.264938923737207,
+        "cells.eagle_q4.mean_request_latency_s": 0.8345803147914921,
+        "cells.eagle_q4.native_counts.accepted": 8025,
+        "cells.eagle_q4.native_counts.proposed": 30290,
+        "cells.eagle_q4.output_tokens": 14290,
+        "cells.eagle_q4.request_seconds": 100.14963777497906,
+        "cells.eagle_q4.request_tokens_per_second": 142.68648711548462,
+        "cells.initial.acceptance_rate": 0.06967682787073115,
+        "cells.initial.acceptance_vs_original_eagle_q4": 0.3664138879777542,
+        "cells.initial.mean_request_latency_s": 1.3426725645667223,
+        "cells.initial.native_counts.accepted": 4560,
+        "cells.initial.native_counts.proposed": 65445,
+        "cells.initial.output_tokens": 14290,
+        "cells.initial.request_seconds": 161.12070774800668,
+        "cells.initial.request_tokens_per_second": 88.69126879922602,
+        "cells.target_only.mean_request_latency_s": 1.2796084356083157,
+        "cells.target_only.output_tokens": 14290,
+        "cells.target_only.request_seconds": 153.55301227299788,
+        "cells.target_only.request_tokens_per_second": 93.06232283215769
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-resume-20261010/dspark-evaluation-01/native-03-attempt-03/evaluation/report.json",
+      "sha256": "174b2c748a8e027766f631b039e27409d1d8081c2c987db51bb079f9e71a9756",
+      "family": "binary-eagle-decoding-artifacts/5080-resume-20261010",
+      "status": "unreported",
+      "measurements": {
+        "cells.dspark_a8.acceptance_rate": 0.03870121351262709,
+        "cells.dspark_a8.acceptance_vs_original_eagle_q4": 0.20301351904727963,
+        "cells.dspark_a8.mean_request_latency_s": 1.702552034808529,
+        "cells.dspark_a8.native_counts.accepted": 2950,
+        "cells.dspark_a8.native_counts.proposed": 76225,
+        "cells.dspark_a8.output_tokens": 14290,
+        "cells.dspark_a8.request_seconds": 204.30624417702347,
+        "cells.dspark_a8.request_tokens_per_second": 69.94401985882656,
+        "cells.eagle_q4.acceptance_rate": 0.264938923737207,
+        "cells.eagle_q4.mean_request_latency_s": 0.8398052431248895,
+        "cells.eagle_q4.native_counts.accepted": 8025,
+        "cells.eagle_q4.native_counts.proposed": 30290,
+        "cells.eagle_q4.output_tokens": 14290,
+        "cells.eagle_q4.request_seconds": 100.77662917498674,
+        "cells.eagle_q4.request_tokens_per_second": 141.79874954129593,
+        "cells.initial.acceptance_rate": 0.14328144203195411,
+        "cells.initial.acceptance_vs_original_eagle_q4": 0.7519288663012179,
+        "cells.initial.mean_request_latency_s": 1.1279224147412605,
+        "cells.initial.native_counts.accepted": 6995,
+        "cells.initial.native_counts.proposed": 48820,
+        "cells.initial.output_tokens": 14290,
+        "cells.initial.request_seconds": 135.35068976895127,
+        "cells.initial.request_tokens_per_second": 105.57759272888501,
+        "cells.target_only.mean_request_latency_s": 1.281682843233466,
+        "cells.target_only.output_tokens": 14290,
+        "cells.target_only.request_seconds": 153.80194118801592,
+        "cells.target_only.request_tokens_per_second": 92.9117011763273
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-resume-20261010/dspark-w1a8-finalist-20261009-01/lane/attempts/b85f7f96c84f4a0b999bc46239d613cc/evaluations/4d9f81ec039942cab95ea511c5acf465/evaluation/report.json",
+      "sha256": "c968cea265f20ad3077c38a4579c7b1a36c4a7a07ea67b7076ff4ce987f6d530",
+      "family": "binary-eagle-decoding-artifacts/5080-resume-20261010",
+      "status": "unreported",
+      "measurements": {
+        "cells.dspark_a8.acceptance_rate": 0.058780736214171396,
+        "cells.dspark_a8.acceptance_vs_original_eagle_q4": 0.30801112329140423,
+        "cells.dspark_a8.mean_request_latency_s": 1.5578337201669759,
+        "cells.dspark_a8.native_counts.accepted": 4040,
+        "cells.dspark_a8.native_counts.proposed": 68730,
+        "cells.dspark_a8.output_tokens": 14290,
+        "cells.dspark_a8.request_seconds": 186.9400464200371,
+        "cells.dspark_a8.request_tokens_per_second": 76.44162004695175,
+        "cells.eagle_q4.acceptance_rate": 0.264938923737207,
+        "cells.eagle_q4.mean_request_latency_s": 0.8433097656500347,
+        "cells.eagle_q4.native_counts.accepted": 8025,
+        "cells.eagle_q4.native_counts.proposed": 30290,
+        "cells.eagle_q4.output_tokens": 14290,
+        "cells.eagle_q4.request_seconds": 101.19717187800416,
+        "cells.eagle_q4.request_tokens_per_second": 141.20947981853652,
+        "cells.initial.acceptance_rate": 0.14328144203195411,
+        "cells.initial.acceptance_vs_original_eagle_q4": 0.7519288663012179,
+        "cells.initial.mean_request_latency_s": 1.1363761656499265,
+        "cells.initial.native_counts.accepted": 6995,
+        "cells.initial.native_counts.proposed": 48820,
+        "cells.initial.output_tokens": 14290,
+        "cells.initial.request_seconds": 136.36513987799117,
+        "cells.initial.request_tokens_per_second": 104.792177918679,
+        "cells.target_only.mean_request_latency_s": 1.2896414643248741,
+        "cells.target_only.output_tokens": 14290,
+        "cells.target_only.request_seconds": 154.7569757189849,
+        "cells.target_only.request_tokens_per_second": 92.33832551721909
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-ce1976-sign-reversion-native-20261014-01/result.json",
+      "sha256": "0a35e63ce217f616bf856d5a612deacd1d41af9518a05efa851123b33e0bba0d",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "COMPLETED_DIRECTIONAL_SMOKE",
+      "measurements": {
+        "directional_confirmation.pooled.ce.acceptance": 0.05411140583554377,
+        "directional_confirmation.pooled.ce1976_initial_signs.acceptance": 0.16288492706645058,
+        "directional_confirmation.pooled.initial.acceptance": 0.1594551282051282,
+        "sign_reversion_causal.pooled.ce.full.acceptance": 0.05411140583554377,
+        "sign_reversion_causal.pooled.ce.later.acceptance": 0.05014925373134328,
+        "sign_reversion_causal.pooled.hybrid.full.acceptance": 0.16288492706645058,
+        "sign_reversion_causal.pooled.hybrid.later.acceptance": 0.15162454873646208,
+        "sign_reversion_causal.repair_acceptance_separate": true,
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-fresh-root-confirmation-native-20261014-01/result.json",
+      "sha256": "2ca8687c2d963e9db15617d3791e8cd9e2be8aca2e216d0e2a3d1d52b607811c",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "COMPLETED_DIRECTIONAL_SMOKE",
+      "measurements": {
+        "directional_confirmation.pooled.fresh_root_ce_replay_update1004.acceptance": 0.1500777604976672,
+        "directional_confirmation.pooled.initial.acceptance": 0.1594551282051282,
+        "directional_confirmation.pooled.original_mode_control_update1004.acceptance": 0.1561014263074485,
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-fresh-root-native-20261014-01/result.json",
+      "sha256": "5a60ec6af5b86dbf357559782d80d328cf49784faa7572995147783777b3e4e8",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "COMPLETED_DIRECTIONAL_SMOKE",
+      "measurements": {
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-fresh-scale-only-12h-20261015-04/lane/evaluations/d91993167bba444bad5adeebadef02e3/attempts/122b469f532c4966835fd6c984fda055/evaluation/report.json",
+      "sha256": "becb4a17343bb27f8c6c82f3d05a3b8c411174b335cd36ff3429bc9615218355",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "unreported",
+      "measurements": {
+        "cells.dspark_a8.acceptance_rate": 0.21404979674796748,
+        "cells.dspark_a8.acceptance_vs_original_eagle_q4": 1.1247678463461388,
+        "cells.dspark_a8.mean_request_latency_s": 0.9415654686333862,
+        "cells.dspark_a8.native_counts.accepted": 8425,
+        "cells.dspark_a8.native_counts.proposed": 39360,
+        "cells.dspark_a8.output_tokens": 14290,
+        "cells.dspark_a8.request_seconds": 112.98785623600634,
+        "cells.dspark_a8.request_tokens_per_second": 126.47376873981385,
+        "cells.eagle_q4.acceptance_rate": 0.264938923737207,
+        "cells.eagle_q4.mean_request_latency_s": 0.8532951601083065,
+        "cells.eagle_q4.native_counts.accepted": 8025,
+        "cells.eagle_q4.native_counts.proposed": 30290,
+        "cells.eagle_q4.output_tokens": 14290,
+        "cells.eagle_q4.request_seconds": 102.39541921299679,
+        "cells.eagle_q4.request_tokens_per_second": 139.5570242285429,
+        "cells.initial.acceptance_rate": 0.14328144203195411,
+        "cells.initial.acceptance_vs_original_eagle_q4": 0.7519288663012179,
+        "cells.initial.mean_request_latency_s": 1.1389252911832046,
+        "cells.initial.native_counts.accepted": 6995,
+        "cells.initial.native_counts.proposed": 48820,
+        "cells.initial.output_tokens": 14290,
+        "cells.initial.request_seconds": 136.67103494198454,
+        "cells.initial.request_tokens_per_second": 104.55763363514411,
+        "cells.target_only.mean_request_latency_s": 1.2922967671998777,
+        "cells.target_only.output_tokens": 14290,
+        "cells.target_only.request_seconds": 155.07561206398532,
+        "cells.target_only.request_tokens_per_second": 92.1485964801728
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-fresh-scale-only-12h-20261015-04/lane/unattended/source08-native-sol-20261019-02/output/supplement/measurement/report.json",
+      "sha256": "799ecebbe0ca9f17b6d0b7d59d59108048a18fd7ad4922527e355845933b41b5",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "unreported",
+      "measurements": {
+        "cells.dspark_a8.acceptance_rate": 0.23388285752580082,
+        "cells.dspark_a8.mean_request_latency_s": 0.825744944433336,
+        "cells.dspark_a8.native_counts.accepted": 8725,
+        "cells.dspark_a8.native_counts.proposed": 37305,
+        "cells.dspark_a8.output_tokens": 14290,
+        "cells.dspark_a8.request_seconds": 99.08939333200033,
+        "cells.dspark_a8.request_tokens_per_second": 144.21321515332286,
+        "cells.dspark_q4_k_m.acceptance_rate": 0.5587577639751553,
+        "cells.dspark_q4_k_m.mean_request_latency_s": 0.4555347037914544,
+        "cells.dspark_q4_k_m.native_counts.accepted": 11245,
+        "cells.dspark_q4_k_m.native_counts.proposed": 20125,
+        "cells.dspark_q4_k_m.output_tokens": 14290,
+        "cells.dspark_q4_k_m.request_seconds": 54.664164454974525,
+        "cells.dspark_q4_k_m.request_tokens_per_second": 261.41440452767387
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-fresh-scale-only-12h-20261015-04/lane/unattended/unattended-1a9b732a6925445aaca2aaf32955a95a/evaluations/9aa2c6c9fe274f1391c68380a56c6591/evaluation/report.json",
+      "sha256": "22832b352ea38733dcabd1421970e4786a6c48ab1eae4957f54d0ba3fda339c6",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "unreported",
+      "measurements": {
+        "cells.dspark_a8.acceptance_rate": 0.23050352065896107,
+        "cells.dspark_a8.acceptance_vs_original_eagle_q4": 1.211937308842472,
+        "cells.dspark_a8.mean_request_latency_s": 0.8883979689419903,
+        "cells.dspark_a8.native_counts.accepted": 8675,
+        "cells.dspark_a8.native_counts.proposed": 37635,
+        "cells.dspark_a8.output_tokens": 14290,
+        "cells.dspark_a8.request_seconds": 106.60775627303883,
+        "cells.dspark_a8.request_tokens_per_second": 134.04277980863904,
+        "cells.eagle_q4.acceptance_rate": 0.264938923737207,
+        "cells.eagle_q4.mean_request_latency_s": 0.8310244029250801,
+        "cells.eagle_q4.native_counts.accepted": 8025,
+        "cells.eagle_q4.native_counts.proposed": 30290,
+        "cells.eagle_q4.output_tokens": 14290,
+        "cells.eagle_q4.request_seconds": 99.72292835100961,
+        "cells.eagle_q4.request_tokens_per_second": 143.29703545910087,
+        "cells.initial.acceptance_rate": 0.14328144203195411,
+        "cells.initial.acceptance_vs_original_eagle_q4": 0.7519288663012179,
+        "cells.initial.mean_request_latency_s": 1.1208804728085247,
+        "cells.initial.native_counts.accepted": 6995,
+        "cells.initial.native_counts.proposed": 48820,
+        "cells.initial.output_tokens": 14290,
+        "cells.initial.request_seconds": 134.50565673702295,
+        "cells.initial.request_tokens_per_second": 106.24088493124802,
+        "cells.target_only.mean_request_latency_s": 1.2707637046999176,
+        "cells.target_only.output_tokens": 14290,
+        "cells.target_only.request_seconds": 152.49164456399012,
+        "cells.target_only.request_tokens_per_second": 93.71005238259781
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-fresh-scale-only-12h-20261015-04/lane/unattended/unattended-3b39be495c1a4058bff91b099d910715/evaluations/ee2b3eed2d3b491388ed8a88d3cd5ca6/evaluation/report.json",
+      "sha256": "69f77608e418e38718406991089f9dc88482bc94827dfa33065f949ab4a31154",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "unreported",
+      "measurements": {
+        "cells.dspark_a8.acceptance_rate": 0.23388285752580082,
+        "cells.dspark_a8.acceptance_vs_original_eagle_q4": 1.2278687587527508,
+        "cells.dspark_a8.mean_request_latency_s": 0.8889071177839166,
+        "cells.dspark_a8.native_counts.accepted": 8725,
+        "cells.dspark_a8.native_counts.proposed": 37305,
+        "cells.dspark_a8.output_tokens": 14290,
+        "cells.dspark_a8.request_seconds": 106.66885413406999,
+        "cells.dspark_a8.request_tokens_per_second": 133.9660026912746,
+        "cells.eagle_q4.acceptance_rate": 0.264938923737207,
+        "cells.eagle_q4.mean_request_latency_s": 0.8388896665417026,
+        "cells.eagle_q4.native_counts.accepted": 8025,
+        "cells.eagle_q4.native_counts.proposed": 30290,
+        "cells.eagle_q4.output_tokens": 14290,
+        "cells.eagle_q4.request_seconds": 100.66675998500432,
+        "cells.eagle_q4.request_tokens_per_second": 141.95351079272533,
+        "cells.initial.acceptance_rate": 0.14328144203195411,
+        "cells.initial.acceptance_vs_original_eagle_q4": 0.7519288663012179,
+        "cells.initial.mean_request_latency_s": 1.1260178421174107,
+        "cells.initial.native_counts.accepted": 6995,
+        "cells.initial.native_counts.proposed": 48820,
+        "cells.initial.output_tokens": 14290,
+        "cells.initial.request_seconds": 135.1221410540893,
+        "cells.initial.request_tokens_per_second": 105.75616911132072,
+        "cells.target_only.mean_request_latency_s": 1.280574405316535,
+        "cells.target_only.output_tokens": 14290,
+        "cells.target_only.request_seconds": 153.6689286379842,
+        "cells.target_only.request_tokens_per_second": 92.9921235649701
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-fresh-scale-only-12h-20261015-04/lane/unattended/unattended-cecf0f9c3ce34ad1b65f9570f90b2b31/evaluations/5b75b5aad42b4cb5875dd614f3f9ee6d/dspark-q4km-supplement/measurement/report.json",
+      "sha256": "020414533086cdebd6763d2e04b0197901c9c15f6d14426284c0a736e4604efa",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "unreported",
+      "measurements": {
+        "cells.dspark_a8.acceptance_rate": 0.23423665146230213,
+        "cells.dspark_a8.mean_request_latency_s": 0.8250010325580054,
+        "cells.dspark_a8.native_counts.accepted": 8730,
+        "cells.dspark_a8.native_counts.proposed": 37270,
+        "cells.dspark_a8.output_tokens": 14290,
+        "cells.dspark_a8.request_seconds": 99.00012390696065,
+        "cells.dspark_a8.request_tokens_per_second": 144.34325368551663,
+        "cells.dspark_q4_k_m.acceptance_rate": 0.5587577639751553,
+        "cells.dspark_q4_k_m.mean_request_latency_s": 0.45419431855061704,
+        "cells.dspark_q4_k_m.native_counts.accepted": 11245,
+        "cells.dspark_q4_k_m.native_counts.proposed": 20125,
+        "cells.dspark_q4_k_m.output_tokens": 14290,
+        "cells.dspark_q4_k_m.request_seconds": 54.50331822607404,
+        "cells.dspark_q4_k_m.request_tokens_per_second": 262.18587170650017
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-fresh-scale-only-12h-20261015-04/lane/unattended/unattended-cecf0f9c3ce34ad1b65f9570f90b2b31/evaluations/5b75b5aad42b4cb5875dd614f3f9ee6d/evaluation/report.json",
+      "sha256": "167c04d34f8eb7b706c363211b7d7933996057e5c6bdffb3da929b81195cd725",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "unreported",
+      "measurements": {
+        "cells.dspark_a8.acceptance_rate": 0.23423665146230213,
+        "cells.dspark_a8.acceptance_vs_original_eagle_q4": 1.2297005741355784,
+        "cells.dspark_a8.mean_request_latency_s": 0.8813754053329225,
+        "cells.dspark_a8.native_counts.accepted": 8730,
+        "cells.dspark_a8.native_counts.proposed": 37270,
+        "cells.dspark_a8.output_tokens": 14290,
+        "cells.dspark_a8.request_seconds": 105.76504863995069,
+        "cells.dspark_a8.request_tokens_per_second": 135.11079684411197,
+        "cells.eagle_q4.acceptance_rate": 0.264938923737207,
+        "cells.eagle_q4.mean_request_latency_s": 0.8309906030247779,
+        "cells.eagle_q4.native_counts.accepted": 8025,
+        "cells.eagle_q4.native_counts.proposed": 30290,
+        "cells.eagle_q4.output_tokens": 14290,
+        "cells.eagle_q4.request_seconds": 99.71887236297334,
+        "cells.eagle_q4.request_tokens_per_second": 143.30286395522887,
+        "cells.initial.acceptance_rate": 0.14328144203195411,
+        "cells.initial.acceptance_vs_original_eagle_q4": 0.7519288663012179,
+        "cells.initial.mean_request_latency_s": 1.1179556090079739,
+        "cells.initial.native_counts.accepted": 6995,
+        "cells.initial.native_counts.proposed": 48820,
+        "cells.initial.output_tokens": 14290,
+        "cells.initial.request_seconds": 134.15467308095685,
+        "cells.initial.request_tokens_per_second": 106.5188388284959,
+        "cells.target_only.mean_request_latency_s": 1.2707744076669163,
+        "cells.target_only.output_tokens": 14290,
+        "cells.target_only.request_seconds": 152.49292892002995,
+        "cells.target_only.request_tokens_per_second": 93.70926311930131
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-fresh-sign-frozen-scales-native-20261014-01/result.json",
+      "sha256": "5e9dac7130303a76fa6697070d975f73ea195e49944013e69036c27cf06b35e1",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "COMPLETED_DIRECTIONAL_SMOKE",
+      "measurements": {
+        "directional_confirmation.pooled.ce.acceptance": 0.05411140583554377,
+        "directional_confirmation.pooled.fresh_sign_frozen_scales.acceptance": 0.16914191419141913,
+        "directional_confirmation.pooled.initial.acceptance": 0.1594551282051282,
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-full-ce-dose30-native-confirmation-20261014-01/result.json",
+      "sha256": "aa86efed54291f275cbbb30b72ef141e4e095666d9b667dce238cf8fa7f72c39",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "COMPLETED_DIRECTIONAL_SMOKE",
+      "measurements": {
+        "directional_confirmation.pooled.fresh_full_ce_dose_replay_update30.acceptance": 0.15776892430278885,
+        "directional_confirmation.pooled.initial.acceptance": 0.1594551282051282,
+        "directional_confirmation.pooled.original_mode_control_update1004.acceptance": 0.1561014263074485,
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-full-ce-exposure30-native-confirmation-20261014-01/result.json",
+      "sha256": "1f27ab92b34a0a2540a80d37f0892d3b25e422b8ced84375fa55a056867f48fd",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "COMPLETED_DIRECTIONAL_SMOKE",
+      "measurements": {
+        "directional_confirmation.pooled.fresh_full_ce_dose_replay_update30.acceptance": 0.15776892430278885,
+        "directional_confirmation.pooled.fresh_full_ce_exposure_replay_update30.acceptance": 0.1669407894736842,
+        "directional_confirmation.pooled.initial.acceptance": 0.1594551282051282,
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-initial-ce-thinking-crossover-20261014-01/measurements/false/result.json",
+      "sha256": "0d8d39131a9a46f2dd7ac4863b391f5563f86e6b8816db9c7b1b3a052ae1857c",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "COMPLETED_DIRECTIONAL_SMOKE",
+      "measurements": {
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-initial-ce-thinking-crossover-20261014-01/measurements/true/result.json",
+      "sha256": "a2a616a3c98d7902b32cb46b7852e1813493904392cc6efa587fd258383390d7",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "COMPLETED_DIRECTIONAL_SMOKE",
+      "measurements": {
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-mode-alignment-confirmation-20261014-01/result.json",
+      "sha256": "bfbb358eaaebc8c569f056e066e535f260cae788fa26bdc0bd789f90220f110f",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "COMPLETED_DIRECTIONAL_SMOKE",
+      "measurements": {
+        "directional_confirmation.pooled.aligned_mode_replay_update1004.acceptance": 0.14930015552099535,
+        "directional_confirmation.pooled.initial.acceptance": 0.1594551282051282,
+        "directional_confirmation.pooled.original_mode_control_update1004.acceptance": 0.1561014263074485,
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-mode-alignment-native216-20261014-01/result.json",
+      "sha256": "804e8ee3cc7fcb46d5425b0a02a8c110760ba83b4d6098327b86968936db58c3",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "COMPLETED_DIRECTIONAL_SMOKE",
+      "measurements": {
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-panel-sensitivity-native-20261014-01/result.json",
+      "sha256": "2266aec44d211e9ae1bb1dc1dfa8d074a943912fdf8e83a7712c160b98829d6f",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "COMPLETED_DIRECTIONAL_SMOKE",
+      "measurements": {
+        "panel_sensitivity.pooled.ce.full.acceptance": 0.05411140583554377,
+        "panel_sensitivity.pooled.ce.later.acceptance": 0.05014925373134328,
+        "panel_sensitivity.pooled.initial.full.acceptance": 0.1594551282051282,
+        "panel_sensitivity.pooled.initial.later.acceptance": 0.14795008912655971,
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-repair-native-smoke-fresh-fusion216-20261014-01/result.json",
+      "sha256": "92f22d69b5233a48f3fcab2bcd568ed6e30711630fd8a4e95adb16af3a7abe1f",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "COMPLETED_DIRECTIONAL_SMOKE",
+      "measurements": {
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-repair-native-smoke-fusion-resident03-20261014-02/result.json",
+      "sha256": "c51ccea02e57f77b42362889c526983a7a7e420b08f2eeb781badb2b9d9ab966",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "COMPLETED_DIRECTIONAL_SMOKE",
+      "measurements": {
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-root25-eight-hour-native-proof-20261016-01/native-report.json",
+      "sha256": "3678fbf9e5640c7aa8d924d40edc2d240b789f9bd12f5abacb57d14151cf6c46",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "unreported",
+      "measurements": {
+        "cells.dspark_a8.acceptance_rate": 0.2211862211862212,
+        "cells.dspark_a8.acceptance_vs_original_eagle_q4": 1.1634091952878163,
+        "cells.dspark_a8.mean_request_latency_s": 0.924831025324723,
+        "cells.dspark_a8.native_counts.accepted": 8540,
+        "cells.dspark_a8.native_counts.proposed": 38610,
+        "cells.dspark_a8.output_tokens": 14290,
+        "cells.dspark_a8.request_seconds": 110.97972303896677,
+        "cells.dspark_a8.request_tokens_per_second": 128.76226042646144,
+        "cells.eagle_q4.acceptance_rate": 0.264938923737207,
+        "cells.eagle_q4.mean_request_latency_s": 0.8548844763420979,
+        "cells.eagle_q4.native_counts.accepted": 8025,
+        "cells.eagle_q4.native_counts.proposed": 30290,
+        "cells.eagle_q4.output_tokens": 14290,
+        "cells.eagle_q4.request_seconds": 102.58613716105174,
+        "cells.eagle_q4.request_tokens_per_second": 139.2975736825521,
+        "cells.initial.acceptance_rate": 0.14328144203195411,
+        "cells.initial.acceptance_vs_original_eagle_q4": 0.7519288663012179,
+        "cells.initial.mean_request_latency_s": 1.1398597939248551,
+        "cells.initial.native_counts.accepted": 6995,
+        "cells.initial.native_counts.proposed": 48820,
+        "cells.initial.output_tokens": 14290,
+        "cells.initial.request_seconds": 136.7831752709826,
+        "cells.initial.request_tokens_per_second": 104.4719130966943,
+        "cells.target_only.mean_request_latency_s": 1.2942273145416645,
+        "cells.target_only.output_tokens": 14290,
+        "cells.target_only.request_seconds": 155.30727774499974,
+        "cells.target_only.request_tokens_per_second": 92.01114208867189
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-scale-only-native-confirmation-20261014-02/result.json",
+      "sha256": "2926755feb1af7297be60748f42c6a3ac5d7c6d8dcb015b0b2a8ada70b636597",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "COMPLETED_DIRECTIONAL_SMOKE",
+      "measurements": {
+        "directional_confirmation.pooled.fresh_scale_only_replay_update1004.acceptance": 0.16116035455278002,
+        "directional_confirmation.pooled.initial.acceptance": 0.1594551282051282,
+        "directional_confirmation.pooled.original_mode_control_update1004.acceptance": 0.1561014263074485,
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-train-prefix-transfer-20261014-01/native-output-01/result.json",
+      "sha256": "75da7d409050619ae130b4995b47576224a7517c88200686e099b32594dbe13e",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "COMPLETED_DIRECTIONAL_SMOKE",
+      "measurements": {
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/old30-native-receipt-transfer-20261013T2218Z/evaluation-report.json",
+      "sha256": "9772fef1f4c352c400c0c438ff1a8417dd8a69de9510675773b4cef6fb4ed433",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "unreported",
+      "measurements": {
+        "cells.dspark_a8.acceptance_rate": 0.03870121351262709,
+        "cells.dspark_a8.acceptance_vs_original_eagle_q4": 0.20301351904727963,
+        "cells.dspark_a8.mean_request_latency_s": 1.692987802933203,
+        "cells.dspark_a8.native_counts.accepted": 2950,
+        "cells.dspark_a8.native_counts.proposed": 76225,
+        "cells.dspark_a8.output_tokens": 14290,
+        "cells.dspark_a8.request_seconds": 203.15853635198437,
+        "cells.dspark_a8.request_tokens_per_second": 70.3391560925686,
+        "cells.eagle_q4.acceptance_rate": 0.264938923737207,
+        "cells.eagle_q4.mean_request_latency_s": 0.840063796607986,
+        "cells.eagle_q4.native_counts.accepted": 8025,
+        "cells.eagle_q4.native_counts.proposed": 30290,
+        "cells.eagle_q4.output_tokens": 14290,
+        "cells.eagle_q4.request_seconds": 100.80765559295833,
+        "cells.eagle_q4.request_tokens_per_second": 141.75510695041095,
+        "cells.initial.acceptance_rate": 0.14328144203195411,
+        "cells.initial.acceptance_vs_original_eagle_q4": 0.7519288663012179,
+        "cells.initial.mean_request_latency_s": 1.1227511709828832,
+        "cells.initial.native_counts.accepted": 6995,
+        "cells.initial.native_counts.proposed": 48820,
+        "cells.initial.output_tokens": 14290,
+        "cells.initial.request_seconds": 134.73014051794598,
+        "cells.initial.request_tokens_per_second": 106.06386919114495,
+        "cells.target_only.mean_request_latency_s": 1.2706785154159055,
+        "cells.target_only.output_tokens": 14290,
+        "cells.target_only.request_seconds": 152.48142184990866,
+        "cells.target_only.request_tokens_per_second": 93.71633492548365
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/campaign-rank-recovery205-qualification/short_binary_double-binary-rank1984-capacity-operator-probe/result.json",
+      "sha256": "33b22a17cb46355fa5a17134806f0e2905ae7131bf54d2ac4a072b9c9fbc40b6",
+      "family": "binary-eagle-decoding-artifacts/unattended-training-preparation-20261028",
+      "status": "unreported",
+      "measurements": {
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/campaign-selected128-short_binary_double-binary-qualification/short_binary_double-binary-capacity-operator-probe/result.json",
+      "sha256": "13606f6403867e4f16bf350ebd807c406f4f5e2fea8c889a697c2e79ea3511a6",
+      "family": "binary-eagle-decoding-artifacts/unattended-training-preparation-20261028",
+      "status": "unreported",
+      "measurements": {
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/campaign-selected128-short_binary_mos-qualification/short_binary_mos-capacity-operator-probe/result.json",
+      "sha256": "89525d431e4d549c717dd554f4b7ca8d5ea518d2c9aa18eb64b6b0ceff4b4b08",
+      "family": "binary-eagle-decoding-artifacts/unattended-training-preparation-20261028",
+      "status": "unreported",
+      "measurements": {
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/campaign-selected128-short_binary_mos-static-qualification/short_binary_mos-static-capacity-operator-probe/result.json",
+      "sha256": "9373c628b59f9dfd8fd827e1be216c506ea8cd04194024983070936d38d1632b",
+      "family": "binary-eagle-decoding-artifacts/unattended-training-preparation-20261028",
+      "status": "unreported",
+      "measurements": {
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/campaign-selected128-short_binary_ternary-a8-qualification/short_binary_ternary-a8-capacity-operator-probe/result.json",
+      "sha256": "53decb217738feddb1a8047244fff2adb2c8a423db57f06f821ce5bf25644b2b",
+      "family": "binary-eagle-decoding-artifacts/unattended-training-preparation-20261028",
+      "status": "unreported",
+      "measurements": {
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/scientific-campaign-20261029/automatic/evaluations/short_binary_double-binary/stage-00-capacity-probe/result.json",
+      "sha256": "7f0fb9a5088bd5e262c0b50d3a57602b86c578b85590b78317a70fec651ca4f8",
+      "family": "binary-eagle-decoding-artifacts/unattended-training-preparation-20261028",
+      "status": "unreported",
+      "measurements": {
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/scientific-campaign-20261029/automatic/evaluations/short_binary_double-binary-rank1984/stage-00-capacity-probe/result.json",
+      "sha256": "9bfcbb97bd685ef20d45ac4d47531d3029a395eb99f085cf6559dc1c5a291061",
+      "family": "binary-eagle-decoding-artifacts/unattended-training-preparation-20261028",
+      "status": "unreported",
+      "measurements": {
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/scientific-campaign-20261029/automatic/evaluations/short_binary_double-binary-rank1984/stage-01-capacity-probe/result.json",
+      "sha256": "2c37306cda315be3944131ba7fe15b2c4c31f3f9418a5d2586cea286e4ee6938",
+      "family": "binary-eagle-decoding-artifacts/unattended-training-preparation-20261028",
+      "status": "unreported",
+      "measurements": {
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/scientific-campaign-20261029/automatic/evaluations/short_binary_mos/stage-00-capacity-probe/result.json",
+      "sha256": "29c616015e1a526b69c33f6597261aa06d496053782b5506adda33aabc0ad870",
+      "family": "binary-eagle-decoding-artifacts/unattended-training-preparation-20261028",
+      "status": "unreported",
+      "measurements": {
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/scientific-campaign-20261029/automatic/evaluations/short_binary_mos-static/stage-00-capacity-probe/result.json",
+      "sha256": "8e18f31de8722407f27e905a21d2df72253915664ab28d7fb7e0d3cb44d60907",
+      "family": "binary-eagle-decoding-artifacts/unattended-training-preparation-20261028",
+      "status": "unreported",
+      "measurements": {
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/unattended-training-preparation-20261028/gpu-resume-20261028/scientific-campaign-20261029/automatic/evaluations/short_binary_ternary-a8/stage-00-capacity-probe/result.json",
+      "sha256": "949340553e5ac6ae9928ad239a712cb5962bcd27cc427d66b2e4e43a9ba8f9bc",
+      "family": "binary-eagle-decoding-artifacts/unattended-training-preparation-20261028",
+      "status": "unreported",
+      "measurements": {
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-broader-training-20261031/request-final01/summary.json",
+      "sha256": "1979f7046252a299376c2fe1f10f63ca74afa8c0a9b5e6218ce1db91bb097025",
+      "family": "binary-eagle-decoding-artifacts/5080-broader-training-20261031",
+      "status": "COMPLETE",
+      "measurements": {
+        "panels.development.cells.dpal_best.full_request_seconds": 75.07788889540825,
+        "panels.development.cells.dpal_best.acceptance_percent": 49.92563212692117,
+        "panels.development.cells.dpal_best.by_domain.code.full_request_seconds": 28.704840907477774,
+        "panels.development.cells.dpal_best.by_domain.code.acceptance_percent": 48.84196185286103,
+        "panels.development.cells.dpal_best.by_domain.prose.full_request_seconds": 25.858916221070103,
+        "panels.development.cells.dpal_best.by_domain.prose.acceptance_percent": 35.294117647058826,
+        "panels.development.cells.dpal_best.by_domain.reasoning.full_request_seconds": 20.514131766860373,
+        "panels.development.cells.dpal_best.by_domain.reasoning.acceptance_percent": 70.20517395182873,
+        "panels.development.cells.dpal_best.by_repetition.0.full_request_seconds": 15.045620913035236,
+        "panels.development.cells.dpal_best.by_repetition.0.acceptance_percent": 49.92563212692117,
+        "panels.development.cells.dpal_best.by_repetition.1.full_request_seconds": 14.929274865076877,
+        "panels.development.cells.dpal_best.by_repetition.1.acceptance_percent": 49.92563212692117,
+        "panels.development.cells.dpal_best.by_repetition.2.full_request_seconds": 15.072592161013745,
+        "panels.development.cells.dpal_best.by_repetition.2.acceptance_percent": 49.92563212692117,
+        "panels.development.cells.dpal_best.by_repetition.3.full_request_seconds": 14.951637357124127,
+        "panels.development.cells.dpal_best.by_repetition.3.acceptance_percent": 49.92563212692117,
+        "panels.development.cells.dpal_best.by_repetition.4.full_request_seconds": 15.078763599158265,
+        "panels.development.cells.dpal_best.by_repetition.4.acceptance_percent": 49.92563212692117,
+        "panels.development.cells.eal_best.full_request_seconds": 70.59250698995311,
+        "panels.development.cells.eal_best.acceptance_percent": 55.630026809651476,
+        "panels.development.cells.eal_best.by_domain.code.full_request_seconds": 26.858019487990532,
+        "panels.development.cells.eal_best.by_domain.code.acceptance_percent": 55.17498138495905,
+        "panels.development.cells.eal_best.by_domain.prose.full_request_seconds": 24.790737059956882,
+        "panels.development.cells.eal_best.by_domain.prose.acceptance_percent": 38.66471019809244,
+        "panels.development.cells.eal_best.by_domain.reasoning.full_request_seconds": 18.943750442005694,
+        "panels.development.cells.eal_best.by_domain.reasoning.acceptance_percent": 78.80859375,
+        "panels.development.cells.eal_best.by_repetition.0.full_request_seconds": 14.143290607084054,
+        "panels.development.cells.eal_best.by_repetition.0.acceptance_percent": 55.630026809651476,
+        "panels.development.cells.eal_best.by_repetition.1.full_request_seconds": 14.10163611418102,
+        "panels.development.cells.eal_best.by_repetition.1.acceptance_percent": 55.630026809651476,
+        "panels.development.cells.eal_best.by_repetition.2.full_request_seconds": 14.018363449024037,
+        "panels.development.cells.eal_best.by_repetition.2.acceptance_percent": 55.630026809651476,
+        "panels.development.cells.eal_best.by_repetition.3.full_request_seconds": 14.175155779812485,
+        "panels.development.cells.eal_best.by_repetition.3.acceptance_percent": 55.630026809651476,
+        "panels.development.cells.eal_best.by_repetition.4.full_request_seconds": 14.154061039851513,
+        "panels.development.cells.eal_best.by_repetition.4.acceptance_percent": 55.630026809651476,
+        "panels.development.cells.narrow_32400.full_request_seconds": 71.15685008832952,
+        "panels.development.cells.narrow_32400.acceptance_percent": 54.67302091607095,
+        "panels.development.cells.narrow_32400.by_domain.code.full_request_seconds": 27.380991647252813,
+        "panels.development.cells.narrow_32400.by_domain.code.acceptance_percent": 53.07748008689356,
+        "panels.development.cells.narrow_32400.by_domain.prose.full_request_seconds": 24.802235485170968,
+        "panels.development.cells.narrow_32400.by_domain.prose.acceptance_percent": 38.394160583941606,
+        "panels.development.cells.narrow_32400.by_domain.reasoning.full_request_seconds": 18.97362295590574,
+        "panels.development.cells.narrow_32400.by_domain.reasoning.acceptance_percent": 78.55750487329435,
+        "panels.development.cells.narrow_32400.by_repetition.0.full_request_seconds": 14.224515683134086,
+        "panels.development.cells.narrow_32400.by_repetition.0.acceptance_percent": 54.67302091607095,
+        "panels.development.cells.narrow_32400.by_repetition.1.full_request_seconds": 14.288315641169902,
+        "panels.development.cells.narrow_32400.by_repetition.1.acceptance_percent": 54.67302091607095,
+        "panels.development.cells.narrow_32400.by_repetition.2.full_request_seconds": 14.236823116021696,
+        "panels.development.cells.narrow_32400.by_repetition.2.acceptance_percent": 54.67302091607095,
+        "panels.development.cells.narrow_32400.by_repetition.3.full_request_seconds": 14.125228736840654,
+        "panels.development.cells.narrow_32400.by_repetition.3.acceptance_percent": 54.67302091607095,
+        "panels.development.cells.narrow_32400.by_repetition.4.full_request_seconds": 14.281966911163181,
+        "panels.development.cells.narrow_32400.by_repetition.4.acceptance_percent": 54.67302091607095,
+        "panels.development.cells.parent3504.full_request_seconds": 70.11078871175414,
+        "panels.development.cells.parent3504.acceptance_percent": 55.265262596640895,
+        "panels.development.cells.parent3504.by_domain.code.full_request_seconds": 26.616092732991092,
+        "panels.development.cells.parent3504.by_domain.code.acceptance_percent": 55.05200594353641,
+        "panels.development.cells.parent3504.by_domain.prose.full_request_seconds": 24.42396461899625,
+        "panels.development.cells.parent3504.by_domain.prose.acceptance_percent": 38.78299120234604,
+        "panels.development.cells.parent3504.by_domain.reasoning.full_request_seconds": 19.070731359766796,
+        "panels.development.cells.parent3504.by_domain.reasoning.acceptance_percent": 77.1373679154659,
+        "panels.development.cells.parent3504.by_repetition.0.full_request_seconds": 14.011435465945397,
+        "panels.development.cells.parent3504.by_repetition.0.acceptance_percent": 55.265262596640895,
+        "panels.development.cells.parent3504.by_repetition.1.full_request_seconds": 14.034139844879974,
+        "panels.development.cells.parent3504.by_repetition.1.acceptance_percent": 55.265262596640895,
+        "panels.development.cells.parent3504.by_repetition.2.full_request_seconds": 14.006240161135793,
+        "panels.development.cells.parent3504.by_repetition.2.acceptance_percent": 55.265262596640895,
+        "panels.development.cells.parent3504.by_repetition.3.full_request_seconds": 13.97963724686997,
+        "panels.development.cells.parent3504.by_repetition.3.acceptance_percent": 55.265262596640895,
+        "panels.development.cells.parent3504.by_repetition.4.full_request_seconds": 14.079335992923006,
+        "panels.development.cells.parent3504.by_repetition.4.acceptance_percent": 55.265262596640895,
+        "panels.development.cells.q4_k_m.full_request_seconds": 64.97299111034954,
+        "panels.development.cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "panels.development.cells.q4_k_m.by_domain.code.full_request_seconds": 24.987703303457238,
+        "panels.development.cells.q4_k_m.by_domain.code.acceptance_percent": 64.73551637279597,
+        "panels.development.cells.q4_k_m.by_domain.prose.full_request_seconds": 22.391316379769705,
+        "panels.development.cells.q4_k_m.by_domain.prose.acceptance_percent": 47.19195305951383,
+        "panels.development.cells.q4_k_m.by_domain.reasoning.full_request_seconds": 17.593971427122597,
+        "panels.development.cells.q4_k_m.by_domain.reasoning.acceptance_percent": 90.0871459694989,
+        "panels.development.cells.q4_k_m.by_repetition.0.full_request_seconds": 13.132823003164958,
+        "panels.development.cells.q4_k_m.by_repetition.0.acceptance_percent": 65.44518473652332,
+        "panels.development.cells.q4_k_m.by_repetition.1.full_request_seconds": 12.827275201911107,
+        "panels.development.cells.q4_k_m.by_repetition.1.acceptance_percent": 65.44518473652332,
+        "panels.development.cells.q4_k_m.by_repetition.2.full_request_seconds": 12.953870765166357,
+        "panels.development.cells.q4_k_m.by_repetition.2.acceptance_percent": 65.44518473652332,
+        "panels.development.cells.q4_k_m.by_repetition.3.full_request_seconds": 12.977085847058333,
+        "panels.development.cells.q4_k_m.by_repetition.3.acceptance_percent": 65.44518473652332,
+        "panels.development.cells.q4_k_m.by_repetition.4.full_request_seconds": 13.081936293048784,
+        "panels.development.cells.q4_k_m.by_repetition.4.acceptance_percent": 65.44518473652332,
+        "panels.development.cells.target_only.full_request_seconds": 152.00471598526929,
+        "panels.development.cells.target_only.acceptance_percent": null,
+        "panels.development.cells.target_only.by_domain.code.full_request_seconds": 55.94010058010463,
+        "panels.development.cells.target_only.by_domain.code.acceptance_percent": null,
+        "panels.development.cells.target_only.by_domain.prose.full_request_seconds": 42.90787053620443,
+        "panels.development.cells.target_only.by_domain.prose.acceptance_percent": null,
+        "panels.development.cells.target_only.by_domain.reasoning.full_request_seconds": 53.15674486896023,
+        "panels.development.cells.target_only.by_domain.reasoning.acceptance_percent": null,
+        "panels.development.cells.target_only.by_repetition.0.full_request_seconds": 30.43244196107844,
+        "panels.development.cells.target_only.by_repetition.0.acceptance_percent": null,
+        "panels.development.cells.target_only.by_repetition.1.full_request_seconds": 30.388937928073574,
+        "panels.development.cells.target_only.by_repetition.1.acceptance_percent": null,
+        "panels.development.cells.target_only.by_repetition.2.full_request_seconds": 30.407170969061553,
+        "panels.development.cells.target_only.by_repetition.2.acceptance_percent": null,
+        "panels.development.cells.target_only.by_repetition.3.full_request_seconds": 30.38469523587264,
+        "panels.development.cells.target_only.by_repetition.3.acceptance_percent": null,
+        "panels.development.cells.target_only.by_repetition.4.full_request_seconds": 30.39146989118308,
+        "panels.development.cells.target_only.by_repetition.4.acceptance_percent": null,
+        "panels.development.comparisons.dpal_best.parent3504.acceptance_change_points": -5.339630469719722,
+        "panels.development.comparisons.dpal_best.q4_k_m.acceptance_change_points": -15.519552609602144,
+        "panels.development.comparisons.eal_best.parent3504.acceptance_change_points": 0.3647642130105808,
+        "panels.development.comparisons.eal_best.q4_k_m.acceptance_change_points": -9.81515792687184,
+        "panels.development.comparisons.narrow_32400.parent3504.acceptance_change_points": -0.5922416805699413,
+        "panels.development.comparisons.narrow_32400.q4_k_m.acceptance_change_points": -10.772163820452363
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-broader-training-20261031/request-final02/summary.json",
+      "sha256": "834cabb2375696be7b9174c69d67b0498f73310137b7315e61b656c55c77151c",
+      "family": "binary-eagle-decoding-artifacts/5080-broader-training-20261031",
+      "status": "COMPLETE",
+      "measurements": {
+        "panels.development.cells.fresh_best.full_request_seconds": 70.5140189161757,
+        "panels.development.cells.fresh_best.acceptance_percent": 54.87125033182904,
+        "panels.development.cells.fresh_best.by_domain.code.full_request_seconds": 26.915192888118327,
+        "panels.development.cells.fresh_best.by_domain.code.acceptance_percent": 54.145267791636094,
+        "panels.development.cells.fresh_best.by_domain.prose.full_request_seconds": 24.576348440081347,
+        "panels.development.cells.fresh_best.by_domain.prose.acceptance_percent": 38.37719298245614,
+        "panels.development.cells.fresh_best.by_domain.reasoning.full_request_seconds": 19.022477587976027,
+        "panels.development.cells.fresh_best.by_domain.reasoning.acceptance_percent": 77.60617760617761,
+        "panels.development.cells.fresh_best.by_repetition.0.full_request_seconds": 14.178819913999178,
+        "panels.development.cells.fresh_best.by_repetition.0.acceptance_percent": 54.87125033182904,
+        "panels.development.cells.fresh_best.by_repetition.1.full_request_seconds": 14.088784890191164,
+        "panels.development.cells.fresh_best.by_repetition.1.acceptance_percent": 54.87125033182904,
+        "panels.development.cells.fresh_best.by_repetition.2.full_request_seconds": 14.059683385072276,
+        "panels.development.cells.fresh_best.by_repetition.2.acceptance_percent": 54.87125033182904,
+        "panels.development.cells.fresh_best.by_repetition.3.full_request_seconds": 13.99656177702127,
+        "panels.development.cells.fresh_best.by_repetition.3.acceptance_percent": 54.87125033182904,
+        "panels.development.cells.fresh_best.by_repetition.4.full_request_seconds": 14.190168949891813,
+        "panels.development.cells.fresh_best.by_repetition.4.acceptance_percent": 54.87125033182904,
+        "panels.development.cells.fresh_early96.full_request_seconds": 73.58647705707699,
+        "panels.development.cells.fresh_early96.acceptance_percent": 50.929181315921646,
+        "panels.development.cells.fresh_early96.by_domain.code.full_request_seconds": 28.34399338811636,
+        "panels.development.cells.fresh_early96.by_domain.code.acceptance_percent": 49.01023890784983,
+        "panels.development.cells.fresh_early96.by_domain.prose.full_request_seconds": 25.917694620147813,
+        "panels.development.cells.fresh_early96.by_domain.prose.acceptance_percent": 35.0,
+        "panels.development.cells.fresh_early96.by_domain.reasoning.full_request_seconds": 19.324789048812818,
+        "panels.development.cells.fresh_early96.by_domain.reasoning.acceptance_percent": 75.59129612109744,
+        "panels.development.cells.fresh_early96.by_repetition.0.full_request_seconds": 14.634354941896163,
+        "panels.development.cells.fresh_early96.by_repetition.0.acceptance_percent": 50.929181315921646,
+        "panels.development.cells.fresh_early96.by_repetition.1.full_request_seconds": 14.708687934966292,
+        "panels.development.cells.fresh_early96.by_repetition.1.acceptance_percent": 50.929181315921646,
+        "panels.development.cells.fresh_early96.by_repetition.2.full_request_seconds": 14.758944003086071,
+        "panels.development.cells.fresh_early96.by_repetition.2.acceptance_percent": 50.929181315921646,
+        "panels.development.cells.fresh_early96.by_repetition.3.full_request_seconds": 14.68034185905708,
+        "panels.development.cells.fresh_early96.by_repetition.3.acceptance_percent": 50.929181315921646,
+        "panels.development.cells.fresh_early96.by_repetition.4.full_request_seconds": 14.804148318071384,
+        "panels.development.cells.fresh_early96.by_repetition.4.acceptance_percent": 50.929181315921646,
+        "panels.development.cells.parent3504.full_request_seconds": 70.02804446831578,
+        "panels.development.cells.parent3504.acceptance_percent": 55.265262596640895,
+        "panels.development.cells.parent3504.by_domain.code.full_request_seconds": 26.58436806802638,
+        "panels.development.cells.parent3504.by_domain.code.acceptance_percent": 55.05200594353641,
+        "panels.development.cells.parent3504.by_domain.prose.full_request_seconds": 24.37445620232029,
+        "panels.development.cells.parent3504.by_domain.prose.acceptance_percent": 38.78299120234604,
+        "panels.development.cells.parent3504.by_domain.reasoning.full_request_seconds": 19.069220197969116,
+        "panels.development.cells.parent3504.by_domain.reasoning.acceptance_percent": 77.1373679154659,
+        "panels.development.cells.parent3504.by_repetition.0.full_request_seconds": 14.014007143035997,
+        "panels.development.cells.parent3504.by_repetition.0.acceptance_percent": 55.265262596640895,
+        "panels.development.cells.parent3504.by_repetition.1.full_request_seconds": 13.930992963141762,
+        "panels.development.cells.parent3504.by_repetition.1.acceptance_percent": 55.265262596640895,
+        "panels.development.cells.parent3504.by_repetition.2.full_request_seconds": 13.97826255299151,
+        "panels.development.cells.parent3504.by_repetition.2.acceptance_percent": 55.265262596640895,
+        "panels.development.cells.parent3504.by_repetition.3.full_request_seconds": 13.980571294145193,
+        "panels.development.cells.parent3504.by_repetition.3.acceptance_percent": 55.265262596640895,
+        "panels.development.cells.parent3504.by_repetition.4.full_request_seconds": 14.124210515001323,
+        "panels.development.cells.parent3504.by_repetition.4.acceptance_percent": 55.265262596640895,
+        "panels.development.cells.previous_eal_best.full_request_seconds": 69.19043412437895,
+        "panels.development.cells.previous_eal_best.acceptance_percent": 55.630026809651476,
+        "panels.development.cells.previous_eal_best.by_domain.code.full_request_seconds": 26.33591815130785,
+        "panels.development.cells.previous_eal_best.by_domain.code.acceptance_percent": 55.17498138495905,
+        "panels.development.cells.previous_eal_best.by_domain.prose.full_request_seconds": 24.305556848004926,
+        "panels.development.cells.previous_eal_best.by_domain.prose.acceptance_percent": 38.66471019809244,
+        "panels.development.cells.previous_eal_best.by_domain.reasoning.full_request_seconds": 18.548959125066176,
+        "panels.development.cells.previous_eal_best.by_domain.reasoning.acceptance_percent": 78.80859375,
+        "panels.development.cells.previous_eal_best.by_repetition.0.full_request_seconds": 14.069080383866094,
+        "panels.development.cells.previous_eal_best.by_repetition.0.acceptance_percent": 55.630026809651476,
+        "panels.development.cells.previous_eal_best.by_repetition.1.full_request_seconds": 14.035451305215247,
+        "panels.development.cells.previous_eal_best.by_repetition.1.acceptance_percent": 55.630026809651476,
+        "panels.development.cells.previous_eal_best.by_repetition.2.full_request_seconds": 13.095731245004572,
+        "panels.development.cells.previous_eal_best.by_repetition.2.acceptance_percent": 55.630026809651476,
+        "panels.development.cells.previous_eal_best.by_repetition.3.full_request_seconds": 13.936252765299287,
+        "panels.development.cells.previous_eal_best.by_repetition.3.acceptance_percent": 55.630026809651476,
+        "panels.development.cells.previous_eal_best.by_repetition.4.full_request_seconds": 14.053918424993753,
+        "panels.development.cells.previous_eal_best.by_repetition.4.acceptance_percent": 55.630026809651476,
+        "panels.development.cells.q4_k_m.full_request_seconds": 64.23880329111125,
+        "panels.development.cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "panels.development.cells.q4_k_m.by_domain.code.full_request_seconds": 24.619268188951537,
+        "panels.development.cells.q4_k_m.by_domain.code.acceptance_percent": 64.73551637279597,
+        "panels.development.cells.q4_k_m.by_domain.prose.full_request_seconds": 22.008784744190052,
+        "panels.development.cells.q4_k_m.by_domain.prose.acceptance_percent": 47.19195305951383,
+        "panels.development.cells.q4_k_m.by_domain.reasoning.full_request_seconds": 17.610750357969664,
+        "panels.development.cells.q4_k_m.by_domain.reasoning.acceptance_percent": 90.0871459694989,
+        "panels.development.cells.q4_k_m.by_repetition.0.full_request_seconds": 12.750343101157341,
+        "panels.development.cells.q4_k_m.by_repetition.0.acceptance_percent": 65.44518473652332,
+        "panels.development.cells.q4_k_m.by_repetition.1.full_request_seconds": 12.735586605849676,
+        "panels.development.cells.q4_k_m.by_repetition.1.acceptance_percent": 65.44518473652332,
+        "panels.development.cells.q4_k_m.by_repetition.2.full_request_seconds": 12.928960684104823,
+        "panels.development.cells.q4_k_m.by_repetition.2.acceptance_percent": 65.44518473652332,
+        "panels.development.cells.q4_k_m.by_repetition.3.full_request_seconds": 12.854618499113712,
+        "panels.development.cells.q4_k_m.by_repetition.3.acceptance_percent": 65.44518473652332,
+        "panels.development.cells.q4_k_m.by_repetition.4.full_request_seconds": 12.969294400885701,
+        "panels.development.cells.q4_k_m.by_repetition.4.acceptance_percent": 65.44518473652332,
+        "panels.development.cells.target_only.full_request_seconds": 151.69651386182522,
+        "panels.development.cells.target_only.acceptance_percent": null,
+        "panels.development.cells.target_only.by_domain.code.full_request_seconds": 55.83048849290935,
+        "panels.development.cells.target_only.by_domain.code.acceptance_percent": null,
+        "panels.development.cells.target_only.by_domain.prose.full_request_seconds": 42.74545418395428,
+        "panels.development.cells.target_only.by_domain.prose.acceptance_percent": null,
+        "panels.development.cells.target_only.by_domain.reasoning.full_request_seconds": 53.12057118496159,
+        "panels.development.cells.target_only.by_domain.reasoning.acceptance_percent": null,
+        "panels.development.cells.target_only.by_repetition.0.full_request_seconds": 30.307767154066823,
+        "panels.development.cells.target_only.by_repetition.0.acceptance_percent": null,
+        "panels.development.cells.target_only.by_repetition.1.full_request_seconds": 30.333148825971875,
+        "panels.development.cells.target_only.by_repetition.1.acceptance_percent": null,
+        "panels.development.cells.target_only.by_repetition.2.full_request_seconds": 30.411750208993908,
+        "panels.development.cells.target_only.by_repetition.2.acceptance_percent": null,
+        "panels.development.cells.target_only.by_repetition.3.full_request_seconds": 30.313584488932975,
+        "panels.development.cells.target_only.by_repetition.3.acceptance_percent": null,
+        "panels.development.cells.target_only.by_repetition.4.full_request_seconds": 30.330263183859643,
+        "panels.development.cells.target_only.by_repetition.4.acceptance_percent": null,
+        "panels.development.comparisons.fresh_best.parent3504.acceptance_change_points": -0.39401226481185603,
+        "panels.development.comparisons.fresh_best.q4_k_m.acceptance_change_points": -10.573934404694278,
+        "panels.development.comparisons.fresh_early96.parent3504.acceptance_change_points": -4.336081280719249,
+        "panels.development.comparisons.fresh_early96.q4_k_m.acceptance_change_points": -14.51600342060167,
+        "panels.development.comparisons.previous_eal_best.parent3504.acceptance_change_points": 0.3647642130105808,
+        "panels.development.comparisons.previous_eal_best.q4_k_m.acceptance_change_points": -9.81515792687184
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-ce-only-screen-20261013-v4-final-01/lane/native-e5-20261014-01/evaluation/report.json",
+      "sha256": "b2a86622d9ed1d191448dab1aefa9af19dbdea8d0efec6353aa4ebf69b3b5991",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "unreported",
+      "measurements": {
+        "cells.dspark_a8.acceptance_rate": 0.04611600737856118,
+        "cells.dspark_a8.acceptance_vs_original_eagle_q4": 0.24169480876462734,
+        "cells.dspark_a8.mean_request_latency_s": 1.6289904011572314,
+        "cells.dspark_a8.native_counts.accepted": 3375,
+        "cells.dspark_a8.native_counts.proposed": 73185,
+        "cells.dspark_a8.output_tokens": 14290,
+        "cells.dspark_a8.request_seconds": 195.47884813886776,
+        "cells.dspark_a8.request_tokens_per_second": 73.10253838741885,
+        "cells.eagle_q4.acceptance_rate": 0.264938923737207,
+        "cells.eagle_q4.mean_request_latency_s": 0.8327501632084022,
+        "cells.eagle_q4.native_counts.accepted": 8025,
+        "cells.eagle_q4.native_counts.proposed": 30290,
+        "cells.eagle_q4.output_tokens": 14290,
+        "cells.eagle_q4.request_seconds": 99.93001958500827,
+        "cells.eagle_q4.request_tokens_per_second": 143.00007204385477,
+        "cells.initial.acceptance_rate": 0.14328144203195411,
+        "cells.initial.acceptance_vs_original_eagle_q4": 0.7519288663012179,
+        "cells.initial.mean_request_latency_s": 1.1181935030592285,
+        "cells.initial.native_counts.accepted": 6995,
+        "cells.initial.native_counts.proposed": 48820,
+        "cells.initial.output_tokens": 14290,
+        "cells.initial.request_seconds": 134.18322036710742,
+        "cells.initial.request_tokens_per_second": 106.49617709952453,
+        "cells.target_only.mean_request_latency_s": 1.270285079784056,
+        "cells.target_only.output_tokens": 14290,
+        "cells.target_only.request_seconds": 152.4342095740867,
+        "cells.target_only.request_tokens_per_second": 93.74536096541186
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/binary-eagle-decoding-artifacts/5080-training-20261013/dspark-fresh-scale-only-12h-20261015-04/lane/attempts/direct-dspark-f199bcd4a05c484a90ee94c495ebe3de/evaluations/c737bcf53f2f467d9032e98a418fd622/evaluation/report.json",
+      "sha256": "90fae8ee27f12f01e89ffa7d7aa1c63c67486957c13ce6ce1745d3aae9357d24",
+      "family": "binary-eagle-decoding-artifacts/5080-training-20261013",
+      "status": "unreported",
+      "measurements": {
+        "cells.dspark_a8.acceptance_rate": 0.2057256165571942,
+        "cells.dspark_a8.acceptance_vs_original_eagle_q4": 1.0835606813813217,
+        "cells.dspark_a8.mean_request_latency_s": 0.9493072956674344,
+        "cells.dspark_a8.native_counts.accepted": 8300,
+        "cells.dspark_a8.native_counts.proposed": 40345,
+        "cells.dspark_a8.output_tokens": 14290,
+        "cells.dspark_a8.request_seconds": 113.91687548009213,
+        "cells.dspark_a8.request_tokens_per_second": 125.4423450412954,
+        "cells.eagle_q4.acceptance_rate": 0.264938923737207,
+        "cells.eagle_q4.mean_request_latency_s": 0.8371463488666147,
+        "cells.eagle_q4.native_counts.accepted": 8025,
+        "cells.eagle_q4.native_counts.proposed": 30290,
+        "cells.eagle_q4.output_tokens": 14290,
+        "cells.eagle_q4.request_seconds": 100.45756186399376,
+        "cells.eagle_q4.request_tokens_per_second": 142.2491222646511,
+        "cells.initial.acceptance_rate": 0.14328144203195411,
+        "cells.initial.acceptance_vs_original_eagle_q4": 0.7519288663012179,
+        "cells.initial.mean_request_latency_s": 1.1242916651889876,
+        "cells.initial.native_counts.accepted": 6995,
+        "cells.initial.native_counts.proposed": 48820,
+        "cells.initial.output_tokens": 14290,
+        "cells.initial.request_seconds": 134.9149998226785,
+        "cells.initial.request_tokens_per_second": 105.91854144299472,
+        "cells.target_only.mean_request_latency_s": 1.2760251328514036,
+        "cells.target_only.output_tokens": 14290,
+        "cells.target_only.request_seconds": 153.12301594216842,
+        "cells.target_only.request_tokens_per_second": 93.32365818471767
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-feature-c91516ac13364b39970660ab02412e25/receipts/result.json",
+      "sha256": "f752928b11becfc5fb6db42f15610d39615b314ecbcb15fe3b9760e3211dfff2",
+      "family": "rg-feature-c91516ac13364b39970660ab02412e25",
+      "status": "GPU_STAGE_COMPLETE",
+      "measurements": {
+        "summary.cells.parent3504.acceptance_percent": 55.265262596640895,
+        "summary.cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "summary.throughput_admissible": true
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-feature-c91516ac13364b39970660ab02412e25/receipts/summary.json",
+      "sha256": "cb4e993636b29459310a0782dd846d9c49923630a66c05c8d24db4b9d2ad72d6",
+      "family": "rg-feature-c91516ac13364b39970660ab02412e25",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.parent3504.acceptance_percent": 55.265262596640895,
+        "cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "throughput_admissible": true
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-gpu-352deaff97064a73b7bc438d9bf95933/receipts/result.json",
+      "sha256": "f3837c112516d5da7c9263377c1a72992b7ddcbbbead8e24df35ff6ffc4e1d76",
+      "family": "rg-gpu-352deaff97064a73b7bc438d9bf95933",
+      "status": "GPU_STAGE_COMPLETE",
+      "measurements": {
+        "summary.cells.parent3504.acceptance_percent": 55.265262596640895,
+        "summary.cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "summary.throughput_admissible": true
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-gpu-352deaff97064a73b7bc438d9bf95933/receipts/summary.json",
+      "sha256": "1812c3748a4e8e42e53f6a1e3c2bad9fdf4b66155e8e21b7c6218c2e5ae7b247",
+      "family": "rg-gpu-352deaff97064a73b7bc438d9bf95933",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.parent3504.acceptance_percent": 55.265262596640895,
+        "cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "throughput_admissible": true
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-gpu-4eb7e4c1ccbe45308d6e1afc7e13228f/receipts/result.json",
+      "sha256": "db374d9287e4f01f0506ea66c821680ba7a336b0aacccdc98a1a7f8721b45211",
+      "family": "rg-gpu-4eb7e4c1ccbe45308d6e1afc7e13228f",
+      "status": "GPU_STAGE_COMPLETE",
+      "measurements": {
+        "summary.cells.parent3504.acceptance_percent": 55.265262596640895,
+        "summary.cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "summary.throughput_admissible": true
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-gpu-4eb7e4c1ccbe45308d6e1afc7e13228f/receipts/summary.json",
+      "sha256": "2e475cae7f0ba9cf6ca5923bcbe1b210fffc0e4b597179dd287c8415803e8b7d",
+      "family": "rg-gpu-4eb7e4c1ccbe45308d6e1afc7e13228f",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.parent3504.acceptance_percent": 55.265262596640895,
+        "cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "throughput_admissible": true
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-gpu-aa61a168f09a43cfa1493020032461c9/receipts/result.json",
+      "sha256": "f64e0ae8b636edec0d1822007903fa6aa1ffe30a603d2fd217d431d8c40f8194",
+      "family": "rg-gpu-aa61a168f09a43cfa1493020032461c9",
+      "status": "GPU_STAGE_COMPLETE",
+      "measurements": {
+        "summary.cells.parent3504.acceptance_percent": 55.265262596640895,
+        "summary.cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "summary.throughput_admissible": true
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-gpu-aa61a168f09a43cfa1493020032461c9/receipts/summary.json",
+      "sha256": "f54f5b62acce8cab23419f604adf6dd761e227312539721df7ba0d2a7827bb8a",
+      "family": "rg-gpu-aa61a168f09a43cfa1493020032461c9",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.parent3504.acceptance_percent": 55.265262596640895,
+        "cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "throughput_admissible": true
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-gpu-ae175ebde1c841999b4bec1329b9335b/receipts/result.json",
+      "sha256": "85e8434fe042da7f985ec03380b2bb6410f72bedfdb0591f5f0c15b915ff3dcf",
+      "family": "rg-gpu-ae175ebde1c841999b4bec1329b9335b",
+      "status": "GPU_STAGE_COMPLETE",
+      "measurements": {
+        "summary.cells.parent3504.acceptance_percent": 55.265262596640895,
+        "summary.cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "summary.throughput_admissible": true
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-gpu-ae175ebde1c841999b4bec1329b9335b/receipts/summary.json",
+      "sha256": "f05db90fea767a99fb46192aa48de5ab3ac475feaaaf82f47a14076c9ceb6d51",
+      "family": "rg-gpu-ae175ebde1c841999b4bec1329b9335b",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.parent3504.acceptance_percent": 55.265262596640895,
+        "cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "throughput_admissible": true
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-gpu-cb4b319388d0439ba4297fe0cac73bb0/receipts/result.json",
+      "sha256": "2bf485b57b3752f1a20d82f0931539c7e54b8eaa50bbc6a4fe5b2a94080b5fcf",
+      "family": "rg-gpu-cb4b319388d0439ba4297fe0cac73bb0",
+      "status": "GPU_STAGE_COMPLETE",
+      "measurements": {
+        "summary.cells.parent3504.acceptance_percent": 57.31707317073171,
+        "summary.cells.q4_k_m.acceptance_percent": 63.57615894039735,
+        "summary.throughput_admissible": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-gpu-cb4b319388d0439ba4297fe0cac73bb0/receipts/summary.json",
+      "sha256": "8986a41d17c78f9a0b33df3affc29608c570bc52a7448edd893008fa5f256c38",
+      "family": "rg-gpu-cb4b319388d0439ba4297fe0cac73bb0",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.parent3504.acceptance_percent": 57.31707317073171,
+        "cells.q4_k_m.acceptance_percent": 63.57615894039735,
+        "throughput_admissible": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-gpu-e55e314f6e0b4759a683f9162d27674a/receipts/result.json",
+      "sha256": "af4f4ee71b84ace111f30560c0bfc22e2ef17868a7e06d3e8df5743531d758a9",
+      "family": "rg-gpu-e55e314f6e0b4759a683f9162d27674a",
+      "status": "GPU_STAGE_COMPLETE",
+      "measurements": {
+        "summary.cells.parent3504.acceptance_percent": 55.265262596640895,
+        "summary.cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "summary.throughput_admissible": true
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-gpu-e55e314f6e0b4759a683f9162d27674a/receipts/summary.json",
+      "sha256": "94d82a9fb62e4004cda8b58370c432b5d48894c0480e45bc776a731db3948752",
+      "family": "rg-gpu-e55e314f6e0b4759a683f9162d27674a",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.parent3504.acceptance_percent": 55.265262596640895,
+        "cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "throughput_admissible": true
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-gpu-eae07860665c41e4b2202230fce5179b/receipts/result.json",
+      "sha256": "e65095c67e32d6d6335af562f1d10ec356ac31c342ae4829a9516bcff81f2f23",
+      "family": "rg-gpu-eae07860665c41e4b2202230fce5179b",
+      "status": "GPU_STAGE_COMPLETE",
+      "measurements": {
+        "summary.cells.parent3504.acceptance_percent": 55.265262596640895,
+        "summary.cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "summary.throughput_admissible": true
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-gpu-eae07860665c41e4b2202230fce5179b/receipts/summary.json",
+      "sha256": "f8b5088ec28a647dc732b33622b7aa61693c50eb93c4dbb7be7fe59abdc45a53",
+      "family": "rg-gpu-eae07860665c41e4b2202230fce5179b",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.parent3504.acceptance_percent": 55.265262596640895,
+        "cells.q4_k_m.acceptance_percent": 65.44518473652332,
+        "throughput_admissible": true
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-gpu-fe2e41cfc6104a51929c12ff89acd3d8/receipts/result.json",
+      "sha256": "60eede2f7c706b44d22745ba1fa21e619dcaf73859b6399225e18e8c2b272a11",
+      "family": "rg-gpu-fe2e41cfc6104a51929c12ff89acd3d8",
+      "status": "GPU_STAGE_COMPLETE",
+      "measurements": {
+        "summary.cells.parent3504.acceptance_percent": 55.39568345323741,
+        "summary.cells.q4_k_m.acceptance_percent": 64.85549132947978,
+        "summary.throughput_admissible": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-gpu-fe2e41cfc6104a51929c12ff89acd3d8/receipts/summary.json",
+      "sha256": "3b2083c1a5b77af8cef59e65c0357e731e661cf68e3d46be387e1251de668307",
+      "family": "rg-gpu-fe2e41cfc6104a51929c12ff89acd3d8",
+      "status": "COMPLETE",
+      "measurements": {
+        "cells.parent3504.acceptance_percent": 55.39568345323741,
+        "cells.q4_k_m.acceptance_percent": 64.85549132947978,
+        "throughput_admissible": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-paired-885908bb5a774ee9b41b83194160b42f/receipts/result.json",
+      "sha256": "266cfb14d3fa0c34d221ff4dfbdd13879c437ed4ec46aa5ef2e39e4089111508",
+      "family": "rg-paired-885908bb5a774ee9b41b83194160b42f",
+      "status": "NATIVE_DIAGNOSTIC_PASS",
+      "measurements": {
+        "Q4_throughput_success": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-seed-receipts01/seed-result.json",
+      "sha256": "b9e72ee4010f163574ac59ddd46aa5d2c161bc3e0c673911369715b6d1c6d683",
+      "family": "rg-seed-receipts01",
+      "status": "DIAGNOSTIC_COMPLETE",
+      "measurements": {
+        "throughput_claim": false
+      }
+    },
+    {
+      "source": "/mnt/c/Users/philip/rg-trial-recovery-eddb2f8592834bd2a20a3b4b0e633097/metadata/636ee2bff269f048-result.json",
+      "sha256": "2498f9a45b67c19b916b67394921b8ae872d19519cd4b393d751d4c99da14b45",
+      "family": "rg-trial-recovery-eddb2f8592834bd2a20a3b4b0e633097",
+      "status": "AUTHENTIC_COMPLETE_CAPTURE",
+      "measurements": {
+        "throughput_claim": false
+      }
+    }
+  ]
+}

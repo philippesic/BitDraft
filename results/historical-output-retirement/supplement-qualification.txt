@@ -1,0 +1,20 @@
+import gzip
+import hashlib
+import json
+from pathlib import Path
+
+index = Path('artifacts/archive/development-history/qualification-index.jsonl.gz')
+rows = [json.loads(line) for line in gzip.open(index, 'rt')]
+for row in rows:
+    path = Path(row['path'])
+    if path.name == 'gpu.txt':
+        row['disposition'] = 'retain-development'
+    if path.name in {'uv.lock', 'CMakeLists.txt', 'Makefile', 'LICENSE', 'COPYING'} and row['support'] is None:
+        data = path.read_bytes()
+        assert hashlib.sha256(data).hexdigest() == row['sha256']
+        blob = Path('artifacts/archive/development-history/blobs') / (row['sha256'] + '.gz')
+        blob.write_bytes(gzip.compress(data, mtime=0))
+        row['support'] = str(blob.resolve())
+with gzip.open(index, 'wt') as output:
+    for row in rows:
+        output.write(json.dumps(row, separators=(',', ':')) + '\n')

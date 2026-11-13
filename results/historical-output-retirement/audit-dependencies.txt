@@ -1,0 +1,61 @@
+import json
+from collections import Counter
+from pathlib import Path
+import sys
+sys.path.insert(0, '/home/philip/BitDraft')
+from w1a1_eagle.storage import relocated
+
+ROOT = Path('/home/philip/BitDraft')
+QUAL = ROOT / 'artifacts/qualification'
+RECEIPTS = ROOT / 'artifacts/receipts/artifact-closeout-20261113'
+seeds = list((ROOT / 'artifacts/training').glob('*.json'))
+seeds += list((ROOT / 'artifacts/benchmarks/references').rglob('*.json'))
+seeds += list((QUAL / 'lean-checks').glob('*cached-spec.json'))
+seeds += list((QUAL / 'lean-checks').glob('*leader-cached-spec.json'))
+keep_roots = [QUAL / 'broad-precision-dev-01', QUAL / 'lean-checks/initialization-01', QUAL / 'original-zero-export-02']
+queue = list(seeds)
+visited = set()
+references = {}
+missing = []
+
+def visit(value, owner):
+    if isinstance(value, dict):
+        if {'path', 'sha256', 'bytes'} <= value.keys() and isinstance(value['path'], str):
+            target = Path(value['path'])
+            target = relocated(target if target.is_absolute() else owner.parent / target).resolve()
+            if target.is_relative_to(ROOT):
+                references.setdefault(str(target), []).append(str(owner))
+                if target.is_file() and target.suffix == '.json' and target.stat().st_size < 64 * 1024 * 1024:
+                    queue.append(target)
+                elif not target.exists():
+                    missing.append({'owner': str(owner), 'path': str(target), 'sha256': value['sha256']})
+        for key, item in value.items():
+            if key in {'drafter', 'latest_state', 'latest_drafter', 'provisional_fast_leader', 'full_dev_incumbent', 'parent', 'source', 'vocabulary', 'materialized'} and 'references' in owner.parts:
+                continue
+            visit(item, owner)
+    elif isinstance(value, list):
+        for item in value:
+            visit(item, owner)
+
+while queue:
+    p = queue.pop()
+    if p in visited:
+        continue
+    visited.add(p)
+    try:
+        visit(json.loads(p.read_text()), p)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        pass
+large = []
+for p in sorted(QUAL.rglob('*')):
+    if p.is_file() and not p.is_symlink() and p.stat().st_size > 8 * 1024 * 1024:
+        owners = references.get(str(p), [])
+        retained = any(p.is_relative_to(root) for root in keep_roots) or bool(owners)
+        large.append({'path': str(p), 'bytes': p.stat().st_size, 'referenced': owners, 'retain': retained})
+(RECEIPTS / 'qualification-dependency-audit.json').write_text(json.dumps({'seed_files': [str(p) for p in seeds], 'visited': [str(p) for p in sorted(visited)], 'references': references, 'missing_before': missing, 'large_files': large}, indent=2) + '\n')
+print('Seeds',len(seeds),'metadata visited',len(visited),'references',len(references),'preexisting missing',len(missing))
+print('Large retained',sum(d['bytes'] for d in large if d['retain']) / 2**30)
+for d in large:
+    if d['retain']:
+        print(round(d['bytes']/2**30,3), d['path'], 'REFERENCES',len(d['referenced']))
+print('Other large payload GiB',sum(d['bytes'] for d in large if not d['retain']) / 2**30)

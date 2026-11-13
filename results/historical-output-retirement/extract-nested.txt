@@ -1,0 +1,84 @@
+import gzip
+import hashlib
+import io
+import json
+import tarfile
+from pathlib import Path
+
+ROOT=Path('/home/philip/BitDraft')
+SOURCE=ROOT/'artifacts/archive/windows-legacy'
+SUPPORT=ROOT/'artifacts/archive/development-history'
+RECEIPTS=ROOT/'artifacts/receipts/artifact-closeout-20261113'
+TEXT={'.json','.jsonl','.md','.txt','.log','.csv','.tsv','.toml','.yaml','.yml','.py','.sh','.cpp','.cc','.c','.h','.hpp','.cu','.cuh','.patch','.diff','.cmake','.ps1'}
+NAMES={'uv.lock','Makefile','LICENSE','COPYING','CMakeLists.txt'}
+rows=[]; processed=set(); containers=[]
+
+def nested_name(name):
+    return any(name.endswith(s) for s in ('.tar.gz','.tar','.tgz','.json.gz','.jsonl.gz','.zip','.bundle'))
+
+def save(data, source, name):
+    sha=hashlib.sha256(data).hexdigest()
+    blob=SUPPORT/'blobs'/(sha+'.gz')
+    if not blob.exists():blob.write_bytes(gzip.compress(data,compresslevel=6,mtime=0))
+    assert hashlib.sha256(gzip.decompress(blob.read_bytes())).hexdigest()==sha
+    rows.append({'source':source,'member':name,'sha256':sha,'bytes':len(data),'archive':'nested-container','disposition':'compact-support'})
+
+def unpack(data, source, name, depth=0):
+    if depth>8:raise ValueError(('nested depth exceeds inspected bound',source))
+    sha=hashlib.sha256(data).hexdigest()
+    containers.append({'source':source,'sha256':sha,'bytes':len(data),'reused':sha in processed})
+    if sha in processed:return
+    processed.add(sha)
+    if name.endswith(('.json.gz','.jsonl.gz')):
+        plain=gzip.decompress(data)
+        if len(plain)<=64*1024*1024:save(plain,source+'::'+Path(name).name.removesuffix('.gz'),name.removesuffix('.gz'))
+        else:raise ValueError(('large nested JSON requires explicit reduction',source,len(plain)))
+        return
+    if name.endswith(('.zip','.bundle')):
+        raise ValueError(('nested container needs explicit reader',source))
+    with tarfile.open(fileobj=io.BytesIO(data),mode='r|*') as bundle:
+        members={}
+        for member in bundle:
+            if member.isdir():continue
+            locator=source+'::'+member.name
+            if member.issym():
+                rows.append({'source':locator,'member':member.name,'sha256':'','bytes':0,'archive':sha,'disposition':'historical-link','link':member.linkname})
+                continue
+            if member.islnk():
+                target=members[member.linkname]
+                rows.append({**target,'source':locator,'member':member.name,'link':member.linkname})
+                continue
+            stream=bundle.extractfile(member)
+            keep=(Path(member.name).suffix.lower() in TEXT or Path(member.name).name in NAMES) and member.size<=64*1024*1024 and Path(member.name).name!='process-lineage.json'
+            inner=nested_name(member.name)
+            chunks=[]; digest=hashlib.sha256();count=0
+            while chunk:=stream.read(4*1024*1024):
+                digest.update(chunk);count+=len(chunk)
+                if keep or inner:chunks.append(chunk)
+            assert count==member.size
+            row={'source':locator,'member':member.name,'sha256':digest.hexdigest(),'bytes':count,'archive':sha,'disposition':'discard-raw'}
+            if keep:
+                save(b''.join(chunks),locator,member.name);row=rows[-1]
+            elif inner:
+                unpack(b''.join(chunks),locator,member.name,depth+1)
+                row['disposition']='converted-container';rows.append(row)
+            else:rows.append(row)
+            members[member.name]=row
+
+for number, archive in enumerate(sorted(SOURCE.glob('*.tar.zst')),1):
+    index=SUPPORT/(archive.name+'.index.jsonl.gz')
+    wanted={r['member']:r for line in gzip.open(index,'rt') if nested_name((r:=json.loads(line))['source'])}
+    if not wanted:continue
+    print('ARCHIVE',number,archive.name,'containers',len(wanted),flush=True)
+    with tarfile.open(archive,mode='r|zst') as bundle:
+        for member in bundle:
+            if member.name not in wanted:continue
+            r=wanted.pop(member.name)
+            data=bundle.extractfile(member).read()
+            assert len(data)==r['bytes'] and hashlib.sha256(data).hexdigest()==r['sha256']
+            unpack(data,r['source'],member.name)
+    if wanted:raise ValueError(('nested members missing',archive.name,list(wanted)))
+with gzip.open(SUPPORT/'windows-nested.index.jsonl.gz','wt') as out:
+    for row in rows:out.write(json.dumps(row,separators=(',',':'))+'\n')
+(RECEIPTS/'nested-evidence-verification.json').write_text(json.dumps({'containers':containers,'nested_member_occurrences':len(rows),'compact_support_rows':sum(r['disposition']=='compact-support' for r in rows)},indent=2)+'\n')
+print('NESTED_EXTRACTION_COMPLETE',len(containers),len(rows),flush=True)

@@ -1,0 +1,56 @@
+import csv
+import gzip
+import hashlib
+import json
+import math
+import sys
+from pathlib import Path
+sys.path.insert(0, '/home/philip/BitDraft')
+from benchmarks.metrics import totals
+from benchmarks.workflows import summarize
+
+ROOT = Path('/home/philip/BitDraft')
+DEST = ROOT / 'results/historical-output-retirement'
+SUPPORT = ROOT / 'artifacts/archive/development-history'
+DEST.mkdir(parents=True,exist_ok=True)
+rows = [json.loads(s) for s in gzip.open(SUPPORT / 'qualification-index.jsonl.gz','rt')]
+catalog=[]; verified=[]; failures=[]; campaigns=[]
+for row in rows:
+    path=Path(row['path'])
+    if path.name not in {'result.json','report.json','failure.json','status.json','interruptions.json'} or row['support'] is None:
+        continue
+    data=gzip.decompress(Path(row['support']).read_bytes())
+    assert hashlib.sha256(data).hexdigest()==row['sha256']
+    d=json.loads(data)
+    if not isinstance(d,dict):continue
+    relative=str(path.relative_to(ROOT/'artifacts/qualification'))
+    if path.name=='failure.json':
+        failures.append({'path':relative,'sha256':row['sha256'],'failure':d})
+        continue
+    if path.name=='status.json' and path.parent.name.startswith('campaign-'):
+        campaigns.append({'path':relative,'sha256':row['sha256'],'status':d.get('status'),'scope':d.get('scope'),'model_update_seconds':d.get('model_update_seconds'),'last_native_interruption_seconds':d.get('last_native_interruption_seconds'),'last_evaluated_updates':d.get('last_evaluated_updates'),'provisional_score':(d.get('provisional_fast_leader') or {}).get('score')})
+    if path.name not in {'result.json','report.json'}:continue
+    measured=d.get('rows',[])
+    summaries=d.get('summary',{})
+    if isinstance(summaries,dict) and summaries:
+        for arm, summary in summaries.items():
+            if not isinstance(summary,dict):continue
+            observed=[v for v in measured if isinstance(v,dict) and v.get('arm')==arm]
+            if observed and all({'wall_seconds','tokens','native','correct'} <= v.keys() for v in observed):
+                computed=summarize(observed) if all({"completed", "model_seconds", "tool_seconds"} <= v.keys() for v in observed) else totals(observed)
+                for key,value in computed.items():
+                    if key not in summary:continue
+                    expected=summary[key]
+                    agrees=math.isclose(value,expected,rel_tol=1e-12,abs_tol=1e-10) if isinstance(value,(float,int)) and not isinstance(value,bool) and isinstance(expected,(int,float)) else value==expected
+                    if not agrees:raise ValueError((relative,arm,key,value,expected))
+                verified.append({'path':relative,'arm':arm,'rows':len(observed)})
+            catalog.append({'path':relative,'sha256':row['sha256'],'status':d.get('status','unreported'),'tier':d.get('tier',''),'arm':arm,'execution':summary.get('execution',''),'rows':len(observed),'requests':summary.get('requests',''),'tasks':summary.get('tasks',''),'tokens':summary.get('tokens',''),'seconds':summary.get('wall_seconds',summary.get('elapsed_seconds','')),'accepted':summary.get('accepted',''),'proposed':summary.get('proposed',''),'correct':summary.get('correct',''),'completed':summary.get('completed','')})
+    else:
+        catalog.append({'path':relative,'sha256':row['sha256'],'status':d.get('status',d.get('operational','unreported')),'tier':d.get('tier',''),'arm':'','rows':len(measured) if isinstance(measured,list) else 0})
+fields=['path','sha256','status','tier','arm','execution','rows','requests','tasks','tokens','seconds','accepted','proposed','correct','completed']
+with (DEST/'qualification.csv').open('w') as out:
+    writer=csv.DictWriter(out,fieldnames=fields);writer.writeheader();writer.writerows(catalog)
+(DEST/'qualification-campaigns.json').write_text(json.dumps(campaigns,indent=2)+'\n')
+with gzip.open(SUPPORT/'qualification-failures.json.gz','wt') as out:json.dump(failures,out)
+(ROOT/'artifacts/receipts/artifact-closeout-20261113/qualification-metrics-verification.json').write_text(json.dumps({'catalog_rows':len(catalog),'recomputed_arms':verified,'failures_preserved':len(failures),'campaigns_preserved':len(campaigns)},indent=2)+'\n')
+print('catalog_rows',len(catalog),'recomputed_arms',len(verified),'failures',len(failures),'campaigns',len(campaigns))

@@ -1,0 +1,53 @@
+import gzip
+import hashlib
+import json
+from pathlib import Path
+
+ROOT = Path('/home/philip/BitDraft')
+QUAL = ROOT / 'artifacts/qualification'
+DEST = ROOT / 'artifacts/archive/development-history'
+RECEIPTS = ROOT / 'artifacts/receipts/artifact-closeout-20261113'
+audit = json.loads((RECEIPTS / 'qualification-dependency-audit.json').read_text())
+keep_roots = [QUAL / 'broad-precision-dev-01', QUAL / 'lean-checks/initialization-01', QUAL / 'original-zero-export-02']
+keep = {Path(p) for p in [*audit['seed_files'], *audit['references'], *audit['visited']]}
+TEXT = {'.json', '.jsonl', '.md', '.txt', '.log', '.csv', '.tsv', '.toml', '.yaml', '.yml', '.py', '.sh', '.cpp', '.cc', '.c', '.h', '.hpp', '.cu', '.cuh', '.patch', '.diff', '.cmake', '.ps1', '.gz'}
+rows = []
+counts = {}
+for number, p in enumerate(sorted(QUAL.rglob('*'))):
+    if p.is_symlink():
+        raise ValueError(('qualification symlink requires explicit handling', str(p)))
+    if not p.is_file():
+        continue
+    status = p.stat()
+    retain = p in keep or any(p.is_relative_to(root) for root in keep_roots)
+    digestor = hashlib.sha256()
+    text = p.suffix.lower() in TEXT and status.st_size <= 64 * 1024 * 1024
+    chunks = []
+    with p.open('rb') as stream:
+        while chunk := stream.read(4 * 1024 * 1024):
+            digestor.update(chunk)
+            if text:
+                chunks.append(chunk)
+    digest = digestor.hexdigest()
+    disposition = 'retain-development' if retain else 'discard-output'
+    support = None
+    if text:
+        blob = DEST / 'blobs' / (digest + '.gz')
+        if not blob.exists():
+            blob.write_bytes(gzip.compress(b''.join(chunks), compresslevel=6, mtime=0))
+        if hashlib.sha256(gzip.decompress(blob.read_bytes())).hexdigest() != digest:
+            raise ValueError(('qualification support readback failed', str(p)))
+        support = str(blob)
+    if not retain and not text and status.st_size < 8 * 1024 * 1024 and p.suffix.lower() not in {'.f16','.f32','.bin','.pyc','.lock','.writer','.png','.svg','.npz','.npy','.pt','.bsz','.so'}:
+        print('REVIEW_NON_TEXT', str(p), status.st_size, flush=True)
+    row = {'path': str(p), 'sha256': digest, 'bytes': status.st_size, 'allocated': status.st_blocks * 512, 'links': status.st_nlink, 'inode': status.st_ino, 'device': status.st_dev, 'disposition': disposition, 'support': support}
+    rows.append(row)
+    counts[disposition + '_bytes'] = counts.get(disposition + '_bytes', 0) + status.st_size
+    counts[disposition + '_files'] = counts.get(disposition + '_files', 0) + 1
+    if number % 2500 == 0:
+        print('PROGRESS',number,str(p), flush=True)
+with gzip.open(DEST / 'qualification-index.jsonl.gz', 'wt') as output:
+    for row in rows:
+        output.write(json.dumps(row,separators=(',', ':')) + '\n')
+(RECEIPTS / 'qualification-extraction.json').write_text(json.dumps(counts,indent=2) + '\n')
+print('QUALIFICATION_EXTRACTION_COMPLETE',json.dumps(counts),flush=True)
