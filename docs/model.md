@@ -19,6 +19,11 @@ CPU tests; a passing tiny test does not establish full-size behavior.
 4. The final normalized state is projected through the frozen vocabulary matrix.
    The worker trains on the fifteen prediction slots after the anchor.
 
+The native runtime uses the same anchor-plus-mask layout but builds only depth+1 slots
+per round (`artifacts/native/runtime-v5/source/common/speculative.cpp`). At the
+benchmark depth of 2 it proposes the first two predictions from a three-slot block, while
+training and its diagnostics use all sixteen slots.
+
 The CPU implementation simulates quantized arithmetic with floating-point tensors.
 It does not demonstrate binary hardware execution or native inference speed.
 

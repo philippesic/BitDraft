@@ -30,6 +30,9 @@ evaluation set. Details: [data](data.md).
 - Complete-request throughput: total emitted tokens divided by total full HTTP
   request wall time. Never a mean of per-request rates.
 - Acceptance: total accepted tokens divided by total proposed tokens.
+- Round: one target verification of a draft. It proposes at most the draft depth and
+  emits its accepted drafts plus one target token. Accepted per round is therefore
+  bounded by depth; at depth 2, 50% acceptance is about one accepted draft per round.
 - Exposure at a position: the number of window visits that cover it. Mean exposure is
   total position visits divided by unique positions. Window passes are total window
   visits divided by unique windows. These are different denominators.
