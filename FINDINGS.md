@@ -168,8 +168,13 @@ failure recovery preserved exact state and reused historical controls.
 
 [Grouped updates](results/grouped-updates/result.md): training one group of windows per
 update raised RTX 5080 update throughput from about 90 to about 2,100 labels/s at typical
-context within a 14 GiB device cap; disk loading limits end-to-end training to about 970
-labels/s, and step sizes still need retuning.
+context within a 14 GiB device cap; before prefetching, disk loading limited end-to-end
+training to about 970 labels/s, and step sizes still need retuning.
+
+[Sequence prefetch](results/sequence-prefetch/result.md): loading the next group's sequence
+in the background, hashing feature bytes in memory and converting FP16 to FP32 on the GPU
+raised end-to-end throughput from 810 to 1,685 labels/s on real weights, within 9% of
+update-only throughput, with bit-identical states.
 
 ## Capture storage
 
