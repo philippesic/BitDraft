@@ -1,0 +1,228 @@
+===== probe.py
+import json
+import os
+import random
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+from benchmarks.measurement import pause, port_number, ready, request
+from benchmarks.runtime_policy import arguments
+from w1a1_eagle.config import native_environment
+from w1a1_eagle.device import cuda_identity, device_lease
+
+MAIN = Path("/home/philip/BitDraft/artifacts")
+RUNTIMES = {
+    "v5": MAIN / "native/runtime-v5/build/bin/llama-server",
+    "new": Path(os.environ.get("NEW_RUNTIME", "")),
+}
+TARGET = MAIN / "models/qwen35-4b-q4km.gguf"
+DRAFTERS = {
+    "target": None,
+    "baseline": MAIN / "models/dflash-4b-q4km.gguf",
+    "he4": MAIN
+    / "qualification/original-zero-export-02/exports/99d2be79f956f6ccde483b960d4a31b939eeda86e4530e813929a3452c14fc1e.bin",
+}
+LENGTHS = (512, 2048, 4096, 8192, 16000)
+REPEATS = 3
+SESSIONS = ((4096, 32), (4096, 512), (12000, 32))
+
+
+def tokens(count: int, seed: int) -> list[int]:
+    generator = random.Random(seed)
+    return [generator.randrange(100, 100000) for _ in range(count)]
+
+
+def complete(port: int, prompt: list[int], cache: bool, predict: int) -> dict:
+    start = time.perf_counter()
+    response = request(
+        port,
+        "completion",
+        {
+            "prompt": prompt,
+            "n_predict": predict,
+            "temperature": 0.0,
+            "seed": 8101,
+            "cache_prompt": cache,
+            "return_tokens": True,
+        },
+    )
+    wall = time.perf_counter() - start
+    timing = response["timings"]
+    return {
+        "wall_ms": wall * 1000,
+        "prompt_ms": timing["prompt_ms"],
+        "prompt_n": timing["prompt_n"],
+        "cache_n": timing.get("cache_n", 0),
+        "predicted_ms": timing["predicted_ms"],
+        "predicted_n": timing["predicted_n"],
+        "draft_n": timing.get("draft_n"),
+        "draft_n_accepted": timing.get("draft_n_accepted"),
+        "tokens": response.get("tokens", []),
+    }
+
+
+def requests_test(port: int) -> list[dict]:
+    rows = []
+    complete(port, tokens(2048, 1), False, 1)
+    for repeat in range(REPEATS):
+        for length in LENGTHS:
+            row = complete(port, tokens(length, 100 + length), False, 1)
+            row.pop("tokens")
+            rows.append({"test": "request", "length": length, "repeat": repeat, **row})
+    for length in LENGTHS:
+        row = complete(port, tokens(length, 100 + length), False, 96)
+        rows.append({"test": "exact", "length": length, "repeat": 0, **row})
+    return rows
+
+
+def session_test(port: int, context: int, new: int) -> list[dict]:
+    rows = []
+    prompt = tokens(context, 7 + context)
+    first = complete(port, prompt, True, 8)
+    prompt = prompt + first["tokens"]
+    for step in range(4):
+        prompt = prompt + tokens(new, 1000 * step + new + context)
+        row = complete(port, prompt, True, 8)
+        prompt = prompt + row["tokens"]
+        rows.append({"test": "session", "context": context, "new": new, "step": step, **row})
+    return rows
+
+
+def run(name: str, runtime: str, arm: str, env: dict[str, str], out: Path) -> None:
+    binary = RUNTIMES[runtime]
+    cell = out / name
+    cell.mkdir(parents=True)
+    port = port_number()
+    argv = arguments(binary, TARGET, DRAFTERS[arm], 32768, 2, port)
+    environment = native_environment(binary.parent)
+    environment.update(env)
+    (cell / "command.json").write_text(json.dumps({"argv": argv, "env": env}, indent=1))
+    rows: list[dict] = []
+    with (cell / "server.log").open("wb") as log:
+        process = subprocess.Popen(
+            [sys.executable, "-B", "-m", "benchmarks.server_child", str(os.getpid()), *argv],
+            env=environment,
+            stdout=log,
+            stderr=subprocess.STDOUT,
+            start_new_session=True,
+        )
+        try:
+            deadline = time.monotonic() + 180
+            while not ready(port):
+                if process.poll() is not None or time.monotonic() > deadline:
+                    raise ValueError("server startup failed: " + name)
+                pause(0.25)
+            rows += requests_test(port)
+            for context, new in SESSIONS:
+                rows += session_test(port, context, new)
+        finally:
+            if process.poll() is None:
+                process.terminate()
+            try:
+                process.wait(timeout=60)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait(timeout=15)
+    (cell / "rows.json").write_text(json.dumps(rows, indent=1))
+    print(name, "done", len(rows), time.strftime("%H:%M:%S"), flush=True)
+
+
+def main() -> None:
+    out = Path(sys.argv[1])
+    names = sys.argv[2].split(",")
+    out.mkdir(parents=True, exist_ok=True)
+    deadline = time.monotonic() + 7000
+    while True:
+        try:
+            with device_lease("cuda"):
+                started = time.time()
+                print("lease-start", time.strftime("%H:%M:%S"), flush=True)
+                (out / "gpu.txt").write_text(cuda_identity())
+                for name in names:
+                    parts = name.split("-")
+                    runtime, arm = parts[0], parts[1]
+                    env = {"LLAMA_SPEC_HOST_FEATURES": "1"} if "hostfeat" in parts else {}
+                    run(name, runtime, arm, env, out)
+                print("lease-end", time.strftime("%H:%M:%S"), "seconds", round(time.time() - started, 1), flush=True)
+                return
+        except ValueError as error:
+            if "lease" not in str(error) and "compute processes" not in str(error):
+                raise
+            if time.monotonic() > deadline:
+                raise
+            time.sleep(20)
+
+
+if __name__ == "__main__":
+    main()
+===== replay.py
+import json
+import os
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+from benchmarks.measurement import pause, port_number, ready, request
+from benchmarks.runtime_policy import arguments
+from w1a1_eagle.config import native_environment
+from w1a1_eagle.device import device_lease
+
+sys.path.insert(0, str(Path(__file__).parent))
+from probe import DRAFTERS, RUNTIMES, TARGET  # noqa: E402
+
+SOURCE = Path(__file__).parent / "screen-v5/0-0-candidate"
+
+
+def run(name: str, runtime: str, arm: str, out: Path) -> None:
+    binary = RUNTIMES[runtime]
+    cell = out / name
+    cell.mkdir(parents=True)
+    port = port_number()
+    argv = arguments(binary, TARGET, DRAFTERS[arm], 32768, 2, port)
+    rows = []
+    with (cell / "server.log").open("wb") as log:
+        process = subprocess.Popen(
+            [sys.executable, "-B", "-m", "benchmarks.server_child", str(os.getpid()), *argv],
+            env=native_environment(binary.parent), stdout=log, stderr=subprocess.STDOUT, start_new_session=True,
+        )
+        try:
+            while not ready(port):
+                if process.poll() is not None:
+                    raise ValueError("startup failed")
+                pause(0.25)
+            for path in sorted(SOURCE.glob("*-request.json"), key=lambda p: int(p.name.split("-")[0])):
+                payload = json.loads(path.read_text())
+                body = payload.get("payload", payload)
+                response = request(port, "completion", body)
+                t = response["timings"]
+                rows.append({"request": path.name, "tokens": response.get("tokens"), **{k: t.get(k) for k in ("prompt_ms", "prompt_n", "predicted_ms", "predicted_n", "draft_n", "draft_n_accepted")}})
+        finally:
+            process.terminate()
+            process.wait(timeout=60)
+    (cell / "rows.json").write_text(json.dumps(rows))
+    print(name, "done", len(rows), flush=True)
+
+
+def main() -> None:
+    out = Path(sys.argv[1])
+    out.mkdir(parents=True, exist_ok=True)
+    while True:
+        try:
+            with device_lease("cuda"):
+                print("lease-start", time.strftime("%H:%M:%S"), flush=True)
+                for name in sys.argv[2].split(","):
+                    runtime, arm = name.split("-")[:2]
+                    run(name, runtime, arm, out)
+                print("lease-end", time.strftime("%H:%M:%S"), flush=True)
+                return
+        except ValueError as error:
+            if "lease" not in str(error) and "compute processes" not in str(error):
+                raise
+            time.sleep(20)
+
+
+if __name__ == "__main__":
+    main()

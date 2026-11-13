@@ -198,6 +198,8 @@ them). Drafters add prompt work, so keep the split visible: in the live panel it
 the decoding gain ([standing](../results/he4broad-final-standing/result.md)). That extra time is
 runtime overhead shared by every DFlash-style drafter: host-side feature copies and larger
 context checkpoints, not drafter compute ([prefill overhead](../results/speculative-prefill-overhead/result.md)).
+Runtime-v6 removes most of it with outputs identical to runtime-v5
+([fixes](../results/drafter-prompt-overhead-fixes/result.md)); panels and saved references still use runtime-v5.
 Request wall time also includes the server's RAM prompt-cache save of the previous request in
 every arm, outside `server_prompt_seconds`. Paired group bootstraps preserve category composition and keep repeats/
 variants together. Sparse strata make intervals unavailable; multiple candidates also
@@ -318,7 +320,8 @@ with receipts after two later segments.
 
 `native-build` uses pinned source/headers/compiler, without old objects; helpers rebuild
 rendering/tokenization/capture/verifier tools. Source includes the measured sampled-EOG
-repair. Trace builds are diagnostic, excluded from timing. `verify-greedy` independently
+repair. An optional `source_edits` list names edit sets in `benchmarks/runtime_edits.py`;
+each edit must match the pinned source exactly once, and `runtime_repairs` records them. Trace builds are diagnostic, excluded from timing. `verify-greedy` independently
 checks target argmax, prefixes, correction/bonus/EOG and counters. `verify-sampler` tests
 both actual native algorithms on probabilities, zero support and EOG. CPU distributions
 and neural GPU requests are separate evidence. `reduce-trace` only checks supplied structure.

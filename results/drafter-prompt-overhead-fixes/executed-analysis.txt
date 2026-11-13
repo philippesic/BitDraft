@@ -1,0 +1,177 @@
+===== run-panels.sh
+#!/usr/bin/env bash
+set -u
+cd /home/philip/.t3/worktrees/BitDraft/t3-fc0c881c
+export BINARY_NUMERICAL_PYTHON=/home/philip/BitDraft/.venv/numerical-clean/bin/python
+while [ $# -ge 3 ]; do
+  cmd=$1; spec=$2; out=$3; shift 3
+  while true; do
+    log=$(mktemp)
+    uv run --locked --no-sync --offline python -B -m benchmarks "$cmd" "$spec" "$out" > "$log" 2>&1
+    code=$?
+    if [ $code -ne 0 ] && grep -q -E "GPU lease|compute processes" "$log" && [ ! -e "$out" ]; then
+      rm -f "$log"; sleep 30; continue
+    fi
+    echo "$(date +%H:%M:%S) $cmd $out exit $code"; tail -3 "$log"; rm -f "$log"
+    break
+  done
+done
+===== screen_check.py
+import json
+import sys
+from pathlib import Path
+
+a, b = Path(sys.argv[1]), Path(sys.argv[2])
+out = {}
+for arm in ("target", "baseline", "candidate"):
+    cells_a = sorted(p for p in a.iterdir() if p.is_dir() and p.name.endswith("-" + arm))
+    cells_b = sorted(p for p in b.iterdir() if p.is_dir() and p.name.endswith("-" + arm))
+    assert [p.name for p in cells_a] == [p.name for p in cells_b]
+    n = same = 0
+    prompt = {"a": 0.0, "b": 0.0}
+    pred = {"a": 0.0, "b": 0.0}
+    acc = {"a": [0, 0], "b": [0, 0]}
+    for ca, cb in zip(cells_a, cells_b):
+        for ra in sorted(ca.glob("*-response.json")):
+            rb = cb / ra.name
+            x, y = json.loads(ra.read_text()), json.loads(rb.read_text())
+            n += 1
+            tx, ty = x["timings"], y["timings"]
+            ok = (
+                x.get("tokens") == y.get("tokens")
+                and x.get("content") == y.get("content")
+                and x.get("stop_type") == y.get("stop_type")
+                and tx.get("draft_n") == ty.get("draft_n")
+                and tx.get("draft_n_accepted") == ty.get("draft_n_accepted")
+                and tx["prompt_n"] == ty["prompt_n"]
+                and tx["predicted_n"] == ty["predicted_n"]
+            )
+            same += ok
+            prompt["a"] += tx["prompt_ms"]
+            prompt["b"] += ty["prompt_ms"]
+            pred["a"] += tx["predicted_ms"]
+            pred["b"] += ty["predicted_ms"]
+            acc["a"][0] += tx.get("draft_n") or 0
+            acc["a"][1] += tx.get("draft_n_accepted") or 0
+            acc["b"][0] += ty.get("draft_n") or 0
+            acc["b"][1] += ty.get("draft_n_accepted") or 0
+    out[arm] = {
+        "responses": n,
+        "identical": same,
+        "prompt_seconds": {k: round(v / 1000, 3) for k, v in prompt.items()},
+        "prediction_seconds": {k: round(v / 1000, 3) for k, v in pred.items()},
+        "proposed_accepted": acc,
+    }
+print(json.dumps(out, indent=1))
+===== live_check.py
+import json
+import sys
+from pathlib import Path
+
+a, b = Path(sys.argv[1]), Path(sys.argv[2])
+rows_a = json.loads((a / "progress.json").read_text())["rows"]
+rows_b = json.loads((b / "progress.json").read_text())["rows"]
+sa = json.loads((a / "result.json").read_text())["summary"]
+sb = json.loads((b / "result.json").read_text())["summary"]
+out = {}
+for arm in ("target", "baseline", "candidate"):
+    ra = {r["task"]: r for r in rows_a if r["arm"] == arm}
+    rb = {r["task"]: r for r in rows_b if r["arm"] == arm}
+    assert ra.keys() == rb.keys()
+    tasks_same = calls = calls_same = 0
+    for task in ra:
+        x, y = ra[task], rb[task]
+        keys = ("state_sha256", "termination", "turns", "tokens", "completed", "native")
+        tasks_same += all(x[k] == y[k] for k in keys)
+        ta = json.loads((a / ("0-" + arm) / task / "transcript.json").read_text())
+        tb = json.loads((b / ("0-" + arm) / task / "transcript.json").read_text())
+        assert len(ta["responses"]) == len(tb["responses"]) or True
+        for p, q in zip(ta["responses"], tb["responses"]):
+            calls += 1
+            tp, tq = p.get("timings", {}), q.get("timings", {})
+            calls_same += (
+                p.get("tokens") == q.get("tokens")
+                and p.get("content") == q.get("content")
+                and tp.get("draft_n") == tq.get("draft_n")
+                and tp.get("draft_n_accepted") == tq.get("draft_n_accepted")
+                and tp.get("prompt_n") == tq.get("prompt_n")
+                and tp.get("cache_n") == tq.get("cache_n")
+            )
+        calls += abs(len(ta["responses"]) - len(tb["responses"]))
+        calls_same += 0
+    keys = ("model_seconds", "server_prompt_seconds", "server_prediction_seconds", "elapsed_seconds", "completed", "accepted", "proposed", "tokens")
+    out[arm] = {
+        "tasks": len(ra),
+        "tasks_identical": tasks_same,
+        "calls": calls,
+        "calls_identical": calls_same,
+        "v5": {k: sa[arm][k] for k in keys},
+        "v6": {k: sb[arm][k] for k in keys},
+    }
+print(json.dumps(out, indent=1))
+===== extract.py
+import hashlib
+import json
+import statistics as st
+import subprocess
+from pathlib import Path
+
+base = Path(__file__).parent
+repo = base.parents[2]
+names = {"v5-target": "v5 target-only", "new-target": "v6 target-only", "v5-baseline": "v5 Baseline",
+         "new-baseline": "v6 Baseline", "new-baseline-hostfeat": "v6 Baseline, host features",
+         "v5-he4": "v5 HE4", "new-he4": "v6 HE4"}
+probe = {}
+for key in names:
+    rows = json.loads((base / "probe-02" / key / "rows.json").read_text())
+    requests = {}
+    for length in (512, 2048, 4096, 8192, 16000):
+        values = [r["prompt_ms"] for r in rows if r["test"] == "request" and r["length"] == length]
+        requests[str(length)] = {"prompt_ms": [round(v, 1) for v in values], "median": round(st.median(values), 1)}
+    xs = [L for L in (512, 2048, 4096, 8192, 16000) for _ in range(3)]
+    ys = [r["prompt_ms"] for L in (512, 2048, 4096, 8192, 16000) for r in rows if r["test"] == "request" and r["length"] == L]
+    mx, my = st.mean(xs), st.mean(ys)
+    slope = sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sum((x - mx) ** 2 for x in xs)
+    sessions = {}
+    for context, new in ((4096, 32), (4096, 512), (12000, 32)):
+        values = [r["prompt_ms"] for r in rows if r["test"] == "session" and r["context"] == context and r["new"] == new]
+        sessions[f"{context}+{new}"] = {"prompt_ms_calls_1_to_4": [round(v, 1) for v in values], "median_calls_2_to_4": round(st.median(values[1:]), 1)}
+    exact = [r for r in rows if r["test"] != "request"]
+    probe[key] = {"label": names[key], "requests": requests, "slope_ms_per_token": round(slope, 4),
+                  "sessions": sessions,
+                  "checked_rows": len(exact), "proposed": sum(r["draft_n"] or 0 for r in exact),
+                  "accepted": sum(r["draft_n_accepted"] or 0 for r in exact),
+                  "generated_tokens": sum(len(r["tokens"]) for r in exact),
+                  "tokens_sha256": hashlib.sha256(json.dumps([r["tokens"] for r in exact]).encode()).hexdigest()}
+screen = json.loads(subprocess.run(["python3", str(base / "screen_check.py"), str(base / "screen-v5"), str(base / "screen-v6final")], capture_output=True, text=True, check=True).stdout)
+live = json.loads(subprocess.run(["python3", str(base / "live_check.py"), str(base / "live-v5"), str(base / "live-v6final")], capture_output=True, text=True, check=True).stdout)
+def sha(p):
+    return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+v6 = json.loads((repo / "artifacts/native/runtime-v6/result.json").read_text())
+v6_server = [a for a in v6["artifacts"] if a["path"].endswith("/llama-server")][0]
+result = {
+    "question": "Do runtime fixes for drafter prompt overhead keep outputs identical and how much prompt time do they save?",
+    "hardware": "RTX 5080 under WSL2, driver as recorded in each output gpu.txt",
+    "runtimes": {
+        "v5": {"server_sha256": "c83a7965756407895146dafd2b1c0fe4a366788e529b6625d90aefb228c02832",
+               "result_sha256": "c70087cc4da028da0d1afe86441e66720bcef3a0a105b782ca91698971a40266"},
+        "v6": {"path": "artifacts/native/runtime-v6 (worktree t3-fc0c881c)",
+               "result_sha256": sha(repo / "artifacts/native/runtime-v6/result.json"),
+               "server_sha256": v6_server["sha256"],
+               "libraries": {Path(a["path"]).name: a["sha256"] for a in v6["artifacts"] if ".so" in Path(a["path"]).name},
+               "code_sha256": v6["code_sha256"], "runtime_repairs": v6["runtime_repairs"],
+               "build_spec": json.loads((repo / "artifacts/native/runtime-v6-build-spec.json").read_text())},
+    },
+    "models": {"target_sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630",
+               "baseline_sha256": "83586a63eab58b4ef9dd1d72de667738fcedb289e97d98d01d8df66f23df610f",
+               "he4_sha256": "99d2be79f956f6ccde483b960d4a31b939eeda86e4530e813929a3452c14fc1e"},
+    "probe": {"definition": "synthetic token prompts; server prompt_ms; requests n_predict 1, three repeats; exact rows n_predict 96 at each length; sessions cache_prompt true, one context call then four calls appending previous outputs plus new tokens, n_predict 8",
+              "configs": probe},
+    "screen": {"definition": "lean DEV screen, 60 requests plus 1 warmup, 128-token caps, establish spec arms target/baseline/candidate(HE4); a=v5, b=v6",
+               "arms": screen},
+    "live": {"definition": "lean DEV live panel, 12 tasks, one round, 3 warmups excluded; v5 then v6 runs", "arms": live},
+    "projections": {"request_16000_excess_reduction_ms": [680, 940], "live_baseline_client_model_seconds_three_repeats": {"from": 259.3, "to": 217, "target_only": 257.1}},
+    "intermediate_build_decode_regression": {"definition": "first v6 build blocked the host after each drafter feature injection; per-token prediction time median ratio v6/v5 on the 60 screen requests", "baseline": 1.017, "he4": 1.044, "target": 0.995, "after_event_fix_he4_replay": 0.992},
+}
+(repo / "results/drafter-prompt-overhead-fixes/result.json").write_text(json.dumps(result, indent=1) + "\n")
+print("written")

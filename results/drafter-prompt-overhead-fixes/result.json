@@ -1,0 +1,794 @@
+{
+ "question": "Do runtime fixes for drafter prompt overhead keep outputs identical and how much prompt time do they save?",
+ "hardware": "RTX 5080 under WSL2, driver as recorded in each output gpu.txt",
+ "runtimes": {
+  "v5": {
+   "server_sha256": "c83a7965756407895146dafd2b1c0fe4a366788e529b6625d90aefb228c02832",
+   "result_sha256": "c70087cc4da028da0d1afe86441e66720bcef3a0a105b782ca91698971a40266"
+  },
+  "v6": {
+   "path": "artifacts/native/runtime-v6 (worktree t3-fc0c881c)",
+   "result_sha256": "b5cbe4c1261b2a13700ce9e7eae18c0852eac3469818cb4873e28e0de296646e",
+   "server_sha256": "1938a8b00e06fa71de12870ad687de1e8736092196b7e5b690fb120fe5d9a077",
+   "libraries": {
+    "libggml-base.so.0.28.0": "5556ca0d37470d234165984d3e4fd2f1794c5124f88f66df647b76b67a60fb7c",
+    "libggml-cpu.so.0.28.0": "6cf8800353c23a2408e39c009ef65f960c4c486ca8aaac973a468097e9847799",
+    "libggml-cuda.so.0.28.0": "f3c8a9ba07c4babf49207d19bf45674c585c75a3ce9ba62ac0332e9f67425c85",
+    "libggml.so.0.28.0": "7331bdd5433006c0bed4add1453da096839ebb24fca1d0bceca01050fbc82066",
+    "libllama-cli-impl.so": "c6c7e821274783aa861b3c51083daee786bdb1d92e35cc1df673c2b45dec63c6",
+    "libllama-common.so.0.8.0": "5bc1235ff0a1699918afdb3478434c0b21e8de47287d72be22a32e55c8c41a23",
+    "libllama-server-impl.so": "161a237a90127bf236d8061bf1fe3470651746893f14cae48887c8778eec33c3",
+    "libllama.so.0.8.0": "ad463e92483bfc0563e17ded117aa1f6e87075a30a76b35f6e361d17d8a6b061",
+    "libmtmd.so.0.8.0": "e6060994d3bf61244c34fcf3caa08f783544816dbed343eeee0e167f17c86aa7"
+   },
+   "code_sha256": "84724b9a5e3aced27b0336b7ce268f9c77cd65d469e8ba0c5ba507981585ef33",
+   "runtime_repairs": [
+    "rejection_eog_boundary_v1",
+    "checkpoint_warm_buffers_v1",
+    "device_feature_handoff_v1"
+   ],
+   "build_spec": {
+    "schema": 1,
+    "bundle": {
+     "path": "/home/philip/BitDraft/artifacts/native/runtime-v1-source.tar.gz",
+     "sha256": "696db0c12cffa6c041bdfe67ca106576e0a9a75da70ed62a560ca14425f37a85",
+     "bytes": 47128955
+    },
+    "cuda_compiler": {
+     "path": "/usr/local/cuda-13.1/bin/nvcc",
+     "sha256": "6ce80365abc2f14ff5f9e069fe687a93d4eaacc555dbf1d1696ee899d39df52a",
+     "bytes": 33371544
+    },
+    "architecture": "120a",
+    "jobs": 4,
+    "unpacked_bytes": 214474943,
+    "source_edits": [
+     "checkpoint_warm_buffers_v1",
+     "device_feature_handoff_v1"
+    ]
+   }
+  }
+ },
+ "models": {
+  "target_sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630",
+  "baseline_sha256": "83586a63eab58b4ef9dd1d72de667738fcedb289e97d98d01d8df66f23df610f",
+  "he4_sha256": "99d2be79f956f6ccde483b960d4a31b939eeda86e4530e813929a3452c14fc1e"
+ },
+ "probe": {
+  "definition": "synthetic token prompts; server prompt_ms; requests n_predict 1, three repeats; exact rows n_predict 96 at each length; sessions cache_prompt true, one context call then four calls appending previous outputs plus new tokens, n_predict 8",
+  "configs": {
+   "v5-target": {
+    "label": "v5 target-only",
+    "requests": {
+     "512": {
+      "prompt_ms": [
+       65.8,
+       61.5,
+       61.0
+      ],
+      "median": 61.5
+     },
+     "2048": {
+      "prompt_ms": [
+       189.8,
+       194.5,
+       193.8
+      ],
+      "median": 193.8
+     },
+     "4096": {
+      "prompt_ms": [
+       368.2,
+       362.3,
+       361.0
+      ],
+      "median": 362.3
+     },
+     "8192": {
+      "prompt_ms": [
+       715.3,
+       711.2,
+       712.1
+      ],
+      "median": 712.1
+     },
+     "16000": {
+      "prompt_ms": [
+       1436.4,
+       1439.0,
+       1480.2
+      ],
+      "median": 1439.0
+     }
+    },
+    "slope_ms_per_token": 0.0897,
+    "sessions": {
+     "4096+32": {
+      "prompt_ms_calls_1_to_4": [
+       59.9,
+       71.1,
+       59.5,
+       65.1
+      ],
+      "median_calls_2_to_4": 65.1
+     },
+     "4096+512": {
+      "prompt_ms_calls_1_to_4": [
+       92.3,
+       86.4,
+       87.7,
+       95.9
+      ],
+      "median_calls_2_to_4": 87.7
+     },
+     "12000+32": {
+      "prompt_ms_calls_1_to_4": [
+       69.5,
+       67.6,
+       62.3,
+       61.7
+      ],
+      "median_calls_2_to_4": 62.3
+     }
+    },
+    "checked_rows": 17,
+    "proposed": 0,
+    "accepted": 0,
+    "generated_tokens": 576,
+    "tokens_sha256": "bf51eef1cbcdaf42b69c1ba5cdfbb89d0522f96a2caeef77f2a81f256a9728da"
+   },
+   "new-target": {
+    "label": "v6 target-only",
+    "requests": {
+     "512": {
+      "prompt_ms": [
+       64.6,
+       85.7,
+       64.2
+      ],
+      "median": 64.6
+     },
+     "2048": {
+      "prompt_ms": [
+       190.5,
+       196.4,
+       194.5
+      ],
+      "median": 194.5
+     },
+     "4096": {
+      "prompt_ms": [
+       361.3,
+       363.3,
+       368.8
+      ],
+      "median": 363.3
+     },
+     "8192": {
+      "prompt_ms": [
+       713.0,
+       715.7,
+       713.1
+      ],
+      "median": 713.1
+     },
+     "16000": {
+      "prompt_ms": [
+       1428.6,
+       1435.8,
+       1430.3
+      ],
+      "median": 1430.3
+     }
+    },
+    "slope_ms_per_token": 0.088,
+    "sessions": {
+     "4096+32": {
+      "prompt_ms_calls_1_to_4": [
+       48.5,
+       48.3,
+       43.0,
+       46.1
+      ],
+      "median_calls_2_to_4": 46.1
+     },
+     "4096+512": {
+      "prompt_ms_calls_1_to_4": [
+       77.3,
+       74.4,
+       74.9,
+       74.7
+      ],
+      "median_calls_2_to_4": 74.7
+     },
+     "12000+32": {
+      "prompt_ms_calls_1_to_4": [
+       50.5,
+       52.8,
+       46.1,
+       46.4
+      ],
+      "median_calls_2_to_4": 46.4
+     }
+    },
+    "checked_rows": 17,
+    "proposed": 0,
+    "accepted": 0,
+    "generated_tokens": 576,
+    "tokens_sha256": "bf51eef1cbcdaf42b69c1ba5cdfbb89d0522f96a2caeef77f2a81f256a9728da"
+   },
+   "v5-baseline": {
+    "label": "v5 Baseline",
+    "requests": {
+     "512": {
+      "prompt_ms": [
+       117.4,
+       92.6,
+       94.2
+      ],
+      "median": 94.2
+     },
+     "2048": {
+      "prompt_ms": [
+       361.2,
+       372.8,
+       369.0
+      ],
+      "median": 369.0
+     },
+     "4096": {
+      "prompt_ms": [
+       690.3,
+       686.4,
+       688.1
+      ],
+      "median": 688.1
+     },
+     "8192": {
+      "prompt_ms": [
+       1286.4,
+       1304.1,
+       1265.2
+      ],
+      "median": 1286.4
+     },
+     "16000": {
+      "prompt_ms": [
+       2477.2,
+       2465.7,
+       2426.7
+      ],
+      "median": 2465.7
+     }
+    },
+    "slope_ms_per_token": 0.1508,
+    "sessions": {
+     "4096+32": {
+      "prompt_ms_calls_1_to_4": [
+       203.0,
+       210.1,
+       227.1,
+       188.8
+      ],
+      "median_calls_2_to_4": 210.1
+     },
+     "4096+512": {
+      "prompt_ms_calls_1_to_4": [
+       194.8,
+       187.0,
+       184.2,
+       184.1
+      ],
+      "median_calls_2_to_4": 184.2
+     },
+     "12000+32": {
+      "prompt_ms_calls_1_to_4": [
+       179.8,
+       137.5,
+       131.5,
+       183.7
+      ],
+      "median_calls_2_to_4": 137.5
+     }
+    },
+    "checked_rows": 17,
+    "proposed": 411,
+    "accepted": 344,
+    "generated_tokens": 576,
+    "tokens_sha256": "bf51eef1cbcdaf42b69c1ba5cdfbb89d0522f96a2caeef77f2a81f256a9728da"
+   },
+   "new-baseline": {
+    "label": "v6 Baseline",
+    "requests": {
+     "512": {
+      "prompt_ms": [
+       64.6,
+       63.9,
+       67.9
+      ],
+      "median": 64.6
+     },
+     "2048": {
+      "prompt_ms": [
+       201.3,
+       214.3,
+       212.7
+      ],
+      "median": 212.7
+     },
+     "4096": {
+      "prompt_ms": [
+       414.7,
+       401.3,
+       406.0
+      ],
+      "median": 406.0
+     },
+     "8192": {
+      "prompt_ms": [
+       771.6,
+       784.2,
+       779.5
+      ],
+      "median": 779.5
+     },
+     "16000": {
+      "prompt_ms": [
+       1534.1,
+       1558.1,
+       1549.5
+      ],
+      "median": 1549.5
+     }
+    },
+    "slope_ms_per_token": 0.0955,
+    "sessions": {
+     "4096+32": {
+      "prompt_ms_calls_1_to_4": [
+       58.3,
+       57.7,
+       53.9,
+       54.6
+      ],
+      "median_calls_2_to_4": 54.6
+     },
+     "4096+512": {
+      "prompt_ms_calls_1_to_4": [
+       91.4,
+       88.4,
+       91.6,
+       90.0
+      ],
+      "median_calls_2_to_4": 90.0
+     },
+     "12000+32": {
+      "prompt_ms_calls_1_to_4": [
+       65.9,
+       64.5,
+       59.6,
+       59.9
+      ],
+      "median_calls_2_to_4": 59.9
+     }
+    },
+    "checked_rows": 17,
+    "proposed": 411,
+    "accepted": 344,
+    "generated_tokens": 576,
+    "tokens_sha256": "bf51eef1cbcdaf42b69c1ba5cdfbb89d0522f96a2caeef77f2a81f256a9728da"
+   },
+   "new-baseline-hostfeat": {
+    "label": "v6 Baseline, host features",
+    "requests": {
+     "512": {
+      "prompt_ms": [
+       91.7,
+       93.2,
+       93.0
+      ],
+      "median": 93.0
+     },
+     "2048": {
+      "prompt_ms": [
+       306.2,
+       316.6,
+       305.8
+      ],
+      "median": 306.2
+     },
+     "4096": {
+      "prompt_ms": [
+       623.4,
+       609.2,
+       625.9
+      ],
+      "median": 623.4
+     },
+     "8192": {
+      "prompt_ms": [
+       1173.2,
+       1189.7,
+       1186.6
+      ],
+      "median": 1186.6
+     },
+     "16000": {
+      "prompt_ms": [
+       2381.2,
+       2389.6,
+       2354.7
+      ],
+      "median": 2381.2
+     }
+    },
+    "slope_ms_per_token": 0.1471,
+    "sessions": {
+     "4096+32": {
+      "prompt_ms_calls_1_to_4": [
+       59.7,
+       56.2,
+       55.8,
+       60.2
+      ],
+      "median_calls_2_to_4": 56.2
+     },
+     "4096+512": {
+      "prompt_ms_calls_1_to_4": [
+       115.1,
+       114.9,
+       114.6,
+       114.1
+      ],
+      "median_calls_2_to_4": 114.6
+     },
+     "12000+32": {
+      "prompt_ms_calls_1_to_4": [
+       68.0,
+       65.9,
+       61.1,
+       73.6
+      ],
+      "median_calls_2_to_4": 65.9
+     }
+    },
+    "checked_rows": 17,
+    "proposed": 411,
+    "accepted": 344,
+    "generated_tokens": 576,
+    "tokens_sha256": "bf51eef1cbcdaf42b69c1ba5cdfbb89d0522f96a2caeef77f2a81f256a9728da"
+   },
+   "v5-he4": {
+    "label": "v5 HE4",
+    "requests": {
+     "512": {
+      "prompt_ms": [
+       113.4,
+       92.3,
+       93.1
+      ],
+      "median": 93.1
+     },
+     "2048": {
+      "prompt_ms": [
+       355.0,
+       364.9,
+       366.2
+      ],
+      "median": 364.9
+     },
+     "4096": {
+      "prompt_ms": [
+       681.3,
+       678.5,
+       675.1
+      ],
+      "median": 678.5
+     },
+     "8192": {
+      "prompt_ms": [
+       1261.7,
+       1256.5,
+       1252.1
+      ],
+      "median": 1256.5
+     },
+     "16000": {
+      "prompt_ms": [
+       2449.8,
+       2421.3,
+       2436.0
+      ],
+      "median": 2436.0
+     }
+    },
+    "slope_ms_per_token": 0.1495,
+    "sessions": {
+     "4096+32": {
+      "prompt_ms_calls_1_to_4": [
+       224.6,
+       222.0,
+       217.6,
+       218.9
+      ],
+      "median_calls_2_to_4": 218.9
+     },
+     "4096+512": {
+      "prompt_ms_calls_1_to_4": [
+       195.6,
+       196.9,
+       197.7,
+       227.1
+      ],
+      "median_calls_2_to_4": 197.7
+     },
+     "12000+32": {
+      "prompt_ms_calls_1_to_4": [
+       149.9,
+       138.1,
+       157.6,
+       198.9
+      ],
+      "median_calls_2_to_4": 157.6
+     }
+    },
+    "checked_rows": 17,
+    "proposed": 660,
+    "accepted": 220,
+    "generated_tokens": 576,
+    "tokens_sha256": "bf51eef1cbcdaf42b69c1ba5cdfbb89d0522f96a2caeef77f2a81f256a9728da"
+   },
+   "new-he4": {
+    "label": "v6 HE4",
+    "requests": {
+     "512": {
+      "prompt_ms": [
+       64.8,
+       71.0,
+       65.5
+      ],
+      "median": 65.5
+     },
+     "2048": {
+      "prompt_ms": [
+       201.5,
+       216.8,
+       211.6
+      ],
+      "median": 211.6
+     },
+     "4096": {
+      "prompt_ms": [
+       412.1,
+       409.0,
+       406.7
+      ],
+      "median": 409.0
+     },
+     "8192": {
+      "prompt_ms": [
+       767.5,
+       779.4,
+       778.5
+      ],
+      "median": 778.5
+     },
+     "16000": {
+      "prompt_ms": [
+       1538.9,
+       1568.1,
+       1552.7
+      ],
+      "median": 1552.7
+     }
+    },
+    "slope_ms_per_token": 0.0957,
+    "sessions": {
+     "4096+32": {
+      "prompt_ms_calls_1_to_4": [
+       59.1,
+       59.6,
+       54.5,
+       54.0
+      ],
+      "median_calls_2_to_4": 54.5
+     },
+     "4096+512": {
+      "prompt_ms_calls_1_to_4": [
+       92.5,
+       88.4,
+       90.1,
+       95.4
+      ],
+      "median_calls_2_to_4": 90.1
+     },
+     "12000+32": {
+      "prompt_ms_calls_1_to_4": [
+       65.8,
+       64.0,
+       60.9,
+       62.2
+      ],
+      "median_calls_2_to_4": 62.2
+     }
+    },
+    "checked_rows": 17,
+    "proposed": 660,
+    "accepted": 220,
+    "generated_tokens": 576,
+    "tokens_sha256": "bf51eef1cbcdaf42b69c1ba5cdfbb89d0522f96a2caeef77f2a81f256a9728da"
+   }
+  }
+ },
+ "screen": {
+  "definition": "lean DEV screen, 60 requests plus 1 warmup, 128-token caps, establish spec arms target/baseline/candidate(HE4); a=v5, b=v6",
+  "arms": {
+   "target": {
+    "responses": 61,
+    "identical": 61,
+    "prompt_seconds": {
+     "a": 10.512,
+     "b": 9.779
+    },
+    "prediction_seconds": {
+     "a": 36.043,
+     "b": 35.289
+    },
+    "proposed_accepted": {
+     "a": [
+      0,
+      0
+     ],
+     "b": [
+      0,
+      0
+     ]
+    }
+   },
+   "baseline": {
+    "responses": 61,
+    "identical": 61,
+    "prompt_seconds": {
+     "a": 19.264,
+     "b": 10.605
+    },
+    "prediction_seconds": {
+     "a": 25.605,
+     "b": 24.869
+    },
+    "proposed_accepted": {
+     "a": [
+      5446,
+      3794
+     ],
+     "b": [
+      5446,
+      3794
+     ]
+    }
+   },
+   "candidate": {
+    "responses": 61,
+    "identical": 61,
+    "prompt_seconds": {
+     "a": 16.979,
+     "b": 10.613
+    },
+    "prediction_seconds": {
+     "a": 30.287,
+     "b": 29.768
+    },
+    "proposed_accepted": {
+     "a": [
+      6755,
+      3134
+     ],
+     "b": [
+      6755,
+      3134
+     ]
+    }
+   }
+  }
+ },
+ "live": {
+  "definition": "lean DEV live panel, 12 tasks, one round, 3 warmups excluded; v5 then v6 runs",
+  "arms": {
+   "target": {
+    "tasks": 12,
+    "tasks_identical": 12,
+    "calls": 121,
+    "calls_identical": 121,
+    "v5": {
+     "model_seconds": 89.45962084730854,
+     "server_prompt_seconds": 14.084907000000001,
+     "server_prediction_seconds": 66.51939099999998,
+     "elapsed_seconds": 92.71121904614847,
+     "completed": 8,
+     "accepted": 0,
+     "proposed": 0,
+     "tokens": 11134
+    },
+    "v6": {
+     "model_seconds": 83.7895933376276,
+     "server_prompt_seconds": 10.576695,
+     "server_prediction_seconds": 65.691141,
+     "elapsed_seconds": 86.93398831196828,
+     "completed": 8,
+     "accepted": 0,
+     "proposed": 0,
+     "tokens": 11134
+    }
+   },
+   "baseline": {
+    "tasks": 12,
+    "tasks_identical": 12,
+    "calls": 121,
+    "calls_identical": 121,
+    "v5": {
+     "model_seconds": 84.5913005946204,
+     "server_prompt_seconds": 28.896384000000005,
+     "server_prediction_seconds": 42.820660000000004,
+     "elapsed_seconds": 87.75723807577742,
+     "completed": 8,
+     "accepted": 6756,
+     "proposed": 8521,
+     "tokens": 11134
+    },
+    "v6": {
+     "model_seconds": 70.12139967200346,
+     "server_prompt_seconds": 14.255748000000002,
+     "server_prediction_seconds": 42.924681,
+     "elapsed_seconds": 73.58560654404573,
+     "completed": 8,
+     "accepted": 6756,
+     "proposed": 8521,
+     "tokens": 11134
+    }
+   },
+   "candidate": {
+    "tasks": 12,
+    "tasks_identical": 12,
+    "calls": 121,
+    "calls_identical": 121,
+    "v5": {
+     "model_seconds": 91.42633727029897,
+     "server_prompt_seconds": 28.517755,
+     "server_prediction_seconds": 50.07373199999999,
+     "elapsed_seconds": 94.57728114398196,
+     "completed": 8,
+     "accepted": 5880,
+     "proposed": 10263,
+     "tokens": 11134
+    },
+    "v6": {
+     "model_seconds": 83.9214780734037,
+     "server_prompt_seconds": 15.811370000000002,
+     "server_prediction_seconds": 50.199149000000006,
+     "elapsed_seconds": 88.21932146698236,
+     "completed": 8,
+     "accepted": 5880,
+     "proposed": 10263,
+     "tokens": 11134
+    }
+   }
+  }
+ },
+ "projections": {
+  "request_16000_excess_reduction_ms": [
+   680,
+   940
+  ],
+  "live_baseline_client_model_seconds_three_repeats": {
+   "from": 259.3,
+   "to": 217,
+   "target_only": 257.1
+  }
+ },
+ "intermediate_build_decode_regression": {
+  "definition": "first v6 build blocked the host after each drafter feature injection; per-token prediction time median ratio v6/v5 on the 60 screen requests",
+  "baseline": 1.017,
+  "he4": 1.044,
+  "target": 0.995,
+  "after_event_fix_he4_replay": 0.992
+ }
+}

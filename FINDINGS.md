@@ -104,7 +104,18 @@ prompt token is the GPU idling while target features are copied through host mem
 Target kernels are unchanged and drafter kernels are about 2%. The drafters' 4,096-token
 sliding window also grows each context checkpoint from 50 to 130 MiB, about 100–140 ms
 per short cached call. Fixes that keep target outputs exact are proposed, not built.
-[Result](results/speculative-prefill-overhead/result.md).
+[Result](results/speculative-prefill-overhead/result.md). Correction 2026-11-13: built
+and measured in F019.
+
+### F019: Do the exact prompt-overhead fixes work?
+
+Yes. Runtime-v6 keeps target features on the GPU and copies checkpoints into reused,
+pre-faulted host memory. Every output, token ID and proposed/accepted count matched
+runtime-v5 on synthetic prompts, 60 DEV requests and 12 live DEV tasks. Drafter prompt
+overhead fell 64–91%: at 16,000 tokens from 1,027 to 119 ms, and a 32-token cached call
+from 210 to 55 ms. On live tasks Baseline took 70.1 s against target-only's 83.8 s
+(v5: 84.6 against 89.5), and HE4 matched target-only. It is not yet the benchmark default.
+[Result](results/drafter-prompt-overhead-fixes/result.md).
 
 ### F019: Does the fixed depth-2 exact protocol treat HE4 and Baseline fairly?
 
