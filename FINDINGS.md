@@ -126,7 +126,7 @@ drafter at its best exact depth (arm D: 0.88 vs 0.82), about 7–10% too favoura
 unchanged and does not systematically favour HE4. Depth 3 is proposed as the shared default.
 [Result](results/draft-depth-fairness/result.md).
 
-### F020: Can a drafter's serving depth be chosen per deployment without a panel sweep?
+### F021: Can a drafter's serving depth be chosen per deployment without a panel sweep?
 
 Yes, on the measured Q4KM/runtime-v5 deployment. `benchmarks calibrate-depth` takes 2–4 GPU
 minutes. It combines one depth-15 survival run with short cost sessions at depths 0–15 and
