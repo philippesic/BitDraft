@@ -1,0 +1,596 @@
+{
+ "dev3_training_panels": {
+  "panels": {
+   "best_observed_update_hour_7": {
+    "HE4broad": {
+     "acceptance": 0.48848684210526316,
+     "accepted": 1485,
+     "accepted_per_round": 0.9769736842105263,
+     "output_tokens": 3025,
+     "prompts": 3,
+     "proposed": 3040,
+     "request_tok_s": 222.06539763929396,
+     "rounds": 1520,
+     "timing_repetitions": 5
+    },
+    "q4": {
+     "acceptance": 0.6532567049808429,
+     "accepted": 1705,
+     "accepted_per_round": 1.3065134099616857,
+     "output_tokens": 3025,
+     "prompts": 3,
+     "proposed": 2610,
+     "request_tok_s": 248.6768447039797,
+     "rounds": 1305,
+     "timing_repetitions": 5
+    },
+    "target": {
+     "acceptance": null,
+     "accepted": 0,
+     "accepted_per_round": null,
+     "output_tokens": 3025,
+     "prompts": 3,
+     "proposed": 0,
+     "request_tok_s": 184.3509292903135,
+     "rounds": 0,
+     "timing_repetitions": 5
+    }
+   },
+   "final_update_hour_8": {
+    "HE4broad": {
+     "acceptance": 0.4693548387096774,
+     "accepted": 1455,
+     "accepted_per_round": 0.9387096774193548,
+     "output_tokens": 3025,
+     "prompts": 3,
+     "proposed": 3100,
+     "request_tok_s": 199.50515551031754,
+     "rounds": 1550,
+     "timing_repetitions": 5
+    },
+    "q4": {
+     "acceptance": 0.6532567049808429,
+     "accepted": 1705,
+     "accepted_per_round": 1.3065134099616857,
+     "output_tokens": 3025,
+     "prompts": 3,
+     "proposed": 2610,
+     "request_tok_s": 228.3534285715914,
+     "rounds": 1305,
+     "timing_repetitions": 5
+    },
+    "target": {
+     "acceptance": null,
+     "accepted": 0,
+     "accepted_per_round": null,
+     "output_tokens": 3025,
+     "prompts": 3,
+     "proposed": 0,
+     "request_tok_s": 174.4027381825216,
+     "rounds": 0,
+     "timing_repetitions": 5
+    }
+   }
+  },
+  "source": {
+   "archive": {
+    "bytes": 65825253,
+    "path": "/home/philip/BitDraft/artifacts/archive/legacy-closeout-20261112/compact-support.tar.gz",
+    "sha256": "51e5cc34f551c9be3294e92652999791bfaa9926d47ef11f2e80ca1621e65d81"
+   },
+   "member": "objects/6374c05ec7af68f762b0aa7ce3f8cf59f001661becdaf4265a69e26ef9d1fd5b",
+   "original_path": "experiments/he4broad-20261110/final-summary.json",
+   "unpacked": {
+    "path": "/home/philip/BitDraft/artifacts/datasets/retained-he4broad-original/closeout-reports/final-summary.json",
+    "sha256": "6374c05ec7af68f762b0aa7ce3f8cf59f001661becdaf4265a69e26ef9d1fd5b"
+   }
+  }
+ },
+ "draft_depth": 2,
+ "full_dev_panels": {
+  "harness": {
+   "evidence": {
+    "bytes": 211731,
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/full-qualification-01/q4km-harness/result.json",
+    "sha256": "6e57e39c2f525288dd4238fabc9ef250efbcf8b7050eb0f4f8644c4b20ac6e73"
+   },
+   "paired_he4broad_vs_baseline": {
+    "acceptance_difference": -0.19607604526347444,
+    "acceptance_difference_95_interval": {
+     "lower": -0.21816750868814072,
+     "upper": -0.17451487304118884
+    },
+    "bootstrap_draws": 2000,
+    "comparison_family": 1,
+    "groups": 30,
+    "interval_available": true,
+    "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+    "simultaneous_acceptance_difference_interval": {
+     "lower": -0.21816750868814072,
+     "upper": -0.17451487304118884
+    },
+    "simultaneous_speed_ratio_interval": {
+     "lower": 0.9056061795358082,
+     "upper": 0.936940966586883
+    },
+    "speed_ratio": 0.9217538098126562,
+    "speed_ratio_95_interval": {
+     "lower": 0.9056061795358082,
+     "upper": 0.936940966586883
+    },
+    "strata": {
+     "[('code', 6)]": 15,
+     "[('structured', 6)]": 15
+    }
+   },
+   "summary": {
+    "baseline": {
+     "acceptance": 0.8236357065413805,
+     "accepted": 18232,
+     "accepted_per_round": 1.647271413082761,
+     "cap_hits": 14,
+     "correct": true,
+     "derived_rounds": 11068,
+     "emitted_per_round": 2.647271413082761,
+     "eos_stops": 166,
+     "proposed": 22136,
+     "proposed_per_round": 2.0,
+     "requests": 180,
+     "speed_vs_baseline": 1.0,
+     "speed_vs_target": 1.221525974724675,
+     "tokens": 29480,
+     "tokens_per_second": 186.28475896119284,
+     "wall_seconds": 158.25234530400485
+    },
+    "he4broad": {
+     "acceptance": 0.6275596612779061,
+     "accepted": 16304,
+     "accepted_per_round": 1.2545398584179748,
+     "cap_hits": 14,
+     "correct": true,
+     "derived_rounds": 12996,
+     "emitted_per_round": 2.2545398584179748,
+     "eos_stops": 166,
+     "proposed": 25980,
+     "proposed_per_round": 1.9990766389658357,
+     "requests": 180,
+     "speed_vs_baseline": 0.9217538098126562,
+     "speed_vs_target": 1.1259462209875877,
+     "tokens": 29480,
+     "tokens_per_second": 171.70868628251185,
+     "wall_seconds": 171.6861309595988
+    },
+    "target": {
+     "acceptance": null,
+     "accepted": 0,
+     "cap_hits": 14,
+     "correct": true,
+     "eos_stops": 166,
+     "proposed": 0,
+     "requests": 180,
+     "speed_vs_baseline": 0.8186481668761847,
+     "speed_vs_target": 1.0,
+     "tokens": 29480,
+     "tokens_per_second": 152.50167644055244,
+     "wall_seconds": 193.30935034994036
+    }
+   }
+  },
+  "live": {
+   "evidence": {
+    "bytes": 75928,
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/full-qualification-01/q4km-live/result.json",
+    "sha256": "e89764ed771557bad8329fba9775deb9d25cfb470cfd5c5dc922b82fe42b6156"
+   },
+   "paired_he4broad_vs_baseline": {
+    "acceptance_difference": -0.21993279598341575,
+    "groups": 8,
+    "interval_available": false,
+    "reason": "insufficient independent groups within a category-composition stratum",
+    "speed_ratio": 0.9377172329039302,
+    "strata": {
+     "[('bugfix', 3)]": 2,
+     "[('diagnosis', 3)]": 2,
+     "[('documentation', 6)]": 1,
+     "[('feature', 3), ('revision', 6)]": 1,
+     "[('feature', 3), ('tool-workflow', 3)]": 1,
+     "[('tool-workflow', 3)]": 1
+    }
+   },
+   "summary": {
+    "baseline": {
+     "completed": 24,
+     "completion_rate": 0.6666666666666666,
+     "correct": true,
+     "elapsed_seconds": 269.7598347601597,
+     "model_seconds": 259.2638870890951,
+     "seconds_per_assigned_task": 7.49332874333777,
+     "tasks": 36,
+     "tool_seconds": 5.505745302711148
+    },
+    "he4broad": {
+     "completed": 24,
+     "completion_rate": 0.6666666666666666,
+     "correct": true,
+     "elapsed_seconds": 287.6771646019188,
+     "model_seconds": 278.1030201424146,
+     "seconds_per_assigned_task": 7.991032350053299,
+     "tasks": 36,
+     "tool_seconds": 5.560944629483856
+    },
+    "target": {
+     "completed": 24,
+     "completion_rate": 0.6666666666666666,
+     "correct": true,
+     "elapsed_seconds": 266.2516369019868,
+     "model_seconds": 257.05259061441757,
+     "seconds_per_assigned_task": 7.395878802832966,
+     "tasks": 36,
+     "tool_seconds": 5.450941148097627
+    }
+   },
+   "tasks_per_arm": 36,
+   "timing_partitions": {
+    "baseline": {
+     "calls": 363,
+     "predicted_tokens": 33402,
+     "prediction_seconds": 128.697769,
+     "prompt_seconds": 82.23089800000004,
+     "prompt_tokens_evaluated": 233682
+    },
+    "he4broad": {
+     "calls": 363,
+     "predicted_tokens": 33402,
+     "prediction_seconds": 149.52048499999995,
+     "prompt_seconds": 82.01419199999997,
+     "prompt_tokens_evaluated": 233682
+    },
+    "target": {
+     "calls": 363,
+     "predicted_tokens": 33402,
+     "prediction_seconds": 196.94493100000008,
+     "prompt_seconds": 39.73559500000001,
+     "prompt_tokens_evaluated": 233682
+    }
+   },
+   "timing_scope": "native server prompt/prediction partitions of every measured model call, warmups excluded; not whole-episode time"
+  },
+  "requests": {
+   "by_category": {
+    "code": {
+     "baseline": {
+      "acceptance": 0.8608320162564913,
+      "requests": 300,
+      "tokens_per_second": 264.5000454502794
+     },
+     "he4broad": {
+      "acceptance": 0.661021848577554,
+      "requests": 300,
+      "tokens_per_second": 236.94389512963463
+     },
+     "target": {
+      "acceptance": null,
+      "requests": 300,
+      "tokens_per_second": 176.7644080489658
+     }
+    },
+    "conversation": {
+     "baseline": {
+      "acceptance": 0.5924765887085235,
+      "requests": 200,
+      "tokens_per_second": 211.25666020577995
+     },
+     "he4broad": {
+      "acceptance": 0.3418914447480974,
+      "requests": 200,
+      "tokens_per_second": 172.9292749514077
+     },
+     "target": {
+      "acceptance": null,
+      "requests": 200,
+      "tokens_per_second": 171.08967109338894
+     }
+    },
+    "documents": {
+     "baseline": {
+      "acceptance": 0.720676248307195,
+      "requests": 250,
+      "tokens_per_second": 134.09432458199896
+     },
+     "he4broad": {
+      "acceptance": 0.483863011768022,
+      "requests": 250,
+      "tokens_per_second": 120.69573423148773
+     },
+     "target": {
+      "acceptance": null,
+      "requests": 250,
+      "tokens_per_second": 126.01744029179704
+     }
+    },
+    "reasoning": {
+     "baseline": {
+      "acceptance": 0.6415493339599111,
+      "requests": 200,
+      "tokens_per_second": 252.81929724033395
+     },
+     "he4broad": {
+      "acceptance": 0.4070711279038028,
+      "requests": 200,
+      "tokens_per_second": 209.14872692710594
+     },
+     "target": {
+      "acceptance": null,
+      "requests": 200,
+      "tokens_per_second": 185.48523609655126
+     }
+    },
+    "structured": {
+     "baseline": {
+      "acceptance": 0.7641388174807198,
+      "requests": 150,
+      "tokens_per_second": 122.65126994757982
+     },
+     "he4broad": {
+      "acceptance": 0.567699836867863,
+      "requests": 150,
+      "tokens_per_second": 115.42176547676681
+     },
+     "target": {
+      "acceptance": null,
+      "requests": 150,
+      "tokens_per_second": 115.68183851767859
+     }
+    },
+    "writing": {
+     "baseline": {
+      "acceptance": 0.5105195045294879,
+      "requests": 100,
+      "tokens_per_second": 223.12474566235335
+     },
+     "he4broad": {
+      "acceptance": 0.26635238656452564,
+      "requests": 100,
+      "tokens_per_second": 177.3063169311613
+     },
+     "target": {
+      "acceptance": null,
+      "requests": 100,
+      "tokens_per_second": 181.48542049985144
+     }
+    }
+   },
+   "by_input_length_band": {
+    "0": {
+     "baseline": {
+      "acceptance": 0.667641829218089,
+      "requests": 600,
+      "tokens_per_second": 249.99110958681513
+     },
+     "he4broad": {
+      "acceptance": 0.4339262935082776,
+      "requests": 600,
+      "tokens_per_second": 209.4151998159711
+     },
+     "target": {
+      "acceptance": null,
+      "requests": 600,
+      "tokens_per_second": 182.1724351622995
+     }
+    },
+    "1": {
+     "baseline": {
+      "acceptance": 0.6577626989057199,
+      "requests": 360,
+      "tokens_per_second": 203.75239934464702
+     },
+     "he4broad": {
+      "acceptance": 0.4306521655585873,
+      "requests": 360,
+      "tokens_per_second": 175.89288413386222
+     },
+     "target": {
+      "acceptance": null,
+      "requests": 360,
+      "tokens_per_second": 164.71860259073853
+     }
+    },
+    "2": {
+     "baseline": {
+      "acceptance": 0.6275423247358255,
+      "requests": 180,
+      "tokens_per_second": 189.56840335358103
+     },
+     "he4broad": {
+      "acceptance": 0.3703326782706345,
+      "requests": 180,
+      "tokens_per_second": 158.44734605909213
+     },
+     "target": {
+      "acceptance": null,
+      "requests": 180,
+      "tokens_per_second": 158.99552837450278
+     }
+    },
+    "3": {
+     "baseline": {
+      "acceptance": 0.6851408028759737,
+      "requests": 60,
+      "tokens_per_second": 90.18016892919462
+     },
+     "he4broad": {
+      "acceptance": 0.4087046394120349,
+      "requests": 60,
+      "tokens_per_second": 81.11644271323331
+     },
+     "target": {
+      "acceptance": null,
+      "requests": 60,
+      "tokens_per_second": 94.84784528101494
+     }
+    }
+   },
+   "evidence": {
+    "bytes": 1465374,
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/full-qualification-01/q4km-requests/result.json",
+    "sha256": "57b0265d2f44b2c9e168601099c145d3dda49dfc5e510004acc81f3b5757b7dc"
+   },
+   "native_per_position": {
+    "baseline": {
+     "accept_calls_including_warmups": 208012,
+     "generated_drafts_including_warmups": 208012,
+     "p_first_accepted": 0.769193085014326,
+     "p_first_two_accepted": 0.5443997077091707
+    },
+    "he4broad": {
+     "accept_calls_including_warmups": 262022,
+     "generated_drafts_including_warmups": 262022,
+     "p_first_accepted": 0.541687033913183,
+     "p_first_two_accepted": 0.29353670302493684
+    }
+   },
+   "native_per_position_scope": "final cumulative per-server statistics lines (three-decimal rates weighted by accept calls), including warmups",
+   "paired_he4broad_vs_baseline": {
+    "acceptance_difference": -0.23915875340284498,
+    "acceptance_difference_95_interval": {
+     "lower": -0.24358280828782186,
+     "upper": -0.23461684428536828
+    },
+    "bootstrap_draws": 2000,
+    "comparison_family": 1,
+    "groups": 600,
+    "interval_available": true,
+    "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+    "simultaneous_acceptance_difference_interval": {
+     "lower": -0.24358280828782186,
+     "upper": -0.23461684428536828
+    },
+    "simultaneous_speed_ratio_interval": {
+     "lower": 0.8422230583643364,
+     "upper": 0.8523569352613923
+    },
+    "speed_ratio": 0.8471466283537286,
+    "speed_ratio_95_interval": {
+     "lower": 0.8422230583643364,
+     "upper": 0.8523569352613923
+    },
+    "strata": {
+     "[('code', 2)]": 150,
+     "[('conversation', 2)]": 100,
+     "[('documents', 2)]": 125,
+     "[('reasoning', 2)]": 100,
+     "[('structured', 2)]": 75,
+     "[('writing', 2)]": 50
+    }
+   },
+   "prompts": 600,
+   "repeats": 2,
+   "summary": {
+    "baseline": {
+     "acceptance": 0.6576699047913925,
+     "accepted": 271886,
+     "accepted_per_round": 1.3148182178677474,
+     "cap_hits": 356,
+     "correct": true,
+     "derived_rounds": 206786,
+     "emitted_per_round": 2.3148182178677477,
+     "eos_stops": 844,
+     "proposed": 413408,
+     "proposed_per_round": 1.9992069095586742,
+     "requests": 1200,
+     "speed_vs_baseline": 1.0,
+     "speed_vs_target": 1.268473951938488,
+     "tokens": 479872,
+     "tokens_per_second": 213.5343957641276,
+     "wall_seconds": 2247.2819813538226
+    },
+    "he4broad": {
+     "acceptance": 0.41851115138854755,
+     "accepted": 217974,
+     "accepted_per_round": 0.8361168862054945,
+     "cap_hits": 356,
+     "correct": true,
+     "derived_rounds": 260698,
+     "emitted_per_round": 1.8361168862054944,
+     "eos_stops": 844,
+     "proposed": 520832,
+     "proposed_per_round": 1.9978365771889313,
+     "requests": 1200,
+     "speed_vs_baseline": 0.8471466283537286,
+     "speed_vs_target": 1.0745834315392195,
+     "tokens": 479872,
+     "tokens_per_second": 180.8949434091314,
+     "wall_seconds": 2652.7662462884327
+    },
+    "target": {
+     "acceptance": null,
+     "accepted": 0,
+     "cap_hits": 356,
+     "correct": true,
+     "eos_stops": 844,
+     "proposed": 0,
+     "requests": 1200,
+     "speed_vs_baseline": 0.788348864769194,
+     "speed_vs_target": 1.0,
+     "tokens": 479872,
+     "tokens_per_second": 168.33959848982576,
+     "wall_seconds": 2850.6186560080387
+    }
+   },
+   "timing_partitions": {
+    "baseline": {
+     "calls": 1212,
+     "predicted_tokens": 482424,
+     "prediction_seconds": 1832.6142370000011,
+     "prompt_seconds": 302.6773269999999,
+     "prompt_tokens_evaluated": 1648470
+    },
+    "he4broad": {
+     "calls": 1212,
+     "predicted_tokens": 482424,
+     "prediction_seconds": 2236.6368699999975,
+     "prompt_seconds": 304.69194699999997,
+     "prompt_tokens_evaluated": 1648470
+    },
+    "target": {
+     "calls": 1212,
+     "predicted_tokens": 482424,
+     "prediction_seconds": 2575.8182239999956,
+     "prompt_seconds": 178.191447,
+     "prompt_tokens_evaluated": 1648470
+    }
+   },
+   "timing_scope": "native server prompt/prediction partitions of each response, including two warmups per server cell; not the HTTP request clock"
+  },
+  "run": {
+   "operator_stop": {
+    "bytes": 585,
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/full-qualification-01/operator-stop.json",
+    "sha256": "9727f1621edfc60a3ba74908d2835885c93d8b77c85d1a8d8c013fcb61fe523c"
+   },
+   "scope": "Q4KM requests, harness and live panels completed; the NVFP4 panel was stopped and is not used",
+   "specification": {
+    "bytes": 2029,
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/full-qualification-spec.json",
+    "sha256": "9c92da4b9e724fc4377819b045e5ef5a1b17652ec4120d2986ca122111d28089"
+   }
+  }
+ },
+ "hardware": "RTX 5080",
+ "question": "Where does the final 220,095-update HE4broad state stand against target-only and Baseline?",
+ "schema": 1,
+ "state": {
+  "binding": {
+   "bytes": 809,
+   "path": "/home/philip/BitDraft/artifacts/benchmarks/original-he4broad-binding.json",
+   "sha256": "10097353110766064e23739f2a2f0f776ee9afa4b4d706b54fb5504f356182ce"
+  },
+  "export_equivalence": {
+   "bytes": 1430,
+   "path": "/home/philip/BitDraft/artifacts/qualification/original-export-canonical-equivalence.json",
+   "sha256": "0b133c8fa7d94b50f59f24ef741d589b3587adc5ed4be3450ef83f3fa064f8c5"
+  },
+  "updates": 220095
+ },
+ "target": "Qwen3.5-4B Q4_K_M"
+}

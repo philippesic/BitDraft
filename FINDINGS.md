@@ -25,6 +25,7 @@ The fixed-data continuation worsened acceptance and request throughput. [Result]
 ### F004: Did the November 8 forty-sequence HE4broad run beat Baseline?
 
 It ended at 24.5658% acceptance and 174.113 tok/s, against 185.444 for target-only and 65.3257% and 249.662 tok/s for Baseline. [Result](results/he4broad-fresh-source-training/result.md).
+2026-11-12: this is a historical run, not HE4's current standing; see F014.
 
 ### F005: How many prompts did the null-topic deduplication bug drop?
 
@@ -62,6 +63,18 @@ In the November 4 modern 4B/RTX 5080 campaign, learned-small G4/D8 was faster on
 ### F013: Did the historical binary pipeline profile establish binary acceleration?
 
 No general binary-acceleration claim followed. [Result](results/binary-pipeline-profile/result.md).
+
+### F014: Where does the current 220,095-update HE4broad state stand?
+
+On 600 Q4KM DEV prompts it reached 41.85% acceptance (0.84 of 2 drafts per round) and
+180.9 tok/s: 1.07× target-only, 0.85× Baseline (65.77%, 213.5 tok/s). It does not beat
+Baseline. [Result](results/he4broad-final-standing/result.md).
+
+### F015: Does any drafter speed up the live tool tasks?
+
+No. Target-only took 7.40 s per assigned task, Baseline 7.49 and HE4 7.99; each drafter
+doubled prompt processing, cancelling its decoding gain. Twelve tasks from one project.
+[Result](results/he4broad-final-standing/result.md).
 
 
 ## Earlier experiments and durable lessons

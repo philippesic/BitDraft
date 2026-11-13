@@ -10,7 +10,8 @@ execution behavior live in [model](model.md) and [execution](execution.md).
 | Question | Relevant knowledge |
 | --- | --- |
 | Why HE4 and a compact fallback? | [Retained precision, latency and memory tradeoffs](../results/retained-drafter-tradeoffs/result.md) |
-| Did longer training help? | [Fixed-data HE4 failure](../results/he4-fixed-data-continuation/result.md), [broader-data trajectory](../results/he4broad-fresh-source-training/result.md), [inconclusive Csmallbroad continuation](../results/csmallbroad-continuation/result.md) |
+| Where does HE4 stand now? | [Final 220,095-update state on full DEV panels](../results/he4broad-final-standing/result.md) |
+| Did longer training help? | [Fixed-data HE4 failure](../results/he4-fixed-data-continuation/result.md), [forty-sequence HE4broad run](../results/he4broad-fresh-source-training/result.md), [final 15,647-capture state](../results/he4broad-final-standing/result.md), [inconclusive Csmallbroad continuation](../results/csmallbroad-continuation/result.md) |
 | Which activation choice has evidence? | [Activation family comparison](../results/activation-family-comparison/result.md), [fixed clipping control](../results/fixed-versus-learned-clipping/result.md) |
 | Can lower kernel cost compensate for quality? | [Binary execution screen](../results/binary-method-comparison/result.md), [complete execution costs](../results/execution-speed-and-model-quality/result.md) |
 | What did earlier models establish? | [Turing quantization](../results/turing-quantization/result.md), [released block drafters](../results/released-block-drafters/result.md), [equal-budget A8 recovery](../results/a8-equal-budget-recovery/result.md) |
