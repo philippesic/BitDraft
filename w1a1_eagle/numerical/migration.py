@@ -6,11 +6,10 @@ from pathlib import Path
 from typing import cast
 
 from w1a1_eagle.checkpoints.store import Store
-from w1a1_eagle.contracts import Record, integer, record, string
+from w1a1_eagle.contracts import Record, string
 from w1a1_eagle.device import device_lease
 from w1a1_eagle.intent import Intent
-from w1a1_eagle.model import Geometry
-from w1a1_eagle.numerical.entry import admission, read_corpus
+from w1a1_eagle.numerical.entry import admission, geometry, read_corpus
 from w1a1_eagle.numerical.legacy import import_state, materialize
 from w1a1_eagle.numerical.weights import load_he4
 from w1a1_eagle.numerical.worker import TensorWorker
@@ -41,11 +40,9 @@ def migrate(specification: Path, output: Path) -> Record:
             canonical(cast(Record, asdict(ProcessIdentity.read(os.getpid())))),
         )
         store.atomic(store.root / "specification.json", specification.read_bytes())
-        corpus = read_corpus(intent, integer(record(intent.raw["geometry"])["hidden"]))
+        corpus = read_corpus(intent)
         admission(intent, corpus)
-        cfg = Geometry(
-            **{name: integer(value) for name, value in record(intent.raw["geometry"]).items()}
-        )
+        cfg = geometry(intent)
         if spec.get("raw_checkpoint") is not None:
             archive.verify()
             raw = artifact(spec["raw_checkpoint"], base)

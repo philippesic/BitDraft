@@ -1,9 +1,10 @@
 import math
 from dataclasses import dataclass
-from typing import cast
+from typing import Callable, cast
 
 import torch
 from torch import Tensor, nn
+from torch.autograd.function import FunctionCtx
 from torch.nn import functional as functional
 
 
@@ -62,12 +63,36 @@ def rope(value: Tensor, positions: Tensor, theta: float) -> Tensor:
     return value * angle.cos() + rotated * angle.sin()
 
 
+def sign_forward(context: FunctionCtx, value: Tensor) -> Tensor:
+    context.save_for_backward(value)
+    return torch.where(value >= 0, 1.0, -1.0)
+
+
+def sign_backward(context: FunctionCtx, gradient: Tensor) -> Tensor:
+    (value,) = cast(tuple[Tensor], getattr(context, "saved_tensors"))
+    return gradient * (value.abs() <= 1).to(gradient.dtype)
+
+
+def autograd_function(
+    name: str,
+    forward: Callable[[FunctionCtx, Tensor], Tensor],
+    backward: Callable[[FunctionCtx, Tensor], Tensor],
+) -> Callable[[Tensor], Tensor]:
+    namespace: dict[str, object] = {
+        "forward": staticmethod(forward),
+        "backward": staticmethod(backward),
+    }
+    bases: tuple[type, ...] = (cast(type, getattr(torch.autograd, "Function")),)
+    return cast(Callable[[Tensor], Tensor], getattr(type(name, bases, namespace), "apply"))
+
+
+SIGN = autograd_function("Sign", sign_forward, sign_backward)
+
+
 def hard_sign(value: Tensor) -> Tensor:
     if value.dtype != torch.float32:
         raise ValueError("latent signs must be F32")
-    signs = torch.where(value >= 0, 1.0, -1.0)
-    surrogate = value * (value.detach().abs() <= 1).to(value.dtype)
-    return signs.detach() + (surrogate - surrogate.detach())
+    return SIGN(value)
 
 
 def cache_storage(value: Tensor) -> Tensor:
@@ -177,6 +202,57 @@ class Layer(nn.Module):
             functional.silu(self.gate.forward(norm)) * self.up.forward(norm)
         )
 
+    def group(
+        self,
+        state: Tensor,
+        context: tuple[Tensor, Tensor],
+        positions: Tensor,
+        allowed: Tensor,
+        slot_allowed: Tensor | None,
+    ) -> Tensor:
+        cfg = self.geometry
+        count, slots, length = positions.shape[0], cfg.slots, context[0].shape[0]
+        groups, heads = cfg.heads // cfg.kv_heads, cfg.kv_heads
+        flat = positions.reshape(-1)
+        norm = rms(state, self.attn_norm, cfg.epsilon)
+        query = self.query.forward(norm).view(-1, cfg.heads, cfg.head_dim)
+        key = self.key.forward(norm).view(-1, heads, cfg.head_dim)
+        value = self.value.forward(norm).view(-1, heads, cfg.head_dim)
+        query = rope(rms(query, self.q_norm, cfg.epsilon), flat, cfg.theta)
+        key = cache_storage(rope(rms(key, self.k_norm, cfg.epsilon), flat, cfg.theta))
+        value = cache_storage(value)
+        query = (
+            query.view(count, slots, heads, groups, cfg.head_dim)
+            .permute(2, 0, 3, 1, 4)
+            .reshape(heads, count, groups * slots, cfg.head_dim)
+        )
+        scale = math.sqrt(cfg.head_dim)
+        context_scores = torch.matmul(
+            query.view(heads, count * groups * slots, cfg.head_dim), context[0].permute(1, 2, 0)
+        ).view(heads, count, groups, slots, length)
+        context_scores.div_(scale).masked_fill_(~allowed[None, :, None], -torch.inf)
+        slot_scores = torch.matmul(
+            query, key.view(count, slots, heads, cfg.head_dim).permute(2, 0, 3, 1)
+        ).view(heads, count, groups, slots, slots)
+        slot_scores.div_(scale)
+        if slot_allowed is not None:
+            slot_scores.masked_fill_(~slot_allowed, -torch.inf)
+        weights = functional.softmax(torch.cat((context_scores, slot_scores), -1), -1)
+        context_weights, slot_weights = weights.split_with_sizes([length, slots], -1)
+        attended = torch.matmul(
+            context_weights.view(heads, count * groups * slots, length),
+            context[1].permute(1, 0, 2),
+        ).view(heads, count, groups, slots, cfg.head_dim) + torch.matmul(
+            slot_weights.view(heads, count, groups * slots, slots),
+            value.view(count, slots, heads, cfg.head_dim).permute(2, 0, 1, 3),
+        ).view(heads, count, groups, slots, cfg.head_dim)
+        attended = attended.permute(1, 3, 0, 2, 4).reshape(count * slots, -1)
+        residual = state + self.output.forward(attended)
+        norm = rms(residual, self.ffn_norm, cfg.epsilon)
+        return residual + self.down.forward(
+            functional.silu(self.gate.forward(norm)) * self.up.forward(norm)
+        )
+
 
 class HE4(nn.Module):
     vocabulary: Tensor
@@ -209,11 +285,11 @@ class HE4(nn.Module):
             [Layer(tensors, f"blk.{i}.", geometry) for i in range(geometry.layers)]
         )
 
-    def forward(self, features: Tensor, tokens: tuple[int, ...], anchor: int) -> Tensor:
+    def check(self, features: Tensor, tokens: tuple[int, ...], anchors: tuple[int, ...]) -> None:
         cfg = self.geometry
         if (
-            type(anchor) is not int
-            or not 0 <= anchor < len(tokens)
+            not anchors
+            or any(type(anchor) is not int or not 0 <= anchor < len(tokens) for anchor in anchors)
             or features.ndim != 2
             or features.shape != (len(tokens), cfg.taps * cfg.hidden)
             or any(
@@ -222,6 +298,47 @@ class HE4(nn.Module):
             )
         ):
             raise ValueError("invalid model inputs")
+
+    def group_hidden(
+        self, features: Tensor, tokens: tuple[int, ...], anchors: tuple[int, ...]
+    ) -> Tensor:
+        self.check(features, tokens, anchors)
+        cfg = self.geometry
+        device = self.vocabulary.device
+        starts = torch.tensor(anchors, device=device)
+        offsets = torch.arange(cfg.slots, device=device)
+        positions = starts[:, None] + offsets[None, :]
+        last = max(anchors)
+        context_positions = torch.arange(last, device=device)
+        identifiers = torch.full((len(anchors), cfg.slots), self.mask, device=device)
+        first: list[int] = [tokens[anchor] for anchor in anchors]
+        identifiers[:, 0] = torch.tensor(first, device=device)
+        state = functional.embedding(identifiers.reshape(-1), self.vocabulary)
+        encoded = rms(
+            self.fusion.forward(features[:last].to(device)), self.encoder_norm, cfg.epsilon
+        )
+        visible = context_positions[None, None, :] < starts[:, None, None]
+        local = visible & (
+            (positions[:, :, None] - context_positions[None, None, :]).abs() < cfg.window
+        )
+        slot_local = (offsets[:, None] - offsets[None, :]).abs() < cfg.window
+        for index, module in enumerate(self.blocks):
+            block = cast(Layer, module)
+            final = index == cfg.layers - 1
+            state = block.group(
+                state,
+                block.context(encoded, context_positions),
+                positions,
+                visible if final else local,
+                None if final else slot_local,
+            )
+        return rms(state, self.output_norm, cfg.epsilon).view(len(anchors), cfg.slots, cfg.hidden)
+
+    def forward(self, features: Tensor, tokens: tuple[int, ...], anchor: int) -> Tensor:
+        cfg = self.geometry
+        if type(anchor) is not int:
+            raise ValueError("invalid model inputs")
+        self.check(features, tokens, (anchor,))
         device = self.vocabulary.device
         positions = torch.arange(anchor, anchor + cfg.slots, device=device)
         context_positions = torch.arange(anchor, device=device)

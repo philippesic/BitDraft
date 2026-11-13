@@ -21,9 +21,24 @@ from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.records import canonical
 from w1a1_eagle.training import Budget, Progress, train
 
+HEAD_ROWS = 128
+FINITE_SCAN_UPDATES = 32
+
 
 class Samples(Protocol):
-    def sample(self, cursor: int) -> tuple[Capture, Supervision]: ...
+    def sample(self, cursor: int) -> tuple[Capture, tuple[Supervision, ...]]: ...
+
+
+def label_weights(lengths: tuple[int, ...]) -> Tensor:
+    parts = []
+    for length in lengths:
+        weights = torch.exp(-torch.arange(length) / 7)
+        parts.append(weights / weights.sum() / len(lengths))
+    return torch.cat(parts)
+
+
+def optimizer_options(group: object) -> Record:
+    return {key: value for key, value in record(group).items() if key not in {"foreach", "fused"}}
 
 
 class TensorWorker:
@@ -80,7 +95,7 @@ class TensorWorker:
                 if values
             ],
             weight_decay=0,
-            foreach=False,
+            fused=True,
         )
         self.last_gradient_norm = 0.0
         self.frozen = {name: (value, value._version) for name, value in model.named_buffers()}
@@ -224,16 +239,17 @@ class TensorWorker:
             self.last_publication = None
             started = self.clock.now()
             try:
-                capture, window = self.samples.sample(cursor)
+                capture, windows = self.samples.sample(cursor)
             finally:
                 self.accounting.data_seconds += self.elapsed(started)
             began = self.update_clock.now()
             complete = False
             try:
-                loss = self.update(capture, window)
+                loss = self.update(capture, windows)
                 complete = True
-                self.accounting.dataset_labels += len(window.labels)
-                self.accounting.observed_labels += len(window.labels)
+                labels = sum(len(window.labels) for window in windows)
+                self.accounting.dataset_labels += labels
+                self.accounting.observed_labels += labels
                 return loss
             finally:
                 elapsed = self.elapsed(began, self.update_clock)
@@ -249,19 +265,52 @@ class TensorWorker:
             raise ValueError("invalid model/data measurement clock")
         return elapsed
 
-    def update(self, capture: Capture, window: Supervision) -> float:
+    def verify_finite(self) -> None:
+        checks = [torch.isfinite(parameter).all() for parameter in self.model.parameters()]
+        if not bool(torch.stack(checks).all()):
+            self.ready = False
+            raise ValueError("nonfinite post-update state")
+
+    def group_loss(self, capture: Capture, windows: tuple[Supervision, ...]) -> Tensor:
+        if not windows or any(not window.labels for window in windows):
+            raise ValueError("an update requires supervised windows")
+        model = self.model
+        device = model.vocabulary.device
+        slots = model.geometry.slots
+        hidden = model.group_hidden(
+            capture.features, capture.tokens, tuple(window.anchor for window in windows)
+        )
+        indices: list[int] = [
+            index * slots + 1 + offset
+            for index, window in enumerate(windows)
+            for offset in range(len(window.labels))
+        ]
+        targets: list[int] = [label for window in windows for label in window.labels]
+        rows = torch.tensor(indices, device=device)
+        labels = torch.tensor(targets, dtype=torch.int64, device=device)
+        weights = label_weights(tuple(len(window.labels) for window in windows)).to(device)
+        selected = hidden.view(-1, hidden.shape[-1]).index_select(0, rows)
+        head = selected.detach().requires_grad_()
+        total = torch.zeros((), device=device)
+        for start in range(0, len(targets), HEAD_ROWS):
+            end = start + HEAD_ROWS
+            losses = torch.nn.functional.cross_entropy(
+                torch.nn.functional.linear(head[start:end], model.vocabulary),
+                labels[start:end],
+                reduction="none",
+            )
+            loss = (losses * weights[start:end]).sum()
+            torch.autograd.backward(loss)
+            total = total + loss.detach()
+        if not bool(torch.isfinite(total)) or head.grad is None:
+            raise ValueError("nonfinite loss")
+        torch.autograd.backward(selected, head.grad)
+        return total
+
+    def update(self, capture: Capture, windows: tuple[Supervision, ...]) -> float:
         feature_version = capture.features._version
         self.optimizer.zero_grad(set_to_none=True)
-        logits = self.model.forward(capture.features, capture.tokens, window.anchor)[
-            1 : 1 + len(window.labels)
-        ]
-        labels = torch.tensor(window.labels, dtype=torch.int64, device=logits.device)
-        losses = torch.nn.functional.cross_entropy(logits, labels, reduction="none")
-        weights = torch.exp(-torch.arange(len(window.labels), device=logits.device) / 7)
-        loss = (losses * weights).sum() / weights.sum()
-        if not bool(torch.isfinite(loss)):
-            raise ValueError("nonfinite loss")
-        torch.autograd.backward(loss)
+        loss = self.group_loss(capture, windows)
         norm = torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0, error_if_nonfinite=True)
         self.last_gradient_norm = float(norm)
         self.optimizer.step()
@@ -269,8 +318,8 @@ class TensorWorker:
             for module in self.model.modules():
                 if isinstance(module, Projection):
                     module.scale.clamp_(min=0)
-        if any(not bool(torch.isfinite(parameter).all()) for parameter in self.model.parameters()):
-            raise ValueError("nonfinite post-update state")
+        if (self.updates + 1) % FINITE_SCAN_UPDATES == 0:
+            self.verify_finite()
         self.verify_frozen()
         if capture.features._version != feature_version:
             raise ValueError("teacher features changed during an update")
@@ -302,6 +351,7 @@ class TensorWorker:
             ):
                 raise ValueError("cannot publish an incomplete update or budget record")
             self.verify_frozen()
+            self.verify_finite()
             self.progress.validate()
             state: dict[str, object] = {
                 "schema": 4,
@@ -440,7 +490,9 @@ class TensorWorker:
             saved_groups = sequence(optimizer_state["param_groups"])
             current_optimizer = cast(dict[str, object], self.optimizer.state_dict())
             fresh_groups = sequence(current_optimizer["param_groups"])
-            if saved_groups != fresh_groups:
+            if [optimizer_options(group) for group in saved_groups] != [
+                optimizer_options(group) for group in fresh_groups
+            ]:
                 raise ValueError("optimizer parameter groups or rates mismatch")
             raw_states = optimizer_state["state"]
             if not isinstance(raw_states, dict):
@@ -548,7 +600,17 @@ class TensorWorker:
             self.accounting = accounting
             lineage = tuple(string(v) for v in sequence(state["lineage"]))
             if mode in {"resume", "continue"}:
-                self.optimizer.load_state_dict(optimizer_state)
+                implementation = [
+                    {
+                        **record(saved),
+                        "foreach": record(fresh)["foreach"],
+                        "fused": record(fresh)["fused"],
+                    }
+                    for saved, fresh in zip(saved_groups, fresh_groups, strict=True)
+                ]
+                self.optimizer.load_state_dict(
+                    cast(dict[str, object], {**optimizer_state, "param_groups": implementation})
+                )
                 self.optimizer_updates = optimizer_updates
                 rng = state["rng"]
                 if not torch.is_tensor(rng) or rng.dtype != torch.uint8:

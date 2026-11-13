@@ -249,15 +249,49 @@ def test_task_sampling_balances_tasks_and_retains_locality() -> None:
     from w1a1_eagle.sampling import TaskSampler
 
     sampler = TaskSampler(
-        (1, 100000, 2), ("first", "first", "second"), {"first": 1, "second": 3}, 8101, 8
+        (1, 100000, 2, 40),
+        ("first", "first", "second", "third"),
+        {"first": 1, "second": 3, "third": 1e-9},
+        8101,
+        8,
+        (5, 6, 5, 3),
     )
-    batches = [sampler.locate(cursor * 8)[0] for cursor in range(2000)]
-    first = [value for value in batches if value in (0, 1)]
-    assert 0.17 < len(first) / len(batches) < 0.33
+    groups = [sampler.locate(cursor) for cursor in range(2000)]
+    first = [row for row, _ in groups if row in (0, 1)]
+    assert 0.17 < len(first) / len(groups) < 0.33
     assert 0.4 < first.count(0) / len(first) < 0.6
-    for cursor in range(0, 80, 8):
-        assert len({sampler.locate(cursor + offset)[0] for offset in range(8)}) == 1
-        assert sampler.locate(cursor) == sampler.locate(cursor)
+    for row, positions in groups:
+        assert len(positions) == min(8, (5, 6, 5, 3)[row], (1, 100000, 2, 40)[row])
+        assert list(positions) == sorted(set(positions))
+        assert all(0 <= position < (1, 100000, 2, 40)[row] for position in positions)
+    assert all(sampler.locate(cursor) == groups[cursor] for cursor in range(0, 2000, 97))
+    assert TaskSampler((1, 100000), ("a", "a"), {"a": 1}, 1, 64).locate(5)[1] != ()
+    with pytest.raises(ValueError, match="dimensions"):
+        TaskSampler((1, 2), ("a", "a"), {"a": 1}, 1, 8, (1, 0))
+
+
+def test_group_size_follows_context_memory_rule() -> None:
+    from w1a1_eagle.training import Grouping
+
+    @dataclass(frozen=True)
+    class Shape:
+        hidden: int = 2560
+        intermediate: int = 9216
+        heads: int = 32
+        layers: int = 6
+        slots: int = 16
+        taps: int = 8
+
+    rule = Grouping()
+    sizes = [rule.windows(Shape(), context) for context in (0, 1000, 4000, 13471, 10**7)]
+    assert sizes[0] == rule.max_windows
+    assert sizes == sorted(sizes, reverse=True)
+    assert sizes[-1] == 1
+    assert Grouping(4, rule.activation_bytes).windows(Shape(), 0) == 4
+    assert Grouping(32, 1).windows(Shape(), 0) == 1
+    for invalid in ((0, 1), (65, 1), (8, 0)):
+        with pytest.raises(ValueError):
+            Grouping(*invalid)
 
 
 def test_streamed_assets_and_retention_preserve_recoverable_states(tmp_path: Path) -> None:

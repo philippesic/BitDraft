@@ -16,7 +16,7 @@ from torch import nn
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.clock import Monotonic
 from w1a1_eagle.contracts import Record, integer, number, record, sequence
-from w1a1_eagle.data import Artifact, Supervision, Window
+from w1a1_eagle.data import Artifact, Supervision, TailWindow, Window
 from w1a1_eagle.identity import source_identity
 from w1a1_eagle.intent import Intent
 from w1a1_eagle.lifecycle import Journal
@@ -29,7 +29,7 @@ from w1a1_eagle.numerical.weights import load_he4, shapes
 from w1a1_eagle.numerical.worker import TensorWorker
 from w1a1_eagle.records import artifact, canonical, read, reference
 from w1a1_eagle.supervisor import execute
-from w1a1_eagle.training import Budget
+from w1a1_eagle.training import Budget, Grouping
 
 
 class TestNumerical(unittest.TestCase):
@@ -53,8 +53,8 @@ class TestNumerical(unittest.TestCase):
             self.assertEqual(tuple(len(window.labels) for window in capture.windows), (2, 1))
 
             class Samples:
-                def sample(self, cursor: int) -> tuple[Capture, Supervision]:
-                    return capture, capture.windows[cursor % len(capture.windows)]
+                def sample(self, cursor: int) -> tuple[Capture, tuple[Supervision, ...]]:
+                    return capture, capture.windows
 
             model, _ = self.tiny_model()
             worker = TensorWorker(model, Samples(), "explicit-partial-objective")
@@ -63,6 +63,7 @@ class TestNumerical(unittest.TestCase):
             )
             self.assertEqual(worker.updates, 1)
             self.assertIsNotNone(worker.progress.last_loss)
+            self.assertEqual(worker.accounting.observed_labels, 3)
 
     def test_cache_storage_rounds_values_preserves_gradients(self) -> None:
         values = torch.tensor([0.1234567, -1.234567], requires_grad=True)
@@ -403,9 +404,9 @@ class TestNumerical(unittest.TestCase):
                 name,
             )
 
-    def tiny_model(self) -> tuple[HE4, torch.Tensor]:
+    def tiny_model(self, window: int = 4096) -> tuple[HE4, torch.Tensor]:
         torch.set_num_threads(1)
-        cfg = Geometry(hidden=4, intermediate=8, heads=2, kv_heads=1, head_dim=2)
+        cfg = Geometry(hidden=4, intermediate=8, heads=2, kv_heads=1, head_dim=2, window=window)
         generator = torch.Generator().manual_seed(17)
         tensors = {
             "fc.weight": torch.randn((4, 32), generator=generator) * 0.1,
@@ -434,6 +435,91 @@ class TestNumerical(unittest.TestCase):
         model = HE4(tensors, torch.randn((20, 4), generator=generator), 19, cfg)
         features = torch.randn((20, 32), generator=generator)
         return model, features
+
+    def test_group_forward_matches_single_windows(self) -> None:
+        for window in (4096, 5):
+            model, features = self.tiny_model(window)
+            tokens = tuple(range(20))
+            for anchors in ((2,), (19,), (0, 3, 3, 9, 12, 19), (7, 1)):
+                with torch.no_grad():
+                    grouped = torch.nn.functional.linear(
+                        model.group_hidden(features, tokens, anchors), model.vocabulary
+                    )
+                    for index, anchor in enumerate(anchors):
+                        single = model.forward(features, tokens, anchor)
+                        torch.testing.assert_close(grouped[index], single, rtol=0, atol=1e-5)
+                        self.assertTrue(torch.equal(grouped[index].argmax(-1), single.argmax(-1)))
+        with self.assertRaisesRegex(ValueError, "inputs"):
+            model.group_hidden(features, tokens, ())
+        with self.assertRaisesRegex(ValueError, "inputs"):
+            model.group_hidden(features, tokens, (20,))
+
+    def test_group_gradient_is_mean_of_window_gradients(self) -> None:
+        worker = self.fixture_worker("gradient")
+        capture, windows = worker.samples.sample(0)
+        parameters = dict(worker.model.named_parameters())
+
+        def gradients(loss: torch.Tensor) -> dict[str, torch.Tensor]:
+            result = {
+                name: torch.zeros_like(value) if value.grad is None else value.grad.clone()
+                for name, value in parameters.items()
+            }
+            worker.optimizer.zero_grad(set_to_none=True)
+            return result
+
+        worker.optimizer.zero_grad(set_to_none=True)
+        grouped_loss = float(worker.group_loss(capture, windows))
+        grouped = gradients(torch.zeros(()))
+        singles: list[tuple[float, dict[str, torch.Tensor]]] = []
+        for window in windows:
+            loss = float(worker.group_loss(capture, (window,)))
+            singles.append((loss, gradients(torch.zeros(()))))
+            count = len(window.labels)
+            logits = worker.model.forward(capture.features, capture.tokens, window.anchor)
+            losses = torch.nn.functional.cross_entropy(
+                logits[1 : 1 + count], torch.tensor(window.labels), reduction="none"
+            )
+            weights = torch.exp(-torch.arange(count) / 7)
+            original = (losses * weights).sum() / weights.sum()
+            original.backward()
+            self.assertAlmostEqual(loss, float(original.detach()), places=5)
+            for name, value in gradients(original).items():
+                torch.testing.assert_close(singles[-1][1][name], value, rtol=1e-4, atol=1e-6)
+        self.assertAlmostEqual(
+            grouped_loss, sum(loss for loss, _ in singles) / len(windows), places=5
+        )
+        for name, value in grouped.items():
+            mean = sum(gradient[name] for _, gradient in singles) / len(windows)
+            torch.testing.assert_close(value, mean, rtol=1e-4, atol=1e-6)
+
+    def test_sign_matches_previous_values_and_gradient(self) -> None:
+        def previous(value: torch.Tensor) -> torch.Tensor:
+            signs = torch.where(value >= 0, 1.0, -1.0)
+            surrogate = value * (value.detach().abs() <= 1).to(value.dtype)
+            return signs.detach() + (surrogate - surrogate.detach())
+
+        one = torch.tensor(1.0)
+        edges = torch.tensor([-2.0, -1.0, -0.5, -0.0, 0.0, 0.5, 1.0, 2.0])
+        edges = torch.cat(
+            (
+                edges,
+                torch.nextafter(one, torch.tensor(2.0)).reshape(1),
+                torch.nextafter(one, torch.tensor(0.0)).reshape(1),
+                -torch.nextafter(one, torch.tensor(2.0)).reshape(1),
+                -torch.nextafter(one, torch.tensor(0.0)).reshape(1),
+                torch.randn(4096, generator=torch.Generator().manual_seed(3)) * 1.5,
+            )
+        )
+        upstream = torch.randn(edges.shape, generator=torch.Generator().manual_seed(4))
+        current_input = edges.clone().requires_grad_()
+        previous_input = edges.clone().requires_grad_()
+        current, old = hard_sign(current_input), previous(previous_input)
+        self.assertTrue(torch.equal(current, old))
+        (current * upstream).sum().backward()
+        (old * upstream).sum().backward()
+        assert current_input.grad is not None and previous_input.grad is not None
+        self.assertTrue(torch.equal(current_input.grad, previous_input.grad))
+        self.assertTrue(torch.equal(current_input.grad[:8] != 0, edges[:8].abs() <= 1))
 
     def test_tiny_six_layer_forward_and_update(self) -> None:
         model, features = self.tiny_model()
@@ -555,13 +641,18 @@ class TestNumerical(unittest.TestCase):
             self.assertEqual(export_store.latest("export-fixture"), exported)
             self.assertEqual(corpus.count, 2)
             self.assertEqual(corpus.unique_positions, 16)
+            self.assertEqual((corpus.groups_per_pass, corpus.windows_per_update), (1, 2))
             expected = [corpus.locate(i)[1] for i in range(5)]
-            self.assertEqual(corpus.locate(0)[1], corpus.locate(corpus.count)[1])
+            self.assertEqual(expected[0], (8, 9))
+            self.assertEqual(corpus.locate(0)[1], corpus.locate(corpus.groups_per_pass)[1])
             self.assertEqual(
                 expected,
                 [Corpus(corpus_ref, 17, 64 * 1024 * 1024, 256).locate(i)[1] for i in range(5)],
             )
-            self.assertEqual(corpus.exposure(4)["mean_visits_upper_bound"], 60 / 16)
+            self.assertEqual(corpus.exposure(4)["mean_visits_upper_bound"], 120 / 16)
+            single = Corpus(corpus_ref, 17, 64 * 1024 * 1024, 256, grouping=Grouping(1, 1))
+            self.assertEqual((single.groups_per_pass, single.labels_per_update), (2, 15))
+            self.assertEqual(sorted(single.locate(i)[1] for i in range(2)), [(8,), (9,)])
             intent: Record = {
                 "schema": 2,
                 "objective": "exercise CPU source integration",
@@ -587,7 +678,7 @@ class TestNumerical(unittest.TestCase):
                 "science_policy": {
                     "id": "synthetic-fixture-only",
                     "min_unique_positions": 16,
-                    "max_mean_visits": 2,
+                    "max_mean_visits": 4,
                 },
                 "geometry": {
                     "hidden": 256,
@@ -602,6 +693,18 @@ class TestNumerical(unittest.TestCase):
             intent_path = root / "intent.json"
             intent_path.write_bytes(canonical(intent))
             sealed = Intent.load(intent_path)
+            self.assertEqual(sealed.grouping, Grouping())
+            grouped = dict(intent)
+            grouped["grouping"] = {"max_windows": 1, "activation_bytes": 1}
+            intent_path.write_bytes(canonical(grouped))
+            self.assertEqual(Intent.load(intent_path).grouping, Grouping(1, 1))
+            self.assertNotEqual(Intent.load(intent_path).recipe, sealed.recipe)
+            for invalid in ({"max_windows": 0, "activation_bytes": 1}, {"max_windows": 1}):
+                grouped["grouping"] = invalid
+                intent_path.write_bytes(canonical(grouped))
+                with self.assertRaises(ValueError):
+                    Intent.load(intent_path)
+            intent_path.write_bytes(canonical(intent))
             editable = sealed.raw
             editable["authority_scope"] = "altered"
             self.assertEqual(sealed.raw["authority_scope"], "disposable-CPU-test")
@@ -612,7 +715,7 @@ class TestNumerical(unittest.TestCase):
             invalid_policy["science_policy"] = {
                 "id": "deliberate-refusal",
                 "min_unique_positions": 17,
-                "max_mean_visits": 2,
+                "max_mean_visits": 4,
             }
             intent_path.write_bytes(canonical(invalid_policy))
             with self.assertRaisesRegex(ValueError, "distinct-data"):
@@ -662,6 +765,13 @@ class TestNumerical(unittest.TestCase):
             intent_path.write_bytes(canonical(intent))
             self.assertEqual(record(report["latest"])["outcome"], "complete", report)
             self.assertEqual(record(report["worker"])["updates"], 1)
+            self.assertEqual(record(record(report["worker"])["accounting"])["observed_labels"], 30)
+            exposures = [
+                row for row in Journal(root / "attempt").events() if row.get("kind") == "exposure"
+            ]
+            self.assertEqual(
+                [(row["anchors"], row["labels"]) for row in exposures], [([8, 9], [15, 15])]
+            )
             self.assertIn("unknown", str(report["scientific"]))
             latest = Store(root / "attempt/states").latest(
                 str(record(report["admission"])["recipe"])
@@ -673,7 +783,7 @@ class TestNumerical(unittest.TestCase):
             intent["science_policy"] = {
                 "id": "synthetic-fixture-only",
                 "min_unique_positions": 16,
-                "max_mean_visits": 5,
+                "max_mean_visits": 8,
             }
             intent_path.write_bytes(canonical(intent))
             resumed_report = execute(intent_path, root / "attempt", "disposable-CPU-test")
@@ -833,14 +943,18 @@ class TestNumerical(unittest.TestCase):
     def fixture_worker(self, identity: str, device: str = "cpu") -> TensorWorker:
         model, features = self.tiny_model()
         model.to(device)
-        window = Window("fixture", 2, tuple(range(3, 18)))
-        capture = Capture(tuple(range(20)), features, (window,))
+        windows: tuple[Supervision, ...] = (
+            Window("fixture", 2, tuple(range(3, 18))),
+            Window("fixture", 4, tuple(range(5, 20))),
+            TailWindow("fixture", 17, (18, 19)),
+        )
+        capture = Capture(tuple(range(20)), features, windows)
 
         class Source:
-            def sample(self, cursor: int) -> tuple[Capture, Window]:
+            def sample(self, cursor: int) -> tuple[Capture, tuple[Supervision, ...]]:
                 if cursor < 0:
                     raise ValueError("negative cursor")
-                return capture, window
+                return capture, windows[cursor % 2 :]
 
         return TensorWorker(model, Source(), identity)
 
@@ -1013,6 +1127,88 @@ class TestNumerical(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "moment geometry"):
                 self.fixture_worker("recipe").restore(malformed, 8 * 1024 * 1024)
 
+    def test_previous_optimizer_layout_continues_and_branches(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            previous = self.fixture_worker("previous-code")
+            previous.optimizer = torch.optim.AdamW(
+                [
+                    {"params": group["params"], "lr": group["lr"], "name": group["name"]}
+                    for group in previous.optimizer.param_groups
+                ],
+                weight_decay=0,
+                foreach=False,
+            )
+            previous.run(Monotonic(), Budget(1, 60, 1), lambda: False)
+            parent = previous.checkpoint(Store(root / "previous"), 4 * 1024 * 1024)
+            saved = torch.load(parent.artifact.path, weights_only=True)
+            self.assertEqual(saved["schema"], 4)
+            self.assertEqual(
+                {
+                    (group["foreach"], group["fused"])
+                    for group in saved["optimizer"]["param_groups"]
+                },
+                {(False, None)},
+            )
+            for mode in ("continue", "branch"):
+                worker = self.fixture_worker("grouped-recipe")
+                worker.restore(parent, 8 * 1024 * 1024, mode=mode)
+                self.assertEqual(worker.cursor, 0)
+                self.assertTrue(all(group["fused"] for group in worker.optimizer.param_groups))
+                self.assertEqual(worker.optimizer_updates, 1 if mode == "continue" else 0)
+                worker.run(Monotonic(), Budget(3, 60, 3), lambda: False)
+                self.assertEqual((worker.updates, worker.cursor), (3, 2))
+                self.assertEqual(worker.accounting.observed_labels, 32 + 32 + 17)
+                steps = {
+                    float(state["step"])
+                    for state in worker.optimizer.state_dict()["state"].values()
+                }
+                self.assertEqual(steps, {3.0 if mode == "continue" else 2.0})
+                child = worker.checkpoint(Store(root / mode), 4 * 1024 * 1024)
+                resumed = self.fixture_worker("grouped-recipe")
+                resumed.restore(child, 8 * 1024 * 1024)
+                self.assertEqual(resumed.cursor, 2)
+
+    def test_plain_grouping_covers_each_window_once_per_pass(self) -> None:
+        from dataclasses import replace
+
+        with tempfile.TemporaryDirectory() as directory:
+            corpus = Corpus(
+                self.fixture_corpus(Path(directory), 4),
+                5,
+                32 * 1024 * 1024,
+                4,
+                grouping=Grouping(4),
+            )
+            template = corpus.rows[0]
+            corpus.rows = tuple(
+                replace(
+                    template,
+                    prompt=replace(template.prompt, identity=f"row-{index}"),
+                    anchors=tuple(range(10, 10 + count)),
+                )
+                for index, count in enumerate((5, 1, 12, 0, 3))
+            )
+            corpus._index(5, 32 * 1024 * 1024, 4, 0)
+            self.assertEqual(corpus.limits, (4, 1, 4, 1, 3))
+            self.assertEqual((corpus.groups_per_pass, corpus.windows_per_update), (7, 4))
+            seen: list[tuple[str, int]] = []
+            for cursor in range(corpus.groups_per_pass):
+                row, anchors = corpus.locate(cursor)
+                self.assertTrue(1 <= len(anchors) <= 4)
+                self.assertEqual(list(anchors), sorted(anchors))
+                seen.extend((row.prompt.identity, anchor) for anchor in anchors)
+            expected = [
+                (f"row-{index}", 10 + offset)
+                for index, count in enumerate((5, 1, 12, 0, 3))
+                for offset in range(count)
+            ]
+            self.assertEqual(sorted(seen), sorted(expected))
+            self.assertEqual(corpus.locate(7), corpus.locate(0))
+            self.assertEqual(
+                sorted(len(corpus.locate(cursor)[1]) for cursor in range(7)), [1, 2, 3, 3, 4, 4, 4]
+            )
+
     def test_continuation_keeps_optimizer_and_dataset_exposure_origin(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -1026,15 +1222,15 @@ class TestNumerical(unittest.TestCase):
             self.assertEqual(changed.optimizer_updates, 1)
             self.assertEqual(changed.accounting.dataset_start_updates, 1)
             self.assertEqual(changed.accounting.dataset_labels, 0)
-            self.assertEqual(changed.accounting.observed_labels, 15)
+            self.assertEqual(changed.accounting.observed_labels, 32)
             changed.run(Monotonic(), Budget(2, 60, 2), lambda: False)
             saved = changed.checkpoint(Store(root / "new"), 4 * 1024 * 1024)
             resumed = self.fixture_worker("new-recipe")
             resumed.accounting.dataset = "b" * 64
             resumed.restore(saved, 8 * 1024 * 1024)
-            self.assertEqual(resumed.accounting.dataset_labels, 15)
+            self.assertEqual(resumed.accounting.dataset_labels, 32)
             self.assertEqual(resumed.accounting.dataset_start_updates, 1)
-            self.assertEqual(resumed.accounting.observed_labels, 30)
+            self.assertEqual(resumed.accounting.observed_labels, 64)
             self.assertEqual(resumed.accounting.encode(), changed.accounting.encode())
             wrong = self.fixture_worker("new-recipe")
             wrong.accounting.dataset = "c" * 64

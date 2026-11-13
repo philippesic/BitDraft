@@ -171,5 +171,5 @@ def summarize(rows: list[Record]) -> Record:
 
 
 class NoSamples:
-    def sample(self, cursor: int) -> tuple[Capture, Supervision]:
+    def sample(self, cursor: int) -> tuple[Capture, tuple[Supervision, ...]]:
         raise ValueError("evaluation cannot request a training sample")

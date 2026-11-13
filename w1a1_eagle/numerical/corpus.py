@@ -16,9 +16,11 @@ from w1a1_eagle.data import (
     supervision,
     supervision_positions,
 )
+from w1a1_eagle.model import Geometry
 from w1a1_eagle.numerical.captures import TAPS, Capture, CaptureCache, CaptureSpec
 from w1a1_eagle.records import artifact, read
 from w1a1_eagle.sampling import TaskSampler
+from w1a1_eagle.training import Grouping, Shape
 
 
 class Corpus:
@@ -29,9 +31,15 @@ class Corpus:
         byte_budget: int,
         hidden: int = 2560,
         sampling: Artifact | None = None,
+        grouping: Grouping = Grouping(),
+        shape: Shape | None = None,
     ) -> None:
         if type(byte_budget) is not int or byte_budget < 1 or type(seed) is not int or seed < 0:
             raise ValueError("positive memory budget and nonnegative seed required")
+        self.shape: Shape = Geometry(hidden=hidden) if shape is None else shape
+        if self.shape.hidden != hidden:
+            raise ValueError("corpus feature width and model geometry differ")
+        self.grouping = grouping
         self.sampling = sampling
         self.task_sampler: TaskSampler | None = None
         if isinstance(manifest, Dataset):
@@ -167,7 +175,22 @@ class Corpus:
             raise ValueError("sampler metadata exceeds memory budget")
         self.cache = CaptureCache(byte_budget - metadata_bytes, hidden)
         self.seed = seed
+        self.limits = tuple(
+            min(len(row.anchors), self.grouping.windows(self.shape, row.anchors[-1]))
+            if row.anchors
+            else 1
+            for row in self.rows
+        )
+        self.groups_per_pass = sum(
+            math.ceil(len(row.anchors) / limit)
+            for row, limit in zip(self.rows, self.limits, strict=True)
+        )
+        self.windows_per_update = max(
+            limit for row, limit in zip(self.rows, self.limits, strict=True) if row.anchors
+        )
         self.order: list[int] = []
+        self.members: list[int] = []
+        self.starts: list[int] = []
         if self.sampling is not None:
             self.sampling.verify()
             configuration = read(self.sampling.path)
@@ -189,31 +212,60 @@ class Corpus:
                 weights,
                 seed,
                 integer(configuration["burst"]),
+                self.limits,
+            )
+            self.windows_per_update = max(
+                self.task_sampler.size(index) for index, row in enumerate(self.rows) if row.anchors
             )
 
-    def locate(self, cursor: int) -> tuple[CaptureRow, int]:
+    def partition(self) -> None:
+        generator = random.Random(self.seed)
+        start = 0
+        for row, limit in zip(self.rows, self.limits, strict=True):
+            count = len(row.anchors)
+            members = list(range(start, start + count))
+            generator.shuffle(members)
+            parts = math.ceil(count / limit)
+            for part in range(parts):
+                self.starts.append(len(self.members))
+                self.members.extend(members[part * count // parts : (part + 1) * count // parts])
+            start += count
+        self.starts.append(len(self.members))
+        self.order = list(range(self.groups_per_pass))
+        generator.shuffle(self.order)
+
+    def locate(self, cursor: int) -> tuple[CaptureRow, tuple[int, ...]]:
         if type(cursor) is not int or cursor < 0:
             raise ValueError("nonnegative sampler cursor required")
         if self.task_sampler is not None:
-            row_index, position = self.task_sampler.locate(cursor)
+            row_index, positions = self.task_sampler.locate(cursor)
             row = self.rows[row_index]
-            return row, row.anchors[position]
-        offset = cursor % self.count
+            return row, tuple(row.anchors[position] for position in positions)
         if not self.order:
-            self.order = list(range(self.count))
-            random.Random(self.seed).shuffle(self.order)
-        index = self.order[offset]
-        row_index = bisect.bisect_right(self.ends, index)
+            self.partition()
+        group = self.order[cursor % self.groups_per_pass]
+        members = sorted(self.members[self.starts[group] : self.starts[group + 1]])
+        row_index = bisect.bisect_right(self.ends, members[0])
         row = self.rows[row_index]
-        return row, row.anchors[index - (self.ends[row_index - 1] if row_index else 0)]
+        offset = self.ends[row_index - 1] if row_index else 0
+        return row, tuple(row.anchors[index - offset] for index in members)
 
-    def sample(self, cursor: int) -> tuple[Capture, Supervision]:
-        row, anchor = self.locate(cursor)
+    def sample(self, cursor: int) -> tuple[Capture, tuple[Supervision, ...]]:
+        row, anchors = self.locate(cursor)
         capture = self.cache.get(row.capture)
-        index = bisect.bisect_left(row.anchors, anchor)
-        if len(capture.windows) != len(row.anchors) or capture.windows[index].anchor != anchor:
+        if len(capture.windows) != len(row.anchors):
             raise ValueError("admitted and materialized window disagreement")
-        return capture, capture.windows[index]
+        windows = []
+        for anchor in anchors:
+            window = capture.windows[bisect.bisect_left(row.anchors, anchor)]
+            if window.anchor != anchor:
+                raise ValueError("admitted and materialized window disagreement")
+            windows.append(window)
+        return capture, tuple(windows)
+
+    @property
+    def labels_per_update(self) -> int:
+        return 15 * self.windows_per_update
 
     def exposure(self, updates: int) -> dict[str, int | float]:
         if type(updates) is not int or updates < 0:
@@ -233,11 +285,13 @@ class Corpus:
             ),
             "windows": self.count,
             "distinct_positions": self.unique_positions,
-            "label_exposures_upper_bound": updates * 15,
-            "mean_visits_upper_bound": updates * 15 / self.unique_positions,
-            "window_passes": updates / self.count,
-            "maximum_position_visits_bound": updates
+            "windows_per_update_max": self.windows_per_update,
+            "groups_per_pass": self.groups_per_pass,
+            "label_exposures_upper_bound": updates * self.labels_per_update,
+            "mean_visits_upper_bound": updates * self.labels_per_update / self.unique_positions,
+            "window_passes_upper_bound": updates * self.windows_per_update / self.count,
+            "maximum_position_visits_bound": updates * min(15, self.windows_per_update)
             if self.task_sampler is not None
-            else math.ceil(updates / self.count) * 15,
+            else math.ceil(updates / self.groups_per_pass) * 15,
             "sampling_with_replacement": int(self.task_sampler is not None),
         }

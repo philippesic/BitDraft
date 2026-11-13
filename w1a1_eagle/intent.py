@@ -1,5 +1,5 @@
 import json
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Literal, cast
 
@@ -9,7 +9,14 @@ from w1a1_eagle.data import Artifact
 from w1a1_eagle.index import IndexSpec, Mount
 from w1a1_eagle.records import artifact, canonical, identity, read
 from w1a1_eagle.storage import relocated
-from w1a1_eagle.training import Budget
+from w1a1_eagle.training import Budget, Grouping
+
+
+def grouping(value: object) -> Grouping:
+    raw = record(value)
+    if set(raw) != {"max_windows", "activation_bytes"}:
+        raise ValueError("grouping requires max_windows and activation_bytes")
+    return Grouping(integer(raw["max_windows"]), integer(raw["activation_bytes"]))
 
 
 @dataclass(frozen=True)
@@ -115,6 +122,7 @@ class Intent:
                 "development_cadence_updates",
                 "initialization",
                 "cpu_threads",
+                "grouping",
             }
             != required
             or type(raw["schema"]) is not int
@@ -174,6 +182,8 @@ class Intent:
             "development" not in raw or integer(raw["development_cadence_updates"]) < 1
         ):
             raise ValueError("positive diagnostic cadence requires an explicit DEV specification")
+        if "grouping" in raw:
+            grouping(raw["grouping"])
         if "model_update_seconds" in raw and number(raw["model_update_seconds"]) <= 0:
             raise ValueError("positive cumulative model-update time limit required")
         budget = record(raw["budget"])
@@ -283,6 +293,10 @@ class Intent:
         )
 
     @property
+    def grouping(self) -> Grouping:
+        return grouping(self.raw["grouping"]) if "grouping" in self.raw else Grouping()
+
+    @property
     def cpu_threads(self) -> int:
         return integer(self.raw.get("cpu_threads", 2))
 
@@ -318,6 +332,7 @@ class Intent:
                 if self.initialization is None
                 else self.initialization.sha256,
                 "cpu_threads": self.cpu_threads,
+                "grouping": cast(Record, asdict(self.grouping)),
                 "sampling": None
                 if self.sampling is None
                 else {"sha256": self.sampling.sha256, "bytes": self.sampling.size},

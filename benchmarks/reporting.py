@@ -34,11 +34,20 @@ def report(root: Path) -> Record:
         for row in journal.events():
             if row.get("kind") == "exposure":
                 task = string(row["trajectory"])
-                visits[task] += 1
-                if "labels" in row:
+                if "anchors" in row:
+                    anchors = [integer(value) for value in sequence(row["anchors"])]
+                    widths = [integer(value) for value in sequence(row["labels"])]
+                    if len(anchors) != len(widths):
+                        raise ValueError("exposure anchors and label widths differ")
+                    visits[task] += len(anchors)
+                    for anchor, width in zip(anchors, widths, strict=True):
+                        positions[task].update(range(anchor, anchor + width))
+                elif "labels" in row:
+                    visits[task] += 1
                     anchor, width = integer(row["anchor"]), integer(row["labels"])
                     positions[task].update(range(anchor, anchor + width))
                 else:
+                    visits[task] += 1
                     missing_widths += 1
             if row.get("kind") == "training-progress":
                 progress.append({"segment": path.name, **row})

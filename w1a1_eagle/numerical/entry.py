@@ -72,12 +72,15 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
     exposure["starting_updates"] = starting_updates
     exposure["known_prior_dataset_labels"] = prior_labels
     exposure["prior_dataset_exposure_known"] = int(known_prior)
-    exposure["dataset_label_exposures_upper_bound"] = prior_labels + planned_updates * 15
+    exposure["dataset_label_exposures_upper_bound"] = (
+        prior_labels + planned_updates * corpus.labels_per_update
+    )
     policy = record(intent.raw["science_policy"])
     if integer(exposure["distinct_positions"]) < integer(policy["min_unique_positions"]):
         raise ValueError("supplied minimum distinct-data policy refuses launch")
-    worst_mean = (prior_labels + planned_attempts * 15) / corpus.unique_positions
-    exposure["maximum_attempt_label_exposures"] = prior_labels + planned_attempts * 15
+    attempt_labels = prior_labels + planned_attempts * corpus.labels_per_update
+    worst_mean = attempt_labels / corpus.unique_positions
+    exposure["maximum_attempt_label_exposures"] = attempt_labels
     exposure["maximum_attempt_mean_visits"] = worst_mean
     if worst_mean > number(policy["max_mean_visits"]):
         raise ValueError("supplied maximum data-reuse policy refuses launch")
@@ -94,6 +97,7 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
         "mode": intent.mode,
         "cpu_threads": intent.cpu_threads,
         "mechanism": "HE4 W1A4/A8/Q4_K weighted CE using each capture’s declared supervision policy",
+        "grouping": cast(Record, asdict(intent.grouping)),
         "exposure": exposure,
         "prior_use_warning": "Prior training is marked for "
         + str(exposure["historical_training_sequences"])
@@ -118,8 +122,7 @@ def preflight(path: Path, sealed: bool = False) -> Record:
     intent = Intent.load_sealed(path) if sealed else Intent.load(path)
     if source_identity(Path(__file__).resolve().parents[2]) != intent.raw["code_sha256"]:
         raise ValueError("source identity differs from intent")
-    cfg = record(intent.raw["geometry"])
-    corpus = read_corpus(intent, integer(cfg["hidden"]))
+    corpus = read_corpus(intent)
     if "development" in intent.raw:
         Diagnostics(artifact(intent.raw["development"], intent.base), corpus, intent.memory_bytes)
     intent.source.verify()
@@ -129,21 +132,30 @@ def preflight(path: Path, sealed: bool = False) -> Record:
     return admission(intent, corpus)
 
 
-def read_corpus(intent: Intent, hidden: int) -> Corpus:
-    if intent.raw.get("corpus_format") == "corpus-mixture-v1":
-        return Corpus(
-            mixture(intent.corpus, intent.seed, intent.memory_bytes, hidden),
-            intent.seed,
-            intent.memory_bytes,
-            hidden,
-            intent.sampling,
-        )
+def geometry(intent: Intent) -> Geometry:
+    return Geometry(
+        **{key: integer(value) for key, value in record(intent.raw["geometry"]).items()}
+    )
+
+
+def read_corpus(intent: Intent) -> Corpus:
+    cfg = geometry(intent)
     source = (
-        IndexReader(intent.corpus, intent.index_spec, intent.memory_bytes).load()
+        mixture(intent.corpus, intent.seed, intent.memory_bytes, cfg.hidden)
+        if intent.raw.get("corpus_format") == "corpus-mixture-v1"
+        else IndexReader(intent.corpus, intent.index_spec, intent.memory_bytes).load()
         if intent.index_spec is not None
         else intent.corpus
     )
-    return Corpus(source, intent.seed, intent.memory_bytes, hidden, intent.sampling)
+    return Corpus(
+        source,
+        intent.seed,
+        intent.memory_bytes,
+        cfg.hidden,
+        intent.sampling,
+        intent.grouping,
+        cfg,
+    )
 
 
 def run(intent_path: Path, root: Path, attempt: str, boundary: Boundary | None = None) -> None:
@@ -161,9 +173,8 @@ def run_leased(
         raise ValueError("source changed between controller admission and worker load")
     torch.set_num_threads(intent.cpu_threads)
     torch.manual_seed(intent.seed)
-    geometry = record(intent.raw["geometry"])
-    cfg = Geometry(**{key: integer(value) for key, value in geometry.items()})
-    corpus = read_corpus(intent, cfg.hidden)
+    cfg = geometry(intent)
+    corpus = read_corpus(intent)
     journal = Journal(root)
     starts = [
         row
@@ -374,7 +385,7 @@ def run_leased(
     resumed = False
 
     class RecordedSamples:
-        def sample(self, cursor: int) -> tuple[Capture, Supervision]:
+        def sample(self, cursor: int) -> tuple[Capture, tuple[Supervision, ...]]:
             nonlocal resumed
             journal.append(
                 {
@@ -384,16 +395,16 @@ def run_leased(
                     "cursor": cursor,
                 }
             )
-            capture, window = corpus.sample(cursor)
+            capture, windows = corpus.sample(cursor)
             journal.append(
                 {
                     "kind": "exposure",
                     "attempt": attempt,
                     "attempts": worker.progress.attempts,
                     "cursor": cursor,
-                    "trajectory": window.trajectory,
-                    "anchor": window.anchor,
-                    "labels": len(window.labels),
+                    "trajectory": windows[0].trajectory,
+                    "anchors": [window.anchor for window in windows],
+                    "labels": [len(window.labels) for window in windows],
                 }
             )
             if not resumed:
@@ -408,7 +419,7 @@ def run_leased(
                 if boundary is not None:
                     boundary.resumed()
                 resumed = True
-            return capture, window
+            return capture, windows
 
     worker.samples = RecordedSamples()
     if intent.parent is None:

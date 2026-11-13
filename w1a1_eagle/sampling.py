@@ -11,9 +11,13 @@ class TaskSampler:
         weights: dict[str, float],
         seed: int,
         burst: int,
+        limits: tuple[int, ...] | None = None,
     ) -> None:
+        limits = counts if limits is None else limits
         if (
             len(counts) != len(strata)
+            or len(limits) != len(counts)
+            or any(type(limit) is not int or limit < 1 for limit in limits)
             or not counts
             or type(seed) is not int
             or seed < 0
@@ -36,16 +40,17 @@ class TaskSampler:
         self.names = sorted(weights)
         self.weights = [weights[name] for name in self.names]
         self.counts = counts
+        self.limits = limits
         self.seed = seed
         self.burst = burst
 
-    def locate(self, cursor: int) -> tuple[int, int]:
+    def size(self, row: int) -> int:
+        return min(self.burst, self.limits[row], self.counts[row])
+
+    def locate(self, cursor: int) -> tuple[int, tuple[int, ...]]:
         if type(cursor) is not int or cursor < 0:
             raise ValueError("nonnegative sampler cursor required")
-        generator = random.Random(self.seed + (cursor // self.burst) * 14029467366897019727)
+        generator = random.Random(self.seed + cursor * 14029467366897019727)
         stratum = generator.choices(self.names, weights=self.weights, k=1)[0]
         row = generator.choice(self.groups[stratum])
-        position = 0
-        for _ in range(cursor % self.burst + 1):
-            position = generator.randrange(self.counts[row])
-        return row, position
+        return row, tuple(sorted(generator.sample(range(self.counts[row]), self.size(row))))
