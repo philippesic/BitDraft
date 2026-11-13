@@ -145,7 +145,8 @@ next cursor's group, which depends only on seed and cursor. It writes no journal
 changes no counter, cursor or RNG: the next update still journals its attempt and exposure
 before receiving that sequence. A failed background load is discarded and the update loads
 synchronously, so errors surface as they would without prefetching. Host memory holds at
-most the current sequence and one upcoming sequence, both in storage precision. When
+most the current sequence, one upcoming sequence and that load's read buffer, all in storage
+precision. When
 training stops for checkpoint, export or evaluation the worker releases both, waiting for
 a load in progress.
 
