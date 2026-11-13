@@ -105,9 +105,9 @@ Target kernels are unchanged and drafter kernels are about 2%. The drafters' 4,0
 sliding window also grows each context checkpoint from 50 to 130 MiB, about 100–140 ms
 per short cached call. Fixes that keep target outputs exact are proposed, not built.
 [Result](results/speculative-prefill-overhead/result.md). Correction 2026-11-13: built
-and measured in F019.
+and measured in F020.
 
-### F019: Do the exact prompt-overhead fixes work?
+### F020: Do the exact prompt-overhead fixes work?
 
 Yes. Runtime-v6 keeps target features on the GPU and copies checkpoints into reused,
 pre-faulted host memory. Every output, token ID and proposed/accepted count matched
