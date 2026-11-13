@@ -183,6 +183,8 @@ other tasks' jobs.
 Reports use total tokens/total time, acceptance totals, EOS/cap counts and category/length/
 harness breakdowns. Current panels draft at depth 2 for both targets (`--spec-draft-n-max`),
 so a round proposes at most two tokens; 64% acceptance means about 1.3 accepted per round.
+That depth caps Baseline below its best exact depth (3) and overstates HE4/Baseline speed
+ratios by about 8% ([depth fairness](../results/draft-depth-fairness/result.md)).
 Summaries therefore add `derived_rounds` (emitted − accepted − requests: each round emits
 its accepted drafts plus one target token, and the first token comes from prompt processing)
 with proposed, accepted and emitted tokens per round. On the 1,200-request Q4KM panel this

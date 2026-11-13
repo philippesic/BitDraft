@@ -106,6 +106,15 @@ sliding window also grows each context checkpoint from 50 to 130 MiB, about 100â
 per short cached call. Fixes that keep target outputs exact are proposed, not built.
 [Result](results/speculative-prefill-overhead/result.md).
 
+### F019: Does the fixed depth-2 exact protocol treat HE4 and Baseline fairly?
+
+No. Depth 2 caps Baseline below its best exact depth (3) while HE4 loses nothing, so on the
+120-request Q4KM panel HE4's speed ratio to Baseline is 0.87 at depth 2 against 0.80 with each
+drafter at its best exact depth (arm D: 0.88 vs 0.82), about 7â€“10% too favourable. Fixed depth
+3 matches the best-depth ratios within 1%. Exact mode leaves acceptance on identical text
+unchanged and does not systematically favour HE4. Depth 3 is proposed as the shared default.
+[Result](results/draft-depth-fairness/result.md).
+
 ## Earlier experiments and durable lessons
 
 ### Packed low-bit paths did not beat ordinary EAGLE in the Turing suite

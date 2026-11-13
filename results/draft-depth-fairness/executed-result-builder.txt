@@ -1,0 +1,192 @@
+import hashlib
+import json
+import re
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
+import analyze
+
+here = Path(sys.argv[1])
+earlier = Path(sys.argv[2])
+out = Path(sys.argv[3])
+panel = here / "panel"
+
+DRAFTERS = {
+    "baseline": "/home/philip/BitDraft/artifacts/models/dflash-4b-q4km.gguf",
+    "he4": "/home/philip/BitDraft/artifacts/qualification/original-zero-export-02/exports/99d2be79f956f6ccde483b960d4a31b939eeda86e4530e813929a3452c14fc1e.bin",
+    "armd": "/home/philip/BitDraft/artifacts/training/recipe-test-arm-d-01/exports/6a07cd5f30a3279600019f57110e11bc5ac66d356ad623bbc93e9621afe93992.bin",
+}
+OTHER = {
+    "target": "/home/philip/BitDraft/artifacts/models/qwen35-4b-q4km.gguf",
+    "server": "/home/philip/BitDraft/artifacts/native/runtime-v5/build/bin/llama-server",
+    "workload": "/home/philip/BitDraft/artifacts/qualification/lean-checks/q4km/requests-workload.json",
+}
+
+
+def sha(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1 << 24), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def parse(name: str) -> dict:
+    parts = name.split("-")
+    return {
+        "arm": parts[0],
+        "mode": "consistent" if parts[1] == "c" else "normal",
+        "depth": int(parts[2][1:]) if len(parts) > 3 else None,
+        "repetition": int(parts[-1][1:]),
+    }
+
+
+panel_cells = {c.name: (c, "this study") for c in sorted(panel.iterdir()) if (c / "summary.json").exists()}
+for batch, names in (("screen-d", ["target-c-r0", "target-n-r0", "baseline-c-d2-r0", "baseline-n-d4-r0"]), ("screen-e", ["baseline-c-d3-r0"])):
+    for name in names:
+        panel_cells[name] = (earlier / batch / name, "consistency study batch " + batch[-1])
+references = {m: {r["task"]: r for r in analyze.load(earlier / "screen-d" / f"target-{m}-r0")} for m in ("c", "n")}
+arm_seconds = {
+    json.loads(line)["name"]: json.loads(line)["arm_seconds"]
+    for line in (panel / "summaries.jsonl").read_text().splitlines()
+}
+
+runs = []
+rows_by_run = {}
+requests: dict[str, list] = {}
+for name, (cell, source) in sorted(panel_cells.items()):
+    rows = analyze.load(cell)
+    rows_by_run[name] = {r["task"]: r for r in rows}
+    entry = {"run": name, "source": source, **parse(name), **analyze.summary(rows)}
+    stats = analyze.lifetime_minus_warmup(cell)
+    if stats:
+        entry["reach_position"] = stats["reach_position"]
+        entry["drafter_draft_ms_per_round"] = round(stats["drafter_draft_ms"] / stats["rounds"], 4)
+    outside = [r["wall_seconds"] - (r["prompt_ms"] + r["predicted_ms"]) / 1000 for r in rows]
+    entry["outside_server_timers_seconds"] = round(sum(outside), 3)
+    entry["outside_server_timers_max_request_seconds"] = round(max(outside), 3)
+    for mode, ref in references.items():
+        div = analyze.divergence(rows, ref)
+        entry["requests_differing_from_target_" + mode] = div["requests_differing"]
+    if name in arm_seconds:
+        entry["arm_seconds"] = round(arm_seconds[name], 1)
+    for r in rows:
+        requests.setdefault(r["task"], [r["group"], r["category"], r["input_tokens"]])
+    entry["requests_rows"] = [
+        [list(requests).index(r["task"]), len(r["tokens"]), r["stop_type"], round(r["wall_seconds"], 4),
+         round(r["prompt_ms"], 2), round(r["predicted_ms"], 2), r["draft_n"], r["draft_n_accepted"]]
+        for r in rows
+    ]
+    runs.append(entry)
+
+by_name = {r["run"]: r for r in runs}
+
+
+def mean(names: list[str], key: str) -> float:
+    return sum(by_name[n][key] for n in names) / len(names)
+
+
+cells = {
+    ("baseline", "c", 2): ["baseline-c-d2-r0", "baseline-c-d2-r1"],
+    ("baseline", "c", 3): ["baseline-c-d3-r0", "baseline-c-d3-r1"],
+    ("baseline", "n", 4): ["baseline-n-d4-r0"],
+    ("he4", "c", 2): ["he4-c-d2-r0"],
+    ("he4", "c", 3): ["he4-c-d3-r0"],
+    ("he4", "n", 3): ["he4-n-d3-r0"],
+    ("armd", "c", 2): ["armd-c-d2-r0", "armd-c-d2-r1"],
+    ("armd", "c", 3): ["armd-c-d3-r0", "armd-c-d3-r1"],
+    ("armd", "n", 3): ["armd-n-d3-r0"],
+}
+cell_means = {
+    f"{a}-{m}-d{d}": {
+        "runs": names,
+        "tokens_per_second": round(mean(names, "tokens_per_second"), 2),
+        "decode_tokens_per_second": round(mean(names, "decode_tokens_per_second"), 2),
+        "accepted_per_round": round(mean(names, "accepted_per_round"), 4),
+        "decode_ms_per_round": round(mean(names, "decode_ms_per_round"), 4),
+    }
+    for (a, m, d), names in cells.items()
+}
+protocols = {
+    "a_fixed_depth_2": {"baseline": "baseline-c-d2", "he4": "he4-c-d2", "armd": "armd-c-d2"},
+    "b_fixed_depth_3": {"baseline": "baseline-c-d3", "he4": "he4-c-d3", "armd": "armd-c-d3"},
+    "c_best_exact_depth": {},
+    "d_best_depth_mode_off": {"baseline": "baseline-n-d4", "he4": "he4-n-d3", "armd": "armd-n-d3"},
+}
+for drafter in ("baseline", "he4", "armd"):
+    exact = [k for k in cell_means if k.startswith(drafter + "-c-")]
+    protocols["c_best_exact_depth"][drafter] = max(exact, key=lambda k: cell_means[k]["tokens_per_second"])
+ratios = {}
+for protocol, chosen in protocols.items():
+    base = cell_means[chosen["baseline"]]
+    ratios[protocol] = {
+        "cells": chosen,
+        **{
+            drafter + "_over_baseline": {
+                "complete": round(cell_means[chosen[drafter]]["tokens_per_second"] / base["tokens_per_second"], 4),
+                "decode": round(cell_means[chosen[drafter]]["decode_tokens_per_second"] / base["decode_tokens_per_second"], 4),
+            }
+            for drafter in ("he4", "armd")
+        },
+    }
+
+
+def paired_acceptance(root: Path, arm: str, depth: int, rep: str = "r0") -> dict:
+    c = {r["task"]: r for r in analyze.load(root / f"{arm}-c-d{depth}-{rep}")}
+    n = {r["task"]: r for r in analyze.load(root / f"{arm}-n-d{depth}-{rep}")}
+    same = [t for t in c if c[t]["tokens"] == n[t]["tokens"]]
+    return {
+        "arm": arm,
+        "depth": depth,
+        "requests": len(c),
+        "identical_output_requests": len(same),
+        "accepted_consistent": sum(c[t]["draft_n_accepted"] for t in same),
+        "accepted_normal": sum(n[t]["draft_n_accepted"] for t in same),
+        "proposed_consistent": sum(c[t]["draft_n"] for t in same),
+        "proposed_normal": sum(n[t]["draft_n"] for t in same),
+        "requests_with_equal_accepted": sum(c[t]["draft_n_accepted"] == n[t]["draft_n_accepted"] for t in same),
+    }
+
+
+acceptance_check = {
+    "panel": [paired_acceptance(panel, a, 3) for a in ("he4", "armd")],
+    "screen": [
+        paired_acceptance(earlier / ("screen-a" if d == 2 else "screen-b"), a, d)
+        for a in ("baseline", "he4")
+        for d in (2, 3, 4, 6, 8, 15)
+    ],
+}
+
+plans = {p.stem: json.loads(p.read_text()) for p in sorted(here.glob("plan-*.json"))}
+result = {
+    "schema": 1,
+    "question": "Does exact verification mode or a fixed draft depth bias the HE4/Baseline speed ratio?",
+    "hardware": (panel / "gpu.txt").read_text().strip(),
+    "inputs": {
+        **{k: {"path": v, "sha256": sha(Path(v))} for k, v in OTHER.items()},
+        **{k: {"path": v, "sha256": sha(Path(v))} for k, v in DRAFTERS.items()},
+        "earlier_panel_runs": str(earlier),
+    },
+    "protocol": {
+        "workload": "120-request Q4KM DEV panel, longer caps, greedy, one warmup, empty caches",
+        "modes": {"c": "GGML_CUDA_DECODE_CONSISTENT=32", "n": "GGML_CUDA_DECODE_CONSISTENT=0"},
+        "timing": "complete = emitted tokens / summed HTTP wall; decode = (emitted - requests) / server predicted_ms",
+        "plans": plans,
+        "script_sha256": {p.name: sha(p) for p in sorted(here.glob("*.py"))},
+        "arm_seconds_this_study": round(sum(arm_seconds.values()), 1),
+        "request_row_fields": [
+            "request_index", "emitted_tokens", "stop_type", "wall_seconds", "prompt_ms", "predicted_ms",
+            "draft_n", "draft_n_accepted",
+        ],
+        "request_fields": ["task", "group", "category", "input_tokens"],
+    },
+    "requests": [[task, *meta] for task, meta in requests.items()],
+    "cell_means": cell_means,
+    "protocol_ratios": ratios,
+    "acceptance_by_mode_on_identical_output": acceptance_check,
+    "runs": runs,
+}
+text = json.dumps(result, indent=1)
+text = re.sub(r"\[\s*([^\[\]{}]*?)\s*\]", lambda m: "[" + re.sub(r"\s*\n\s*", " ", m.group(1)) + "]", text)
+out.write_text(text + "\n")
