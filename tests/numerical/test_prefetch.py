@@ -23,7 +23,7 @@ from w1a1_eagle.identity import source_identity
 from w1a1_eagle.intent import Intent
 from w1a1_eagle.lifecycle import Journal
 from w1a1_eagle.model import Geometry
-from w1a1_eagle.numerical.captures import Capture, CaptureCache, CaptureSpec, load_capture
+from w1a1_eagle.numerical.captures import Capture, CaptureCache, CaptureSpec, finite, load_capture
 from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.entry import run_leased
 from w1a1_eagle.numerical.worker import TensorWorker
@@ -230,6 +230,23 @@ class TestPrefetch(unittest.TestCase):
             self.assertIsNone(corpus.cache.pending)
             self.assertEqual(len(corpus.cache.entries), 0)
             self.assertFalse(any(type(item) is Capture for item in gc.get_objects()))
+
+    def test_bit_pattern_scan_matches_isfinite(self) -> None:
+        values = np.arange(1 << 16, dtype=np.uint32).astype(np.uint16).view(np.float16)
+        regular = np.isfinite(values)
+        self.assertTrue(finite(values[regular].reshape(1, 1, -1)))
+        self.assertEqual(int((~regular).sum()), 2048)
+        for value in values[~regular]:
+            self.assertFalse(finite(np.full((1, 1, 1), value, dtype=np.float16)))
+        edges = [0, 1, 0x7F7FFFFF, 0x7F800000, 0x7F800001, 0x7FFFFFFF, 0x80000000]
+        edges += [0x80000001, 0xFF7FFFFF, 0xFF800000, 0xFF800001, 0xFFFFFFFF]
+        for bits in edges:
+            single32 = np.full((1, 1, 1), bits, dtype=np.uint32).view(np.float32)
+            self.assertEqual(finite(single32), bool(np.isfinite(single32).all()), hex(bits))
+        mixed = np.zeros((2, 3, 4), dtype=np.float16)
+        self.assertTrue(finite(mixed))
+        mixed[1, 2, 3] = np.inf
+        self.assertFalse(finite(mixed))
 
     def test_authentication_refuses_changes_with_prefetch(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

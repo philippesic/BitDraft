@@ -30,6 +30,14 @@ class Capture:
         return self.features.numel() * self.features.element_size()
 
 
+def finite(values: "HalfArray | FloatArray") -> bool:
+    if values.dtype == np.float16:
+        half = values.view(np.uint16)
+        return not bool(((half >= 0x7C00) & (half < 0x8000) | (half >= 0xFC00)).any())
+    single = values.view(np.uint32)
+    return not bool(((single >= 0x7F800000) & (single < 0x80000000) | (single >= 0xFF800000)).any())
+
+
 def load_capture(spec: CaptureSpec, byte_budget: int, hidden: int = 2560) -> Capture:
     if type(byte_budget) is not int or byte_budget < 1 or hidden < 1:
         raise ValueError("explicit capture byte budget required")
@@ -102,12 +110,9 @@ def load_capture(spec: CaptureSpec, byte_budget: int, hidden: int = 2560) -> Cap
     for index, tap in enumerate(TAPS):
         files[f"layer-{tap}.{suffix}"].read_verified(raw[index * size : (index + 1) * size])
     del raw
-    stored = torch.from_numpy(taps)
-    bits = stored.view(torch.int16 if storage_size == 2 else torch.int32)
-    exponent = 0x7C00 if storage_size == 2 else 0x7F800000
-    if bool(((bits & exponent) == exponent).any()):
+    if not finite(taps):
         raise ValueError("nonfinite teacher features")
-    del bits
+    stored = torch.from_numpy(taps)
     features = torch.empty((n, len(TAPS), hidden), dtype=stored.dtype)
     features.copy_(stored.permute(1, 0, 2))
     del stored, taps
