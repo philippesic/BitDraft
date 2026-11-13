@@ -2,6 +2,11 @@
 
 ## Outcome
 
+Final removal is complete: the 5080 legacy checkout quarantine and all four audited
+2080 Ti project directories are gone. Two obsolete 2080 Ti project settings files were
+backed up and removed too. Current corpora, the original220095 checkpoint, selected/recovery state,
+models, saved controls and independent source/evidence archives remain in BitDraft.
+
 The authorized November 12 closeout verified compact historical evidence and retired
 16,881 large legacy files:202.54 GiB of unique physical data inside the old checkout.
 Three additional obsolete Windows optimizer archives,11.87 GiB, were retired separately.
@@ -82,8 +87,34 @@ The historical original-data recipe correctly refused its old executable-source 
 Its original remains unchanged; a separate admission-only copy with the current source
 identity passed. No allocation was exercised and no training or capture was launched.
 The original parent files and corpus identities remain unchanged. The old main checkout
-is quarantined at `/home/philip/BitDraft/artifacts/archive/legacy-checkout-pending-delete`.
-Final deletion awaits Philip's requested confirmation.
+was quarantined at `/home/philip/BitDraft/artifacts/archive/legacy-checkout-pending-delete`
+before Philip authorized and completed its final removal, recorded below.
+
+## Final directory retirement
+
+Each deletion root was checked by physical path, owner, device/inode and actual process
+dependencies. All 11 remote checkouts were clean; their HEADs and seven project refs were
+independently preserved, along with native source. Compact reports, larger JSON records,
+executed source and host-private settings were copied and SHA256-verified before removal.
+Exact raw-file plans used the maintained retirement command and durable journals; reviewed
+Git checkout removal followed separately. Shared library/dependency aliases were unlinked
+only from retired trees, and their surviving links and unchanged size/mtime were checked.
+The unrelated Semantic Cache GPU job remained running.
+
+After the 5080 quarantine was physically absent, both corpora (6,000 new records and
+15,647 original records) passed admission, actual sample payload loading passed in all
+three folders backing the new corpus, all six
+saved comparison configurations authenticated, and the maintained native environment
+started its server with CUDA hidden. Original220095 in raw and normalized form and corpus
+manifests retained their full SHA256 values. This does not reread every feature array,
+start training or repeat GPU benchmarks. The final source/docs commit runs the local gate.
+
+The 2080 Ti's obsolete20671 checkpoint series, old model copies, raw profiles and runtime
+environments are discarded; exact old optimizer/runtime replay is unavailable. The
+temporary retirement workspace was removed after every receipt/source file was copied
+and reverified inside BitDraft. The [structured closeout](result.json) links the final
+retirement and preservation receipts; [archive access](../../docs/evidence.md#historical-2080-ti-records)
+explains recovery of retained compact evidence.
 
 ## Artifact disposition
 
@@ -104,9 +135,8 @@ so summaries cannot replace them. Rehashed parent files and current metadata kep
 identities. Feature arrays were already validated during capture and are authenticated
 when read; the entire feature corpus was not reread for this cleanup.
 
-The obsolete raw files and inactive checkouts above are discarded. The remaining old
-main checkout will be quarantined for independent operation checks and Philip's final
-deletion confirmation; neither the current corpora nor external evidence lives in it.
+The obsolete raw files, inactive checkouts and final old main quarantine are discarded.
+The retained historical evidence is inside BitDraft, independent of those deleted trees.
 
 ## Scope correction, November 12, 2026
 

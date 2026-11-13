@@ -101,10 +101,10 @@ rewrite. Keep original IDs in immutable execution records. Relocation and attrib
 cleanup do not change measured results or executed source-file identities.
 
 The canonical checkout is `/home/philip/BitDraft`; the T3 project points there. Both old
-checkout paths are absent. The remaining legacy main tree is quarantined under
-`/home/philip/BitDraft/artifacts/archive/legacy-checkout-pending-delete` until Philip confirms
-its deletion. It contains no required current data input. Delete only that owned
-quarantine, without following its compatibility links into other retained evidence/data.
+checkout paths and the legacy quarantine are absent. Philip authorized their final removal
+after independent operation and preservation checks. Retirement receipts under
+`artifacts/receipts/final-old-directories-20261112/` distinguish raw-file retirement from
+checkout removal and verify that shared files and retained data survived.
 `origin` is the user-owned `git@github.com:philippesic/BitDraft.git`. Main preserves
 legacy main ancestry; `archive/legacy-main` and `archive/pre-bitdraft` preserve the
 original legacy tip and the port history with the requested attribution cleanup. Publication keeps existing repository
@@ -122,8 +122,12 @@ from this checkout; the main native submodule revision is independently archived
 The old 20671-update checkpoint series, model copies, environments, build outputs and raw
 profiles are obsolete historical artifacts, not current training inputs. Their exact
 resume/runtime replay is not retained by these compact archives. The original220095 parent
-and current corpora remain separately preserved in this checkout. This inventory and
-preservation pass did not delete the remote directories or stop the unrelated GPU job.
+and current corpora remain separately preserved in this checkout. The four old project
+directories and obsolete project host/hook settings have been removed. Verified source,
+receipts and shared-file preservation checks live under
+`artifacts/receipts/final-old-directories-20261112/`; the temporary remote cleanup workspace
+is also gone. The unrelated GPU job was left running. Private settings backups remain
+ignored and access-restricted in the archive, rather than entering Git.
 
 ## Windows artifact archives
 

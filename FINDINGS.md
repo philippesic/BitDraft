@@ -160,4 +160,5 @@ all 6,000 records passed product validation and metadata admission; FP16 arrays 
 
 [Legacy artifact closeout](results/legacy-artifact-closeout/result.md): compact evidence
 and independent source/WIP recovery replace obsolete large raw run trees. Current corpora
-and the original HE4broad continuation parent remain intact.
+and the original HE4broad continuation parent remain intact. The old 5080 and2080 Ti
+checkouts and obsolete external artifacts have been removed after preservation checks.

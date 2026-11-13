@@ -54,9 +54,9 @@ current readers translate their locators without changing their recorded bytes.
 Archived absolute locators are historical references, not instructions to recreate external
 storage. Current guides and newly emitted references use the project-local locations.
 
-The old checkout is preserved under `artifacts/archive/legacy-checkout-pending-delete`;
-its final deletion still follows the earlier explicit confirmation condition. It is not
-an input to current training or capture.
+The old 5080 checkout and its `legacy-checkout-pending-delete` quarantine have been removed.
+Historical source, useful measurements and unpublished edits remain independently archived;
+current training and capture use the artifact locations above, without an old checkout.
 
 Older Windows run folders, checkpoints and transfer deliveries are preserved as verified
 compressed archives under `artifacts/archive/windows-legacy/`. Each `.tar.zst` has an

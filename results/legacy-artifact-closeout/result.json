@@ -311,5 +311,132 @@
       }
     ],
     "old_checkout_symlink_targets": 0
+  },
+  "final_cleanup": {
+    "phase": "complete",
+    "authorization": "Philip explicitly authorized final removal in this thread, November12 2026.",
+    "roots_removed": [
+      "/home/philip/BitDraft/artifacts/archive/legacy-checkout-pending-delete",
+      "/home/philip/binary-eagle-decoding",
+      "/home/philip/binary-eagle-decoding-worktrees",
+      "/home/philip/he4broad-training-20261110-01",
+      "/home/philip/binary-eagle-benchmark-qualification-20261110"
+    ],
+    "obsolete_settings_removed": [
+      "/home/philip/.config/binary-eagle-decoding",
+      "/home/philip/.grokbot-hooks/eagle-em.env"
+    ],
+    "temporary_remote_workspace_removed": true,
+    "raw_retirement_journals": [
+      {
+        "path": "/home/philip/BitDraft/artifacts/receipts/final-old-directories-20261112/5080-retirement.jsonl",
+        "bytes": 55752,
+        "sha256": "9b300cc453e7b49e91e9cbde41d0d4197cc7a7a7dd73092b4fa1ea078cde4d44",
+        "files": 129
+      },
+      {
+        "path": "/home/philip/BitDraft/artifacts/receipts/final-old-directories-20261112/2080-complete/runner/artifacts/receipts/2080-binary-eagle-benchmark-qualification-20261110-retirement.jsonl",
+        "bytes": 49609,
+        "sha256": "1b62d2c2153faf6150c28115c447723cb82129babf159507d0ef7de701aa9a2b",
+        "files": 120
+      },
+      {
+        "path": "/home/philip/BitDraft/artifacts/receipts/final-old-directories-20261112/2080-complete/runner/artifacts/receipts/2080-binary-eagle-decoding-retirement.jsonl",
+        "bytes": 1073587,
+        "sha256": "b4cb4e3f9c5ff5fea71f36714410741ab2d1664da38d85dd77baa5ed6358ee92",
+        "files": 2333
+      },
+      {
+        "path": "/home/philip/BitDraft/artifacts/receipts/final-old-directories-20261112/2080-complete/runner/artifacts/receipts/2080-he4broad-training-20261110-01-retirement.jsonl",
+        "bytes": 21277,
+        "sha256": "16812ddaead158a3bccda041b4811bec739f3570dc4e18a2cbf9c12641036169",
+        "files": 54
+      },
+      {
+        "path": "/home/philip/BitDraft/artifacts/receipts/final-old-directories-20261112/2080-complete/runner/artifacts/receipts/old-eagle-hook-retirement.jsonl",
+        "bytes": 497,
+        "sha256": "9e43e349d9a90e101f1cd8d9e2dfd7be5be9ea9e0a4be99c555c6dbf4d1f8939",
+        "files": 1
+      },
+      {
+        "path": "/home/philip/BitDraft/artifacts/receipts/final-old-directories-20261112/2080-complete/runner/artifacts/receipts/old-project-config-retirement.jsonl",
+        "bytes": 499,
+        "sha256": "af26a31c149431ec7ca7a1dd89e4f5f5abbaf0084cfc5f9d1d07baaca1b7ae2d",
+        "files": 1
+      }
+    ],
+    "additional_raw_file_unlinks": 2638,
+    "remaining_current_data": "Original15647 corpus and raw/normalized original220095; full6000 FP16 corpus and three supporting roots; current models/runtime, selected/recovery state, saved controls and evidence archives.",
+    "limits": "No new GPU qualification or training. Feature arrays sampled, not wholly reread. Exact obsolete20671 optimizer/runtime/profile replay retired.",
+    "verification": [
+      "Both corpus metadata admissions",
+      "Product payload loader sample in each of three new-corpus roots",
+      "All six saved comparison inputs/controls",
+      "Maintained native_environment server version with CUDA hidden",
+      "Full parent/corpus-manifest/archive SHA256 after deletion",
+      "Shared files preserve surviving links and size/mtime"
+    ],
+    "proofs": [
+      {
+        "path": "/home/philip/BitDraft/artifacts/receipts/final-old-directories-20261112/2080-copy-verification.json",
+        "bytes": 154,
+        "sha256": "2bf9ae774889dff2719d6e9ccaf7b647b3afe1d0af79d2710548b380c1fe57e8"
+      },
+      {
+        "path": "/home/philip/BitDraft/artifacts/receipts/final-old-directories-20261112/2080-final-removal.json",
+        "bytes": 834,
+        "sha256": "03f9cc2508718fd1bdffb45ba53929b927b952a35e7cd085a50b39958390f220"
+      },
+      {
+        "path": "/home/philip/BitDraft/artifacts/receipts/final-old-directories-20261112/5080-checkout-retirement.jsonl",
+        "bytes": 9188,
+        "sha256": "54f94788d147c6f7f35a4ca2d3d7358d2c5ac43df6adc3bb8e14d70d23d4663f"
+      },
+      {
+        "path": "/home/philip/BitDraft/artifacts/receipts/final-old-directories-20261112/post-delete-retained-hashes.json",
+        "bytes": 2241,
+        "sha256": "b9c8bc60e63dabbc037b40509005db40222aefa5ae1281b86cd3949a5b00cacf"
+      },
+      {
+        "path": "/home/philip/BitDraft/artifacts/receipts/final-old-directories-20261112/post-delete-comparison-inputs.json",
+        "bytes": 1591,
+        "sha256": "a46e6a5691ebbbea93d4e342032de002ee2e5b118f60548dbb96e135c78e6c00"
+      },
+      {
+        "path": "/home/philip/BitDraft/artifacts/receipts/final-old-directories-20261112/post-delete-full6k-loader-qualified-env.jsonl",
+        "bytes": 1265,
+        "sha256": "8eca7c350c7ca85336d40496f76ed1b0b848d5398a5e67182c94515e7dbe7e80"
+      },
+      {
+        "path": "/home/philip/BitDraft/artifacts/receipts/final-old-directories-20261112/post-delete-original-preflight.json",
+        "bytes": 2321,
+        "sha256": "80b82a745ae4aab27148771c63e37c977f93dffdca2069a5f6927b8099eed2a6"
+      },
+      {
+        "path": "/home/philip/BitDraft/artifacts/receipts/final-old-directories-20261112/post-delete-native-launch.json",
+        "bytes": 215,
+        "sha256": "98c018e130838c6e4564a2548fd83e70c5e4d760dd8c7367fa5ab19547c44344"
+      },
+      {
+        "path": "/home/philip/BitDraft/artifacts/receipts/final-old-directories-20261112/quarantine-tracked-diff.patch",
+        "bytes": 1308164,
+        "sha256": "7b53dae38bfeac5e699b3f20534baf9ca875c9ae80622478f34c555926217f5d"
+      },
+      {
+        "path": "/home/philip/BitDraft/artifacts/receipts/final-old-directories-20261112/host-private-preservation.json",
+        "bytes": 827,
+        "sha256": "83c7209689b7ce4255bb9409a116020c89aba811d1dd7a85fb83c43e9f4b9a6e"
+      },
+      {
+        "path": "/home/philip/BitDraft/artifacts/archive/2080-closeout-20261112/preservation.json",
+        "bytes": 805,
+        "sha256": "975f58058767678aff8c758b91e3d2a99f121548e77e70bf591c1daab7f30c21"
+      },
+      {
+        "path": "/home/philip/BitDraft/artifacts/archive/2080-closeout-20261112/large-source-reports-preservation.json",
+        "bytes": 3308,
+        "sha256": "dc0286f15057a92659aea80dc758a2159c0552b7a48f3d7143c80b474549db7d"
+      }
+    ]
   }
 }
