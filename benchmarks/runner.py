@@ -31,6 +31,7 @@ from benchmarks.metrics import (
     verify_generation as verify_generation,
 )
 from benchmarks.runtime_policy import payload
+from benchmarks.scenarios import scenario_report, task_scenario
 from benchmarks.serving import session
 from benchmarks.statistics import paired, partitions
 from w1a1_eagle.checkpoints.store import Store
@@ -167,6 +168,14 @@ def compare_leased(
                                 "task": key,
                                 "group": task["group"],
                                 "category": task["category"],
+                                "scenario": task_scenario(
+                                    task, sampled=spec.sampling.temperature > 0
+                                ),
+                                **{
+                                    field: task[field]
+                                    for field in ("project", "style")
+                                    if field in task
+                                },
                                 "input_tokens": len(identifiers),
                                 "length_band": length_band(len(identifiers)),
                                 "harness": task.get("harness", "default"),
@@ -231,6 +240,15 @@ def compare_leased(
             "historical_comparisons": historical_comparisons(rows, cached),
             "elapsed_seconds": now() - began_panel,
             "summary": aggregate,
+            "resident_gpu_mib": {
+                arm.name: max(
+                    float(path.read_text().strip())
+                    for path in store.root.glob("*-" + arm.name + "/resident-memory.txt")
+                )
+                for arm in spec.arms
+            },
+            "memory_scope": "device-wide resident memory after model load; includes target, KV, drafter and desktop; not peak inference allocation",
+            "by_scenario": scenario_report(all_rows, spec, cached),
             "by_category": partitions(
                 all_rows,
                 "category",
@@ -300,7 +318,15 @@ def prompt_tokens(port: int, task: Record, cap: int, context: int) -> list[objec
     rendered = request(
         port,
         "apply-template",
-        {"messages": task["messages"], "tools": task.get("tools", [])},
+        {
+            "messages": task["messages"],
+            "tools": task.get("tools", []),
+            **(
+                {"chat_template_kwargs": {"enable_thinking": task["thinking"]}}
+                if "thinking" in task
+                else {}
+            ),
+        },
     )
     identifiers = sequence(
         request(

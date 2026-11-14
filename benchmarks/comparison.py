@@ -170,15 +170,26 @@ class Comparison:
             "agentic-slice",
             "agentic-suite",
             "agentic-confirmation",
+            "thinking-slice",
+            "thinking-suite",
+            "sampled-slice",
+            "sampled-suite",
         }:
             raise ValueError("explicit workload role/tier required")
-        if sampling.temperature > 0 and tier not in {"pilot", "sampled"}:
+        if sampling.temperature > 0 and tier not in {
+            "pilot",
+            "sampled",
+            "sampled-slice",
+            "sampled-suite",
+        }:
             raise ValueError("sampled requests require an explicit sampled tier or pilot")
-        if tier == "sampled" and (
-            sampling.temperature <= 0 or len(sampling.seeds) != 3 or sampling.qualification is None
+        if tier in {"sampled", "sampled-slice", "sampled-suite"} and (
+            sampling.temperature <= 0
+            or len(sampling.seeds) != (2 if tier == "sampled-slice" else 3)
+            or sampling.qualification is None
         ):
             raise ValueError(
-                "sampled robustness requires three fixed seeds and native verifier qualification"
+                "sampled cohorts require their fixed seed count and native verifier qualification"
             )
         expected = {
             "short": 120,
@@ -192,6 +203,10 @@ class Comparison:
             "agentic-slice": 12,
             "agentic-suite": 60,
             "agentic-confirmation": 15,
+            "thinking-slice": 12,
+            "thinking-suite": 40,
+            "sampled-slice": 12,
+            "sampled-suite": 40,
         }
         if not tasks or len(tasks) > 600 or (tier in expected and len(tasks) != expected[tier]):
             raise ValueError("workload count differs from declared tier")
@@ -207,6 +222,7 @@ class Comparison:
                 "ancestry",
                 "fixture",
                 "followup",
+                "thinking",
                 "scenario",
                 "project",
                 "style",
@@ -237,6 +253,11 @@ class Comparison:
                 raise ValueError("protected heldout identity in evaluation workload")
             string(task["group"])
             string(task["category"])
+            if "thinking" in task and type(task["thinking"]) is not bool:
+                raise ValueError("thinking must be an explicit boolean")
+            for field in ("scenario", "project", "style", "task_kind"):
+                if field in task:
+                    string(task[field])
             messages = sequence(task["messages"])
             if not messages:
                 raise ValueError("empty conversation")
@@ -256,7 +277,13 @@ class Comparison:
             or not 1 <= depth <= 15
         ):
             raise ValueError("comparison execution bounds invalid")
-        if (references or tier == "screen") and (repeats != 1 or sampling.temperature):
+        if tier.startswith("thinking-") and any(
+            task.get("thinking") is not True or task["output_cap"] != 2048 for task in tasks
+        ):
+            raise ValueError("thinking cohorts require thinking enabled and 2048-token caps")
+        if (references and repeats != 1) or (
+            tier == "screen" and (repeats != 1 or sampling.temperature)
+        ):
             raise ValueError("lean/cached panels require one greedy pass")
         return cls(
             artifact(raw["source"], root),
@@ -325,7 +352,9 @@ class Comparison:
 
     def reference_protocol(self) -> Record:
         return {
-            "policy": "native-greedy-request-v3"
+            "policy": "native-sampled-request-v3"
+            if self.sampling.temperature
+            else "native-greedy-request-v3"
             if self.tier not in LIVE_TIERS
             else "native-live-v3",
             "target_arguments": arguments(
@@ -392,8 +421,6 @@ class Comparison:
             source_spec = Comparison.load(artifact(value["specification"], ref.path.parent).path)
             source_protocol = source_spec.reference_protocol()
             desired_protocol = self.reference_protocol()
-            source_protocol.pop("tasks")
-            desired_protocol.pop("tasks")
             original_tasks = {string(task["id"]): task for task in source_spec.tasks}
             source_arm = next(
                 (arm for arm in source_spec.arms if arm.name == value["source_arm"]), None
@@ -404,13 +431,12 @@ class Comparison:
                 else None
             )
             if (
-                source_protocol != desired_protocol
+                not protocol_covers(source_protocol, desired_protocol)
                 or source_arm is None
                 or (source_arm.drafter.sha256 if source_arm.drafter else None)
                 != (recorded_model.sha256 if recorded_model else None)
                 or any(original_tasks.get(string(task["id"])) != task for task in self.tasks)
                 or source_spec.diagnostic
-                or source_spec.sampling.temperature
             ):
                 raise ValueError("reference model/workload identity differs from its source")
             wanted = {task["id"] for task in self.tasks}
@@ -420,6 +446,7 @@ class Comparison:
                 if record(row)["arm"] == value["source_arm"]
                 and record(row)["rep"] == value["source_repeat"]
                 and record(row)["task"] in wanted
+                and record(row).get("seed", 8101) in self.sampling.seeds
             ]
             if (
                 result.get("status") != "complete"
@@ -431,10 +458,15 @@ class Comparison:
                 artifact(receipt, ref.path.parent).verify()
             rows = [record(row) for row in sequence(value["rows"])]
             if (
-                len(rows) != len(self.tasks)
+                len(rows) != len(self.tasks) * len(self.sampling.seeds)
                 or {row["task"] for row in rows} != {task["id"] for task in self.tasks}
                 or any(row.get("correct") is not True for row in rows)
-                or set(record(value["signatures"])) != {string(task["id"]) for task in self.tasks}
+                or set(record(value["signatures"]))
+                != {
+                    string(task["id"]) + ("/" + str(seed) if self.sampling.temperature else "")
+                    for task in self.tasks
+                    for seed in self.sampling.seeds
+                }
             ):
                 raise ValueError(
                     "reference must contain one complete verified observation per task"
@@ -462,8 +494,12 @@ class Comparison:
             raise ValueError(
                 "cached evaluation requires established target and baseline references"
             )
-        if found and any(
-            value["signatures"] != found["target"]["signatures"] for value in found.values()
+        if (
+            found
+            and not self.sampling.temperature
+            and any(
+                value["signatures"] != found["target"]["signatures"] for value in found.values()
+            )
         ):
             raise ValueError("cached competitors disagree with target output signatures")
         if len({string(value["gpu"]) for value in found.values()}) > 1:
@@ -548,3 +584,16 @@ def require_agentic(tier: str, tasks: tuple[Record, ...]) -> None:
         for project in projects
     ):
         raise ValueError("agentic slice requires two styles per project")
+
+
+def protocol_covers(source: Record, desired: Record) -> bool:
+    left, right = dict(source), dict(desired)
+    left.pop("tasks")
+    right.pop("tasks")
+    source_sampling = sequence(left.pop("sampling"))
+    desired_sampling = sequence(right.pop("sampling"))
+    return (
+        left == right
+        and source_sampling[:4] == desired_sampling[:4]
+        and set(desired_sampling[4:]) <= set(source_sampling[4:])
+    )

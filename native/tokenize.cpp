@@ -30,7 +30,7 @@ int main(int argc, char ** argv) {
                 inputs.messages = common_chat_msgs_parse_oaicompat(common_json::parse(request.at("messages").dump()));
                 inputs.tools = common_chat_tools_parse_oaicompat(common_json::parse(request.value("tools",nlohmann::json::array()).dump()));
                 inputs.use_jinja = true;
-                inputs.enable_thinking = false;
+                inputs.enable_thinking = request.value("thinking", false);
                 inputs.reasoning_format = COMMON_REASONING_FORMAT_DEEPSEEK;
                 inputs.parallel_tool_calls = caps.at("supports_parallel_tool_calls").get<bool>();
                 inputs.add_generation_prompt = true;

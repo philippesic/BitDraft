@@ -198,6 +198,7 @@ def capture(specification: Path, output: Path) -> Record:
                     rendered = tokenizer.render(
                         [record(v) for v in sequence(row["messages"])],
                         [record(v) for v in sequence(row["tools"])],
+                        thinking=row.get("thinking", False) is True,
                     )
                     if source_names(row, rendered) & heldout or (
                         selected_role == "train" and source_names(row, rendered) & protected

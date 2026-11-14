@@ -1683,6 +1683,7 @@ class TestNumerical(unittest.TestCase):
             str(index): "code" if index % 2 else "writing" for index in range(120)
         }
         diagnostics.cache = Cache(1024)
+        diagnostics.groups = {}
         before = torch.get_rng_state()
         result = diagnostics.measure(model)
         groups = record(result["by_category"])
@@ -1704,4 +1705,16 @@ class TestNumerical(unittest.TestCase):
         self.assertTrue(all(0 <= value <= 1 for value in top1 + survival))
         self.assertTrue(all(b <= a for a, b in zip(survival, survival[1:], strict=False)))
         self.assertTrue(all(alive <= top for alive, top in zip(survival, top1, strict=True)))
+        self.assertTrue(torch.equal(before, torch.get_rng_state()))
+        extra = Diagnostics.__new__(Diagnostics)
+        extra.windows = diagnostics.windows[:20]
+        extra.specs = diagnostics.specs
+        extra.categories = diagnostics.categories
+        extra.cache = Cache(1024)
+        extra.groups = {}
+        diagnostics.groups = {"agentic-coding": extra, "thinking-on": extra}
+        extended = diagnostics.measure(model)
+        self.assertEqual({key: extended[key] for key in result}, result)
+        self.assertEqual(record(record(extended["groups"])["agentic-coding"])["windows"], 20)
+        self.assertGreaterEqual(number(extended["added_seconds"]), 0)
         self.assertTrue(torch.equal(before, torch.get_rng_state()))

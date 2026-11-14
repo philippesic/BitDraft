@@ -13,6 +13,7 @@ from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.config import native_environment
 from w1a1_eagle.contracts import Record
 from w1a1_eagle.data import Artifact
+from w1a1_eagle.device import cuda_tool
 from w1a1_eagle.processes import ProcessIdentity
 from w1a1_eagle.records import canonical, reference
 
@@ -86,6 +87,15 @@ def native_server(
             cell.atomic(cell.root / "server-owner.json", canonical(cast(Record, asdict(owner))))
             cell.atomic(
                 cell.root / "library-maps.txt", Path(f"/proc/{process.pid}/maps").read_bytes()
+            )
+            cell.atomic(
+                cell.root / "resident-memory.txt",
+                subprocess.run(
+                    [cuda_tool(), "--query-gpu=memory.used", "--format=csv,noheader,nounits"],
+                    capture_output=True,
+                    check=True,
+                    timeout=15,
+                ).stdout,
             )
             yield port
         finally:

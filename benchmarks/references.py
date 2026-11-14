@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from benchmarks.comparison import Comparison
+from benchmarks.comparison import Comparison, protocol_covers
 from benchmarks.native import file_reference
 from benchmarks.runtime_policy import LIVE_TIERS, arguments, payload
 from w1a1_eagle.checkpoints.store import Store
@@ -26,23 +26,20 @@ def register(specification: Path, output: Path) -> Record:
     if "protocol" in result and result["protocol"] != prior.reference_protocol():
         raise ValueError("source result executed a different runtime/request policy")
     current_protocol, old_protocol = spec.reference_protocol(), prior.reference_protocol()
-    current_protocol.pop("tasks")
-    old_protocol.pop("tasks")
     old_tasks = {string(task["id"]): task for task in prior.tasks}
     if (
-        current_protocol != old_protocol
-        or spec.sampling.temperature
+        not protocol_covers(old_protocol, current_protocol)
+        or (spec.sampling.temperature and spec.sampling.qualification is None)
         or spec.diagnostic
         or result.get("status") != "complete"
         or result.get("diagnostic", False)
-        or result.get("sampled", False)
         or any(old_tasks.get(string(task["id"])) != task for task in spec.tasks)
         or any(
             record(summary).get("correct") is not True
             for summary in record(result["summary"]).values()
         )
     ):
-        raise ValueError("only complete valid matching greedy evidence can establish a reference")
+        raise ValueError("only complete valid matching evidence can establish a reference")
     rows = [record(row) for row in sequence(result["rows"])]
     expected = {
         (arm.name, string(task["id"]), rep, seed)
@@ -76,6 +73,7 @@ def register(specification: Path, output: Path) -> Record:
         if row["arm"] == name
         and row["rep"] == rep
         and row["task"] in {task["id"] for task in spec.tasks}
+        and row.get("seed", 8101) in spec.sampling.seeds
     ]
     signatures: Record = {}
     receipts: list[Record] = []
@@ -120,9 +118,18 @@ def register(specification: Path, output: Path) -> Record:
         wanted = {string(row["task"]) for row in selected}
         count = prior.block_count()
         ordered = tuple(sorted(prior.tasks, key=selection_order)) if count > 1 else prior.tasks
-        for group in range(count):
+        for group, seed in (
+            (group, seed) for group in range(count) for seed in spec.sampling.seeds
+        ):
             tasks = ordered[group::count]
-            cell = result_ref.path.parent / (str(rep) + "-" + str(group) + "-" + name)
+            cell = result_ref.path.parent / (
+                str(rep)
+                + "-"
+                + str(group)
+                + "-"
+                + (str(seed) + "-" if prior.sampling.temperature else "")
+                + name
+            )
             command(cell)
             responses = [
                 read(cell / (str(index) + "-response.json"))
@@ -143,7 +150,7 @@ def register(specification: Path, output: Path) -> Record:
                         prior.sampling.top_p,
                         prior.sampling.top_k,
                         prior.sampling.min_p,
-                        prior.sampling.seeds[0],
+                        seed,
                     ):
                         raise ValueError(
                             "executed request policy differs from requested reference protocol"
@@ -153,14 +160,22 @@ def register(specification: Path, output: Path) -> Record:
                         read(cell / (str(index) + "-request.json")),
                         arm.drafter is not None,
                     )
-                    row = next(row for row in selected if row["task"] == key)
+                    row = next(
+                        row
+                        for row in selected
+                        if row["task"] == key and row.get("seed", 8101) == seed
+                    )
                     if not valid_sample(response, integer(task["output_cap"])) or record(
                         row["native"]
                     ) != native_counts(response, arm.drafter is not None):
                         raise ValueError("reference row disagrees with raw counters or stopping")
-                    signatures[key] = signature(response)
+                    signatures[key + ("/" + str(seed) if prior.sampling.temperature else "")] = (
+                        signature(response)
+                    )
                     receipts.append(file_reference(path))
-    if len(selected) != len(spec.tasks) or len(signatures) != len(spec.tasks):
+    if len(selected) != len(spec.tasks) * len(spec.sampling.seeds) or len(signatures) != len(
+        selected
+    ):
         raise ValueError("reference observation is incomplete")
     value: Record = {
         "schema": "benchmark-reference-v1",

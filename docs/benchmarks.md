@@ -24,6 +24,7 @@ explicit paths and the shared saved-reference registry.
 | `compare`, `live` | Isolated native requests; executing tool episodes |
 | `campaign-preflight`, `campaign`, `campaign-report` | CPU admission; training; read-only health |
 | `prepare-checks`, `record-reference` | Frozen lean cohorts; authenticated reusable references |
+| `scenario-report` | Per-scenario paired comparisons and Level 2/3 decisions |
 | `prepare-initialization` | Reusable authenticated model basis; no training or capture |
 | `suite` | Broader panels and optional state selection |
 | `verify-greedy`, `verify-sampler`, `profile-native` | Independent decisions, distributions, kernel activation |
@@ -37,6 +38,39 @@ where needed. Preserve inputs, logs, ownership and failures. Comparison outputs 
 new; capture resumes verified records. Resume campaigns/suites with their recorded source
 and specification. Checkout edits do not alter active runs. CPU preflight is not runtime
 qualification. Run [local checks](development.md); there is no hosted CI.
+
+## Three evaluation levels
+
+Level 1 checks training progress: the unchanged 60-request candidate-only screen and
+120 fixed teacher-forced DEV windows, plus separate 20-window agentic-history and
+20-window thinking groups. Loss/top1 are diagnostics, not speed evidence. Preserve the
+120-second complete training pause budget; a standalone diagnostic timing does not
+qualify a production campaign interruption.
+
+Level 2 guides development decisions. Run the four routine cohorts below, the fixed
+12-request thinking slice, the same 12 sampled requests with two seeds, and the
+12-task `agentic-coding` slice. Every primary scenario must be visible. If any slice
+is worse than Baseline or the prior leader beyond its paired 95% interval, or its
+speed direction disagrees with the broader request panel, Level 3 is required before
+a decision. Saved timing is descriptive; acceptance regression against a saved leader
+also triggers escalation. Missing scenarios prevent a Level 2 clearance.
+
+Level 3 is required to claim **faster**: all routine request coverage, all 40 thinking
+requests, the same 40 sampled requests with three seeds, and the comprehensive
+agentic-coding suite. For every primary scenario, the lower bound of the paired 95%
+speed interval must exceed 1 against target-only and be at least 1 against Baseline.
+Agentic coding decides: a request-panel gain cannot compensate for a workflow failure
+or regression. Missing, invalid, sparse or inconclusive evidence cannot pass. A passed
+DEV suite reports `confirmation-required`; the claim needs one successful run on
+fresh, protected, source-disjoint confirmation data. Reused DEV is selection data.
+heldout24 and its aliases remain the final reserve and are not consumed here.
+
+Primary scenarios are `agentic-coding`, `coding-requests`, `chat-writing`, `reasoning`,
+`long-documents`, `thinking-on`, and `sampled`. Structured/tool requests remain separately
+reported as `structured-tools`; their regressions must also be inspected. Request/task
+metadata may carry plain `scenario`, `project` and `style` fields. An agentic project
+uses one `group` across its tasks and instruction styles, preserving project-level
+uncertainty. Scenario tags do not manufacture independent observations.
 
 ## Routine DEV cohorts
 
@@ -66,8 +100,8 @@ and the 6K TRAIN bank; smaller evals do not change training data. Targets remain
 4B Q4KM/NVFP4, with separate reference records.
 
 Legacy short120/full600/harness90/live×3/sample120×3 evidence keeps its original meaning;
-these are supported readers, not routine defaults. No default sampled sweep or repeats.
-Additional seeds/repetitions answer explicit uncertainty, not an automatic checklist.
+these are supported readers, not routine defaults. Sampled slices use seeds 8101/8102;
+comprehensive sampled sets add 8103. Extra repetitions answer explicit uncertainty.
 
 These are reused DEV cohorts. Independent confirmation requires fresh curation and
 access receipts; a new label supplies no unseen data. Never consume heldout24 aliases.
@@ -232,7 +266,7 @@ proposals make acceptance unavailable.
 
 Request time covers pretokenized HTTP completion including prefill/decode, excluding
 rendering/tokenization/load/warmup. Live time includes harness/tools. Models are loaded
-and warmed, thinking disabled, KV F16 and draft policy fixed. Independent requests/tasks
+and warmed, thinking disabled unless explicitly enabled in the frozen task, KV F16 and draft policy fixed. Independent requests/tasks
 start with empty caches; live sessions reuse prefixes after their first call. `gpu.txt`,
 commands, loaded libraries and ownership receipts identify execution. The lease preserves
 other tasks' jobs.
@@ -264,9 +298,53 @@ Paired group bootstraps preserve category composition and keep repeats/
 variants together. Sparse strata make intervals unavailable; multiple candidates also
 receive adjusted intervals. Wide intervals are inconclusive. Compare matched arms within
 targets, without pooling away regressions or mixing absolute scores across changed eras.
-Sampled mode declares temperature/top-p/top-k/min-p, three seeds and target/runtime-bound
-qualification. Unequal paths get descriptive robustness, not greedy equality or checkpoint
-ranking by throughput.
+Sampled mode declares temperature/top-p/top-k/min-p, fixed seeds and target/runtime-bound
+qualification. The new cohorts use temperature 0.7, top-p 0.9, top-k 0, min-p 0 and no
+repetition/frequency/presence penalties, matching the retained sampled setup. The target
+sampler defines the output distribution; exact sample-and-match/rejection verification
+preserves it mathematically. `verify-sampler` tests both native algorithms, zero support
+and EOG against controlled probabilities. Passing finite tests qualifies the implementation
+within that scope; it does not prove neural output quality or all distributions.
+Pair the same request and seed across arms, keeping all seeds/variants within their source
+group in the bootstrap. Compare aggregate emitted tokens / total request seconds, with
+paired source-group 95% intervals. Outputs can differ despite identical seeds: do not
+assert greedy equality, equal response quality or matched completion latency. Sampled
+throughput is one required scenario, never a substitute for greedy or application evidence.
+
+### Thinking and sampled cohorts
+
+`thinking-slice`/`thinking-suite` contain 12/40 requests with `thinking: true` and
+2,048-token answer caps. Selection is fixed before measurement: take coding and reasoning
+requests from broader120, sort each category by SHA256 of `scenario-levels-v1:` plus its
+source group, then take 20 per category; the slice takes six per category from that order.
+`sampled-slice`/`sampled-suite` use the same IDs and caps, with thinking disabled and two/
+three seeds. The slice is nested, not independent confirmation. Both target precisions
+use the same selection. An enabled template changes token identity, so its old token hash
+cannot be reused; native rendering and raw request/response receipts bind the new prompt.
+The runtime receives `chat_template_kwargs.enable_thinking: true` for rendering; direct
+completion consumes that tokenized thinking prompt. Greedy verification still compares
+all generated tokens, content and stopping exactly, including reasoning and cap stops.
+
+`record-reference` also admits qualified sampled panels. It retains every seed-specific
+raw signature, without requiring cross-arm equality. Projection may select tasks and a
+subset of source seeds; the source panel must still be complete. Existing greedy reference
+identities and the campaign screen are unchanged. Sampled references use
+`native-sampled-request-v3`; greedy and sampled controls cannot mix.
+
+### Scenario reports and decisions
+
+`scenario-report SPEC OUTPUT` accepts `schema: scenario-report-v1`, `level: 2|3`,
+`candidate`, authenticated result references in `panels`, and `confirmation: null` (or
+an authenticated successful fresh Level 3 report). Panels share the target/runtime/context/
+depth/role and candidate content. Each panel retains its own scenarios; primary panels
+cannot duplicate a scenario. The names `screen`, `prefix`, and `live` are supplementary
+and do not replace the dedicated agentic suite. Use separate reports for Q4KM and NVFP4.
+Reports include speed versus target-only and Baseline, paired 95% intervals for fresh
+matched arms, acceptance, drafter bytes, and recorded resident GPU MiB. Resident memory
+is a device-wide after-load observation, including target, KV, drafter and desktop; it
+is not peak allocation or incremental drafter memory. Older runs without this receipt
+report memory unavailable. Historical speed ratios never acquire paired timing intervals
+through re-reporting. Source-group intervals cover prompt variation, not between-run drift.
 
 ## Depth calibration
 
@@ -469,8 +547,16 @@ The V2 suite's `targets` maps each precision to authenticated `requests`, `harne
 Use one greedy pass and the saved controls for every panel. Inspect individual outcomes
 before interpreting an aggregate or recording an incumbent.
 
-Diagnostics preserve RNG and report category loss/top1 on 120 fixed role-safe DEV windows,
-plus first-position top-1/prefix survival ([execution](execution.md#sampling-and-clocks)).
+Diagnostics preserve RNG and report category loss/top1 on the original 120 fixed role-safe
+DEV windows. An optional `groups` mapping in `training-diagnostics-v1` binds independent
+`training-diagnostics-group-v1` artifacts with the same corpus/exclusions/windows fields
+and exactly 20 fixed windows each, named `agentic-coding` and `thinking-on`. Each group
+passes the same DEV/TRAIN/protected-identity and capture checks. Original top-level metrics
+and reach-weight adaptation continue to use only the original 120 windows; group metrics
+and elapsed seconds are separate. Agentic captures use measured DEV histories in the
+TRAIN expansion's multi-span session format. Thinking captures use separate DEV requests
+outside the 40 thinking comparison IDs, with target-generated thinking enabled. Both
+report per-position top-1/prefix survival ([execution](execution.md#sampling-and-clocks)).
 They are not acceptance. Measure the complete training interruption against the short
 wall budget; do not stretch the training interval to accommodate an oversized check.
 Keep model/data/evaluation/checkpoint clocks separate.

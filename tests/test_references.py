@@ -294,3 +294,89 @@ def test_screen_enforces_categories_lengths_caps_and_independent_groups() -> Non
     ):
         with pytest.raises(ValueError):
             require_cohort("screen", (first, *tasks[1:]))
+
+
+def test_sampled_reference_preserves_seed_paths_and_projects_complete_source(
+    tmp_path: Path,
+) -> None:
+    path = evidence(tmp_path)
+    specification = read(path)
+    qualification = tmp_path / "sampler.json"
+    qualification.write_bytes(
+        canonical(
+            {
+                "status": "passed",
+                "eos_stopped": True,
+                "target_sha256": record(specification["target"])["sha256"],
+                "runtime_source_sha256": record(specification["source"])["sha256"],
+                "functions_tested": ["sample-and-match", "rejection"],
+            }
+        )
+    )
+    specification["sampling"] = {
+        "temperature": 0.7,
+        "top_p": 0.9,
+        "top_k": 0,
+        "min_p": 0.0,
+        "seeds": [8101, 8102, 8103],
+        "qualification": file_reference(qualification),
+    }
+    path.write_bytes(canonical(specification))
+    original = read(tmp_path / "result.json")
+    rows: list[Record] = []
+    for seed in (8101, 8102, 8103):
+        for arm in ("target", "baseline"):
+            cell = tmp_path / ("0-0-" + str(seed) + "-" + arm)
+            cell.mkdir()
+            previous = tmp_path / ("0-0-" + arm)
+            for name in ("command.json", "server.log"):
+                (cell / name).write_bytes((previous / name).read_bytes())
+            for index in range(2):
+                response = read(previous / f"{index}-response.json")
+                record(response["generation_settings"]).update(
+                    {"seed": seed, "temperature": 0.7, "top_p": 0.9}
+                )
+                response["tokens"] = [seed + (1 if arm == "baseline" else 0)]
+                (cell / f"{index}-response.json").write_bytes(canonical(response))
+                (cell / f"{index}-request.json").write_bytes(
+                    canonical(payload([9], 2, 0.7, 0.9, 0, 0.0, seed))
+                )
+                row = next(
+                    record(row)
+                    for row in sequence(original["rows"])
+                    if record(row)["arm"] == arm and record(row)["task"] == str(index)
+                )
+                rows.append({**row, "seed": seed})
+    original.update({"rows": rows, "sampled": True})
+    (tmp_path / "result.json").write_bytes(canonical(original))
+    desired = read(path)
+    record(desired["sampling"])["seeds"] = [8101, 8102]
+    projection = tmp_path / "projection.json"
+    projection.write_bytes(canonical(desired))
+    refs: dict[str, object] = {}
+    for arm in ("target", "baseline"):
+        registration = tmp_path / "registration.json"
+        registration.write_bytes(
+            canonical(
+                {
+                    "schema": 1,
+                    "comparison": file_reference(projection),
+                    "result": file_reference(tmp_path / "result.json"),
+                    "arm": arm,
+                    "rep": 0,
+                }
+            )
+        )
+        refs[arm] = register(registration, tmp_path / "registry")["reference"]
+    desired["arms"] = [
+        {
+            "name": "candidate",
+            "drafter": record(sequence(specification["arms"])[1])["drafter"],
+        }
+    ]
+    desired["references"] = refs
+    projection.write_bytes(canonical(desired))
+    cached = Comparison.load(projection).cached()
+    assert len(sequence(cached["target"]["rows"])) == 4
+    assert cached["target"]["signatures"] != cached["baseline"]["signatures"]
+    assert set(record(cached["target"]["signatures"])) == {"0/8101", "0/8102", "1/8101", "1/8102"}

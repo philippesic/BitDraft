@@ -61,6 +61,7 @@ def main() -> int:
         "prepare-rsr",
         "profile-rounds",
         "round-profile-report",
+        "scenario-report",
     ):
         comparison = commands.add_parser(name)
         comparison.add_argument("input", type=Path)
@@ -150,6 +151,10 @@ def main() -> int:
             from benchmarks.campaign import preflight
 
             result = preflight(args.input)
+        elif args.command == "scenario-report":
+            from benchmarks.scenario_report import report as report_scenarios
+
+            result = report_scenarios(args.input, args.output)
         elif args.command == "calibrate-depth":
             from benchmarks.calibration import calibrate
 

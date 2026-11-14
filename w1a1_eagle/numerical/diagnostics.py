@@ -1,5 +1,6 @@
 import torch
 
+from w1a1_eagle.clock import Monotonic
 from w1a1_eagle.contracts import Record, integer, record, sequence, string
 from w1a1_eagle.data import Artifact, CaptureSpec
 from w1a1_eagle.model import HE4
@@ -10,12 +11,20 @@ from w1a1_eagle.training import MAXIMUM_SLOTS
 
 
 class Diagnostics:
-    def __init__(self, specification: Artifact, training: Corpus, byte_budget: int) -> None:
+    def __init__(
+        self,
+        specification: Artifact,
+        training: Corpus,
+        byte_budget: int,
+        supplementary: bool = False,
+    ) -> None:
         specification.verify()
         raw = read(specification.path)
         if (
-            set(raw) != {"schema", "corpus", "exclusions", "windows"}
-            or raw["schema"] != "training-diagnostics-v1"
+            set(raw) - {"groups"} != {"schema", "corpus", "exclusions", "windows"}
+            or raw["schema"]
+            != ("training-diagnostics-group-v1" if supplementary else "training-diagnostics-v1")
+            or (supplementary and "groups" in raw)
         ):
             raise ValueError("unsupported training diagnostics")
         root = specification.path.parent
@@ -68,16 +77,49 @@ class Diagnostics:
             for v in sequence(raw["windows"])
         ]
         if (
-            len(windows) != 120
-            or len(set(windows)) != 120
+            len(windows) != (20 if supplementary else 120)
+            or len(set(windows)) != len(windows)
             or any(name not in specs or anchor < 0 for name, anchor in windows)
         ):
-            raise ValueError("diagnostics require 120 distinct fixed DEV windows")
+            raise ValueError(
+                "diagnostics require 120 base or 20 supplementary distinct fixed DEV windows"
+            )
         self.windows = tuple(sorted(windows))
         self.specs = specs
         self.cache = CaptureCache(byte_budget)
+        self.groups = {
+            name: Diagnostics(artifact(value, root), training, byte_budget, supplementary=True)
+            for name, value in record(raw.get("groups", {})).items()
+        }
+        if set(self.groups) - {"agentic-coding", "thinking-on"}:
+            raise ValueError("unsupported supplementary diagnostic group")
+        seen_windows = set(self.windows)
+        for group in self.groups.values():
+            if seen_windows.intersection(group.windows):
+                raise ValueError("diagnostic groups overlap")
+            seen_windows.update(group.windows)
 
     def measure(self, model: HE4, slots: int = MAXIMUM_SLOTS) -> Record:
+        clock = Monotonic()
+        began = clock.now()
+        result = self.measure_windows(model, slots)
+        if not self.groups:
+            return result
+        base_seconds = clock.now() - began
+        groups: Record = {}
+        for name, group in self.groups.items():
+            start = clock.now()
+            measured = group.measure_windows(model, slots)
+            groups[name] = {**measured, "seconds": clock.now() - start}
+            group.cache.clear()
+        return {
+            **result,
+            "base_seconds": base_seconds,
+            "groups": groups,
+            "added_seconds": clock.now() - began - base_seconds,
+        }
+
+    def measure_windows(self, model: HE4, slots: int = MAXIMUM_SLOTS) -> Record:
         size = model.block(slots)
         cpu_rng = torch.get_rng_state()
         cuda_rng = torch.cuda.get_rng_state_all() if model.vocabulary.device.type == "cuda" else []

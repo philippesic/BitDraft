@@ -75,10 +75,12 @@ class Tokenizer:
             raise TemplateRefused(string(reply["error"]))
         return reply
 
-    def render(self, messages: list[Record], tools: list[Record]) -> str:
+    def render(self, messages: list[Record], tools: list[Record], thinking: bool = False) -> str:
         payload = record(
             cast(object, json.loads(canonical({"messages": messages, "tools": tools})))
         )
+        if thinking:
+            payload["thinking"] = True
         reply = self.query(payload)
         self.last_prompt = string(reply["prompt"])
         self.last_tokens = self.identifiers(reply)
