@@ -92,6 +92,14 @@ class TestSupervisedResume(unittest.TestCase):
             self.assertEqual(
                 [(row["anchors"], row["labels"]) for row in exposures], [([8, 9], [15, 15])]
             )
+            self.assertEqual(
+                [
+                    row["losses"]
+                    for row in Journal(root / "attempt").events()
+                    if row.get("kind") == "training-progress"
+                ],
+                [[]],
+            )
             self.assertIn("unknown", str(report["scientific"]))
             latest = Store(root / "attempt/states").latest(
                 str(record(report["admission"])["recipe"])

@@ -168,7 +168,8 @@ sequence load and selecting windows; background loading during the previous upda
 not counted in any clock. Startup, checkpoint, export, diagnostics and native evaluation
 stay separate; controller wall time is an operational budget. Legacy clocks cannot be
 reconstructed. Dataset exposure starts from known lineage rather than charging every
-historical update to new data. Workers publish accounting every 100 updates.
+historical update to new data. Workers publish accounting every 100 updates, with
+the training loss of every update since the previous record.
 
 Optional `development` binds 120 fixed DEV windows and cadence; diagnostics preserve RNG
 and report category loss/top1 over all fifteen positions. A run that ends also measures

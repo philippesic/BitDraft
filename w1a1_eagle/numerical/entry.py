@@ -307,6 +307,8 @@ def run_leased(
     last_checkpoint_seconds = clock.now()
     last_diagnostic_updates = -1
     last_progress_updates = -1
+    last_loss_updates = worker.updates
+    losses: list[float | None] = []
 
     def diagnose(diagnostics: Diagnostics, refresh: bool) -> None:
         nonlocal last_diagnostic_updates
@@ -337,7 +339,11 @@ def run_leased(
             last_checkpoint_seconds, \
             stop_reason, \
             last_diagnostic_updates, \
-            last_progress_updates
+            last_progress_updates, \
+            last_loss_updates
+        if worker.updates != last_loss_updates:
+            losses.append(worker.progress.last_loss)
+            last_loss_updates = worker.updates
         if worker.updates != last_progress_updates and worker.cursor % 100 == 0:
             journal.append(
                 {
@@ -346,10 +352,12 @@ def run_leased(
                     "updates": worker.updates,
                     "cursor": worker.cursor,
                     "loss": worker.progress.last_loss,
+                    "losses": list(losses),
                     "gradient_norm": worker.last_gradient_norm,
                     "accounting": worker.accounting.encode(),
                 }
             )
+            losses.clear()
             last_progress_updates = worker.updates
         update_limit = (
             boundary.limit()
