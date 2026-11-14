@@ -1,0 +1,104 @@
+[
+  {
+    "bytes": 56498410,
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/baseline/d1/nodes/trace.nsys-rep",
+    "phase": "retirement-intent",
+    "plan_sha256": "490f0b36347840de456486186f1fef613bf0915ab977eae456f3c13fa684b977",
+    "sha256": "bec58d957280a4c508efe7035b2ce7f65469609429e47a37638829f2589a80f7",
+    "source_result": "results/round-profile-baseline-s4/result.md"
+  },
+  {
+    "bytes": 22754538,
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/baseline/d1/phases/trace.nsys-rep",
+    "phase": "retirement-intent",
+    "plan_sha256": "490f0b36347840de456486186f1fef613bf0915ab977eae456f3c13fa684b977",
+    "sha256": "ed4b46f728e7834f509b24b35ad84976815d2b2d4cca5ff1724b09ecbeaa0b71",
+    "source_result": "results/round-profile-baseline-s4/result.md"
+  },
+  {
+    "bytes": 40951233,
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/baseline/d3/nodes/trace.nsys-rep",
+    "phase": "retirement-intent",
+    "plan_sha256": "490f0b36347840de456486186f1fef613bf0915ab977eae456f3c13fa684b977",
+    "sha256": "082e41ed89239ca625594b86fa44cdc80ad74530945bc676379a849644a8cb1e",
+    "source_result": "results/round-profile-baseline-s4/result.md"
+  },
+  {
+    "bytes": 17512586,
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/baseline/d3/phases/trace.nsys-rep",
+    "phase": "retirement-intent",
+    "plan_sha256": "490f0b36347840de456486186f1fef613bf0915ab977eae456f3c13fa684b977",
+    "sha256": "404d70b944d656b320b8cbac4e83a382eebeb7fc3cf10a77e069433e5904d823",
+    "source_result": "results/round-profile-baseline-s4/result.md"
+  },
+  {
+    "bytes": 35791760,
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/baseline/d7/nodes/trace.nsys-rep",
+    "phase": "retirement-intent",
+    "plan_sha256": "490f0b36347840de456486186f1fef613bf0915ab977eae456f3c13fa684b977",
+    "sha256": "eeb46db95c214066847f095da4644eeca04f6d55b736aaab570b4139f3fc9fe3",
+    "source_result": "results/round-profile-baseline-s4/result.md"
+  },
+  {
+    "bytes": 16298654,
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/baseline/d7/phases/trace.nsys-rep",
+    "phase": "retirement-intent",
+    "plan_sha256": "490f0b36347840de456486186f1fef613bf0915ab977eae456f3c13fa684b977",
+    "sha256": "25832bc282214fe075e46988841d865230baa33da0a9f8c76bad22d8c199abb0",
+    "source_result": "results/round-profile-baseline-s4/result.md"
+  },
+  {
+    "bytes": 59946457,
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/s4/d1/nodes/trace.nsys-rep",
+    "phase": "retirement-intent",
+    "plan_sha256": "490f0b36347840de456486186f1fef613bf0915ab977eae456f3c13fa684b977",
+    "sha256": "d9094a3fe3e253da0b3b63e8703a5e7eadb01f5ad1b5144acc439db4568ec073",
+    "source_result": "results/round-profile-baseline-s4/result.md"
+  },
+  {
+    "bytes": 23682200,
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/s4/d1/phases/trace.nsys-rep",
+    "phase": "retirement-intent",
+    "plan_sha256": "490f0b36347840de456486186f1fef613bf0915ab977eae456f3c13fa684b977",
+    "sha256": "9955a42ce41dd653a7fdce464a0ac6973c563b9bc2a58e4c85c7d3e74082f780",
+    "source_result": "results/round-profile-baseline-s4/result.md"
+  },
+  {
+    "bytes": 46095853,
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/s4/d3/nodes/trace.nsys-rep",
+    "phase": "retirement-intent",
+    "plan_sha256": "490f0b36347840de456486186f1fef613bf0915ab977eae456f3c13fa684b977",
+    "sha256": "94b4100de64610f28a663f40057723ca4864ffb9c77e643845818a1955d34d6c",
+    "source_result": "results/round-profile-baseline-s4/result.md"
+  },
+  {
+    "bytes": 19232765,
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/s4/d3/phases/trace.nsys-rep",
+    "phase": "retirement-intent",
+    "plan_sha256": "490f0b36347840de456486186f1fef613bf0915ab977eae456f3c13fa684b977",
+    "sha256": "ebbf4207ad0e393cd09ed91274d0bff16d8adfe56f1cd9cd56a1e3c8b9170592",
+    "source_result": "results/round-profile-baseline-s4/result.md"
+  },
+  {
+    "bytes": 42706647,
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/s4/d7/nodes/trace.nsys-rep",
+    "phase": "retirement-intent",
+    "plan_sha256": "490f0b36347840de456486186f1fef613bf0915ab977eae456f3c13fa684b977",
+    "sha256": "3fb9d29fa971ab4399c2b1c262f377777ab670d16dfc5670521310233ccb391d",
+    "source_result": "results/round-profile-baseline-s4/result.md"
+  },
+  {
+    "bytes": 18707437,
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/s4/d7/phases/trace.nsys-rep",
+    "phase": "retirement-intent",
+    "plan_sha256": "490f0b36347840de456486186f1fef613bf0915ab977eae456f3c13fa684b977",
+    "sha256": "b25d0fe6b4e4b97cd63474aaec05ae5bc60e99db68d0b1780cad79b257b9feed",
+    "source_result": "results/round-profile-baseline-s4/result.md"
+  },
+  {
+    "path": "",
+    "plan_sha256": "490f0b36347840de456486186f1fef613bf0915ab977eae456f3c13fa684b977",
+    "phase": "complete",
+    "files": 12
+  }
+]

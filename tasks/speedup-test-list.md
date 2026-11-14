@@ -28,7 +28,7 @@ use it. An optimization Baseline could adopt equally does not count toward closi
 
 Context from the [round profile](../docs/benchmarks.md#round-profile) of S4 at depth 3
 (record `artifacts/benchmarks/round-profile-baseline-s4-02/round-profile.json`, runtime-v6,
-no result entry yet): drafter GPU time is 1.47 ms of a 9.4 ms round. One-bit feed-forward is
+[result](../results/round-profile-baseline-s4/result.md)): drafter GPU time is 1.47 ms of a 9.4 ms round. One-bit feed-forward is
 0.36 ms of that and reading its weights once would take about 0.06 ms, so items 1–3 together
 can save at most about 3% of request speed. Vocabulary scoring (0.40 ms) and the attention
 tables (0.27 ms) are still 4-bit.

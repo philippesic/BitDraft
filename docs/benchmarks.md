@@ -351,7 +351,7 @@ bytes read per round and multiply-adds per slot (one row of its input), from nod
 `round-profile.json` holds every clock under its own name, averaged per traced round, with a
 `reconciliation`: the clean drafter counter against the traced draft wall, drafter kernel
 time on the phases and nodes clocks, and the share of nodes-clock drafter time attributed to
-graph nodes. `round-profile.txt` is the short table. Traces stay in the session folders;
+graph nodes. `round-profile.txt` is the short table. Traces stay in the session folders until authorized result closeout;
 `round-profile-report SPEC OUTPUT` rebuilds both files from them without the GPU.
 
 Limits: Nsight's API tracing lengthens the phases round (measure the gap in each run, never
@@ -359,6 +359,10 @@ pool it with clean time). The nodes clock exists for kernel attribution; its wal
 because graphs are off. The server's `draft_ms` covers only drafting; the feature handoff
 (`srv.process`) is drafter work outside that counter. Clean runs cannot split target
 verification from the handoff and sampling.
+
+The [Baseline/S4 WSL2 result](../results/round-profile-baseline-s4/result.md) records
+the runtime-v6 component split and trace retirement. Its retained summaries cannot
+regenerate the raw trace analysis.
 
 ## Live application and instructions
 
