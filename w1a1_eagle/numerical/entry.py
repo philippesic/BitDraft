@@ -136,6 +136,8 @@ def preflight(path: Path, sealed: bool = False) -> Record:
     intent.vocabulary.verify()
     if intent.initialization is not None:
         intent.initialization.verify()
+    if intent.frozen_baseline is not None:
+        intent.frozen_baseline.verify()
     return admission(intent, corpus)
 
 

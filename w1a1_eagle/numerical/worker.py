@@ -142,6 +142,10 @@ class TensorWorker:
             data = array.data.cast("B")
             for offset in range(0, len(data), 1024 * 1024):
                 digest.update(data[offset : offset + 1024 * 1024])
+        if model.frozen_format != "Q4_0":
+            digest.update(canonical([model.frozen_format, model.frozen_baseline, list(model.native_types)]))
+            for name, shape, codes in model.native_codes:
+                digest.update(canonical([name, list(shape), hashlib.sha256(codes).hexdigest()]))
         self.frozen_sha256 = digest.hexdigest()
         self.native_codes = model.native_codes
         self.native_types = model.native_types
