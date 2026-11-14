@@ -113,3 +113,47 @@ def test_read_ranges_unique_patch_and_protected_followup_phase(tmp_path: Path) -
         sandbox.invoke("replace_text", {"path": "value.txt", "old": "missing", "new": ""})
     with pytest.raises(ValueError, match="no followup"):
         sandbox.advance()
+
+
+def test_training_session_projects_keep_permissive_sources_and_drop_contact_lines(
+    tmp_path: Path,
+) -> None:
+    from benchmarks.sessions import components, project_task
+    from w1a1_eagle.contracts import Record, record, string
+
+    target = "def total(values):\n    return sum(values)\n" * 30
+    rows: list[Record] = [
+        {
+            "commit": "b" * 40,
+            "old_file": "pkg/util.py",
+            "new_file": "pkg/util.py",
+            "old_contents": "",
+            "new_contents": "VALUE = 1\n",
+            "message": "Add util",
+            "license": "mit",
+            "repos": "owner/project,fork/project",
+        },
+        {
+            "commit": "a" * 40,
+            "old_file": "pkg/core.py",
+            "new_file": "pkg/core.py",
+            "old_contents": target,
+            "new_contents": target + "\n",
+            "message": "Handle empty input\n\nSigned-off-by: Someone <someone@example.com>",
+            "license": "mit",
+            "repos": "fork/project",
+        },
+    ]
+    grouped = components(rows)
+    assert list(grouped) == ["fork/project"]
+    task = project_task("fork/project", grouped["fork/project"], "system", 1024)
+    assert task is not None
+    prompt = string(record(sequence(task["messages"])[1])["content"])
+    assert prompt.startswith("Handle empty input\n\nThe change belongs in pkg/core.py.")
+    assert "@" not in prompt and task["group"] == "commitpack:fork/project"
+    sandbox = Sandbox(tmp_path / "session", record(task["fixture"]))
+    assert sandbox.test()["passed"] is False
+    sandbox.write("pkg/core.py", target + "# handled\n")
+    assert sandbox.test()["passed"] is True
+    rows[0]["license"] = "agpl-3.0"
+    assert project_task("fork/project", rows, "system", 1024) is None
