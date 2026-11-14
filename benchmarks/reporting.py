@@ -154,3 +154,12 @@ def interruptions(root: Path) -> list[Record]:
                 )
                 previous = None
     return values
+
+
+def overrun(pauses: list[Record], budget: float) -> bool:
+    return any(
+        row["reason"] in {None, "model-update-time"}
+        and row["seconds"] is not None
+        and number(row["seconds"]) > budget
+        for row in pauses
+    )

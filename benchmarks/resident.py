@@ -9,7 +9,7 @@ from benchmarks.measurement import deadline, now
 from benchmarks.metrics import totals
 from benchmarks.native import file_reference
 from benchmarks.references import register
-from benchmarks.reporting import controller_record, interruptions
+from benchmarks.reporting import controller_record, interruptions, overrun
 from benchmarks.runner import compare_leased
 from w1a1_eagle.checkpoints.store import StateRef, Store
 from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
@@ -197,12 +197,7 @@ class Evaluations:
             self.store.root / "interruptions.json",
             canonical({"values": pauses, "budget_seconds": self.raw["maximum_pause_seconds"]}),
         )
-        if any(
-            row["reason"] in {None, "model-update-time"}
-            and row["seconds"] is not None
-            and number(row["seconds"]) > number(self.raw["maximum_pause_seconds"])
-            for row in pauses
-        ):
+        if overrun(pauses, number(self.raw["maximum_pause_seconds"])):
             raise ValueError("resident training interruption exceeded budget; recovery preserved")
         if "pending_selection" in self.status:
             self.status["provisional_fast_leader"] = self.status.pop("pending_selection")
@@ -386,11 +381,7 @@ class Evaluations:
             self.store.root / "interruptions.json",
             canonical({"values": pauses, "budget_seconds": self.raw["maximum_pause_seconds"]}),
         )
-        if any(
-            row["seconds"] is not None
-            and number(row["seconds"]) > number(self.raw["maximum_pause_seconds"])
-            for row in pauses
-        ):
+        if overrun(pauses, number(self.raw["maximum_pause_seconds"])):
             raise ValueError("resident training interruption exceeded budget; recovery preserved")
 
 

@@ -331,7 +331,8 @@ An optional authenticated `initial_reference` reuses the exact initial drafter's
 screen; it does not require another initial inference pass. Recovery retries a whole
 incomplete candidate screen in a new output directory, retaining the failed attempt.
 Normal repeated checks use one training worker. Journal capacity may rotate it into a
-new supervised worker while preserving global budgets and durable recovery.
+new supervised worker while preserving global budgets and durable recovery; that
+rotation is not a check pause and does not count against the pause budget.
 Recovery of a final check at the update guard reuses its completed evaluation and does
 not launch another identical screen.
 `initial_drafter` must match a completed producer bound to the durable parent, or a

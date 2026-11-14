@@ -245,6 +245,15 @@ def test_resident_interruption_clock_pairs_multiple_checks_in_one_worker(tmp_pat
     assert [row["seconds"] for row in interruptions(tmp_path)] == [75, 80, 80]
 
 
+def test_journal_rotation_pause_does_not_count_against_the_check_budget() -> None:
+    from benchmarks.reporting import overrun
+
+    rotation = {"reason": "journal-capacity", "seconds": 142.0}
+    check = {"reason": "model-update-time", "seconds": 121.0}
+    assert not overrun([rotation, {**check, "seconds": 70.0}], 120.0)
+    assert overrun([rotation, check], 120.0)
+
+
 def test_native_server_dies_with_its_parent(tmp_path: Path) -> None:
     import select
     import signal
