@@ -23,30 +23,41 @@ routine cohorts alongside S4. The unchanged 120 training diagnostic windows have
 
 ## State
 
-First implementation checkpoint `8d9e772d`; full gate passed at that checkpoint. New
-report validation tests pass; the latest full check passed 136 tests and all 92 proofs
-but found one import-order issue, now fixed. Q4KM thinking suite completed in 797.6 s,
-all three arms exact on all 40 requests. Both runtime-v7 sampler verifications passed.
-The 160-window diagnostic measurement preserves all original 120-window numbers
-exactly; supplementary groups cost 10.6 s. The complete resident training pause is
-not yet qualified. Confirmation has 120 frozen requests and 12 validated, unexecuted
-specifications; `confirmation/protection-v2.json` is the future exclusion artifact.
+Implementation checkpoints `8d9e772d` and `40c4d5bd`; the latter full gate passed 136 tests
+and all 92 proofs. Current memory-in-scenario reporting changes pass the configured partial
+check. Both thinking suites completed exactly on all 40 requests in all three arms:
+Q4KM 797.6 s, NVFP4 630.2 s. Twelve shared reference records cover both suites and slices.
+Both sampler verifications passed. The 160-window diagnostic measurement preserves all
+original 120-window numbers exactly; supplementary groups cost 10.6 s. The complete
+resident training pause is not yet qualified. Confirmation has 120 frozen requests and
+12 validated, unexecuted specifications; use `confirmation/protection-v2.json` as its
+future exclusion artifact. Prior protocol-v3 reports were regenerated through the maintained
+scenario-report command; neither format establishes faster under the new rule.
 
-Only the NVFP4 thinking panel currently has GPU allocation. On completion release it
-and notify the agentic owner: their all60 target-only calibration has next priority.
-Keep `gpu-yield` present; do not queue more GPU work until coordination permits it.
-Inspect `queue-owner.json`, `controllers/`, `queue-source.txt`, `logs/queue.log` and actual
-GPU clients before resuming. A ten-minute healthcheck monitors this task.
-All paths are under the main checkout's `artifacts/benchmarks/scenario-levels-01/`.
-Frozen source and scripts reproduce the work. Raw panels/captures, source snapshots,
-models and registry dependency closures are retained pending compact result extraction.
-This task authorizes no deletion of shared data or existing references.
+The lead authorized only Q4KM sampled next after agentic target-only calibration ended.
+Bounded controller PID4168453 runs `q4km-sampled-suite`; inspect `queue-owner.json`,
+`logs/queue-q4km-sampled.log` and actual clients. It has no subsequent allocated job.
+`gpu-yield` was restored after it started. On completion notify the agentic owner and
+give them the next slot if waiting. Do not start NVFP4 sampled or routine checks without
+coordinating. The launcher accepts named jobs after its frozen source argument.
+`report-source.txt` points to current source. The ten-minute healthcheck next wakes
+at 19:30 UTC on November14.
+
+All relative paths above are under the main checkout's
+`artifacts/benchmarks/scenario-levels-01/`. Conservative compute used is about 1816 s of
+about 5400 s; task artifacts occupy 3.0 GiB. `compact-draft/` and `result-draft.md` are interim
+extractions, not the final result. Frozen source and scripts reproduce the work. Raw
+panels/captures, source snapshots, models and registry dependency closures remain retained.
+No shared data or existing reference deletion is authorized.
 
 ## Next
 
-Register NVFP4 thinking evidence. After the agentic calibration and coordinated release,
-run both sampled suites and both-precision final-drafter routine checks. Qualify the
-complete extended training pause, register references, finalize result/FINDINGS and
-measured-cost documentation, run the full check and commit locally. Account standalone
-time receipts as well as queue-progress when enforcing the 1.5-hour GPU budget. Preserve
-failures and report any allocation limit honestly.
+Finish the bounded Q4KM sampled allocation. After coordinated release, run NVFP4 sampled
+and both-precision final
+routine cohorts, one named allocation at a time. Register all complete evidence with
+`scripts/register_completed.py`. Qualify the complete extended training pause using
+`scripts/qualify_pause.py` after Q4KM screen final is registered. Keep total new artifact
+size below 15 GB; its two disposable states need an explicit Store retention decision.
+Finish result/FINDINGS and measured-cost docs; regenerate compact evidence and maintained
+reports; run full gate and commit locally. Count standalone receipts and queue-progress
+as well as raw panel times. Preserve failures and report any allocation limit honestly.

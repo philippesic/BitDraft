@@ -228,6 +228,13 @@ def compare_leased(
                 for name in names
             }
         )
+        resident_gpu_mib: Record = {
+            arm.name: max(
+                float(path.read_text().strip())
+                for path in store.root.glob("*-" + arm.name + "/resident-memory.txt")
+            )
+            for arm in spec.arms
+        }
         result: Record = {
             "status": "complete",
             "protocol": spec.reference_protocol(),
@@ -244,15 +251,9 @@ def compare_leased(
             "elapsed_seconds": now() - began_panel,
             "arm_elapsed_seconds": arm_elapsed,
             "summary": aggregate,
-            "resident_gpu_mib": {
-                arm.name: max(
-                    float(path.read_text().strip())
-                    for path in store.root.glob("*-" + arm.name + "/resident-memory.txt")
-                )
-                for arm in spec.arms
-            },
+            "resident_gpu_mib": resident_gpu_mib,
             "memory_scope": "device-wide resident memory after model load; includes target, KV, drafter and desktop; not peak inference allocation",
-            "by_scenario": scenario_report(all_rows, spec, cached),
+            "by_scenario": scenario_report(all_rows, spec, cached, resident_gpu_mib),
             "by_category": partitions(
                 all_rows,
                 "category",

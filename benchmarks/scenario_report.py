@@ -43,7 +43,7 @@ def report(specification: Path, output: Path) -> Record:
         rows = [record(row) for row in sequence(result["rows"])] + [
             record(row) for reference in cached.values() for row in sequence(reference["rows"])
         ]
-        groups = scenario_report(rows, spec, cached)
+        groups = scenario_report(rows, spec, cached, record(result.get("resident_gpu_mib", {})))
         if name == "requests":
             for control in ("baseline", "prior-leader"):
                 if any(row["arm"] == control for row in rows):

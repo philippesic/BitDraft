@@ -352,6 +352,27 @@ is not peak allocation or incremental drafter memory. Older runs without this re
 report memory unavailable. Historical speed ratios never acquire paired timing intervals
 through re-reporting. Source-group intervals cover prompt variation, not between-run drift.
 
+### Frozen request confirmation reserve
+
+`/home/philip/BitDraft/artifacts/benchmarks/scenario-levels-01/confirmation/` holds
+120 new, unexecuted role-`confirmation` requests: 20 each coding, chat/writing,
+reasoning, long documents, thinking-on and sampled. The agentic confirmation suite
+is a separate workload. Sources are MBPP sanitized, BIG-Bench Hard, GovReport through
+LongBench, and newly authored chat/writing. The frozen source revisions, licenses,
+selection/access receipts and exact overlap checks live beside the bank. Source families
+are disjoint from the current TRAIN and DEV banks; this is not a target-pretraining or
+semantic-deduplication claim. `specs/` freezes both target formats and fresh sampled
+seeds 9101–9103 without running inference.
+
+Future training and DEV admission must include `confirmation/protection-v2.json` in
+its exclusions, alongside the existing opaque protected identities. Do not change
+historical specifications. `protection-receipt.json` authenticates this union and the
+superseded first union, which incorrectly included TRAIN identities and was corrected
+before use. `access.json` and `ancestry-audit.json` record curation-only access and no
+training, calibration, selection or inference consumption. A confirmation run is a
+separate explicit operation after the DEV verdict is eligible; never reuse this reserve
+for routine decisions.
+
 ## Depth calibration
 
 `calibrate-depth SPEC [OUTPUT]` picks the draft depth to serve a trained drafter with on a

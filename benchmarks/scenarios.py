@@ -31,7 +31,12 @@ def task_scenario(task: Record, sampled: bool = False) -> str:
     }.get(string(task["category"]), "unclassified")
 
 
-def scenario_report(rows: list[Record], spec: Comparison, cached: dict[str, Record]) -> Record:
+def scenario_report(
+    rows: list[Record],
+    spec: Comparison,
+    cached: dict[str, Record],
+    resident_gpu_mib: Record | None = None,
+) -> Record:
     tasks = {string(task["id"]): task for task in spec.tasks}
     names = sorted({string(row["arm"]) for row in rows})
     normalized = [
@@ -67,6 +72,7 @@ def scenario_report(rows: list[Record], spec: Comparison, cached: dict[str, Reco
                     name: {
                         **totals([row for row in selected if row["arm"] == name]),
                         "drafter_bytes": sizes[name],
+                        "resident_gpu_mib": (resident_gpu_mib or {}).get(name),
                         **(
                             {
                                 "completed_tasks": sum(
