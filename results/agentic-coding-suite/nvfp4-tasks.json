@@ -1,0 +1,4082 @@
+[
+  {
+    "arm": "target",
+    "task": "cjson-number-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 668,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 7.488982368027791,
+    "raw_wall_seconds": 7.488982368027791,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "cjson-array-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 612,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 7.028656984912232,
+    "raw_wall_seconds": 7.028656984912232,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "cjson-bool-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 946,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 10.305540923960507,
+    "raw_wall_seconds": 10.305540923960507,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "cjson-case-sensitive",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 477,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 5.547442308976315,
+    "raw_wall_seconds": 6.031452795956284,
+    "loop": {
+      "excluded_seconds": 0.48401048697996885,
+      "model_seconds": 0.46161568397656083,
+      "native": {
+        "acceptance": null,
+        "accepted": 0,
+        "proposed": 0
+      },
+      "response_index": 7,
+      "tokens": 53
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "cjson-string-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 480,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 5.661542052985169,
+    "raw_wall_seconds": 6.153142067953013,
+    "loop": {
+      "excluded_seconds": 0.4916000149678439,
+      "model_seconds": 0.46984306594822556,
+      "native": {
+        "acceptance": null,
+        "accepted": 0,
+        "proposed": 0
+      },
+      "response_index": 6,
+      "tokens": 57
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "cjson-null-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 1543,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 14.429468973074108,
+    "raw_wall_seconds": 14.429468973074108,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "cjson-false-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 916,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 9.47809904103633,
+    "raw_wall_seconds": 9.47809904103633,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "cjson-true-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 2143,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 19.83657109597698,
+    "raw_wall_seconds": 19.83657109597698,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "cjson-object-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "tools",
+    "task_kind": "test-writing",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 3999,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 37.82430428394582,
+    "raw_wall_seconds": 37.82430428394582,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "cjson-raw-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "minimal",
+    "task_kind": "test-writing",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 367,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 5.655250432901084,
+    "raw_wall_seconds": 6.044983975938521,
+    "loop": {
+      "excluded_seconds": 0.3897335430374369,
+      "model_seconds": 0.3626717609586194,
+      "native": {
+        "acceptance": null,
+        "accepted": 0,
+        "proposed": 0
+      },
+      "response_index": 7,
+      "tokens": 37
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "parson-number-value",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 566,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 6.996208342956379,
+    "raw_wall_seconds": 6.996208342956379,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "parson-boolean-value",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 541,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 6.805735033005476,
+    "raw_wall_seconds": 6.805735033005476,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "parson-object-count",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 464,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 6.190135753015056,
+    "raw_wall_seconds": 6.190135753015056,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "parson-array-count",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 461,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 6.1752776589710265,
+    "raw_wall_seconds": 6.1752776589710265,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "parson-object-number",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 482,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 6.357728507951833,
+    "raw_wall_seconds": 6.357728507951833,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "parson-array-number",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 481,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 6.3131736820796505,
+    "raw_wall_seconds": 6.3131736820796505,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "parson-dot-number",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 709,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 8.189779727952555,
+    "raw_wall_seconds": 8.189779727952555,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "parson-dot-boolean",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 464,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 6.2154792920919135,
+    "raw_wall_seconds": 6.2154792920919135,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "parson-number-alias",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "minimal",
+    "task_kind": "test-writing",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 1087,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 13.619784084963612,
+    "raw_wall_seconds": 13.83042911090888,
+    "loop": {
+      "excluded_seconds": 0.21064502594526857,
+      "model_seconds": 0.18040140205994248,
+      "native": {
+        "acceptance": null,
+        "accepted": 0,
+        "proposed": 0
+      },
+      "response_index": 14,
+      "tokens": 15
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "parson-bool-alias",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "coding",
+    "task_kind": "test-writing",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 2376,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 23.62468558200635,
+    "raw_wall_seconds": 23.62468558200635,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "inih-integer-base",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 2026,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 17.36752751597669,
+    "raw_wall_seconds": 17.36752751597669,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "inih-integer64-base",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 889,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 9.98351040109992,
+    "raw_wall_seconds": 10.409449163009413,
+    "loop": {
+      "excluded_seconds": 0.4259387619094923,
+      "model_seconds": 0.4065943439491093,
+      "native": {
+        "acceptance": null,
+        "accepted": 0,
+        "proposed": 0
+      },
+      "response_index": 12,
+      "tokens": 53
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "inih-unsigned-base",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 1363,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 14.264714945922606,
+    "raw_wall_seconds": 14.264714945922606,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "inih-unsigned64-base",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 698,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 8.344019234995358,
+    "raw_wall_seconds": 8.344019234995358,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "inih-empty-default",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 942,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 8.716611754032783,
+    "raw_wall_seconds": 9.130763393011875,
+    "loop": {
+      "excluded_seconds": 0.41415163897909224,
+      "model_seconds": 0.3972021429799497,
+      "native": {
+        "acceptance": null,
+        "accepted": 0,
+        "proposed": 0
+      },
+      "response_index": 8,
+      "tokens": 53
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "inih-bool-yes",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 531,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 7.164196228957735,
+    "raw_wall_seconds": 7.164196228957735,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "inih-bool-off",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 628,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 8.484612380038016,
+    "raw_wall_seconds": 8.484612380038016,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "inih-has-value",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 618,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 7.753989013959654,
+    "raw_wall_seconds": 7.753989013959654,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "inih-section-match",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "coding",
+    "task_kind": "test-writing",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 3699,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 30.96223621990066,
+    "raw_wall_seconds": 30.96223621990066,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "inih-real-parser",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "tools",
+    "task_kind": "test-writing",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 1940,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 19.305894072982483,
+    "raw_wall_seconds": 19.305894072982483,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "rapidcsv-row-count",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 901,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 11.78373890707735,
+    "raw_wall_seconds": 11.78373890707735,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "rapidcsv-delimiter-default",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 593,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 8.848365248995833,
+    "raw_wall_seconds": 8.848365248995833,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "rapidcsv-header-default",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 1771,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 20.341712721972726,
+    "raw_wall_seconds": 20.341712721972726,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "rapidcsv-trim-option",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 747,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 10.101975848898292,
+    "raw_wall_seconds": 10.101975848898292,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "rapidcsv-separator-option",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 1218,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 14.84478659904562,
+    "raw_wall_seconds": 15.33363960403949,
+    "loop": {
+      "excluded_seconds": 0.48885300499387085,
+      "model_seconds": 0.46404759807046503,
+      "native": {
+        "acceptance": null,
+        "accepted": 0,
+        "proposed": 0
+      },
+      "response_index": 13,
+      "tokens": 53
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "rapidcsv-quoted-newlines",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 4753,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 44.92438590794336,
+    "raw_wall_seconds": 44.92438590794336,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "rapidcsv-quote-char",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 699,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 9.665286952978931,
+    "raw_wall_seconds": 9.665286952978931,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "rapidcsv-row-label",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 2782,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 26.885857685934752,
+    "raw_wall_seconds": 26.885857685934752,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "rapidcsv-skip-empty",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "tools",
+    "task_kind": "test-writing",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 1498,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 17.209330954938196,
+    "raw_wall_seconds": 17.209330954938196,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "rapidcsv-skip-blank",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "minimal",
+    "task_kind": "test-writing",
+    "completed": false,
+    "correct": true,
+    "termination": "context-limit",
+    "tokens": 4245,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 42.94049914192874,
+    "raw_wall_seconds": 42.94049914192874,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "humanize-ordinal-teens",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 1577,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 14.424111736007035,
+    "raw_wall_seconds": 14.424111736007035,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "humanize-apnumber-bound",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 1231,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 11.853486126987264,
+    "raw_wall_seconds": 11.853486126987264,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "humanize-size-base",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 1512,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 13.913031860953197,
+    "raw_wall_seconds": 13.913031860953197,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "humanize-negative-size",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 332,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 3.862624745001085,
+    "raw_wall_seconds": 4.38081839599181,
+    "loop": {
+      "excluded_seconds": 0.5181936509907246,
+      "model_seconds": 0.49903759302105755,
+      "native": {
+        "acceptance": null,
+        "accepted": 0,
+        "proposed": 0
+      },
+      "response_index": 4,
+      "tokens": 58
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "humanize-singular-byte",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 391,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 4.733129366999492,
+    "raw_wall_seconds": 4.733129366999492,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "humanize-mixed-fraction",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 704,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 7.1229067399399355,
+    "raw_wall_seconds": 7.1229067399399355,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "tomli-true-value",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 599,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 5.552666937932372,
+    "raw_wall_seconds": 5.552666937932372,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "tomli-false-value",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 558,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 5.253632056992501,
+    "raw_wall_seconds": 5.253632056992501,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "tomli-integer-base",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 907,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 7.81857142096851,
+    "raw_wall_seconds": 7.81857142096851,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "tomli-timezone-sign",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 862,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 7.555788507102989,
+    "raw_wall_seconds": 7.555788507102989,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "tomli-error-line",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 617,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 5.648354424978606,
+    "raw_wall_seconds": 5.648354424978606,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "tomli-unicode-scalar",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 472,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 4.409691691049375,
+    "raw_wall_seconds": 4.879667201079428,
+    "loop": {
+      "excluded_seconds": 0.46997551003005356,
+      "model_seconds": 0.4524117630207911,
+      "native": {
+        "acceptance": null,
+        "accepted": 0,
+        "proposed": 0
+      },
+      "response_index": 6,
+      "tokens": 59
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "humanize-ordinal-many",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "coding",
+    "task_kind": "feature",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 2117,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 18.452908779028803,
+    "raw_wall_seconds": 18.452908779028803,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "humanize-sizes-many",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "tools",
+    "task_kind": "feature",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 1613,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 14.371356859104708,
+    "raw_wall_seconds": 14.559124196064658,
+    "loop": {
+      "excluded_seconds": 0.18776733695995063,
+      "model_seconds": 0.16554272489156574,
+      "native": {
+        "acceptance": null,
+        "accepted": 0,
+        "proposed": 0
+      },
+      "response_index": 11,
+      "tokens": 15
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "humanize-ordinal-helper",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "minimal",
+    "task_kind": "refactor",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 1732,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 16.861287230974995,
+    "raw_wall_seconds": 16.861287230974995,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "humanize-list-helper",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "coding",
+    "task_kind": "refactor",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 1031,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 9.583691749954596,
+    "raw_wall_seconds": 9.583691749954596,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "tomli-load-many",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "tools",
+    "task_kind": "feature",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 2658,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 20.553714326000772,
+    "raw_wall_seconds": 20.553714326000772,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "tomli-flatten",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "minimal",
+    "task_kind": "feature",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 2353,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 17.876117101986893,
+    "raw_wall_seconds": 17.876117101986893,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "tomli-scalar-helper",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "coding",
+    "task_kind": "refactor",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 2660,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 23.029207690036856,
+    "raw_wall_seconds": 23.029207690036856,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "target",
+    "task": "tomli-offset-helper",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "tools",
+    "task_kind": "refactor",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 690,
+    "native": {
+      "accepted": 0,
+      "proposed": 0
+    },
+    "wall_seconds": 6.390488581964746,
+    "raw_wall_seconds": 6.390488581964746,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "cjson-number-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 668,
+    "native": {
+      "accepted": 449,
+      "proposed": 636
+    },
+    "wall_seconds": 5.5279514560243115,
+    "raw_wall_seconds": 5.5279514560243115,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "cjson-array-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 612,
+    "native": {
+      "accepted": 397,
+      "proposed": 621
+    },
+    "wall_seconds": 5.435549846966751,
+    "raw_wall_seconds": 5.435549846966751,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "cjson-bool-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 946,
+    "native": {
+      "accepted": 564,
+      "proposed": 1098
+    },
+    "wall_seconds": 8.543572601047345,
+    "raw_wall_seconds": 8.543572601047345,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "cjson-case-sensitive",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 477,
+    "native": {
+      "accepted": 287,
+      "proposed": 549
+    },
+    "wall_seconds": 4.943622812861577,
+    "raw_wall_seconds": 5.2811972429044545,
+    "loop": {
+      "excluded_seconds": 0.3375744300428778,
+      "model_seconds": 0.31452273402828723,
+      "native": {
+        "acceptance": 0.6296296296296297,
+        "accepted": 34,
+        "proposed": 54
+      },
+      "response_index": 7,
+      "tokens": 53
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "cjson-string-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 480,
+    "native": {
+      "accepted": 291,
+      "proposed": 549
+    },
+    "wall_seconds": 4.731458421912976,
+    "raw_wall_seconds": 5.112403562990949,
+    "loop": {
+      "excluded_seconds": 0.38094514107797295,
+      "model_seconds": 0.35902458999771625,
+      "native": {
+        "acceptance": 0.5151515151515151,
+        "accepted": 34,
+        "proposed": 66
+      },
+      "response_index": 6,
+      "tokens": 57
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "cjson-null-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 1543,
+    "native": {
+      "accepted": 1005,
+      "proposed": 1566
+    },
+    "wall_seconds": 10.119672102038749,
+    "raw_wall_seconds": 10.119672102038749,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "cjson-false-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 916,
+    "native": {
+      "accepted": 603,
+      "proposed": 909
+    },
+    "wall_seconds": 7.101963532040827,
+    "raw_wall_seconds": 7.101963532040827,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "cjson-true-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 2143,
+    "native": {
+      "accepted": 1482,
+      "proposed": 1935
+    },
+    "wall_seconds": 12.457686210982502,
+    "raw_wall_seconds": 12.457686210982502,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "cjson-object-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "tools",
+    "task_kind": "test-writing",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 3999,
+    "native": {
+      "accepted": 2847,
+      "proposed": 3408
+    },
+    "wall_seconds": 21.663852542056702,
+    "raw_wall_seconds": 21.663852542056702,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "cjson-raw-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "minimal",
+    "task_kind": "test-writing",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 367,
+    "native": {
+      "accepted": 191,
+      "proposed": 507
+    },
+    "wall_seconds": 5.445058548008092,
+    "raw_wall_seconds": 5.749157406040467,
+    "loop": {
+      "excluded_seconds": 0.3040988580323756,
+      "model_seconds": 0.27687226596754044,
+      "native": {
+        "acceptance": 0.5238095238095238,
+        "accepted": 22,
+        "proposed": 42
+      },
+      "response_index": 7,
+      "tokens": 37
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "parson-number-value",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 566,
+    "native": {
+      "accepted": 357,
+      "proposed": 606
+    },
+    "wall_seconds": 5.712382444995455,
+    "raw_wall_seconds": 5.712382444995455,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "parson-boolean-value",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 541,
+    "native": {
+      "accepted": 336,
+      "proposed": 591
+    },
+    "wall_seconds": 5.594681165996008,
+    "raw_wall_seconds": 5.594681165996008,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "parson-object-count",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 464,
+    "native": {
+      "accepted": 288,
+      "proposed": 504
+    },
+    "wall_seconds": 5.2000602070475,
+    "raw_wall_seconds": 5.2000602070475,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "parson-array-count",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 461,
+    "native": {
+      "accepted": 291,
+      "proposed": 486
+    },
+    "wall_seconds": 5.097025775001384,
+    "raw_wall_seconds": 5.097025775001384,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "parson-object-number",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 482,
+    "native": {
+      "accepted": 304,
+      "proposed": 510
+    },
+    "wall_seconds": 5.226411078008823,
+    "raw_wall_seconds": 5.226411078008823,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "parson-array-number",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 481,
+    "native": {
+      "accepted": 306,
+      "proposed": 504
+    },
+    "wall_seconds": 5.190765585983172,
+    "raw_wall_seconds": 5.190765585983172,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "parson-dot-number",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 709,
+    "native": {
+      "accepted": 461,
+      "proposed": 717
+    },
+    "wall_seconds": 6.283492467016913,
+    "raw_wall_seconds": 6.283492467016913,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "parson-dot-boolean",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 464,
+    "native": {
+      "accepted": 296,
+      "proposed": 480
+    },
+    "wall_seconds": 5.094902034034021,
+    "raw_wall_seconds": 5.094902034034021,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "parson-number-alias",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "minimal",
+    "task_kind": "test-writing",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 1087,
+    "native": {
+      "accepted": 638,
+      "proposed": 1305
+    },
+    "wall_seconds": 11.389668199932203,
+    "raw_wall_seconds": 11.589474892942235,
+    "loop": {
+      "excluded_seconds": 0.19980669301003218,
+      "model_seconds": 0.16893262905068696,
+      "native": {
+        "acceptance": 0.4444444444444444,
+        "accepted": 8,
+        "proposed": 18
+      },
+      "response_index": 14,
+      "tokens": 15
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "parson-bool-alias",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "coding",
+    "task_kind": "test-writing",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 2376,
+    "native": {
+      "accepted": 1532,
+      "proposed": 2484
+    },
+    "wall_seconds": 16.231408662046306,
+    "raw_wall_seconds": 16.231408662046306,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "inih-integer-base",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 2026,
+    "native": {
+      "accepted": 1392,
+      "proposed": 1872
+    },
+    "wall_seconds": 11.639868782018311,
+    "raw_wall_seconds": 11.639868782018311,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "inih-integer64-base",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 889,
+    "native": {
+      "accepted": 548,
+      "proposed": 987
+    },
+    "wall_seconds": 8.306097051943652,
+    "raw_wall_seconds": 8.644087519031018,
+    "loop": {
+      "excluded_seconds": 0.3379904670873657,
+      "model_seconds": 0.31790924700908363,
+      "native": {
+        "acceptance": 0.49206349206349204,
+        "accepted": 31,
+        "proposed": 63
+      },
+      "response_index": 12,
+      "tokens": 53
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "inih-unsigned-base",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 1363,
+    "native": {
+      "accepted": 909,
+      "proposed": 1320
+    },
+    "wall_seconds": 10.837374054011889,
+    "raw_wall_seconds": 10.837374054011889,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "inih-unsigned64-base",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 698,
+    "native": {
+      "accepted": 461,
+      "proposed": 690
+    },
+    "wall_seconds": 6.699101122096181,
+    "raw_wall_seconds": 6.699101122096181,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "inih-empty-default",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 942,
+    "native": {
+      "accepted": 578,
+      "proposed": 1068
+    },
+    "wall_seconds": 6.862372608971782,
+    "raw_wall_seconds": 7.165413283975795,
+    "loop": {
+      "excluded_seconds": 0.3030406750040129,
+      "model_seconds": 0.284739677910693,
+      "native": {
+        "acceptance": 0.5789473684210527,
+        "accepted": 33,
+        "proposed": 57
+      },
+      "response_index": 8,
+      "tokens": 53
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "inih-bool-yes",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 531,
+    "native": {
+      "accepted": 339,
+      "proposed": 552
+    },
+    "wall_seconds": 6.095340795931406,
+    "raw_wall_seconds": 6.095340795931406,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "inih-bool-off",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 628,
+    "native": {
+      "accepted": 391,
+      "proposed": 684
+    },
+    "wall_seconds": 7.005017488030717,
+    "raw_wall_seconds": 7.005017488030717,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "inih-has-value",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 618,
+    "native": {
+      "accepted": 403,
+      "proposed": 621
+    },
+    "wall_seconds": 6.380241830949672,
+    "raw_wall_seconds": 6.380241830949672,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "inih-section-match",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "coding",
+    "task_kind": "test-writing",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 3699,
+    "native": {
+      "accepted": 2607,
+      "proposed": 3237
+    },
+    "wall_seconds": 19.08230574603658,
+    "raw_wall_seconds": 19.08230574603658,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "inih-real-parser",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "tools",
+    "task_kind": "test-writing",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 1940,
+    "native": {
+      "accepted": 1323,
+      "proposed": 1818
+    },
+    "wall_seconds": 13.71682679199148,
+    "raw_wall_seconds": 13.71682679199148,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "rapidcsv-row-count",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 901,
+    "native": {
+      "accepted": 591,
+      "proposed": 906
+    },
+    "wall_seconds": 9.095339867984876,
+    "raw_wall_seconds": 9.095339867984876,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "rapidcsv-delimiter-default",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 593,
+    "native": {
+      "accepted": 379,
+      "proposed": 621
+    },
+    "wall_seconds": 7.283270210027695,
+    "raw_wall_seconds": 7.283270210027695,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "rapidcsv-header-default",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 1771,
+    "native": {
+      "accepted": 1116,
+      "proposed": 1920
+    },
+    "wall_seconds": 15.726969196926802,
+    "raw_wall_seconds": 15.726969196926802,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "rapidcsv-trim-option",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 747,
+    "native": {
+      "accepted": 492,
+      "proposed": 744
+    },
+    "wall_seconds": 7.993372922996059,
+    "raw_wall_seconds": 7.993372922996059,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "rapidcsv-separator-option",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 1218,
+    "native": {
+      "accepted": 771,
+      "proposed": 1302
+    },
+    "wall_seconds": 11.708216050988995,
+    "raw_wall_seconds": 12.074072967050597,
+    "loop": {
+      "excluded_seconds": 0.36585691606160253,
+      "model_seconds": 0.34071859100367874,
+      "native": {
+        "acceptance": 0.5333333333333333,
+        "accepted": 32,
+        "proposed": 60
+      },
+      "response_index": 13,
+      "tokens": 53
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "rapidcsv-quoted-newlines",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 4753,
+    "native": {
+      "accepted": 3322,
+      "proposed": 4240
+    },
+    "wall_seconds": 26.761542434920557,
+    "raw_wall_seconds": 26.761542434920557,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "rapidcsv-quote-char",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 699,
+    "native": {
+      "accepted": 458,
+      "proposed": 702
+    },
+    "wall_seconds": 7.746977960923687,
+    "raw_wall_seconds": 7.746977960923687,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "rapidcsv-row-label",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 2782,
+    "native": {
+      "accepted": 1950,
+      "proposed": 2463
+    },
+    "wall_seconds": 16.38896009407472,
+    "raw_wall_seconds": 16.38896009407472,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "rapidcsv-skip-empty",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "tools",
+    "task_kind": "test-writing",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 1498,
+    "native": {
+      "accepted": 948,
+      "proposed": 1602
+    },
+    "wall_seconds": 13.386316687916405,
+    "raw_wall_seconds": 13.386316687916405,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "rapidcsv-skip-blank",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "minimal",
+    "task_kind": "test-writing",
+    "completed": false,
+    "correct": true,
+    "termination": "context-limit",
+    "tokens": 4245,
+    "native": {
+      "accepted": 3026,
+      "proposed": 3621
+    },
+    "wall_seconds": 24.420022174948826,
+    "raw_wall_seconds": 24.420022174948826,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "humanize-ordinal-teens",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 1577,
+    "native": {
+      "accepted": 1005,
+      "proposed": 1668
+    },
+    "wall_seconds": 10.367951035033911,
+    "raw_wall_seconds": 10.367951035033911,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "humanize-apnumber-bound",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 1231,
+    "native": {
+      "accepted": 781,
+      "proposed": 1302
+    },
+    "wall_seconds": 8.98130095610395,
+    "raw_wall_seconds": 8.98130095610395,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "humanize-size-base",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 1512,
+    "native": {
+      "accepted": 1000,
+      "proposed": 1488
+    },
+    "wall_seconds": 9.651707128970884,
+    "raw_wall_seconds": 9.651707128970884,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "humanize-negative-size",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 332,
+    "native": {
+      "accepted": 210,
+      "proposed": 354
+    },
+    "wall_seconds": 3.2937210579402745,
+    "raw_wall_seconds": 3.6876573199406266,
+    "loop": {
+      "excluded_seconds": 0.39393626200035214,
+      "model_seconds": 0.3744019189616665,
+      "native": {
+        "acceptance": 0.5303030303030303,
+        "accepted": 35,
+        "proposed": 66
+      },
+      "response_index": 4,
+      "tokens": 58
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "humanize-singular-byte",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 391,
+    "native": {
+      "accepted": 233,
+      "proposed": 450
+    },
+    "wall_seconds": 4.064714119071141,
+    "raw_wall_seconds": 4.064714119071141,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "humanize-mixed-fraction",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 704,
+    "native": {
+      "accepted": 461,
+      "proposed": 708
+    },
+    "wall_seconds": 5.241632362944074,
+    "raw_wall_seconds": 5.241632362944074,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "tomli-true-value",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 599,
+    "native": {
+      "accepted": 373,
+      "proposed": 654
+    },
+    "wall_seconds": 4.348147076903842,
+    "raw_wall_seconds": 4.348147076903842,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "tomli-false-value",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 558,
+    "native": {
+      "accepted": 357,
+      "proposed": 582
+    },
+    "wall_seconds": 4.069840006064624,
+    "raw_wall_seconds": 4.069840006064624,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "tomli-integer-base",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 907,
+    "native": {
+      "accepted": 590,
+      "proposed": 924
+    },
+    "wall_seconds": 5.557585778995417,
+    "raw_wall_seconds": 5.557585778995417,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "tomli-timezone-sign",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 862,
+    "native": {
+      "accepted": 556,
+      "proposed": 888
+    },
+    "wall_seconds": 5.518343330943026,
+    "raw_wall_seconds": 5.518343330943026,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "tomli-error-line",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 617,
+    "native": {
+      "accepted": 386,
+      "proposed": 669
+    },
+    "wall_seconds": 4.413294318015687,
+    "raw_wall_seconds": 4.413294318015687,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "tomli-unicode-scalar",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 472,
+    "native": {
+      "accepted": 272,
+      "proposed": 582
+    },
+    "wall_seconds": 3.6870303789619356,
+    "raw_wall_seconds": 4.056849806918763,
+    "loop": {
+      "excluded_seconds": 0.369819427956827,
+      "model_seconds": 0.3513763779774308,
+      "native": {
+        "acceptance": 0.5072463768115942,
+        "accepted": 35,
+        "proposed": 69
+      },
+      "response_index": 6,
+      "tokens": 59
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "humanize-ordinal-many",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "coding",
+    "task_kind": "feature",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 2117,
+    "native": {
+      "accepted": 1460,
+      "proposed": 1926
+    },
+    "wall_seconds": 11.564562657033093,
+    "raw_wall_seconds": 11.564562657033093,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "humanize-sizes-many",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "tools",
+    "task_kind": "feature",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 1613,
+    "native": {
+      "accepted": 1106,
+      "proposed": 1488
+    },
+    "wall_seconds": 9.306482409010641,
+    "raw_wall_seconds": 9.503906529047526,
+    "loop": {
+      "excluded_seconds": 0.19742412003688514,
+      "model_seconds": 0.17462085909210145,
+      "native": {
+        "acceptance": 0.3333333333333333,
+        "accepted": 7,
+        "proposed": 21
+      },
+      "response_index": 11,
+      "tokens": 15
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "humanize-ordinal-helper",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "minimal",
+    "task_kind": "refactor",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 1732,
+    "native": {
+      "accepted": 1227,
+      "proposed": 1494
+    },
+    "wall_seconds": 10.24115342402365,
+    "raw_wall_seconds": 10.24115342402365,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "humanize-list-helper",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "coding",
+    "task_kind": "refactor",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 1031,
+    "native": {
+      "accepted": 714,
+      "proposed": 930
+    },
+    "wall_seconds": 6.198930109967478,
+    "raw_wall_seconds": 6.198930109967478,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "tomli-load-many",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "tools",
+    "task_kind": "feature",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 2658,
+    "native": {
+      "accepted": 1825,
+      "proposed": 2451
+    },
+    "wall_seconds": 12.487484725075774,
+    "raw_wall_seconds": 12.487484725075774,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "tomli-flatten",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "minimal",
+    "task_kind": "feature",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 2353,
+    "native": {
+      "accepted": 1659,
+      "proposed": 2055
+    },
+    "wall_seconds": 10.489185107988305,
+    "raw_wall_seconds": 10.489185107988305,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "tomli-scalar-helper",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "coding",
+    "task_kind": "refactor",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 2660,
+    "native": {
+      "accepted": 1815,
+      "proposed": 2486
+    },
+    "wall_seconds": 14.845417004078627,
+    "raw_wall_seconds": 14.845417004078627,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "baseline",
+    "task": "tomli-offset-helper",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "tools",
+    "task_kind": "refactor",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 690,
+    "native": {
+      "accepted": 459,
+      "proposed": 672
+    },
+    "wall_seconds": 4.656322352937423,
+    "raw_wall_seconds": 4.656322352937423,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "cjson-number-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 668,
+    "native": {
+      "accepted": 455,
+      "proposed": 621
+    },
+    "wall_seconds": 5.435397446970455,
+    "raw_wall_seconds": 5.435397446970455,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "cjson-array-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 612,
+    "native": {
+      "accepted": 405,
+      "proposed": 597
+    },
+    "wall_seconds": 5.340687222080305,
+    "raw_wall_seconds": 5.340687222080305,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "cjson-bool-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 946,
+    "native": {
+      "accepted": 632,
+      "proposed": 897
+    },
+    "wall_seconds": 7.492072000983171,
+    "raw_wall_seconds": 7.492072000983171,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "cjson-case-sensitive",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 477,
+    "native": {
+      "accepted": 299,
+      "proposed": 513
+    },
+    "wall_seconds": 4.627570434007794,
+    "raw_wall_seconds": 4.939096829970367,
+    "loop": {
+      "excluded_seconds": 0.3115263959625736,
+      "model_seconds": 0.28848504298366606,
+      "native": {
+        "acceptance": 0.75,
+        "accepted": 36,
+        "proposed": 48
+      },
+      "response_index": 7,
+      "tokens": 53
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "cjson-string-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 480,
+    "native": {
+      "accepted": 305,
+      "proposed": 510
+    },
+    "wall_seconds": 4.562001080950722,
+    "raw_wall_seconds": 4.883440861944109,
+    "loop": {
+      "excluded_seconds": 0.3214397809933871,
+      "model_seconds": 0.29869876301381737,
+      "native": {
+        "acceptance": 0.7037037037037037,
+        "accepted": 38,
+        "proposed": 54
+      },
+      "response_index": 6,
+      "tokens": 57
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "cjson-null-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 1543,
+    "native": {
+      "accepted": 1053,
+      "proposed": 1425
+    },
+    "wall_seconds": 9.577271249960177,
+    "raw_wall_seconds": 9.577271249960177,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "cjson-false-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 916,
+    "native": {
+      "accepted": 625,
+      "proposed": 849
+    },
+    "wall_seconds": 6.856791869038716,
+    "raw_wall_seconds": 6.856791869038716,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "cjson-true-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 2143,
+    "native": {
+      "accepted": 1497,
+      "proposed": 1893
+    },
+    "wall_seconds": 12.32215016509872,
+    "raw_wall_seconds": 12.32215016509872,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "cjson-object-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "tools",
+    "task_kind": "test-writing",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 3999,
+    "native": {
+      "accepted": 2794,
+      "proposed": 3569
+    },
+    "wall_seconds": 22.24326174496673,
+    "raw_wall_seconds": 22.24326174496673,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "cjson-raw-type",
+    "group": "project:DaveGamble/cJSON",
+    "project": "DaveGamble/cJSON",
+    "style": "minimal",
+    "task_kind": "test-writing",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 367,
+    "native": {
+      "accepted": 203,
+      "proposed": 471
+    },
+    "wall_seconds": 5.2802413100143895,
+    "raw_wall_seconds": 5.618213864043355,
+    "loop": {
+      "excluded_seconds": 0.33797255402896553,
+      "model_seconds": 0.3092856300063431,
+      "native": {
+        "acceptance": 0.4166666666666667,
+        "accepted": 20,
+        "proposed": 48
+      },
+      "response_index": 7,
+      "tokens": 37
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "parson-number-value",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 566,
+    "native": {
+      "accepted": 367,
+      "proposed": 576
+    },
+    "wall_seconds": 5.587280950974673,
+    "raw_wall_seconds": 5.587280950974673,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "parson-boolean-value",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 541,
+    "native": {
+      "accepted": 353,
+      "proposed": 546
+    },
+    "wall_seconds": 5.3901875470764935,
+    "raw_wall_seconds": 5.3901875470764935,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "parson-object-count",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 464,
+    "native": {
+      "accepted": 305,
+      "proposed": 456
+    },
+    "wall_seconds": 4.970023430068977,
+    "raw_wall_seconds": 4.970023430068977,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "parson-array-count",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 461,
+    "native": {
+      "accepted": 308,
+      "proposed": 441
+    },
+    "wall_seconds": 4.90057017991785,
+    "raw_wall_seconds": 4.90057017991785,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "parson-object-number",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 482,
+    "native": {
+      "accepted": 312,
+      "proposed": 489
+    },
+    "wall_seconds": 5.13887016591616,
+    "raw_wall_seconds": 5.13887016591616,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "parson-array-number",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 481,
+    "native": {
+      "accepted": 319,
+      "proposed": 468
+    },
+    "wall_seconds": 5.01010524306912,
+    "raw_wall_seconds": 5.01010524306912,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "parson-dot-number",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 709,
+    "native": {
+      "accepted": 459,
+      "proposed": 729
+    },
+    "wall_seconds": 6.3238083409378305,
+    "raw_wall_seconds": 6.3238083409378305,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "parson-dot-boolean",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 464,
+    "native": {
+      "accepted": 315,
+      "proposed": 426
+    },
+    "wall_seconds": 4.887370591983199,
+    "raw_wall_seconds": 4.887370591983199,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "parson-number-alias",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "minimal",
+    "task_kind": "test-writing",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 1087,
+    "native": {
+      "accepted": 644,
+      "proposed": 1287
+    },
+    "wall_seconds": 11.205872642924078,
+    "raw_wall_seconds": 11.389635460916907,
+    "loop": {
+      "excluded_seconds": 0.1837628179928288,
+      "model_seconds": 0.15310418896842748,
+      "native": {
+        "acceptance": 0.6,
+        "accepted": 9,
+        "proposed": 15
+      },
+      "response_index": 14,
+      "tokens": 15
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "parson-bool-alias",
+    "group": "project:kgabis/parson",
+    "project": "kgabis/parson",
+    "style": "coding",
+    "task_kind": "test-writing",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 2376,
+    "native": {
+      "accepted": 1519,
+      "proposed": 2523
+    },
+    "wall_seconds": 16.359261324978434,
+    "raw_wall_seconds": 16.359261324978434,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "inih-integer-base",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 2026,
+    "native": {
+      "accepted": 1369,
+      "proposed": 1941
+    },
+    "wall_seconds": 11.764367453986779,
+    "raw_wall_seconds": 11.764367453986779,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "inih-integer64-base",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 889,
+    "native": {
+      "accepted": 574,
+      "proposed": 915
+    },
+    "wall_seconds": 7.9232719738502055,
+    "raw_wall_seconds": 8.202845823951066,
+    "loop": {
+      "excluded_seconds": 0.27957385010086,
+      "model_seconds": 0.25933971896301955,
+      "native": {
+        "acceptance": 0.75,
+        "accepted": 36,
+        "proposed": 48
+      },
+      "response_index": 12,
+      "tokens": 53
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "inih-unsigned-base",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 1363,
+    "native": {
+      "accepted": 936,
+      "proposed": 1242
+    },
+    "wall_seconds": 10.386084812926129,
+    "raw_wall_seconds": 10.386084812926129,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "inih-unsigned64-base",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 698,
+    "native": {
+      "accepted": 474,
+      "proposed": 657
+    },
+    "wall_seconds": 6.493188751046546,
+    "raw_wall_seconds": 6.493188751046546,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "inih-empty-default",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 942,
+    "native": {
+      "accepted": 559,
+      "proposed": 1128
+    },
+    "wall_seconds": 7.057005514041521,
+    "raw_wall_seconds": 7.325351091101766,
+    "loop": {
+      "excluded_seconds": 0.268345577060245,
+      "model_seconds": 0.24950310692656785,
+      "native": {
+        "acceptance": 0.8222222222222222,
+        "accepted": 37,
+        "proposed": 45
+      },
+      "response_index": 8,
+      "tokens": 53
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "inih-bool-yes",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 531,
+    "native": {
+      "accepted": 353,
+      "proposed": 510
+    },
+    "wall_seconds": 5.983989696018398,
+    "raw_wall_seconds": 5.983989696018398,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "inih-bool-off",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 628,
+    "native": {
+      "accepted": 401,
+      "proposed": 657
+    },
+    "wall_seconds": 6.981165271950886,
+    "raw_wall_seconds": 6.981165271950886,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "inih-has-value",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 618,
+    "native": {
+      "accepted": 408,
+      "proposed": 612
+    },
+    "wall_seconds": 6.247242685989477,
+    "raw_wall_seconds": 6.247242685989477,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "inih-section-match",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "coding",
+    "task_kind": "test-writing",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 3699,
+    "native": {
+      "accepted": 2560,
+      "proposed": 3386
+    },
+    "wall_seconds": 19.564460515975952,
+    "raw_wall_seconds": 19.564460515975952,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "inih-real-parser",
+    "group": "project:benhoyt/inih",
+    "project": "benhoyt/inih",
+    "style": "tools",
+    "task_kind": "test-writing",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 1940,
+    "native": {
+      "accepted": 1293,
+      "proposed": 1908
+    },
+    "wall_seconds": 13.920338341966271,
+    "raw_wall_seconds": 13.920338341966271,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "rapidcsv-row-count",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 901,
+    "native": {
+      "accepted": 597,
+      "proposed": 888
+    },
+    "wall_seconds": 9.05555469810497,
+    "raw_wall_seconds": 9.05555469810497,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "rapidcsv-delimiter-default",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 593,
+    "native": {
+      "accepted": 395,
+      "proposed": 576
+    },
+    "wall_seconds": 7.087719032075256,
+    "raw_wall_seconds": 7.087719032075256,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "rapidcsv-header-default",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 1771,
+    "native": {
+      "accepted": 1115,
+      "proposed": 1929
+    },
+    "wall_seconds": 15.74962408200372,
+    "raw_wall_seconds": 15.74962408200372,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "rapidcsv-trim-option",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 747,
+    "native": {
+      "accepted": 504,
+      "proposed": 708
+    },
+    "wall_seconds": 7.823699183994904,
+    "raw_wall_seconds": 7.823699183994904,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "rapidcsv-separator-option",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 1218,
+    "native": {
+      "accepted": 811,
+      "proposed": 1182
+    },
+    "wall_seconds": 11.347344785928726,
+    "raw_wall_seconds": 11.663080652942881,
+    "loop": {
+      "excluded_seconds": 0.3157358670141548,
+      "model_seconds": 0.2901449929922819,
+      "native": {
+        "acceptance": 0.75,
+        "accepted": 36,
+        "proposed": 48
+      },
+      "response_index": 13,
+      "tokens": 53
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "rapidcsv-quoted-newlines",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 4753,
+    "native": {
+      "accepted": 3246,
+      "proposed": 4468
+    },
+    "wall_seconds": 27.769505036994815,
+    "raw_wall_seconds": 27.769505036994815,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "rapidcsv-quote-char",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 699,
+    "native": {
+      "accepted": 476,
+      "proposed": 645
+    },
+    "wall_seconds": 7.510701515013352,
+    "raw_wall_seconds": 7.510701515013352,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "rapidcsv-row-label",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 2782,
+    "native": {
+      "accepted": 1896,
+      "proposed": 2622
+    },
+    "wall_seconds": 17.08671357401181,
+    "raw_wall_seconds": 17.08671357401181,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "rapidcsv-skip-empty",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "tools",
+    "task_kind": "test-writing",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 1498,
+    "native": {
+      "accepted": 950,
+      "proposed": 1596
+    },
+    "wall_seconds": 13.248970575048588,
+    "raw_wall_seconds": 13.248970575048588,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "rapidcsv-skip-blank",
+    "group": "project:d99kris/rapidcsv",
+    "project": "d99kris/rapidcsv",
+    "style": "minimal",
+    "task_kind": "test-writing",
+    "completed": false,
+    "correct": true,
+    "termination": "context-limit",
+    "tokens": 4245,
+    "native": {
+      "accepted": 3000,
+      "proposed": 3699
+    },
+    "wall_seconds": 24.725974394008517,
+    "raw_wall_seconds": 24.725974394008517,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "humanize-ordinal-teens",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 1577,
+    "native": {
+      "accepted": 1039,
+      "proposed": 1566
+    },
+    "wall_seconds": 9.930365088977851,
+    "raw_wall_seconds": 9.930365088977851,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "humanize-apnumber-bound",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 1231,
+    "native": {
+      "accepted": 812,
+      "proposed": 1212
+    },
+    "wall_seconds": 8.65452980902046,
+    "raw_wall_seconds": 8.65452980902046,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "humanize-size-base",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 1512,
+    "native": {
+      "accepted": 1034,
+      "proposed": 1386
+    },
+    "wall_seconds": 9.246937465039082,
+    "raw_wall_seconds": 9.246937465039082,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "humanize-negative-size",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 332,
+    "native": {
+      "accepted": 221,
+      "proposed": 321
+    },
+    "wall_seconds": 3.136925667989999,
+    "raw_wall_seconds": 3.489358808961697,
+    "loop": {
+      "excluded_seconds": 0.35243314097169787,
+      "model_seconds": 0.33335641503799707,
+      "native": {
+        "acceptance": 0.6666666666666666,
+        "accepted": 38,
+        "proposed": 57
+      },
+      "response_index": 4,
+      "tokens": 58
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "humanize-singular-byte",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 391,
+    "native": {
+      "accepted": 249,
+      "proposed": 405
+    },
+    "wall_seconds": 3.8568011089228094,
+    "raw_wall_seconds": 3.8568011089228094,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "humanize-mixed-fraction",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 704,
+    "native": {
+      "accepted": 475,
+      "proposed": 669
+    },
+    "wall_seconds": 5.094629785045981,
+    "raw_wall_seconds": 5.094629785045981,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "tomli-true-value",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 599,
+    "native": {
+      "accepted": 401,
+      "proposed": 573
+    },
+    "wall_seconds": 3.997795196948573,
+    "raw_wall_seconds": 3.997795196948573,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "tomli-false-value",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 558,
+    "native": {
+      "accepted": 371,
+      "proposed": 540
+    },
+    "wall_seconds": 3.870078030973673,
+    "raw_wall_seconds": 3.870078030973673,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "tomli-integer-base",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 907,
+    "native": {
+      "accepted": 598,
+      "proposed": 903
+    },
+    "wall_seconds": 5.477297042030841,
+    "raw_wall_seconds": 5.477297042030841,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "tomli-timezone-sign",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "tools",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 862,
+    "native": {
+      "accepted": 551,
+      "proposed": 906
+    },
+    "wall_seconds": 5.5673952009528875,
+    "raw_wall_seconds": 5.5673952009528875,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "tomli-error-line",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "minimal",
+    "task_kind": "bug-fix",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 617,
+    "native": {
+      "accepted": 393,
+      "proposed": 648
+    },
+    "wall_seconds": 4.324473272077739,
+    "raw_wall_seconds": 4.324473272077739,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "tomli-unicode-scalar",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "coding",
+    "task_kind": "bug-fix",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 472,
+    "native": {
+      "accepted": 285,
+      "proposed": 543
+    },
+    "wall_seconds": 3.5597066829213873,
+    "raw_wall_seconds": 3.8808755669742823,
+    "loop": {
+      "excluded_seconds": 0.321168884052895,
+      "model_seconds": 0.3018449229421094,
+      "native": {
+        "acceptance": 0.6842105263157895,
+        "accepted": 39,
+        "proposed": 57
+      },
+      "response_index": 6,
+      "tokens": 59
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "humanize-ordinal-many",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "coding",
+    "task_kind": "feature",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 2117,
+    "native": {
+      "accepted": 1466,
+      "proposed": 1908
+    },
+    "wall_seconds": 11.439371009008028,
+    "raw_wall_seconds": 11.439371009008028,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "humanize-sizes-many",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "tools",
+    "task_kind": "feature",
+    "completed": false,
+    "correct": true,
+    "termination": "repeated-assistant",
+    "tokens": 1613,
+    "native": {
+      "accepted": 1100,
+      "proposed": 1506
+    },
+    "wall_seconds": 9.338368055876344,
+    "raw_wall_seconds": 9.502795021981001,
+    "loop": {
+      "excluded_seconds": 0.16442696610465646,
+      "model_seconds": 0.14030902402009815,
+      "native": {
+        "acceptance": 0.6,
+        "accepted": 9,
+        "proposed": 15
+      },
+      "response_index": 11,
+      "tokens": 15
+    },
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "humanize-ordinal-helper",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "minimal",
+    "task_kind": "refactor",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 1732,
+    "native": {
+      "accepted": 1187,
+      "proposed": 1614
+    },
+    "wall_seconds": 10.699458053917624,
+    "raw_wall_seconds": 10.699458053917624,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "humanize-list-helper",
+    "group": "project:python-humanize/humanize",
+    "project": "python-humanize/humanize",
+    "style": "coding",
+    "task_kind": "refactor",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 1031,
+    "native": {
+      "accepted": 716,
+      "proposed": 924
+    },
+    "wall_seconds": 6.149117682012729,
+    "raw_wall_seconds": 6.149117682012729,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "tomli-load-many",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "tools",
+    "task_kind": "feature",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 2658,
+    "native": {
+      "accepted": 1827,
+      "proposed": 2445
+    },
+    "wall_seconds": 12.451433880953118,
+    "raw_wall_seconds": 12.451433880953118,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "tomli-flatten",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "minimal",
+    "task_kind": "feature",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 2353,
+    "native": {
+      "accepted": 1633,
+      "proposed": 2133
+    },
+    "wall_seconds": 10.725515892030671,
+    "raw_wall_seconds": 10.725515892030671,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "tomli-scalar-helper",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "coding",
+    "task_kind": "refactor",
+    "completed": false,
+    "correct": true,
+    "termination": "turn-limit",
+    "tokens": 2660,
+    "native": {
+      "accepted": 1806,
+      "proposed": 2511
+    },
+    "wall_seconds": 14.886033930000849,
+    "raw_wall_seconds": 14.886033930000849,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  },
+  {
+    "arm": "candidate",
+    "task": "tomli-offset-helper",
+    "group": "project:hukkin/tomli",
+    "project": "hukkin/tomli",
+    "style": "tools",
+    "task_kind": "refactor",
+    "completed": true,
+    "correct": true,
+    "termination": "model-finished",
+    "tokens": 690,
+    "native": {
+      "accepted": 458,
+      "proposed": 675
+    },
+    "wall_seconds": 4.645683374023065,
+    "raw_wall_seconds": 4.645683374023065,
+    "loop": null,
+    "rep": 0,
+    "scenario": "agentic-coding"
+  }
+]

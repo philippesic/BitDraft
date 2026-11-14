@@ -309,3 +309,12 @@ checkouts and obsolete external artifacts have been removed after preservation c
 
 Target work and host waiting dominate; one-bit feed-forward saves no time at depth 3.
 The drafter counter excludes handoff. [Result](results/round-profile-baseline-s4/result.md).
+
+### F0xx: Does the six-project agentic suite distinguish S4 from Baseline?
+
+The frozen 60-task suite completes 37/60 on both target formats, with exact
+Baseline/S4 agreement to target-only on all tasks. S4/Baseline task rate is
+0.9952× [0.9605, 1.0226] on Q4KM and 1.0090× [1.0003, 1.0196] on NVFP4;
+project-bootstrap intervals do not establish timing stability for that small
+lead. The fixed 12-task slice and 15 unexecuted confirmation tasks are retained.
+[Result](results/agentic-coding-suite/result.md).

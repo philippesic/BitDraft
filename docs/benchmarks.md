@@ -46,6 +46,8 @@ qualification. Run [local checks](development.md); there is no hosted CI.
 | Broader requests | 120 requests, existing longer caps | One pass |
 | Prefix sensitivity | 6 groups × 3 prefixes = 18 requests | One pass |
 | Live | 12 tasks, two per family | One round; failures stay denominated |
+| Agentic slice (Level 2) | 12 tasks, two per project | One greedy pass; saved controls; [scope](#agentic-coding-panels) |
+| Agentic suite (Level 3) | 60 tasks across six projects | One greedy pass; project-group intervals; failures stay denominated |
 
 Screen categories: 15 code, 12 documents, 10 reasoning, 10 conversation, 8 structured/tool,
 5 writing. Input bands: 30 below 512 tokens, 18 at 512–2047, 9 at 2048–8191, 3 at 8192–16384.
@@ -94,6 +96,14 @@ as structured requests without the project harness. None of these is measured us
 The [TRAIN expansion](../results/train-bank-expansion/result.md) adds 874 whole tool
 sessions in the live harness format (1.6K–6.8K tokens, about 12% of positions supervised)
 on separate TRAIN projects; it does not change these DEV panels.
+
+The new agentic panels resemble focused library maintenance with a checked follow-up:
+44 seeded bug fixes, eight test-writing tasks, four features and four refactors.
+Initial context averages 16,304 tokens (11,523–19,865), drawn from relevant source.
+Each style appears twenty times; the slice uses two styles per project. The 1,024-token
+cap applies per assistant call, with at most sixteen calls per task. These small
+authored patches exercise real sandboxed
+tools and growing context, but do not model hours-long production issue resolution.
 
 ## Reusable references
 
@@ -754,6 +764,7 @@ Task and live-result records carry plain `scenario: "agentic-coding"`, `project`
 `task_kind` fields. `group` is `project:owner/repository`, so related tasks stay
 together in paired bootstraps. The suite has twenty tasks per instruction style.
 Style is varied across tasks rather than counting the same task three times.
+This provides coverage, not a paired estimate of the prefix's causal effect.
 There are six independent project groups, not sixty independent repositories;
 intervals do not estimate run-to-run timing noise. Close speed calls require
 fresh matched repeats. The separate prefix cohort remains available unchanged.
@@ -775,8 +786,13 @@ from a complete valid suite is supported by `record-reference`.
 
 Inputs, controls, source snapshots, provenance and runs live in the main checkout's
 `/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/`. The source-role
-check excludes named repositories against both TRAIN session batches and all
-46,412 repository aliases in the full CommitPackFT source. All 750 selected
+check resolves all 640 + 615 TRAIN session tasks and 750 bank CommitPack rows
+back to full source alias sets. Current-name lookup spans 46,412 raw aliases;
+reachable-history matching additionally identifies the historical Humanize name
+and three Boltons forks in unused raw rows. Their transitively expanded repository
+families and upstream commits have zero selected TRAIN matches. The raw source
+as a whole is not disjoint; the admitted TRAIN selections are.
+All 750 selected
 Magicoder seeds are authenticated against their retained seed hashes and prompt
 bodies; seeds, problems and solutions plus all 6,000 TRAIN bank requests and
 the 750 CommitPack rows' old/new source files are scanned against upstream project
@@ -791,8 +807,36 @@ The target's public pretraining exposure is unknown. No protected evaluation dat
 is used by this curation.
 
 `context_tokens` records each live call's rendered context size.
-`arm_elapsed_seconds` includes loading and warmups; summary `elapsed_seconds`
+`arm_elapsed_seconds` includes loading and warmups, excluding shared panel preflight;
+summary `elapsed_seconds`
 sums assigned-task wall times including tools. Slice cost projected from suite
-rows excludes an independent slice load/warmup. The intended costs are about
-three minutes per slice and ten to fifteen minutes per suite, per drafter and
-format; qualification must report actual costs rather than assuming these budgets.
+rows excludes an independent slice load/warmup. Qualified revision five completes
+37/60 tasks on each format and all three arms; the slice completes 5/12 Q4KM and
+7/12 NVFP4. All 240 drafter tasks exactly match target-only outputs and workspace
+fingerprints. See the [result](../results/agentic-coding-suite/result.md) for
+intervals, calibration history and completed/failed strata.
+
+| Format / arm | Full measured arm, minutes | Slice projected raw task cost, minutes |
+| --- | ---: | ---: |
+| Q4KM / target-only | 12.30 | 2.64 |
+| Q4KM / Baseline | 9.28 | 2.02 |
+| Q4KM / S4 final | 9.34 | 2.00 |
+| NVFP4 / target-only | 13.17 | 3.03 |
+| NVFP4 / Baseline | 9.29 | 2.10 |
+| NVFP4 / S4 final | 9.22 | 2.09 |
+
+Full-arm costs include startup, warmup and bookkeeping, excluding shared panel
+preflight. Slice costs include actual loop-detection cost but are projections
+from full evidence, without independent startup/warmup; no standalone slice
+runtime was measured. Warmup and remaining arm overhead are recorded separately
+in the result. The intended roughly three-minute slice and ten-to-fifteen-minute
+suite budgets are met by the measured drafter arms within these timing scopes.
+
+Twelve saved records cover target-only, Baseline and S4 final export `405e326b…`
+for both panels and formats. Candidate-only specifications are
+`/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/candidate-specs/{q4km,nvfp4}-v5-agentic-{slice,suite}.json`.
+Copy a specification and replace its candidate model reference for a new state;
+keep the three saved controls. Execute it with the maintained `live SPEC OUTPUT`
+entry, under the GPU lease and using a fresh absolute main-artifact output path.
+The [definition](../benchmarks/definitions/agentic-coding-v1.json) authenticates
+these specifications. Existing registry records were not overwritten.

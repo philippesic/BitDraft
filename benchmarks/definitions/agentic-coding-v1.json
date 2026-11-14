@@ -112,9 +112,9 @@
     }
   ],
   "dev_recipes": {
-    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/specs/calibration-recipes-v4.json",
-    "bytes": 18311405,
-    "sha256": "fbd043570e26fc192e79ab81c83756cc6ac9160ec0bcd7eb5c2ce3d60831e299"
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/specs/calibration-recipes-v5.json",
+    "bytes": 18312333,
+    "sha256": "03445e62ceadc1da83f2c147c5a4ad386b7c4dc73a437472faa4c6244fe09e43"
   },
   "reserve_recipes": {
     "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/specs/reserve-recipes.json",
@@ -132,9 +132,9 @@
     "bytes": 160764
   },
   "reserve_access": {
-    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/confirmation-access.json",
-    "sha256": "0388d729555f12a0e17de98120f42ad0fa69db4fe607a9c2748389dd73e95643",
-    "bytes": 730
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/confirmation-harness-v4c-access.json",
+    "bytes": 1066,
+    "sha256": "fcfbcf1cf4733336ea83c1e6057a9a4ca7aa4ad48ecb03f2cddde5fdb1ed35a8"
   },
   "slice_ids": [
     "cjson-number-type",
@@ -512,11 +512,67 @@
       "task_kind": "refactor"
     }
   ],
-  "scope": "Authored controlled changes in permissive real projects; known repository names disjoint and no declared content-scan hits. Magicoder lacks repository identities, so absolute repository-disjointness remains unproven. Unknown target pretraining exposure. Confirmation curated but never executed.",
-  "curation_revision": "Revision four: target-only difficulty calibration pending. Native test scaffolds; two checked code behaviors for bug-fix phases; first-repeat truncation. All 240 CPU controls passed.",
+  "scope": "Authored controlled changes in permissive real projects. Known repository families and reachable commits are excluded from selected TRAIN sessions and bank records; unused raw CommitPack source contains related Humanize/Boltons history. No declared code-content scan hits. Magicoder lacks repository identities, so absolute repository or semantic disjointness remains unproven. Unknown target pretraining exposure. Confirmation curated but never executed.",
+  "curation_revision": "Frozen revision5: corrected eight Python follow-up instructions; protected checks and membership unchanged. Both target formats complete37/60 (61.7%) in segmented target-only calibration. Fresh matched comparison evidence is separate.",
   "full_bank_provenance": {
     "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/audit-fullbank.json",
     "bytes": 136316,
     "sha256": "ef4e12a95efdd9ced6ba8c9b10db64da1aae06264a7ab6bdd40b10064b9da3e5"
+  },
+  "dev_controls": {
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/prepared-calibration-v5/result.json",
+    "bytes": 76003,
+    "sha256": "abeb0e8c255882ee0bbbeb636a4ef2954e1bbddac46274b2d19a23605f4046f7"
+  },
+  "dev_workload": {
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/panels-calibration-v5/live-workload.json",
+    "bytes": 3653871,
+    "sha256": "a62517274227bc53e673063d9ce32c1c054685034f8c3ee0af3dc3c5fbd6e100"
+  },
+  "reserve_workload": {
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/panels-confirmation-v4c/live-workload.json",
+    "bytes": 778268,
+    "sha256": "a5198e8e8390413527a9787b879e43521e27d06688cad0d939dd142b92afd0f4"
+  },
+  "calibration": {
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/calibration-v5-outcome.json",
+    "bytes": 225751,
+    "sha256": "c8fe852895eadc00e9a8cc739ff4d3e078e165e4749995177ad8ad7fa1f20978"
+  },
+  "freeze": {
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/frozen-v5.json",
+    "bytes": 2680,
+    "sha256": "cb8e01f51476349b7e34cf6ba1e0d7c5ce0e77c2c73057c772329793bfcbff99"
+  },
+  "repository_lineage": {
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/repository-lineage-audit.json",
+    "sha256": "33143b460b2dcf0d4f7d739bed9d24a8802d93f230b2339aea7ccb30a810d839",
+    "bytes": 5490
+  },
+  "candidate_specifications": {
+    "q4km": {
+      "slice": {
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/candidate-specs/q4km-v5-agentic-slice.json",
+        "bytes": 4197,
+        "sha256": "f77674db189d9f49b4851a73c9bf99146ac17dafe7d578aabf87f58a907fe507"
+      },
+      "suite": {
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/candidate-specs/q4km-v5-agentic-suite.json",
+        "bytes": 4201,
+        "sha256": "cc3cb914912fb096cbfe9c5d72c37220620cd9c1a3397e3c7784a93ae38d12c3"
+      }
+    },
+    "nvfp4": {
+      "slice": {
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/candidate-specs/nvfp4-v5-agentic-slice.json",
+        "bytes": 4199,
+        "sha256": "c65394162a2d09eb821aa4c89fe827962b016fe1f5ed6bdba0698272515465fc"
+      },
+      "suite": {
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/candidate-specs/nvfp4-v5-agentic-suite.json",
+        "bytes": 4203,
+        "sha256": "c87bb260c7c1d87fc88456e3c32a3c6cbf549b9af2830448bd776dea6c7a0b8b"
+      }
+    }
   }
 }

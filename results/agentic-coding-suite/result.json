@@ -1,0 +1,2854 @@
+{
+  "status": "qualified",
+  "dev_projects": [
+    "DaveGamble/cJSON",
+    "kgabis/parson",
+    "benhoyt/inih",
+    "d99kris/rapidcsv",
+    "python-humanize/humanize",
+    "hukkin/tomli"
+  ],
+  "calibration": {
+    "q4km": {
+      "completed": 37,
+      "tasks": 60,
+      "completion_rate": 0.6166666666666667,
+      "sources": [
+        {
+          "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/runs/q4km-calibration-v4/progress.json",
+          "sha256": "d4631491c7833c7f08decfed8f58bcec89c5b6c749b9fe84c647d5663eb19160",
+          "bytes": 66087
+        },
+        {
+          "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/runs/q4km-calibration-v5/result.json",
+          "sha256": "e1cdb21bfdc789fc565b42c01b0a0ddf939616619202fc1d5fe9774d180f37af",
+          "bytes": 453832
+        }
+      ],
+      "rows": [
+        {
+          "task": "cjson-number-type",
+          "project": "DaveGamble/cJSON",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "cjson-array-type",
+          "project": "DaveGamble/cJSON",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "cjson-bool-type",
+          "project": "DaveGamble/cJSON",
+          "style": "tools",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "cjson-case-sensitive",
+          "project": "DaveGamble/cJSON",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "cjson-string-type",
+          "project": "DaveGamble/cJSON",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "cjson-null-type",
+          "project": "DaveGamble/cJSON",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "cjson-false-type",
+          "project": "DaveGamble/cJSON",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "cjson-true-type",
+          "project": "DaveGamble/cJSON",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "cjson-object-type",
+          "project": "DaveGamble/cJSON",
+          "style": "tools",
+          "completed": false,
+          "termination": "context-limit"
+        },
+        {
+          "task": "cjson-raw-type",
+          "project": "DaveGamble/cJSON",
+          "style": "minimal",
+          "completed": false,
+          "termination": "context-limit"
+        },
+        {
+          "task": "parson-number-value",
+          "project": "kgabis/parson",
+          "style": "coding",
+          "completed": false,
+          "termination": "model-finished"
+        },
+        {
+          "task": "parson-boolean-value",
+          "project": "kgabis/parson",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "parson-object-count",
+          "project": "kgabis/parson",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "parson-array-count",
+          "project": "kgabis/parson",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "parson-object-number",
+          "project": "kgabis/parson",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "parson-array-number",
+          "project": "kgabis/parson",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "parson-dot-number",
+          "project": "kgabis/parson",
+          "style": "coding",
+          "completed": false,
+          "termination": "turn-limit"
+        },
+        {
+          "task": "parson-dot-boolean",
+          "project": "kgabis/parson",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "parson-number-alias",
+          "project": "kgabis/parson",
+          "style": "minimal",
+          "completed": false,
+          "termination": "context-limit"
+        },
+        {
+          "task": "parson-bool-alias",
+          "project": "kgabis/parson",
+          "style": "coding",
+          "completed": false,
+          "termination": "context-limit"
+        },
+        {
+          "task": "inih-integer-base",
+          "project": "benhoyt/inih",
+          "style": "tools",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "inih-integer64-base",
+          "project": "benhoyt/inih",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "inih-unsigned-base",
+          "project": "benhoyt/inih",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "inih-unsigned64-base",
+          "project": "benhoyt/inih",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "inih-empty-default",
+          "project": "benhoyt/inih",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "inih-bool-yes",
+          "project": "benhoyt/inih",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "inih-bool-off",
+          "project": "benhoyt/inih",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "inih-has-value",
+          "project": "benhoyt/inih",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "inih-section-match",
+          "project": "benhoyt/inih",
+          "style": "coding",
+          "completed": false,
+          "termination": "turn-limit"
+        },
+        {
+          "task": "inih-real-parser",
+          "project": "benhoyt/inih",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "rapidcsv-row-count",
+          "project": "d99kris/rapidcsv",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "rapidcsv-delimiter-default",
+          "project": "d99kris/rapidcsv",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "rapidcsv-header-default",
+          "project": "d99kris/rapidcsv",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "rapidcsv-trim-option",
+          "project": "d99kris/rapidcsv",
+          "style": "minimal",
+          "completed": false,
+          "termination": "context-limit"
+        },
+        {
+          "task": "rapidcsv-separator-option",
+          "project": "d99kris/rapidcsv",
+          "style": "coding",
+          "completed": true,
+          "termination": "turn-limit"
+        },
+        {
+          "task": "rapidcsv-quoted-newlines",
+          "project": "d99kris/rapidcsv",
+          "style": "tools",
+          "completed": false,
+          "termination": "context-limit"
+        },
+        {
+          "task": "rapidcsv-quote-char",
+          "project": "d99kris/rapidcsv",
+          "style": "minimal",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "rapidcsv-row-label",
+          "project": "d99kris/rapidcsv",
+          "style": "coding",
+          "completed": false,
+          "termination": "context-limit"
+        },
+        {
+          "task": "rapidcsv-skip-empty",
+          "project": "d99kris/rapidcsv",
+          "style": "tools",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "rapidcsv-skip-blank",
+          "project": "d99kris/rapidcsv",
+          "style": "minimal",
+          "completed": false,
+          "termination": "turn-limit"
+        },
+        {
+          "task": "humanize-ordinal-teens",
+          "project": "python-humanize/humanize",
+          "style": "coding",
+          "completed": false,
+          "termination": "turn-limit"
+        },
+        {
+          "task": "humanize-apnumber-bound",
+          "project": "python-humanize/humanize",
+          "style": "tools",
+          "completed": false,
+          "termination": "turn-limit"
+        },
+        {
+          "task": "humanize-size-base",
+          "project": "python-humanize/humanize",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "humanize-negative-size",
+          "project": "python-humanize/humanize",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "humanize-singular-byte",
+          "project": "python-humanize/humanize",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "humanize-mixed-fraction",
+          "project": "python-humanize/humanize",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "tomli-true-value",
+          "project": "hukkin/tomli",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "tomli-false-value",
+          "project": "hukkin/tomli",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "tomli-integer-base",
+          "project": "hukkin/tomli",
+          "style": "coding",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "tomli-timezone-sign",
+          "project": "hukkin/tomli",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "tomli-error-line",
+          "project": "hukkin/tomli",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "tomli-unicode-scalar",
+          "project": "hukkin/tomli",
+          "style": "coding",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "humanize-ordinal-many",
+          "project": "python-humanize/humanize",
+          "style": "coding",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "humanize-sizes-many",
+          "project": "python-humanize/humanize",
+          "style": "tools",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "humanize-ordinal-helper",
+          "project": "python-humanize/humanize",
+          "style": "minimal",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "humanize-list-helper",
+          "project": "python-humanize/humanize",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "tomli-load-many",
+          "project": "hukkin/tomli",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "tomli-flatten",
+          "project": "hukkin/tomli",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "tomli-scalar-helper",
+          "project": "hukkin/tomli",
+          "style": "coding",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "tomli-offset-helper",
+          "project": "hukkin/tomli",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        }
+      ]
+    },
+    "nvfp4": {
+      "completed": 37,
+      "tasks": 60,
+      "completion_rate": 0.6166666666666667,
+      "sources": [
+        {
+          "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/runs/nvfp4-calibration-v4c/progress.json",
+          "sha256": "8351fa0a680bc2b0615c41deeddb6b20f6d50cad0308a58f41f75171efe5c7bd",
+          "bytes": 59577
+        },
+        {
+          "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/runs/nvfp4-calibration-v5/result.json",
+          "sha256": "6141d9e55f4268695d9026db1c67cf7203c4a02c4c72718d84a64a6b6c0a7a9f",
+          "bytes": 452786
+        }
+      ],
+      "rows": [
+        {
+          "task": "cjson-number-type",
+          "project": "DaveGamble/cJSON",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "cjson-array-type",
+          "project": "DaveGamble/cJSON",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "cjson-bool-type",
+          "project": "DaveGamble/cJSON",
+          "style": "tools",
+          "completed": false,
+          "termination": "turn-limit"
+        },
+        {
+          "task": "cjson-case-sensitive",
+          "project": "DaveGamble/cJSON",
+          "style": "minimal",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "cjson-string-type",
+          "project": "DaveGamble/cJSON",
+          "style": "coding",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "cjson-null-type",
+          "project": "DaveGamble/cJSON",
+          "style": "tools",
+          "completed": false,
+          "termination": "turn-limit"
+        },
+        {
+          "task": "cjson-false-type",
+          "project": "DaveGamble/cJSON",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "cjson-true-type",
+          "project": "DaveGamble/cJSON",
+          "style": "coding",
+          "completed": false,
+          "termination": "turn-limit"
+        },
+        {
+          "task": "cjson-object-type",
+          "project": "DaveGamble/cJSON",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "cjson-raw-type",
+          "project": "DaveGamble/cJSON",
+          "style": "minimal",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "parson-number-value",
+          "project": "kgabis/parson",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "parson-boolean-value",
+          "project": "kgabis/parson",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "parson-object-count",
+          "project": "kgabis/parson",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "parson-array-count",
+          "project": "kgabis/parson",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "parson-object-number",
+          "project": "kgabis/parson",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "parson-array-number",
+          "project": "kgabis/parson",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "parson-dot-number",
+          "project": "kgabis/parson",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "parson-dot-boolean",
+          "project": "kgabis/parson",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "parson-number-alias",
+          "project": "kgabis/parson",
+          "style": "minimal",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "parson-bool-alias",
+          "project": "kgabis/parson",
+          "style": "coding",
+          "completed": false,
+          "termination": "turn-limit"
+        },
+        {
+          "task": "inih-integer-base",
+          "project": "benhoyt/inih",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "inih-integer64-base",
+          "project": "benhoyt/inih",
+          "style": "minimal",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "inih-unsigned-base",
+          "project": "benhoyt/inih",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "inih-unsigned64-base",
+          "project": "benhoyt/inih",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "inih-empty-default",
+          "project": "benhoyt/inih",
+          "style": "minimal",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "inih-bool-yes",
+          "project": "benhoyt/inih",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "inih-bool-off",
+          "project": "benhoyt/inih",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "inih-has-value",
+          "project": "benhoyt/inih",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "inih-section-match",
+          "project": "benhoyt/inih",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "inih-real-parser",
+          "project": "benhoyt/inih",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "rapidcsv-row-count",
+          "project": "d99kris/rapidcsv",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "rapidcsv-delimiter-default",
+          "project": "d99kris/rapidcsv",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "rapidcsv-header-default",
+          "project": "d99kris/rapidcsv",
+          "style": "tools",
+          "completed": false,
+          "termination": "model-finished"
+        },
+        {
+          "task": "rapidcsv-trim-option",
+          "project": "d99kris/rapidcsv",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "rapidcsv-separator-option",
+          "project": "d99kris/rapidcsv",
+          "style": "coding",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "rapidcsv-quoted-newlines",
+          "project": "d99kris/rapidcsv",
+          "style": "tools",
+          "completed": false,
+          "termination": "turn-limit"
+        },
+        {
+          "task": "rapidcsv-quote-char",
+          "project": "d99kris/rapidcsv",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "rapidcsv-row-label",
+          "project": "d99kris/rapidcsv",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "rapidcsv-skip-empty",
+          "project": "d99kris/rapidcsv",
+          "style": "tools",
+          "completed": false,
+          "termination": "turn-limit"
+        },
+        {
+          "task": "rapidcsv-skip-blank",
+          "project": "d99kris/rapidcsv",
+          "style": "minimal",
+          "completed": false,
+          "termination": "context-limit"
+        },
+        {
+          "task": "humanize-ordinal-teens",
+          "project": "python-humanize/humanize",
+          "style": "coding",
+          "completed": false,
+          "termination": "turn-limit"
+        },
+        {
+          "task": "humanize-apnumber-bound",
+          "project": "python-humanize/humanize",
+          "style": "tools",
+          "completed": false,
+          "termination": "turn-limit"
+        },
+        {
+          "task": "humanize-size-base",
+          "project": "python-humanize/humanize",
+          "style": "minimal",
+          "completed": false,
+          "termination": "turn-limit"
+        },
+        {
+          "task": "humanize-negative-size",
+          "project": "python-humanize/humanize",
+          "style": "coding",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "humanize-singular-byte",
+          "project": "python-humanize/humanize",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "humanize-mixed-fraction",
+          "project": "python-humanize/humanize",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "tomli-true-value",
+          "project": "hukkin/tomli",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "tomli-false-value",
+          "project": "hukkin/tomli",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "tomli-integer-base",
+          "project": "hukkin/tomli",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "tomli-timezone-sign",
+          "project": "hukkin/tomli",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "tomli-error-line",
+          "project": "hukkin/tomli",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "tomli-unicode-scalar",
+          "project": "hukkin/tomli",
+          "style": "coding",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "humanize-ordinal-many",
+          "project": "python-humanize/humanize",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "humanize-sizes-many",
+          "project": "python-humanize/humanize",
+          "style": "tools",
+          "completed": false,
+          "termination": "repeated-assistant"
+        },
+        {
+          "task": "humanize-ordinal-helper",
+          "project": "python-humanize/humanize",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "humanize-list-helper",
+          "project": "python-humanize/humanize",
+          "style": "coding",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "tomli-load-many",
+          "project": "hukkin/tomli",
+          "style": "tools",
+          "completed": false,
+          "termination": "turn-limit"
+        },
+        {
+          "task": "tomli-flatten",
+          "project": "hukkin/tomli",
+          "style": "minimal",
+          "completed": true,
+          "termination": "model-finished"
+        },
+        {
+          "task": "tomli-scalar-helper",
+          "project": "hukkin/tomli",
+          "style": "coding",
+          "completed": false,
+          "termination": "turn-limit"
+        },
+        {
+          "task": "tomli-offset-helper",
+          "project": "hukkin/tomli",
+          "style": "tools",
+          "completed": true,
+          "termination": "model-finished"
+        }
+      ]
+    }
+  },
+  "comparisons": {
+    "q4km": {
+      "source": {
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/runs/q4km-suite-v5/result.json",
+        "sha256": "887f577543ba412335d4a47293bcef6491ecf0a41252ace49723d4b1cb36cc55"
+      },
+      "suite": {
+        "summary": {
+          "baseline": {
+            "tasks": 60,
+            "completed": 37,
+            "completion_rate": 0.6166666666666667,
+            "elapsed_seconds": 532.8087510120822,
+            "raw_elapsed_seconds": 543.1386486018309,
+            "looped_tasks": 10,
+            "loop_detection_seconds": 10.329897589748725,
+            "seconds_per_assigned_task": 8.88014585020137,
+            "assigned_tasks_per_second": 0.11261076302900178,
+            "tokens_per_second": 118.8700446073638,
+            "model_seconds": 458.10595382680185,
+            "tool_seconds": 60.731846425682306,
+            "correct": true,
+            "tokens": 63335,
+            "proposed": 64812,
+            "accepted": 41091,
+            "acceptance": 0.6340029624143677,
+            "server_prompt_seconds": 161.55804899999995,
+            "server_prediction_seconds": 293.656166,
+            "groups": 6,
+            "acceptance_95_interval": {
+              "lower": 0.5774160976194144,
+              "upper": 0.6789037967456466
+            },
+            "assigned_tasks_per_second_95_interval": {
+              "lower": 0.10077518688119148,
+              "upper": 0.12638385969886942
+            }
+          },
+          "candidate": {
+            "tasks": 60,
+            "completed": 37,
+            "completion_rate": 0.6166666666666667,
+            "elapsed_seconds": 535.3653032918228,
+            "raw_elapsed_seconds": 545.7048159749247,
+            "looped_tasks": 10,
+            "loop_detection_seconds": 10.33951268310193,
+            "seconds_per_assigned_task": 8.922755054863712,
+            "assigned_tasks_per_second": 0.11207300815177136,
+            "tokens_per_second": 118.30239952154065,
+            "model_seconds": 459.4606048085261,
+            "tool_seconds": 61.46635474683717,
+            "correct": true,
+            "tokens": 63335,
+            "proposed": 63013,
+            "accepted": 41768,
+            "acceptance": 0.6628473489597385,
+            "server_prompt_seconds": 170.957185,
+            "server_prediction_seconds": 285.508585,
+            "groups": 6,
+            "acceptance_95_interval": {
+              "lower": 0.6160655445720902,
+              "upper": 0.6963350785340314
+            },
+            "assigned_tasks_per_second_95_interval": {
+              "lower": 0.0995453483890034,
+              "upper": 0.12827406250898468
+            }
+          },
+          "target": {
+            "tasks": 60,
+            "completed": 37,
+            "completion_rate": 0.6166666666666667,
+            "elapsed_seconds": 706.0544933198253,
+            "raw_elapsed_seconds": 725.513453771593,
+            "looped_tasks": 10,
+            "loop_detection_seconds": 19.45896045176778,
+            "seconds_per_assigned_task": 11.767574888663754,
+            "assigned_tasks_per_second": 0.08497927648315592,
+            "tokens_per_second": 89.70270793434467,
+            "model_seconds": 632.2743062160444,
+            "tool_seconds": 60.301693792571314,
+            "correct": true,
+            "tokens": 63335,
+            "proposed": 0,
+            "accepted": 0,
+            "acceptance": null,
+            "server_prompt_seconds": 139.1247319999999,
+            "server_prediction_seconds": 490.604653,
+            "groups": 6,
+            "acceptance_95_interval": {
+              "available": false
+            },
+            "assigned_tasks_per_second_95_interval": {
+              "lower": 0.07583003600406599,
+              "upper": 0.09709069701543822
+            }
+          }
+        },
+        "by_completion": {
+          "completed": {
+            "baseline": {
+              "tasks": 37,
+              "completed": 37,
+              "completion_rate": 1.0,
+              "elapsed_seconds": 290.0067898860434,
+              "raw_elapsed_seconds": 290.0067898860434,
+              "looped_tasks": 0,
+              "loop_detection_seconds": 0,
+              "seconds_per_assigned_task": 7.838021348271443,
+              "assigned_tasks_per_second": 0.12758321973957557,
+              "tokens_per_second": 116.6903713299183,
+              "model_seconds": 239.573047072161,
+              "tool_seconds": 42.98498799907975,
+              "correct": true,
+              "tokens": 33841,
+              "proposed": 34005,
+              "accepted": 22138,
+              "acceptance": 0.6510219085428613,
+              "server_prompt_seconds": 88.05238900000002,
+              "server_prediction_seconds": 150.01858000000001,
+              "groups": 6,
+              "acceptance_95_interval": {
+                "lower": 0.6094346549192364,
+                "upper": 0.6790575004354209
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.11342468676946615,
+                "upper": 0.13927784632966467
+              }
+            },
+            "candidate": {
+              "tasks": 37,
+              "completed": 37,
+              "completion_rate": 1.0,
+              "elapsed_seconds": 287.527201320976,
+              "raw_elapsed_seconds": 287.527201320976,
+              "looped_tasks": 0,
+              "loop_detection_seconds": 0,
+              "seconds_per_assigned_task": 7.77100544110746,
+              "assigned_tasks_per_second": 0.12868347700673957,
+              "tokens_per_second": 117.69669041581281,
+              "model_seconds": 236.47610288008582,
+              "tool_seconds": 43.51264923752751,
+              "correct": true,
+              "tokens": 33841,
+              "proposed": 32961,
+              "accepted": 22543,
+              "acceptance": 0.6839294924304481,
+              "server_prompt_seconds": 89.700386,
+              "server_prediction_seconds": 145.158038,
+              "groups": 6,
+              "acceptance_95_interval": {
+                "lower": 0.6551412900090259,
+                "upper": 0.7029473009770943
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.11376793486560366,
+                "upper": 0.14172632523357662
+              }
+            },
+            "target": {
+              "tasks": 37,
+              "completed": 37,
+              "completion_rate": 1.0,
+              "elapsed_seconds": 382.04676396853756,
+              "raw_elapsed_seconds": 382.04676396853756,
+              "looped_tasks": 0,
+              "loop_detection_seconds": 0,
+              "seconds_per_assigned_task": 10.32558821536588,
+              "assigned_tasks_per_second": 0.09684678287982315,
+              "tokens_per_second": 88.57816160638096,
+              "model_seconds": 331.87526887853164,
+              "tool_seconds": 43.06564265419729,
+              "correct": true,
+              "tokens": 33841,
+              "proposed": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "server_prompt_seconds": 75.88975100000002,
+              "server_prediction_seconds": 254.61591399999998,
+              "groups": 6,
+              "acceptance_95_interval": {
+                "available": false
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.0847241903546553,
+                "upper": 0.10849761587039575
+              }
+            }
+          },
+          "failed": {
+            "baseline": {
+              "tasks": 23,
+              "completed": 0,
+              "completion_rate": 0.0,
+              "elapsed_seconds": 242.8019611260388,
+              "raw_elapsed_seconds": 253.13185871578753,
+              "looped_tasks": 10,
+              "loop_detection_seconds": 10.329897589748725,
+              "seconds_per_assigned_task": 10.556607005479949,
+              "assigned_tasks_per_second": 0.09472740620929611,
+              "tokens_per_second": 121.47348342334693,
+              "model_seconds": 218.53290675464086,
+              "tool_seconds": 17.746858426602557,
+              "correct": true,
+              "tokens": 29494,
+              "proposed": 30807,
+              "accepted": 18953,
+              "acceptance": 0.6152173207387931,
+              "server_prompt_seconds": 73.50566,
+              "server_prediction_seconds": 143.637586,
+              "groups": 6,
+              "acceptance_95_interval": {
+                "lower": 0.5296189979123174,
+                "upper": 0.6889129670844559
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.08158144035242514,
+                "upper": 0.11114447551835445
+              }
+            },
+            "candidate": {
+              "tasks": 23,
+              "completed": 0,
+              "completion_rate": 0.0,
+              "elapsed_seconds": 247.83810197084676,
+              "raw_elapsed_seconds": 258.1776146539487,
+              "looped_tasks": 10,
+              "loop_detection_seconds": 10.33951268310193,
+              "seconds_per_assigned_task": 10.77556965090638,
+              "assigned_tasks_per_second": 0.09280251832587667,
+              "tokens_per_second": 119.0051076305829,
+              "model_seconds": 222.9845019284403,
+              "tool_seconds": 17.953705509309657,
+              "correct": true,
+              "tokens": 29494,
+              "proposed": 30052,
+              "accepted": 19225,
+              "acceptance": 0.6397244775722082,
+              "server_prompt_seconds": 81.25679900000003,
+              "server_prediction_seconds": 140.350547,
+              "groups": 6,
+              "acceptance_95_interval": {
+                "lower": 0.5759215558629669,
+                "upper": 0.6919545596016184
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.07948584772347109,
+                "upper": 0.11138588803516575
+              }
+            },
+            "target": {
+              "tasks": 23,
+              "completed": 0,
+              "completion_rate": 0.0,
+              "elapsed_seconds": 324.0077293512877,
+              "raw_elapsed_seconds": 343.4666898030555,
+              "looped_tasks": 10,
+              "loop_detection_seconds": 19.45896045176778,
+              "seconds_per_assigned_task": 14.08729258049077,
+              "assigned_tasks_per_second": 0.07098596087830826,
+              "tokens_per_second": 91.02869261499234,
+              "model_seconds": 300.3990373375127,
+              "tool_seconds": 17.236051138374023,
+              "correct": true,
+              "tokens": 29494,
+              "proposed": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "server_prompt_seconds": 63.234981000000005,
+              "server_prediction_seconds": 235.98873899999998,
+              "groups": 6,
+              "acceptance_95_interval": {
+                "available": false
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.058024816574874856,
+                "upper": 0.08685489977438454
+              }
+            }
+          }
+        },
+        "paired_task_rate": {
+          "baseline-vs-target": {
+            "groups": 6,
+            "speed_ratio": 1.325155587213346,
+            "acceptance_difference": null,
+            "speed_ratio_95_interval": {
+              "lower": 1.252393314321154,
+              "upper": 1.4035841409458902
+            },
+            "acceptance_difference_95_interval": {
+              "available": false
+            },
+            "simultaneous_speed_ratio_interval": {
+              "lower": 1.252393314321154,
+              "upper": 1.4035841409458902
+            },
+            "simultaneous_acceptance_difference_interval": {
+              "available": false
+            },
+            "comparison_family": 1,
+            "strata": {
+              "[('code', 10)]": 6
+            },
+            "bootstrap_draws": 2000,
+            "interval_available": true,
+            "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer"
+          },
+          "candidate-vs-target": {
+            "groups": 6,
+            "speed_ratio": 1.318827516423793,
+            "acceptance_difference": null,
+            "speed_ratio_95_interval": {
+              "lower": 1.2702303605475456,
+              "upper": 1.3673209313155785
+            },
+            "acceptance_difference_95_interval": {
+              "available": false
+            },
+            "simultaneous_speed_ratio_interval": {
+              "lower": 1.2702303605475456,
+              "upper": 1.3673209313155785
+            },
+            "simultaneous_acceptance_difference_interval": {
+              "available": false
+            },
+            "comparison_family": 1,
+            "strata": {
+              "[('code', 10)]": 6
+            },
+            "bootstrap_draws": 2000,
+            "interval_available": true,
+            "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer"
+          },
+          "candidate-vs-baseline": {
+            "groups": 6,
+            "speed_ratio": 0.9952246582585368,
+            "acceptance_difference": 0.028844386545370804,
+            "speed_ratio_95_interval": {
+              "lower": 0.9604943108674904,
+              "upper": 1.0225609771299309
+            },
+            "acceptance_difference_95_interval": {
+              "lower": 0.008018974266204904,
+              "upper": 0.05556506093920943
+            },
+            "simultaneous_speed_ratio_interval": {
+              "lower": 0.9604943108674904,
+              "upper": 1.0225609771299309
+            },
+            "simultaneous_acceptance_difference_interval": {
+              "lower": 0.008018974266204904,
+              "upper": 0.05556506093920943
+            },
+            "comparison_family": 1,
+            "strata": {
+              "[('code', 10)]": 6
+            },
+            "bootstrap_draws": 2000,
+            "interval_available": true,
+            "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer"
+          },
+          "target-vs-baseline": {
+            "groups": 6,
+            "speed_ratio": 0.754628369415012,
+            "acceptance_difference": null,
+            "speed_ratio_95_interval": {
+              "lower": 0.7119725038792649,
+              "upper": 0.7984712059422314
+            },
+            "acceptance_difference_95_interval": {
+              "available": false
+            },
+            "simultaneous_speed_ratio_interval": {
+              "lower": 0.7119725038792649,
+              "upper": 0.7984712059422314
+            },
+            "simultaneous_acceptance_difference_interval": {
+              "available": false
+            },
+            "comparison_family": 1,
+            "strata": {
+              "[('code', 10)]": 6
+            },
+            "bootstrap_draws": 2000,
+            "interval_available": true,
+            "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer"
+          }
+        }
+      },
+      "slice": {
+        "summary": {
+          "baseline": {
+            "tasks": 12,
+            "completed": 5,
+            "completion_rate": 0.4166666666666667,
+            "elapsed_seconds": 120.48653119604569,
+            "raw_elapsed_seconds": 121.28342579095624,
+            "looped_tasks": 3,
+            "loop_detection_seconds": 0.7968945949105546,
+            "seconds_per_assigned_task": 10.040544266337141,
+            "assigned_tasks_per_second": 0.09959619453625564,
+            "tokens_per_second": 120.03001378194408,
+            "model_seconds": 103.36374447122216,
+            "tool_seconds": 13.818214018712752,
+            "correct": true,
+            "tokens": 14462,
+            "proposed": 15046,
+            "accepted": 9295,
+            "acceptance": 0.617772165359564,
+            "server_prompt_seconds": 35.11955700000001,
+            "server_prediction_seconds": 67.55527200000002,
+            "groups": 6,
+            "acceptance_95_interval": {
+              "lower": 0.5554033224867272,
+              "upper": 0.6685926811449824
+            },
+            "assigned_tasks_per_second_95_interval": {
+              "lower": 0.08519884486960587,
+              "upper": 0.11906787359837127
+            }
+          },
+          "candidate": {
+            "tasks": 12,
+            "completed": 5,
+            "completion_rate": 0.4166666666666667,
+            "elapsed_seconds": 119.32007419108413,
+            "raw_elapsed_seconds": 120.0186421170365,
+            "looped_tasks": 3,
+            "loop_detection_seconds": 0.6985679259523749,
+            "seconds_per_assigned_task": 9.943339515923677,
+            "assigned_tasks_per_second": 0.1005698335452147,
+            "tokens_per_second": 121.20341106090792,
+            "model_seconds": 101.71993430377916,
+            "tool_seconds": 14.177913663792424,
+            "correct": true,
+            "tokens": 14462,
+            "proposed": 14659,
+            "accepted": 9439,
+            "acceptance": 0.6439047684016646,
+            "server_prompt_seconds": 35.360948,
+            "server_prediction_seconds": 65.644216,
+            "groups": 6,
+            "acceptance_95_interval": {
+              "lower": 0.5811151583076491,
+              "upper": 0.7138792772010765
+            },
+            "assigned_tasks_per_second_95_interval": {
+              "lower": 0.0863412388424423,
+              "upper": 0.12194021180090796
+            }
+          },
+          "target": {
+            "tasks": 12,
+            "completed": 5,
+            "completion_rate": 0.4166666666666667,
+            "elapsed_seconds": 157.67716232815292,
+            "raw_elapsed_seconds": 158.55763597902842,
+            "looped_tasks": 3,
+            "loop_detection_seconds": 0.8804736508755013,
+            "seconds_per_assigned_task": 13.139763527346076,
+            "assigned_tasks_per_second": 0.07610487037448052,
+            "tokens_per_second": 91.71905294631144,
+            "model_seconds": 140.857506598928,
+            "tool_seconds": 13.678256992483512,
+            "correct": true,
+            "tokens": 14462,
+            "proposed": 0,
+            "accepted": 0,
+            "acceptance": null,
+            "server_prompt_seconds": 29.660219,
+            "server_prediction_seconds": 110.61412099999998,
+            "groups": 6,
+            "acceptance_95_interval": {
+              "available": false
+            },
+            "assigned_tasks_per_second_95_interval": {
+              "lower": 0.06439008531440603,
+              "upper": 0.09540186684166864
+            }
+          }
+        },
+        "by_completion": {
+          "completed": {
+            "baseline": {
+              "tasks": 5,
+              "completed": 5,
+              "completion_rate": 1.0,
+              "elapsed_seconds": 41.224546220037155,
+              "raw_elapsed_seconds": 41.224546220037155,
+              "looped_tasks": 0,
+              "loop_detection_seconds": 0,
+              "seconds_per_assigned_task": 8.244909244007431,
+              "assigned_tasks_per_second": 0.12128696270693586,
+              "tokens_per_second": 100.88649557962924,
+              "model_seconds": 31.404759204015136,
+              "tool_seconds": 8.721983709488995,
+              "correct": true,
+              "tokens": 4159,
+              "proposed": 4287,
+              "accepted": 2675,
+              "acceptance": 0.6239794728248192,
+              "server_prompt_seconds": 12.45937,
+              "server_prediction_seconds": 18.732249,
+              "groups": 4,
+              "acceptance_95_interval": {
+                "lower": 0.5660333098756745,
+                "upper": 0.6595092024539877
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.10626319517986599,
+                "upper": 0.15082062859324066
+              }
+            },
+            "candidate": {
+              "tasks": 5,
+              "completed": 5,
+              "completion_rate": 1.0,
+              "elapsed_seconds": 40.61081905208994,
+              "raw_elapsed_seconds": 40.61081905208994,
+              "looped_tasks": 0,
+              "loop_detection_seconds": 0,
+              "seconds_per_assigned_task": 8.122163810417987,
+              "assigned_tasks_per_second": 0.12311990047742431,
+              "tokens_per_second": 102.41113321712155,
+              "model_seconds": 30.585460017086007,
+              "tool_seconds": 8.898551929974928,
+              "correct": true,
+              "tokens": 4159,
+              "proposed": 4110,
+              "accepted": 2740,
+              "acceptance": 0.6666666666666666,
+              "server_prompt_seconds": 12.489213,
+              "server_prediction_seconds": 17.862541,
+              "groups": 4,
+              "acceptance_95_interval": {
+                "lower": 0.6071273359408953,
+                "upper": 0.7423991155334438
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.10796393282091517,
+                "upper": 0.1569601124094948
+              }
+            },
+            "target": {
+              "tasks": 5,
+              "completed": 5,
+              "completion_rate": 1.0,
+              "elapsed_seconds": 51.35849111387506,
+              "raw_elapsed_seconds": 51.35849111387506,
+              "looped_tasks": 0,
+              "loop_detection_seconds": 0,
+              "seconds_per_assigned_task": 10.271698222775012,
+              "assigned_tasks_per_second": 0.09735488507467453,
+              "tokens_per_second": 80.97979340511428,
+              "model_seconds": 41.783598455251195,
+              "tool_seconds": 8.532433439511806,
+              "correct": true,
+              "tokens": 4159,
+              "proposed": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "server_prompt_seconds": 10.644984,
+              "server_prediction_seconds": 30.944739,
+              "groups": 4,
+              "acceptance_95_interval": {
+                "available": false
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.08603806028711868,
+                "upper": 0.12286185887095667
+              }
+            }
+          },
+          "failed": {
+            "baseline": {
+              "tasks": 7,
+              "completed": 0,
+              "completion_rate": 0.0,
+              "elapsed_seconds": 79.26198497600853,
+              "raw_elapsed_seconds": 80.05887957091909,
+              "looped_tasks": 3,
+              "loop_detection_seconds": 0.7968945949105546,
+              "seconds_per_assigned_task": 11.323140710858363,
+              "assigned_tasks_per_second": 0.08831471987635434,
+              "tokens_per_second": 129.98665126943982,
+              "model_seconds": 71.95898526720703,
+              "tool_seconds": 5.096230309223756,
+              "correct": true,
+              "tokens": 10303,
+              "proposed": 10759,
+              "accepted": 6620,
+              "acceptance": 0.615298819592899,
+              "server_prompt_seconds": 22.660187000000004,
+              "server_prediction_seconds": 48.823023000000006,
+              "groups": 5,
+              "acceptance_95_interval": {
+                "lower": 0.5130453847840386,
+                "upper": 0.6955185053801585
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.07713640767727971,
+                "upper": 0.10776132494529976
+              }
+            },
+            "candidate": {
+              "tasks": 7,
+              "completed": 0,
+              "completion_rate": 0.0,
+              "elapsed_seconds": 78.7092551389942,
+              "raw_elapsed_seconds": 79.40782306494657,
+              "looped_tasks": 3,
+              "loop_detection_seconds": 0.6985679259523749,
+              "seconds_per_assigned_task": 11.244179305570599,
+              "assigned_tasks_per_second": 0.08893490336858817,
+              "tokens_per_second": 130.89947277236627,
+              "model_seconds": 71.13447428669315,
+              "tool_seconds": 5.279361733817495,
+              "correct": true,
+              "tokens": 10303,
+              "proposed": 10549,
+              "accepted": 6699,
+              "acceptance": 0.635036496350365,
+              "server_prompt_seconds": 22.871735,
+              "server_prediction_seconds": 47.78167500000001,
+              "groups": 5,
+              "acceptance_95_interval": {
+                "lower": 0.5443694862480539,
+                "upper": 0.7275522755227553
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.07834107635209132,
+                "upper": 0.11102737706412946
+              }
+            },
+            "target": {
+              "tasks": 7,
+              "completed": 0,
+              "completion_rate": 0.0,
+              "elapsed_seconds": 106.31867121427786,
+              "raw_elapsed_seconds": 107.19914486515336,
+              "looped_tasks": 3,
+              "loop_detection_seconds": 0.8804736508755013,
+              "seconds_per_assigned_task": 15.188381602039694,
+              "assigned_tasks_per_second": 0.0658397995389915,
+              "tokens_per_second": 96.90677923574707,
+              "model_seconds": 99.07390814367682,
+              "tool_seconds": 5.145823552971706,
+              "correct": true,
+              "tokens": 10303,
+              "proposed": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "server_prompt_seconds": 19.015235,
+              "server_prediction_seconds": 79.669382,
+              "groups": 5,
+              "acceptance_95_interval": {
+                "available": false
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.05540317342816512,
+                "upper": 0.086669285531703
+              }
+            }
+          }
+        },
+        "paired_task_rate": {
+          "baseline-vs-target": {
+            "groups": 6,
+            "speed_ratio": 1.3086704444299562,
+            "acceptance_difference": null,
+            "speed_ratio_95_interval": {
+              "lower": 1.2303266051503972,
+              "upper": 1.3780705011421752
+            },
+            "acceptance_difference_95_interval": {
+              "available": false
+            },
+            "simultaneous_speed_ratio_interval": {
+              "lower": 1.2303266051503972,
+              "upper": 1.3780705011421752
+            },
+            "simultaneous_acceptance_difference_interval": {
+              "available": false
+            },
+            "comparison_family": 1,
+            "strata": {
+              "[('code', 2)]": 6
+            },
+            "bootstrap_draws": 2000,
+            "interval_available": true,
+            "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer"
+          },
+          "candidate-vs-target": {
+            "groups": 6,
+            "speed_ratio": 1.321463830768678,
+            "acceptance_difference": null,
+            "speed_ratio_95_interval": {
+              "lower": 1.2650953308891124,
+              "upper": 1.3670006932110301
+            },
+            "acceptance_difference_95_interval": {
+              "available": false
+            },
+            "simultaneous_speed_ratio_interval": {
+              "lower": 1.2650953308891124,
+              "upper": 1.3670006932110301
+            },
+            "simultaneous_acceptance_difference_interval": {
+              "available": false
+            },
+            "comparison_family": 1,
+            "strata": {
+              "[('code', 2)]": 6
+            },
+            "bootstrap_draws": 2000,
+            "interval_available": true,
+            "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer"
+          },
+          "candidate-vs-baseline": {
+            "groups": 6,
+            "speed_ratio": 1.0097758655688862,
+            "acceptance_difference": 0.026132603042100522,
+            "speed_ratio_95_interval": {
+              "lower": 0.9853513761234048,
+              "upper": 1.0355316805589085
+            },
+            "acceptance_difference_95_interval": {
+              "lower": -0.00425589324501241,
+              "upper": 0.07340087319808075
+            },
+            "simultaneous_speed_ratio_interval": {
+              "lower": 0.9853513761234048,
+              "upper": 1.0355316805589085
+            },
+            "simultaneous_acceptance_difference_interval": {
+              "lower": -0.00425589324501241,
+              "upper": 0.07340087319808075
+            },
+            "comparison_family": 1,
+            "strata": {
+              "[('code', 2)]": 6
+            },
+            "bootstrap_draws": 2000,
+            "interval_available": true,
+            "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer"
+          },
+          "target-vs-baseline": {
+            "groups": 6,
+            "speed_ratio": 0.7641343198788217,
+            "acceptance_difference": null,
+            "speed_ratio_95_interval": {
+              "lower": 0.7256522791621894,
+              "upper": 0.8127923071920877
+            },
+            "acceptance_difference_95_interval": {
+              "available": false
+            },
+            "simultaneous_speed_ratio_interval": {
+              "lower": 0.7256522791621894,
+              "upper": 0.8127923071920877
+            },
+            "simultaneous_acceptance_difference_interval": {
+              "available": false
+            },
+            "comparison_family": 1,
+            "strata": {
+              "[('code', 2)]": 6
+            },
+            "bootstrap_draws": 2000,
+            "interval_available": true,
+            "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer"
+          }
+        }
+      },
+      "arm_elapsed_seconds": {
+        "0-baseline": 557.0367050700588,
+        "0-candidate": 560.4316248130053,
+        "0-target": 737.9248752059648
+      },
+      "scope": "One greedy pass. 2000 paired project-group bootstrap draws; six project groups. Slice rows projected from full suite, excluding independent load/warmup. Primary wall excludes loop detection calls; raw costs retained. No timing-noise claim."
+    },
+    "nvfp4": {
+      "source": {
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/runs/nvfp4-suite-v5/result.json",
+        "sha256": "d54384dc4a8e373a846e30cd1a614a75bfd228a9bc8f4fb965cb0bc3d20b4850"
+      },
+      "suite": {
+        "summary": {
+          "baseline": {
+            "tasks": 60,
+            "completed": 37,
+            "completion_rate": 0.6166666666666667,
+            "elapsed_seconds": 543.1115249077557,
+            "raw_elapsed_seconds": 546.302017898066,
+            "looped_tasks": 10,
+            "loop_detection_seconds": 3.190492990310304,
+            "seconds_per_assigned_task": 9.051858748462594,
+            "assigned_tasks_per_second": 0.11047454758061091,
+            "tokens_per_second": 141.66335360507705,
+            "model_seconds": 456.5484200477367,
+            "tool_seconds": 73.89551927323919,
+            "correct": true,
+            "tokens": 76939,
+            "proposed": 74706,
+            "accepted": 51418,
+            "acceptance": 0.688271357052981,
+            "server_prompt_seconds": 122.11696699999997,
+            "server_prediction_seconds": 331.84950599999996,
+            "groups": 6,
+            "acceptance_95_interval": {
+              "lower": 0.6507148009705555,
+              "upper": 0.709016620959952
+            },
+            "assigned_tasks_per_second_95_interval": {
+              "lower": 0.08993583333477684,
+              "upper": 0.13339295742401402
+            }
+          },
+          "candidate": {
+            "tasks": 60,
+            "completed": 37,
+            "completion_rate": 0.6166666666666667,
+            "elapsed_seconds": 538.2896330655785,
+            "raw_elapsed_seconds": 541.1460188998608,
+            "looped_tasks": 10,
+            "loop_detection_seconds": 2.856385834282264,
+            "seconds_per_assigned_task": 8.971493884426309,
+            "assigned_tasks_per_second": 0.11146415668140937,
+            "tokens_per_second": 142.93234584851592,
+            "model_seconds": 451.82989515562076,
+            "tool_seconds": 73.73575975454878,
+            "correct": true,
+            "tokens": 76939,
+            "proposed": 73943,
+            "accepted": 51708,
+            "acceptance": 0.6992954032159907,
+            "server_prompt_seconds": 122.05655700000001,
+            "server_prediction_seconds": 327.08874700000007,
+            "groups": 6,
+            "acceptance_95_interval": {
+              "lower": 0.6740504737151002,
+              "upper": 0.7162663542276899
+            },
+            "assigned_tasks_per_second_95_interval": {
+              "lower": 0.08987546156661048,
+              "upper": 0.13501834628412845
+            }
+          },
+          "target": {
+            "tasks": 60,
+            "completed": 37,
+            "completion_rate": 0.6166666666666667,
+            "elapsed_seconds": 772.9038658023346,
+            "raw_elapsed_seconds": 776.9847347771283,
+            "looped_tasks": 10,
+            "loop_detection_seconds": 4.080868974793702,
+            "seconds_per_assigned_task": 12.881731096705577,
+            "assigned_tasks_per_second": 0.07762931802354917,
+            "tokens_per_second": 99.54536832356415,
+            "model_seconds": 686.7523894748883,
+            "tool_seconds": 73.66011843807064,
+            "correct": true,
+            "tokens": 76939,
+            "proposed": 0,
+            "accepted": 0,
+            "acceptance": null,
+            "server_prompt_seconds": 101.23987299999997,
+            "server_prediction_seconds": 583.105388,
+            "groups": 6,
+            "acceptance_95_interval": {
+              "available": false
+            },
+            "assigned_tasks_per_second_95_interval": {
+              "lower": 0.06197236819362809,
+              "upper": 0.09560430000222774
+            }
+          }
+        },
+        "by_completion": {
+          "completed": {
+            "baseline": {
+              "tasks": 37,
+              "completed": 37,
+              "completion_rate": 1.0,
+              "elapsed_seconds": 289.4567464471329,
+              "raw_elapsed_seconds": 289.4567464471329,
+              "looped_tasks": 0,
+              "loop_detection_seconds": 0,
+              "seconds_per_assigned_task": 7.823155309381971,
+              "assigned_tasks_per_second": 0.1278256611882348,
+              "tokens_per_second": 138.7046613796335,
+              "model_seconds": 235.08753126196098,
+              "tool_seconds": 48.08491612051148,
+              "correct": true,
+              "tokens": 40149,
+              "proposed": 38154,
+              "accepted": 27105,
+              "acceptance": 0.7104104418933794,
+              "server_prompt_seconds": 68.47593900000001,
+              "server_prediction_seconds": 165.30330299999997,
+              "groups": 6,
+              "acceptance_95_interval": {
+                "lower": 0.6731781376518219,
+                "upper": 0.7417044329843204
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.10331513276745502,
+                "upper": 0.15993388183575868
+              }
+            },
+            "candidate": {
+              "tasks": 37,
+              "completed": 37,
+              "completion_rate": 1.0,
+              "elapsed_seconds": 287.83719591400586,
+              "raw_elapsed_seconds": 287.83719591400586,
+              "looped_tasks": 0,
+              "loop_detection_seconds": 0,
+              "seconds_per_assigned_task": 7.77938367335151,
+              "assigned_tasks_per_second": 0.12854488761436555,
+              "tokens_per_second": 139.48509980619357,
+              "model_seconds": 233.6400287518045,
+              "tool_seconds": 47.88237047626171,
+              "correct": true,
+              "tokens": 40149,
+              "proposed": 38017,
+              "accepted": 27177,
+              "acceptance": 0.7148644027671831,
+              "server_prompt_seconds": 68.504982,
+              "server_prediction_seconds": 163.77089900000001,
+              "groups": 6,
+              "acceptance_95_interval": {
+                "lower": 0.6943537597002943,
+                "upper": 0.7348036335698468
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.10327039582709997,
+                "upper": 0.1627525591874866
+              }
+            },
+            "target": {
+              "tasks": 37,
+              "completed": 37,
+              "completion_rate": 1.0,
+              "elapsed_seconds": 408.84551783138886,
+              "raw_elapsed_seconds": 408.84551783138886,
+              "looped_tasks": 0,
+              "loop_detection_seconds": 0,
+              "seconds_per_assigned_task": 11.049878860307807,
+              "assigned_tasks_per_second": 0.09049872968219526,
+              "tokens_per_second": 98.20090535163398,
+              "model_seconds": 354.08444599749055,
+              "tool_seconds": 48.55930351279676,
+              "correct": true,
+              "tokens": 40149,
+              "proposed": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "server_prompt_seconds": 57.40815399999998,
+              "server_prediction_seconds": 295.457747,
+              "groups": 6,
+              "acceptance_95_interval": {
+                "available": false
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.07158292389899071,
+                "upper": 0.11671422975804556
+              }
+            }
+          },
+          "failed": {
+            "baseline": {
+              "tasks": 23,
+              "completed": 0,
+              "completion_rate": 0.0,
+              "elapsed_seconds": 253.65477846062277,
+              "raw_elapsed_seconds": 256.84527145093307,
+              "looped_tasks": 10,
+              "loop_detection_seconds": 3.190492990310304,
+              "seconds_per_assigned_task": 11.02846862872273,
+              "assigned_tasks_per_second": 0.09067442032664293,
+              "tokens_per_second": 145.03964886161708,
+              "model_seconds": 221.46088878577575,
+              "tool_seconds": 25.810603152727708,
+              "correct": true,
+              "tokens": 36790,
+              "proposed": 36552,
+              "accepted": 24313,
+              "acceptance": 0.6651619610418035,
+              "server_prompt_seconds": 53.64102800000001,
+              "server_prediction_seconds": 166.546203,
+              "groups": 6,
+              "acceptance_95_interval": {
+                "lower": 0.6000925711640824,
+                "upper": 0.7031474200100628
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.06644494057429615,
+                "upper": 0.12255605952092545
+              }
+            },
+            "candidate": {
+              "tasks": 23,
+              "completed": 0,
+              "completion_rate": 0.0,
+              "elapsed_seconds": 250.45243715157267,
+              "raw_elapsed_seconds": 253.30882298585493,
+              "looped_tasks": 10,
+              "loop_detection_seconds": 2.856385834282264,
+              "seconds_per_assigned_task": 10.889236397894464,
+              "assigned_tasks_per_second": 0.0918338039013791,
+              "tokens_per_second": 146.89415850137988,
+              "model_seconds": 218.18986640381627,
+              "tool_seconds": 25.853389278287068,
+              "correct": true,
+              "tokens": 36790,
+              "proposed": 35926,
+              "accepted": 24531,
+              "acceptance": 0.6828202416077492,
+              "server_prompt_seconds": 53.551575000000014,
+              "server_prediction_seconds": 163.31784800000003,
+              "groups": 6,
+              "acceptance_95_interval": {
+                "lower": 0.6296935540683339,
+                "upper": 0.7067989007049826
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.0662613782977185,
+                "upper": 0.12705977929195625
+              }
+            },
+            "target": {
+              "tasks": 23,
+              "completed": 0,
+              "completion_rate": 0.0,
+              "elapsed_seconds": 364.05834797094576,
+              "raw_elapsed_seconds": 368.13921694573946,
+              "looped_tasks": 10,
+              "loop_detection_seconds": 4.080868974793702,
+              "seconds_per_assigned_task": 15.828623824823728,
+              "assigned_tasks_per_second": 0.06317668617733647,
+              "tokens_per_second": 101.05522975931342,
+              "model_seconds": 332.6679434773978,
+              "tool_seconds": 25.10081492527388,
+              "correct": true,
+              "tokens": 36790,
+              "proposed": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "server_prompt_seconds": 43.83171899999999,
+              "server_prediction_seconds": 287.647641,
+              "groups": 6,
+              "acceptance_95_interval": {
+                "available": false
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.04434633090724301,
+                "upper": 0.09039876385902636
+              }
+            }
+          }
+        },
+        "paired_task_rate": {
+          "baseline-vs-target": {
+            "groups": 6,
+            "speed_ratio": 1.4231034149636355,
+            "acceptance_difference": null,
+            "speed_ratio_95_interval": {
+              "lower": 1.3616965703392918,
+              "upper": 1.4673232534953793
+            },
+            "acceptance_difference_95_interval": {
+              "available": false
+            },
+            "simultaneous_speed_ratio_interval": {
+              "lower": 1.3616965703392918,
+              "upper": 1.4673232534953793
+            },
+            "simultaneous_acceptance_difference_interval": {
+              "available": false
+            },
+            "comparison_family": 1,
+            "strata": {
+              "[('code', 10)]": 6
+            },
+            "bootstrap_draws": 2000,
+            "interval_available": true,
+            "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer"
+          },
+          "candidate-vs-target": {
+            "groups": 6,
+            "speed_ratio": 1.4358512932909737,
+            "acceptance_difference": null,
+            "speed_ratio_95_interval": {
+              "lower": 1.3783856806061783,
+              "upper": 1.4795515761955464
+            },
+            "acceptance_difference_95_interval": {
+              "available": false
+            },
+            "simultaneous_speed_ratio_interval": {
+              "lower": 1.3783856806061783,
+              "upper": 1.4795515761955464
+            },
+            "simultaneous_acceptance_difference_interval": {
+              "available": false
+            },
+            "comparison_family": 1,
+            "strata": {
+              "[('code', 10)]": 6
+            },
+            "bootstrap_draws": 2000,
+            "interval_available": true,
+            "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer"
+          },
+          "candidate-vs-baseline": {
+            "groups": 6,
+            "speed_ratio": 1.0089578017966208,
+            "acceptance_difference": 0.011024046163009671,
+            "speed_ratio_95_interval": {
+              "lower": 1.000347487083866,
+              "upper": 1.0195864116619537
+            },
+            "acceptance_difference_95_interval": {
+              "lower": -0.0032098367508914816,
+              "upper": 0.02869850246241501
+            },
+            "simultaneous_speed_ratio_interval": {
+              "lower": 1.000347487083866,
+              "upper": 1.0195864116619537
+            },
+            "simultaneous_acceptance_difference_interval": {
+              "lower": -0.0032098367508914816,
+              "upper": 0.02869850246241501
+            },
+            "comparison_family": 1,
+            "strata": {
+              "[('code', 10)]": 6
+            },
+            "bootstrap_draws": 2000,
+            "interval_available": true,
+            "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer"
+          },
+          "target-vs-baseline": {
+            "groups": 6,
+            "speed_ratio": 0.7026896214886484,
+            "acceptance_difference": null,
+            "speed_ratio_95_interval": {
+              "lower": 0.6815130869205905,
+              "upper": 0.7328003798359047
+            },
+            "acceptance_difference_95_interval": {
+              "available": false
+            },
+            "simultaneous_speed_ratio_interval": {
+              "lower": 0.6815130869205905,
+              "upper": 0.7328003798359047
+            },
+            "simultaneous_acceptance_difference_interval": {
+              "available": false
+            },
+            "comparison_family": 1,
+            "strata": {
+              "[('code', 10)]": 6
+            },
+            "bootstrap_draws": 2000,
+            "interval_available": true,
+            "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer"
+          }
+        }
+      },
+      "slice": {
+        "summary": {
+          "baseline": {
+            "tasks": 12,
+            "completed": 7,
+            "completion_rate": 0.5833333333333334,
+            "elapsed_seconds": 125.42688829102553,
+            "raw_elapsed_seconds": 125.82411910407245,
+            "looped_tasks": 2,
+            "loop_detection_seconds": 0.3972308130469173,
+            "seconds_per_assigned_task": 10.452240690918794,
+            "assigned_tasks_per_second": 0.09567326562512367,
+            "tokens_per_second": 147.76735875800352,
+            "model_seconds": 105.71850830456242,
+            "tool_seconds": 16.852807029383257,
+            "correct": true,
+            "tokens": 18534,
+            "proposed": 17916,
+            "accepted": 12423,
+            "acceptance": 0.6934025452109845,
+            "server_prompt_seconds": 25.477657999999998,
+            "server_prediction_seconds": 79.65753,
+            "groups": 6,
+            "acceptance_95_interval": {
+              "lower": 0.619253494739876,
+              "upper": 0.759015083408251
+            },
+            "assigned_tasks_per_second_95_interval": {
+              "lower": 0.0842176998510399,
+              "upper": 0.10998473855548993
+            }
+          },
+          "candidate": {
+            "tasks": 12,
+            "completed": 7,
+            "completion_rate": 0.5833333333333334,
+            "elapsed_seconds": 125.2225931637222,
+            "raw_elapsed_seconds": 125.57078294781968,
+            "looped_tasks": 2,
+            "loop_detection_seconds": 0.34818978409748524,
+            "seconds_per_assigned_task": 10.43521609697685,
+            "assigned_tasks_per_second": 0.0958293523302988,
+            "tokens_per_second": 148.00843467414649,
+            "model_seconds": 105.7121570642339,
+            "tool_seconds": 16.62842866347637,
+            "correct": true,
+            "tokens": 18534,
+            "proposed": 17996,
+            "accepted": 12405,
+            "acceptance": 0.6893198488553012,
+            "server_prompt_seconds": 25.499991,
+            "server_prediction_seconds": 79.59735400000002,
+            "groups": 6,
+            "acceptance_95_interval": {
+              "lower": 0.6217167614405632,
+              "upper": 0.7373556833003236
+            },
+            "assigned_tasks_per_second_95_interval": {
+              "lower": 0.08341189306629078,
+              "upper": 0.11082374277005298
+            }
+          },
+          "target": {
+            "tasks": 12,
+            "completed": 7,
+            "completion_rate": 0.5833333333333334,
+            "elapsed_seconds": 181.53757296595722,
+            "raw_elapsed_seconds": 181.93598532886244,
+            "looped_tasks": 2,
+            "loop_detection_seconds": 0.3984123629052192,
+            "seconds_per_assigned_task": 15.128131080496436,
+            "assigned_tasks_per_second": 0.06610201846341912,
+            "tokens_per_second": 102.09456751675083,
+            "model_seconds": 162.15724882483482,
+            "tool_seconds": 16.54293727793265,
+            "correct": true,
+            "tokens": 18534,
+            "proposed": 0,
+            "accepted": 0,
+            "acceptance": null,
+            "server_prompt_seconds": 21.058657,
+            "server_prediction_seconds": 140.547747,
+            "groups": 6,
+            "acceptance_95_interval": {
+              "available": false
+            },
+            "assigned_tasks_per_second_95_interval": {
+              "lower": 0.054881651139430554,
+              "upper": 0.07944497339977041
+            }
+          }
+        },
+        "by_completion": {
+          "completed": {
+            "baseline": {
+              "tasks": 7,
+              "completed": 7,
+              "completion_rate": 1.0,
+              "elapsed_seconds": 66.1483327250462,
+              "raw_elapsed_seconds": 66.1483327250462,
+              "looped_tasks": 0,
+              "loop_detection_seconds": 0,
+              "seconds_per_assigned_task": 9.449761817863743,
+              "assigned_tasks_per_second": 0.10582277302583533,
+              "tokens_per_second": 148.5751733282728,
+              "model_seconds": 54.60298790165689,
+              "tool_seconds": 10.218192818108946,
+              "correct": true,
+              "tokens": 9828,
+              "proposed": 9084,
+              "accepted": 6733,
+              "acceptance": 0.741193306913254,
+              "server_prompt_seconds": 13.911429,
+              "server_prediction_seconds": 40.415592000000004,
+              "groups": 5,
+              "acceptance_95_interval": {
+                "lower": 0.643979057591623,
+                "upper": 0.7938898450946644
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.0831355939019451,
+                "upper": 0.1492385711634104
+              }
+            },
+            "candidate": {
+              "tasks": 7,
+              "completed": 7,
+              "completion_rate": 1.0,
+              "elapsed_seconds": 66.54692941298708,
+              "raw_elapsed_seconds": 66.54692941298708,
+              "looped_tasks": 0,
+              "loop_detection_seconds": 0,
+              "seconds_per_assigned_task": 9.506704201855298,
+              "assigned_tasks_per_second": 0.10518892549584569,
+              "tokens_per_second": 147.68525139616733,
+              "model_seconds": 55.202465374721214,
+              "tool_seconds": 10.00350886862725,
+              "correct": true,
+              "tokens": 9828,
+              "proposed": 9263,
+              "accepted": 6680,
+              "acceptance": 0.721148655942999,
+              "server_prompt_seconds": 13.934546999999998,
+              "server_prediction_seconds": 40.96978600000001,
+              "groups": 5,
+              "acceptance_95_interval": {
+                "lower": 0.6529383429672447,
+                "upper": 0.7611992209237618
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.0819933994912904,
+                "upper": 0.1492346793627627
+              }
+            },
+            "target": {
+              "tasks": 7,
+              "completed": 7,
+              "completion_rate": 1.0,
+              "elapsed_seconds": 98.22689323790837,
+              "raw_elapsed_seconds": 98.22689323790837,
+              "looped_tasks": 0,
+              "loop_detection_seconds": 0,
+              "seconds_per_assigned_task": 14.032413319701195,
+              "assigned_tasks_per_second": 0.07126357934426164,
+              "tokens_per_second": 100.05406539934334,
+              "model_seconds": 86.65259174373932,
+              "tool_seconds": 10.251434969715774,
+              "correct": true,
+              "tokens": 9828,
+              "proposed": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "server_prompt_seconds": 11.591123,
+              "server_prediction_seconds": 74.80476300000001,
+              "groups": 5,
+              "acceptance_95_interval": {
+                "available": false
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.052069738734241935,
+                "upper": 0.1131947766327491
+              }
+            }
+          },
+          "failed": {
+            "baseline": {
+              "tasks": 5,
+              "completed": 0,
+              "completion_rate": 0.0,
+              "elapsed_seconds": 59.27855556597933,
+              "raw_elapsed_seconds": 59.67578637902625,
+              "looped_tasks": 2,
+              "loop_detection_seconds": 0.3972308130469173,
+              "seconds_per_assigned_task": 11.855711113195866,
+              "assigned_tasks_per_second": 0.08434753431930045,
+              "tokens_per_second": 146.86592675676593,
+              "model_seconds": 51.11552040290553,
+              "tool_seconds": 6.634614211274311,
+              "correct": true,
+              "tokens": 8706,
+              "proposed": 8832,
+              "accepted": 5690,
+              "acceptance": 0.6442481884057971,
+              "server_prompt_seconds": 11.566229,
+              "server_prediction_seconds": 39.241938000000005,
+              "groups": 4,
+              "acceptance_95_interval": {
+                "lower": 0.5438759689922481,
+                "upper": 0.710773212552572
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.0682936772602852,
+                "upper": 0.09788733258067187
+              }
+            },
+            "candidate": {
+              "tasks": 5,
+              "completed": 0,
+              "completion_rate": 0.0,
+              "elapsed_seconds": 58.67566375073511,
+              "raw_elapsed_seconds": 59.0238535348326,
+              "looped_tasks": 2,
+              "loop_detection_seconds": 0.34818978409748524,
+              "seconds_per_assigned_task": 11.735132750147022,
+              "assigned_tasks_per_second": 0.08521420432908794,
+              "tokens_per_second": 148.3749725778079,
+              "model_seconds": 50.50969168951269,
+              "tool_seconds": 6.62491979484912,
+              "correct": true,
+              "tokens": 8706,
+              "proposed": 8733,
+              "accepted": 5725,
+              "acceptance": 0.6555593724951334,
+              "server_prompt_seconds": 11.565444,
+              "server_prediction_seconds": 38.627568000000004,
+              "groups": 4,
+              "acceptance_95_interval": {
+                "lower": 0.5469527363184079,
+                "upper": 0.7188689505165851
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.06842900448201512,
+                "upper": 0.09963330202946245
+              }
+            },
+            "target": {
+              "tasks": 5,
+              "completed": 0,
+              "completion_rate": 0.0,
+              "elapsed_seconds": 83.31067972804885,
+              "raw_elapsed_seconds": 83.70909209095407,
+              "looped_tasks": 2,
+              "loop_detection_seconds": 0.3984123629052192,
+              "seconds_per_assigned_task": 16.66213594560977,
+              "assigned_tasks_per_second": 0.06001631503093608,
+              "tokens_per_second": 104.5004077318659,
+              "model_seconds": 75.5046570810955,
+              "tool_seconds": 6.291502308216877,
+              "correct": true,
+              "tokens": 8706,
+              "proposed": 0,
+              "accepted": 0,
+              "acceptance": null,
+              "server_prompt_seconds": 9.467534,
+              "server_prediction_seconds": 65.742984,
+              "groups": 4,
+              "acceptance_95_interval": {
+                "available": false
+              },
+              "assigned_tasks_per_second_95_interval": {
+                "lower": 0.048905223502223004,
+                "upper": 0.07072927332599048
+              }
+            }
+          }
+        },
+        "paired_task_rate": {
+          "baseline-vs-target": {
+            "groups": 6,
+            "speed_ratio": 1.4473577032760245,
+            "acceptance_difference": null,
+            "speed_ratio_95_interval": {
+              "lower": 1.3187136029963822,
+              "upper": 1.5704986398362637
+            },
+            "acceptance_difference_95_interval": {
+              "available": false
+            },
+            "simultaneous_speed_ratio_interval": {
+              "lower": 1.3187136029963822,
+              "upper": 1.5704986398362637
+            },
+            "simultaneous_acceptance_difference_interval": {
+              "available": false
+            },
+            "comparison_family": 1,
+            "strata": {
+              "[('code', 2)]": 6
+            },
+            "bootstrap_draws": 2000,
+            "interval_available": true,
+            "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer"
+          },
+          "candidate-vs-target": {
+            "groups": 6,
+            "speed_ratio": 1.4497190034118366,
+            "acceptance_difference": null,
+            "speed_ratio_95_interval": {
+              "lower": 1.326921536887799,
+              "upper": 1.566234197972985
+            },
+            "acceptance_difference_95_interval": {
+              "available": false
+            },
+            "simultaneous_speed_ratio_interval": {
+              "lower": 1.326921536887799,
+              "upper": 1.566234197972985
+            },
+            "simultaneous_acceptance_difference_interval": {
+              "available": false
+            },
+            "comparison_family": 1,
+            "strata": {
+              "[('code', 2)]": 6
+            },
+            "bootstrap_draws": 2000,
+            "interval_available": true,
+            "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer"
+          },
+          "candidate-vs-baseline": {
+            "groups": 6,
+            "speed_ratio": 1.001631455811143,
+            "acceptance_difference": -0.004082696355683368,
+            "speed_ratio_95_interval": {
+              "lower": 0.9914578548424723,
+              "upper": 1.0117323742765514
+            },
+            "acceptance_difference_95_interval": {
+              "lower": -0.02347791594687887,
+              "upper": 0.013688389513534682
+            },
+            "simultaneous_speed_ratio_interval": {
+              "lower": 0.9914578548424723,
+              "upper": 1.0117323742765514
+            },
+            "simultaneous_acceptance_difference_interval": {
+              "lower": -0.02347791594687887,
+              "upper": 0.013688389513534682
+            },
+            "comparison_family": 1,
+            "strata": {
+              "[('code', 2)]": 6
+            },
+            "bootstrap_draws": 2000,
+            "interval_available": true,
+            "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer"
+          },
+          "target-vs-baseline": {
+            "groups": 6,
+            "speed_ratio": 0.6909142071352148,
+            "acceptance_difference": null,
+            "speed_ratio_95_interval": {
+              "lower": 0.6367404432163389,
+              "upper": 0.7583147680647255
+            },
+            "acceptance_difference_95_interval": {
+              "available": false
+            },
+            "simultaneous_speed_ratio_interval": {
+              "lower": 0.6367404432163389,
+              "upper": 0.7583147680647255
+            },
+            "simultaneous_acceptance_difference_interval": {
+              "available": false
+            },
+            "comparison_family": 1,
+            "strata": {
+              "[('code', 2)]": 6
+            },
+            "bootstrap_draws": 2000,
+            "interval_available": true,
+            "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer"
+          }
+        }
+      },
+      "arm_elapsed_seconds": {
+        "0-baseline": 557.6866852119565,
+        "0-candidate": 553.4437955240719,
+        "0-target": 789.9463446940063
+      },
+      "scope": "One greedy pass. 2000 paired project-group bootstrap draws; six project groups. Slice rows projected from full suite, excluding independent load/warmup. Primary wall excludes loop detection calls; raw costs retained. No timing-noise claim."
+    }
+  },
+  "freeze": {
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/frozen-v5.json",
+    "bytes": 2680,
+    "sha256": "cb8e01f51476349b7e34cf6ba1e0d7c5ce0e77c2c73057c772329793bfcbff99"
+  },
+  "scope": "One greedy three-arm pass per target format. All failed tasks retained. Paired 2000-draw bootstrap resamples six whole project groups, not turns or independent repetitions. Twelve-task slice projected from complete full-suite records; no standalone slice runtime measured. Primary totals exclude repeated-assistant detection calls; raw and full-arm costs remain explicit. No run-to-run timing confidence claim.",
+  "measurements": {
+    "q4km": {
+      "source": {
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/runs/q4km-suite-v5/result.json",
+        "bytes": 3875143,
+        "sha256": "887f577543ba412335d4a47293bcef6491ecf0a41252ace49723d4b1cb36cc55"
+      },
+      "rows_file": "q4km-tasks.json",
+      "rows_sha256": "9049c41a7fd939d6c1bd03a2d47c2f10f237c60954dd828a0114ee4f0c270cdd",
+      "row_count": 180,
+      "costs": {
+        "target": {
+          "arm_elapsed_seconds": 737.9248752059648,
+          "assigned_raw_seconds": 725.513453771593,
+          "assigned_primary_seconds": 706.0544933198253,
+          "warmup_seconds": 7.178403325029649,
+          "load_and_bookkeeping_seconds": 5.233018109342083,
+          "non_task_seconds": 12.411421434371732,
+          "slice_projected_raw_seconds": 158.55763597902842,
+          "slice_projected_primary_seconds": 157.67716232815292,
+          "release": {
+            "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/runs/q4km-suite-v5/0-target/release.json",
+            "bytes": 30,
+            "sha256": "e468240c0e96ee3167a08e50f990d09b851444cef9e489ef49c1f5785de61955"
+          }
+        },
+        "baseline": {
+          "arm_elapsed_seconds": 557.0367050700588,
+          "assigned_raw_seconds": 543.1386486018309,
+          "assigned_primary_seconds": 532.8087510120822,
+          "warmup_seconds": 5.9590887889498845,
+          "load_and_bookkeeping_seconds": 7.938967679277994,
+          "non_task_seconds": 13.898056468227878,
+          "slice_projected_raw_seconds": 121.28342579095624,
+          "slice_projected_primary_seconds": 120.48653119604569,
+          "release": {
+            "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/runs/q4km-suite-v5/0-baseline/release.json",
+            "bytes": 30,
+            "sha256": "e468240c0e96ee3167a08e50f990d09b851444cef9e489ef49c1f5785de61955"
+          }
+        },
+        "candidate": {
+          "arm_elapsed_seconds": 560.4316248130053,
+          "assigned_raw_seconds": 545.7048159749247,
+          "assigned_primary_seconds": 535.3653032918228,
+          "warmup_seconds": 5.765736732049845,
+          "load_and_bookkeeping_seconds": 8.96107210603077,
+          "non_task_seconds": 14.726808838080615,
+          "slice_projected_raw_seconds": 120.0186421170365,
+          "slice_projected_primary_seconds": 119.32007419108413,
+          "release": {
+            "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/runs/q4km-suite-v5/0-candidate/release.json",
+            "bytes": 30,
+            "sha256": "e468240c0e96ee3167a08e50f990d09b851444cef9e489ef49c1f5785de61955"
+          }
+        }
+      },
+      "terminations": {
+        "model-finished": 37,
+        "repeated-assistant": 10,
+        "context-limit": 7,
+        "turn-limit": 6
+      },
+      "initial_context_tokens": {
+        "min": 11523,
+        "max": 19865,
+        "mean": 16303.95
+      },
+      "complete_calls": 656,
+      "panel_elapsed_seconds": 1855.7086279880023
+    },
+    "nvfp4": {
+      "source": {
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/runs/nvfp4-suite-v5/result.json",
+        "bytes": 3872309,
+        "sha256": "d54384dc4a8e373a846e30cd1a614a75bfd228a9bc8f4fb965cb0bc3d20b4850"
+      },
+      "rows_file": "nvfp4-tasks.json",
+      "rows_sha256": "985b31c75ae24953f39338aa5a8cced3fef9222debb2d13b6df8f98b51242c49",
+      "row_count": 180,
+      "costs": {
+        "target": {
+          "arm_elapsed_seconds": 789.9463446940063,
+          "assigned_raw_seconds": 776.9847347771283,
+          "assigned_primary_seconds": 772.9038658023346,
+          "warmup_seconds": 7.5560948989586905,
+          "load_and_bookkeeping_seconds": 5.405515017919242,
+          "non_task_seconds": 12.961609916877933,
+          "slice_projected_raw_seconds": 181.93598532886244,
+          "slice_projected_primary_seconds": 181.53757296595722,
+          "release": {
+            "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/runs/nvfp4-suite-v5/0-target/release.json",
+            "bytes": 30,
+            "sha256": "e468240c0e96ee3167a08e50f990d09b851444cef9e489ef49c1f5785de61955"
+          }
+        },
+        "baseline": {
+          "arm_elapsed_seconds": 557.6866852119565,
+          "assigned_raw_seconds": 546.302017898066,
+          "assigned_primary_seconds": 543.1115249077557,
+          "warmup_seconds": 5.787787019973621,
+          "load_and_bookkeeping_seconds": 5.596880293916911,
+          "non_task_seconds": 11.384667313890532,
+          "slice_projected_raw_seconds": 125.82411910407245,
+          "slice_projected_primary_seconds": 125.42688829102553,
+          "release": {
+            "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/runs/nvfp4-suite-v5/0-baseline/release.json",
+            "bytes": 30,
+            "sha256": "e468240c0e96ee3167a08e50f990d09b851444cef9e489ef49c1f5785de61955"
+          }
+        },
+        "candidate": {
+          "arm_elapsed_seconds": 553.4437955240719,
+          "assigned_raw_seconds": 541.1460188998608,
+          "assigned_primary_seconds": 538.2896330655785,
+          "warmup_seconds": 5.6940840689931065,
+          "load_and_bookkeeping_seconds": 6.603692555218004,
+          "non_task_seconds": 12.29777662421111,
+          "slice_projected_raw_seconds": 125.57078294781968,
+          "slice_projected_primary_seconds": 125.2225931637222,
+          "release": {
+            "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/runs/nvfp4-suite-v5/0-candidate/release.json",
+            "bytes": 30,
+            "sha256": "e468240c0e96ee3167a08e50f990d09b851444cef9e489ef49c1f5785de61955"
+          }
+        }
+      },
+      "terminations": {
+        "model-finished": 38,
+        "turn-limit": 11,
+        "repeated-assistant": 10,
+        "context-limit": 1
+      },
+      "initial_context_tokens": {
+        "min": 11523,
+        "max": 19865,
+        "mean": 16303.95
+      },
+      "complete_calls": 634,
+      "panel_elapsed_seconds": 1901.354616678087
+    }
+  },
+  "registrations": {
+    "q4km": {
+      "source": {
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/registrations/q4km-v5-all-registered.json",
+        "bytes": 2314,
+        "sha256": "0fe1f589e3735bb0dc0391c4edce652622cc1ff57324fec676d1f035a2eb42dc"
+      },
+      "records": {
+        "agentic-suite": {
+          "specification": {
+            "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/candidate-specs/q4km-v5-agentic-suite.json",
+            "bytes": 4201,
+            "sha256": "cc3cb914912fb096cbfe9c5d72c37220620cd9c1a3397e3c7784a93ae38d12c3"
+          },
+          "references": {
+            "target": {
+              "bytes": 3746590,
+              "path": "/home/philip/BitDraft/artifacts/benchmarks/references/b81f3ddde034fba1536d87ab4f06b0d4f536a74f8467b58161c31af976e71e71.json",
+              "sha256": "042ed697a415736b630d292e20c86538d938a0d5fd092b1638c1899ab4ff2903"
+            },
+            "baseline": {
+              "bytes": 3747366,
+              "path": "/home/philip/BitDraft/artifacts/benchmarks/references/02e75c0992eda3d39a732c96b24ed11589515b9d2a27e1a1b1fea87abf7dbac3.json",
+              "sha256": "4af01af31bcf144c8581b58f02691e51fbae60aff32c1daafc24bb20eaca4f79"
+            },
+            "prior-leader": {
+              "bytes": 3747482,
+              "path": "/home/philip/BitDraft/artifacts/benchmarks/references/4733ad263f2426a4332c7dbb5c9f2e41830119795517b7d0d7dce0fbe1fcb3ff.json",
+              "sha256": "6d9c5f17c1eb311fd693051801176c7cf7d6e40ceb40a2b9eed12236c037585b"
+            }
+          }
+        },
+        "agentic-slice": {
+          "specification": {
+            "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/candidate-specs/q4km-v5-agentic-slice.json",
+            "bytes": 4197,
+            "sha256": "f77674db189d9f49b4851a73c9bf99146ac17dafe7d578aabf87f58a907fe507"
+          },
+          "references": {
+            "target": {
+              "bytes": 754286,
+              "path": "/home/philip/BitDraft/artifacts/benchmarks/references/5db389652aba9c8e47691065f05f88aa42f231db9edf367db9a98eb5e98c251b.json",
+              "sha256": "accefd2a4b5110909466634d19e9496fde8aec10a4f89c8915287c9ca7ad09a5"
+            },
+            "baseline": {
+              "bytes": 754561,
+              "path": "/home/philip/BitDraft/artifacts/benchmarks/references/7ca1dcf6054644efd11ebe6bc306209b952db73e19222c96c94cc9feefcb281a.json",
+              "sha256": "625968009bd4deda3b1443b117227253643ee225ae0fb1488f1350fcb22b997c"
+            },
+            "prior-leader": {
+              "bytes": 754690,
+              "path": "/home/philip/BitDraft/artifacts/benchmarks/references/388e9dc749dbe6dba302cfbde1bf54eeeca8d58e382160ed333ab579dd4e5c3f.json",
+              "sha256": "bc7f9aadcca9f347bd3bfd82b9beafe0fa8bc9539a096223d4a8d5c017e3c8a1"
+            }
+          }
+        }
+      }
+    },
+    "nvfp4": {
+      "source": {
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/registrations/nvfp4-v5-all-registered.json",
+        "bytes": 2316,
+        "sha256": "81c34179ffc71541bd1c49a4b00a95185f4b7564fb69a0b8777b1f019ba007b0"
+      },
+      "records": {
+        "agentic-suite": {
+          "specification": {
+            "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/candidate-specs/nvfp4-v5-agentic-suite.json",
+            "bytes": 4203,
+            "sha256": "c87bb260c7c1d87fc88456e3c32a3c6cbf549b9af2830448bd776dea6c7a0b8b"
+          },
+          "references": {
+            "target": {
+              "bytes": 3745629,
+              "path": "/home/philip/BitDraft/artifacts/benchmarks/references/ea3a0f56ef055cf515ce0a401cc5164a16fa9383183b4af0eedcc0484baf74b5.json",
+              "sha256": "f228ca5ed0c5f626912bf154dae0a680dec48e6ff04a3e429b9ec19b9ff835f1"
+            },
+            "baseline": {
+              "bytes": 3746466,
+              "path": "/home/philip/BitDraft/artifacts/benchmarks/references/1cee79b9ada5d3214075ee287be5f29c78db47c695ec8d5b3f0f9e19fd5f11e4.json",
+              "sha256": "8baec774cb7751e040a0401905d42f102535ffaaede94ed03a4ef5a5ba1beda4"
+            },
+            "prior-leader": {
+              "bytes": 3746626,
+              "path": "/home/philip/BitDraft/artifacts/benchmarks/references/3961d2692ddd26a0e435d37047e8467dde68087f0c9f1142ffa0a7ca063207ef.json",
+              "sha256": "5687f8d8d875a972764d83091b2472d44d875cf6f967adf9331a107d193a3881"
+            }
+          }
+        },
+        "agentic-slice": {
+          "specification": {
+            "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/candidate-specs/nvfp4-v5-agentic-slice.json",
+            "bytes": 4199,
+            "sha256": "c65394162a2d09eb821aa4c89fe827962b016fe1f5ed6bdba0698272515465fc"
+          },
+          "references": {
+            "target": {
+              "bytes": 752225,
+              "path": "/home/philip/BitDraft/artifacts/benchmarks/references/47ae53ee17c10f5d711c60b9f42d8a335c6aa19f75f2119dec127e655ce6781f.json",
+              "sha256": "1fa318f0bedbd7a804508199706b8a7fc20d5ff0806e9ac381c0bdf04896cb78"
+            },
+            "baseline": {
+              "bytes": 752505,
+              "path": "/home/philip/BitDraft/artifacts/benchmarks/references/667a4b0bd8c0f675f4622db76b96f8fb40c5e39760b116e3505d97d5df13d41b.json",
+              "sha256": "ee751e6cf0ce0f72e13f4985abb775932422ed5803a553d90e93b9e7ac4d349e"
+            },
+            "prior-leader": {
+              "bytes": 752609,
+              "path": "/home/philip/BitDraft/artifacts/benchmarks/references/8feeb0e1c5bf7628b453bb139537acb3696b9e746b70be2ea3a75c8147406b7a.json",
+              "sha256": "f6aed292ade8dc8fcaf7173fca52a9a5d09e681ce78be4ebf0e8515ff27d89ff"
+            }
+          }
+        }
+      }
+    }
+  },
+  "executed_source": {
+    "sha256": "a2da8d5b269c5b6d8bdb73c34ab35f131ddff1fa5dd18c07babb948dcfac6e2b",
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/executed-sources/a2da8d5b269c5b6d8bdb73c34ab35f131ddff1fa5dd18c07babb948dcfac6e2b"
+  },
+  "provenance": {
+    "frozen-v5.json": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/frozen-v5.json",
+      "bytes": 2680,
+      "sha256": "cb8e01f51476349b7e34cf6ba1e0d7c5ce0e77c2c73057c772329793bfcbff99"
+    },
+    "frozen-v5-provenance-addendum.json": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/frozen-v5-provenance-addendum.json",
+      "bytes": 764,
+      "sha256": "89703b77dddc2e193c4f89982980221cb408e93a350231ef403f0252f256b555"
+    },
+    "repository-lineage-audit.json": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/repository-lineage-audit.json",
+      "bytes": 5490,
+      "sha256": "33143b460b2dcf0d4f7d739bed9d24a8802d93f230b2339aea7ccb30a810d839"
+    },
+    "audit.json": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/audit.json",
+      "bytes": 136299,
+      "sha256": "99729e5ec7378e24d922806697e8b4f716926a127faedf3bc57823660d8d5a65"
+    },
+    "audit-fullbank.json": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/audit-fullbank.json",
+      "bytes": 136316,
+      "sha256": "ef4e12a95efdd9ced6ba8c9b10db64da1aae06264a7ab6bdd40b10064b9da3e5"
+    },
+    "seed-authentication.json": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/seed-authentication.json",
+      "bytes": 160764,
+      "sha256": "1ec7a50cb05e92bed6b1486dbf83c022a00fc3c5c088426a8eeca7b2a0102121"
+    },
+    "history-depth.json": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/history-depth.json",
+      "bytes": 367,
+      "sha256": "4c3b365606e5c010d32957291de2fc2e424b482cacb890743799b7ace629bdf9"
+    },
+    "toolchain-v5.json": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/toolchain-v5.json",
+      "bytes": 1832,
+      "sha256": "63117ff89fbbaaee3c3350c7dcb424aa6195993e045719995cc0581761d92e78"
+    },
+    "confirmation-harness-v4c-access.json": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/confirmation-harness-v4c-access.json",
+      "bytes": 1066,
+      "sha256": "fcfbcf1cf4733336ea83c1e6057a9a4ca7aa4ad48ecb03f2cddde5fdb1ed35a8"
+    },
+    "calibration-v5-plan.json": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/calibration-v5-plan.json",
+      "bytes": 8535,
+      "sha256": "f530130c9b9b251323de59040b70fca901a75a1557691f1fee88f6ba4fcec777"
+    },
+    "calibration-v5-outcome.json": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/calibration-v5-outcome.json",
+      "bytes": 225751,
+      "sha256": "c8fe852895eadc00e9a8cc739ff4d3e078e165e4749995177ad8ad7fa1f20978"
+    },
+    "q4km-suite-v5-raw-verification.json": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/q4km-suite-v5-raw-verification.json",
+      "bytes": 43107,
+      "sha256": "fe10e28105f7c77431ff94c853be60e7ee23214ad53ba2a74b237dd80eb5e078"
+    },
+    "nvfp4-suite-v5-raw-verification.json": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/nvfp4-suite-v5-raw-verification.json",
+      "bytes": 43105,
+      "sha256": "956267ccaac3efe0dda111fe7a4e0d56c8bbada091bf00746f3cb8b8cb99b37d"
+    },
+    "allocation-cost.json": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/allocation-cost.json",
+      "bytes": 11419,
+      "sha256": "c37a6285bfbc80b61e32fc1ac9a2e2867c7b2390d2988abc9b9d5293cb97caf2"
+    },
+    "candidate-specification-verification.json": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/candidate-specification-verification.json",
+      "bytes": 1665,
+      "sha256": "8cb79122f4c0e01ccad4e1e0328c380e3d4014fa527f48e98c99bb76e5225049"
+    }
+  },
+  "reproduction": {
+    "summarize_panel.py": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/specs/summarize_panel.py",
+      "bytes": 2674,
+      "sha256": "f13cb74ff278546ebfe15279ed8d1eef8ba9044fcf1477b700706877594713d4"
+    },
+    "assemble_result.py": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/specs/assemble_result.py",
+      "bytes": 4417,
+      "sha256": "da0d08cb2a5c5b263e2aa2836a94156193085af89ec4f6d6e69d3d9e88a87dcc"
+    },
+    "render_result.py": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/specs/render_result.py",
+      "bytes": 4231,
+      "sha256": "533afcaae60c32d8a1e5ab3f36d9ba3ebc74ee3dfc6982bc39634bb90f02c762"
+    },
+    "figure-requirements.txt": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/specs/figure-requirements.txt",
+      "bytes": 186,
+      "sha256": "e5708547f2896c18ada600ca70cfacbb1cd7d5a833516fb7aa902d5f3ae8b710"
+    },
+    "audit_lineage.py": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/specs/audit_lineage.py",
+      "bytes": 3355,
+      "sha256": "e9d44bba9105f8b513ae30d0b6829b71ec5480ac950ca2928e700ce793d33c94"
+    },
+    "verify_live_evidence.py": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/specs/verify_live_evidence.py",
+      "bytes": 2726,
+      "sha256": "145d067144153b9139715d46b89adfa2da2449f1c6f6ce8059a74b5964319855"
+    },
+    "render_tables.py": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/specs/render_tables.py",
+      "bytes": 2872,
+      "sha256": "ba914b58c29e30ab7cf1d22f1a33d217faa2aeb9f4ae9e107b99d4fe5a28201d"
+    },
+    "allocation_cost.py": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/specs/allocation_cost.py",
+      "bytes": 1736,
+      "sha256": "313d0cb6b83bc5d396c48210c3880561020ae7566ec43374d41d8687ca20453d"
+    },
+    "close_report.py": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/specs/close_report.py",
+      "bytes": 11353,
+      "sha256": "6e547b91a2f4e1a16244e3ad016fc94a949e4ae2a5925949678f61d873fbf755"
+    },
+    "verify_candidates.py": {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/specs/verify_candidates.py",
+      "bytes": 945,
+      "sha256": "3672c8dbfe19248fb9a9f0c56f0b8ab851add617e51aadfd56f55a31a8113daa"
+    }
+  }
+}
