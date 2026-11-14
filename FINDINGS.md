@@ -10,6 +10,14 @@ See [closeout specification](docs/results.md).
 
 ## Current candidate and retained controls
 
+### F0xx: Does broader scenario coverage establish that final S4 is faster?
+
+No. Final S4 beats target-only but trails Baseline on both thinking and sampled
+requests in Q4KM and NVFP4. Three-level reporting now requires every primary scenario
+and fresh confirmation. The extended 160-window diagnostics preserved the original
+120 metrics and passed a 73.4-second resident interruption; 120 fresh confirmation
+requests remain frozen and unexecuted. [Result](results/scenario-benchmark-levels/result.md).
+
 ### F001: Which drafter is the incumbent?
 
 The external DFlash Q4KM drafter is the Baseline. [Result](results/baseline-identity/result.md).

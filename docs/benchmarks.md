@@ -341,6 +341,34 @@ subset of source seeds; the source panel must still be complete. Existing greedy
 identities and the campaign screen are unchanged. Sampled references use
 `native-sampled-request-v3`; greedy and sampled controls cannot mix.
 
+### Measured cost of thinking and sampled coverage
+
+The final S4 data-curve export `405e326b…` was measured with runtime-v7, depth 3,
+cache-ram 0 and exact verification on the RTX 5080. These are summed request seconds
+per arm; full panel wall includes load, warmup and teardown. Level 2 costs project the
+fixed request/seed slice from the completed Level 3 run, so their independent startup
+cost is not measured. The 12/40-request thinking sets use one seed; sampled uses 12×2
+and 40×3. Both drafters matched target-only exactly on all greedy outputs. Both native
+sampler qualifications passed; all observed sampled paths also matched under the fixed
+seeds, although sampled validity does not require that equality.
+
+| Precision / cohort | Target request s | Baseline request s | HE4 request s | Full panel wall s |
+| --- | ---: | ---: | ---: | ---: |
+| q4km-thinking-slice | 100.9 | 58.9 | 66.4 | projected slice |
+| q4km-thinking-suite | 342.2 | 196.8 | 225.0 | 797.6 |
+| q4km-sampled-slice | 103.4 | 78.2 | 81.8 | projected slice |
+| q4km-sampled-suite | 635.0 | 478.5 | 501.5 | 1658.5 |
+| nvfp4-thinking-slice | 75.5 | 45.5 | 50.9 | projected slice |
+| nvfp4-thinking-suite | 272.6 | 158.4 | 179.8 | 630.2 |
+| nvfp4-sampled-slice | 105.9 | 80.7 | 86.2 | projected slice |
+| nvfp4-sampled-suite | 619.7 | 476.4 | 499.5 | 1636.2 |
+
+The separate 20 agentic and 20 thinking diagnostic windows add 10.6 seconds to the
+training-time measurement: 2.9 seconds agentic and 7.7 thinking. The combined 160-window
+pass took 20.6 seconds and preserved all original 120-window metrics exactly. The two-update resident pilot measured a complete checkpoint/export/screen/restore/next-
+sample interruption of 73.4 seconds, below the 120-second budget. Its supplementary groups
+added 4.5–4.6 seconds per resident pass; startup and standalone timings remain separate.
+
 ### Scenario reports and decisions
 
 `scenario-report SPEC OUTPUT` accepts `schema: scenario-report-v1`, `level: 2|3`,
@@ -596,6 +624,10 @@ and elapsed seconds are separate. Agentic captures use measured DEV histories in
 TRAIN expansion's multi-span session format. Thinking captures use separate DEV requests
 outside the 40 thinking comparison IDs, with target-generated thinking enabled. Both
 report per-position top-1/prefix survival ([execution](execution.md#sampling-and-clocks)).
+New training intents can bind the qualified 160-window configuration at
+`/home/philip/BitDraft/artifacts/benchmarks/scenario-levels-01/diagnostics/training-diagnostics.json`.
+Existing intents keep their bound diagnostics for exact resumption; the added groups do
+not change the original 120 windows or their selection weights.
 They are not acceptance. Measure the complete training interruption against the short
 wall budget; do not stretch the training interval to accommodate an oversized check.
 Keep model/data/evaluation/checkpoint clocks separate.
