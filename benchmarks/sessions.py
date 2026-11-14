@@ -180,6 +180,9 @@ def build_tasks(raw: Record, root: Path) -> tuple[list[Record], Record]:
     )
     eligible = [name for _, name in ranked]
     tasks: list[Record] = []
+    skip = integer(raw.get("skip", 0))
+    if skip < 0:
+        raise ValueError("session task skip must be nonnegative")
     refused = {"protected": 0, "no_project": 0}
     for name in eligible:
         task = project_task(name, grouped[name], system, integer(raw["output_cap"]))
@@ -190,10 +193,11 @@ def build_tasks(raw: Record, root: Path) -> tuple[list[Record], Record]:
             refused["protected"] += 1
             continue
         tasks.append(task)
-        if len(tasks) == integer(raw["tasks"]):
+        if len(tasks) == skip + integer(raw["tasks"]):
             break
-    if len(tasks) != integer(raw["tasks"]):
+    if len(tasks) != skip + integer(raw["tasks"]):
         raise ValueError("source cannot supply the requested TRAIN session tasks")
+    tasks = tasks[skip:]
     summary: Record = {
         "source_rows": len(rows),
         "components": len(grouped),
@@ -206,7 +210,7 @@ def build_tasks(raw: Record, root: Path) -> tuple[list[Record], Record]:
 def generate(specification: Path, output: Path) -> Record:
     raw = read(specification)
     if (
-        set(raw)
+        set(raw) - {"skip"}
         != {
             "schema",
             "role",

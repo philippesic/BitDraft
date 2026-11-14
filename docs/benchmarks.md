@@ -166,7 +166,8 @@ permissive licenses only and drops trailer and contact lines from commit message
 copies two to eight parseable files, asks for the commit's change and checks that the file
 changed and every file compiles. It runs the live harness (`tools` system prompt, the five
 file/test tools, 16 turns, 1024-token calls) with the target alone and records transcripts
-and responses; it resumes completed tasks. Task success is not required: the target's own
+and responses; it resumes completed tasks, and an optional `skip` starts after earlier tasks
+of the same seeded order. Task success is not required: the target's own
 greedy turns are the supervision. `select-expansion` selects a TRAIN expansion bank from the
 curated pool, new public sources (`math`, `oasst2`) and session transcripts, converting each
 session into one [session record](data.md#session-records). It excludes base-bank, protected
