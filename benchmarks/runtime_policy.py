@@ -2,6 +2,7 @@ from pathlib import Path
 
 from w1a1_eagle.contracts import Record
 
+LIVE_TIERS = frozenset({"live", "agentic-slice", "agentic-suite", "agentic-confirmation"})
 LIVE_TURNS = 16
 LIVE_SECONDS = 900
 

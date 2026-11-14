@@ -2,7 +2,7 @@ from pathlib import Path
 
 from benchmarks.comparison import Comparison
 from benchmarks.native import file_reference
-from benchmarks.runtime_policy import arguments, payload
+from benchmarks.runtime_policy import LIVE_TIERS, arguments, payload
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, record, sequence, string
 from w1a1_eagle.lifecycle import Ownership
@@ -95,7 +95,7 @@ def register(specification: Path, output: Path) -> Record:
             raise ValueError("executed server policy differs from requested reference protocol")
         receipts.append(file_reference(path))
 
-    if prior.tier == "live":
+    if prior.tier in LIVE_TIERS:
         command(result_ref.path.parent / (str(rep) + "-" + name))
         for row in selected:
             signatures[string(row["task"])] = row["state_sha256"]

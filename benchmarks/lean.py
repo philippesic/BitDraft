@@ -11,6 +11,10 @@ from w1a1_eagle.records import artifact, canonical, read
 
 def prepare(specification: Path, output: Path) -> Record:
     raw = read(specification)
+    if raw.get("schema") == 2:
+        from benchmarks.agentic import prepare_checks
+
+        return prepare_checks(specification, output)
     if set(raw) != {"schema", "requests", "harness", "live"} or raw["schema"] != 1:
         raise ValueError("lean preparation requires frozen request/harness/live specifications")
     if output.exists():

@@ -1,20 +1,18 @@
 from pathlib import Path
 
 from benchmarks.native import file_reference
-from benchmarks.sandbox import TOOLS
+from benchmarks.sandbox import SYSTEMS, TOOLS
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, record, sequence, string
 from w1a1_eagle.records import artifact, canonical, read
 
-SYSTEMS = {
-    "minimal": "You are a helpful coding assistant.",
-    "coding": "You are working in a project. Inspect relevant context, preserve existing behavior, make the smallest complete change, and verify your answer. Explain assumptions and remaining limitations clearly.",
-    "tools": "You are a coding agent with file and test tools. Read the current files before editing. Use tools when they help, follow project instructions, preserve unrelated work, run focused checks, and give a concise final answer grounded in their results.",
-}
-
 
 def panels(specification: Path, output: Path) -> Record:
     raw = read(specification)
+    if raw.get("schema") == 2:
+        from benchmarks.agentic import prepare_panels
+
+        return prepare_panels(specification, output)
     if set(raw) - {"harnesses"} != {"schema", "workload", "live_definitions"} or raw["schema"] != 1:
         raise ValueError("unsupported panel preparation specification")
     if output.exists():

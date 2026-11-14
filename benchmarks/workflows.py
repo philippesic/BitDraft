@@ -7,7 +7,7 @@ from benchmarks.comparison import Comparison
 from benchmarks.measurement import now, request
 from benchmarks.metrics import server_seconds, totals
 from benchmarks.runner import native_counts, reconcile, signature, valid_sample, verify_generation
-from benchmarks.runtime_policy import LIVE_SECONDS, LIVE_TURNS, payload
+from benchmarks.runtime_policy import LIVE_SECONDS, LIVE_TIERS, LIVE_TURNS, payload
 from benchmarks.sandbox import TOOLS, Sandbox
 from benchmarks.serving import session
 from benchmarks.statistics import paired, partitions
@@ -59,7 +59,7 @@ def live(specification: Path, output: Path) -> Record:
         raise ValueError(
             "sampled live workflows require a separately qualified harness; this entry is greedy"
         )
-    if spec.tier not in {"live", "pilot"} or output.exists():
+    if spec.tier not in LIVE_TIERS | {"pilot"} or output.exists():
         raise ValueError("live tier or explicit pilot and a new output required")
     fixtures: dict[str, Record] = {}
     for task in spec.tasks:
@@ -89,6 +89,7 @@ def live_leased(
     freeze_source(code_root, store.root / "sources", code, 0)
     store.atomic(store.root / "specification.json", specification.read_bytes())
     rows: list[Record] = []
+    arm_elapsed: Record = {}
     cached = spec.cached()
     if any(value["gpu"] != cuda_identity() for value in cached.values()):
         raise ValueError(
@@ -105,6 +106,7 @@ def live_leased(
             if rep:
                 arms = arms[rep % len(arms) :] + arms[: rep % len(arms)]
             for arm in arms:
+                began_arm = now()
                 cell = Store(store.root / (str(rep) + "-" + arm.name))
                 responses: list[Record] = []
                 with session(spec, arm, cell) as port:
@@ -159,6 +161,11 @@ def live_leased(
                                 "task": name,
                                 "group": task["group"],
                                 "category": task["category"],
+                                **{
+                                    key: task[key]
+                                    for key in ("scenario", "project", "style", "task_kind")
+                                    if key in task
+                                },
                                 "rep": rep,
                                 "correct": references.get(name) == fingerprint,
                                 "state_sha256": fingerprint,
@@ -166,6 +173,7 @@ def live_leased(
                         )
                         rows.append(row)
                         store.atomic(store.root / "progress.json", canonical({"rows": rows}))
+                arm_elapsed[str(rep) + "-" + arm.name] = now() - began_arm
                 if arm.drafter:
                     reconcile((cell.root / "server.log").read_text(), responses)
                     if not any(
@@ -187,6 +195,7 @@ def live_leased(
             "tier": spec.tier,
             "rows": rows,
             "elapsed_seconds": now() - began_panel,
+            "arm_elapsed_seconds": arm_elapsed,
             "historical_references": {name: value["reference"] for name, value in cached.items()},
             "summary": {
                 arm.name: {
@@ -252,6 +261,7 @@ def execute(
     reason = "turn-limit"
     followup = task.get("followup")
     phase_checks: list[Record] = []
+    context_tokens: list[int] = []
     for turn in range(LIVE_TURNS):
         if now() - began >= LIVE_SECONDS:
             reason = "task-deadline"
@@ -264,6 +274,7 @@ def execute(
                 {"content": rendered["prompt"], "add_special": True, "parse_special": True},
             )["tokens"]
         )
+        context_tokens.append(len(identifiers))
         if len(identifiers) + integer(task["output_cap"]) > context:
             reason = "context-limit"
             break
@@ -348,6 +359,7 @@ def execute(
             "termination": reason,
             "checks": checks,
             "turns": len(responses),
+            "context_tokens": context_tokens,
             "tokens": tokens,
             "wall_seconds": elapsed,
             "model_seconds": model_seconds,

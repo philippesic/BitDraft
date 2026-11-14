@@ -7,6 +7,13 @@ from typing import cast
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, record, string
 
+SYSTEMS = {
+    "minimal": "You are a helpful coding assistant.",
+    "coding": "You are working in a project. Inspect relevant context, preserve existing behavior, make the smallest complete change, and verify your answer. Explain assumptions and remaining limitations clearly.",
+    "tools": "You are a coding agent with file and test tools. Read the current files before editing. Use tools when they help, follow project instructions, preserve unrelated work, run focused checks, and give a concise final answer grounded in their results.",
+}
+
+
 TOOLS: list[Record] = [
     {
         "type": "function",

@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import cast
 
 from benchmarks.native import file_reference
-from benchmarks.project_workflows import check_script
+from benchmarks.project_recipes import check_script
 from benchmarks.protection import source_names
 from benchmarks.sandbox import Sandbox
 from benchmarks.serving import native_server

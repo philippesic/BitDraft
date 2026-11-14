@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from benchmarks.coverage import FULL, SHORT, length_band
-from benchmarks.runtime_policy import LIVE_SECONDS, LIVE_TURNS, arguments, payload
+from benchmarks.runtime_policy import LIVE_SECONDS, LIVE_TIERS, LIVE_TURNS, arguments, payload
 from benchmarks.sandbox import TOOLS
 from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
 from w1a1_eagle.data import Artifact
@@ -154,6 +154,9 @@ class Comparison:
             "screen",
             "comparison",
             "prefix",
+            "agentic-slice",
+            "agentic-suite",
+            "agentic-confirmation",
         }:
             raise ValueError("explicit workload role/tier required")
         if sampling.temperature > 0 and tier not in {"pilot", "sampled"}:
@@ -173,12 +176,29 @@ class Comparison:
             "screen": 60,
             "comparison": 120,
             "prefix": 18,
+            "agentic-slice": 12,
+            "agentic-suite": 60,
+            "agentic-confirmation": 15,
         }
         if not tasks or len(tasks) > 600 or (tier in expected and len(tasks) != expected[tier]):
             raise ValueError("workload count differs from declared tier")
+        if tier.startswith("agentic-") and role != (
+            "confirmation" if tier == "agentic-confirmation" else "dev"
+        ):
+            raise ValueError("agentic tier and role disagree")
         seen: set[str] = set()
         for task in tasks:
-            if set(task) - {"tools", "harness", "ancestry", "fixture", "followup"} != {
+            if set(task) - {
+                "tools",
+                "harness",
+                "ancestry",
+                "fixture",
+                "followup",
+                "scenario",
+                "project",
+                "style",
+                "task_kind",
+            } != {
                 "id",
                 "group",
                 "role",
@@ -214,6 +234,7 @@ class Comparison:
                     raise ValueError("message content must be text")
         repeats, warmups = integer(raw["repeats"]), integer(raw["warmups"])
         require_cohort(tier, tasks)
+        require_agentic(tier, tasks)
         context, depth = integer(raw["context"]), integer(raw["depth"])
         if (
             not 1 <= repeats <= 20
@@ -291,7 +312,9 @@ class Comparison:
 
     def reference_protocol(self) -> Record:
         return {
-            "policy": "native-greedy-request-v3" if self.tier != "live" else "native-live-v3",
+            "policy": "native-greedy-request-v3"
+            if self.tier not in LIVE_TIERS
+            else "native-live-v3",
             "target_arguments": arguments(
                 Path("server"), Path("target"), None, self.context, self.depth, 0
             ),
@@ -322,7 +345,7 @@ class Comparison:
                 "tools": TOOLS,
                 "cache_followups": True,
             }
-            if self.tier == "live"
+            if self.tier in LIVE_TIERS
             else None,
         }
 
@@ -477,3 +500,24 @@ def require_cohort(tier: str, tasks: tuple[Record, ...]) -> None:
             sorted(values) != ["coding", "minimal", "tools"] for values in groups.values()
         ):
             raise ValueError("harness requires declared groups with all three configurations")
+
+
+def require_agentic(tier: str, tasks: tuple[Record, ...]) -> None:
+    if not tier.startswith("agentic-"):
+        return
+    projects = Counter(string(task.get("project")) for task in tasks)
+    expected = 2 if tier == "agentic-slice" else 10
+    if tier != "agentic-confirmation" and (
+        len(projects) != 6 or set(projects.values()) != {expected}
+    ):
+        raise ValueError("agentic DEV cohorts require balanced coverage of six projects")
+    for task in tasks:
+        if (
+            task.get("scenario") != "agentic-coding"
+            or task.get("style") not in {"minimal", "coding", "tools"}
+            or task.get("group") != "project:" + string(task.get("project"))
+            or "fixture" not in task
+        ):
+            raise ValueError("agentic tasks require project groups, scenario, style and fixture")
+    if {task["style"] for task in tasks} != {"minimal", "coding", "tools"}:
+        raise ValueError("agentic cohorts require all three instruction styles")

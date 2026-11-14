@@ -1,34 +1,19 @@
 from pathlib import Path
 
 from benchmarks.native import file_reference
+from benchmarks.project_recipes import check_script, replace
 from benchmarks.sandbox import Sandbox
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, record, sequence, string
 from w1a1_eagle.records import artifact, canonical, read
 
 
-def replace(text: str, changes: object) -> str:
-    for value in sequence(changes):
-        change = record(value)
-        old, new = string(change["old"]), change["new"]
-        if not isinstance(new, str):
-            raise ValueError("replacement must be text")
-        if not old or text.count(old) != 1:
-            raise ValueError("project fixture mutation must match exactly once")
-        text = text.replace(old, new, 1)
-    return text
-
-
-def check_script(value: object) -> str:
-    return (
-        "import sys\nsys.path.insert(0, '/work')\n"
-        + string(value)
-        + "\nprint('ACCEPTANCE_CHECKS_PASSED')\n"
-    )
-
-
 def prepare(specification: Path, output: Path) -> Record:
     raw = read(specification)
+    if raw.get("schema") == 2:
+        from benchmarks.agentic import prepare_projects
+
+        return prepare_projects(specification, output)
     if set(raw) != {"schema", "sources", "recipes"} or raw["schema"] != 1 or output.exists():
         raise ValueError("new project workflow output and authenticated sources required")
     root = specification.resolve().parent

@@ -703,3 +703,73 @@ cases from the main checkout after verified worktree-copy removal. A relocated
 experimental-server replay also reproduces tokens and proposal/acceptance counts.
 `replay-plan.json` names the retained branch source snapshot and exact commands,
 so replay does not require a surviving worktree or changes to main's source.
+
+## Agentic coding panels
+
+The [agentic definition](../benchmarks/definitions/agentic-coding-v1.json) freezes
+six DEV projects: cJSON and Parson (C), inih and rapidcsv (C++), and humanize and
+Tomli (Python). Each contributes ten tasks, for sixty total; two fixed tasks per
+project form the twelve-task routine slice. The existing four cohorts and their
+references retain their definitions. These new panels supplement them.
+
+| Panel | Role and units | Policy |
+| --- | --- | --- |
+| `agentic-slice` | Level 2, 12 DEV tasks | One greedy pass, two tasks per project |
+| `agentic-suite` | Level 3, 60 DEV tasks | One greedy pass; project-group bootstrap |
+| `agentic-confirmation` | 15 reserved tasks on Boltons | Frozen, unexecuted; separate one-time confirmation allocation required |
+
+The suite contains bug fixes, small API additions, refactors and test-writing.
+Every DEV task has initial and follow-up acceptance checks; preparation requires
+broken controls to fail and both known repairs to pass. Regression-test tasks
+also run the submitted test against a protected faulty implementation, so an
+empty or always-passing test cannot satisfy the check. These are authored,
+controlled changes in real libraries, not naturally occurring issue-resolution
+traffic. Source excerpts provide relevant longer context; the smallest project
+has less context. No padding manufactures length. Task success and failures stay
+in the denominator, independently of exact drafter/target trajectory agreement.
+
+Task and live-result records carry plain `scenario: "agentic-coding"`, `project`
+(the `owner/repository` identity), `style` (`minimal`, `coding`, `tools`) and
+`task_kind` fields. `group` is `project:owner/repository`, so related tasks stay
+together in paired bootstraps. The suite has twenty tasks per instruction style.
+Style is varied across tasks rather than counting the same task three times.
+There are six independent project groups, not sixty independent repositories;
+intervals do not estimate run-to-run timing noise. Close speed calls require
+fresh matched repeats. The separate prefix cohort remains available unchanged.
+
+`prepare-project-workflows` schema 2 accepts `role`, authenticated `projects`
+(maps of project names to relative source paths and file references), `recipes`
+and `provenance`. Recipes use per-file `mutations`, `initial_changes` and
+`followup_changes`, protected Python check scripts, prompts and metadata.
+Checks may invoke the sandbox's C/C++ compilers. Compiler outputs belong under
+`/tmp`, never the final project file tree. For `confirmation`, preparation freezes
+recipes and records access but executes no controls; lack of qualification is
+explicit in its result. `prepare-panels` schema 2 takes authenticated
+`live_definitions` and preserves role and per-task style without creating a
+separate request harness. `prepare-checks` schema 2 takes an authenticated full
+`live` comparison and exactly twelve `slice_ids`; it preserves task definitions
+and writes the suite and slice establishment specifications. All execute through
+`live` and use `native-live-v3` reference semantics. Projection of slice references
+from a complete valid suite is supported by `record-reference`.
+
+Inputs, controls, source snapshots, provenance and runs live in the main checkout's
+`/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/`. The source-role
+check excludes named repositories against both TRAIN session batches and all
+46,412 repository aliases in the full CommitPackFT source. All 750 selected
+Magicoder seeds are authenticated against their retained seed hashes and prompt
+bodies; seeds, problems and solutions plus the 750 TRAIN CommitPack requests and
+old/new source files are scanned against upstream project code. The scan uses
+13-token shingles, at least twelve shared shingles and 35% containment in the
+smaller set, plus exact matches of at least 25 tokens. No selected project hits.
+First-commit dates are recorded; all projects predate the conservative source
+cutoff, so dates establish no additional exclusion. Magicoder has no repository
+names: absence of these matches is not proof of repository or semantic disjointness.
+The target's public pretraining exposure is unknown. No protected evaluation data
+is used by this curation.
+
+`context_tokens` records each live call's rendered context size.
+`arm_elapsed_seconds` includes loading and warmups; summary `elapsed_seconds`
+sums assigned-task wall times including tools. Slice cost projected from suite
+rows excludes an independent slice load/warmup. The intended costs are about
+three minutes per slice and ten to fifteen minutes per suite, per drafter and
+format; qualification must report actual costs rather than assuming these budgets.

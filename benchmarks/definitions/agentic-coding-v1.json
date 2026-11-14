@@ -1,0 +1,517 @@
+{
+  "schema": 1,
+  "version": "agentic-coding-v1",
+  "projects": [
+    {
+      "repository": "DaveGamble/cJSON",
+      "revision": "6d9f2443ab071f86e5d9b43025a40929ec41c46c",
+      "first_commits": [
+        "7276f4df051bc58af8a2da7d3199517d43d37582 2017-04-11T14:45:28+02:00",
+        "6b9b57be226a505a9c9cdd9ed029f22495ce04ec 2017-02-07T21:30:57+01:00",
+        "fc0df31a18b6acdcd01a4507060287097a50b4f4 2011-08-22T00:43:38-04:00",
+        "805b652e51477778e50337d44581b279e90f93a9 2009-08-26T03:55:20Z"
+      ],
+      "role": "dev",
+      "language": "C",
+      "license": "MIT",
+      "license_receipt": {
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/upstream/cJSON/LICENSE",
+        "sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+        "bytes": 1084
+      }
+    },
+    {
+      "repository": "kgabis/parson",
+      "revision": "ec53fb6528b45811df9db0db22cab96a94a96a11",
+      "first_commits": [
+        "de829803e3f58731f3438293469fd5d5f8b3fbf0 2012-10-16T19:56:54+02:00"
+      ],
+      "role": "dev",
+      "language": "C",
+      "license": "MIT",
+      "license_receipt": {
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/upstream/parson/LICENSE",
+        "sha256": "ea4347d6cdbf46b37f436d02150fc7c4167280e8d0c3269b5d61ef1d0a002542",
+        "bytes": 1079
+      }
+    },
+    {
+      "repository": "benhoyt/inih",
+      "revision": "611ab51f8dd7ec583543815b0de693495045fbf8",
+      "first_commits": [
+        "6aae10568f45ddea2ec2b29db76e4beab955f0f0 2009-07-10T09:48:46Z"
+      ],
+      "role": "dev",
+      "language": "C++",
+      "license": "BSD-3-Clause",
+      "license_receipt": {
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/upstream/inih/LICENSE.txt",
+        "sha256": "9ae3b39e83e9158e44b67733baa3bb2d84e80efdcfb14a5820210a42c7abdf7f",
+        "bytes": 1510
+      }
+    },
+    {
+      "repository": "d99kris/rapidcsv",
+      "revision": "2114a1aa0fc29c152717d4660d885a9dc42c10a3",
+      "first_commits": [
+        "50384e29e10babfcec2a795882e60ed0a2bad8c0 2017-05-19T23:26:33+08:00"
+      ],
+      "role": "dev",
+      "language": "C++",
+      "license": "BSD-3-Clause",
+      "license_receipt": {
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/upstream/rapidcsv/LICENSE",
+        "sha256": "8e60b029b7a16c4087af1e8dc695e4412f36f46819aa2fe1ef445e7776e40594",
+        "bytes": 1518
+      }
+    },
+    {
+      "repository": "python-humanize/humanize",
+      "revision": "a95004512dde4e8f0269946bb4af754382347441",
+      "first_commits": [
+        "4267a54777e2ef1c71146d516429c6047a6de983 2011-10-07T19:49:53-04:00"
+      ],
+      "role": "dev",
+      "language": "Python",
+      "license": "MIT",
+      "license_receipt": {
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/upstream/humanize/LICENCE",
+        "sha256": "8ba6c18112a431400ad3c743f70670079b302545d98884fc2f28a91c383a0380",
+        "bytes": 1078
+      }
+    },
+    {
+      "repository": "hukkin/tomli",
+      "revision": "43a86ade8b795c6ef9b4ec53372a607cd1ed426f",
+      "first_commits": [
+        "d2522b47ddf87014ff99d133d5e7c220d4a8894a 2021-05-23T17:27:13+03:00"
+      ],
+      "role": "dev",
+      "language": "Python",
+      "license": "MIT",
+      "license_receipt": {
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/upstream/tomli/LICENSE",
+        "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe",
+        "bytes": 1072
+      }
+    },
+    {
+      "repository": "mahmoud/boltons",
+      "revision": "d31d821d56c8f7756af9c30a864077f2e5855321",
+      "first_commits": [
+        "2c4595e3278c4b4b4175c1dbf6d00a5b02fc65f2 2013-02-19T18:04:47-08:00"
+      ],
+      "role": "confirmation",
+      "language": "Python",
+      "license": "BSD-3-Clause",
+      "license_receipt": {
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/upstream/boltons/LICENSE",
+        "sha256": "c301912653a8d8c99eab6212aa3aea8d164ea249d8ad53c941e0558a0a5ac1e3",
+        "bytes": 1497
+      }
+    }
+  ],
+  "dev_recipes": {
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/specs/dev-recipes-v3.json",
+    "sha256": "abb70b945e901cd54a3de243c268f3c978bfa22132c892862921f9c9bf0b2378",
+    "bytes": 7174830
+  },
+  "reserve_recipes": {
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/specs/reserve-recipes.json",
+    "sha256": "2b14cc467f1795cdbef7781da8d1f29c91d5fad98a0b34f6ddda658366a9b94f",
+    "bytes": 774835
+  },
+  "provenance": {
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/audit.json",
+    "sha256": "99729e5ec7378e24d922806697e8b4f716926a127faedf3bc57823660d8d5a65",
+    "bytes": 136299
+  },
+  "seed_authentication": {
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/seed-authentication.json",
+    "sha256": "1ec7a50cb05e92bed6b1486dbf83c022a00fc3c5c088426a8eeca7b2a0102121",
+    "bytes": 160764
+  },
+  "reserve_access": {
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/confirmation-access.json",
+    "sha256": "0388d729555f12a0e17de98120f42ad0fa69db4fe607a9c2748389dd73e95643",
+    "bytes": 730
+  },
+  "slice_ids": [
+    "cjson-number-type",
+    "cjson-object-type",
+    "parson-dot-number",
+    "parson-number-alias",
+    "inih-integer-base",
+    "inih-has-value",
+    "rapidcsv-row-count",
+    "rapidcsv-trim-option",
+    "humanize-ordinal-teens",
+    "humanize-ordinal-many",
+    "tomli-integer-base",
+    "tomli-load-many"
+  ],
+  "tasks": [
+    {
+      "id": "cjson-number-type",
+      "project": "DaveGamble/cJSON",
+      "style": "minimal",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "cjson-array-type",
+      "project": "DaveGamble/cJSON",
+      "style": "coding",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "cjson-bool-type",
+      "project": "DaveGamble/cJSON",
+      "style": "tools",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "cjson-case-sensitive",
+      "project": "DaveGamble/cJSON",
+      "style": "minimal",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "cjson-string-type",
+      "project": "DaveGamble/cJSON",
+      "style": "coding",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "cjson-null-type",
+      "project": "DaveGamble/cJSON",
+      "style": "tools",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "cjson-false-type",
+      "project": "DaveGamble/cJSON",
+      "style": "minimal",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "cjson-true-type",
+      "project": "DaveGamble/cJSON",
+      "style": "coding",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "cjson-object-type",
+      "project": "DaveGamble/cJSON",
+      "style": "tools",
+      "task_kind": "test-writing"
+    },
+    {
+      "id": "cjson-raw-type",
+      "project": "DaveGamble/cJSON",
+      "style": "minimal",
+      "task_kind": "test-writing"
+    },
+    {
+      "id": "parson-number-value",
+      "project": "kgabis/parson",
+      "style": "coding",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "parson-boolean-value",
+      "project": "kgabis/parson",
+      "style": "tools",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "parson-object-count",
+      "project": "kgabis/parson",
+      "style": "minimal",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "parson-array-count",
+      "project": "kgabis/parson",
+      "style": "coding",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "parson-object-number",
+      "project": "kgabis/parson",
+      "style": "tools",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "parson-array-number",
+      "project": "kgabis/parson",
+      "style": "minimal",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "parson-dot-number",
+      "project": "kgabis/parson",
+      "style": "coding",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "parson-dot-boolean",
+      "project": "kgabis/parson",
+      "style": "tools",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "parson-number-alias",
+      "project": "kgabis/parson",
+      "style": "minimal",
+      "task_kind": "test-writing"
+    },
+    {
+      "id": "parson-bool-alias",
+      "project": "kgabis/parson",
+      "style": "coding",
+      "task_kind": "test-writing"
+    },
+    {
+      "id": "inih-integer-base",
+      "project": "benhoyt/inih",
+      "style": "tools",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "inih-integer64-base",
+      "project": "benhoyt/inih",
+      "style": "minimal",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "inih-unsigned-base",
+      "project": "benhoyt/inih",
+      "style": "coding",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "inih-unsigned64-base",
+      "project": "benhoyt/inih",
+      "style": "tools",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "inih-empty-default",
+      "project": "benhoyt/inih",
+      "style": "minimal",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "inih-bool-yes",
+      "project": "benhoyt/inih",
+      "style": "coding",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "inih-bool-off",
+      "project": "benhoyt/inih",
+      "style": "tools",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "inih-has-value",
+      "project": "benhoyt/inih",
+      "style": "minimal",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "inih-section-match",
+      "project": "benhoyt/inih",
+      "style": "coding",
+      "task_kind": "test-writing"
+    },
+    {
+      "id": "inih-real-parser",
+      "project": "benhoyt/inih",
+      "style": "tools",
+      "task_kind": "test-writing"
+    },
+    {
+      "id": "rapidcsv-row-count",
+      "project": "d99kris/rapidcsv",
+      "style": "minimal",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "rapidcsv-delimiter-default",
+      "project": "d99kris/rapidcsv",
+      "style": "coding",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "rapidcsv-header-default",
+      "project": "d99kris/rapidcsv",
+      "style": "tools",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "rapidcsv-trim-option",
+      "project": "d99kris/rapidcsv",
+      "style": "minimal",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "rapidcsv-separator-option",
+      "project": "d99kris/rapidcsv",
+      "style": "coding",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "rapidcsv-quoted-newlines",
+      "project": "d99kris/rapidcsv",
+      "style": "tools",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "rapidcsv-quote-char",
+      "project": "d99kris/rapidcsv",
+      "style": "minimal",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "rapidcsv-row-label",
+      "project": "d99kris/rapidcsv",
+      "style": "coding",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "rapidcsv-skip-empty",
+      "project": "d99kris/rapidcsv",
+      "style": "tools",
+      "task_kind": "test-writing"
+    },
+    {
+      "id": "rapidcsv-skip-blank",
+      "project": "d99kris/rapidcsv",
+      "style": "minimal",
+      "task_kind": "test-writing"
+    },
+    {
+      "id": "humanize-ordinal-teens",
+      "project": "python-humanize/humanize",
+      "style": "coding",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "humanize-apnumber-bound",
+      "project": "python-humanize/humanize",
+      "style": "tools",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "humanize-size-base",
+      "project": "python-humanize/humanize",
+      "style": "minimal",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "humanize-negative-size",
+      "project": "python-humanize/humanize",
+      "style": "coding",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "humanize-singular-byte",
+      "project": "python-humanize/humanize",
+      "style": "tools",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "humanize-mixed-fraction",
+      "project": "python-humanize/humanize",
+      "style": "minimal",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "tomli-true-value",
+      "project": "hukkin/tomli",
+      "style": "tools",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "tomli-false-value",
+      "project": "hukkin/tomli",
+      "style": "minimal",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "tomli-integer-base",
+      "project": "hukkin/tomli",
+      "style": "coding",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "tomli-timezone-sign",
+      "project": "hukkin/tomli",
+      "style": "tools",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "tomli-error-line",
+      "project": "hukkin/tomli",
+      "style": "minimal",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "tomli-unicode-scalar",
+      "project": "hukkin/tomli",
+      "style": "coding",
+      "task_kind": "bug-fix"
+    },
+    {
+      "id": "humanize-ordinal-many",
+      "project": "python-humanize/humanize",
+      "style": "coding",
+      "task_kind": "feature"
+    },
+    {
+      "id": "humanize-sizes-many",
+      "project": "python-humanize/humanize",
+      "style": "tools",
+      "task_kind": "feature"
+    },
+    {
+      "id": "humanize-ordinal-helper",
+      "project": "python-humanize/humanize",
+      "style": "minimal",
+      "task_kind": "refactor"
+    },
+    {
+      "id": "humanize-list-helper",
+      "project": "python-humanize/humanize",
+      "style": "coding",
+      "task_kind": "refactor"
+    },
+    {
+      "id": "tomli-load-many",
+      "project": "hukkin/tomli",
+      "style": "tools",
+      "task_kind": "feature"
+    },
+    {
+      "id": "tomli-flatten",
+      "project": "hukkin/tomli",
+      "style": "minimal",
+      "task_kind": "feature"
+    },
+    {
+      "id": "tomli-scalar-helper",
+      "project": "hukkin/tomli",
+      "style": "coding",
+      "task_kind": "refactor"
+    },
+    {
+      "id": "tomli-offset-helper",
+      "project": "hukkin/tomli",
+      "style": "tools",
+      "task_kind": "refactor"
+    }
+  ],
+  "scope": "Authored controlled changes in permissive real projects; known repository names disjoint and no declared content-scan hits. Magicoder lacks repository identities, so absolute repository-disjointness remains unproven. Unknown target pretraining exposure. Confirmation curated but never executed.",
+  "curation_revision": "Current request after source context; bounded file navigation; concise follow-up tests. Pilot failure retained."
+}
