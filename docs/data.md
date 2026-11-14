@@ -46,6 +46,11 @@ It references the existing supplement and both capture shards; every supporting 
 is now inside `artifacts/datasets/`, including the copied Windows-produced files. This is TRAIN data with recorded prior
 exposure, not independent evaluation data or a new training allocation.
 
+The [TRAIN expansion](../results/train-bank-expansion/result.md) adds 2,633 records in
+three capture shards under `artifacts/datasets/train-expansion-01/` (874 session records
+and 1,759 single-turn prompts). Its `mixture.json` combines them with the 6K corpus as a
+`corpus-mixture-v1` manifest; bind it from an intent's `corpus` with `corpus_format`.
+
 The prompt-bank bodies and role/ID selections remain under `bank/v8`. Portable curation
 metadata is under `bank/v8-relocated-01`; its relocation receipt changes only the old
 exclusion-file locator. Historical admission/specification files remain byte-identical.

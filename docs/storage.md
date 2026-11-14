@@ -9,7 +9,7 @@ Shared host tools, drivers, global agent policy and the machine GPU lease are ho
 
 | Location | Contents |
 | --- | --- |
-| `artifacts/datasets/` | Original teacher corpus, supplemental captures and the complete 6K FP16 corpus |
+| `artifacts/datasets/` | Original teacher corpus, supplemental captures, the complete 6K FP16 corpus and the TRAIN expansion |
 | `artifacts/models/` | Target/drafter inputs, vocabulary and reusable model assets |
 | `artifacts/training/` | Training specifications, campaign runs and health records |
 | `artifacts/benchmarks/` | Comparison definitions, workloads, results and saved reference registry |

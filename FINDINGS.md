@@ -287,6 +287,11 @@ update-only throughput, with bit-identical states.
 [The frozen 6K TRAIN bank is fully captured](results/frozen-train-bank-capture/result.md):
 all 6,000 records passed product validation and metadata admission; FP16 arrays use about 230 GiB.
 
+[The TRAIN expansion adds 2,633 records and 1.72M supervised positions](results/train-bank-expansion/result.md):
+874 target-generated agentic tool sessions (one exact multi-span capture each, 0.27M labels)
+plus longer-answer code, writing, conversation, maths and paper prompts, 194.9 GB FP16 in
+4.9 GPU hours; the mixture with the 6K corpus admits 8,633 records. Learning value is unmeasured.
+
 [Early rounding screen](results/fp16-feature-screen/result.md), followed by
 [matched training/native adoption](results/fp16-storage-adoption/result.md).
 

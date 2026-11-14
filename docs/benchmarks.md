@@ -89,6 +89,9 @@ The screen sees only answer openings, and inputs there are longer than in traini
 calls reuse a cached context and evaluate about seven new prompt tokens per generated
 token, so drafter prompt cost matters most there. Function-calling prompts (Glaive) count
 as structured requests without the project harness. None of these is measured user traffic.
+The [TRAIN expansion](../results/train-bank-expansion/result.md) adds 874 whole tool
+sessions in the live harness format (1.6K–6.8K tokens, about 12% of positions supervised)
+on separate TRAIN projects; it does not change these DEV panels.
 
 ## Reusable references
 
