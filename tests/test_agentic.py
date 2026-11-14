@@ -204,3 +204,28 @@ def test_compiler_diagnostics_are_stable_and_raw_logs_are_retained(tmp_path: Pat
     assert diagnostic in str(original["output"])
     assert "/tmp/compiler-temporary.o: undefined reference to missing" in str(stable["output"])
     assert diagnostic in (tmp_path / "stable/test-1.log").read_text()
+
+
+def test_agentic_workspace_supports_binary_files_and_disables_child_bytecode(
+    tmp_path: Path,
+) -> None:
+    from benchmarks.sandbox import Sandbox
+
+    sandbox = Sandbox(
+        tmp_path,
+        {
+            "files": {"example.py": "value = 1\n"},
+            "environment": "no-python-bytecode-v1",
+            "checks": "import subprocess, sys\n"
+            "subprocess.run([sys.executable, '-c', 'import example'], check=True)\n"
+            "print('ACCEPTANCE_CHECKS_PASSED')\n",
+        },
+    )
+    assert sandbox.test()["passed"] is True
+    assert sandbox.state() == {"example.py": "value = 1\n"}
+    binary = sandbox.work.root / "result.bin"
+    binary.write_bytes(b"\xff\x00")
+    first = sandbox.state(True)
+    binary.write_bytes(b"\xff\x01")
+    assert first["result.bin"] != sandbox.state(True)["result.bin"]
+    assert first["example.py"] == sandbox.state(True)["example.py"]

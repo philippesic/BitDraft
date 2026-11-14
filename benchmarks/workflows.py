@@ -67,7 +67,8 @@ def live(specification: Path, output: Path) -> Record:
         ref.verify()
         fixture = read(ref.path)
         if (
-            set(fixture) - {"followup_checks", "diagnostics"} != {"schema", "files", "checks"}
+            set(fixture) - {"followup_checks", "diagnostics", "environment"}
+            != {"schema", "files", "checks"}
             or fixture["schema"] != 1
         ):
             raise ValueError("unsupported live fixture")
@@ -141,11 +142,7 @@ def live_leased(
                             task_store.root / "transcript.json",
                             canonical({"messages": transcript, "responses": generated}),
                         )
-                        state = {
-                            str(path.relative_to(sandbox.work.root)): path.read_text()
-                            for path in sorted(sandbox.work.root.rglob("*"))
-                            if path.is_file() and not path.is_symlink()
-                        }
+                        state = sandbox.state(task.get("scenario") == "agentic-coding")
                         fingerprint = identity(
                             {
                                 "responses": [signature(value) for value in generated],

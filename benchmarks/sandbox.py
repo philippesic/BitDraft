@@ -1,3 +1,4 @@
+import hashlib
 import os
 import re
 import signal
@@ -71,6 +72,9 @@ class Sandbox:
         self.diagnostics = fixture.get("diagnostics")
         if self.diagnostics not in {None, "stable-compiler-paths-v1"}:
             raise ValueError("unsupported diagnostic normalization")
+        self.environment = fixture.get("environment")
+        if self.environment not in {None, "no-python-bytecode-v1"}:
+            raise ValueError("unsupported sandbox environment")
         self.runs = 0
         self.followup_checks = fixture.get("followup_checks")
 
@@ -137,6 +141,15 @@ class Sandbox:
             return str(self.test()["output"])
         raise ValueError("unknown tool or invalid arguments")
 
+    def state(self, byte_hashes: bool = False) -> dict[str, str]:
+        return {
+            str(path.relative_to(self.work.root)): hashlib.sha256(path.read_bytes()).hexdigest()
+            if byte_hashes
+            else path.read_text()
+            for path in sorted(self.work.root.rglob("*"))
+            if path.is_file() and not path.is_symlink()
+        }
+
     def test(self) -> Record:
         self.runs += 1
         argv = [
@@ -178,6 +191,11 @@ class Sandbox:
             "--setenv",
             "PATH",
             "/usr/bin:/bin",
+            *(
+                ["--setenv", "PYTHONDONTWRITEBYTECODE", "1"]
+                if self.environment == "no-python-bytecode-v1"
+                else []
+            ),
             "/usr/bin/python3",
             "-I",
             "-B",

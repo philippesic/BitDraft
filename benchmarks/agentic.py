@@ -58,6 +58,7 @@ def prepare_projects(specification: Path, output: Path) -> Record:
             "files": broken,
             "checks": check_script(recipe["checks"]),
             "diagnostics": "stable-compiler-paths-v1",
+            "environment": "no-python-bytecode-v1",
         }
         if "followup" in recipe:
             fixture["followup_checks"] = check_script(recipe["followup_checks"])

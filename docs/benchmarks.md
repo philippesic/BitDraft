@@ -745,6 +745,9 @@ If that rate cannot be reached without trivial tasks, report the failed calibrat
 instead of establishing routine references. Calibration panels are not references.
 Agentic fixtures normalize random GCC temporary object names in returned diagnostic
 text with `stable-compiler-paths-v1`; raw test logs retain the original text.
+The `no-python-bytecode-v1` fixture environment suppresses bytecode in child Python
+processes. New agentic workspace signatures hash every regular file's raw bytes,
+including any binary outputs; legacy live signatures retain their text encoding.
 
 Task and live-result records carry plain `scenario: "agentic-coding"`, `project`
 (the `owner/repository` identity), `style` (`minimal`, `coding`, `tools`) and

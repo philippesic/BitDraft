@@ -361,6 +361,7 @@ class Comparison:
                     {
                         "stop_repeated_assistant": "exact-consecutive-content-v1",
                         "loop_accounting": "exclude-detection-call-from-primary; retain-raw-wall",
+                        "workspace_state": "all-regular-files-sha256-v1",
                     }
                     if self.tier.startswith("agentic-")
                     else {}
