@@ -245,6 +245,15 @@ def build_kernel_benchmark(specification: Path, output: Path) -> Record:
     return record_out
 
 
+def validate_activation_manifest(manifest: Record, drafter_digest: str) -> None:
+    if manifest.get("schema") != "kernel-activations-v1" or manifest.get("role") != "dev":
+        raise ValueError("authenticated DEV activation manifest required")
+    specification = record(manifest["specification"])
+    drafter = record(specification["drafter"])
+    if drafter.get("sha256") != drafter_digest:
+        raise ValueError("activation capture drafter differs from benchmark drafter")
+
+
 def benchmark_kernels(specification: Path, output: Path) -> Record:
     raw = read(specification)
     required = {
@@ -279,11 +288,7 @@ def benchmark_kernels(specification: Path, output: Path) -> Record:
     for library in libraries:
         library.verify()
     activation_manifest = read(inputs["activations"].path)
-    if (
-        activation_manifest.get("schema") != "kernel-activations-v1"
-        or activation_manifest.get("role") != "dev"
-    ):
-        raise ValueError("authenticated DEV activation manifest required")
+    validate_activation_manifest(activation_manifest, inputs["drafter"].sha256)
     layers = [integer(value) for value in sequence(raw["layers"])]
     groups = [string(value) for value in sequence(raw["groups"])]
     slots = [integer(value) for value in sequence(raw["slots"])]

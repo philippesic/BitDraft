@@ -37,8 +37,10 @@ Initial warmup was increased to 10000 launches after a noisy preliminary smoke
 case; both preliminary and final samples are retained. The full extended gate passed with 147 tests and 92 rule proofs;
 Cross-slot DP4A in `cross-01/result.json` passed all 48 group checks but was slower
 than the dispatched reference at every tested slot count. Original MMA in `mma-01/result.json` passed all 48 byte checks; it loses at four
-slots, wins gate/up at eight and sixteen, and loses down throughout. The authored
-tensor-core variants remain unqualified. Required variants plus broadcast-MMA
+slots, wins gate/up at eight and sixteen, and loses down throughout. Broadcast-MMA in `mma-broadcast-01/result.json` passed all 48 checks; it improves
+original MMA but still loses to dispatched DP4A at four slots. One-warp MMA remains
+unqualified. Nsight Compute was attempted separately and denied hardware-counter
+access (ERR_NVGPUCTRPERM); raw failure logs are retained under `mma-profile/`. Required variants plus broadcast-MMA
 and one-warp-MMA are compiled. No waiter is currently active.
 
 Read-only inputs are hardlinked into this worktree: runtime-v7 source, compatibility
