@@ -35,7 +35,9 @@ Baseline sweep in `reference-02/result.json` passed all 120 byte checks. Baselin
 down matrices in layers 2 and 5 are Q6_K; the other feed-forward matrices are Q4_K.
 Initial warmup was increased to 10000 launches after a noisy preliminary smoke
 case; both preliminary and final samples are retained. The full extended gate passed with 147 tests and 92 rule proofs;
-alternative-variant qualification is next. Required variants plus broadcast-MMA
+Cross-slot DP4A in `cross-01/result.json` passed all 48 group checks but was slower
+than the dispatched reference at every tested slot count. Original MMA and the
+authored tensor-core variants remain unqualified. Required variants plus broadcast-MMA
 and one-warp-MMA are compiled. No waiter is currently active.
 
 Read-only inputs are hardlinked into this worktree: runtime-v7 source, compatibility
