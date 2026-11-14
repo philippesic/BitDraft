@@ -2,10 +2,13 @@ import gc
 import hashlib
 import importlib.metadata
 import json
+import os
+import signal
 import struct
 import tempfile
 import tomllib
 import unittest
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import cast
 
@@ -14,7 +17,7 @@ import numpy as np
 import torch
 from torch import nn
 
-from w1a1_eagle.checkpoints.store import Store
+from w1a1_eagle.checkpoints.store import StateRef, Store
 from w1a1_eagle.clock import Monotonic
 from w1a1_eagle.contracts import Record, integer, number, record, sequence
 from w1a1_eagle.data import Artifact, Supervision, TailWindow, Window
@@ -34,12 +37,12 @@ from w1a1_eagle.model import (
 )
 from w1a1_eagle.numerical.captures import Capture, CaptureCache, CaptureSpec, load_capture
 from w1a1_eagle.numerical.corpus import Corpus
-from w1a1_eagle.numerical.entry import admission
+from w1a1_eagle.numerical.entry import admission, run_leased
 from w1a1_eagle.numerical.export import export_he4, packed_signs
-from w1a1_eagle.numerical.weights import load_he4, shapes
+from w1a1_eagle.numerical.weights import load_he4, prepare_initialization, shapes
 from w1a1_eagle.numerical.worker import TensorWorker, label_weights
+from w1a1_eagle.processes import ProcessIdentity
 from w1a1_eagle.records import artifact, canonical, read, reference
-from w1a1_eagle.supervisor import execute
 from w1a1_eagle.training import (
     Blocks,
     Budget,
@@ -118,11 +121,230 @@ def gguf_fixture(root: Path, cfg: Geometry) -> tuple[Artifact, Artifact]:
     return source_ref, vocabulary_ref
 
 
+def authenticated(path: Path) -> Artifact:
+    return Artifact(path, hashlib.sha256(path.read_bytes()).hexdigest(), path.stat().st_size)
+
+
+def fixture_corpus(root: Path, hidden: int) -> Artifact:
+    files = []
+    for tap in (2, 6, 10, 14, 18, 22, 26, 30):
+        path = root / f"layer-{tap}.f32"
+        path.write_bytes(np.full((24, hidden), tap / 32, dtype="<f4").tobytes())
+        files.append(reference(authenticated(path)))
+    metadata = root / "capture.json"
+    metadata.write_bytes(
+        canonical(
+            {
+                "taps": [2, 6, 10, 14, 18, 22, 26, 30],
+                "feature_semantics": "zero_based_pre_block_input_all_tokens",
+                "input_tokens": [0] * 24,
+                "prompt_tokens": 8,
+                "logit_positions": list(range(8, 24)),
+                "greedy_ids": [1] * 15 + [19],
+                "eog_ids": [19],
+            }
+        )
+    )
+    for name, values in (
+        ("inputs.npy", [0] * 24),
+        ("label_positions.npy", list(range(8, 24))),
+        ("labels.npy", [1] * 15 + [19]),
+    ):
+        path = root / name
+        np.save(path, np.asarray(values, dtype="int32"), allow_pickle=False)
+        files.append(reference(authenticated(path)))
+    source = root / "source.json"
+    source.write_bytes(
+        canonical(
+            {
+                "id": "one",
+                "group_id": "one",
+                "source": "synthetic-fixture",
+                "role": "fit",
+                "source_ancestry": {"fixture": "only"},
+                "identities": {"rendered_sha256": "c" * 64},
+                "pool": "unused_modern_reserved",
+            }
+        )
+    )
+    files.append(reference(authenticated(source)))
+    manifest = root / "corpus.json"
+    manifest.write_bytes(
+        canonical(
+            {
+                "schema": 1,
+                "target_sha256": "a" * 64,
+                "protected": ["heldout24"],
+                "expected_train": 1,
+                "records": [
+                    {
+                        "id": "one",
+                        "source": "synthetic-fixture",
+                        "group": "one",
+                        "topic": None,
+                        "aliases": [],
+                        "role": "train",
+                        "ancestry": "verified",
+                        "prior_use": "unobserved",
+                        "metadata": reference(authenticated(metadata)),
+                        "files": files,
+                    }
+                ],
+            }
+        )
+    )
+    return authenticated(manifest)
+
+
+def fixture_index(root: Path, corpus: Artifact) -> tuple[Artifact, Record]:
+    row = record(sequence(read(corpus.path)["records"])[0])
+    metadata_ref = record(row["metadata"])
+    metadata = read(Path(str(metadata_ref["path"])))
+    exclusions = root / "exclusions.json"
+    exclusions.write_bytes(canonical({"identities": ["heldout24"]}))
+    receipt: Record = {
+        "status": "VERIFIED_NATIVE_HARD_LABEL_CAPTURE",
+        "id": "one",
+        "group_id": "one",
+        "metadata": metadata_ref,
+        "files": row["files"],
+        "greedy_vs_full_logits_argmax": True,
+        "no_post_eog_labels": True,
+        "taps": [2, 6, 10, 14, 18, 22, 26, 30],
+        "feature_semantics": "zero_based_pre_block_input_all_tokens",
+        "feature_shape": [24, 256],
+        "windows": 2,
+        "unique_label_positions_in_windows": 16,
+        "unique_label_positions": 16,
+        "verified_rows": 16,
+        "sequences": 1,
+    }
+    proof = root / "proof.json"
+    proof.write_bytes(canonical(receipt))
+    index = root / "index.json"
+    index.write_bytes(
+        canonical(
+            {
+                "status": "ADMITTED_METADATA",
+                "manifest_sha256": "b" * 64,
+                "target_sha256": "a" * 64,
+                "exclusions": reference(authenticated(exclusions)),
+                "rows": [
+                    {
+                        "id": "one",
+                        "receipt_pin": reference(authenticated(proof)),
+                        "receipt": receipt,
+                        "metadata": metadata,
+                        "anchors": [8, 9],
+                    }
+                ],
+                "sequences": 1,
+                "windows": 2,
+                "unique_labels_in_windows": 16,
+                "note": "synthetic producer contract, not native qualification",
+            }
+        )
+    )
+    adapter: Record = {
+        "kind": "he4fresh-index-v1",
+        "logical_root": str(root),
+        "metadata_root": str(root),
+        "data_root": str(root),
+        "manifest_sha256": "b" * 64,
+        "target_sha256": "a" * 64,
+        "exclusions": reference(authenticated(exclusions)),
+        "sequences": 1,
+        "windows": 2,
+        "unique_positions": 16,
+    }
+    return authenticated(index), adapter
+
+
+LOADER_GEOMETRY = Geometry(hidden=256, intermediate=256, heads=4, kv_heads=1, head_dim=8, layers=1)
+
+
+@dataclass(frozen=True)
+class LoaderFixture:
+    source: Artifact
+    vocabulary: Artifact
+    initialization: Artifact
+    corpus: Artifact
+    intent: Record
+
+
+def loader_fixture(root: Path) -> LoaderFixture:
+    source_ref, vocabulary_ref = gguf_fixture(root, LOADER_GEOMETRY)
+    prepared = prepare_initialization(
+        source_ref, vocabulary_ref, 64 * 1024 * 1024, LOADER_GEOMETRY, root / "initialization"
+    )
+    initialization = artifact(prepared["materialized"], root)
+    corpus_ref = fixture_corpus(root, 256)
+    intent: Record = {
+        "schema": 2,
+        "objective": "exercise CPU source integration",
+        "checkpoint_updates": 1,
+        "checkpoint_seconds": 30,
+        "hypothesis": "one finite update can be restored",
+        "decision": "CPU plumbing qualification only",
+        "risk": "synthetic source cannot establish native parity or learning usefulness",
+        "authority_scope": "disposable-CPU-test",
+        "source": reference(source_ref),
+        "initialization": reference(initialization),
+        "vocabulary": reference(vocabulary_ref),
+        "corpus": reference(corpus_ref),
+        "parent": None,
+        "mode": "fresh",
+        "budget": {"updates": 1, "wall_seconds": 60, "attempts": 2, "retries": 0},
+        "memory_bytes": 64 * 1024 * 1024,
+        "state_bytes": 8 * 1024 * 1024,
+        "disk_reserve_bytes": 1,
+        "backing_available_bytes": 256 * 1024 * 1024,
+        "seed": 17,
+        "device": "cpu",
+        "science_policy": {
+            "id": "synthetic-fixture-only",
+            "min_unique_positions": 16,
+            "max_mean_visits": 4,
+        },
+        "geometry": {
+            "hidden": 256,
+            "intermediate": 256,
+            "heads": 4,
+            "kv_heads": 1,
+            "head_dim": 8,
+            "layers": 1,
+        },
+        "code_sha256": source_identity(Path.cwd()),
+    }
+    return LoaderFixture(source_ref, vocabulary_ref, initialization, corpus_ref, intent)
+
+
+def row_optimization() -> Record:
+    return {
+        "step_sizes": default_step_sizes(),
+        "schedule": {
+            "decay": "constant",
+            "warmup_updates": 0,
+            "start_update": 0,
+            "final_update": None,
+        },
+        "latent_scale": {"kind": "row", "multiple": 3},
+    }
+
+
+def scenario_intent(root: Path) -> tuple[LoaderFixture, Record, Path]:
+    loaded = loader_fixture(root)
+    intent = {**loaded.intent, "optimization": row_optimization()}
+    path = root / "intent.json"
+    path.write_bytes(canonical(intent))
+    return loaded, intent, path
+
+
 class TestNumerical(unittest.TestCase):
     def test_short_capture_uses_explicit_partial_objective(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            corpus = Corpus(self.fixture_corpus(root, 4), 1, 32 * 1024 * 1024, 4)
+            corpus = Corpus(fixture_corpus(root, 4), 1, 32 * 1024 * 1024, 4)
             original = corpus.rows[0].capture
             metadata = read(original.metadata.path)
             metadata.update(
@@ -166,7 +388,7 @@ class TestNumerical(unittest.TestCase):
     def test_fp16_feature_loading_matches_explicit_roundtrip(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            corpus = Corpus(self.fixture_corpus(root, 8), 1, 32 * 1024 * 1024, 8)
+            corpus = Corpus(fixture_corpus(root, 8), 1, 32 * 1024 * 1024, 8)
             original = corpus.rows[0].capture
             expected = load_capture(original, 32 * 1024 * 1024, 8)
             typed = record(cast(object, json.loads(original.metadata.path.read_text())))
@@ -196,140 +418,7 @@ class TestNumerical(unittest.TestCase):
                 load_capture(spec, 32 * 1024 * 1024, 8)
 
     def reference(self, path: Path) -> Artifact:
-        return Artifact(path, hashlib.sha256(path.read_bytes()).hexdigest(), path.stat().st_size)
-
-    def fixture_corpus(self, root: Path, hidden: int) -> Artifact:
-        files = []
-        for tap in (2, 6, 10, 14, 18, 22, 26, 30):
-            path = root / f"layer-{tap}.f32"
-            path.write_bytes(np.full((24, hidden), tap / 32, dtype="<f4").tobytes())
-            files.append(reference(self.reference(path)))
-        metadata = root / "capture.json"
-        metadata.write_bytes(
-            canonical(
-                {
-                    "taps": [2, 6, 10, 14, 18, 22, 26, 30],
-                    "feature_semantics": "zero_based_pre_block_input_all_tokens",
-                    "input_tokens": [0] * 24,
-                    "prompt_tokens": 8,
-                    "logit_positions": list(range(8, 24)),
-                    "greedy_ids": [1] * 15 + [19],
-                    "eog_ids": [19],
-                }
-            )
-        )
-        for name, values in (
-            ("inputs.npy", [0] * 24),
-            ("label_positions.npy", list(range(8, 24))),
-            ("labels.npy", [1] * 15 + [19]),
-        ):
-            path = root / name
-            np.save(path, np.asarray(values, dtype="int32"), allow_pickle=False)
-            files.append(reference(self.reference(path)))
-        source = root / "source.json"
-        source.write_bytes(
-            canonical(
-                {
-                    "id": "one",
-                    "group_id": "one",
-                    "source": "synthetic-fixture",
-                    "role": "fit",
-                    "source_ancestry": {"fixture": "only"},
-                    "identities": {"rendered_sha256": "c" * 64},
-                    "pool": "unused_modern_reserved",
-                }
-            )
-        )
-        files.append(reference(self.reference(source)))
-        manifest = root / "corpus.json"
-        manifest.write_bytes(
-            canonical(
-                {
-                    "schema": 1,
-                    "target_sha256": "a" * 64,
-                    "protected": ["heldout24"],
-                    "expected_train": 1,
-                    "records": [
-                        {
-                            "id": "one",
-                            "source": "synthetic-fixture",
-                            "group": "one",
-                            "topic": None,
-                            "aliases": [],
-                            "role": "train",
-                            "ancestry": "verified",
-                            "prior_use": "unobserved",
-                            "metadata": reference(self.reference(metadata)),
-                            "files": files,
-                        }
-                    ],
-                }
-            )
-        )
-        return self.reference(manifest)
-
-    def fixture_index(self, root: Path, corpus: Artifact) -> tuple[Artifact, Record]:
-        row = record(sequence(read(corpus.path)["records"])[0])
-        metadata_ref = record(row["metadata"])
-        metadata = read(Path(str(metadata_ref["path"])))
-        exclusions = root / "exclusions.json"
-        exclusions.write_bytes(canonical({"identities": ["heldout24"]}))
-        receipt: Record = {
-            "status": "VERIFIED_NATIVE_HARD_LABEL_CAPTURE",
-            "id": "one",
-            "group_id": "one",
-            "metadata": metadata_ref,
-            "files": row["files"],
-            "greedy_vs_full_logits_argmax": True,
-            "no_post_eog_labels": True,
-            "taps": [2, 6, 10, 14, 18, 22, 26, 30],
-            "feature_semantics": "zero_based_pre_block_input_all_tokens",
-            "feature_shape": [24, 256],
-            "windows": 2,
-            "unique_label_positions_in_windows": 16,
-            "unique_label_positions": 16,
-            "verified_rows": 16,
-            "sequences": 1,
-        }
-        proof = root / "proof.json"
-        proof.write_bytes(canonical(receipt))
-        index = root / "index.json"
-        index.write_bytes(
-            canonical(
-                {
-                    "status": "ADMITTED_METADATA",
-                    "manifest_sha256": "b" * 64,
-                    "target_sha256": "a" * 64,
-                    "exclusions": reference(self.reference(exclusions)),
-                    "rows": [
-                        {
-                            "id": "one",
-                            "receipt_pin": reference(self.reference(proof)),
-                            "receipt": receipt,
-                            "metadata": metadata,
-                            "anchors": [8, 9],
-                        }
-                    ],
-                    "sequences": 1,
-                    "windows": 2,
-                    "unique_labels_in_windows": 16,
-                    "note": "synthetic producer contract, not native qualification",
-                }
-            )
-        )
-        adapter: Record = {
-            "kind": "he4fresh-index-v1",
-            "logical_root": str(root),
-            "metadata_root": str(root),
-            "data_root": str(root),
-            "manifest_sha256": "b" * 64,
-            "target_sha256": "a" * 64,
-            "exclusions": reference(self.reference(exclusions)),
-            "sequences": 1,
-            "windows": 2,
-            "unique_positions": 16,
-        }
-        return self.reference(index), adapter
+        return authenticated(path)
 
     def test_default_geometry_against_retained_header(self) -> None:
         header = read(Path("evidence/he4-initializer-header.json"))
@@ -641,19 +730,15 @@ class TestNumerical(unittest.TestCase):
         self.assertFalse(torch.cuda.is_initialized())
 
     def test_gguf_loading_and_preflight(self) -> None:
-        cfg = Geometry(hidden=256, intermediate=256, heads=4, kv_heads=1, head_dim=8, layers=1)
+        cfg = LOADER_GEOMETRY
         with tempfile.TemporaryDirectory(prefix="binary-loader-") as directory:
             root = Path(directory)
-            source_ref, vocabulary_ref = gguf_fixture(root, cfg)
+            loaded = loader_fixture(root)
+            source_ref, vocabulary_ref = loaded.source, loaded.vocabulary
+            initialization, corpus_ref = loaded.initialization, loaded.corpus
             with self.assertRaisesRegex(ValueError, "memory"):
                 load_he4(source_ref, vocabulary_ref, 0, cfg)
             model = load_he4(source_ref, vocabulary_ref, 64 * 1024 * 1024, cfg)
-            from w1a1_eagle.numerical.weights import prepare_initialization
-
-            prepared = prepare_initialization(
-                source_ref, vocabulary_ref, 64 * 1024 * 1024, cfg, root / "initialization"
-            )
-            initialization = artifact(prepared["materialized"], root)
             cached_model = load_he4(
                 source_ref, vocabulary_ref, 64 * 1024 * 1024, cfg, initialization
             )
@@ -666,7 +751,6 @@ class TestNumerical(unittest.TestCase):
             block = cast(Layer, model.blocks[0])
             self.assertTrue(torch.equal(block.gate.latent_sign, torch.ones((256, 256))))
             self.assertTrue(torch.equal(block.gate.scale, torch.ones(256)))
-            corpus_ref = self.fixture_corpus(root, 256)
             corpus = Corpus(corpus_ref, 17, 64 * 1024 * 1024, 256)
             export_store = Store(root / "exports")
             exporter = TensorWorker(model, corpus, "export-fixture")
@@ -724,43 +808,7 @@ class TestNumerical(unittest.TestCase):
             single = Corpus(corpus_ref, 17, 64 * 1024 * 1024, 256, grouping=Grouping(1, 1))
             self.assertEqual((single.groups_per_pass, single.labels_per_update), (2, 15))
             self.assertEqual(sorted(single.locate(i)[1] for i in range(2)), [(8,), (9,)])
-            intent: Record = {
-                "schema": 2,
-                "objective": "exercise CPU source integration",
-                "checkpoint_updates": 1,
-                "checkpoint_seconds": 30,
-                "hypothesis": "one finite update can be restored",
-                "decision": "CPU plumbing qualification only",
-                "risk": "synthetic source cannot establish native parity or learning usefulness",
-                "authority_scope": "disposable-CPU-test",
-                "source": reference(source_ref),
-                "initialization": reference(initialization),
-                "vocabulary": reference(vocabulary_ref),
-                "corpus": reference(corpus_ref),
-                "parent": None,
-                "mode": "fresh",
-                "budget": {"updates": 1, "wall_seconds": 60, "attempts": 2, "retries": 0},
-                "memory_bytes": 64 * 1024 * 1024,
-                "state_bytes": 8 * 1024 * 1024,
-                "disk_reserve_bytes": 1,
-                "backing_available_bytes": 256 * 1024 * 1024,
-                "seed": 17,
-                "device": "cpu",
-                "science_policy": {
-                    "id": "synthetic-fixture-only",
-                    "min_unique_positions": 16,
-                    "max_mean_visits": 4,
-                },
-                "geometry": {
-                    "hidden": 256,
-                    "intermediate": 256,
-                    "heads": 4,
-                    "kv_heads": 1,
-                    "head_dim": 8,
-                    "layers": 1,
-                },
-                "code_sha256": source_identity(Path.cwd()),
-            }
+            intent = dict(loaded.intent)
             intent_path = root / "intent.json"
             intent_path.write_bytes(canonical(intent))
             sealed = Intent.load(intent_path)
@@ -856,142 +904,23 @@ class TestNumerical(unittest.TestCase):
             intent_path.write_bytes(canonical(optimized))
             with self.assertRaisesRegex(ValueError, "final update"):
                 admission(Intent.load(intent_path), corpus)
-            intent["optimization"] = {
-                "step_sizes": default_step_sizes(),
-                "schedule": {
-                    "decay": "constant",
-                    "warmup_updates": 0,
-                    "start_update": 0,
-                    "final_update": None,
-                },
-                "latent_scale": {"kind": "row", "multiple": 3},
-            }
-            intent_path.write_bytes(canonical(intent))
             editable = sealed.raw
             editable["authority_scope"] = "altered"
             self.assertEqual(sealed.raw["authority_scope"], "disposable-CPU-test")
-            with self.assertRaisesRegex(ValueError, "scope"):
-                execute(intent_path, root / "not-authorized", "unrelated-task")
-            self.assertFalse((root / "not-authorized").exists())
-            invalid_policy = dict(intent)
-            invalid_policy["science_policy"] = {
-                "id": "deliberate-refusal",
-                "min_unique_positions": 17,
-                "max_mean_visits": 4,
-            }
-            intent_path.write_bytes(canonical(invalid_policy))
-            with self.assertRaisesRegex(ValueError, "distinct-data"):
-                admission(Intent.load(intent_path), corpus)
-            refused = execute(intent_path, root / "refused-retry", "disposable-CPU-test")
-            self.assertEqual(record(refused["latest"])["outcome"], "refused")
-            self.assertIsNone(refused["worker"])
-            self.assertFalse((root / "refused-retry/states/latest.json").exists())
-            worker_refused = execute(
-                intent_path,
-                root / "worker-admission-refused",
-                "disposable-CPU-test",
-                worker_preflight=True,
-            )
-            self.assertEqual(record(worker_refused["latest"])["outcome"], "failed")
-            self.assertIsNone(worker_refused["worker"])
-            self.assertFalse((root / "worker-admission-refused/states/latest.json").exists())
-            intent_path.write_bytes(canonical(intent))
-            recovered = execute(intent_path, root / "refused-retry", "disposable-CPU-test")
-            self.assertEqual(recovered["attempts"], 2)
-            self.assertEqual(record(recovered["latest"])["outcome"], "complete", recovered)
-            self.assertGreater(
-                number(recovered["cumulative_attempt_seconds"]),
-                number(refused["cumulative_attempt_seconds"]),
-            )
-            invalid_policy["schema"] = 1
-            intent_path.write_bytes(canonical(invalid_policy))
-            with self.assertRaisesRegex(ValueError, "schema is 2"):
-                Intent.load(intent_path)
-            intent_path.write_bytes(canonical(intent))
 
-            def mutate_caller_intent(_admission: Record) -> None:
-                changed = dict(intent)
-                changed["authority_scope"] = "caller-changed-after-preflight"
-                intent_path.write_bytes(canonical(changed))
-
-            report = execute(
-                intent_path, root / "attempt", "disposable-CPU-test", mutate_caller_intent
-            )
-            sealed_path = next((root / "attempt/intents").glob("*.json"))
-            self.assertEqual(
-                Intent.load_sealed(sealed_path).raw["authority_scope"], "disposable-CPU-test"
-            )
-            self.assertEqual(Intent.load_sealed(sealed_path).base, intent_path.parent)
-            snapshot = next((root / "attempt/sources").iterdir())
-            self.assertEqual(source_identity(snapshot), intent["code_sha256"])
-            intent_path.write_bytes(canonical(intent))
-            self.assertEqual(record(report["latest"])["outcome"], "complete", report)
-            self.assertEqual(record(report["worker"])["updates"], 1)
-            self.assertEqual(record(record(report["worker"])["accounting"])["observed_labels"], 30)
-            exposures = [
-                row for row in Journal(root / "attempt").events() if row.get("kind") == "exposure"
-            ]
-            self.assertEqual(
-                [(row["anchors"], row["labels"]) for row in exposures], [([8, 9], [15, 15])]
-            )
-            self.assertIn("unknown", str(report["scientific"]))
-            latest = Store(root / "attempt/states").latest(
-                str(record(report["admission"])["recipe"])
-            )
-            self.assertEqual(latest.updates, 1)
-            saved_latent = torch.load(latest.artifact.path, weights_only=True)["model"][
-                "blocks.0.gate.latent_sign"
-            ]
-            self.assertLess(float((saved_latent - 1 / 3).abs().max()), 2e-3)
-            intent["mode"] = "resume"
-            intent["parent"] = reference(latest.artifact)
-            intent["budget"] = {"updates": 3, "wall_seconds": 60, "attempts": 4, "retries": 0}
+    def test_model_update_budget_stops_campaign_without_live_captures(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="binary-loader-") as directory:
+            root = Path(directory)
+            loaded, intent, intent_path = scenario_intent(root)
             intent["science_policy"] = {
                 "id": "synthetic-fixture-only",
                 "min_unique_positions": 16,
                 "max_mean_visits": 8,
             }
-            intent_path.write_bytes(canonical(intent))
-            resumed_report = execute(intent_path, root / "attempt", "disposable-CPU-test")
-            self.assertEqual(
-                record(resumed_report["latest"])["outcome"], "complete", resumed_report
-            )
-            self.assertEqual(record(resumed_report["worker"])["updates"], 3)
-            self.assertEqual(resumed_report["attempts"], 2)
-            self.assertTrue(
-                any(
-                    row.get("kind") == "checkpoint" and row.get("updates") == 2
-                    for row in Journal(root / "attempt").events()
-                )
-            )
-            self.assertGreater(
-                number(resumed_report["cumulative_attempt_seconds"]),
-                number(report["cumulative_attempt_seconds"]),
-            )
-            index_ref, adapter = self.fixture_index(root, corpus_ref)
+            index_ref, adapter = fixture_index(root, loaded.corpus)
             intent.update(
-                mode="fresh",
-                parent=None,
                 corpus=reference(index_ref),
                 input_adapter=adapter,
-                budget={"updates": 1, "wall_seconds": 60, "attempts": 2, "retries": 0},
-            )
-            intent_path.write_bytes(canonical(intent))
-            indexed_report = execute(intent_path, root / "indexed-attempt", "disposable-CPU-test")
-            self.assertEqual(
-                record(indexed_report["latest"])["outcome"], "complete", indexed_report
-            )
-            self.assertEqual(record(indexed_report["worker"])["updates"], 1)
-
-            import os
-            import signal
-            from dataclasses import asdict
-
-            from w1a1_eagle.checkpoints.store import StateRef
-            from w1a1_eagle.numerical.entry import run_leased
-            from w1a1_eagle.processes import ProcessIdentity
-
-            intent.update(
                 model_update_seconds=1e-12,
                 budget={"updates": 3, "wall_seconds": 60, "attempts": 4, "retries": 0},
             )
@@ -1542,7 +1471,7 @@ class TestNumerical(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as directory:
             corpus = Corpus(
-                self.fixture_corpus(Path(directory), 4),
+                fixture_corpus(Path(directory), 4),
                 5,
                 32 * 1024 * 1024,
                 4,

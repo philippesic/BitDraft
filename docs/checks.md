@@ -5,7 +5,7 @@
 | Command | Time | Use |
 | --- | --- | --- |
 | `uv run --locked --no-sync --offline python tools/check.py` | about 5–20 s, depending on type caches | While editing |
-| `uv run --locked --no-sync --offline python tools/check.py --full` | about 60 s | Commit gate; the pre-commit hook runs it |
+| `uv run --locked --no-sync --offline python tools/check.py --full` | about 40 s | Commit gate; the pre-commit hook runs it |
 | `uv run --locked --no-sync --offline python tools/check.py --self-test` | seconds | Rule proofs only, after changing a checker or rule |
 | `uv run --locked --no-sync --offline python -m tools.doctor` | seconds | Environment, hook and receipt inspection |
 
@@ -17,7 +17,7 @@ inspect GPU jobs or qualify native execution. Read [support](support.md) and the
 result for measured hardware coverage.
 
 The plain command runs every static stage and the ordinary CPU tests and labels itself
-partial. It skips the numerical test (about 45 s), the required-test roster and the
+partial. It skips the numerical test (about 20 s), the required-test roster and the
 rule proofs, keeps a type-check cache of about 300 MB in `.venv/check-temp`, writes no receipt and
 is never a commit result. `--full` runs everything portable and writes the receipt.
 
@@ -95,6 +95,9 @@ syntax fails closed. Patches are checked hunk by hunk against their pinned base.
 ## Adding things
 
 - A new test, source file or document needs no checker edit.
+- The full gate runs each test class in `tests/numerical` as its own process, all in
+  parallel, each within 60 s; every test method found there must pass. Give a slow
+  end-to-end scenario its own class rather than lengthening an existing one.
 - Add a test to `policy/cpu-tests.toml` only when its removal must fail the gate.
 - A new public command must be declared in `policy/commands.toml`.
 - Prefer local archived evidence (see [evidence access](evidence.md)). An original-repository
