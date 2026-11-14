@@ -373,7 +373,11 @@ class Intent:
 
     @property
     def frozen_baseline(self) -> Artifact | None:
-        return artifact(self.raw["frozen_baseline"], self.base) if "frozen_baseline" in self.raw else None
+        return (
+            artifact(self.raw["frozen_baseline"], self.base)
+            if "frozen_baseline" in self.raw
+            else None
+        )
 
     @property
     def cpu_threads(self) -> int:
@@ -414,7 +418,17 @@ class Intent:
                 "grouping": cast(Record, asdict(self.grouping)),
                 "optimization": cast(Record, asdict(self.optimization)),
                 "blocks": self.blocks.encode(),
-                **({"frozen_tables": {"format": self.frozen_format, "sha256": self.frozen_baseline.sha256, "bytes": self.frozen_baseline.size}} if self.frozen_baseline is not None else {}),
+                **(
+                    {
+                        "frozen_tables": {
+                            "format": self.frozen_format,
+                            "sha256": self.frozen_baseline.sha256,
+                            "bytes": self.frozen_baseline.size,
+                        }
+                    }
+                    if self.frozen_baseline is not None
+                    else {}
+                ),
                 "sampling": None
                 if self.sampling is None
                 else {"sha256": self.sampling.sha256, "bytes": self.sampling.size},

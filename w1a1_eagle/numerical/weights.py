@@ -261,7 +261,9 @@ def load_he4(
                 raise ValueError("Baseline frozen table must be Q4_K or Q6_K: " + name)
             if tuple(int(v) for v in reversed(item.shape)) != tuple(tensors[name].shape):
                 raise ValueError("Baseline frozen table geometry differs: " + name)
-            decoded = api.dequantize(item.data, item.tensor_type).reshape(tuple(tensors[name].shape))
+            decoded = api.dequantize(item.data, item.tensor_type).reshape(
+                tuple(tensors[name].shape)
+            )
             operand = torch.tensor(decoded, dtype=torch.float32)
             if not bool(torch.isfinite(operand).all()):
                 raise ValueError("nonfinite Baseline frozen operand")

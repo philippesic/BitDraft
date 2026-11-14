@@ -742,7 +742,9 @@ class TestNumerical(unittest.TestCase):
             for index, (name, _, _) in enumerate(old.native_codes):
                 if name == "output.weight":
                     continue
-                kind = gguf.GGMLQuantizationType.Q4_K if index % 2 else gguf.GGMLQuantizationType.Q6_K
+                kind = (
+                    gguf.GGMLQuantizationType.Q4_K if index % 2 else gguf.GGMLQuantizationType.Q6_K
+                )
                 shape = shapes(cfg)[name]
                 width = 144 if kind == gguf.GGMLQuantizationType.Q4_K else 210
                 data = np.zeros((shape[0], shape[1] // 256 * width), dtype=np.uint8)
@@ -753,7 +755,9 @@ class TestNumerical(unittest.TestCase):
             writer.write_tensors_to_file()
             writer.close()
             baseline = authenticated(baseline_path)
-            model = load_he4(source, vocabulary, 64 * 1024 * 1024, cfg, None, "baseline-k", baseline)
+            model = load_he4(
+                source, vocabulary, 64 * 1024 * 1024, cfg, None, "baseline-k", baseline
+            )
             corpus = Corpus(corpus_ref, 17, 64 * 1024 * 1024, 256)
             parent = TensorWorker(old, corpus, "old")
             state = parent.checkpoint(Store(root / "states"), 64 * 1024 * 1024)
@@ -763,12 +767,23 @@ class TestNumerical(unittest.TestCase):
                 worker.restore(state, 64 * 1024 * 1024)
             worker.restore(state, 64 * 1024 * 1024, "branch")
             self.assertIsNotNone(worker.frozen_transition)
-            exported = export_he4(worker, source, vocabulary, Store(root / "exports"), 8 * 1024 * 1024, 32 * 1024 * 1024)
+            exported = export_he4(
+                worker,
+                source,
+                vocabulary,
+                Store(root / "exports"),
+                8 * 1024 * 1024,
+                32 * 1024 * 1024,
+            )
             for tensor in gguf.GGUFReader(str(exported.artifact.path)).tensors:
                 if tensor.name in expected:
-                    self.assertEqual((tensor.tensor_type, tensor.data.tobytes()), expected[tensor.name])
+                    self.assertEqual(
+                        (tensor.tensor_type, tensor.data.tobytes()), expected[tensor.name]
+                    )
             child = worker.checkpoint(Store(root / "child"), 64 * 1024 * 1024)
-            resumed_model = load_he4(source, vocabulary, 64 * 1024 * 1024, cfg, None, "baseline-k", baseline)
+            resumed_model = load_he4(
+                source, vocabulary, 64 * 1024 * 1024, cfg, None, "baseline-k", baseline
+            )
             resumed = TensorWorker(resumed_model, corpus, "new")
             resumed.restore(child, 64 * 1024 * 1024)
             self.assertEqual(resumed.frozen_transition, worker.frozen_transition)
@@ -866,7 +881,15 @@ class TestNumerical(unittest.TestCase):
             self.assertEqual(sealed.grouping, Grouping())
             intent_path.write_bytes(canonical({**intent, "frozen_format": "Q4_0"}))
             self.assertEqual(Intent.load(intent_path).recipe, sealed.recipe)
-            intent_path.write_bytes(canonical({**intent, "frozen_format": "baseline-k", "frozen_baseline": reference(source_ref)}))
+            intent_path.write_bytes(
+                canonical(
+                    {
+                        **intent,
+                        "frozen_format": "baseline-k",
+                        "frozen_baseline": reference(source_ref),
+                    }
+                )
+            )
             self.assertNotEqual(Intent.load(intent_path).recipe, sealed.recipe)
             intent_path.write_bytes(canonical({**intent, "frozen_format": "baseline-k"}))
             with self.assertRaisesRegex(ValueError, "authenticated"):
