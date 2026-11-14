@@ -241,7 +241,7 @@ def load_he4(
         digest = hashlib.sha256()
         for name, value in parent_model.named_buffers():
             digest.update(canonical([name, str(value.dtype), list(value.shape)]))
-            digest.update(value.detach().cpu().contiguous().numpy().tobytes())
+            digest.update(cast(Array, value.detach().cpu().contiguous().numpy()).tobytes())
         parent_frozen_sha256 = digest.hexdigest()
         del parent_model
         frozen_baseline.verify()

@@ -732,9 +732,10 @@ class TestNumerical(unittest.TestCase):
     def test_baseline_frozen_tables_export_and_branch(self) -> None:
         with tempfile.TemporaryDirectory(prefix="binary-frozen-") as directory:
             root = Path(directory)
-            loaded = loader_fixture(root)
-            cfg = LOADER_GEOMETRY
-            old = load_he4(loaded.source, loaded.vocabulary, 64 * 1024 * 1024, cfg)
+            cfg = Geometry(hidden=256, intermediate=256, heads=32, kv_heads=8, head_dim=8, layers=1)
+            source, vocabulary = gguf_fixture(root, cfg)
+            corpus_ref = fixture_corpus(root, 256)
+            old = load_he4(source, vocabulary, 64 * 1024 * 1024, cfg)
             baseline_path = root / "baseline.gguf"
             writer = gguf.GGUFWriter(str(baseline_path), "dflash")
             expected = {}
@@ -752,8 +753,8 @@ class TestNumerical(unittest.TestCase):
             writer.write_tensors_to_file()
             writer.close()
             baseline = authenticated(baseline_path)
-            model = load_he4(loaded.source, loaded.vocabulary, 64 * 1024 * 1024, cfg, None, "baseline-k", baseline)
-            corpus = Corpus(loaded.corpus, 17, 64 * 1024 * 1024, 256)
+            model = load_he4(source, vocabulary, 64 * 1024 * 1024, cfg, None, "baseline-k", baseline)
+            corpus = Corpus(corpus_ref, 17, 64 * 1024 * 1024, 256)
             parent = TensorWorker(old, corpus, "old")
             state = parent.checkpoint(Store(root / "states"), 64 * 1024 * 1024)
             worker = TensorWorker(model, corpus, "new")
@@ -762,10 +763,19 @@ class TestNumerical(unittest.TestCase):
                 worker.restore(state, 64 * 1024 * 1024)
             worker.restore(state, 64 * 1024 * 1024, "branch")
             self.assertIsNotNone(worker.frozen_transition)
-            exported = export_he4(worker, loaded.source, loaded.vocabulary, Store(root / "exports"), 8 * 1024 * 1024, 32 * 1024 * 1024)
+            exported = export_he4(worker, source, vocabulary, Store(root / "exports"), 8 * 1024 * 1024, 32 * 1024 * 1024)
             for tensor in gguf.GGUFReader(str(exported.artifact.path)).tensors:
                 if tensor.name in expected:
                     self.assertEqual((tensor.tensor_type, tensor.data.tobytes()), expected[tensor.name])
+            child = worker.checkpoint(Store(root / "child"), 64 * 1024 * 1024)
+            resumed_model = load_he4(source, vocabulary, 64 * 1024 * 1024, cfg, None, "baseline-k", baseline)
+            resumed = TensorWorker(resumed_model, corpus, "new")
+            resumed.restore(child, 64 * 1024 * 1024)
+            self.assertEqual(resumed.frozen_transition, worker.frozen_transition)
+            with self.assertRaisesRegex(ValueError, "frozen"):
+                resumed.restore(state, 64 * 1024 * 1024, "continue")
+            with self.assertRaisesRegex(ValueError, "authenticated"):
+                load_he4(source, vocabulary, 64 * 1024 * 1024, cfg, None, "baseline-k")
             model.native_types = ()
             with self.assertRaisesRegex(ValueError, "frozen"):
                 worker.verify_frozen()
@@ -854,6 +864,13 @@ class TestNumerical(unittest.TestCase):
             intent_path.write_bytes(canonical(intent))
             sealed = Intent.load(intent_path)
             self.assertEqual(sealed.grouping, Grouping())
+            intent_path.write_bytes(canonical({**intent, "frozen_format": "Q4_0"}))
+            self.assertEqual(Intent.load(intent_path).recipe, sealed.recipe)
+            intent_path.write_bytes(canonical({**intent, "frozen_format": "baseline-k", "frozen_baseline": reference(source_ref)}))
+            self.assertNotEqual(Intent.load(intent_path).recipe, sealed.recipe)
+            intent_path.write_bytes(canonical({**intent, "frozen_format": "baseline-k"}))
+            with self.assertRaisesRegex(ValueError, "authenticated"):
+                Intent.load(intent_path)
             grouped = dict(intent)
             grouped["grouping"] = {"max_windows": 1, "activation_bytes": 1, "device_bytes": 2}
             intent_path.write_bytes(canonical(grouped))
