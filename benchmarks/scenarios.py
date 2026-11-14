@@ -70,7 +70,7 @@ def scenario_report(
             "summary": relative_speed(
                 {
                     name: {
-                        **totals([row for row in selected if row["arm"] == name]),
+                        **unit_totals([row for row in selected if row["arm"] == name]),
                         "drafter_bytes": sizes[name],
                         "resident_gpu_mib": (resident_gpu_mib or {}).get(name),
                         **(
@@ -92,7 +92,7 @@ def scenario_report(
             "comparisons": comparisons,
             "by_outcome": {
                 outcome: {
-                    name: totals(members)
+                    name: unit_totals(members)
                     for name in names
                     if (
                         members := [
@@ -111,6 +111,22 @@ def scenario_report(
             else "matched greedy output paths",
         }
     return output
+
+
+def unit_totals(rows: list[Record]) -> Record:
+    summary = totals(rows)
+    if all("completed" in row for row in rows):
+        summary["tasks"] = summary.pop("requests")
+        for field in (
+            "derived_rounds",
+            "accepted_per_round",
+            "emitted_per_round",
+            "proposed_per_round",
+            "cap_hits",
+            "eos_stops",
+        ):
+            summary.pop(field)
+    return summary
 
 
 def faster_verdict(scenarios: Record, candidate: str, confirmed: bool = False) -> Record:
@@ -159,6 +175,8 @@ def level2_decision(slices: Record, main_panel: Record, candidate: str) -> Recor
     reasons: list[str] = [
         name + ": missing Level 2 scenario" for name in PRIMARY if name not in slices
     ]
+    if not main_panel:
+        reasons.append("missing broader-request comparison")
     timing_unresolved: list[str] = []
     for scenario, value in slices.items():
         comparisons = record(record(value)["comparisons"])

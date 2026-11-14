@@ -57,6 +57,7 @@ def test_level2_regression_or_direction_disagreement_requires_level3() -> None:
     assert historical["timing_unresolved"]
     slices["sampled"] = scenario(1.01)
     assert not level2_decision(slices, main, "candidate")["level3_required"]
+    assert level2_decision(slices, {}, "candidate")["level3_required"]
 
 
 def test_sampled_pairing_keeps_seeds_and_rejects_unmatched_seed() -> None:
@@ -163,3 +164,23 @@ def test_small_development_slice_cannot_establish_level3_coverage(tmp_path: Path
     assert qualified_scenario(replace(spec, tier="thinking-slice"), 2, "thinking-on")
     assert qualified_scenario(replace(spec, tier="thinking-suite"), 3, "thinking-on")
     assert not qualified_scenario(replace(spec, role="confirmation"), 3, "coding-requests")
+
+
+def test_workflow_totals_do_not_infer_model_calls_from_task_count() -> None:
+    from benchmarks.scenarios import unit_totals
+
+    rows: list[Record] = [
+        {
+            "tokens": 12,
+            "wall_seconds": 2.0,
+            "native": {"accepted": 5, "proposed": 10},
+            "completed": completed,
+            "correct": True,
+        }
+        for completed in (True, False)
+    ]
+    summary = unit_totals(rows)
+    assert summary["tasks"] == 2
+    assert summary["tokens_per_second"] == 6.0
+    assert summary["acceptance"] == 0.5
+    assert "derived_rounds" not in summary and "cap_hits" not in summary

@@ -45,6 +45,8 @@ def report(specification: Path, output: Path) -> Record:
         ]
         groups = scenario_report(rows, spec, cached, record(result.get("resident_gpu_mib", {})))
         if name == "requests":
+            if level == 2 and spec.tier not in {"comparison", "full"}:
+                raise ValueError("Level 2 requests must be the broader request panel")
             for control in ("baseline", "prior-leader"):
                 if any(row["arm"] == control for row in rows):
                     main_comparisons[candidate + "/" + control] = paired(rows, candidate, control)
