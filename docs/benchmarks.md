@@ -53,7 +53,9 @@ Level 2 guides development decisions. Run the four routine cohorts below, the fi
 is worse than Baseline or the prior leader beyond its paired 95% interval, or its
 speed direction disagrees with the broader request panel, Level 3 is required before
 a decision. Saved timing is descriptive; acceptance regression against a saved leader
-also triggers escalation. Missing scenarios prevent a Level 2 clearance.
+also triggers escalation. Historical speed direction still participates in the disagreement
+check. The report lists unresolved timing when no paired interval exists; absence of an
+escalation trigger is not speed qualification. Missing scenarios prevent a Level 2 clearance.
 
 Level 3 is required to claim **faster**: all routine request coverage, all 40 thinking
 requests, the same 40 sampled requests with three seeds, and the comprehensive
@@ -305,6 +307,10 @@ sampler defines the output distribution; exact sample-and-match/rejection verifi
 preserves it mathematically. `verify-sampler` tests both native algorithms, zero support
 and EOG against controlled probabilities. Passing finite tests qualifies the implementation
 within that scope; it does not prove neural output quality or all distributions.
+The maintained serving policy uses greedy draft proposals and target sample-and-match:
+it draws a target token at each accepted position and keeps a draft token only when
+it matches. Fixed-seed paths can therefore coincide across arms under consistent32.
+Rejection sampling is also verifier-tested, but is not this serving policy.
 Pair the same request and seed across arms, keeping all seeds/variants within their source
 group in the bootstrap. Compare aggregate emitted tokens / total request seconds, with
 paired source-group 95% intervals. Outputs can differ despite identical seeds: do not

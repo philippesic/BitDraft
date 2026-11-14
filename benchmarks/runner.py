@@ -305,7 +305,7 @@ def compare_leased(
             if spec.tier in {"harness", "prefix"}
             else {},
             "code_sha256": code_identity,
-            "scientific": "sampled descriptive robustness; unequal outputs cannot rank checkpoints by throughput"
+            "scientific": "sampled throughput with qualified target distribution; fixed seeds do not require equal paths or establish response-quality equivalence"
             if spec.sampling.temperature
             else "matched request panel only; live workflow and harness claims require their panels",
         }

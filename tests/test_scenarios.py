@@ -46,11 +46,17 @@ def test_verdict_requires_every_scenario_and_fresh_confirmation() -> None:
 
 def test_level2_regression_or_direction_disagreement_requires_level3() -> None:
     main = record(scenario(1.01)["comparisons"])
-    assert level2_decision({"sampled": scenario(0.8, 0.9)}, main, "candidate")["level3_required"]
-    assert level2_decision({"sampled": scenario(0.8, 1.1)}, main, "candidate")["level3_required"]
-    assert not level2_decision({name: scenario(1.01) for name in PRIMARY}, main, "candidate")[
-        "level3_required"
-    ]
+    slices: Record = {name: scenario(1.01) for name in PRIMARY}
+    slices["sampled"] = scenario(0.8, 0.9)
+    assert level2_decision(slices, main, "candidate")["level3_required"]
+    slices["sampled"] = scenario(0.8, 1.1)
+    assert level2_decision(slices, main, "candidate")["level3_required"]
+    slices["sampled"] = {"comparisons": {"candidate/baseline": {"historical_speed_ratio": 0.95}}}
+    historical = level2_decision(slices, main, "candidate")
+    assert historical["level3_required"]
+    assert historical["timing_unresolved"]
+    slices["sampled"] = scenario(1.01)
+    assert not level2_decision(slices, main, "candidate")["level3_required"]
 
 
 def test_sampled_pairing_keeps_seeds_and_rejects_unmatched_seed() -> None:

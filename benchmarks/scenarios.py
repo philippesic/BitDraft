@@ -106,7 +106,7 @@ def scenario_report(
             }
             if any("completed" in row for row in selected)
             else {},
-            "timing_scope": "sampled throughput: same requests and seeds, unequal token paths; not a quality or latency equivalence claim"
+            "timing_scope": "sampled throughput: same requests and seeds, potentially unequal token paths; not a quality or latency equivalence claim"
             if spec.sampling.temperature
             else "matched greedy output paths",
         }
@@ -159,6 +159,7 @@ def level2_decision(slices: Record, main_panel: Record, candidate: str) -> Recor
     reasons: list[str] = [
         name + ": missing Level 2 scenario" for name in PRIMARY if name not in slices
     ]
+    timing_unresolved: list[str] = []
     for scenario, value in slices.items():
         comparisons = record(record(value)["comparisons"])
         for control in ("baseline", "prior-leader"):
@@ -173,12 +174,25 @@ def level2_decision(slices: Record, main_panel: Record, candidate: str) -> Recor
                 )
             if "upper" in bounds and number(bounds["upper"]) < 1:
                 reasons.append(scenario + ": slower than " + control + " beyond interval")
+            comparison_ratio = comparison.get(
+                "speed_ratio", comparison.get("historical_speed_ratio")
+            )
+            main_ratio = main.get("speed_ratio", main.get("historical_speed_ratio"))
+            if comparison and "upper" not in bounds:
+                timing_unresolved.append(
+                    scenario + ": no paired timing interval against " + control
+                )
             if (
-                "speed_ratio" in comparison
-                and "speed_ratio" in main
-                and ((number(comparison["speed_ratio"]) < 1) != (number(main["speed_ratio"]) < 1))
+                comparison_ratio is not None
+                and main_ratio is not None
+                and ((number(comparison_ratio) < 1) != (number(main_ratio) < 1))
             ):
                 reasons.append(
                     scenario + ": direction disagrees with main panel against " + control
                 )
-    return {"level3_required": bool(reasons), "reasons": reasons}
+    return {
+        "level3_required": bool(reasons),
+        "reasons": reasons,
+        "timing_unresolved": timing_unresolved,
+        "scope": "absence of an escalation trigger is not a speed qualification",
+    }
