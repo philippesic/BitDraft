@@ -46,6 +46,8 @@ class ExportTypes(Protocol):
     def Q4_0(self) -> object: ...
     @property
     def Q4_K(self) -> object: ...
+    @property
+    def Q6_K(self) -> object: ...
 
 
 class WriterStates(Protocol):
@@ -204,12 +206,20 @@ def prepare(
         for name, (shape, data) in cached.items():
             array = cast(NativeArray, np.frombuffer(data, dtype=np.uint8).reshape(shape))
             head_code = name == "output.weight"
+            kind_name = "Q4_K" if head_code else dict(model.native_types).get(name, "Q4_0")
+            kind = {"Q4_0": kinds.Q4_0, "Q4_K": kinds.Q4_K, "Q6_K": kinds.Q6_K}[kind_name]
+            operand = model.vocabulary if head_code else frozen[name]
+            restored = torch.tensor(
+                api.dequantize(array, kind).reshape(tuple(operand.shape)), dtype=torch.float32
+            )
+            if not torch.equal(restored, operand.detach().cpu()):
+                raise ValueError("frozen code execution/export operands disagree")
             tensors.append(
                 ExportTensor(
                     name,
                     array,
-                    kinds.Q4_K if head_code else kinds.Q4_0,
-                    "Q4_K" if head_code else "Q4_0",
+                    kind,
+                    kind_name,
                 )
             )
     else:
@@ -290,8 +300,8 @@ def export_he4(
         expected: Expected = {}
         for tensor in tensors:
             shape = tuple(tensor.data.shape)
-            if tensor.kind_name in {"Q4_0", "Q4_K"}:
-                block, width = (32, 18) if tensor.kind_name == "Q4_0" else (256, 144)
+            if tensor.kind_name in {"Q4_0", "Q4_K", "Q6_K"}:
+                block, width = {"Q4_0": (32, 18), "Q4_K": (256, 144), "Q6_K": (256, 210)}[tensor.kind_name]
                 shape = (*shape[:-1], shape[-1] // width * block)
             expected[tensor.name] = (
                 tensor.kind_name,
