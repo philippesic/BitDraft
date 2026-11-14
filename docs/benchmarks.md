@@ -578,8 +578,10 @@ quality, attention, vocabulary scoring and server overhead remain outside this t
 Add a variant in `native/kernel-variants.cuh`, dispatch it in
 `native/kernel-benchmark.cu`, and register its name in
 `benchmarks/kernel_benchmark.py`. New matrix families can reuse the authenticated
-input manifest, sample parser, timing and identity records; add a preparation/launch
-adapter for their format and ordinary-runtime reference. Do not weaken byte equality
+input manifest, sample parser, timing and identity records.
+`prepare_feed_forward` is the current preparation adapter; a new family supplies
+prepared commands and metric metadata to the same timing loop, plus its native
+launch and ordinary-runtime reference. Do not weaken byte equality
 for an alternative arithmetic path.
 
 Artifact disposition: retain build receipts, compiler/source identities, specifications,
@@ -604,3 +606,17 @@ token signatures and proposed/accepted counts against clean runtime-v7 on DEV
 requests before interpreting server timing. Existing calibration measurement and
 round-profile counter readers provide clean per-round drafter timing without a
 profiling runtime or tracing overhead.
+
+Example invocation sequence, with the authenticated specifications described above:
+
+```sh
+python -m benchmarks build-kernel-benchmark kernel-build-spec.json artifacts/native/kernel-benchmark-v7
+python -m benchmarks capture-kernel-activations kernel-capture-spec.json artifacts/benchmarks/kernel-inputs
+python -m benchmarks benchmark-kernels kernel-timing-spec.json artifacts/benchmarks/kernel-times
+```
+
+The reported weight-read floor assumes one cold read of the weight payload and row
+metadata at the supplied bandwidth. It is not a physical lower bound for these
+cache-resident repeats: a Baseline matrix may finish faster than its cold-read floor.
+Report this distinction alongside effective GB/s, and retain outlier samples when
+stating the timing spread.

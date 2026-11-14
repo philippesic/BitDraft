@@ -13,6 +13,7 @@ from benchmarks.native import file_reference
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.config import native_environment
 from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
+from w1a1_eagle.data import Artifact
 from w1a1_eagle.device import cuda_identity, device_lease
 from w1a1_eagle.numerical.gguf_readback import Reader
 from w1a1_eagle.records import artifact, canonical, read
@@ -254,6 +255,130 @@ def validate_activation_manifest(manifest: Record, drafter_digest: str) -> None:
         raise ValueError("activation capture drafter differs from benchmark drafter")
 
 
+def prepare_feed_forward(
+    raw: Record,
+    inputs: dict[str, Artifact],
+    executable: Path,
+    activation_manifest: Record,
+    output: Path,
+) -> list[tuple[list[str], Record]]:
+    owner = Store(output)
+    layers = [integer(value) for value in sequence(raw["layers"])]
+    groups = [string(value) for value in sequence(raw["groups"])]
+    slots = [integer(value) for value in sequence(raw["slots"])]
+    variants = [string(value) for value in sequence(raw["variants"])]
+    warmup, repeats, trials = (integer(raw[name]) for name in ("warmup", "repeats", "trials"))
+    one, four = Weights(inputs["drafter"].path), Weights(inputs["baseline"].path)
+    prepared: list[tuple[list[str], Record]] = []
+    activation_rows = record(activation_manifest["tensors"])
+    for layer in layers:
+        for group in groups:
+            base = f"blk.{layer}.ffn_{group}"
+            geometry = one.tensors[base + ".w1a1_packed"].shape
+            if len(geometry) != 2:
+                raise ValueError("matrix tensor required")
+            k, m = geometry[0] * 32, geometry[1]
+            bits = integer(one.metadata[base + ".w1ax.bits"])
+            mode = integer(one.metadata[base + ".w1ax.mode"])
+            clip_value = one.metadata[base + ".w1ax.clip"]
+            clip = (
+                cast(tuple[float], struct.unpack("<e", struct.pack("<H", integer(clip_value))))[0]
+                if type(clip_value) is int
+                else number(clip_value)
+            )
+            for count in slots:
+                prefix = output / f"layer-{layer}-{group}-{count}"
+                activation = artifact(
+                    activation_rows[f"{base}.{count}"], inputs["activations"].path.parent
+                )
+                activation.verify()
+                if activation.size != k * count * 4:
+                    raise ValueError("activation geometry differs")
+                owner.atomic(Path(str(prefix) + ".input"), activation.path.read_bytes())
+                for suffix, tensor_suffix, kinds in (
+                    ("weights", "w1a1_packed", {26}),
+                    ("scales", "w1a1_scale", {0, 1}),
+                    ("midpoint", "w1ax_midpoint", {0, 1}),
+                    ("gain", "w1ax_gain", {0, 1}),
+                ):
+                    owner.atomic(
+                        Path(str(prefix) + "." + suffix),
+                        one.tensor(base + "." + tensor_suffix, kinds),
+                    )
+                if group == "gate":
+                    for suffix, tensor_suffix, kinds in (
+                        ("weights", "w1a1_packed", {26}),
+                        ("scales", "w1a1_scale", {0, 1}),
+                        ("midpoint", "w1ax_midpoint", {0, 1}),
+                    ):
+                        owner.atomic(
+                            Path(str(prefix) + ".up." + suffix),
+                            one.tensor(f"blk.{layer}.ffn_up." + tensor_suffix, kinds),
+                        )
+                for variant in variants:
+                    names = (
+                        ("gate", "up") if variant == "baseline" and group == "gate" else (group,)
+                    )
+                    for name in names:
+                        selected = prefix
+                        if variant == "baseline":
+                            if four.tensors[f"blk.{layer}.ffn_{name}.weight"].shape != (k, m):
+                                raise ValueError("Baseline and one-bit matrix geometries differ")
+                            selected = Path(str(prefix) + "." + name)
+                            owner.atomic(
+                                Path(str(selected) + ".input"), activation.path.read_bytes()
+                            )
+                            owner.atomic(
+                                Path(str(selected) + ".quantized"),
+                                four.tensor(f"blk.{layer}.ffn_{name}.weight", {12, 14}),
+                            )
+                        matrices = 2 if group == "gate" and variant != "baseline" else 1
+                        weight_bytes = (
+                            four.tensors[f"blk.{layer}.ffn_{name}.weight"].size
+                            if variant == "baseline"
+                            else matrices * (m * k // 8 + m * 8)
+                        )
+                        command = [
+                            str(executable),
+                            str(selected),
+                            variant,
+                            str(m),
+                            str(k),
+                            str(count),
+                            str(
+                                four.tensors[f"blk.{layer}.ffn_{name}.weight"].kind
+                                if variant == "baseline"
+                                else bits
+                            ),
+                            str(mode),
+                            str(clip),
+                            str(warmup),
+                            str(repeats),
+                            str(trials),
+                            str(int(matrices == 2)),
+                            "v1",
+                        ]
+                        row: Record = {
+                            "layer": layer,
+                            "group": group,
+                            "matrix": name,
+                            "variant": variant,
+                            "slots": count,
+                            "m": m,
+                            "k": k,
+                            "matrices": matrices,
+                            "weight_bytes": weight_bytes,
+                            "weight_format": {12: "Q4_K", 14: "Q6_K"}[
+                                four.tensors[f"blk.{layer}.ffn_{name}.weight"].kind
+                            ]
+                            if variant == "baseline"
+                            else "W1Ax",
+                            "activation": file_reference(activation.path),
+                        }
+                        prepared.append((command, row))
+    return prepared
+
+
 def benchmark_kernels(specification: Path, output: Path) -> Record:
     raw = read(specification)
     required = {
@@ -330,114 +455,7 @@ def benchmark_kernels(specification: Path, output: Path) -> Record:
     if output.exists():
         raise ValueError("kernel measurement output must be new")
     owner = Store(output)
-    one, four = Weights(inputs["drafter"].path), Weights(inputs["baseline"].path)
-    prepared: list[tuple[list[str], Record]] = []
-    activation_rows = record(activation_manifest["tensors"])
-    for layer in layers:
-        for group in groups:
-            base = f"blk.{layer}.ffn_{group}"
-            geometry = one.tensors[base + ".w1a1_packed"].shape
-            if len(geometry) != 2:
-                raise ValueError("matrix tensor required")
-            k, m = geometry[0] * 32, geometry[1]
-            bits = integer(one.metadata[base + ".w1ax.bits"])
-            mode = integer(one.metadata[base + ".w1ax.mode"])
-            clip_value = one.metadata[base + ".w1ax.clip"]
-            clip = (
-                cast(tuple[float], struct.unpack("<e", struct.pack("<H", integer(clip_value))))[0]
-                if type(clip_value) is int
-                else number(clip_value)
-            )
-            for count in slots:
-                prefix = output / f"layer-{layer}-{group}-{count}"
-                activation = artifact(
-                    activation_rows[f"{base}.{count}"], inputs["activations"].path.parent
-                )
-                activation.verify()
-                if activation.size != k * count * 4:
-                    raise ValueError("activation geometry differs")
-                owner.atomic(Path(str(prefix) + ".input"), activation.path.read_bytes())
-                for suffix, tensor_suffix, kinds in (
-                    ("weights", "w1a1_packed", {26}),
-                    ("scales", "w1a1_scale", {0, 1}),
-                    ("midpoint", "w1ax_midpoint", {0, 1}),
-                    ("gain", "w1ax_gain", {0, 1}),
-                ):
-                    owner.atomic(
-                        Path(str(prefix) + "." + suffix),
-                        one.tensor(base + "." + tensor_suffix, kinds),
-                    )
-                if group == "gate":
-                    for suffix, tensor_suffix, kinds in (
-                        ("weights", "w1a1_packed", {26}),
-                        ("scales", "w1a1_scale", {0, 1}),
-                        ("midpoint", "w1ax_midpoint", {0, 1}),
-                    ):
-                        owner.atomic(
-                            Path(str(prefix) + ".up." + suffix),
-                            one.tensor(f"blk.{layer}.ffn_up." + tensor_suffix, kinds),
-                        )
-                for variant in variants:
-                    names = (
-                        ("gate", "up") if variant == "baseline" and group == "gate" else (group,)
-                    )
-                    for name in names:
-                        selected = prefix
-                        if variant == "baseline":
-                            if four.tensors[f"blk.{layer}.ffn_{name}.weight"].shape != (k, m):
-                                raise ValueError("Baseline and one-bit matrix geometries differ")
-                            selected = Path(str(prefix) + "." + name)
-                            owner.atomic(
-                                Path(str(selected) + ".input"), activation.path.read_bytes()
-                            )
-                            owner.atomic(
-                                Path(str(selected) + ".quantized"),
-                                four.tensor(f"blk.{layer}.ffn_{name}.weight", {12, 14}),
-                            )
-                        matrices = 2 if group == "gate" and variant != "baseline" else 1
-                        weight_bytes = (
-                            four.tensors[f"blk.{layer}.ffn_{name}.weight"].size
-                            if variant == "baseline"
-                            else matrices * (m * k // 8 + m * 8)
-                        )
-                        command = [
-                            str(executable.path),
-                            str(selected),
-                            variant,
-                            str(m),
-                            str(k),
-                            str(count),
-                            str(
-                                four.tensors[f"blk.{layer}.ffn_{name}.weight"].kind
-                                if variant == "baseline"
-                                else bits
-                            ),
-                            str(mode),
-                            str(clip),
-                            str(warmup),
-                            str(repeats),
-                            str(trials),
-                            str(int(matrices == 2)),
-                            "v1",
-                        ]
-                        row: Record = {
-                            "layer": layer,
-                            "group": group,
-                            "matrix": name,
-                            "variant": variant,
-                            "slots": count,
-                            "m": m,
-                            "k": k,
-                            "matrices": matrices,
-                            "weight_bytes": weight_bytes,
-                            "weight_format": {12: "Q4_K", 14: "Q6_K"}[
-                                four.tensors[f"blk.{layer}.ffn_{name}.weight"].kind
-                            ]
-                            if variant == "baseline"
-                            else "W1Ax",
-                            "activation": file_reference(activation.path),
-                        }
-                        prepared.append((command, row))
+    prepared = prepare_feed_forward(raw, inputs, executable.path, activation_manifest, output)
     owner.atomic(output / "specification.json", canonical(raw))
     results: list[Record] = []
     with device_lease("cuda"):
