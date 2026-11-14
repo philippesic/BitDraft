@@ -190,7 +190,33 @@ def test_references_deduplicate_validate_raw_and_preserve_historical_scope(tmp_p
     assert "speed_ratio_95_interval" not in comparison and "historical_speed_ratio" in comparison
     subset = record(historical_comparisons(rows[:1], cached)["candidate/baseline"])
     assert subset["groups"] == 1 and subset["acceptance_difference"] == 0
+    target_record = read(artifact(refs[0][1], tmp_path).path, 16 * 1024 * 1024)
+    old_arguments = [
+        value
+        for value in sequence(record(target_record["protocol"])["target_arguments"])
+        if value not in {"--cache-ram", "0"}
+    ]
+    old_era = tmp_path / "old-era-target.json"
+    old_era.write_bytes(
+        canonical(
+            {
+                **target_record,
+                "protocol": {
+                    **record(target_record["protocol"]),
+                    "policy": "native-greedy-request-v2",
+                    "target_arguments": old_arguments,
+                },
+            }
+        )
+    )
     for broken in (
+        replace(
+            spec,
+            references=(
+                ("target", artifact(file_reference(old_era), tmp_path)),
+                spec.references[1],
+            ),
+        ),
         replace(spec, depth=3),
         replace(spec, tasks=({**spec.tasks[0], "output_cap": 3}, *spec.tasks[1:])),
         replace(spec, references=spec.references[:1]),

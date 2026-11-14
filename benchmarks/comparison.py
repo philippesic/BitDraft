@@ -291,7 +291,7 @@ class Comparison:
 
     def reference_protocol(self) -> Record:
         return {
-            "policy": "native-greedy-request-v2" if self.tier != "live" else "native-live-v2",
+            "policy": "native-greedy-request-v3" if self.tier != "live" else "native-live-v3",
             "target_arguments": arguments(
                 Path("server"), Path("target"), None, self.context, self.depth, 0
             ),

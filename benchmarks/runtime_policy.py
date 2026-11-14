@@ -41,6 +41,8 @@ def arguments(
         "off",
         "--no-webui",
         "--no-warmup",
+        "--cache-ram",
+        "0",
         "--spec-type",
         "draft-dflash" if drafter else "none",
         "-lv",
