@@ -304,3 +304,8 @@ plus longer-answer code, writing, conversation, maths and paper prompts, 194.9 G
 and independent source/WIP recovery replace obsolete large raw run trees. Current corpora
 and the original HE4broad continuation parent remain intact. The old 5080 and 2080 Ti
 checkouts and obsolete external artifacts have been removed after preservation checks.
+
+### F026: Where does S4 spend a speculative round on WSL2?
+
+Target work and host waiting dominate; one-bit feed-forward saves no time at depth 3.
+The drafter counter excludes handoff. [Result](results/round-profile-baseline-s4/result.md).

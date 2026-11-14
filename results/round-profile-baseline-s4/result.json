@@ -1,0 +1,2868 @@
+{
+  "schema": 1,
+  "kind": "extracted and recomputed; no rerun",
+  "records": [
+    {
+      "source": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-02/round-profile.json",
+      "sha256": "79e105e9b638c4d337b4da38aa7403131a3f885dbc3fa60f190b44793aba357f",
+      "status": "complete",
+      "code_sha256": "99acd451a7a1ad0b02b4a84c71f2137d753a0af784e946f31f7690f3563b3162",
+      "identities": {
+        "clean_runtime": {
+          "bytes": 3072,
+          "path": "/home/philip/BitDraft/artifacts/native/runtime-v6/result.json",
+          "sha256": "661ca313ea26c0d846356422185c524d061c87ce1b2376bea627a866cb1a395e"
+        },
+        "clean_server": {
+          "bytes": 17872,
+          "path": "/home/philip/BitDraft/artifacts/native/runtime-v6/build/bin/llama-server",
+          "sha256": "190b49eb8a752cc6019264a50046243655d59167503f07e919792bd779505ae5"
+        },
+        "comparison": {
+          "bytes": 3235,
+          "path": "/home/philip/BitDraft/artifacts/benchmarks/references/runtime-v6-depth3/lean-q4km/requests-establish.json",
+          "sha256": "f8e4724e11ebcb627fac0421273f15204674da095c0ce0ad003c7bca167f8a6a"
+        },
+        "diagnostic_runtime": {
+          "bytes": 3292,
+          "path": "/home/philip/BitDraft/artifacts/native/runtime-v6-round-profile/result.json",
+          "sha256": "cae9df8e34cbd89f9327cba0e8975f0cb6e6bffca56edc4e7b132bc1f7881c03"
+        },
+        "diagnostic_server": {
+          "bytes": 17872,
+          "path": "/home/philip/BitDraft/artifacts/native/runtime-v6-round-profile/build/bin/llama-server",
+          "sha256": "2101a9c41de91acc1c7fe60fd2fe1912a6785489fbc7caad949e4bf8e9cc349e"
+        },
+        "drafters": {
+          "baseline": {
+            "bytes": 381456064,
+            "path": "/home/philip/BitDraft/artifacts/models/dflash-4b-q4km.gguf",
+            "sha256": "83586a63eab58b4ef9dd1d72de667738fcedb289e97d98d01d8df66f23df610f"
+          },
+          "s4": {
+            "bytes": 541022016,
+            "path": "/home/philip/BitDraft/artifacts/training/block-test-s4-01/exports/10ade33ae91b19a471f76ef65463005485725c1377a58728624ceee5afe8b509.bin",
+            "sha256": "10ade33ae91b19a471f76ef65463005485725c1377a58728624ceee5afe8b509"
+          }
+        },
+        "profiler": {
+          "bytes": 76353640,
+          "path": "/opt/nvidia/nsight-systems/2025.5.2/target-linux-x64/nsys",
+          "sha256": "dff002f06a6068fad71ea64ff84bde41278b5a93b0916d27989bc6c9bb84f535"
+        },
+        "target": {
+          "bytes": 2834975040,
+          "path": "/home/philip/BitDraft/artifacts/models/qwen35-4b-q4km.gguf",
+          "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+        },
+        "workload": {
+          "bytes": 908215,
+          "path": "/home/philip/BitDraft/artifacts/benchmarks/references/runtime-v6-depth3/lean-q4km/requests-workload.json",
+          "sha256": "f25c750415006c383e1f22791fdd56f2b8c2c12a9ea0e1ae33ca03b10491e905"
+        }
+      },
+      "settings": {
+        "bands": {
+          "long": [
+            "qasper-83e708263727cf48ee85fb86",
+            "qasper-609c07fa0d439dad7a031189"
+          ],
+          "short": [
+            "ultrachat-706515e8cd15f41a372165c1",
+            "commitpack-4f317134640f49c71a821abe",
+            "commitpack-25c9eb5ae51f166a59e4bf7a"
+          ]
+        },
+        "context": 32768,
+        "decode_consistent": "32",
+        "depths": [
+          1,
+          3,
+          7
+        ],
+        "output_cap": 128
+      },
+      "gpu": "index, name, uuid, driver_version, memory.total [MiB]\n0, NVIDIA GeForce RTX 5080, GPU-44ceb8b5-b67a-a317-fee3-f01c9201994e, 617.42, 16303 MiB\n",
+      "clocks": {
+        "clean": "unmodified runtime, server counters only: decode ms per derived round and the drafter generate counter",
+        "nodes": "diagnostic runtime under Nsight with CUDA graphs disabled and one NVTX range per graph node: GPU kernel time per component",
+        "phases": "diagnostic runtime under Nsight with CUDA graphs as served: NVTX phase walls and GPU activity per round"
+      },
+      "profiles": [
+        {
+          "band": "short",
+          "depth": 1,
+          "drafter": "baseline",
+          "tasks": [
+            "ultrachat-706515e8cd15f41a372165c1",
+            "commitpack-4f317134640f49c71a821abe",
+            "commitpack-25c9eb5ae51f166a59e4bf7a"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 0.8941798941798942,
+              "derived_rounds": 189,
+              "draft_counter_ms": 1.6850213903743314,
+              "remainder_ms": 6.525274905921965,
+              "requests": 3,
+              "round_ms": 8.210296296296296
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 1.6850213903743314,
+            "clean_round_ms": 8.210296296296296,
+            "instrumentation_round_ms": 0.7075026455026467,
+            "kernel_time_ratio_nodes_to_phases": 0.942779718153493,
+            "nodes_attributed_ms": 1.3619634782608698,
+            "nodes_attribution_coverage": 0.9999999999999997,
+            "nodes_drafter_gpu_ms": 1.3619634782608703,
+            "phases_draft_counter_ms": 1.87127807486631,
+            "phases_drafter_gpu_ms": 1.444625347826087,
+            "phases_drafter_wall_ms": 2.3842467771739124,
+            "phases_round_ms": 8.917798941798942,
+            "phases_traced_round_ms": 8.83921522282609,
+            "unexplained_draft_ms": -0.2705249357126258
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.012600217391304349,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 1.432025130434783,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 0.8941798941798942,
+              "derived_rounds": 189,
+              "draft_counter_ms": 1.87127807486631,
+              "remainder_ms": 7.0465208669326325,
+              "requests": 3,
+              "round_ms": 8.917798941798942
+            },
+            "traced_rounds": 184,
+            "wall_ms": 8.83921522282609,
+            "phase_ms": {
+              "checkpoint": 0.015338190217391289,
+              "draft": 1.9555463260869572,
+              "process": 0.42870045108695626,
+              "target": 5.909251081521734,
+              "verify": 0.5184690217391308
+            },
+            "gpu_busy_ms": 6.178216288043484,
+            "drafter_gpu_ms": 1.3083642880434785
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06597098369565223,
+              "attention over context (score, softmax, mix)": 0.03876889673913043,
+              "attention projections (q, k, v, output)": 0.15674141847826084,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.012539478260869558,
+              "feature handoff + context K/V update": 0.12208155978260866,
+              "feed-forward down": 0.11757916304347833,
+              "feed-forward gate": 0.10315327173913037,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0166691847826087,
+              "feed-forward up": 0.10335104347826082,
+              "final norm + vocabulary scoring": 0.5681793043478264,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.023441255434782596,
+              "token selection kernels": 0.03348791847826085
+            },
+            "server_counters": {
+              "accepted_per_round": 0.8941798941798942,
+              "derived_rounds": 189,
+              "draft_counter_ms": 3.3161176470588236,
+              "remainder_ms": 14.601289760348585,
+              "requests": 3,
+              "round_ms": 17.91740740740741
+            },
+            "traced_rounds": 184,
+            "wall_ms": 17.92855129347826,
+            "phase_ms": {
+              "checkpoint": 0.01476243478260869,
+              "draft": 3.40284944021739,
+              "process": 1.0351184239130427,
+              "target": 12.94136108152174,
+              "verify": 0.5211755054347829
+            },
+            "gpu_busy_ms": 6.534526728260869,
+            "drafter_gpu_ms": 1.3619634782608694
+          }
+        },
+        {
+          "band": "long",
+          "depth": 1,
+          "drafter": "baseline",
+          "tasks": [
+            "qasper-83e708263727cf48ee85fb86",
+            "qasper-609c07fa0d439dad7a031189"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 0.8014184397163121,
+              "derived_rounds": 141,
+              "draft_counter_ms": 1.8587428571428575,
+              "remainder_ms": 8.99701600810537,
+              "requests": 2,
+              "round_ms": 10.855758865248227
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 1.8587428571428575,
+            "clean_round_ms": 10.855758865248227,
+            "instrumentation_round_ms": 0.8146312056737592,
+            "kernel_time_ratio_nodes_to_phases": 0.9445746041542142,
+            "nodes_attributed_ms": 1.5123192536231886,
+            "nodes_attribution_coverage": 1.0000000000000004,
+            "nodes_drafter_gpu_ms": 1.512319253623188,
+            "phases_draft_counter_ms": 2.1415428571428574,
+            "phases_drafter_gpu_ms": 1.6010585579710144,
+            "phases_drafter_wall_ms": 2.663243956521739,
+            "phases_round_ms": 11.670390070921986,
+            "phases_traced_round_ms": 11.623301224637684,
+            "unexplained_draft_ms": -0.36294278778467826
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.015180601449275365,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 1.5858779565217387,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 0.8014184397163121,
+              "derived_rounds": 141,
+              "draft_counter_ms": 2.1415428571428574,
+              "remainder_ms": 9.528847213779128,
+              "requests": 2,
+              "round_ms": 11.670390070921986
+            },
+            "traced_rounds": 138,
+            "wall_ms": 11.623301224637684,
+            "phase_ms": {
+              "checkpoint": 0.015644115942028983,
+              "draft": 2.2216856449275357,
+              "process": 0.44155831159420283,
+              "target": 8.382280260869566,
+              "verify": 0.5466438840579709
+            },
+            "gpu_busy_ms": 8.691923485507242,
+            "drafter_gpu_ms": 1.4600285144927534
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06744736231884059,
+              "attention over context (score, softmax, mix)": 0.1823869855072464,
+              "attention projections (q, k, v, output)": 0.156716463768116,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.015257347826086953,
+              "feature handoff + context K/V update": 0.12214107246376812,
+              "feed-forward down": 0.11774628985507249,
+              "feed-forward gate": 0.10375355797101442,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.016521840579710147,
+              "feed-forward up": 0.10371039130434784,
+              "final norm + vocabulary scoring": 0.5687517173913044,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.023483528985507228,
+              "token selection kernels": 0.034402695652173916
+            },
+            "server_counters": {
+              "accepted_per_round": 0.8014184397163121,
+              "derived_rounds": 141,
+              "draft_counter_ms": 3.1861928571428573,
+              "remainder_ms": 16.130714944275585,
+              "requests": 2,
+              "round_ms": 19.31690780141844
+            },
+            "traced_rounds": 138,
+            "wall_ms": 19.351059130434773,
+            "phase_ms": {
+              "checkpoint": 0.015626282608695648,
+              "draft": 3.248129253623186,
+              "process": 0.9340187028985506,
+              "target": 14.610022985507243,
+              "verify": 0.5264138913043478
+            },
+            "gpu_busy_ms": 9.062060833333328,
+            "drafter_gpu_ms": 1.5123192536231882
+          }
+        },
+        {
+          "band": "short",
+          "depth": 1,
+          "drafter": "s4",
+          "tasks": [
+            "ultrachat-706515e8cd15f41a372165c1",
+            "commitpack-4f317134640f49c71a821abe",
+            "commitpack-25c9eb5ae51f166a59e4bf7a"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 0.817258883248731,
+              "derived_rounds": 197,
+              "draft_counter_ms": 1.5346530612244897,
+              "remainder_ms": 6.642169273800891,
+              "requests": 3,
+              "round_ms": 8.176822335025381
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 1.5346530612244897,
+            "clean_round_ms": 8.176822335025381,
+            "instrumentation_round_ms": 0.6090355329949233,
+            "kernel_time_ratio_nodes_to_phases": 0.9469372317576784,
+            "nodes_attributed_ms": 1.1057927772020724,
+            "nodes_attribution_coverage": 1.0000000000000002,
+            "nodes_drafter_gpu_ms": 1.1057927772020721,
+            "phases_draft_counter_ms": 1.6829642857142857,
+            "phases_drafter_gpu_ms": 1.1677572072538858,
+            "phases_drafter_wall_ms": 2.23768089119171,
+            "phases_round_ms": 8.785857868020305,
+            "phases_traced_round_ms": 8.768370699481862,
+            "unexplained_draft_ms": -0.23512167452680388
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.011961580310880827,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 1.155795626943005,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 0.817258883248731,
+              "derived_rounds": 197,
+              "draft_counter_ms": 1.6829642857142857,
+              "remainder_ms": 7.102893582306018,
+              "requests": 3,
+              "round_ms": 8.785857868020305
+            },
+            "traced_rounds": 193,
+            "wall_ms": 8.768370699481862,
+            "phase_ms": {
+              "checkpoint": 0.014768176165803119,
+              "draft": 1.7697747357512936,
+              "process": 0.4679061554404146,
+              "target": 5.98606532642487,
+              "verify": 0.5177924300518134
+            },
+            "gpu_busy_ms": 5.930538196891193,
+            "drafter_gpu_ms": 1.0587033575129523
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06545123834196896,
+              "attention over context (score, softmax, mix)": 0.038629829015544064,
+              "attention projections (q, k, v, output)": 0.18229105181347152,
+              "block embedding": 0.0012843471502590688,
+              "copies (inputs, logits)": 0.011889326424870478,
+              "feature handoff + context K/V update": 0.13153478756476678,
+              "feed-forward down": 0.08813540932642486,
+              "feed-forward gate": 0.013857948186528494,
+              "feed-forward gate+up (one fused kernel)": 0.10252936787564772,
+              "feed-forward norm": 0.01668989119170984,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.3916653419689116,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.028882626943005127,
+              "token selection kernels": 0.03295161139896375
+            },
+            "server_counters": {
+              "accepted_per_round": 0.817258883248731,
+              "derived_rounds": 197,
+              "draft_counter_ms": 3.233392857142857,
+              "remainder_ms": 14.746465010877447,
+              "requests": 3,
+              "round_ms": 17.979857868020304
+            },
+            "traced_rounds": 193,
+            "wall_ms": 18.004885103626947,
+            "phase_ms": {
+              "checkpoint": 0.01524523316062176,
+              "draft": 3.327802207253884,
+              "process": 1.0463673678756478,
+              "target": 13.091200202072532,
+              "verify": 0.5112105544041451
+            },
+            "gpu_busy_ms": 6.282698860103632,
+            "drafter_gpu_ms": 1.105792777202073
+          }
+        },
+        {
+          "band": "long",
+          "depth": 1,
+          "drafter": "s4",
+          "tasks": [
+            "qasper-83e708263727cf48ee85fb86",
+            "qasper-609c07fa0d439dad7a031189"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 0.7162162162162162,
+              "derived_rounds": 148,
+              "draft_counter_ms": 1.6382260273972602,
+              "remainder_ms": 8.882010459089225,
+              "requests": 2,
+              "round_ms": 10.520236486486485
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 1.6382260273972602,
+            "clean_round_ms": 10.520236486486485,
+            "instrumentation_round_ms": 0.802878378378379,
+            "kernel_time_ratio_nodes_to_phases": 0.9495549850911162,
+            "nodes_attributed_ms": 1.2517006249999998,
+            "nodes_attribution_coverage": 0.9999999999999997,
+            "nodes_drafter_gpu_ms": 1.2517006250000002,
+            "phases_draft_counter_ms": 1.8043356164383562,
+            "phases_drafter_gpu_ms": 1.3181970972222226,
+            "phases_drafter_wall_ms": 2.3230378819444453,
+            "phases_round_ms": 11.323114864864865,
+            "phases_traced_round_ms": 11.226031187500006,
+            "unexplained_draft_ms": -0.245183875380518
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.014270951388888885,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 1.303926145833333,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 0.7162162162162162,
+              "derived_rounds": 148,
+              "draft_counter_ms": 1.8043356164383562,
+              "remainder_ms": 9.518779248426508,
+              "requests": 2,
+              "round_ms": 11.323114864864865
+            },
+            "traced_rounds": 144,
+            "wall_ms": 11.226031187500006,
+            "phase_ms": {
+              "checkpoint": 0.015886270833333344,
+              "draft": 1.8834099027777782,
+              "process": 0.43962797916666685,
+              "target": 8.332609201388891,
+              "verify": 0.5398289930555558
+            },
+            "gpu_busy_ms": 8.443789729166664,
+            "drafter_gpu_ms": 1.2059059166666664
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06598192361111112,
+              "attention over context (score, softmax, mix)": 0.1807695972222222,
+              "attention projections (q, k, v, output)": 0.18336089583333331,
+              "block embedding": 0.001292055555555557,
+              "copies (inputs, logits)": 0.014239125000000005,
+              "feature handoff + context K/V update": 0.13162045833333327,
+              "feed-forward down": 0.08867102777777774,
+              "feed-forward gate": 0.013848666666666667,
+              "feed-forward gate+up (one fused kernel)": 0.10217236805555552,
+              "feed-forward norm": 0.016483229166666655,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.39218545138888883,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.02892521527777779,
+              "token selection kernels": 0.03215061111111111
+            },
+            "server_counters": {
+              "accepted_per_round": 0.7162162162162162,
+              "derived_rounds": 148,
+              "draft_counter_ms": 3.1792739726027395,
+              "remainder_ms": 15.768354405775636,
+              "requests": 2,
+              "round_ms": 18.947628378378376
+            },
+            "traced_rounds": 144,
+            "wall_ms": 18.99313517361111,
+            "phase_ms": {
+              "checkpoint": 0.016003236111111114,
+              "draft": 3.271124263888889,
+              "process": 0.8664221388888892,
+              "target": 14.327220930555553,
+              "verify": 0.49609938888888866
+            },
+            "gpu_busy_ms": 8.802620625,
+            "drafter_gpu_ms": 1.2517006250000002
+          }
+        },
+        {
+          "band": "short",
+          "depth": 3,
+          "drafter": "baseline",
+          "tasks": [
+            "ultrachat-706515e8cd15f41a372165c1",
+            "commitpack-4f317134640f49c71a821abe",
+            "commitpack-25c9eb5ae51f166a59e4bf7a"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 2.086206896551724,
+              "derived_rounds": 116,
+              "draft_counter_ms": 1.8438608695652172,
+              "remainder_ms": 7.341785682158919,
+              "requests": 3,
+              "round_ms": 9.185646551724137
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 1.8438608695652172,
+            "clean_round_ms": 9.185646551724137,
+            "instrumentation_round_ms": 0.7302413793103479,
+            "kernel_time_ratio_nodes_to_phases": 0.9478602720842506,
+            "nodes_attributed_ms": 1.5144234553571432,
+            "nodes_attribution_coverage": 1.0,
+            "nodes_drafter_gpu_ms": 1.5144234553571432,
+            "phases_draft_counter_ms": 2.0314,
+            "phases_drafter_gpu_ms": 1.5977285892857145,
+            "phases_drafter_wall_ms": 2.5352806428571424,
+            "phases_round_ms": 9.915887931034485,
+            "phases_traced_round_ms": 9.906765714285717,
+            "unexplained_draft_ms": -0.27033684472049635
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.019159214285714286,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 1.5785693750000005,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 2.086206896551724,
+              "derived_rounds": 116,
+              "draft_counter_ms": 2.0314,
+              "remainder_ms": 7.884487931034485,
+              "requests": 3,
+              "round_ms": 9.915887931034485
+            },
+            "traced_rounds": 112,
+            "wall_ms": 9.906765714285717,
+            "phase_ms": {
+              "checkpoint": 0.015352758928571436,
+              "draft": 2.1141977142857136,
+              "process": 0.42108292857142854,
+              "target": 6.559301098214287,
+              "verify": 0.784520625
+            },
+            "gpu_busy_ms": 6.913074723214286,
+            "drafter_gpu_ms": 1.460166223214286
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06616508035714287,
+              "attention over context (score, softmax, mix)": 0.04488216964285714,
+              "attention projections (q, k, v, output)": 0.1776441250000001,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.019488133928571422,
+              "feature handoff + context K/V update": 0.13476706249999998,
+              "feed-forward down": 0.12098810714285715,
+              "feed-forward gate": 0.11694363392857139,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.01643366071428571,
+              "feed-forward up": 0.11609881250000005,
+              "final norm + vocabulary scoring": 0.5725127767857141,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.028903196428571424,
+              "token selection kernels": 0.0995966964285714
+            },
+            "server_counters": {
+              "accepted_per_round": 2.086206896551724,
+              "derived_rounds": 116,
+              "draft_counter_ms": 3.1308173913043476,
+              "remainder_ms": 14.547742953523237,
+              "requests": 3,
+              "round_ms": 17.678560344827584
+            },
+            "traced_rounds": 112,
+            "wall_ms": 17.641847955357147,
+            "phase_ms": {
+              "checkpoint": 0.015383642857142865,
+              "draft": 3.224295553571428,
+              "process": 0.8431379285714286,
+              "target": 12.781795607142863,
+              "verify": 0.7645973035714289
+            },
+            "gpu_busy_ms": 7.281066991071425,
+            "drafter_gpu_ms": 1.5144234553571418
+          }
+        },
+        {
+          "band": "long",
+          "depth": 3,
+          "drafter": "baseline",
+          "tasks": [
+            "qasper-83e708263727cf48ee85fb86",
+            "qasper-609c07fa0d439dad7a031189"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 1.6185567010309279,
+              "derived_rounds": 97,
+              "draft_counter_ms": 2.067618556701031,
+              "remainder_ms": 9.749917525773194,
+              "requests": 2,
+              "round_ms": 11.817536082474225
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 2.067618556701031,
+            "clean_round_ms": 11.817536082474225,
+            "instrumentation_round_ms": 0.9495360824742285,
+            "kernel_time_ratio_nodes_to_phases": 0.9474472518398005,
+            "nodes_attributed_ms": 1.6799144736842107,
+            "nodes_attribution_coverage": 1.0000000000000002,
+            "nodes_drafter_gpu_ms": 1.6799144736842104,
+            "phases_draft_counter_ms": 2.333917525773196,
+            "phases_drafter_gpu_ms": 1.7730955157894737,
+            "phases_drafter_wall_ms": 2.8353614,
+            "phases_round_ms": 12.767072164948454,
+            "phases_traced_round_ms": 12.597447768421047,
+            "unexplained_draft_ms": -0.337854874877916
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.02495043157894737,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 1.748145084210527,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 1.6185567010309279,
+              "derived_rounds": 97,
+              "draft_counter_ms": 2.333917525773196,
+              "remainder_ms": 10.433154639175257,
+              "requests": 2,
+              "round_ms": 12.767072164948454
+            },
+            "traced_rounds": 95,
+            "wall_ms": 12.597447768421047,
+            "phase_ms": {
+              "checkpoint": 0.015390642105263157,
+              "draft": 2.405473431578947,
+              "process": 0.42988796842105287,
+              "target": 9.005321515789472,
+              "verify": 0.7263358105263162
+            },
+            "gpu_busy_ms": 9.487926505263161,
+            "drafter_gpu_ms": 1.6254551263157895
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06744285263157894,
+              "attention over context (score, softmax, mix)": 0.19707007368421053,
+              "attention projections (q, k, v, output)": 0.1777850947368421,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.027586463157894734,
+              "feature handoff + context K/V update": 0.13477386315789475,
+              "feed-forward down": 0.1217403263157895,
+              "feed-forward gate": 0.11770544210526314,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.01644930526315789,
+              "feed-forward up": 0.11615870526315791,
+              "final norm + vocabulary scoring": 0.5733220736842107,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.02904717894736841,
+              "token selection kernels": 0.1008330947368421
+            },
+            "server_counters": {
+              "accepted_per_round": 1.6185567010309279,
+              "derived_rounds": 97,
+              "draft_counter_ms": 3.6634639175257737,
+              "remainder_ms": 17.343329896907218,
+              "requests": 2,
+              "round_ms": 21.006793814432992
+            },
+            "traced_rounds": 95,
+            "wall_ms": 21.003920557894737,
+            "phase_ms": {
+              "checkpoint": 0.016399673684210532,
+              "draft": 3.747143978947367,
+              "process": 0.9336533894736843,
+              "target": 15.59090094736842,
+              "verify": 0.6972965473684211
+            },
+            "gpu_busy_ms": 9.85007070526316,
+            "drafter_gpu_ms": 1.6799144736842107
+          }
+        },
+        {
+          "band": "short",
+          "depth": 3,
+          "drafter": "s4",
+          "tasks": [
+            "ultrachat-706515e8cd15f41a372165c1",
+            "commitpack-4f317134640f49c71a821abe",
+            "commitpack-25c9eb5ae51f166a59e4bf7a"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 1.796875,
+              "derived_rounds": 128,
+              "draft_counter_ms": 1.7486456692913388,
+              "remainder_ms": 7.660690268208661,
+              "requests": 3,
+              "round_ms": 9.4093359375
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 1.7486456692913388,
+            "clean_round_ms": 9.4093359375,
+            "instrumentation_round_ms": 0.9615781250000008,
+            "kernel_time_ratio_nodes_to_phases": 0.9611567967526263,
+            "nodes_attributed_ms": 1.469297048387097,
+            "nodes_attribution_coverage": 1.0000000000000009,
+            "nodes_drafter_gpu_ms": 1.4692970483870957,
+            "phases_draft_counter_ms": 2.1532677165354333,
+            "phases_drafter_gpu_ms": 1.5286757096774188,
+            "phases_drafter_wall_ms": 2.7336993225806467,
+            "phases_round_ms": 10.3709140625,
+            "phases_traced_round_ms": 10.299576387096776,
+            "unexplained_draft_ms": -0.49146640328930746
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.016346193548387095,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 1.5123295161290322,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 1.796875,
+              "derived_rounds": 128,
+              "draft_counter_ms": 2.1532677165354333,
+              "remainder_ms": 8.217646345964567,
+              "requests": 3,
+              "round_ms": 10.3709140625
+            },
+            "traced_rounds": 124,
+            "wall_ms": 10.299576387096776,
+            "phase_ms": {
+              "checkpoint": 0.015467822580645161,
+              "draft": 2.2401120725806463,
+              "process": 0.49358724999999976,
+              "target": 6.790310435483868,
+              "verify": 0.7446705322580647
+            },
+            "gpu_busy_ms": 6.870751725806455,
+            "drafter_gpu_ms": 1.4174681451612898
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06525000806451614,
+              "attention over context (score, softmax, mix)": 0.0446560564516129,
+              "attention projections (q, k, v, output)": 0.2740536290322581,
+              "block embedding": 0.0012707096774193548,
+              "copies (inputs, logits)": 0.01602716935483871,
+              "feature handoff + context K/V update": 0.17330354838709677,
+              "feed-forward down": 0.1416392016129032,
+              "feed-forward gate": 0.013770370967741934,
+              "feed-forward gate+up (one fused kernel)": 0.1894073306451613,
+              "feed-forward norm": 0.016461693548387092,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.4012872661290325,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.03426845967741934,
+              "token selection kernels": 0.09790160483870967
+            },
+            "server_counters": {
+              "accepted_per_round": 1.796875,
+              "derived_rounds": 128,
+              "draft_counter_ms": 3.64332283464567,
+              "remainder_ms": 18.215841227854334,
+              "requests": 3,
+              "round_ms": 21.859164062500003
+            },
+            "traced_rounds": 124,
+            "wall_ms": 21.975567532258072,
+            "phase_ms": {
+              "checkpoint": 0.015291499999999989,
+              "draft": 3.744783572580646,
+              "process": 1.1541159435483865,
+              "target": 16.319274790322574,
+              "verify": 0.7257542983870968
+            },
+            "gpu_busy_ms": 7.23240987903226,
+            "drafter_gpu_ms": 1.4692970483870966
+          }
+        },
+        {
+          "band": "long",
+          "depth": 3,
+          "drafter": "s4",
+          "tasks": [
+            "qasper-83e708263727cf48ee85fb86",
+            "qasper-609c07fa0d439dad7a031189"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 1.247787610619469,
+              "derived_rounds": 113,
+              "draft_counter_ms": 2.044107142857143,
+              "remainder_ms": 9.752963653603032,
+              "requests": 2,
+              "round_ms": 11.797070796460176
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 2.044107142857143,
+            "clean_round_ms": 11.797070796460176,
+            "instrumentation_round_ms": 1.782106194690268,
+            "kernel_time_ratio_nodes_to_phases": 0.9587104879524677,
+            "nodes_attributed_ms": 1.6241953727272729,
+            "nodes_attribution_coverage": 0.9999999999999998,
+            "nodes_drafter_gpu_ms": 1.6241953727272733,
+            "phases_draft_counter_ms": 2.526330357142857,
+            "phases_drafter_gpu_ms": 1.6941458272727272,
+            "phases_drafter_wall_ms": 3.2681096,
+            "phases_round_ms": 13.579176991150444,
+            "phases_traced_round_ms": 13.410835581818176,
+            "unexplained_draft_ms": -0.6879686844155839
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.02061971818181818,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 1.6735261090909097,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 1.247787610619469,
+              "derived_rounds": 113,
+              "draft_counter_ms": 2.526330357142857,
+              "remainder_ms": 11.052846634007587,
+              "requests": 2,
+              "round_ms": 13.579176991150444
+            },
+            "traced_rounds": 110,
+            "wall_ms": 13.410835581818176,
+            "phase_ms": {
+              "checkpoint": 0.017407581818181823,
+              "draft": 2.732075827272727,
+              "process": 0.5360337727272725,
+              "target": 9.397728900000002,
+              "verify": 0.7053663090909092
+            },
+            "gpu_busy_ms": 9.449070509090907,
+            "drafter_gpu_ms": 1.5746298000000003
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06551527272727271,
+              "attention over context (score, softmax, mix)": 0.19349347272727277,
+              "attention projections (q, k, v, output)": 0.27455092727272723,
+              "block embedding": 0.0012776999999999995,
+              "copies (inputs, logits)": 0.02122845454545455,
+              "feature handoff + context K/V update": 0.17341053636363646,
+              "feed-forward down": 0.14163933636363638,
+              "feed-forward gate": 0.013737609090909084,
+              "feed-forward gate+up (one fused kernel)": 0.18893368181818182,
+              "feed-forward norm": 0.016374972727272726,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.4023331363636364,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.034538836363636374,
+              "token selection kernels": 0.0971614363636364
+            },
+            "server_counters": {
+              "accepted_per_round": 1.247787610619469,
+              "derived_rounds": 113,
+              "draft_counter_ms": 3.5647232142857135,
+              "remainder_ms": 17.27665731668774,
+              "requests": 2,
+              "round_ms": 20.841380530973453
+            },
+            "traced_rounds": 110,
+            "wall_ms": 20.913019654545455,
+            "phase_ms": {
+              "checkpoint": 0.016557272727272726,
+              "draft": 3.68285959090909,
+              "process": 1.0493572999999998,
+              "target": 15.530296636363627,
+              "verify": 0.6162087454545454
+            },
+            "gpu_busy_ms": 9.801940181818184,
+            "drafter_gpu_ms": 1.624195372727273
+          }
+        },
+        {
+          "band": "short",
+          "depth": 7,
+          "drafter": "baseline",
+          "tasks": [
+            "ultrachat-706515e8cd15f41a372165c1",
+            "commitpack-4f317134640f49c71a821abe",
+            "commitpack-25c9eb5ae51f166a59e4bf7a"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 3.5316455696202533,
+              "derived_rounds": 79,
+              "draft_counter_ms": 3.0050125,
+              "remainder_ms": 11.099848259493672,
+              "requests": 3,
+              "round_ms": 14.104860759493672
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 3.0050125,
+            "clean_round_ms": 14.104860759493672,
+            "instrumentation_round_ms": 0.7050759493670888,
+            "kernel_time_ratio_nodes_to_phases": 0.9742820635569613,
+            "nodes_attributed_ms": 2.6187946103896107,
+            "nodes_attribution_coverage": 1.0000000000000002,
+            "nodes_drafter_gpu_ms": 2.6187946103896103,
+            "phases_draft_counter_ms": 3.171075,
+            "phases_drafter_gpu_ms": 2.6879224285714285,
+            "phases_drafter_wall_ms": 3.6743134155844173,
+            "phases_round_ms": 14.80993670886076,
+            "phases_traced_round_ms": 14.475398428571426,
+            "unexplained_draft_ms": -0.2484603181818179
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.029083948051948052,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 2.6588384805194805,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 3.5316455696202533,
+              "derived_rounds": 79,
+              "draft_counter_ms": 3.171075,
+              "remainder_ms": 11.63886170886076,
+              "requests": 3,
+              "round_ms": 14.80993670886076
+            },
+            "traced_rounds": 77,
+            "wall_ms": 14.475398428571426,
+            "phase_ms": {
+              "checkpoint": 0.01615037662337662,
+              "draft": 3.2534728181818178,
+              "process": 0.4208405974025974,
+              "target": 9.660143272727272,
+              "verify": 1.113023493506494
+            },
+            "gpu_busy_ms": 10.958687987012995,
+            "drafter_gpu_ms": 2.546505480519481
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06645959740259741,
+              "attention over context (score, softmax, mix)": 0.055155285714285705,
+              "attention projections (q, k, v, output)": 0.26151620779220774,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.027907571428571427,
+              "feature handoff + context K/V update": 0.18874420779220777,
+              "feed-forward down": 0.18664215584415583,
+              "feed-forward gate": 0.19606064935064932,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.016396831168831175,
+              "feed-forward up": 0.19459797402597398,
+              "final norm + vocabulary scoring": 1.1534757142857142,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.04041100000000002,
+              "token selection kernels": 0.23142741558441565
+            },
+            "server_counters": {
+              "accepted_per_round": 3.5316455696202533,
+              "derived_rounds": 79,
+              "draft_counter_ms": 4.31115,
+              "remainder_ms": 16.76812848101266,
+              "requests": 3,
+              "round_ms": 21.079278481012658
+            },
+            "traced_rounds": 77,
+            "wall_ms": 20.814258350649347,
+            "phase_ms": {
+              "checkpoint": 0.015661883116883116,
+              "draft": 4.405725233766235,
+              "process": 0.7635487792207792,
+              "target": 14.527163090909092,
+              "verify": 1.0896529999999998
+            },
+            "gpu_busy_ms": 11.351030233766231,
+            "drafter_gpu_ms": 2.618794610389611
+          }
+        },
+        {
+          "band": "long",
+          "depth": 7,
+          "drafter": "baseline",
+          "tasks": [
+            "qasper-83e708263727cf48ee85fb86",
+            "qasper-609c07fa0d439dad7a031189"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 2.0602409638554215,
+              "derived_rounds": 83,
+              "draft_counter_ms": 3.2254457831325305,
+              "remainder_ms": 13.105638554216869,
+              "requests": 2,
+              "round_ms": 16.3310843373494
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 3.2254457831325305,
+            "clean_round_ms": 16.3310843373494,
+            "instrumentation_round_ms": 0.8569397590361447,
+            "kernel_time_ratio_nodes_to_phases": 0.9695590796931554,
+            "nodes_attributed_ms": 2.785695061728395,
+            "nodes_attribution_coverage": 0.9999999999999996,
+            "nodes_drafter_gpu_ms": 2.785695061728396,
+            "phases_draft_counter_ms": 3.4962168674698795,
+            "phases_drafter_gpu_ms": 2.8731565925925926,
+            "phases_drafter_wall_ms": 4.003608938271608,
+            "phases_round_ms": 17.188024096385544,
+            "phases_traced_round_ms": 17.06229924691358,
+            "unexplained_draft_ms": -0.3471760934106798
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.038538666666666666,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 2.834617925925925,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 2.0602409638554215,
+              "derived_rounds": 83,
+              "draft_counter_ms": 3.4962168674698795,
+              "remainder_ms": 13.691807228915664,
+              "requests": 2,
+              "round_ms": 17.188024096385544
+            },
+            "traced_rounds": 81,
+            "wall_ms": 17.06229924691358,
+            "phase_ms": {
+              "checkpoint": 0.016870209876543203,
+              "draft": 3.5726218765432103,
+              "process": 0.4309870617283951,
+              "target": 12.205924592592593,
+              "verify": 0.821209814814815
+            },
+            "gpu_busy_ms": 13.590417345679015,
+            "drafter_gpu_ms": 2.7225920123456793
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06783230864197531,
+              "attention over context (score, softmax, mix)": 0.20749292592592594,
+              "attention projections (q, k, v, output)": 0.26075877777777773,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.03708317283950618,
+              "feature handoff + context K/V update": 0.1887978395061728,
+              "feed-forward down": 0.18568345679012352,
+              "feed-forward gate": 0.19676219753086424,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.01645380246913581,
+              "feed-forward up": 0.19430016049382717,
+              "final norm + vocabulary scoring": 1.1560957037037034,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.0405942962962963,
+              "token selection kernels": 0.2338404197530864
+            },
+            "server_counters": {
+              "accepted_per_round": 2.0602409638554215,
+              "derived_rounds": 83,
+              "draft_counter_ms": 4.198156626506024,
+              "remainder_ms": 18.61313253012048,
+              "requests": 2,
+              "round_ms": 22.811289156626504
+            },
+            "traced_rounds": 81,
+            "wall_ms": 22.815402740740737,
+            "phase_ms": {
+              "checkpoint": 0.016904382716049385,
+              "draft": 4.284888320987655,
+              "process": 0.8896425061728394,
+              "target": 16.770525580246918,
+              "verify": 0.8375912469135801
+            },
+            "gpu_busy_ms": 13.958280925925925,
+            "drafter_gpu_ms": 2.7856950617283958
+          }
+        },
+        {
+          "band": "short",
+          "depth": 7,
+          "drafter": "s4",
+          "tasks": [
+            "ultrachat-706515e8cd15f41a372165c1",
+            "commitpack-4f317134640f49c71a821abe",
+            "commitpack-25c9eb5ae51f166a59e4bf7a"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 2.6161616161616164,
+              "derived_rounds": 99,
+              "draft_counter_ms": 2.834397959183673,
+              "remainder_ms": 10.548995980210265,
+              "requests": 3,
+              "round_ms": 13.383393939393939
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 2.834397959183673,
+            "clean_round_ms": 13.383393939393939,
+            "instrumentation_round_ms": 0.9492121212121205,
+            "kernel_time_ratio_nodes_to_phases": 0.9748148597357255,
+            "nodes_attributed_ms": 2.6182963894736844,
+            "nodes_attribution_coverage": 1.0000000000000002,
+            "nodes_drafter_gpu_ms": 2.618296389473684,
+            "phases_draft_counter_ms": 3.116744897959183,
+            "phases_drafter_gpu_ms": 2.6859422210526316,
+            "phases_drafter_wall_ms": 3.6081304421052622,
+            "phases_round_ms": 14.332606060606059,
+            "phases_traced_round_ms": 14.210770757894746,
+            "unexplained_draft_ms": -0.3647368197636953
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.025634115789473683,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 2.6603081052631588,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 2.6161616161616164,
+              "derived_rounds": 99,
+              "draft_counter_ms": 3.116744897959183,
+              "remainder_ms": 11.215861162646876,
+              "requests": 3,
+              "round_ms": 14.332606060606059
+            },
+            "traced_rounds": 95,
+            "wall_ms": 14.210770757894746,
+            "phase_ms": {
+              "checkpoint": 0.01538562105263158,
+              "draft": 3.1991347789473683,
+              "process": 0.4089956631578947,
+              "target": 9.666208715789475,
+              "verify": 0.9097635473684206
+            },
+            "gpu_busy_ms": 10.985282263157892,
+            "drafter_gpu_ms": 2.5664687473684205
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06599667368421054,
+              "attention over context (score, softmax, mix)": 0.05416083157894736,
+              "attention projections (q, k, v, output)": 0.4518333684210526,
+              "block embedding": 0.0012769894736842098,
+              "copies (inputs, logits)": 0.024682863157894735,
+              "feature handoff + context K/V update": 0.2574967578947369,
+              "feed-forward down": 0.25793118947368415,
+              "feed-forward gate": 0.013726652631578951,
+              "feed-forward gate+up (one fused kernel)": 0.35932337894736854,
+              "feed-forward norm": 0.01635693684210527,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.8457829789473685,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.045734652631578956,
+              "token selection kernels": 0.22399311578947376
+            },
+            "server_counters": {
+              "accepted_per_round": 2.6161616161616164,
+              "derived_rounds": 99,
+              "draft_counter_ms": 4.0445,
+              "remainder_ms": 16.657257575757573,
+              "requests": 3,
+              "round_ms": 20.701757575757572
+            },
+            "traced_rounds": 95,
+            "wall_ms": 20.704359389473684,
+            "phase_ms": {
+              "checkpoint": 0.015753378947368418,
+              "draft": 4.133907326315788,
+              "process": 0.8730420210526318,
+              "target": 14.746615389473686,
+              "verify": 0.9220921157894738
+            },
+            "gpu_busy_ms": 11.35666357894737,
+            "drafter_gpu_ms": 2.6182963894736844
+          }
+        },
+        {
+          "band": "long",
+          "depth": 7,
+          "drafter": "s4",
+          "tasks": [
+            "qasper-83e708263727cf48ee85fb86",
+            "qasper-609c07fa0d439dad7a031189"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 1.4660194174757282,
+              "derived_rounds": 103,
+              "draft_counter_ms": 3.1255686274509804,
+              "remainder_ms": 12.71659642109271,
+              "requests": 2,
+              "round_ms": 15.84216504854369
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 3.1255686274509804,
+            "clean_round_ms": 15.84216504854369,
+            "instrumentation_round_ms": 0.9393883495145641,
+            "kernel_time_ratio_nodes_to_phases": 0.9692832504903145,
+            "nodes_attributed_ms": 2.7754472199999993,
+            "nodes_attribution_coverage": 1.0,
+            "nodes_drafter_gpu_ms": 2.7754472199999993,
+            "phases_draft_counter_ms": 3.4044705882352937,
+            "phases_drafter_gpu_ms": 2.8634016099999995,
+            "phases_drafter_wall_ms": 3.897738360000001,
+            "phases_round_ms": 16.781553398058254,
+            "phases_traced_round_ms": 16.766206899999997,
+            "unexplained_draft_ms": -0.35581410254901913
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.03661228999999999,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 2.826789320000001,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 1.4660194174757282,
+              "derived_rounds": 103,
+              "draft_counter_ms": 3.4044705882352937,
+              "remainder_ms": 13.37708280982296,
+              "requests": 2,
+              "round_ms": 16.781553398058254
+            },
+            "traced_rounds": 100,
+            "wall_ms": 16.766206899999997,
+            "phase_ms": {
+              "checkpoint": 0.017452820000000004,
+              "draft": 3.4813827299999995,
+              "process": 0.4163556299999998,
+              "target": 12.159112719999996,
+              "verify": 0.6764496600000004
+            },
+            "gpu_busy_ms": 13.626200099999997,
+            "drafter_gpu_ms": 2.7359884900000013
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06602463000000001,
+              "attention over context (score, softmax, mix)": 0.20465499,
+              "attention projections (q, k, v, output)": 0.45115846,
+              "block embedding": 0.0012748899999999999,
+              "copies (inputs, logits)": 0.033329899999999996,
+              "feature handoff + context K/V update": 0.2575057799999999,
+              "feed-forward down": 0.25610722999999996,
+              "feed-forward gate": 0.01369219,
+              "feed-forward gate+up (one fused kernel)": 0.35744045999999985,
+              "feed-forward norm": 0.01636759,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.8466597099999996,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.04598190000000001,
+              "token selection kernels": 0.22524949
+            },
+            "server_counters": {
+              "accepted_per_round": 1.4660194174757282,
+              "derived_rounds": 103,
+              "draft_counter_ms": 4.0714313725490205,
+              "remainder_ms": 18.09121911288787,
+              "requests": 2,
+              "round_ms": 22.16265048543689
+            },
+            "traced_rounds": 100,
+            "wall_ms": 22.282964779999997,
+            "phase_ms": {
+              "checkpoint": 0.016827629999999996,
+              "draft": 4.1605179,
+              "process": 0.7674745000000004,
+              "target": 16.595026709999992,
+              "verify": 0.7264662199999999
+            },
+            "gpu_busy_ms": 13.96863539,
+            "drafter_gpu_ms": 2.77544722
+          }
+        }
+      ]
+    },
+    {
+      "source": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/round-profile.json",
+      "sha256": "84f54f655dc439a11634a5fb52e8e600c81482b9bd9bee497495150cf0576554",
+      "status": "complete",
+      "code_sha256": "99acd451a7a1ad0b02b4a84c71f2137d753a0af784e946f31f7690f3563b3162",
+      "identities": {
+        "clean_runtime": {
+          "bytes": 3072,
+          "path": "/home/philip/BitDraft/artifacts/native/runtime-v6/result.json",
+          "sha256": "661ca313ea26c0d846356422185c524d061c87ce1b2376bea627a866cb1a395e"
+        },
+        "clean_server": {
+          "bytes": 17872,
+          "path": "/home/philip/BitDraft/artifacts/native/runtime-v6/build/bin/llama-server",
+          "sha256": "190b49eb8a752cc6019264a50046243655d59167503f07e919792bd779505ae5"
+        },
+        "comparison": {
+          "bytes": 3235,
+          "path": "/home/philip/BitDraft/artifacts/benchmarks/references/runtime-v6-depth3/lean-q4km/requests-establish.json",
+          "sha256": "f8e4724e11ebcb627fac0421273f15204674da095c0ce0ad003c7bca167f8a6a"
+        },
+        "diagnostic_runtime": {
+          "bytes": 3292,
+          "path": "/home/philip/BitDraft/artifacts/native/runtime-v6-round-profile/result.json",
+          "sha256": "cae9df8e34cbd89f9327cba0e8975f0cb6e6bffca56edc4e7b132bc1f7881c03"
+        },
+        "diagnostic_server": {
+          "bytes": 17872,
+          "path": "/home/philip/BitDraft/artifacts/native/runtime-v6-round-profile/build/bin/llama-server",
+          "sha256": "2101a9c41de91acc1c7fe60fd2fe1912a6785489fbc7caad949e4bf8e9cc349e"
+        },
+        "drafters": {
+          "baseline": {
+            "bytes": 381456064,
+            "path": "/home/philip/BitDraft/artifacts/models/dflash-4b-q4km.gguf",
+            "sha256": "83586a63eab58b4ef9dd1d72de667738fcedb289e97d98d01d8df66f23df610f"
+          },
+          "s4": {
+            "bytes": 541022016,
+            "path": "/home/philip/BitDraft/artifacts/training/block-test-s4-01/exports/10ade33ae91b19a471f76ef65463005485725c1377a58728624ceee5afe8b509.bin",
+            "sha256": "10ade33ae91b19a471f76ef65463005485725c1377a58728624ceee5afe8b509"
+          }
+        },
+        "profiler": {
+          "bytes": 76353640,
+          "path": "/opt/nvidia/nsight-systems/2025.5.2/target-linux-x64/nsys",
+          "sha256": "dff002f06a6068fad71ea64ff84bde41278b5a93b0916d27989bc6c9bb84f535"
+        },
+        "target": {
+          "bytes": 2834975040,
+          "path": "/home/philip/BitDraft/artifacts/models/qwen35-4b-q4km.gguf",
+          "sha256": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630"
+        },
+        "workload": {
+          "bytes": 908215,
+          "path": "/home/philip/BitDraft/artifacts/benchmarks/references/runtime-v6-depth3/lean-q4km/requests-workload.json",
+          "sha256": "f25c750415006c383e1f22791fdd56f2b8c2c12a9ea0e1ae33ca03b10491e905"
+        }
+      },
+      "settings": {
+        "bands": {
+          "long": [
+            "qasper-83e708263727cf48ee85fb86",
+            "qasper-609c07fa0d439dad7a031189"
+          ],
+          "short": [
+            "ultrachat-706515e8cd15f41a372165c1",
+            "commitpack-4f317134640f49c71a821abe",
+            "commitpack-25c9eb5ae51f166a59e4bf7a"
+          ]
+        },
+        "context": 32768,
+        "decode_consistent": "32",
+        "depths": [
+          1,
+          3,
+          7
+        ],
+        "output_cap": 128
+      },
+      "gpu": "index, name, uuid, driver_version, memory.total [MiB]\n0, NVIDIA GeForce RTX 5080, GPU-44ceb8b5-b67a-a317-fee3-f01c9201994e, 617.42, 16303 MiB\n",
+      "clocks": {
+        "clean": "unmodified runtime, server counters only: decode ms per derived round and the drafter generate counter",
+        "nodes": "diagnostic runtime under Nsight with CUDA graphs disabled and one NVTX range per graph node: GPU kernel time per component",
+        "phases": "diagnostic runtime under Nsight with CUDA graphs as served: NVTX phase walls and GPU activity per round"
+      },
+      "profiles": [
+        {
+          "band": "short",
+          "depth": 1,
+          "drafter": "baseline",
+          "tasks": [
+            "ultrachat-706515e8cd15f41a372165c1",
+            "commitpack-4f317134640f49c71a821abe",
+            "commitpack-25c9eb5ae51f166a59e4bf7a"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 0.8941798941798942,
+              "derived_rounds": 189,
+              "draft_counter_ms": 1.6775401069518716,
+              "remainder_ms": 6.410930792519027,
+              "requests": 3,
+              "round_ms": 8.088470899470899
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 1.6775401069518716,
+            "clean_round_ms": 8.088470899470899,
+            "instrumentation_round_ms": 0.6579788359788381,
+            "kernel_time_ratio_nodes_to_phases": 0.9402858659424647,
+            "nodes_attributed_ms": 1.3608336304347821,
+            "nodes_attribution_coverage": 1.0,
+            "nodes_drafter_gpu_ms": 1.3608336304347821,
+            "phases_draft_counter_ms": 1.817016042780749,
+            "phases_drafter_gpu_ms": 1.4472552228260873,
+            "phases_drafter_wall_ms": 2.292368570652173,
+            "phases_round_ms": 8.746449735449737,
+            "phases_traced_round_ms": 8.687350423913044,
+            "unexplained_draft_ms": -0.2188515126133448
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.01358876086956521,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 1.4336664619565205,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 0.8941798941798942,
+              "derived_rounds": 189,
+              "draft_counter_ms": 1.817016042780749,
+              "remainder_ms": 6.929433692668988,
+              "requests": 3,
+              "round_ms": 8.746449735449737
+            },
+            "traced_rounds": 184,
+            "wall_ms": 8.687350423913044,
+            "phase_ms": {
+              "checkpoint": 0.014224494565217398,
+              "draft": 1.8963916195652164,
+              "process": 0.3959769510869568,
+              "target": 5.86252085326087,
+              "verify": 0.5079605217391306
+            },
+            "gpu_busy_ms": 6.175146440217399,
+            "drafter_gpu_ms": 1.3101319782608691
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06593246195652175,
+              "attention over context (score, softmax, mix)": 0.03883061413043475,
+              "attention projections (q, k, v, output)": 0.15626536413043482,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.012526907608695641,
+              "feature handoff + context K/V update": 0.12141194021739128,
+              "feed-forward down": 0.11746650543478267,
+              "feed-forward gate": 0.10328031521739126,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.016730005434782615,
+              "feed-forward up": 0.10349950543478256,
+              "final norm + vocabulary scoring": 0.5680527771739126,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.02333771739130435,
+              "token selection kernels": 0.03349951630434781
+            },
+            "server_counters": {
+              "accepted_per_round": 0.8941798941798942,
+              "derived_rounds": 189,
+              "draft_counter_ms": 2.8705294117647058,
+              "remainder_ms": 12.926904450669157,
+              "requests": 3,
+              "round_ms": 15.797433862433863
+            },
+            "traced_rounds": 184,
+            "wall_ms": 15.824407315217393,
+            "phase_ms": {
+              "checkpoint": 0.014950201086956525,
+              "draft": 2.954920673913043,
+              "process": 0.7501508967391307,
+              "target": 11.564320021739132,
+              "verify": 0.5274803260869568
+            },
+            "gpu_busy_ms": 6.53575629347826,
+            "drafter_gpu_ms": 1.360833630434782
+          }
+        },
+        {
+          "band": "long",
+          "depth": 1,
+          "drafter": "baseline",
+          "tasks": [
+            "qasper-83e708263727cf48ee85fb86",
+            "qasper-609c07fa0d439dad7a031189"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 0.8014184397163121,
+              "derived_rounds": 141,
+              "draft_counter_ms": 1.8506857142857143,
+              "remainder_ms": 8.85000932117528,
+              "requests": 2,
+              "round_ms": 10.700695035460994
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 1.8506857142857143,
+            "clean_round_ms": 10.700695035460994,
+            "instrumentation_round_ms": 0.7046382978723393,
+            "kernel_time_ratio_nodes_to_phases": 0.9404677752156562,
+            "nodes_attributed_ms": 1.5111353478260872,
+            "nodes_attribution_coverage": 0.9999999999999999,
+            "nodes_drafter_gpu_ms": 1.5111353478260874,
+            "phases_draft_counter_ms": 2.0285499999999996,
+            "phases_drafter_gpu_ms": 1.60679120289855,
+            "phases_drafter_wall_ms": 2.5057975579710154,
+            "phases_round_ms": 11.405333333333333,
+            "phases_traced_round_ms": 11.316305188405796,
+            "unexplained_draft_ms": -0.25543172049689544
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.020233615942028986,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 1.5865575869565216,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 0.8014184397163121,
+              "derived_rounds": 141,
+              "draft_counter_ms": 2.0285499999999996,
+              "remainder_ms": 9.376783333333334,
+              "requests": 2,
+              "round_ms": 11.405333333333333
+            },
+            "traced_rounds": 138,
+            "wall_ms": 11.316305188405796,
+            "phase_ms": {
+              "checkpoint": 0.015511891304347823,
+              "draft": 2.1061174347826097,
+              "process": 0.3996801231884055,
+              "target": 8.262581739130432,
+              "verify": 0.5176271231884059
+            },
+            "gpu_busy_ms": 8.694320934782604,
+            "drafter_gpu_ms": 1.4651645652173921
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06704965217391301,
+              "attention over context (score, softmax, mix)": 0.18276776086956525,
+              "attention projections (q, k, v, output)": 0.15631999275362324,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.01513645652173912,
+              "feature handoff + context K/V update": 0.1215519492753623,
+              "feed-forward down": 0.11762961594202902,
+              "feed-forward gate": 0.10360747826086962,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.016468681159420285,
+              "feed-forward up": 0.10386584057971016,
+              "final norm + vocabulary scoring": 0.5687298623188408,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.023642746376811588,
+              "token selection kernels": 0.0343653115942029
+            },
+            "server_counters": {
+              "accepted_per_round": 0.8014184397163121,
+              "derived_rounds": 141,
+              "draft_counter_ms": 3.0669785714285718,
+              "remainder_ms": 15.206900861195543,
+              "requests": 2,
+              "round_ms": 18.273879432624113
+            },
+            "traced_rounds": 138,
+            "wall_ms": 18.314192775362322,
+            "phase_ms": {
+              "checkpoint": 0.01546242753623189,
+              "draft": 3.155266978260869,
+              "process": 0.7638903333333337,
+              "target": 13.842965471014498,
+              "verify": 0.5210361304347824
+            },
+            "gpu_busy_ms": 9.061054847826089,
+            "drafter_gpu_ms": 1.511135347826088
+          }
+        },
+        {
+          "band": "short",
+          "depth": 1,
+          "drafter": "s4",
+          "tasks": [
+            "ultrachat-706515e8cd15f41a372165c1",
+            "commitpack-4f317134640f49c71a821abe",
+            "commitpack-25c9eb5ae51f166a59e4bf7a"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 0.817258883248731,
+              "derived_rounds": 197,
+              "draft_counter_ms": 1.4223826530612247,
+              "remainder_ms": 6.373033590593598,
+              "requests": 3,
+              "round_ms": 7.795416243654823
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 1.4223826530612247,
+            "clean_round_ms": 7.795416243654823,
+            "instrumentation_round_ms": 0.8584670050761423,
+            "kernel_time_ratio_nodes_to_phases": 0.9489724582892621,
+            "nodes_attributed_ms": 1.1064787668393783,
+            "nodes_attribution_coverage": 0.9999999999999994,
+            "nodes_drafter_gpu_ms": 1.106478766839379,
+            "phases_draft_counter_ms": 1.644392857142857,
+            "phases_drafter_gpu_ms": 1.1659756373056998,
+            "phases_drafter_wall_ms": 2.162761497409325,
+            "phases_round_ms": 8.653883248730965,
+            "phases_traced_round_ms": 8.631537720207254,
+            "unexplained_draft_ms": -0.30790233139473466
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.012488492227979268,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 1.15348714507772,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 0.817258883248731,
+              "derived_rounds": 197,
+              "draft_counter_ms": 1.644392857142857,
+              "remainder_ms": 7.009490391588108,
+              "requests": 3,
+              "round_ms": 8.653883248730965
+            },
+            "traced_rounds": 193,
+            "wall_ms": 8.631537720207254,
+            "phase_ms": {
+              "checkpoint": 0.015213253886010369,
+              "draft": 1.7302849844559594,
+              "process": 0.43247651295336786,
+              "target": 5.963290932642486,
+              "verify": 0.47840210880829
+            },
+            "gpu_busy_ms": 5.925769093264245,
+            "drafter_gpu_ms": 1.0576313730569942
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06574282901554404,
+              "attention over context (score, softmax, mix)": 0.03847332124352332,
+              "attention projections (q, k, v, output)": 0.18270648704663217,
+              "block embedding": 0.0012818652849740937,
+              "copies (inputs, logits)": 0.011910829015544045,
+              "feature handoff + context K/V update": 0.13146854404145084,
+              "feed-forward down": 0.08853139896373055,
+              "feed-forward gate": 0.01389404145077721,
+              "feed-forward gate+up (one fused kernel)": 0.10246323316062177,
+              "feed-forward norm": 0.01666217616580311,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.391627139896373,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.02881319170984453,
+              "token selection kernels": 0.03290370984455959
+            },
+            "server_counters": {
+              "accepted_per_round": 0.817258883248731,
+              "derived_rounds": 197,
+              "draft_counter_ms": 3.786591836734694,
+              "remainder_ms": 18.597164508442972,
+              "requests": 3,
+              "round_ms": 22.383756345177666
+            },
+            "traced_rounds": 193,
+            "wall_ms": 22.29724847150261,
+            "phase_ms": {
+              "checkpoint": 0.01868416062176165,
+              "draft": 3.8545278652849726,
+              "process": 1.1956837150259068,
+              "target": 16.583727917098443,
+              "verify": 0.6222246735751293
+            },
+            "gpu_busy_ms": 6.285228751295339,
+            "drafter_gpu_ms": 1.1064787668393776
+          }
+        },
+        {
+          "band": "long",
+          "depth": 1,
+          "drafter": "s4",
+          "tasks": [
+            "qasper-83e708263727cf48ee85fb86",
+            "qasper-609c07fa0d439dad7a031189"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 0.7162162162162162,
+              "derived_rounds": 148,
+              "draft_counter_ms": 1.632506849315068,
+              "remainder_ms": 8.901432339874123,
+              "requests": 2,
+              "round_ms": 10.53393918918919
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 1.632506849315068,
+            "clean_round_ms": 10.53393918918919,
+            "instrumentation_round_ms": 0.9650135135135098,
+            "kernel_time_ratio_nodes_to_phases": 0.9500524803995395,
+            "nodes_attributed_ms": 1.2511810486111108,
+            "nodes_attribution_coverage": 0.9999999999999998,
+            "nodes_drafter_gpu_ms": 1.251181048611111,
+            "phases_draft_counter_ms": 1.8984931506849316,
+            "phases_drafter_gpu_ms": 1.3169599305555557,
+            "phases_drafter_wall_ms": 2.4013434652777788,
+            "phases_round_ms": 11.4989527027027,
+            "phases_traced_round_ms": 11.396650805555549,
+            "unexplained_draft_ms": -0.327888650684931
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.014992263888888892,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 1.3019676666666664,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 0.7162162162162162,
+              "derived_rounds": 148,
+              "draft_counter_ms": 1.8984931506849316,
+              "remainder_ms": 9.60045955201777,
+              "requests": 2,
+              "round_ms": 11.4989527027027
+            },
+            "traced_rounds": 144,
+            "wall_ms": 11.396650805555549,
+            "phase_ms": {
+              "checkpoint": 0.01600917361111111,
+              "draft": 1.960395499999999,
+              "process": 0.4409479652777779,
+              "target": 8.434742076388888,
+              "verify": 0.5297698402777781
+            },
+            "gpu_busy_ms": 8.43674020833334,
+            "drafter_gpu_ms": 1.205461333333333
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06568003472222224,
+              "attention over context (score, softmax, mix)": 0.1807786666666667,
+              "attention projections (q, k, v, output)": 0.18330518750000002,
+              "block embedding": 0.0012746874999999998,
+              "copies (inputs, logits)": 0.014244750000000004,
+              "feature handoff + context K/V update": 0.1314378472222222,
+              "feed-forward down": 0.08873466666666667,
+              "feed-forward gate": 0.013841555555555553,
+              "feed-forward gate+up (one fused kernel)": 0.10208414583333332,
+              "feed-forward norm": 0.016435437499999997,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.392229034722222,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.029038111111111105,
+              "token selection kernels": 0.0320969236111111
+            },
+            "server_counters": {
+              "accepted_per_round": 0.7162162162162162,
+              "derived_rounds": 148,
+              "draft_counter_ms": 3.6936643835616443,
+              "remainder_ms": 17.96574777860052,
+              "requests": 2,
+              "round_ms": 21.659412162162162
+            },
+            "traced_rounds": 144,
+            "wall_ms": 21.784750347222225,
+            "phase_ms": {
+              "checkpoint": 0.017042062500000007,
+              "draft": 3.7891874444444458,
+              "process": 1.0536353819444444,
+              "target": 16.32889552083334,
+              "verify": 0.5729225416666665
+            },
+            "gpu_busy_ms": 8.79751040972222,
+            "drafter_gpu_ms": 1.2511810486111108
+          }
+        },
+        {
+          "band": "short",
+          "depth": 3,
+          "drafter": "baseline",
+          "tasks": [
+            "ultrachat-706515e8cd15f41a372165c1",
+            "commitpack-4f317134640f49c71a821abe",
+            "commitpack-25c9eb5ae51f166a59e4bf7a"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 2.086206896551724,
+              "derived_rounds": 116,
+              "draft_counter_ms": 1.858608695652174,
+              "remainder_ms": 7.3869430284857565,
+              "requests": 3,
+              "round_ms": 9.24555172413793
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 1.858608695652174,
+            "clean_round_ms": 9.24555172413793,
+            "instrumentation_round_ms": 0.6725258620689658,
+            "kernel_time_ratio_nodes_to_phases": 0.9469416469581204,
+            "nodes_attributed_ms": 1.5130990089285712,
+            "nodes_attribution_coverage": 0.9999999999999997,
+            "nodes_drafter_gpu_ms": 1.5130990089285716,
+            "phases_draft_counter_ms": 2.015269565217391,
+            "phases_drafter_gpu_ms": 1.5978798839285713,
+            "phases_drafter_wall_ms": 2.5006288035714292,
+            "phases_round_ms": 9.918077586206897,
+            "phases_traced_round_ms": 9.878064008928572,
+            "unexplained_draft_ms": -0.23594179541925442
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.01953436607142857,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 1.578345517857144,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 2.086206896551724,
+              "derived_rounds": 116,
+              "draft_counter_ms": 2.015269565217391,
+              "remainder_ms": 7.9028080209895055,
+              "requests": 3,
+              "round_ms": 9.918077586206897
+            },
+            "traced_rounds": 112,
+            "wall_ms": 9.878064008928572,
+            "phase_ms": {
+              "checkpoint": 0.014645348214285711,
+              "draft": 2.0945504910714283,
+              "process": 0.40607831250000015,
+              "target": 6.549206383928569,
+              "verify": 0.8015259910714282
+            },
+            "gpu_busy_ms": 6.90950323214286,
+            "drafter_gpu_ms": 1.4598123482142855
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06610970535714283,
+              "attention over context (score, softmax, mix)": 0.04483808035714285,
+              "attention projections (q, k, v, output)": 0.1773823214285714,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.019321455357142844,
+              "feature handoff + context K/V update": 0.13470525000000003,
+              "feed-forward down": 0.12098406250000003,
+              "feed-forward gate": 0.11675181249999998,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.016395982142857146,
+              "feed-forward up": 0.11595431250000003,
+              "final norm + vocabulary scoring": 0.5723568124999998,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.028867687499999992,
+              "token selection kernels": 0.09943152678571429
+            },
+            "server_counters": {
+              "accepted_per_round": 2.086206896551724,
+              "derived_rounds": 116,
+              "draft_counter_ms": 3.3374782608695654,
+              "remainder_ms": 14.216685532233884,
+              "requests": 3,
+              "round_ms": 17.55416379310345
+            },
+            "traced_rounds": 112,
+            "wall_ms": 17.531367812500005,
+            "phase_ms": {
+              "checkpoint": 0.014657866071428573,
+              "draft": 3.380771071428573,
+              "process": 0.8603550625,
+              "target": 12.494980955357144,
+              "verify": 0.7681818124999996
+            },
+            "gpu_busy_ms": 7.275353741071426,
+            "drafter_gpu_ms": 1.5130990089285719
+          }
+        },
+        {
+          "band": "long",
+          "depth": 3,
+          "drafter": "baseline",
+          "tasks": [
+            "qasper-83e708263727cf48ee85fb86",
+            "qasper-609c07fa0d439dad7a031189"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 1.6185567010309279,
+              "derived_rounds": 97,
+              "draft_counter_ms": 2.011762886597938,
+              "remainder_ms": 9.715721649484538,
+              "requests": 2,
+              "round_ms": 11.727484536082475
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 2.011762886597938,
+            "clean_round_ms": 11.727484536082475,
+            "instrumentation_round_ms": 0.9498762886597927,
+            "kernel_time_ratio_nodes_to_phases": 0.9452491389852997,
+            "nodes_attributed_ms": 1.675689694736842,
+            "nodes_attribution_coverage": 0.9999999999999998,
+            "nodes_drafter_gpu_ms": 1.6756896947368425,
+            "phases_draft_counter_ms": 2.280938144329897,
+            "phases_drafter_gpu_ms": 1.772749242105263,
+            "phases_drafter_wall_ms": 2.790845568421052,
+            "phases_round_ms": 12.677360824742268,
+            "phases_traced_round_ms": 12.561394863157894,
+            "unexplained_draft_ms": -0.3466942923494303
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.025607599999999998,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 1.747141642105263,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 1.6185567010309279,
+              "derived_rounds": 97,
+              "draft_counter_ms": 2.280938144329897,
+              "remainder_ms": 10.396422680412371,
+              "requests": 2,
+              "round_ms": 12.677360824742268
+            },
+            "traced_rounds": 95,
+            "wall_ms": 12.561394863157894,
+            "phase_ms": {
+              "checkpoint": 0.01618883157894736,
+              "draft": 2.358457178947368,
+              "process": 0.4323883894736843,
+              "target": 9.021641768421055,
+              "verify": 0.7175456421052631
+            },
+            "gpu_busy_ms": 9.481908063157897,
+            "drafter_gpu_ms": 1.6249590842105264
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0673797894736842,
+              "attention over context (score, softmax, mix)": 0.19728497894736843,
+              "attention projections (q, k, v, output)": 0.1775098736842105,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.02476046315789474,
+              "feature handoff + context K/V update": 0.13475118947368422,
+              "feed-forward down": 0.12091785263157893,
+              "feed-forward gate": 0.11750587368421056,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.01645197894736842,
+              "feed-forward up": 0.11604799999999996,
+              "final norm + vocabulary scoring": 0.573712,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.028890568421052636,
+              "token selection kernels": 0.10047712631578946
+            },
+            "server_counters": {
+              "accepted_per_round": 1.6185567010309279,
+              "derived_rounds": 97,
+              "draft_counter_ms": 3.119381443298969,
+              "remainder_ms": 15.989278350515463,
+              "requests": 2,
+              "round_ms": 19.108659793814432
+            },
+            "traced_rounds": 95,
+            "wall_ms": 19.08745763157894,
+            "phase_ms": {
+              "checkpoint": 0.015722810526315786,
+              "draft": 3.2060997157894757,
+              "process": 0.8501445789473683,
+              "target": 14.3083997368421,
+              "verify": 0.691837947368421
+            },
+            "gpu_busy_ms": 9.838213621052624,
+            "drafter_gpu_ms": 1.6756896947368414
+          }
+        },
+        {
+          "band": "short",
+          "depth": 3,
+          "drafter": "s4",
+          "tasks": [
+            "ultrachat-706515e8cd15f41a372165c1",
+            "commitpack-4f317134640f49c71a821abe",
+            "commitpack-25c9eb5ae51f166a59e4bf7a"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 1.796875,
+              "derived_rounds": 128,
+              "draft_counter_ms": 1.7468897637795278,
+              "remainder_ms": 7.224610236220473,
+              "requests": 3,
+              "round_ms": 8.9715
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 1.7468897637795278,
+            "clean_round_ms": 8.9715,
+            "instrumentation_round_ms": 0.7086328124999994,
+            "kernel_time_ratio_nodes_to_phases": 0.9617854257895321,
+            "nodes_attributed_ms": 1.4700646451612907,
+            "nodes_attribution_coverage": 1.0000000000000002,
+            "nodes_drafter_gpu_ms": 1.4700646451612902,
+            "phases_draft_counter_ms": 1.9248267716535437,
+            "phases_drafter_gpu_ms": 1.5284746532258071,
+            "phases_drafter_wall_ms": 2.399273217741935,
+            "phases_round_ms": 9.6801328125,
+            "phases_traced_round_ms": 9.608704879032256,
+            "unexplained_draft_ms": -0.2581140346075699
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.01623129032258064,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 1.5122433629032255,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 1.796875,
+              "derived_rounds": 128,
+              "draft_counter_ms": 1.9248267716535437,
+              "remainder_ms": 7.755306040846456,
+              "requests": 3,
+              "round_ms": 9.6801328125
+            },
+            "traced_rounds": 124,
+            "wall_ms": 9.608704879032256,
+            "phase_ms": {
+              "checkpoint": 0.014669645161290323,
+              "draft": 2.0050037983870976,
+              "process": 0.39426941935483883,
+              "target": 6.474392064516129,
+              "verify": 0.7094950080645162
+            },
+            "gpu_busy_ms": 6.866495282258067,
+            "drafter_gpu_ms": 1.4173939838709666
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06549071774193549,
+              "attention over context (score, softmax, mix)": 0.044728354838709676,
+              "attention projections (q, k, v, output)": 0.2741214274193549,
+              "block embedding": 0.0012725322580645156,
+              "copies (inputs, logits)": 0.01611020161290323,
+              "feature handoff + context K/V update": 0.17333131451612907,
+              "feed-forward down": 0.14144469354838698,
+              "feed-forward gate": 0.013761822580645157,
+              "feed-forward gate+up (one fused kernel)": 0.18962175806451617,
+              "feed-forward norm": 0.016364209677419354,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.4015531129032259,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.03431757258064517,
+              "token selection kernels": 0.09794692741935483
+            },
+            "server_counters": {
+              "accepted_per_round": 1.796875,
+              "derived_rounds": 128,
+              "draft_counter_ms": 3.018244094488189,
+              "remainder_ms": 13.857248093011812,
+              "requests": 3,
+              "round_ms": 16.8754921875
+            },
+            "traced_rounds": 124,
+            "wall_ms": 16.903323564516132,
+            "phase_ms": {
+              "checkpoint": 0.014697137096774195,
+              "draft": 3.101667951612904,
+              "process": 0.7307996129032257,
+              "target": 12.324822814516132,
+              "verify": 0.7194815322580644
+            },
+            "gpu_busy_ms": 7.238130927419355,
+            "drafter_gpu_ms": 1.4700646451612902
+          }
+        },
+        {
+          "band": "long",
+          "depth": 3,
+          "drafter": "s4",
+          "tasks": [
+            "qasper-83e708263727cf48ee85fb86",
+            "qasper-609c07fa0d439dad7a031189"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 1.247787610619469,
+              "derived_rounds": 113,
+              "draft_counter_ms": 1.953535714285714,
+              "remainder_ms": 9.644889064475349,
+              "requests": 2,
+              "round_ms": 11.598424778761062
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 1.953535714285714,
+            "clean_round_ms": 11.598424778761062,
+            "instrumentation_round_ms": 0.8034778761061947,
+            "kernel_time_ratio_nodes_to_phases": 0.9580613120974083,
+            "nodes_attributed_ms": 1.6249536818181816,
+            "nodes_attribution_coverage": 1.0000000000000002,
+            "nodes_drafter_gpu_ms": 1.6249536818181813,
+            "phases_draft_counter_ms": 2.162169642857143,
+            "phases_drafter_gpu_ms": 1.6960852727272726,
+            "phases_drafter_wall_ms": 2.645870636363637,
+            "phases_round_ms": 12.401902654867257,
+            "phases_traced_round_ms": 12.249433627272726,
+            "unexplained_draft_ms": -0.2847878766233778
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.02394340909090909,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 1.6721418636363636,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 1.247787610619469,
+              "derived_rounds": 113,
+              "draft_counter_ms": 2.162169642857143,
+              "remainder_ms": 10.239733012010113,
+              "requests": 2,
+              "round_ms": 12.401902654867257
+            },
+            "traced_rounds": 110,
+            "wall_ms": 12.249433627272726,
+            "phase_ms": {
+              "checkpoint": 0.01634396363636364,
+              "draft": 2.2383235909090917,
+              "process": 0.4075470454545455,
+              "target": 8.96082631818182,
+              "verify": 0.6120198000000002
+            },
+            "gpu_busy_ms": 9.447451509090907,
+            "drafter_gpu_ms": 1.577421690909091
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06562905454545456,
+              "attention over context (score, softmax, mix)": 0.1936942363636364,
+              "attention projections (q, k, v, output)": 0.27436270909090904,
+              "block embedding": 0.0012777000000000003,
+              "copies (inputs, logits)": 0.022753009090909094,
+              "feature handoff + context K/V update": 0.17337220909090906,
+              "feed-forward down": 0.14096781818181817,
+              "feed-forward gate": 0.013747154545454547,
+              "feed-forward gate+up (one fused kernel)": 0.18876016363636364,
+              "feed-forward norm": 0.016358990909090917,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.4024414363636363,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.03448410909090909,
+              "token selection kernels": 0.09710509090909089
+            },
+            "server_counters": {
+              "accepted_per_round": 1.247787610619469,
+              "derived_rounds": 113,
+              "draft_counter_ms": 2.9691249999999996,
+              "remainder_ms": 15.50970685840708,
+              "requests": 2,
+              "round_ms": 18.47883185840708
+            },
+            "traced_rounds": 110,
+            "wall_ms": 18.52572459090909,
+            "phase_ms": {
+              "checkpoint": 0.015345927272727272,
+              "draft": 3.0539646636363647,
+              "process": 0.8466092363636365,
+              "target": 13.95451275454546,
+              "verify": 0.6402610727272726
+            },
+            "gpu_busy_ms": 9.807521672727265,
+            "drafter_gpu_ms": 1.6249536818181822
+          }
+        },
+        {
+          "band": "short",
+          "depth": 7,
+          "drafter": "baseline",
+          "tasks": [
+            "ultrachat-706515e8cd15f41a372165c1",
+            "commitpack-4f317134640f49c71a821abe",
+            "commitpack-25c9eb5ae51f166a59e4bf7a"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 3.5316455696202533,
+              "derived_rounds": 79,
+              "draft_counter_ms": 2.918375,
+              "remainder_ms": 10.960650316455695,
+              "requests": 3,
+              "round_ms": 13.879025316455696
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 2.918375,
+            "clean_round_ms": 13.879025316455696,
+            "instrumentation_round_ms": 1.0499367088607592,
+            "kernel_time_ratio_nodes_to_phases": 0.9744480694560341,
+            "nodes_attributed_ms": 2.618543103896104,
+            "nodes_attribution_coverage": 1.0000000000000004,
+            "nodes_drafter_gpu_ms": 2.618543103896103,
+            "phases_draft_counter_ms": 3.229025,
+            "phases_drafter_gpu_ms": 2.6872064155844155,
+            "phases_drafter_wall_ms": 3.7391411818181814,
+            "phases_round_ms": 14.928962025316455,
+            "phases_traced_round_ms": 14.618588441558442,
+            "unexplained_draft_ms": -0.39477668831168833
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.02846505194805195,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 2.6587413636363615,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 3.5316455696202533,
+              "derived_rounds": 79,
+              "draft_counter_ms": 3.229025,
+              "remainder_ms": 11.699937025316455,
+              "requests": 3,
+              "round_ms": 14.928962025316455
+            },
+            "traced_rounds": 77,
+            "wall_ms": 14.618588441558442,
+            "phase_ms": {
+              "checkpoint": 0.015881025974025978,
+              "draft": 3.3131516883116885,
+              "process": 0.42598949350649357,
+              "target": 9.760944571428576,
+              "verify": 1.0897394415584412
+            },
+            "gpu_busy_ms": 10.954772480519486,
+            "drafter_gpu_ms": 2.5452363246753245
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06651596103896104,
+              "attention over context (score, softmax, mix)": 0.05519257142857142,
+              "attention projections (q, k, v, output)": 0.26170484415584416,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.027636467532467537,
+              "feature handoff + context K/V update": 0.1886741168831169,
+              "feed-forward down": 0.18677577922077931,
+              "feed-forward gate": 0.19580051948051944,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.016399298701298706,
+              "feed-forward up": 0.19475977922077925,
+              "final norm + vocabulary scoring": 1.1533074285714286,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.04048757142857141,
+              "token selection kernels": 0.2312887662337663
+            },
+            "server_counters": {
+              "accepted_per_round": 3.5316455696202533,
+              "derived_rounds": 79,
+              "draft_counter_ms": 4.515575,
+              "remainder_ms": 17.072108544303795,
+              "requests": 3,
+              "round_ms": 21.587683544303797
+            },
+            "traced_rounds": 77,
+            "wall_ms": 21.315205662337657,
+            "phase_ms": {
+              "checkpoint": 0.016299766233766236,
+              "draft": 4.6246501688311685,
+              "process": 0.8491900259740259,
+              "target": 14.759018194805192,
+              "verify": 1.0527084155844155
+            },
+            "gpu_busy_ms": 11.346653857142858,
+            "drafter_gpu_ms": 2.6185431038961036
+          }
+        },
+        {
+          "band": "long",
+          "depth": 7,
+          "drafter": "baseline",
+          "tasks": [
+            "qasper-83e708263727cf48ee85fb86",
+            "qasper-609c07fa0d439dad7a031189"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 2.0602409638554215,
+              "derived_rounds": 83,
+              "draft_counter_ms": 3.2053012048192766,
+              "remainder_ms": 12.923397590361445,
+              "requests": 2,
+              "round_ms": 16.12869879518072
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 3.2053012048192766,
+            "clean_round_ms": 16.12869879518072,
+            "instrumentation_round_ms": 1.1864819277108474,
+            "kernel_time_ratio_nodes_to_phases": 0.9697127399907667,
+            "nodes_attributed_ms": 2.785951839506173,
+            "nodes_attribution_coverage": 0.9999999999999997,
+            "nodes_drafter_gpu_ms": 2.7859518395061738,
+            "phases_draft_counter_ms": 3.587759036144578,
+            "phases_drafter_gpu_ms": 2.8729661111111118,
+            "phases_drafter_wall_ms": 4.07649538271605,
+            "phases_round_ms": 17.31518072289157,
+            "phases_traced_round_ms": 17.178362567901235,
+            "unexplained_draft_ms": -0.4585861778967728
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.03898108641975309,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 2.833985024691358,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 2.0602409638554215,
+              "derived_rounds": 83,
+              "draft_counter_ms": 3.587759036144578,
+              "remainder_ms": 13.72742168674699,
+              "requests": 2,
+              "round_ms": 17.31518072289157
+            },
+            "traced_rounds": 81,
+            "wall_ms": 17.178362567901235,
+            "phase_ms": {
+              "checkpoint": 0.017259691358024687,
+              "draft": 3.6638873827160494,
+              "process": 0.412608,
+              "target": 12.249080629629628,
+              "verify": 0.8201697654320984
+            },
+            "gpu_busy_ms": 13.585620061728397,
+            "drafter_gpu_ms": 2.7217245432098767
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06802343209876546,
+              "attention over context (score, softmax, mix)": 0.20806022222222217,
+              "attention projections (q, k, v, output)": 0.2603378024691358,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.03689865432098765,
+              "feature handoff + context K/V update": 0.1886037160493827,
+              "feed-forward down": 0.18559650617283946,
+              "feed-forward gate": 0.19687912345679012,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.016442777777777775,
+              "feed-forward up": 0.19477861728395063,
+              "final norm + vocabulary scoring": 1.1558731975308643,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.040695592592592596,
+              "token selection kernels": 0.23376219753086427
+            },
+            "server_counters": {
+              "accepted_per_round": 2.0602409638554215,
+              "derived_rounds": 83,
+              "draft_counter_ms": 4.355819277108433,
+              "remainder_ms": 18.644313253012047,
+              "requests": 2,
+              "round_ms": 23.00013253012048
+            },
+            "traced_rounds": 81,
+            "wall_ms": 22.97175500000001,
+            "phase_ms": {
+              "checkpoint": 0.01712751851851852,
+              "draft": 4.44739487654321,
+              "process": 0.7860620493827158,
+              "target": 16.868548160493834,
+              "verify": 0.8369632962962965
+            },
+            "gpu_busy_ms": 13.957459024691358,
+            "drafter_gpu_ms": 2.7859518395061724
+          }
+        },
+        {
+          "band": "short",
+          "depth": 7,
+          "drafter": "s4",
+          "tasks": [
+            "ultrachat-706515e8cd15f41a372165c1",
+            "commitpack-4f317134640f49c71a821abe",
+            "commitpack-25c9eb5ae51f166a59e4bf7a"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 2.6161616161616164,
+              "derived_rounds": 99,
+              "draft_counter_ms": 2.839877551020408,
+              "remainder_ms": 10.505657802514946,
+              "requests": 3,
+              "round_ms": 13.345535353535354
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 2.839877551020408,
+            "clean_round_ms": 13.345535353535354,
+            "instrumentation_round_ms": 0.9477070707070698,
+            "kernel_time_ratio_nodes_to_phases": 0.9765362585655042,
+            "nodes_attributed_ms": 2.617867378947369,
+            "nodes_attribution_coverage": 1.0000000000000004,
+            "nodes_drafter_gpu_ms": 2.617867378947368,
+            "phases_draft_counter_ms": 3.1024081632653067,
+            "phases_drafter_gpu_ms": 2.680768231578947,
+            "phases_drafter_wall_ms": 3.6148349368421044,
+            "phases_round_ms": 14.293242424242424,
+            "phases_traced_round_ms": 14.156198494736849,
+            "unexplained_draft_ms": -0.3468225858216978
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.025089926315789476,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 2.655678305263159,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 2.6161616161616164,
+              "derived_rounds": 99,
+              "draft_counter_ms": 3.1024081632653067,
+              "remainder_ms": 11.190834260977116,
+              "requests": 3,
+              "round_ms": 14.293242424242424
+            },
+            "traced_rounds": 95,
+            "wall_ms": 14.156198494736849,
+            "phase_ms": {
+              "checkpoint": 0.015470010526315792,
+              "draft": 3.1867001368421057,
+              "process": 0.42813479999999987,
+              "target": 9.624539957894738,
+              "verify": 0.8893305157894734
+            },
+            "gpu_busy_ms": 10.98244951578947,
+            "drafter_gpu_ms": 2.563338821052632
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06599506315789473,
+              "attention over context (score, softmax, mix)": 0.05424956842105262,
+              "attention projections (q, k, v, output)": 0.4516281052631579,
+              "block embedding": 0.001273968421052631,
+              "copies (inputs, logits)": 0.024856042105263165,
+              "feature handoff + context K/V update": 0.257431747368421,
+              "feed-forward down": 0.2577198105263159,
+              "feed-forward gate": 0.013716852631578944,
+              "feed-forward gate+up (one fused kernel)": 0.3591990210526317,
+              "feed-forward norm": 0.016355063157894742,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.8458058210526317,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.04572349473684212,
+              "token selection kernels": 0.22391282105263158
+            },
+            "server_counters": {
+              "accepted_per_round": 2.6161616161616164,
+              "derived_rounds": 99,
+              "draft_counter_ms": 4.0931530612244895,
+              "remainder_ms": 16.681210575139147,
+              "requests": 3,
+              "round_ms": 20.77436363636364
+            },
+            "traced_rounds": 95,
+            "wall_ms": 20.783225915789476,
+            "phase_ms": {
+              "checkpoint": 0.015594031578947369,
+              "draft": 4.186093147368422,
+              "process": 0.9921444631578942,
+              "target": 14.642376284210528,
+              "verify": 0.9346273578947369
+            },
+            "gpu_busy_ms": 11.355735000000006,
+            "drafter_gpu_ms": 2.617867378947368
+          }
+        },
+        {
+          "band": "long",
+          "depth": 7,
+          "drafter": "s4",
+          "tasks": [
+            "qasper-83e708263727cf48ee85fb86",
+            "qasper-609c07fa0d439dad7a031189"
+          ],
+          "clean": {
+            "server_counters": {
+              "accepted_per_round": 1.4660194174757282,
+              "derived_rounds": 103,
+              "draft_counter_ms": 3.096235294117647,
+              "remainder_ms": 12.689754997144487,
+              "requests": 2,
+              "round_ms": 15.785990291262134
+            }
+          },
+          "outputs_identical": true,
+          "reconciliation": {
+            "clean_draft_counter_ms": 3.096235294117647,
+            "clean_round_ms": 15.785990291262134,
+            "instrumentation_round_ms": 1.0327572815533976,
+            "kernel_time_ratio_nodes_to_phases": 0.971469742115601,
+            "nodes_attributed_ms": 2.775824219999999,
+            "nodes_attribution_coverage": 0.9999999999999997,
+            "nodes_drafter_gpu_ms": 2.77582422,
+            "phases_draft_counter_ms": 3.383450980392157,
+            "phases_drafter_gpu_ms": 2.857345010000001,
+            "phases_drafter_wall_ms": 3.8803380399999994,
+            "phases_round_ms": 16.818747572815532,
+            "phases_traced_round_ms": 16.79242211,
+            "unexplained_draft_ms": -0.36452995588235515
+          },
+          "phases": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.0,
+              "attention over context (score, softmax, mix)": 0.0,
+              "attention projections (q, k, v, output)": 0.0,
+              "block embedding": 0.0,
+              "copies (inputs, logits)": 0.03465011,
+              "feature handoff + context K/V update": 0.0,
+              "feed-forward down": 0.0,
+              "feed-forward gate": 0.0,
+              "feed-forward gate+up (one fused kernel)": 0.0,
+              "feed-forward norm": 0.0,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.0,
+              "outside graph nodes": 2.8226949,
+              "residual and activation elementwise": 0.0,
+              "token selection kernels": 0.0
+            },
+            "server_counters": {
+              "accepted_per_round": 1.4660194174757282,
+              "derived_rounds": 103,
+              "draft_counter_ms": 3.383450980392157,
+              "remainder_ms": 13.435296592423375,
+              "requests": 2,
+              "round_ms": 16.818747572815532
+            },
+            "traced_rounds": 100,
+            "wall_ms": 16.79242211,
+            "phase_ms": {
+              "checkpoint": 0.016339020000000003,
+              "draft": 3.4607652500000023,
+              "process": 0.4195727899999999,
+              "target": 12.186451860000004,
+              "verify": 0.6943986500000005
+            },
+            "gpu_busy_ms": 13.623850699999998,
+            "drafter_gpu_ms": 2.7314309900000002
+          },
+          "nodes": {
+            "groups": {
+              "attention norms, rope, block K/V write": 0.06603243000000002,
+              "attention over context (score, softmax, mix)": 0.20462109999999994,
+              "attention projections (q, k, v, output)": 0.4510430900000001,
+              "block embedding": 0.0012742499999999996,
+              "copies (inputs, logits)": 0.03342652000000001,
+              "feature handoff + context K/V update": 0.25742059,
+              "feed-forward down": 0.25622892,
+              "feed-forward gate": 0.013694939999999997,
+              "feed-forward gate+up (one fused kernel)": 0.3574455300000001,
+              "feed-forward norm": 0.01636608,
+              "feed-forward up": 0.0,
+              "final norm + vocabulary scoring": 0.8470178399999996,
+              "outside graph nodes": 0.0,
+              "residual and activation elementwise": 0.04598239000000001,
+              "token selection kernels": 0.22527054000000002
+            },
+            "server_counters": {
+              "accepted_per_round": 1.4660194174757282,
+              "derived_rounds": 103,
+              "draft_counter_ms": 4.138313725490196,
+              "remainder_ms": 18.209890158004946,
+              "requests": 2,
+              "round_ms": 22.34820388349514
+            },
+            "traced_rounds": 100,
+            "wall_ms": 22.47266141,
+            "phase_ms": {
+              "checkpoint": 0.0167571,
+              "draft": 4.227602209999999,
+              "process": 0.8287179400000002,
+              "target": 16.6864668,
+              "verify": 0.6963073099999997
+            },
+            "gpu_busy_ms": 13.968829020000001,
+            "drafter_gpu_ms": 2.7758242199999987
+          }
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "primary_phase_overhead_percent": [
+      2.627021105673477,
+      13.67936849071234
+    ],
+    "max_repeat_component_delta_ms": 0.002825999999999995,
+    "max_repeat_clean_relative_percent": 4.664478152311158
+  }
+}

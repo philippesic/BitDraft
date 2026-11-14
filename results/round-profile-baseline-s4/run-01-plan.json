@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "owner": "Philip / round-profile closeout",
+  "authorization": "Owner explicitly authorized retirement of Nsight traces and exports in round-profile-baseline-s4-01 and -02 after compact evidence verification, 2026-11-14. No other deletion authorized.",
+  "result": "results/round-profile-baseline-s4/result.md",
+  "limitations": "Raw trace component analysis cannot be regenerated after retirement; JSON/text, session records, runtime source/build, specification and inputs retained.",
+  "root": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01",
+  "protected": [
+    "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/round-profile.json",
+    "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/round-profile.txt"
+  ],
+  "retained": [
+    {
+      "path": "/home/philip/.t3/worktrees/BitDraft/t3-fd1c9bf2/results/round-profile-baseline-s4/result.json",
+      "sha256": "8c800aabe466ee3d027e6b9ca67e90789904cad251467ee361a094655984257f",
+      "bytes": 123577
+    },
+    {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-specs/baseline-s4-v3.json",
+      "sha256": "e46e01cbafb415c7ca8a0c3bbad43055abfba417b22d0af78ed05c84de58134a",
+      "bytes": 1496
+    },
+    {
+      "path": "/home/philip/BitDraft/artifacts/native/runtime-v6-round-profile/result.json",
+      "sha256": "cae9df8e34cbd89f9327cba0e8975f0cb6e6bffca56edc4e7b132bc1f7881c03",
+      "bytes": 3292
+    }
+  ],
+  "remove": [
+    {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/baseline/d1/nodes/trace.nsys-rep",
+      "sha256": "bec58d957280a4c508efe7035b2ce7f65469609429e47a37638829f2589a80f7",
+      "bytes": 56498410
+    },
+    {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/baseline/d1/phases/trace.nsys-rep",
+      "sha256": "ed4b46f728e7834f509b24b35ad84976815d2b2d4cca5ff1724b09ecbeaa0b71",
+      "bytes": 22754538
+    },
+    {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/baseline/d3/nodes/trace.nsys-rep",
+      "sha256": "082e41ed89239ca625594b86fa44cdc80ad74530945bc676379a849644a8cb1e",
+      "bytes": 40951233
+    },
+    {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/baseline/d3/phases/trace.nsys-rep",
+      "sha256": "404d70b944d656b320b8cbac4e83a382eebeb7fc3cf10a77e069433e5904d823",
+      "bytes": 17512586
+    },
+    {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/baseline/d7/nodes/trace.nsys-rep",
+      "sha256": "eeb46db95c214066847f095da4644eeca04f6d55b736aaab570b4139f3fc9fe3",
+      "bytes": 35791760
+    },
+    {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/baseline/d7/phases/trace.nsys-rep",
+      "sha256": "25832bc282214fe075e46988841d865230baa33da0a9f8c76bad22d8c199abb0",
+      "bytes": 16298654
+    },
+    {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/s4/d1/nodes/trace.nsys-rep",
+      "sha256": "d9094a3fe3e253da0b3b63e8703a5e7eadb01f5ad1b5144acc439db4568ec073",
+      "bytes": 59946457
+    },
+    {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/s4/d1/phases/trace.nsys-rep",
+      "sha256": "9955a42ce41dd653a7fdce464a0ac6973c563b9bc2a58e4c85c7d3e74082f780",
+      "bytes": 23682200
+    },
+    {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/s4/d3/nodes/trace.nsys-rep",
+      "sha256": "94b4100de64610f28a663f40057723ca4864ffb9c77e643845818a1955d34d6c",
+      "bytes": 46095853
+    },
+    {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/s4/d3/phases/trace.nsys-rep",
+      "sha256": "ebbf4207ad0e393cd09ed91274d0bff16d8adfe56f1cd9cd56a1e3c8b9170592",
+      "bytes": 19232765
+    },
+    {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/s4/d7/nodes/trace.nsys-rep",
+      "sha256": "3fb9d29fa971ab4399c2b1c262f377777ab670d16dfc5670521310233ccb391d",
+      "bytes": 42706647
+    },
+    {
+      "path": "/home/philip/BitDraft/artifacts/benchmarks/round-profile-baseline-s4-01/s4/d7/phases/trace.nsys-rep",
+      "sha256": "b25d0fe6b4e4b97cd63474aaec05ae5bc60e99db68d0b1780cad79b257b9feed",
+      "bytes": 18707437
+    }
+  ]
+}
