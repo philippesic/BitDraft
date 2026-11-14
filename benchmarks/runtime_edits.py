@@ -1440,4 +1440,79 @@ int32_t llama_model_n_head(const llama_model * model) {
 """,
         ),
     ),
+    "stop_token_cache_v1": (
+        (
+            "tools/server/server-context.cpp",
+            r"""            slot.sampled = ids.back(); // last accepted token
+            SLT_DBG(slot, "add accepted tokens: sampled=%d, ids.size=%zu, n_draft=%zu\n", slot.sampled, ids.size(), n_draft);
+
+            slot.mem.seq_rm(slot.id, slot.prompt.tokens.pos_next(), -1);
+
+            for (size_t i = 0; i < ids.size(); ++i) {
+                completion_token_output result;
+
+                result.tok          = ids[i];
+                result.text_to_send = common_token_to_piece(slot.ctx_tgt, result.tok, accept_special_token(slot, result.tok));
+                result.prob         = 1.0f; // set later
+
+                // post_sampling_probs is not supported with speculative decoding
+                if (slot.task->params.sampling.n_probs > 0 && !slot.task->params.post_sampling_probs) {
+                    populate_token_probs(slot, result, false, params_base.special, spec_i_batch[i]);
+                }
+
+                slot.stats.n_gen += 1;
+
+                if (!process_token(result, slot)) {
+                    slot.print_timings();
+                    send_final_response(slot);
+                    slot.release();
+
+                    return;
+                }
+            }
+
+            slot.print_timings_tg();
+""",
+            r"""            slot.sampled = ids.back(); // last accepted token
+            SLT_DBG(slot, "add accepted tokens: sampled=%d, ids.size=%zu, n_draft=%zu\n", slot.sampled, ids.size(), n_draft);
+
+            const bool can_drop_stop_tail =
+                ctx_tgt_seq_rm_type != COMMON_CONTEXT_SEQ_RM_TYPE_FULL &&
+                ctx_dft_seq_rm_type != COMMON_CONTEXT_SEQ_RM_TYPE_FULL &&
+                (ctx_tgt_seq_rm_type != COMMON_CONTEXT_SEQ_RM_TYPE_RS || n_draft <= llama_n_rs_seq(ctx_tgt));
+
+            for (size_t i = 0; i < ids.size(); ++i) {
+                completion_token_output result;
+
+                result.tok          = ids[i];
+                result.text_to_send = common_token_to_piece(slot.ctx_tgt, result.tok, accept_special_token(slot, result.tok));
+                result.prob         = 1.0f; // set later
+
+                // post_sampling_probs is not supported with speculative decoding
+                if (slot.task->params.sampling.n_probs > 0 && !slot.task->params.post_sampling_probs) {
+                    populate_token_probs(slot, result, false, params_base.special, spec_i_batch[i]);
+                }
+
+                slot.stats.n_gen += 1;
+
+                if (!process_token(result, slot)) {
+                    if (can_drop_stop_tail && i + 1 < ids.size()) {
+                        slot.prompt.tokens.keep_first(slot.prompt.n_tokens() - (int) (ids.size() - 1 - i));
+                    }
+                    slot.mem.seq_rm(slot.id, slot.prompt.tokens.pos_next(), -1);
+
+                    slot.print_timings();
+                    send_final_response(slot);
+                    slot.release();
+
+                    return;
+                }
+            }
+
+            slot.mem.seq_rm(slot.id, slot.prompt.tokens.pos_next(), -1);
+
+            slot.print_timings_tg();
+""",
+        ),
+    ),
 }
