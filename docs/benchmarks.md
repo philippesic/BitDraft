@@ -17,7 +17,8 @@ explicit paths and the shared saved-reference registry.
 | --- | --- |
 | `plan`, `verify-inputs` | Native comparison units/warmups; optional model/runtime hashing |
 | `native-build`, `native-helpers` | Authenticated runtime/helper builds |
-| `curate`, `admit-bank`, `select-supplement` | Role-safe prompt preparation/selection |
+| `curate`, `admit-bank`, `select-supplement`, `select-expansion` | Role-safe prompt preparation/selection |
+| `generate-sessions` | Target-only greedy TRAIN tool sessions for session captures |
 | `prepare-project-workflows`, `prepare-replays`, `prepare-panels` | Project controls, measured histories, live/harness inputs |
 | `capture`, `evaluate` | Teacher features; matched teacher-forced DEV loss |
 | `compare`, `live` | Isolated native requests; executing tool episodes |
@@ -158,6 +159,19 @@ leaving about 1 GB for metadata under 400 GB. FP32 raw features are twice that. 
 truncation manufactures coverage. Exact inputs/caps set the maximum, EOS the actual size.
 These are dataset planning ceilings, not global disk limits. [Data](data.md) owns formats,
 partial tails, mixtures and ancestry.
+
+`generate-sessions` builds TRAIN coding projects from CommitPackFT repository groups that
+share no repository with the curated pool, skips groups whose hash marks them as DEV, keeps
+permissive licenses only and drops trailer and contact lines from commit messages. Each task
+copies two to eight parseable files, asks for the commit's change and checks that the file
+changed and every file compiles. It runs the live harness (`tools` system prompt, the five
+file/test tools, 16 turns, 1024-token calls) with the target alone and records transcripts
+and responses; it resumes completed tasks. Task success is not required: the target's own
+greedy turns are the supervision. `select-expansion` selects a TRAIN expansion bank from the
+curated pool, new public sources (`math`, `oasst2`) and session transcripts, converting each
+session into one [session record](data.md#session-records). It excludes base-bank, protected
+and heldout identities and token prefixes, fills `source|subtype|band` quotas in seeded
+order, rechecks tokenization and forecasts maximum FP16 features against a declared ceiling.
 
 Capture resumes the exact specification in its existing output: authenticate completed
 `progress.json` records and skip their IDs. Keep incomplete attempt directories and

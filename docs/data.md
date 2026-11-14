@@ -83,6 +83,25 @@ stop generation; the first generated one is the last supervised label. The origi
 also admits shorter terminal windows, normalizing the same decay weights over available
 labels. It retains short answers and EOS without inventing padding or post-EOS labels.
 
+### Session records
+
+A session record supervises every assistant turn of one tool session in a single capture.
+Its tokens are the chat template's final rendering of the whole transcript, cut after the
+last assistant turn, so each turn's context is exactly what the live harness sends for
+that call. `supervised_spans` lists `[first, last]` logit positions per turn: `first` is
+the generation prompt's last token and `last + 1` is the turn's end-of-turn token. The
+capture helper batches the text between turns in 512-token chunks, as the server does,
+and decodes turn tokens one at a time with logits; labels are its argmax.
+
+The history retokenizes the model's own output: identical text often splits into other
+tokens than the model generated, so a label can differ from the next history token.
+`capture_supervision` therefore ends each window at the first label that differs from the
+next input token or is an end-of-generation token. Every window is a true greedy chain
+under the capture's arithmetic, and windows may start at any turn position, including
+after a disagreement. Turns whose context the final rendering changes (for example a
+later user message removes the empty thinking block) are not spans. Session records set
+`prompt_tokens` to the first span's prompt length and have no generated tokens.
+
 The reader handles modern eight-tap F32 and explicitly declared FP16 storage and optional pinned int32 NPY copies.
 It authenticates files before use, keeps features in their stored precision, bounds how many
 features it materializes, and reconstructs the seeded grouping order from the saved cursor,

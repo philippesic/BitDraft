@@ -27,6 +27,10 @@ Linux/Windows-produced records at `linux-captures/` and `windows-captures/` unde
 corpus folder. All three are physical project-local storage. The original 15,647-record
 corpus is `artifacts/datasets/retained-he4broad-original`; its original final 220095 archive
 and `artifacts/migration/import-01/states/` parent remain distinct from probe descendants.
+The TRAIN expansion lives in one folder, `artifacts/datasets/train-expansion-01/`: read-only
+public `sources/`, runtime-v6 `native-helpers/` with the span-capable capture helper,
+`specs/`, session transcripts, the selected expansion bank, capture shards, the mixture
+manifest with the 6K corpus, `logs/` and the `executed-sources/` that ran them.
 Use [data](data.md) for roles/identity and [execution](execution.md) for state restoration.
 
 ## New output locations
