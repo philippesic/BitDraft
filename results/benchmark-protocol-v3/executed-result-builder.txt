@@ -1,0 +1,182 @@
+import glob, hashlib, json, re, sys
+from pathlib import Path
+
+REG = Path("/home/philip/BitDraft/artifacts/benchmarks/references")
+P = REG / "runtime-v6-depth3"
+RESULTS = Path(sys.argv[1])
+OUT = Path(sys.argv[2])
+EARLIER_LIVE = {
+    "runtime-v6 depth 2, RAM cache on": Path("/home/philip/.t3/worktrees/BitDraft/t3-fc0c881c/artifacts/benchmarks/prefill-fix/live-v6final"),
+    "runtime-v5 depth 2, RAM cache on": Path("/home/philip/.t3/worktrees/BitDraft/t3-fc0c881c/artifacts/benchmarks/prefill-fix/live-v5"),
+    "runtime-v5 depth 2, full-qualification rep 0": REG.parent / "full-qualification-01/q4km-live",
+}
+EARLIER_SCREEN = Path("/home/philip/.t3/worktrees/BitDraft/t3-fc0c881c/artifacts/benchmarks/prefill-fix/screen-v6final/result.json")
+OLD_TARGET = {"q4km-screen": "ce2af5f1", "q4km-requests": "fa954024", "q4km-harness": "ffbfaeee", "q4km-live-controls": "2fefcbe8",
+              "nvfp4-screen": "3a0f445a", "nvfp4-requests": "b0d173c9", "nvfp4-harness": "56b13043", "nvfp4-live-controls": "e4c1ec10"}
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+def load(path):
+    return json.loads(Path(path).read_text())
+
+def rounded(value):
+    if isinstance(value, float):
+        return round(value, 4)
+    if isinstance(value, dict):
+        return {k: rounded(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [rounded(v) for v in value]
+    return value
+
+seconds = {}
+for line in (P / "logs/runs.log").read_text().splitlines():
+    match = re.search(r"end (\S+) exit=(\d+) seconds=([\d.]+)", line)
+    if match:
+        seconds[match.group(1)] = {"exit": int(match.group(2)), "seconds": round(float(match.group(3)), 1)}
+
+registry = {}
+for path in glob.glob(str(REG / "*.json")):
+    value = load(path)
+    if str(P) in value["result"]["path"]:
+        registry[(Path(value["result"]["path"]).parent.name, value["source_arm"])] = (Path(path).name, value)
+
+runs = {}
+for result_path in sorted(P.glob("runs/*/result.json")):
+    run = result_path.parent.name
+    result = load(result_path)
+    keep = ("tasks", "requests", "completed", "correct", "tokens", "tokens_per_second", "acceptance", "accepted", "proposed",
+            "accepted_per_round", "proposed_per_round", "derived_rounds", "cap_hits", "eos_stops", "wall_seconds",
+            "elapsed_seconds", "model_seconds", "tool_seconds", "server_prompt_seconds", "server_prediction_seconds",
+            "speed_vs_target", "speed_vs_baseline", "execution")
+    entry = {
+        "result": {"path": str(result_path), "sha256": sha(result_path)},
+        "tier": result.get("tier"),
+        "protocol_policy": result["protocol"]["policy"],
+        "code_sha256": result.get("code_sha256"),
+        "gpu_seconds_including_loads": seconds.get(run, {}).get("seconds"),
+        "summary": {arm: rounded({k: v for k, v in s.items() if k in keep}) for arm, s in result["summary"].items()},
+        "references": {arm: name for (r, arm), (name, _) in registry.items() if r == run},
+    }
+    for key in ("paired_against_baseline", "historical_comparisons", "paired_task_rate_against_baseline"):
+        if result.get(key):
+            entry[key] = rounded(result[key])
+    if result.get("tier") == "live":
+        entry["rows"] = [rounded({k: r[k] for k in ("arm", "task", "completed", "correct", "turns", "tokens", "model_seconds", "server_prompt_seconds", "server_prediction_seconds", "native", "state_sha256")}) for r in result["rows"]]
+    runs[run] = entry
+
+exactness = {"target_signatures_vs_runtime_v5_references": {}}
+for run, prefix in OLD_TARGET.items():
+    if (run, "target") not in registry:
+        continue
+    (old_path,) = glob.glob(str(REG / (prefix + "*.json")))
+    old = load(old_path)
+    new = registry[(run, "target")][1]
+    exactness["target_signatures_vs_runtime_v5_references"][run] = {
+        "old_reference": Path(old_path).name, "old_policy": old["protocol"].get("policy"),
+        "new_reference": registry[(run, "target")][0],
+        "tasks": len(old["signatures"]),
+        "identical": sum(new["signatures"].get(t) == s for t, s in old["signatures"].items()),
+    }
+
+def rows(run, arm):
+    return {r["task"]: r for r in load(P / "runs" / run / "result.json")["rows"] if r["arm"] == arm and r["rep"] == 0}
+
+def counts(run, arm):
+    return {t: [r["native"]["accepted"], r["native"]["proposed"], r["tokens"]] for t, r in rows(run, arm).items()}
+
+drafters = {}
+block = load(RESULTS / "block-size-and-reach-weights/result.json")["screens"]["3"]["per_request"]
+fair = load(RESULTS / "draft-depth-fairness/result.json")
+order = [r[0] for r in fair["requests"]]
+fair_runs = {r["run"]: r for r in fair["runs"]}
+pairs = [("q4km-screen", "baseline", block["baseline"], "block-size test, depth 3, runtime-v5"),
+         ("q4km-screen", "candidate", block["s4"], "block-size test S4, depth 3, runtime-v5"),
+         ("q4km-requests", "baseline", {order[x[0]]: [x[7], x[6], x[1]] for x in fair_runs["baseline-c-d3-r0"]["requests_rows"]}, "depth fairness baseline-c-d3-r0, runtime-v5"),
+         ("q4km-requests-220095", "candidate", {order[x[0]]: [x[7], x[6], x[1]] for x in fair_runs["he4-c-d3-r0"]["requests_rows"]}, "depth fairness he4-c-d3-r0, runtime-v5")]
+for run, arm, old, source in pairs:
+    if not (P / "runs" / run / "result.json").exists():
+        continue
+    new = counts(run, arm)
+    drafters[run + "/" + arm] = {"source": source, "requests": len(new),
+                                 "identical_accepted_proposed_tokens": sum(old.get(t) == v for t, v in new.items()),
+                                 "new_totals": [sum(v[i] for v in new.values()) for i in range(3)],
+                                 "old_totals": [sum(v[i] for v in old.values()) for i in range(3)]}
+exactness["drafter_counters_vs_runtime_v5_depth3"] = drafters
+
+def transcripts(root, rep, arm):
+    return {p.parent.name: load(p)["responses"] for p in (root / f"{rep}-{arm}").glob("*/transcript.json")}
+
+live = {}
+EARLIER_NVFP4 = {"runtime-v5 depth 2, saved-control source": REG.parent.parent / "qualification/lean-checks/nvfp4-controls-suite-01/nvfp4-live"}
+def compare_target(run, earlier_map):
+    target = transcripts(P / "runs" / run, 0, "target")
+    for label, earlier in earlier_map.items():
+        old = transcripts(earlier, 0, "target")
+        calls = same_tokens = same_counts = 0
+        for task, responses in target.items():
+            for a, b in zip(responses, old[task]):
+                calls += 1
+                same_tokens += a["tokens"] == b["tokens"]
+                same_counts += (a["timings"]["cache_n"], a["tokens_evaluated"]) == (b["timings"]["cache_n"], b["tokens_evaluated"])
+        live[f"{run} target vs {label}"] = {"calls": calls, "identical_tokens": same_tokens, "identical_cached_and_evaluated": same_counts}
+
+def compare_arm(target_run, run, arm):
+    target = transcripts(P / "runs" / target_run, 0, "target")
+    other = transcripts(P / "runs" / run, 0, arm)
+    calls = differing_cache = 0
+    events = []
+    for task, responses in sorted(target.items()):
+        for index, (a, b) in enumerate(zip(responses, other[task])):
+            calls += 1
+            if a["timings"]["cache_n"] != b["timings"]["cache_n"]:
+                differing_cache += 1
+                previous = other[task][index - 1]
+                events.append({"task": task, "call": index, "target_cached": a["timings"]["cache_n"], "arm_cached": b["timings"]["cache_n"],
+                               "previous_call_stop": previous["stop_type"], "previous_call_last_token": previous["tokens"][-1],
+                               "previous_call_proposed": previous["timings"].get("draft_n"), "previous_call_accepted": previous["timings"].get("draft_n_accepted"),
+                               "tokens_identical": a["tokens"] == b["tokens"]})
+            if a["tokens"] != b["tokens"]:
+                first = next((i for i, (x, y) in enumerate(zip(a["tokens"], b["tokens"])) if x != y), None)
+                events.append({"task": task, "call": index, "first_differing_generated_token": first})
+                break
+    live[f"{run} {arm} vs {target_run} target"] = {"calls_compared": calls, "cached_prefix_differs": differing_cache, "events": events}
+
+compare_target("q4km-live", EARLIER_LIVE)
+compare_target("q4km-live-controls", EARLIER_LIVE)
+compare_target("nvfp4-live-controls", EARLIER_NVFP4)
+compare_arm("q4km-live", "q4km-live", "baseline")
+compare_arm("q4km-live", "q4km-live", "candidate")
+compare_arm("q4km-live-controls", "q4km-live-controls", "baseline")
+compare_arm("q4km-live-controls", "q4km-live-s4", "candidate")
+compare_arm("nvfp4-live-controls", "nvfp4-live-controls", "baseline")
+compare_arm("nvfp4-live-controls", "nvfp4-live-s4", "candidate")
+exactness["live"] = live
+
+screen_cache = {}
+earlier = load(EARLIER_SCREEN)
+for label, result in (("runtime-v6 depth 2, RAM cache on", earlier), ("runtime-v6 depth 3, RAM cache off", load(P / "runs/q4km-screen/result.json"))):
+    s = result["summary"]["target"]
+    wall = sum(r["wall_seconds"] for r in result["rows"] if r["arm"] == "target")
+    screen_cache[label] = rounded({"target_wall_seconds": wall, "server_prompt_seconds": s["server_prompt_seconds"],
+                                   "server_prediction_seconds": s["server_prediction_seconds"],
+                                   "outside_server_timers_per_request_ms": 1000 * (wall - s["server_prompt_seconds"] - s["server_prediction_seconds"]) / 60})
+
+build = load("/home/philip/BitDraft/artifacts/native/runtime-v6/result.json")
+value = {
+    "schema": 1,
+    "question": "Benchmark protocol v3: runtime-v6, depth 3 exact, --cache-ram 0; new saved controls and S4 standing",
+    "protocol": {k: v for k, v in load(P / "runs/q4km-screen/result.json")["protocol"].items() if k != "tasks"},
+    "workloads": {name: sha(P / "lean-q4km" / (name + "-workload.json")) for name in ("screen", "requests", "harness", "live")},
+    "runtime": {"build": "/home/philip/BitDraft/artifacts/native/runtime-v6", "build_spec_sha256": sha("/home/philip/BitDraft/artifacts/native/runtime-v6-build-spec.json"),
+                "code_sha256": build["code_sha256"], "runtime_repairs": build["runtime_repairs"],
+                "llama_server_sha256": next(a["sha256"] for a in build["artifacts"] if a["path"].endswith("llama-server"))},
+    "gpu": (P / "runs/q4km-screen/gpu.txt").read_text().strip(),
+    "gpu_seconds": seconds,
+    "gpu_seconds_total": round(sum(v["seconds"] for v in seconds.values()), 1),
+    "runs": runs,
+    "exactness": exactness,
+    "ram_cache_screen_target": screen_cache,
+}
+OUT.write_text(json.dumps(value, indent=1, sort_keys=True) + "\n")
+print("written", OUT)

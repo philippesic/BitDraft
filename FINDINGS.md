@@ -69,6 +69,7 @@ No general binary-acceleration claim followed. [Result](results/binary-pipeline-
 On 600 Q4KM DEV prompts it reached 41.85% acceptance (0.84 of 2 drafts per round) and
 180.9 tok/s: 1.07× target-only, 0.85× Baseline (65.77%, 213.5 tok/s). It does not beat
 Baseline. [Result](results/he4broad-final-standing/result.md).
+2026-11-13: measured under depth 2 and runtime-v5; F023 gives the protocol-v3 standing.
 
 ### F015: Does any drafter speed up the live tool tasks?
 
@@ -76,6 +77,7 @@ Not measurably. Over 36 task runs target-only took 7.40 s per assigned task, Bas
 and HE4 7.99; each drafter doubled prompt processing, cancelling its decoding gain.
 Twelve tasks from one project.
 [Result](results/he4broad-final-standing/result.md).
+2026-11-13: under protocol v3 Baseline is 1.48× faster than target-only on these tasks (F023).
 
 
 ### F016: Which step-size recipe should fresh grouped HE4 training use?
@@ -114,8 +116,9 @@ pre-faulted host memory. Every output, token ID and proposed/accepted count matc
 runtime-v5 on synthetic prompts, 60 DEV requests and 12 live DEV tasks. Drafter prompt
 overhead fell 64–91%: at 16,000 tokens from 1,027 to 119 ms, and a 32-token cached call
 from 210 to 55 ms. On live tasks Baseline took 70.1 s against target-only's 83.8 s
-(v5: 84.6 against 89.5), and HE4 matched target-only. It is not yet the benchmark default.
-[Result](results/drafter-prompt-overhead-fixes/result.md).
+(v5: 84.6 against 89.5), and HE4 matched target-only.
+[Result](results/drafter-prompt-overhead-fixes/result.md). 2026-11-13: adopted as the
+benchmark runtime in protocol v3 (F023).
 
 ### F019: Does the fixed depth-2 exact protocol treat HE4 and Baseline fairly?
 
@@ -124,7 +127,7 @@ No. Depth 2 caps Baseline below its best exact depth (3) while HE4 loses nothing
 drafter at its best exact depth (arm D: 0.88 vs 0.82), about 7–10% too favourable. Fixed depth
 3 matches the best-depth ratios within 1%. Exact mode leaves acceptance on identical text
 unchanged and does not systematically favour HE4. Depth 3 is proposed as the shared default.
-[Result](results/draft-depth-fairness/result.md).
+[Result](results/draft-depth-fairness/result.md). 2026-11-13: adopted in protocol v3 (F023).
 
 ### F021: Can a drafter's serving depth be chosen per deployment without a panel sweep?
 
@@ -145,6 +148,18 @@ gained 4.1–5.0 points but trailed 4-slot blocks by 1.0–1.6 at every tested d
 keep deeper positions better on DEV, untested natively beyond depth 4. Baseline still
 leads by about 10 points. The 4-slot state is kept. One seed.
 [Result](results/block-size-and-reach-weights/result.md).
+
+### F023: How do Baseline and S4 stand under benchmark protocol v3?
+
+Protocol v3 (runtime-v6, exact depth 3, no RAM prompt cache) is the default; target
+outputs and depth-3 draft counts match runtime-v5 exactly. Baseline runs 1.36–1.43× target-only
+on the 60- and 120-request cohorts, 1.70–1.72× on the prefix harness and 1.34–1.48× on live
+tool tasks, on both precisions. S4 reaches 0.88–0.93 of Baseline's request speed, 11–13
+acceptance points lower; on live tasks with matching trajectories it ties Baseline
+(Q4KM 47.3 vs 47.6 s, NVFP4 30.5 vs 30.0 s). The 220,095 export reaches 0.79 of Baseline on
+the panel. S4's live trajectory diverged on 1–2 of 12 tasks through cached-prefix reuse after
+a drafted end-of-turn token, so it has no live reference. Depth-2/runtime-v5 ratios are not
+comparable. [Result](results/benchmark-protocol-v3/result.md).
 
 ## Earlier experiments and durable lessons
 

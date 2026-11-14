@@ -115,6 +115,31 @@ uncertainty. Historical speed ratios are descriptive, without paired timing inte
 Changed runtime/hardware needs new controls; consequential close speed decisions need
 fresh matched trials. Filesystem/tool tasks retain whole-episode failure denominators.
 
+### Current protocol
+
+Request policy v3 (`native-greedy-request-v3`, `native-live-v3`) serves with runtime-v6
+(`artifacts/native/runtime-v6`), exact verification, depth 3, `--cache-ram 0`, F16 KV and
+32,768 context. Target and Baseline references exist for both targets on all four cohorts,
+and S4 is the prior leader on the screen, panel and prefix harness
+([protocol switch](../results/benchmark-protocol-v3/result.md)). Everything they depend on
+is in `artifacts/benchmarks/references/runtime-v6-depth3/`:
+
+| Folder | Contents |
+| --- | --- |
+| `inputs/` | The multi-arm request/harness/live specifications given to `prepare-checks` |
+| `lean-q4km/`, `lean-nvfp4/` | Lean workloads and `*-establish.json` specifications |
+| `runs/` | The source panels the references authenticate; never delete while referenced |
+| `establish/` | Target and Baseline live establishment, derived from `live-establish.json` (see [live](#live-application-and-instructions)) |
+| `registrations/` | `record-reference` inputs, including refused ones |
+| `specs/` | Candidate-only specifications with target and Baseline references and S4 as a placeholder candidate (`*-candidate.json`; `q4km-screen-candidate.json` is the campaign screen), `*-leader.json` that add the S4 prior leader where it has a reference, and `suite.json` |
+| `executed-sources/` | The frozen code that ran the panels |
+
+Swap the `candidate` drafter in a copy of a `specs/` file to check a new state. Records
+of earlier protocols (runtime-v5, depth 2, policies v1/v2) stay valid for their own
+protocol. A comparison refuses every reference whose protocol differs from its own, so
+those controls cannot serve v3 runs, and current code cannot run the old protocol.
+Acceptance and speed ratios from depth-2 or runtime-v5 panels are not comparable with v3.
+
 ## Prompts and captures
 
 `curate` authenticates pinned sources and native token counts. `admit-bank` rechecks
@@ -182,11 +207,11 @@ commands, loaded libraries and ownership receipts identify execution. The lease 
 other tasks' jobs.
 
 Reports use total tokens/total time, acceptance totals, EOS/cap counts and category/length/
-harness breakdowns. Current panels draft at depth 2 for both targets (`--spec-draft-n-max`),
-so a round proposes at most two tokens; 64% acceptance means about 1.3 accepted per round.
-That depth caps Baseline below its best exact depth (3) and overstates HE4/Baseline speed
-ratios by about 8% ([depth fairness](../results/draft-depth-fairness/result.md)).
-Summaries therefore add `derived_rounds` (emitted − accepted − requests: each round emits
+harness breakdowns. Panels draft at depth 3 for both targets (`--spec-draft-n-max`),
+so a round proposes at most three tokens; 53% acceptance means about 1.6 accepted per round.
+Depth 3 is Baseline's best exact depth and within about 1% of each measured drafter's own
+best ([depth fairness](../results/draft-depth-fairness/result.md)); the earlier depth 2
+overstated HE4/Baseline speed ratios by about 8%. Summaries therefore add `derived_rounds` (emitted − accepted − requests: each round emits
 its accepted drafts plus one target token, and the first token comes from prompt processing)
 with proposed, accepted and emitted tokens per round. On the 1,200-request Q4KM panel this
 matched the native round counters within 0.1%. Requests ending at EOS match exactly; a
@@ -200,9 +225,11 @@ the decoding gain ([standing](../results/he4broad-final-standing/result.md)). Th
 runtime overhead shared by every DFlash-style drafter: host-side feature copies and larger
 context checkpoints, not drafter compute ([prefill overhead](../results/speculative-prefill-overhead/result.md)).
 Runtime-v6 removes most of it with outputs identical to runtime-v5
-([fixes](../results/drafter-prompt-overhead-fixes/result.md)); panels and saved references still use runtime-v5.
-Request wall time also includes the server's RAM prompt-cache save of the previous request in
-every arm, outside `server_prompt_seconds`. Paired group bootstraps preserve category composition and keep repeats/
+([fixes](../results/drafter-prompt-overhead-fixes/result.md)), and panels use it.
+Servers run with `--cache-ram 0`: the RAM prompt cache saved the previous request's state
+before each new one (about 90 ms per request, outside `server_prompt_seconds`) and nothing
+reused it. Live sessions reuse their prefix from the slot's own cache, which stays on.
+Paired group bootstraps preserve category composition and keep repeats/
 variants together. Sparse strata make intervals unavailable; multiple candidates also
 receive adjusted intervals. Wide intervals are inconclusive. Compare matched arms within
 targets, without pooling away regressions or mixing absolute scores across changed eras.
@@ -219,6 +246,8 @@ greedy DEV `comparison` (runtime build, server, libraries, target, workload, con
 the `drafter`, `tasks` and `cost_tasks` counts, `survival_cap` and `cost_cap` output
 caps, `max_depth` (2–15) and `exact` (exact verification, `GGML_CUDA_DECODE_CONSISTENT=32`;
 false sets 0). Example: [panel calibration](../results/draft-depth-calibration/spec-example.json).
+Servers take the benchmark arguments, including `--cache-ram 0`; calibrations recorded
+before that change also counted the RAM prompt-cache save in their request overhead.
 
 It runs under the GPU lease:
 
@@ -260,6 +289,14 @@ outside primary totals and reconcile their counters. All failures/timeouts stay 
 Report completion, whole-task/model/tool/overhead time and greedy trajectory/filesystem
 agreement, including shared failures. Faster incomplete work is not a win. Deployment
 claims need trials in the intended application/configuration.
+
+Live greedy agreement is checked, not guaranteed. When a drafter's accepted drafts end a
+call with the end-of-turn token, that token stays in the slot cache. The next call then
+reuses one more cached token and splits its new prompt into different batches. Prompt
+batches over 32 tokens use fused arithmetic, so a near tie can flip. Under protocol v3,
+S4 diverged this way on 1 of 12 Q4KM and 2 of 12 NVFP4 tasks; Baseline never differed.
+A diverged arm makes its panel unusable for `record-reference`, so live controls are
+established from target and Baseline alone, and a drafter that diverges has no live reference.
 
 ## Training and selection
 

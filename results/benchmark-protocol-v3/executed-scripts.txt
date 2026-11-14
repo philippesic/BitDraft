@@ -1,0 +1,308 @@
+Executed scripts for results/benchmark-protocol-v3, in order of use. Paths are the main checkout's.
+Sequence: gen_inputs.py; freeze_source of the branch into runtime-v6-depth3/executed-sources;
+launch.py prepare-checks for q4km and nvfp4; run.sh for every panel; register.sh after each;
+live_controls.py after the refused three-arm live registration; specs.py; verify-inputs on every
+spec and three old-protocol specs; the suite consistency check; signatures.py, check_exact.py,
+live_check.py and cache_diff.py for exactness. The q4km screen-candidate and leader specs were
+written by an earlier revision of specs.py with the same per-file logic.
+
+===== gen_inputs.py
+import hashlib, json, sys
+from pathlib import Path
+
+P = Path(sys.argv[1])
+main = Path("/home/philip/BitDraft/artifacts")
+build = main / "native/runtime-v6"
+result = json.loads((build / "result.json").read_text())
+server = next(a for a in result["artifacts"] if a["path"].endswith("/llama-server"))
+libs = sorted((a for a in result["artifacts"] if ".so" in Path(a["path"]).name), key=lambda a: a["path"])
+
+def ref(path):
+    data = Path(path).read_bytes()
+    return {"path": str(path), "sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data)}
+
+s4 = ref(main / "training/block-test-s4-01/exports/10ade33ae91b19a471f76ef65463005485725c1377a58728624ceee5afe8b509.bin")
+assert s4["sha256"].startswith("10ade33a")
+out = P / "inputs"
+out.mkdir(parents=True, exist_ok=False)
+for precision in ("q4km", "nvfp4"):
+    refs = {}
+    for panel in ("requests", "harness", "live"):
+        spec = json.loads((main / f"benchmarks/full-{precision}-{panel}-spec.json").read_text())
+        spec["source"] = ref(build / "result.json")
+        spec["binary"] = {k: server[k] for k in ("path", "sha256", "bytes")}
+        spec["libraries"] = [{k: a[k] for k in ("path", "sha256", "bytes")} for a in libs]
+        spec["depth"] = 3
+        spec["arms"] = [*spec["arms"][:2], {"name": "s4", "drafter": s4}]
+        path = out / f"full-{precision}-{panel}-spec.json"
+        path.write_text(json.dumps(spec, indent=2, sort_keys=True) + "\n")
+        refs[panel] = ref(path)
+    checks = {"schema": 1, **refs}
+    (out / f"{precision}-checks.json").write_text(json.dumps(checks, indent=2, sort_keys=True) + "\n")
+print("ok")
+
+===== launch.py
+import subprocess
+import sys
+from pathlib import Path
+
+snapshot = Path(sys.argv[1]).resolve()
+sys.path.insert(0, str(snapshot))
+from w1a1_eagle.config import benchmark_environment  # noqa: E402
+
+root = Path("/home/philip/BitDraft")
+environment = benchmark_environment(root, snapshot)
+command = [sys.executable, "-B", "-m", "benchmarks", "--frozen", *sys.argv[2:]]
+raise SystemExit(subprocess.run(command, cwd=snapshot, env=environment, check=False).returncode)
+
+===== run.sh
+#!/bin/bash
+SP=/tmp/claude-1000/-home-philip--t3-worktrees-BitDraft-t3-c74ee272/d8e5e12f-e27d-4e7c-8dac-3ea5033cef4a/scratchpad
+P=/home/philip/BitDraft/artifacts/benchmarks/references/runtime-v6-depth3
+S=$P/executed-sources/68210f1ed915da2968f5dd12f622309fd1196a53bcf478cd1676cee589a9cd76
+PY=/home/philip/.t3/worktrees/BitDraft/t3-c74ee272/.venv/bin/python
+mkdir -p $P/logs
+for item in "$@"; do
+  cmd=${item%%:*}; rest=${item#*:}; spec=${rest%%:*}; out=${rest#*:}
+  start=$(date +%s.%N)
+  echo "$(date -Is) start $cmd $spec $out" >> $P/logs/runs.log
+  $PY $SP/launch.py $S $cmd $P/$spec $P/runs/$out > $P/logs/$out.log 2>&1
+  code=$?
+  end=$(date +%s.%N)
+  echo "$(date -Is) end $out exit=$code seconds=$(echo "$end - $start" | bc)" >> $P/logs/runs.log
+  [ $code -eq 0 ] || exit $code
+done
+
+===== registrations.py
+import hashlib, json, sys
+from pathlib import Path
+
+P = Path("/home/philip/BitDraft/artifacts/benchmarks/references/runtime-v6-depth3")
+
+def ref(path):
+    data = Path(path).read_bytes()
+    return {"path": str(path), "sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data)}
+
+out = P / "registrations"
+out.mkdir(exist_ok=True)
+for item in sys.argv[1:]:
+    precision, cohort, run, spec, arm, name = item.split(":")
+    path = out / f"{precision}-{cohort}-{name}.json"
+    if path.exists():
+        print("exists", path); continue
+    value = {"schema": 1, "comparison": ref(P / spec), "result": ref(P / "runs" / run / "result.json"), "arm": arm, "rep": 0}
+    path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n")
+    print(path)
+
+===== register.sh
+#!/bin/bash
+SP=/tmp/claude-1000/-home-philip--t3-worktrees-BitDraft-t3-c74ee272/d8e5e12f-e27d-4e7c-8dac-3ea5033cef4a/scratchpad
+P=/home/philip/BitDraft/artifacts/benchmarks/references/runtime-v6-depth3
+S=$P/executed-sources/68210f1ed915da2968f5dd12f622309fd1196a53bcf478cd1676cee589a9cd76
+PY=/home/philip/.t3/worktrees/BitDraft/t3-c74ee272/.venv/bin/python
+for path in $(python3 $SP/registrations.py "$@"); do
+  [ -f "$path" ] || { echo "$path"; continue; }
+  echo "== $(basename $path)"
+  $PY $SP/launch.py $S record-reference $path /home/philip/BitDraft/artifacts/benchmarks/references | tee -a $P/logs/registrations.log | python3 -c "import json,sys;d=json.load(sys.stdin);print(d.get('outcome',''), d.get('detail',''), d.get('reference',{}).get('path','')[-75:], d.get('reused'))"
+done
+
+===== live_controls.py
+import json, sys
+from pathlib import Path
+P = Path("/home/philip/BitDraft/artifacts/benchmarks/references/runtime-v6-depth3")
+(P / "establish").mkdir(exist_ok=True)
+for precision in ("q4km", "nvfp4"):
+    spec = json.loads((P / f"lean-{precision}/live-establish.json").read_text())
+    assert [a["name"] for a in spec["arms"]] == ["target", "baseline", "candidate"]
+    spec["arms"] = spec["arms"][:2]
+    (P / f"establish/{precision}-live-controls.json").write_text(json.dumps(spec, indent=2, sort_keys=True) + "\n")
+
+===== specs.py
+import glob, hashlib, json, sys
+from pathlib import Path
+
+P = Path("/home/philip/BitDraft/artifacts/benchmarks/references/runtime-v6-depth3")
+REG = P.parent
+S4 = "/home/philip/BitDraft/artifacts/training/block-test-s4-01/exports/10ade33ae91b19a471f76ef65463005485725c1377a58728624ceee5afe8b509.bin"
+HE4 = "/home/philip/BitDraft/artifacts/qualification/original-zero-export-02/exports/99d2be79f956f6ccde483b960d4a31b939eeda86e4530e813929a3452c14fc1e.bin"
+
+def ref(path):
+    data = Path(path).read_bytes()
+    return {"path": str(path), "sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data)}
+
+def registered(run, arm):
+    found = []
+    for path in glob.glob(str(REG / "*.json")):
+        value = json.loads(Path(path).read_text())
+        if value.get("source_arm") == arm and value["result"]["path"] == str(P / "runs" / run / "result.json"):
+            found.append(path)
+    assert len(found) == 1, (run, arm, found)
+    return ref(found[0])
+
+out = P / "specs"
+out.mkdir(exist_ok=True)
+drafters = {"s4": ref(S4), "he4-220095": ref(HE4)}
+
+def write(name, precision, cohort, candidate, leader_run):
+    path = out / name
+    if path.exists():
+        print("exists", path); return ref(path)
+    source = P / f"lean-{precision}" / f"{cohort}-establish.json"
+    spec = json.loads(source.read_text())
+    run = f"{precision}-{cohort}" if cohort != "live" else f"{precision}-live-controls"
+    spec["arms"] = [{"name": "candidate", "drafter": drafters[candidate]}]
+    spec["references"] = {"target": registered(run, "target"), "baseline": registered(run, "baseline")}
+    if leader_run:
+        spec["references"]["prior-leader"] = registered(leader_run, "candidate")
+    path.write_text(json.dumps(spec, indent=2, sort_keys=True) + "\n")
+    print(path)
+    return ref(path)
+
+mode = sys.argv[1]
+if mode == "templates":
+    for precision in ("q4km", "nvfp4"):
+        for cohort in ("screen", "requests", "harness", "live"):
+            write(f"{precision}-{cohort}-candidate.json", precision, cohort, "s4", None)
+elif mode == "one":
+    precision, cohort = sys.argv[2:4]
+    write(f"{precision}-{cohort}-candidate.json", precision, cohort, "s4", None)
+elif mode == "leader":
+    precision, cohort, leader_run = sys.argv[2:5]
+    write(f"{precision}-{cohort}-leader.json", precision, cohort, "he4-220095", leader_run)
+elif mode == "suite":
+    value = {"schema": "full-suite-v2", "targets": {
+        precision: {c: ref(out / f"{precision}-{c}-candidate.json") for c in ("requests", "harness", "live")}
+        for precision in ("q4km", "nvfp4")}}
+    path = out / "suite.json"
+    assert not path.exists()
+    path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n")
+    print(path)
+
+===== signatures.py
+import glob, json, sys
+from pathlib import Path
+REG = Path("/home/philip/BitDraft/artifacts/benchmarks/references")
+P = REG / "runtime-v6-depth3"
+OLD = {("q4km", "screen"): "ce2af5f1", ("q4km", "requests"): "fa954024", ("q4km", "harness"): "ffbfaeee", ("q4km", "live"): "2fefcbe8",
+       ("nvfp4", "screen"): "3a0f445a", ("nvfp4", "requests"): "b0d173c9", ("nvfp4", "harness"): "56b13043", ("nvfp4", "live"): "e4c1ec10"}
+def load(prefix):
+    (path,) = glob.glob(str(REG / (prefix + "*.json"))); return json.loads(Path(path).read_text())
+index = {}
+for path in glob.glob(str(REG / "*.json")):
+    v = json.loads(Path(path).read_text())
+    if str(P) in v["result"]["path"]:
+        run = Path(v["result"]["path"]).parent.name
+        index[(run, v["source_arm"])] = (Path(path).name[:12], v)
+out = {}
+for (precision, cohort), prefix in OLD.items():
+    key = (f"{precision}-{cohort}", "target")
+    if key not in index: continue
+    old = load(prefix); new = index[key][1]
+    same = sum(new["signatures"].get(t) == s for t, s in old["signatures"].items())
+    others = {arm: index[(key[0], arm)][1]["signatures"] == new["signatures"] for arm in ("baseline", "candidate") if (key[0], arm) in index}
+    out[key[0]] = {"new_target": index[key][0], "old_target": prefix, "identical": same, "tasks": len(old["signatures"]), "drafter_arms_equal_target": others}
+json.dump(out, sys.stdout, indent=1); print()
+
+===== check_exact.py
+import glob, json, sys
+from pathlib import Path
+
+P = Path("/home/philip/BitDraft/artifacts/benchmarks/references/runtime-v6-depth3")
+REG = P.parent
+WT = Path("/home/philip/.t3/worktrees/BitDraft/t3-c74ee272/results")
+OLD_TARGET = {
+    ("q4km", "screen"): "ce2af5f1", ("q4km", "requests"): "fa954024",
+    ("q4km", "harness"): "ffbfaeee", ("q4km", "live"): "2fefcbe8",
+    ("nvfp4", "screen"): "3a0f445a", ("nvfp4", "requests"): "b0d173c9",
+    ("nvfp4", "harness"): "56b13043", ("nvfp4", "live"): "e4c1ec10",
+}
+
+def registry(prefix):
+    (path,) = glob.glob(str(REG / (prefix + "*.json")))
+    return json.loads(Path(path).read_text())
+
+def rows(run, arm):
+    result = json.loads((P / "runs" / run / "result.json").read_text())
+    return {r["task"]: r for r in result["rows"] if r["arm"] == arm and r["rep"] == 0}
+
+report = {}
+for (precision, cohort), prefix in OLD_TARGET.items():
+    run = precision + "-" + cohort
+    if not (P / "runs" / run / "result.json").exists():
+        continue
+    old = registry(prefix)
+    new = rows(run, "target")
+    entry = {"tasks": len(new), "old_tasks": len(old["signatures"])}
+    if cohort == "live":
+        old_rows = {r["task"]: r for r in old["rows"]}
+        entry["state_match"] = sum(new[t]["state_sha256"] == old["signatures"][t] for t in new)
+        entry["tokens_turns_match"] = sum(
+            (new[t]["tokens"], new[t]["turns"], new[t]["completed"]) == (old_rows[t]["tokens"], old_rows[t]["turns"], old_rows[t]["completed"]) for t in new)
+        for arm in ("baseline", "candidate"):
+            other = rows(run, arm)
+            entry[arm + "_state_match_target"] = sum(other[t]["state_sha256"] == new[t]["state_sha256"] for t in new)
+    else:
+        entry["signature_match"] = None
+    report[run] = entry
+json.dump(report, sys.stdout, indent=1)
+print()
+
+def compare_counts(new, old, label):
+    same = sum(1 for t in new if t in old and old[t] == new[t])
+    print(label, "requests", len(new), "identical", same, "new totals", [sum(v[i] for v in new.values()) for i in range(3)], "old totals", [sum(v[i] for v in old.values()) for i in range(3)])
+
+if (P / "runs/q4km-screen/result.json").exists():
+    block = json.loads((WT / "block-size-and-reach-weights/result.json").read_text())["screens"]["3"]["per_request"]
+    for arm, old_arm in (("baseline", "baseline"), ("candidate", "s4")):
+        new = {t: [r["native"]["accepted"], r["native"]["proposed"], r["tokens"]] for t, r in rows("q4km-screen", arm).items()}
+        compare_counts(new, {t: v for t, v in block[old_arm].items()}, "screen depth3 v5-vs-v6 " + arm)
+fair = json.loads((WT / "draft-depth-fairness/result.json").read_text())
+order = [r[0] for r in fair["requests"]]
+runs = {r["run"]: r for r in fair["runs"]}
+for run, arm, old_run in (("q4km-requests", "baseline", "baseline-c-d3-r0"), ("q4km-requests-220095", "candidate", "he4-c-d3-r0")):
+    if (P / "runs" / run / "result.json").exists():
+        new = {t: [r["native"]["accepted"], r["native"]["proposed"], r["tokens"]] for t, r in rows(run, arm).items()}
+        old = {order[x[0]]: [x[7], x[6], x[1]] for x in runs[old_run]["requests_rows"]}
+        compare_counts(new, old, "panel depth3 v5-vs-v6 " + arm)
+
+===== live_check.py
+import json, sys
+from pathlib import Path
+new_root, old_root, arm = Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3]
+old_arm = sys.argv[4] if len(sys.argv) > 4 else arm
+calls = same_tokens = same_cache = 0
+tasks = 0
+for task in sorted(p.parent.name for p in (new_root / ("0-" + arm)).glob("*/transcript.json")):
+    new = json.loads((new_root / ("0-" + arm) / task / "transcript.json").read_text())["responses"]
+    old = json.loads((old_root / ("0-" + old_arm) / task / "transcript.json").read_text())["responses"]
+    tasks += 1
+    assert len(new) == len(old), (task, len(new), len(old))
+    for a, b in zip(new, old):
+        calls += 1
+        same_tokens += a["tokens"] == b["tokens"] and a["content"] == b["content"]
+        same_cache += (a["timings"]["cache_n"], a["tokens_evaluated"], a["timings"]["prompt_n"]) == (b["timings"]["cache_n"], b["tokens_evaluated"], b["timings"]["prompt_n"])
+print(json.dumps({"tasks": tasks, "calls": calls, "identical_tokens": same_tokens, "identical_cache_and_prompt_counts": same_cache}))
+
+===== cache_diff.py
+import json, sys
+from pathlib import Path
+root = Path(sys.argv[1]); rep = sys.argv[2] if len(sys.argv) > 2 else "0"
+arms = sorted(p.name.split("-", 1)[1] for p in root.glob(rep + "-*") if p.is_dir())
+target = {p.parent.name: json.loads(p.read_text())["responses"] for p in (root / (rep + "-target")).glob("*/transcript.json")}
+for arm in arms:
+    if arm == "target": continue
+    calls = diff_cache = diff_tokens = eos_draft = 0
+    for task, tr in target.items():
+        rs = json.loads((root / (rep + "-" + arm) / task / "transcript.json").read_text())["responses"]
+        for a, b in zip(tr, rs):
+            calls += 1
+            if a["timings"]["cache_n"] != b["timings"]["cache_n"]: diff_cache += 1
+            if a["tokens"] != b["tokens"]:
+                diff_tokens += 1; break
+    print(root.name, rep, arm, "calls", calls, "cache_n differs", diff_cache, "token mismatch calls", diff_tokens)
+
+===== freeze (run from the branch checkout)
+uv run --locked --no-sync --offline python -c 'from pathlib import Path; from w1a1_eagle.identity import freeze_source, source_identity; root=Path(".").resolve(); print(freeze_source(root, Path("P/executed-sources"), source_identity(root), 0))'
+
+===== native build (run from /home/philip/BitDraft)
+uv run --locked --no-sync --offline python -m benchmarks native-build artifacts/native/runtime-v6-build-spec.json runtime-v6
