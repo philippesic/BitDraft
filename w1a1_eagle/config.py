@@ -85,3 +85,16 @@ def benchmark_environment(root: Path, snapshot: Path) -> dict[str, str]:
     environment["PYTHONPATH"] = str(snapshot)
     environment["BINARY_NUMERICAL_PYTHON"] = numerical_python(root)
     return environment
+
+
+def kernel_capture_environment(
+    libraries: Path, helper: Path, output: Path, slots: int
+) -> dict[str, str]:
+    environment = native_environment(libraries)
+    environment.update(
+        LD_PRELOAD=str(helper),
+        GGML_CUDA_DISABLE_GRAPHS="1",
+        BITDRAFT_KERNEL_CAPTURE=str(output),
+        BITDRAFT_KERNEL_SLOTS=str(slots),
+    )
+    return environment

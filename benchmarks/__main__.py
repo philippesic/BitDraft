@@ -55,6 +55,9 @@ def main() -> int:
         "prepare-checks",
         "prepare-initialization",
         "calibrate-depth",
+        "capture-kernel-activations",
+        "build-kernel-benchmark",
+        "benchmark-kernels",
         "profile-rounds",
         "round-profile-report",
     ):
@@ -73,6 +76,7 @@ def main() -> int:
                 "generate-sessions": "datasets",
                 "select-expansion": "bank",
                 "native-build": "native",
+                "build-kernel-benchmark": "native",
                 "native-helpers": "native",
                 "campaign": "training",
                 "record-reference": "benchmarks",
@@ -149,6 +153,18 @@ def main() -> int:
             from benchmarks.calibration import calibrate
 
             result = calibrate(args.input, args.output)
+        elif args.command == "capture-kernel-activations":
+            from benchmarks.kernel_capture import capture_kernel_activations
+
+            result = capture_kernel_activations(args.input, args.output)
+        elif args.command == "build-kernel-benchmark":
+            from benchmarks.kernel_benchmark import build_kernel_benchmark
+
+            result = build_kernel_benchmark(args.input, args.output)
+        elif args.command == "benchmark-kernels":
+            from benchmarks.kernel_benchmark import benchmark_kernels
+
+            result = benchmark_kernels(args.input, args.output)
         elif args.command == "profile-rounds":
             from benchmarks.round_profile import profile_rounds
 

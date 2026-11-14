@@ -60,6 +60,16 @@ affected check. If resolving it would change an agreed guarantee, explain that p
 change and continue independent authorized work while input is pending. A passing gate
 does not make missing hardware evidence available.
 
+## Kernel benchmark validation
+
+`tests/test_kernel_probe.py` checks bounded tensor extraction and runtime-source
+slicing. `tests/test_kernel_benchmark.py` checks timing-record validation, failure
+retention and rate/floor arithmetic. `tests/test_kernel_capture.py` checks capture
+configuration isolation and schema refusal. The full gate does not qualify CUDA kernels.
+Use the [kernel benchmark](benchmarks.md#kernel-benchmark) for per-variant full-output
+byte equality and repeated GPU times at each requested geometry. A failed equality
+check must remain visible in the result.
+
 ## Stages
 
 | Stage | Covers |

@@ -26,5 +26,7 @@ def test_extract_matrix(tmp_path: Path) -> None:
 def test_runtime_kernels(tmp_path: Path) -> None:
     source = tmp_path / "runtime.cu"
     kernels = "static __device__ float gained_value() {}\n"
-    source.write_text("prefix\n" + kernels + "void ggml_cuda_w1ax_pack() {}")
+    source.write_text(
+        "prefix\n" + kernels + "void ggml_cuda_w1ax_pack() {}\nvoid ggml_cuda_w1ax_pack() {}"
+    )
     assert runtime_kernels(source) == kernels
