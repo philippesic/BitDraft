@@ -82,3 +82,18 @@ def test_activation_manifest_accepts_captured_drafter() -> None:
         },
         "expected",
     )
+
+
+def test_experimental_runtime_uses_qualified_kernel() -> None:
+    from benchmarks.runtime_edits import SOURCE_EDITS
+
+    root = Path(__file__).resolve().parents[1]
+    variants = (root / "native/kernel-variants.cuh").read_text()
+    kernel = (
+        "static __global__ void mma_warp_dot("
+        + variants.split("static __global__ void mma_warp_dot(", 1)[1]
+    )
+    edits = SOURCE_EDITS["kernel_gate_mma_warp_v1"]
+    assert edits[0][2] == kernel + "\n" + edits[0][1]
+    assert edits[1][2].endswith(edits[1][1])
+    assert "n == 4 || n == 8 || n == 16" in edits[1][2]
