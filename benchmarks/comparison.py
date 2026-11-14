@@ -50,7 +50,7 @@ class Comparison:
     def load(cls, path: Path) -> "Comparison":
         raw = read(path)
         if (
-            set(raw) - {"exclusions", "diagnostic", "sampling", "references"}
+            set(raw) - {"exclusions", "diagnostic", "sampling", "references", "calibration"}
             != {
                 "schema",
                 "source",
@@ -127,7 +127,20 @@ class Comparison:
             for name, value in record(raw.get("references", {})).items()
         )
         arm_names = [a.name for a in arms] + [name for name, _ in references]
-        if len(set(arm_names)) != len(arm_names) or not arms or len(arm_names) < 2:
+        calibration = raw.get("calibration")
+        if calibration is not None and (
+            calibration != "target-only"
+            or raw["tier"] != "pilot"
+            or raw["role"] != "dev"
+            or arms != [Arm("target", None)]
+            or references
+        ):
+            raise ValueError("calibration requires an explicit target-only DEV pilot")
+        if (
+            len(set(arm_names)) != len(arm_names)
+            or not arms
+            or (len(arm_names) < 2 and calibration is None)
+        ):
             raise ValueError("unique target and speculative arms required")
         if references and (
             "target" not in dict(references) or any(a.drafter is None for a in arms)
@@ -344,6 +357,14 @@ class Comparison:
                 "seconds": LIVE_SECONDS,
                 "tools": TOOLS,
                 "cache_followups": True,
+                **(
+                    {
+                        "stop_repeated_assistant": "exact-consecutive-content-v1",
+                        "loop_accounting": "exclude-detection-call-from-primary; retain-raw-wall",
+                    }
+                    if self.tier.startswith("agentic-")
+                    else {}
+                ),
             }
             if self.tier in LIVE_TIERS
             else None,
@@ -521,3 +542,8 @@ def require_agentic(tier: str, tasks: tuple[Record, ...]) -> None:
             raise ValueError("agentic tasks require project groups, scenario, style and fixture")
     if {task["style"] for task in tasks} != {"minimal", "coding", "tools"}:
         raise ValueError("agentic cohorts require all three instruction styles")
+    if tier == "agentic-slice" and any(
+        len({task["style"] for task in tasks if task["project"] == project}) != 2
+        for project in projects
+    ):
+        raise ValueError("agentic slice requires two styles per project")

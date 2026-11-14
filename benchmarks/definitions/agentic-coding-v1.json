@@ -112,9 +112,9 @@
     }
   ],
   "dev_recipes": {
-    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/specs/dev-recipes-v3.json",
-    "sha256": "abb70b945e901cd54a3de243c268f3c978bfa22132c892862921f9c9bf0b2378",
-    "bytes": 7174830
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/specs/calibration-recipes-v4.json",
+    "bytes": 18311405,
+    "sha256": "fbd043570e26fc192e79ab81c83756cc6ac9160ec0bcd7eb5c2ce3d60831e299"
   },
   "reserve_recipes": {
     "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/specs/reserve-recipes.json",
@@ -144,9 +144,9 @@
     "inih-integer-base",
     "inih-has-value",
     "rapidcsv-row-count",
-    "rapidcsv-trim-option",
+    "rapidcsv-header-default",
     "humanize-ordinal-teens",
-    "humanize-ordinal-many",
+    "humanize-sizes-many",
     "tomli-integer-base",
     "tomli-load-many"
   ],
@@ -513,5 +513,10 @@
     }
   ],
   "scope": "Authored controlled changes in permissive real projects; known repository names disjoint and no declared content-scan hits. Magicoder lacks repository identities, so absolute repository-disjointness remains unproven. Unknown target pretraining exposure. Confirmation curated but never executed.",
-  "curation_revision": "Current request after source context; bounded file navigation; concise follow-up tests. Pilot failure retained."
+  "curation_revision": "Revision four: target-only difficulty calibration pending. Native test scaffolds; two checked code behaviors for bug-fix phases; first-repeat truncation. All 240 CPU controls passed.",
+  "full_bank_provenance": {
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/provenance/audit-fullbank.json",
+    "bytes": 136316,
+    "sha256": "ef4e12a95efdd9ced6ba8c9b10db64da1aae06264a7ab6bdd40b10064b9da3e5"
+  }
 }

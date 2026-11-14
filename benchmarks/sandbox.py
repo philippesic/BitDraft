@@ -1,4 +1,5 @@
 import os
+import re
 import signal
 import subprocess
 from pathlib import Path
@@ -67,6 +68,9 @@ class Sandbox:
                 raise ValueError("fixture file must be text")
             self.write(name, value)
         self.checks.atomic(self.checks.root / "check.py", string(fixture["checks"]).encode())
+        self.diagnostics = fixture.get("diagnostics")
+        if self.diagnostics not in {None, "stable-compiler-paths-v1"}:
+            raise ValueError("unsupported diagnostic normalization")
         self.runs = 0
         self.followup_checks = fixture.get("followup_checks")
 
@@ -196,6 +200,10 @@ class Sandbox:
                     pass
                 process.wait(timeout=5)
         text = path.read_bytes()[:16384].decode(errors="replace")
+        if self.diagnostics == "stable-compiler-paths-v1":
+            text = re.sub(
+                r"/tmp/cc[A-Za-z0-9]{6}(?=\.(?:o|s|c|cc|cpp)\b)", "/tmp/compiler-temporary", text
+            )
         return {
             "passed": cast(int, process.returncode) == 0
             and "ACCEPTANCE_CHECKS_PASSED" in text

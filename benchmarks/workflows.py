@@ -67,7 +67,7 @@ def live(specification: Path, output: Path) -> Record:
         ref.verify()
         fixture = read(ref.path)
         if (
-            set(fixture) - {"followup_checks"} != {"schema", "files", "checks"}
+            set(fixture) - {"followup_checks", "diagnostics"} != {"schema", "files", "checks"}
             or fixture["schema"] != 1
         ):
             raise ValueError("unsupported live fixture")
@@ -212,6 +212,23 @@ def live_leased(
                 for name, value in cached.items()
             },
             "code_sha256": code,
+            "by_completion": {
+                outcome: {
+                    name: {
+                        **summarize(selected),
+                        "execution": "historical" if name in cached else "measured",
+                    }
+                    for name in names
+                    if (
+                        selected := [
+                            row
+                            for row in rows + historical_rows
+                            if row["arm"] == name and row["completed"] is completed
+                        ]
+                    )
+                }
+                for outcome, completed in (("completed", True), ("failed", False))
+            },
             "by_category": partitions(
                 rows + historical_rows,
                 "category",
@@ -262,10 +279,15 @@ def execute(
     followup = task.get("followup")
     phase_checks: list[Record] = []
     context_tokens: list[int] = []
+    stop_repeated = task.get("scenario") == "agentic-coding"
+    previous_content: str | None = None
+    loop: Record | None = None
+    excluded_seconds = 0.0
     for turn in range(LIVE_TURNS):
         if now() - began >= LIVE_SECONDS:
             reason = "task-deadline"
             break
+        call_began = now()
         rendered = request(port, "apply-template", {"messages": messages, "tools": TOOLS})
         identifiers = sequence(
             request(
@@ -282,18 +304,34 @@ def execute(
         query = payload(identifiers, integer(task["output_cap"]), 0, 1.0, 0, 0.0, 8101)
         query["cache_prompt"] = turn > 0
         response = request(port, "completion", query)
-        model_seconds += now() - start
+        request_seconds = now() - start
+        model_seconds += request_seconds
         responses.append(response)
         verify_generation(response, query, speculative)
         if not valid_sample(response, integer(task["output_cap"])):
             raise ValueError("live native response has invalid tokens or stopping")
+        content = response["content"]
+        if not isinstance(content, str):
+            raise ValueError("native content is not text")
+        if stop_repeated and content == previous_content:
+            duplicate_model_seconds = request_seconds
+            excluded_seconds = now() - call_began
+            model_seconds -= duplicate_model_seconds
+            loop = {
+                "response_index": len(responses) - 1,
+                "tokens": len(sequence(response["tokens"])),
+                "model_seconds": duplicate_model_seconds,
+                "excluded_seconds": excluded_seconds,
+                "native": native_counts(response, speculative),
+            }
+            messages.append({"role": "assistant", "content": content})
+            reason = "repeated-assistant"
+            break
+        previous_content = content
         tokens += len(sequence(response["tokens"]))
         counters = native_counts(response, speculative)
         proposed += integer(counters["proposed"])
         accepted += integer(counters["accepted"])
-        content = response["content"]
-        if not isinstance(content, str):
-            raise ValueError("native content is not text")
         try:
             selected = calls(content)
         except (ValueError, KeyError) as error:
@@ -349,11 +387,13 @@ def execute(
     start = now()
     checks = sandbox.test()
     tool_seconds += now() - start
-    elapsed = now() - began
+    raw_elapsed = now() - began
+    elapsed = raw_elapsed - excluded_seconds
     return (
         {
             "completed": checks["passed"] is True
             and followup is None
+            and loop is None
             and all(check["passed"] is True for check in phase_checks),
             "phase_checks": phase_checks,
             "termination": reason,
@@ -362,11 +402,13 @@ def execute(
             "context_tokens": context_tokens,
             "tokens": tokens,
             "wall_seconds": elapsed,
+            "raw_wall_seconds": raw_elapsed,
+            "loop": loop,
             "model_seconds": model_seconds,
             "tool_seconds": tool_seconds,
             "overhead_seconds": max(0.0, elapsed - model_seconds - tool_seconds),
             "native": {"proposed": proposed, "accepted": accepted},
-            **server_seconds(responses),
+            **server_seconds(responses[:-1] if loop is not None else responses),
         },
         messages,
         responses,
@@ -382,7 +424,18 @@ def summarize(rows: list[Record]) -> Record:
         "completed": completed,
         "completion_rate": completed / len(rows),
         "elapsed_seconds": seconds,
+        "raw_elapsed_seconds": sum(
+            number(row.get("raw_wall_seconds", row["wall_seconds"])) for row in rows
+        ),
+        "looped_tasks": sum(row.get("loop") is not None for row in rows),
+        "loop_detection_seconds": sum(
+            number(record(row["loop"])["excluded_seconds"])
+            for row in rows
+            if row.get("loop") is not None
+        ),
         "seconds_per_assigned_task": seconds / len(rows),
+        "assigned_tasks_per_second": len(rows) / seconds,
+        "tokens_per_second": integer(counters["tokens"]) / seconds,
         "model_seconds": sum(number(row["model_seconds"]) for row in rows),
         "tool_seconds": sum(number(row["tool_seconds"]) for row in rows),
         "correct": all(row["correct"] is True for row in rows),

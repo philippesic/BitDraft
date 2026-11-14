@@ -116,5 +116,91 @@ def test_agentic_references_use_live_protocol_and_keep_legacy_protocol() -> None
     original = spec.reference_protocol()
     assert original["policy"] == "native-live-v3"
     for tier in ("agentic-slice", "agentic-suite", "agentic-confirmation"):
-        assert replace(spec, tier=tier).reference_protocol() == original
+        protocol = replace(spec, tier=tier).reference_protocol()
+        assert protocol["policy"] == original["policy"]
+        assert record(protocol["live"])["stop_repeated_assistant"] == "exact-consecutive-content-v1"
+        assert "stop_repeated_assistant" not in record(original["live"])
+        protocol["live"] = original["live"]
+        assert protocol == original
     assert replace(spec, tier="screen").reference_protocol()["policy"] == "native-greedy-request-v3"
+
+
+def test_live_stops_first_repeated_turn_without_counting_its_tokens(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import benchmarks.workflows as workflows
+    from benchmarks.sandbox import Sandbox
+
+    content = '<tool_call>{"name":"list_files","arguments":{}}</tool_call>'
+    response: Record = {
+        "content": content,
+        "tokens": [1, 2, 3],
+        "timings": {"prompt_ms": 1.0, "predicted_ms": 2.0},
+    }
+
+    def request(port: int, endpoint: str, body: Record) -> Record:
+        if endpoint == "apply-template":
+            return {"prompt": "prompt"}
+        if endpoint == "tokenize":
+            return {"tokens": [5, 6]}
+        return dict(response)
+
+    def verify(response: Record, query: Record, speculative: bool) -> None:
+        return None
+
+    def valid(response: Record, cap: int) -> bool:
+        return True
+
+    def counts(response: Record, speculative: bool) -> Record:
+        return {"proposed": 3, "accepted": 2}
+
+    monkeypatch.setattr(workflows, "request", request)
+    monkeypatch.setattr(workflows, "verify_generation", verify)
+    monkeypatch.setattr(workflows, "valid_sample", valid)
+    monkeypatch.setattr(workflows, "native_counts", counts)
+    sandbox = Sandbox(
+        tmp_path,
+        {"files": {"value.py": "value = 1"}, "checks": "print('ACCEPTANCE_CHECKS_PASSED')"},
+    )
+    row, messages, responses = workflows.execute(
+        1,
+        {
+            "scenario": "agentic-coding",
+            "messages": [{"role": "user", "content": "inspect"}],
+            "output_cap": 10,
+        },
+        sandbox,
+        100,
+        True,
+    )
+    assert row["termination"] == "repeated-assistant" and row["completed"] is False
+    assert row["tokens"] == 3 and row["native"] == {"proposed": 3, "accepted": 2}
+    assert len(responses) == 2 and len(messages) == 4
+    assert record(row["loop"])["tokens"] == 3
+    assert row["turns"] == 2
+    assert float(str(row["raw_wall_seconds"])) - float(str(row["wall_seconds"])) == pytest.approx(
+        float(str(record(row["loop"])["excluded_seconds"]))
+    )
+    legacy, _, legacy_responses = workflows.execute(
+        1,
+        {"messages": [{"role": "user", "content": "inspect"}], "output_cap": 10},
+        sandbox,
+        100,
+        True,
+    )
+    assert legacy["termination"] == "turn-limit" and legacy["loop"] is None
+    assert legacy["tokens"] == 3 * len(legacy_responses)
+
+
+def test_compiler_diagnostics_are_stable_and_raw_logs_are_retained(tmp_path: Path) -> None:
+    from benchmarks.sandbox import Sandbox
+
+    diagnostic = "/tmp/ccAb12Cd.o: undefined reference to missing"
+    fixture: Record = {"files": {}, "checks": "print(" + repr(diagnostic) + ")"}
+    original = Sandbox(tmp_path / "original", fixture).test()
+    stable = Sandbox(
+        tmp_path / "stable", {**fixture, "diagnostics": "stable-compiler-paths-v1"}
+    ).test()
+    assert diagnostic in str(original["output"])
+    assert "/tmp/compiler-temporary.o: undefined reference to missing" in str(stable["output"])
+    assert diagnostic in (tmp_path / "stable/test-1.log").read_text()

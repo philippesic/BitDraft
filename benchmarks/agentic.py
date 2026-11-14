@@ -43,7 +43,7 @@ def prepare_projects(specification: Path, output: Path) -> Record:
     recipes.verify()
     tasks: list[Record] = []
     checks: list[Record] = []
-    for value in sequence(read(recipes.path)["tasks"]):
+    for value in sequence(read(recipes.path, 64 * 1024 * 1024)["tasks"]):
         recipe = record(value)
         name, project = string(recipe["id"]), string(recipe["project"])
         if not name.replace("-", "").isalnum() or name in {task["id"] for task in tasks}:
@@ -53,7 +53,12 @@ def prepare_projects(specification: Path, output: Path) -> Record:
         original = sources[project]
         broken = changed(original, recipe["mutations"])
         oracle = changed(original, recipe.get("initial_changes", {}))
-        fixture: Record = {"schema": 1, "files": broken, "checks": check_script(recipe["checks"])}
+        fixture: Record = {
+            "schema": 1,
+            "files": broken,
+            "checks": check_script(recipe["checks"]),
+            "diagnostics": "stable-compiler-paths-v1",
+        }
         if "followup" in recipe:
             fixture["followup_checks"] = check_script(recipe["followup_checks"])
         if role == "dev":

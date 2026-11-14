@@ -728,6 +728,24 @@ traffic. Source excerpts provide relevant longer context; the smallest project
 has less context. No padding manufactures length. Task success and failures stay
 in the denominator, independently of exact drafter/target trajectory agreement.
 
+New agentic tasks stop at the first assistant content exactly equal to its
+immediately preceding assistant content, including tool-call text. This counts
+as a failed task even if the final workspace passes. The detection call is retained
+in raw responses and native reconciliation, but its tokens, draft proposals,
+acceptances and duration are excluded from primary measurements. `loop` records
+the excluded call; `raw_wall_seconds` preserves its actual cost. The `by_completion`
+summary reports completed and failed tasks separately alongside pooled results.
+Existing `live` tasks retain their original stopping and reference protocol.
+
+Difficulty calibration uses only an explicit `calibration: "target-only"`, DEV,
+`pilot` specification with the sole arm `target`. Record each revision and its
+target-only completion rate; aim for at least about 60% completion while retaining
+real coding work. Freeze membership, prompts and checks before comparing drafters.
+If that rate cannot be reached without trivial tasks, report the failed calibration
+instead of establishing routine references. Calibration panels are not references.
+Agentic fixtures normalize random GCC temporary object names in returned diagnostic
+text with `stable-compiler-paths-v1`; raw test logs retain the original text.
+
 Task and live-result records carry plain `scenario: "agentic-coding"`, `project`
 (the `owner/repository` identity), `style` (`minimal`, `coding`, `tools`) and
 `task_kind` fields. `group` is `project:owner/repository`, so related tasks stay
@@ -757,8 +775,10 @@ Inputs, controls, source snapshots, provenance and runs live in the main checkou
 check excludes named repositories against both TRAIN session batches and all
 46,412 repository aliases in the full CommitPackFT source. All 750 selected
 Magicoder seeds are authenticated against their retained seed hashes and prompt
-bodies; seeds, problems and solutions plus the 750 TRAIN CommitPack requests and
-old/new source files are scanned against upstream project code. The scan uses
+bodies; seeds, problems and solutions plus all 6,000 TRAIN bank requests and
+the 750 CommitPack rows' old/new source files are scanned against upstream project
+code. The 6,000-row bank contains 750 CommitPack rows, not 6,000 CommitPack rows.
+The scan uses
 13-token shingles, at least twelve shared shingles and 35% containment in the
 smaller set, plus exact matches of at least 25 tokens. No selected project hits.
 First-commit dates are recorded; all projects predate the conservative source
