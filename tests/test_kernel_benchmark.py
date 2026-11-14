@@ -89,11 +89,94 @@ def test_experimental_runtime_uses_qualified_kernel() -> None:
 
     root = Path(__file__).resolve().parents[1]
     variants = (root / "native/kernel-variants.cuh").read_text()
-    kernel = (
-        "static __global__ void mma_warp_dot("
-        + variants.split("static __global__ void mma_warp_dot(", 1)[1]
-    )
+    marker = "static __global__ void mma_warp_dot("
+    kernel = marker + variants.split(marker, 1)[1].split("\n}\n", 1)[0] + "\n}\n"
     edits = SOURCE_EDITS["kernel_gate_mma_warp_v1"]
     assert edits[0][2] == kernel + "\n" + edits[0][1]
     assert edits[1][2].endswith(edits[1][1])
     assert "n == 4 || n == 8 || n == 16" in edits[1][2]
+
+
+def write_kernel_weights(
+    path: Path,
+    metadata: dict[str, int | float],
+    tensors: list[tuple[str, tuple[int, ...], int, bytes]],
+) -> None:
+    header = b"GGUF" + struct.pack("<IQQ", 3, len(tensors), len(metadata))
+    for key, value in metadata.items():
+        encoded = key.encode()
+        header += struct.pack("<Q", len(encoded)) + encoded
+        header += (
+            struct.pack("<Ii", 4, value) if type(value) is int else struct.pack("<If", 6, value)
+        )
+    payload = b""
+    for name, shape, kind, data in tensors:
+        encoded = name.encode()
+        header += struct.pack("<Q", len(encoded)) + encoded + struct.pack("<I", len(shape))
+        header += struct.pack("<" + "Q" * len(shape), *shape)
+        header += struct.pack("<IQ", kind, len(payload))
+        payload += data
+        payload += bytes((-len(payload)) % 32)
+    path.write_bytes(header + bytes((-len(header)) % 32) + payload)
+
+
+def test_feed_forward_adapter_preserves_geometry_and_payload(tmp_path: Path) -> None:
+    from benchmarks.kernel_benchmark import prepare_feed_forward
+    from benchmarks.native import file_reference
+    from w1a1_eagle.data import Artifact
+
+    base = "blk.0.ffn_down"
+    one, baseline, activation, manifest = (
+        tmp_path / name for name in ("one", "four", "x", "manifest")
+    )
+    write_kernel_weights(
+        one,
+        {base + ".w1ax.bits": 8, base + ".w1ax.mode": 2, base + ".w1ax.clip": 1.0},
+        [
+            (base + ".w1a1_packed", (8, 16), 26, bytes(512)),
+            (base + ".w1a1_scale", (16,), 0, struct.pack("<16f", *([1.0] * 16))),
+            (base + ".w1ax_midpoint", (16,), 0, bytes(64)),
+            (base + ".w1ax_gain", (256,), 0, struct.pack("<256f", *([1.0] * 256))),
+        ],
+    )
+    payload = bytes(range(210)) * 16
+    write_kernel_weights(baseline, {}, [(base + ".weight", (256, 16), 14, payload)])
+    activation.write_bytes(bytes(4096))
+    manifest.write_text("{}")
+    inputs = {
+        key: Artifact.capture(path)
+        for key, path in [("drafter", one), ("baseline", baseline), ("activations", manifest)]
+    }
+    specification: Record = {
+        "layers": [0],
+        "groups": ["down"],
+        "slots": [4],
+        "variants": ["reference", "baseline"],
+        "warmup": 1,
+        "repeats": 1,
+        "trials": 3,
+    }
+    output = tmp_path / "prepared"
+    prepared = prepare_feed_forward(
+        specification,
+        inputs,
+        tmp_path / "probe",
+        {"tensors": {base + ".4": file_reference(activation)}},
+        output,
+    )
+    assert len(prepared) == 2
+    command, row = prepared[1]
+    assert command[3:7] == ["16", "256", "4", "14"]
+    assert row["weight_format"] == "Q6_K"
+    assert row["weight_bytes"] == 3360
+    assert (output / "layer-0-down-4.down.quantized").read_bytes() == payload
+    assert (output / "layer-0-down-4.down.input").read_bytes() == activation.read_bytes()
+    write_kernel_weights(baseline, {}, [(base + ".weight", (512, 8), 14, payload)])
+    with pytest.raises(ValueError, match="geometries differ"):
+        prepare_feed_forward(
+            specification,
+            inputs,
+            tmp_path / "probe",
+            {"tensors": {base + ".4": file_reference(activation)}},
+            tmp_path / "mismatched",
+        )

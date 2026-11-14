@@ -41,9 +41,13 @@ slots, wins gate/up at eight and sixteen, and loses down throughout. Broadcast-M
 original MMA but still loses to dispatched DP4A at four slots. One-warp MMA in `mma-warp-01/result.json` passed all 48 checks and wins gate/up
 at four, eight and sixteen slots. Independent repeat `repeat-01/result.json` confirms the four-slot gate/up win
 (28.781 versus 30.800 µs for layer 0), with all byte checks passing. The conditional
-served experiment is required; named build `runtime-v7-kernel-warp` is in progress. Nsight Compute was attempted separately and denied hardware-counter
+served experiment is required; named build `runtime-v7-kernel-warp` is in progress. Its CUDA variant compiled;
+the CPU guard paused and resumed the remaining build around several other lease
+owners, requiring ten quiet minutes each time. Compilation is near completion.
+The extracted preparation adapter and its Q6_K/geometry fixture pass the full gate
+with 152 tests and 92 rule proofs. Nsight Compute was attempted separately and denied hardware-counter
 access (ERR_NVGPUCTRPERM); raw failure logs are retained under `mma-profile/`. Required variants plus broadcast-MMA
-and one-warp-MMA are compiled. No waiter is currently active.
+and one-warp-MMA are compiled. The build guard owns the quiet-period wait when another lease owner appears.
 
 Read-only inputs are hardlinked into this worktree: runtime-v7 source, compatibility
 headers, libraries and receipt, S4 export, Baseline, target and DEV workload. No
@@ -63,8 +67,10 @@ evidence; `smoke-clean.log` repeats it after that build ended.
 
 ## Next
 
-Run the full extended gate and push the maintained-command checkpoint, then qualify
-successive variants with full byte identity and repeated timing. Commit and push
-each meaningful checkpoint. Profile MMA separately
-from clean timing; apply the conditional served-runtime step if a four-slot winner
-emerges.
+Finish the guarded native build, run `serve-warp.py` under its GPU lease after all
+CPU work ends, and check exact tokens/counts plus clean counters at depths 1, 3, 7.
+The script reuses maintained calibration measurement and counter readers. The other
+round-profile branch was not on origin/main when fetched; do not touch its build.
+Then update the retained artifact report, run the final full gate, retire this task
+only when its criteria are met, and push. Original source/model/default references
+remain unchanged.
