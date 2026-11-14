@@ -593,3 +593,14 @@ Q6_K. The adapter reads the stored Q4_K or Q6_K type and records `weight_format`
 actual payload bytes for each measurement. It does not requantize the Baseline to
 make every matrix four-bit. Aggregate down comparisons therefore use the original
 mixed-precision Baseline; individual records distinguish the two formats.
+
+The separately named experimental edit `kernel_gate_mma_warp_v1` can be appended
+to runtime-v7's edit list for `native-build`. It uses the qualified one-warp MMA
+body for 9216 × 2560 joint gate/up operations at 4, 8 and 16 slots with row
+midpoints present. Other shapes and slot counts retain the original dispatch.
+This edit is opt-in; it is not part of the default benchmark runtime. Its source
+parity test ties the embedded kernel to the standalone variant. Qualify generated
+token signatures and proposed/accepted counts against clean runtime-v7 on DEV
+requests before interpreting server timing. Existing calibration measurement and
+round-profile counter readers provide clean per-round drafter timing without a
+profiling runtime or tracing overhead.
