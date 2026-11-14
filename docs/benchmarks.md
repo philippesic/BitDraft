@@ -304,8 +304,26 @@ DEV `comparison` (runtime, server, libraries, target, workload, context), a `dia
 `source_edits`; any other difference is refused), the Nsight Systems `profiler` binary, named
 `drafters`, `depths`, `lengths` (bands of `minimum`–`maximum` input tokens with a task count)
 and `output_cap` and `exact` as in calibration. The current inputs are in
-`artifacts/benchmarks/round-profile-specs/` and the diagnostic runtime is
-`artifacts/native/runtime-v6-round-profile`.
+`artifacts/benchmarks/round-profile-specs/baseline-s4-v7.json` and the diagnostic runtime is
+`artifacts/native/runtime-v7-round-profile-ready`.
+
+For a future runtime, copy its clean `native-build` specification, append
+`round_profile_nvtx_v1` to `source_edits`, and run `native-build` into a new diagnostic
+build directory. Preserve all other build settings and the clean runtime. Copy the profile
+specification, bind its `comparison` to that runtime's authenticated greedy DEV comparison,
+and bind `diagnostic_build` to the new build's `result.json` (refresh path, SHA256 and bytes).
+Keep drafters, bands, depths and output cap fixed when comparing runtime versions.
+The build requires every source edit to match exactly once; profile admission verifies
+that the diagnostic differs from the clean build only by the profiling edit. Rebuild and
+measure before adopting the new profile specification.
+
+The v7 qualification is retained in `artifacts/benchmarks/round-profile-baseline-s4-v7-01/`
+(`round-profile.json` and `v6-comparison.json`). It used 192.18 seconds under the GPU lease.
+All three clocks produced identical outputs in all 12 drafter/depth/band cells, and all
+18 session output records matched v6 run 02. Node attribution was 100% within floating-point
+roundoff. Every node component changed by less than 0.004 ms; clean round times changed
+by −4.74% to +0.18%, within the prior 5% repeat variation. This single run establishes
+compatibility, not a runtime speedup. Preserve the v6 records as historical measurements.
 
 Each drafter and depth runs three server sessions under the GPU lease, on the same requests:
 
