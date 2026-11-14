@@ -30,12 +30,17 @@ artifact disposition are written.
   requests, `capture_supervision`). Session windows end at each label/next-token
   disagreement because re-rendered history retokenizes the model's own output.
 - Helpers are built against runtime-v6 in `train-expansion-01/native-helpers`.
-- Sources are stored read-only in `train-expansion-01/sources`. A 12-task session pilot
-  waits for an idle GPU (`specs/sessions-pilot.json`, log `logs/sessions-pilot.log`).
+- Sources are stored read-only in `train-expansion-01/sources`. Non-session quotas
+  (`specs/quotas-nonsession.json`) select 1,759 prompts with a 193 GB maximum forecast.
+- `specs/chain.py` (detached, started by `specs/when_idle.sh` after 10 idle GPU minutes,
+  log `logs/chain.log`) runs 640 sessions, selects up to 120 GB of sessions plus the
+  non-session quotas into `bank/`, and captures shard A (sessions first, then an
+  interleaved non-session prefix, maximum 200 GB) into `capture-a/`. The S4 campaign
+  holds the GPU from 20:42 on 2026-11-13.
 - Raw outputs: session transcripts and captures are TRAIN inputs retained until a later
   result retires them; executed source snapshots stay beside them.
 
 ## Next
 
-Measure the pilot's session lengths, span agreement and time, then fix session and
-non-session quotas, run the main sessions, select, and capture in shards.
+Check the first session captures for label/next-token agreement and validation, then
+size shard B from shard A's actual bytes and capture it; build the mixture manifest.
