@@ -84,6 +84,7 @@ def compare_leased(
         canonical(cast(Record, asdict(ProcessIdentity.read(os.getpid())))),
     )
     rows: list[Record] = []
+    arm_elapsed = {arm.name: 0.0 for arm in spec.arms}
     cached = spec.cached()
     if any(value["gpu"] != cuda_identity() for value in cached.values()):
         raise ValueError(
@@ -110,6 +111,7 @@ def compare_leased(
                     )
                 )
                 responses: list[Record] = []
+                began_arm = now()
                 with session(spec, arm, cell, managed_group) as port:
                     tasks = [selected[i % len(selected)] for i in range(spec.warmups)] + list(
                         selected
@@ -195,6 +197,7 @@ def compare_leased(
                             raise ValueError(
                                 "greedy token/text/stopping mismatch: " + arm.name + "/" + key
                             )
+                arm_elapsed[arm.name] += now() - began_arm
                 if arm.drafter:
                     reconcile((cell.root / "server.log").read_text(), responses)
                     if not any(
@@ -239,6 +242,7 @@ def compare_leased(
             "historical_references": {name: value["reference"] for name, value in cached.items()},
             "historical_comparisons": historical_comparisons(rows, cached),
             "elapsed_seconds": now() - began_panel,
+            "arm_elapsed_seconds": arm_elapsed,
             "summary": aggregate,
             "resident_gpu_mib": {
                 arm.name: max(

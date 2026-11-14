@@ -67,12 +67,39 @@ def scenario_report(rows: list[Record], spec: Comparison, cached: dict[str, Reco
                     name: {
                         **totals([row for row in selected if row["arm"] == name]),
                         "drafter_bytes": sizes[name],
+                        **(
+                            {
+                                "completed_tasks": sum(
+                                    row["completed"] is True
+                                    for row in selected
+                                    if row["arm"] == name
+                                )
+                            }
+                            if all("completed" in row for row in selected)
+                            else {}
+                        ),
                         "execution": "historical" if name in cached else "measured",
                     }
                     for name in names
                 }
             ),
             "comparisons": comparisons,
+            "by_outcome": {
+                outcome: {
+                    name: totals(members)
+                    for name in names
+                    if (
+                        members := [
+                            row
+                            for row in selected
+                            if row["arm"] == name and row.get("completed") is completed
+                        ]
+                    )
+                }
+                for outcome, completed in (("completed", True), ("failed", False))
+            }
+            if any("completed" in row for row in selected)
+            else {},
             "timing_scope": "sampled throughput: same requests and seeds, unequal token paths; not a quality or latency equivalence claim"
             if spec.sampling.temperature
             else "matched greedy output paths",
@@ -100,6 +127,14 @@ def faster_verdict(scenarios: Record, candidate: str, confirmed: bool = False) -
             passed &= lower > 1 if control == "target" else lower >= 1
         summary = record(record(values["summary"]).get(candidate, {}))
         passed &= summary.get("correct") is True
+        if scenario == "agentic-coding":
+            baseline_summary = record(record(values["summary"]).get("baseline", {}))
+            if "completed_tasks" not in summary or "completed_tasks" not in baseline_summary:
+                available = False
+            else:
+                passed &= number(summary["completed_tasks"]) >= number(
+                    baseline_summary["completed_tasks"]
+                )
         decisions[scenario] = "insufficient" if not available else "pass" if passed else "fail"
     eligible = all(value == "pass" for value in decisions.values())
     return {

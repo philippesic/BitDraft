@@ -338,9 +338,15 @@ identities and the campaign screen are unchanged. Sampled references use
 an authenticated successful fresh Level 3 report). Panels share the target/runtime/context/
 depth/role and candidate content. Each panel retains its own scenarios; primary panels
 cannot duplicate a scenario. The names `screen`, `prefix`, and `live` are supplementary
-and do not replace the dedicated agentic suite. Use separate reports for Q4KM and NVFP4.
+and do not replace the dedicated agentic suite. Level 3 requires the full thinking,
+sampled and agentic suite tiers; a pilot or slice cannot supply its primary coverage.
+Fresh confirmation needs at least 20 requests per request scenario and 15 agentic tasks.
+Use separate reports for Q4KM and NVFP4.
 Reports include speed versus target-only and Baseline, paired 95% intervals for fresh
-matched arms, acceptance, drafter bytes, and recorded resident GPU MiB. Resident memory
+matched arms, acceptance, drafter bytes, and recorded resident GPU MiB. Application panels
+also show completed/failed strata and completion counts; a completion regression cannot
+pass the verdict. `arm_elapsed_seconds`, when recorded, includes model load, warmups and
+teardown; summed row seconds measure only the panel requests/tasks. Resident memory
 is a device-wide after-load observation, including target, KV, drafter and desktop; it
 is not peak allocation or incremental drafter memory. Older runs without this receipt
 report memory unavailable. Historical speed ratios never acquire paired timing intervals

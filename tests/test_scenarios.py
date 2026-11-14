@@ -13,7 +13,10 @@ from w1a1_eagle.records import canonical, read
 
 def scenario(lower: float, upper: float = 1.2) -> Record:
     return {
-        "summary": {"candidate": {"correct": True}},
+        "summary": {
+            "candidate": {"correct": True, "completed_tasks": 12},
+            "baseline": {"completed_tasks": 12},
+        },
         "comparisons": {
             "candidate/" + arm: {
                 "speed_ratio": (lower + upper) / 2,
@@ -109,3 +112,48 @@ def test_thinking_policy_changes_reference_identity_without_changing_legacy(tmp_
     path.write_bytes(canonical(spec))
     updated = Comparison.load(path).reference_protocol()
     assert original != updated and original["target_arguments"] == updated["target_arguments"]
+
+
+def test_scenario_report_refuses_partial_evidence_and_missing_scenarios(tmp_path: Path) -> None:
+    from benchmarks.native import file_reference
+    from benchmarks.scenario_report import report, validate_panel
+    from w1a1_eagle.contracts import sequence
+
+    path = evidence(tmp_path)
+    comparison = Comparison.load(path)
+    result = read(tmp_path / "result.json")
+    validate_panel(comparison, result)
+    with pytest.raises(ValueError, match="incomplete"):
+        validate_panel(comparison, result | {"rows": sequence(result["rows"])[:-1]})
+    with pytest.raises(ValueError, match="duplicated"):
+        validate_panel(
+            comparison, result | {"rows": [*sequence(result["rows"]), sequence(result["rows"])[0]]}
+        )
+    report_spec = tmp_path / "report.json"
+    report_spec.write_bytes(
+        canonical(
+            {
+                "schema": "scenario-report-v1",
+                "level": 3,
+                "candidate": "baseline",
+                "panels": {"requests": file_reference(tmp_path / "result.json")},
+                "confirmation": None,
+            }
+        )
+    )
+    output = report(report_spec, tmp_path / "report-output")
+    assert record(output["verdict"])["verdict"] == "not-established"
+    assert record(record(output["verdict"])["scenarios"])["agentic-coding"] == "missing"
+
+
+def test_small_development_slice_cannot_establish_level3_coverage(tmp_path: Path) -> None:
+    from dataclasses import replace
+
+    from benchmarks.scenario_report import qualified_scenario
+
+    spec = Comparison.load(evidence(tmp_path))
+    assert not qualified_scenario(spec, 3, "coding-requests")
+    assert not qualified_scenario(replace(spec, tier="thinking-slice"), 3, "thinking-on")
+    assert qualified_scenario(replace(spec, tier="thinking-slice"), 2, "thinking-on")
+    assert qualified_scenario(replace(spec, tier="thinking-suite"), 3, "thinking-on")
+    assert not qualified_scenario(replace(spec, role="confirmation"), 3, "coding-requests")
