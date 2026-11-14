@@ -34,15 +34,18 @@ artifact disposition are written.
   (`specs/quotas-nonsession.json`) select 1,759 prompts with a 193 GB maximum forecast.
   Legacy Dolly/Magicoder rows are excluded: they come from the old corpus that the S4
   data-curve mixture samples.
-- `specs/chain.py` (detached, started by `specs/when_idle.sh` after 10 idle GPU minutes,
-  log `logs/chain.log`) runs 640 sessions, selects up to 120 GB of sessions plus the
-  non-session quotas into `bank/`, and captures shard A (sessions first, then an
-  interleaved non-session prefix, maximum 200 GB) into `capture-a/`. The S4 campaign
-  holds the GPU from 20:42 on 2026-11-13.
+- GPU allocation began 2026-11-14 01:57. `sessions/` holds 640 complete TRAIN sessions
+  (433 passed their checks); `bank/` selected 2,399 prompts (640 session records with
+  201,729 span positions); `capture-a/` (1,844 IDs: all sessions, then an interleaved
+  non-session prefix) runs from snapshot `c2f0a0c0…`. First session records: 98.4% of
+  span labels equal the next history token and every turn ends with its end-of-turn label.
+- `specs/after_capture_a.sh` then runs `specs/chain3.py` (snapshot `75e90cfa…`, log
+  `logs/chain3.log`): 615 more sessions (`skip` 640), a session-only `bank-2/` sized to
+  the room left under 200 GB, `capture-c/`, the non-session remainder `capture-b/`, and
+  the mixture manifest with its CPU admission.
 - Raw outputs: session transcripts and captures are TRAIN inputs retained until a later
   result retires them; executed source snapshots stay beside them.
 
 ## Next
 
-Check the first session captures for label/next-token agreement and validation, then
-size shard B from shard A's actual bytes and capture it; build the mixture manifest.
+Verify chain3's outputs, then write the result, FINDINGS entry and tranche-2 forecast.
