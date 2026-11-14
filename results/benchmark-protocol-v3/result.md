@@ -131,6 +131,9 @@ Proposed, not decided: a runtime edit that keeps an accepted final end-of-turn d
 of the slot cache, or ends the cached prefix at a fixed boundary, so live trajectories stay
 exact. It would need a new runtime and new live controls.
 
+Correction 2026-11-13: done as runtime-v7, which keeps a stopping accepted draft out of the
+cache; every v3 reference was re-recorded on it ([stop-token cache](../stop-token-cache-exactness/result.md)).
+
 ## Evidence and reproduction
 
 [result.json](result.json) holds every arm summary, the paired comparisons, live rows,

@@ -36,9 +36,11 @@ folder in the matching category: training campaigns in `artifacts/training`, cap
 conversions in `artifacts/datasets`, native builds in `artifacts/native`, prompt preparation
 in `artifacts/bank`, and comparisons in `artifacts/benchmarks`. `record-reference` defaults
 to the shared `artifacts/benchmarks/references` registry so observations deduplicate.
-Its `runtime-v6-depth3/` folder keeps the current protocol's source panels, establishment
-specifications and candidate-only specifications beside the records that authenticate
-them ([current protocol](benchmarks.md#current-protocol)).
+Records authenticate their source runs by absolute path, so those runs never move while
+referenced. The current protocol's runs, establishment and candidate-only specifications
+are in `artifacts/benchmarks/runtime-v7-depth3/` ([current protocol](benchmarks.md#current-protocol)).
+The previous protocol's are in the registry's own `runtime-v6-depth3/` subfolder, where
+they were first written; new runs go directly under `artifacts/benchmarks/`.
 Outputs land in the checkout whose code runs: a worktree writes its own `artifacts/`, and
 its `/home/philip/BitDraft` paths resolve there. Freezing branch source under this
 checkout's `artifacts/` and running the snapshot with `--frozen` writes here instead.

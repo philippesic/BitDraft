@@ -160,6 +160,18 @@ acceptance points lower; on live tasks with matching trajectories it ties Baseli
 the panel. S4's live trajectory diverged on 1–2 of 12 tasks through cached-prefix reuse after
 a drafted end-of-turn token, so it has no live reference. Depth-2/runtime-v5 ratios are not
 comparable. [Result](results/benchmark-protocol-v3/result.md).
+Correction 2026-11-13: runtime-v7 removes the divergence; S4 now has live references (F024).
+
+### F024: Can drafter arms stay exact on live tasks?
+
+Yes. Runtime-v7 drops a stopping token that was an accepted draft from the session cache,
+so the next call reuses the same prefix as target-only. S4 then matched target-only on all
+12 live tasks of both precisions, call by call including cached counts. Target-only and
+Baseline matched runtime-v6 everywhere, and every request output and draft count was
+unchanged. Live, S4 ties Baseline: Q4KM 55.0 vs 55.4 s (target-only 78.1), NVFP4 38.2 vs
+38.9 s (51.6). All 24 v3 references were re-recorded from the exactness panels, because a
+reference binds its runtime; S4 is the prior leader on all four cohorts. No speed cost was
+measured on a quiet host. [Result](results/stop-token-cache-exactness/result.md).
 
 ## Earlier experiments and durable lessons
 

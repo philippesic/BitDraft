@@ -22,7 +22,7 @@ CPU tests; a passing tiny test does not establish full-size behavior.
    The worker trains on the k−1 prediction slots after the anchor.
 
 The native runtime uses the same anchor-plus-mask layout and non-causal attention and
-builds depth+1 slots per round (`artifacts/native/runtime-v6/source/common/speculative.cpp`):
+builds depth+1 slots per round (`artifacts/native/runtime-v7/source/common/speculative.cpp`):
 at the benchmark depth 3 it proposes the first three predictions from a four-slot block. A block of k
 slots in training is exactly that layout (tested against a sixteen-slot pass whose later
 slots are hidden). The recipe chooses the training block sizes; the default is sixteen

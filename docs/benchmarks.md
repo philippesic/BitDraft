@@ -117,28 +117,29 @@ fresh matched trials. Filesystem/tool tasks retain whole-episode failure denomin
 
 ### Current protocol
 
-Request policy v3 (`native-greedy-request-v3`, `native-live-v3`) serves with runtime-v6
-(`artifacts/native/runtime-v6`), exact verification, depth 3, `--cache-ram 0`, F16 KV and
-32,768 context. Target and Baseline references exist for both targets on all four cohorts,
-and S4 is the prior leader on the screen, panel and prefix harness
-([protocol switch](../results/benchmark-protocol-v3/result.md)). Everything they depend on
-is in `artifacts/benchmarks/references/runtime-v6-depth3/`:
+Request policy v3 (`native-greedy-request-v3`, `native-live-v3`) serves with runtime-v7
+(`artifacts/native/runtime-v7`), exact verification, depth 3, `--cache-ram 0`, F16 KV and
+32,768 context. Runtime-v7 is runtime-v6 plus the `stop_token_cache_v1` edit, which keeps a
+stopping token out of the slot cache when it was an accepted draft
+([stop-token cache](../results/stop-token-cache-exactness/result.md)). Target and Baseline
+references exist for both targets on all four cohorts, and S4 is the prior leader on all
+four. Everything they depend on is in `artifacts/benchmarks/runtime-v7-depth3/`:
 
 | Folder | Contents |
 | --- | --- |
-| `inputs/` | The multi-arm request/harness/live specifications given to `prepare-checks` |
-| `lean-q4km/`, `lean-nvfp4/` | Lean workloads and `*-establish.json` specifications |
+| `establish/` | Three-arm (target, Baseline, S4) specifications, one per precision and cohort, using the lean workloads in `references/runtime-v6-depth3/lean-*` |
 | `runs/` | The source panels the references authenticate; never delete while referenced |
-| `establish/` | Target and Baseline live establishment, derived from `live-establish.json` (see [live](#live-application-and-instructions)) |
-| `registrations/` | `record-reference` inputs, including refused ones |
-| `specs/` | Candidate-only specifications with target and Baseline references and S4 as a placeholder candidate (`*-candidate.json`; `q4km-screen-candidate.json` is the campaign screen), `*-leader.json` that add the S4 prior leader where it has a reference, and `suite.json` |
+| `registrations/` | `record-reference` inputs |
+| `specs/` | Candidate-only specifications with target and Baseline references and S4 as a placeholder candidate (`*-candidate.json`; `q4km-screen-candidate.json` is the campaign screen), `*-leader.json` that add the S4 prior leader, and `suite.json` |
 | `executed-sources/` | The frozen code that ran the panels |
 
 Swap the `candidate` drafter in a copy of a `specs/` file to check a new state. Records
-of earlier protocols (runtime-v5, depth 2, policies v1/v2) stay valid for their own
-protocol. A comparison refuses every reference whose protocol differs from its own, so
-those controls cannot serve v3 runs, and current code cannot run the old protocol.
-Acceptance and speed ratios from depth-2 or runtime-v5 panels are not comparable with v3.
+of earlier protocols (runtime-v6 or v5, depth 2, policies v1/v2) stay valid for their own
+protocol; runtime-v6's are in `artifacts/benchmarks/references/runtime-v6-depth3/`. A
+comparison refuses every reference whose runtime or protocol differs from its own, so
+those controls cannot serve runtime-v7 runs. Runtime-v6 and v7 give identical outputs and
+draft counts, so their acceptance and speed ratios are comparable; depth-2 or runtime-v5
+ratios are not.
 
 ## Prompts and captures
 
@@ -225,7 +226,7 @@ the decoding gain ([standing](../results/he4broad-final-standing/result.md)). Th
 runtime overhead shared by every DFlash-style drafter: host-side feature copies and larger
 context checkpoints, not drafter compute ([prefill overhead](../results/speculative-prefill-overhead/result.md)).
 Runtime-v6 removes most of it with outputs identical to runtime-v5
-([fixes](../results/drafter-prompt-overhead-fixes/result.md)), and panels use it.
+([fixes](../results/drafter-prompt-overhead-fixes/result.md)); panels use its successor runtime-v7.
 Servers run with `--cache-ram 0`: the RAM prompt cache saved the previous request's state
 before each new one (about 90 ms per request, outside `server_prompt_seconds`) and nothing
 reused it. Live sessions reuse their prefix from the slot's own cache, which stays on.
@@ -290,13 +291,12 @@ Report completion, whole-task/model/tool/overhead time and greedy trajectory/fil
 agreement, including shared failures. Faster incomplete work is not a win. Deployment
 claims need trials in the intended application/configuration.
 
-Live greedy agreement is checked, not guaranteed. When a drafter's accepted drafts end a
-call with the end-of-turn token, that token stays in the slot cache. The next call then
-reuses one more cached token and splits its new prompt into different batches. Prompt
-batches over 32 tokens use fused arithmetic, so a near tie can flip. Under protocol v3,
-S4 diverged this way on 1 of 12 Q4KM and 2 of 12 NVFP4 tasks; Baseline never differed.
-A diverged arm makes its panel unusable for `record-reference`, so live controls are
-established from target and Baseline alone, and a drafter that diverges has no live reference.
+Live greedy agreement is checked, not guaranteed. A call that ends on an accepted draft
+used to leave that draft in the slot cache, so the next call reused one more cached token
+than target-only, batched its new prompt differently and could flip a near tie; under
+runtime-v6 S4 diverged this way on 1 of 12 Q4KM and 2 of 12 NVFP4 tasks. Runtime-v7 drops
+the stopping token and anything after it from the cache, so drafter arms leave the cache
+as target-only does. A diverged arm still makes its panel unusable for `record-reference`.
 
 ## Training and selection
 

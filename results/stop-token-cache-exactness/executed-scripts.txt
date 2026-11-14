@@ -1,0 +1,369 @@
+Executed scripts for results/stop-token-cache-exactness, in order of use. Paths are the main checkout's.
+Sequence: freeze the branch into artifacts/native/executed-sources and run native-build through
+launch.py; gen_establish.py; freeze the branch into runtime-v7-depth3/executed-sources; run.sh for
+the two live panels; live_check.py; run.sh for the six request panels; register.py for all 24 arms
+(live first); specs.py; verify-inputs on all 16 specifications through launch.py; request_check.py;
+the first two rechecks by hand (same commands as interleave.sh); interleave.sh after waiting for
+an idle GPU; build_result.py.
+
+===== freeze (run from the branch checkout; destination per use)
+uv run --locked --no-sync --offline python -c 'from pathlib import Path; from w1a1_eagle.identity import freeze_source, source_identity; root=Path(".").resolve(); print(freeze_source(root, Path("DESTINATION"), source_identity(root), 0))'
+
+===== native build (spec = runtime-v6-build-spec.json with "stop_token_cache_v1" appended to source_edits)
+.venv/bin/python launch.py artifacts/native/executed-sources/8abfc54c... native-build artifacts/native/runtime-v7-build-spec.json artifacts/native/runtime-v7
+
+===== launch.py
+import subprocess
+import sys
+from pathlib import Path
+
+snapshot = Path(sys.argv[1]).resolve()
+sys.path.insert(0, str(snapshot))
+from w1a1_eagle.config import benchmark_environment  # noqa: E402
+
+root = Path("/home/philip/BitDraft")
+environment = benchmark_environment(root, snapshot)
+command = [sys.executable, "-B", "-m", "benchmarks", "--frozen", *sys.argv[2:]]
+raise SystemExit(subprocess.run(command, cwd=snapshot, env=environment, check=False).returncode)
+
+===== gen_establish.py
+import hashlib, json
+from pathlib import Path
+
+main = Path("/home/philip/BitDraft/artifacts")
+old = main / "benchmarks/references/runtime-v6-depth3"
+build = main / "native/runtime-v7"
+P = main / "benchmarks/runtime-v7-depth3"
+result = json.loads((build / "result.json").read_text())
+server = next(a for a in result["artifacts"] if a["path"].endswith("/llama-server"))
+libs = sorted((a for a in result["artifacts"] if ".so" in Path(a["path"]).name), key=lambda a: a["path"])
+
+def ref(path):
+    data = Path(path).read_bytes()
+    return {"path": str(path), "sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data)}
+
+out = P / "establish"
+out.mkdir(parents=True, exist_ok=False)
+for precision in ("q4km", "nvfp4"):
+    for cohort in ("screen", "requests", "harness", "live"):
+        spec = json.loads((old / f"lean-{precision}/{cohort}-establish.json").read_text())
+        before = {k: v for k, v in spec.items() if k not in ("source", "binary", "libraries")}
+        spec["source"] = ref(build / "result.json")
+        spec["binary"] = {k: server[k] for k in ("path", "sha256", "bytes")}
+        spec["libraries"] = [{k: a[k] for k in ("path", "sha256", "bytes")} for a in libs]
+        assert {k: v for k, v in spec.items() if k not in ("source", "binary", "libraries")} == before
+        assert [a["name"] for a in spec["arms"]] == ["target", "baseline", "candidate"]
+        (out / f"{precision}-{cohort}.json").write_text(json.dumps(spec, indent=2, sort_keys=True) + "\n")
+print("ok")
+
+===== run.sh
+#!/bin/bash
+SP=/tmp/claude-1000/-home-philip--t3-worktrees-BitDraft-t3-87d2c050/3aea9213-e6ed-49a7-a8b9-0f619df05b29/scratchpad
+P=/home/philip/BitDraft/artifacts/benchmarks/runtime-v7-depth3
+S=$(ls -d $P/executed-sources/*/ | head -1)
+PY=/home/philip/.t3/worktrees/BitDraft/t3-87d2c050/.venv/bin/python
+mkdir -p $P/logs $P/runs
+for item in "$@"; do
+  cmd=${item%%:*}; rest=${item#*:}; spec=${rest%%:*}; out=${rest#*:}
+  start=$(date +%s.%N)
+  echo "$(date -Is) start $cmd $spec $out" >> $P/logs/runs.log
+  $PY $SP/launch.py $S $cmd $P/$spec $P/runs/$out > $P/logs/$out.log 2>&1
+  code=$?
+  end=$(date +%s.%N)
+  echo "$(date -Is) end $out exit=$code seconds=$(echo "$end - $start" | bc)" >> $P/logs/runs.log
+  [ $code -eq 0 ] || exit $code
+done
+
+===== live_check.py
+import json, sys
+from pathlib import Path
+V7 = Path("/home/philip/BitDraft/artifacts/benchmarks/runtime-v7-depth3/runs")
+V6 = Path("/home/philip/BitDraft/artifacts/benchmarks/references/runtime-v6-depth3/runs")
+
+def load(root, arm):
+    return {p.parent.name: json.loads(p.read_text()) for p in (root / ("0-" + arm)).glob("*/transcript.json")}
+
+def key(r):
+    return (r["tokens"], r["content"], r["timings"]["cache_n"], r["tokens_evaluated"], r["timings"]["prompt_n"])
+
+def compare(new, old):
+    tasks = calls = same = same_tasks = 0
+    first = []
+    for task in sorted(new):
+        a, b = new[task]["responses"], old[task]["responses"]
+        tasks += 1
+        ok = len(a) == len(b)
+        for i, (x, y) in enumerate(zip(a, b)):
+            calls += 1
+            if key(x) == key(y):
+                same += 1
+            else:
+                ok = False
+                first.append((task, i))
+        same_tasks += ok
+    return {"tasks": tasks, "tasks_identical": same_tasks, "calls_compared": calls, "calls_identical": same, "first_differences": first[:6]}
+
+def result_rows(root):
+    res = json.loads((root / "result.json").read_text())
+    return {(r["arm"], r["task"]): r for r in res["rows"]}
+
+out = {}
+for precision in ("q4km", "nvfp4"):
+    run = V7 / f"{precision}-live"
+    v6c = V6 / f"{precision}-live-controls"
+    v6s = V6 / f"{precision}-live-s4"
+    t7 = load(run, "target")
+    rows = result_rows(run)
+    rows6 = result_rows(v6c)
+    entry = {
+        "target_v7_vs_v6": compare(t7, load(v6c, "target")),
+        "baseline_v7_vs_v6": compare(load(run, "baseline"), load(v6c, "baseline")),
+        "s4_v7_vs_target_v7": compare(load(run, "candidate"), t7),
+        "s4_v6_vs_target_v6": compare(load(v6s, "candidate"), load(v6c, "target")),
+        "state_match_target": {arm: sum(rows[(arm, t)]["state_sha256"] == rows[("target", t)]["state_sha256"] for t in t7) for arm in ("baseline", "candidate")},
+        "target_state_v7_vs_v6": sum(rows[("target", t)]["state_sha256"] == rows6[("target", t)]["state_sha256"] for t in t7),
+    }
+    out[precision] = entry
+json.dump(out, sys.stdout, indent=1); print()
+
+===== register.py
+import hashlib, json, subprocess, sys
+from pathlib import Path
+
+P = Path("/home/philip/BitDraft/artifacts/benchmarks/runtime-v7-depth3")
+REG = Path("/home/philip/BitDraft/artifacts/benchmarks/references")
+SP = Path(__file__).resolve().parent
+(S,) = list((P / "executed-sources").iterdir())
+PY = "/home/philip/.t3/worktrees/BitDraft/t3-87d2c050/.venv/bin/python"
+
+def ref(path):
+    data = Path(path).read_bytes()
+    return {"path": str(path), "sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data)}
+
+out = P / "registrations"
+out.mkdir(exist_ok=True)
+for item in sys.argv[1:]:
+    precision, cohort, arm = item.split(":")
+    path = out / f"{precision}-{cohort}-{arm}.json"
+    if not path.exists():
+        value = {"schema": 1, "comparison": ref(P / "establish" / f"{precision}-{cohort}.json"),
+                 "result": ref(P / "runs" / f"{precision}-{cohort}" / "result.json"), "arm": arm, "rep": 0}
+        path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n")
+    proc = subprocess.run([PY, str(SP / "launch.py"), str(S), "record-reference", str(path), str(REG)],
+                          capture_output=True, text=True)
+    with (P / "logs/registrations.log").open("a") as log:
+        log.write(f"== {path.name} exit={proc.returncode}\n{proc.stdout}{proc.stderr}\n")
+    try:
+        d = json.loads(proc.stdout)
+        print(path.name, proc.returncode, Path(d["reference"]["path"]).name[:12], "reused" if d["reused"] else "new")
+    except Exception:
+        print(path.name, proc.returncode, proc.stdout[-300:], proc.stderr[-300:])
+
+===== specs.py
+import glob, hashlib, json
+from pathlib import Path
+
+P = Path("/home/philip/BitDraft/artifacts/benchmarks/runtime-v7-depth3")
+REG = Path("/home/philip/BitDraft/artifacts/benchmarks/references")
+S4 = "/home/philip/BitDraft/artifacts/training/block-test-s4-01/exports/10ade33ae91b19a471f76ef65463005485725c1377a58728624ceee5afe8b509.bin"
+HE4 = "/home/philip/BitDraft/artifacts/qualification/original-zero-export-02/exports/99d2be79f956f6ccde483b960d4a31b939eeda86e4530e813929a3452c14fc1e.bin"
+
+def ref(path):
+    data = Path(path).read_bytes()
+    return {"path": str(path), "sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data)}
+
+def registered(run, arm):
+    found = [p for p in glob.glob(str(REG / "*.json"))
+             if (v := json.loads(Path(p).read_text())).get("source_arm") == arm
+             and v["result"]["path"] == str(P / "runs" / run / "result.json")]
+    assert len(found) == 1, (run, arm, found)
+    return ref(found[0])
+
+out = P / "specs"
+out.mkdir(exist_ok=True)
+for precision in ("q4km", "nvfp4"):
+    for cohort in ("screen", "requests", "harness", "live"):
+        run = f"{precision}-{cohort}"
+        base = json.loads((P / "establish" / f"{run}.json").read_text())
+        controls = {"target": registered(run, "target"), "baseline": registered(run, "baseline")}
+        for name, drafter, refs in (
+            ("candidate", S4, controls),
+            ("leader", HE4, {**controls, "prior-leader": registered(run, "candidate")}),
+        ):
+            path = out / f"{run}-{name}.json"
+            assert not path.exists()
+            spec = {**base, "arms": [{"name": "candidate", "drafter": ref(drafter)}], "references": refs}
+            path.write_text(json.dumps(spec, indent=2, sort_keys=True) + "\n")
+suite = {"schema": "full-suite-v2", "targets": {
+    precision: {c: ref(out / f"{precision}-{c}-candidate.json") for c in ("requests", "harness", "live")}
+    for precision in ("q4km", "nvfp4")}}
+(out / "suite.json").write_text(json.dumps(suite, indent=2, sort_keys=True) + "\n")
+print(sorted(p.name for p in out.iterdir()))
+
+===== request_check.py
+import hashlib, json, sys
+from pathlib import Path
+V7 = Path("/home/philip/BitDraft/artifacts/benchmarks/runtime-v7-depth3/runs")
+V6 = Path("/home/philip/BitDraft/artifacts/benchmarks/references/runtime-v6-depth3/runs")
+
+def responses(root, arm):
+    found = {}
+    for cell in sorted(root.glob(f"0-*-{arm}")):
+        for req in cell.glob("*-request.json"):
+            prompt = json.loads(req.read_text())["prompt"]
+            key = hashlib.sha256(json.dumps(prompt).encode()).hexdigest()
+            resp = json.loads((cell / req.name.replace("request", "response")).read_text())
+            found.setdefault(key, []).append(resp)
+    return found
+
+def rows(root, arm):
+    res = json.loads((root / "result.json").read_text())
+    return {r["task"]: r for r in res["rows"] if r["arm"] == arm}
+
+def output(r):
+    return (r["tokens"], r["content"], r["stop_type"])
+
+def counts(r):
+    t = r["timings"]
+    return (t.get("draft_n"), t.get("draft_n_accepted"), r["tokens_evaluated"], t["cache_n"], t["prompt_n"], t["predicted_n"])
+
+out = {}
+for precision in ("q4km", "nvfp4"):
+    for cohort in ("screen", "harness", "requests"):
+        name = f"{precision}-{cohort}"
+        if not (V7 / name / "result.json").exists():
+            continue
+        entry = {}
+        target7 = responses(V7 / name, "target")
+        for arm in ("target", "baseline", "candidate"):
+            new, old = responses(V7 / name, arm), responses(V6 / name, arm)
+            assert set(new) == set(old)
+            pairs = [(a, b) for k in new for a, b in zip(new[k], old[k])]
+            r7, r6 = rows(V7 / name, arm), rows(V6 / name, arm)
+            entry[arm] = {
+                "responses": len(pairs),
+                "rows": len(r7),
+                "outputs_identical_v6": sum(output(a) == output(b) for a, b in pairs),
+                "counters_identical_v6": sum(counts(a) == counts(b) for a, b in pairs),
+                "row_native_identical_v6": sum(r7[t]["native"] == r6[t]["native"] for t in r7),
+                "row_correct": sum(r7[t]["correct"] is True for t in r7),
+                "tokens_cached_identical_v6": sum(a["tokens_cached"] == b["tokens_cached"] for a, b in pairs),
+                "tokens_cached_one_less_v6": sum(a["tokens_cached"] == b["tokens_cached"] - 1 for a, b in pairs),
+                "outputs_equal_target_v7": sum(output(a) == output(t) for k in new for a, t in zip(new[k], target7[k])),
+                "tokens_cached_equal_target_v7": sum(a["tokens_cached"] == t["tokens_cached"] for k in new for a, t in zip(new[k], target7[k])),
+            }
+        out[name] = entry
+json.dump(out, sys.stdout, indent=1); print()
+
+===== interleave.sh
+#!/bin/bash
+SP=/tmp/claude-1000/-home-philip--t3-worktrees-BitDraft-t3-87d2c050/3aea9213-e6ed-49a7-a8b9-0f619df05b29/scratchpad
+P=/home/philip/BitDraft/artifacts/benchmarks/runtime-v7-depth3
+S=$(ls -d $P/executed-sources/*/)
+PY=/home/philip/.t3/worktrees/BitDraft/t3-87d2c050/.venv/bin/python
+V6SPEC=/home/philip/BitDraft/artifacts/benchmarks/references/runtime-v6-depth3/establish/q4km-live-controls.json
+V7SPEC=$P/recheck/q4km-live-controls.json
+for item in v7:2 v6:2 v7:3 v6:3; do
+  rt=${item%%:*}; n=${item#*:}; out=$rt-q4km-live-recheck-$n
+  [ $rt = v6 ] && spec=$V6SPEC || spec=$V7SPEC
+  start=$(date +%s.%N)
+  echo "$(date -Is) start live $spec $out load=$(cut -d' ' -f1 /proc/loadavg)" >> $P/logs/runs.log
+  $PY $SP/launch.py $S live $spec $P/runs/$out > $P/logs/$out.log 2>&1
+  code=$?
+  end=$(date +%s.%N)
+  echo "$(date -Is) end $out exit=$code seconds=$(echo "$end - $start" | bc) load=$(cut -d' ' -f1 /proc/loadavg)" >> $P/logs/runs.log
+  [ $code -eq 0 ] || exit $code
+done
+
+===== build_result.py
+import glob, hashlib, json, re, subprocess, sys
+from pathlib import Path
+
+A = Path("/home/philip/BitDraft/artifacts")
+P = A / "benchmarks/runtime-v7-depth3"
+V6 = A / "benchmarks/references/runtime-v6-depth3/runs"
+REG = A / "benchmarks/references"
+SP = Path(__file__).resolve().parent
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+def run_json(script):
+    return json.loads(subprocess.run([sys.executable, str(SP / script)], capture_output=True, text=True, check=True).stdout)
+
+ARM = {"target": "target", "baseline": "baseline", "candidate": "s4"}
+REQ_KEYS = ("tokens_per_second", "speed_vs_target", "speed_vs_baseline", "acceptance", "accepted_per_round", "accepted", "proposed", "tokens", "server_prompt_seconds", "server_prediction_seconds", "wall_seconds", "eos_stops", "cap_hits")
+LIVE_KEYS = ("model_seconds", "completed", "tasks", "acceptance", "accepted", "proposed", "tokens", "server_prompt_seconds", "server_prediction_seconds", "tool_seconds")
+
+panels = {}
+for precision in ("q4km", "nvfp4"):
+    for cohort in ("screen", "requests", "harness", "live"):
+        name = f"{precision}-{cohort}"
+        new = json.loads((P / "runs" / name / "result.json").read_text())
+        old_name = f"{precision}-live-controls" if cohort == "live" else name
+        old = json.loads((V6 / old_name / "result.json").read_text())
+        keys = LIVE_KEYS if cohort == "live" else REQ_KEYS
+        entry = {
+            "v7": {ARM[a]: {k: s.get(k) for k in keys} for a, s in new["summary"].items()},
+            "v6": {ARM[a]: {k: s.get(k) for k in keys} for a, s in old["summary"].items()},
+            "result_sha256": sha(P / "runs" / name / "result.json"),
+        }
+        paired = new.get("paired_against_baseline") or new.get("paired_task_rate_against_baseline")
+        entry["s4_vs_baseline"] = paired["candidate"]
+        panels[name] = entry
+
+gpu = {}
+for line in (P / "logs/runs.log").read_text().splitlines():
+    m = re.search(r"end (\S+) exit=(\d+) seconds=([\d.]+)", line)
+    if m:
+        gpu[m.group(1)] = float(m.group(3))
+
+references = {}
+for path in glob.glob(str(REG / "*.json")):
+    value = json.loads(Path(path).read_text())
+    if value["result"]["path"].startswith(str(P / "runs")):
+        run = Path(value["result"]["path"]).parent.name
+        references[f"{run}/{ARM[value['source_arm']]}"] = Path(path).name[:-5]
+
+timing = []
+for line in (P / "logs/runs.log").read_text().splitlines():
+    m = re.search(r"start live \S+ (v[67]-q4km-live-recheck\S*)", line)
+    if m:
+        run = m.group(1)
+        r = json.loads((P / "runs" / run / "result.json").read_text())
+        timing.append({"run": run, "runtime": run[:2], "started": line.split()[0], "arms": {
+            ARM[a]: {k: s[k] for k in ("model_seconds", "server_prompt_seconds", "server_prediction_seconds")}
+            for a, s in r["summary"].items()}})
+for run, path in (("v6-original", V6 / "q4km-live-controls"), ("v7-panel", P / "runs/q4km-live")):
+    r = json.loads((path / "result.json").read_text())
+    timing.append({"run": run, "arms": {ARM[a]: {k: s[k] for k in ("model_seconds", "server_prompt_seconds", "server_prediction_seconds")} for a, s in r["summary"].items()}})
+build = json.loads((A / "native/runtime-v7/result.json").read_text())
+result = {
+    "schema": 1,
+    "runtime_v7": {
+        "build_result_sha256": sha(A / "native/runtime-v7/result.json"),
+        "build_spec_sha256": sha(A / "native/runtime-v7-build-spec.json"),
+        "code_sha256": build["code_sha256"],
+        "runtime_repairs": build["runtime_repairs"],
+        "artifacts": {Path(a["path"]).name: a["sha256"] for a in build["artifacts"]},
+    },
+    "runtime_v6_build_result_sha256": sha(A / "native/runtime-v6/result.json"),
+    "runs_code_sha256": next((P / "executed-sources").iterdir()).name,
+    "models": {
+        "q4km_target": "3874209241c9a397e2f62cd3f70f80fd2dfbf0dfccb6838416bdb48a714e8630",
+        "nvfp4_target": json.loads((P / "establish/nvfp4-screen.json").read_text())["target"]["sha256"],
+        "baseline": json.loads((P / "establish/q4km-screen.json").read_text())["arms"][1]["drafter"]["sha256"],
+        "s4": json.loads((P / "establish/q4km-screen.json").read_text())["arms"][2]["drafter"]["sha256"],
+    },
+    "workloads": {f"{p}-{c}": json.loads((P / "establish" / f"{p}-{c}.json").read_text())["workload"]["sha256"] for p in ("q4km", "nvfp4") for c in ("screen", "requests", "harness", "live")},
+    "live_exactness": run_json("live_check.py"),
+    "request_exactness": run_json("request_check.py"),
+    "panels": panels,
+    "gpu_command_seconds": gpu,
+    "gpu_command_seconds_total": sum(gpu.values()),
+    "references": references,
+    "timing_rechecks": timing,
+}
+Path(sys.argv[1]).write_text(json.dumps(result, indent=1, sort_keys=True) + "\n")
+print("ok", len(references), round(result["gpu_command_seconds_total"], 1))
+
