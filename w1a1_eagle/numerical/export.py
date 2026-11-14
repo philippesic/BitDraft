@@ -137,6 +137,11 @@ def prepare(
                     field.types[0],
                     field.types[-1] if len(field.types) > 1 else None,
                 )
+    if model.frozen_format != "Q4_0":
+        writer.add_string("dflash.w1ax.frozen_format", model.frozen_format)
+        if model.frozen_baseline is None:
+            raise ValueError("Baseline frozen tables lack authenticated identity")
+        writer.add_string("dflash.w1ax.frozen_baseline", model.frozen_baseline)
     writer.add_uint32("dflash.w1ax.version", 2)
     writer.add_uint32("dflash.w1ax.activation_bits", 8)
     for key, config_value in {
@@ -207,10 +212,11 @@ def prepare(
             array = cast(NativeArray, np.frombuffer(data, dtype=np.uint8).reshape(shape))
             head_code = name == "output.weight"
             kind_name = "Q4_K" if head_code else dict(model.native_types).get(name, "Q4_0")
-            kind = {"Q4_0": kinds.Q4_0, "Q4_K": kinds.Q4_K, "Q6_K": kinds.Q6_K}[kind_name]
+            native_kind = {"Q4_0": kinds.Q4_0, "Q4_K": kinds.Q4_K, "Q6_K": kinds.Q6_K}[kind_name]
             operand = model.vocabulary if head_code else frozen[name]
             restored = torch.tensor(
-                api.dequantize(array, kind).reshape(tuple(operand.shape)), dtype=torch.float32
+                api.dequantize(array, native_kind).reshape(tuple(operand.shape)),
+                dtype=torch.float32,
             )
             if not torch.equal(restored, operand.detach().cpu()):
                 raise ValueError("frozen code execution/export operands disagree")
@@ -218,7 +224,7 @@ def prepare(
                 ExportTensor(
                     name,
                     array,
-                    kind,
+                    native_kind,
                     kind_name,
                 )
             )
@@ -301,7 +307,9 @@ def export_he4(
         for tensor in tensors:
             shape = tuple(tensor.data.shape)
             if tensor.kind_name in {"Q4_0", "Q4_K", "Q6_K"}:
-                block, width = {"Q4_0": (32, 18), "Q4_K": (256, 144), "Q6_K": (256, 210)}[tensor.kind_name]
+                block, width = {"Q4_0": (32, 18), "Q4_K": (256, 144), "Q6_K": (256, 210)}[
+                    tensor.kind_name
+                ]
                 shape = (*shape[:-1], shape[-1] // width * block)
             expected[tensor.name] = (
                 tensor.kind_name,

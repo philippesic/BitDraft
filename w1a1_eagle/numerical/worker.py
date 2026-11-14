@@ -143,13 +143,19 @@ class TensorWorker:
             for offset in range(0, len(data), 1024 * 1024):
                 digest.update(data[offset : offset + 1024 * 1024])
         if model.frozen_format != "Q4_0":
-            digest.update(canonical([model.frozen_format, model.frozen_baseline, list(model.native_types)]))
+            digest.update(
+                canonical([model.frozen_format, model.frozen_baseline, list(model.native_types)])
+            )
             for name, shape, codes in model.native_codes:
                 digest.update(canonical([name, list(shape), hashlib.sha256(codes).hexdigest()]))
         self.frozen_sha256 = digest.hexdigest()
         self.native_codes = model.native_codes
         self.native_types = model.native_types
-        self.frozen_configuration = (model.frozen_format, model.frozen_baseline, model.parent_frozen_sha256)
+        self.frozen_configuration = (
+            model.frozen_format,
+            model.frozen_baseline,
+            model.parent_frozen_sha256,
+        )
         self.frozen_transition: Record | None = None
 
     def verify_frozen(self) -> None:
@@ -157,7 +163,12 @@ class TensorWorker:
         if (
             self.model.native_codes is not self.native_codes
             or self.model.native_types is not self.native_types
-            or (self.model.frozen_format, self.model.frozen_baseline, self.model.parent_frozen_sha256) != self.frozen_configuration
+            or (
+                self.model.frozen_format,
+                self.model.frozen_baseline,
+                self.model.parent_frozen_sha256,
+            )
+            != self.frozen_configuration
             or set(current) != set(self.frozen)
             or any(
                 current[name] is not value or value._version != version
@@ -443,7 +454,11 @@ class TensorWorker:
                     for name, value in self.model.named_parameters(remove_duplicate=False)
                 },
                 "frozen_sha256": self.frozen_sha256,
-                **({"frozen_transition": self.frozen_transition} if self.frozen_transition is not None else {}),
+                **(
+                    {"frozen_transition": self.frozen_transition}
+                    if self.frozen_transition is not None
+                    else {}
+                ),
                 "optimizer": cast(dict[str, object], self.optimizer.state_dict()),
                 "rng": torch.get_rng_state(),
                 "device": self.model.vocabulary.device.type,
@@ -541,7 +556,9 @@ class TensorWorker:
             if updates != reference.updates or updates < 0 or cursor < 0:
                 raise ValueError("state accounting mismatch")
             self.verify_frozen()
-            transition = record(state["frozen_transition"]) if "frozen_transition" in state else None
+            transition = (
+                record(state["frozen_transition"]) if "frozen_transition" in state else None
+            )
             if state["frozen_sha256"] != self.frozen_sha256:
                 if (
                     mode != "branch"
