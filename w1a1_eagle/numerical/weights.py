@@ -2,7 +2,7 @@ import math
 import zipfile
 from dataclasses import asdict
 from pathlib import Path
-from typing import Protocol, Sequence, cast
+from typing import Literal, Protocol, Sequence, cast
 
 import gguf
 import torch
@@ -172,7 +172,13 @@ def load_he4(
     memory_budget_bytes: int,
     geometry: Geometry = Geometry(),
     initialization: Artifact | None = None,
+    frozen_format: Literal["Q4_0", "baseline-k"] = "Q4_0",
+    frozen_baseline: Artifact | None = None,
 ) -> HE4:
+    if frozen_format not in {"Q4_0", "baseline-k"}:
+        raise ValueError("unsupported frozen table format")
+    if (frozen_format == "baseline-k") != (frozen_baseline is not None):
+        raise ValueError("baseline-k requires an authenticated Baseline artifact")
     if initialization is None:
         tensors, head, mask, codes = decode(source, vocabulary, memory_budget_bytes, geometry)
     else:
@@ -227,7 +233,39 @@ def load_he4(
                 (string(row["name"]), tuple(integer(v) for v in sequence(row["shape"])), data)
             )
         codes = tuple(entries)
+    native_types: tuple[tuple[str, str], ...] = ()
+    if frozen_baseline is not None:
+        frozen_baseline.verify()
+        api = cast(GGUF, gguf)
+        baseline = api.GGUFReader(str(frozen_baseline.path))
+        records = {item.name: item for item in baseline.tensors}
+        if len(records) != len(baseline.tensors):
+            raise ValueError("duplicate Baseline tensors")
+        replacements = []
+        types = []
+        for name, shape, data in codes:
+            if name == "output.weight":
+                replacements.append((name, shape, data))
+                continue
+            item = records.get(name)
+            if item is None or item.tensor_type.name not in {"Q4_K", "Q6_K"}:
+                raise ValueError("Baseline frozen table must be Q4_K or Q6_K: " + name)
+            if tuple(int(v) for v in reversed(item.shape)) != tuple(tensors[name].shape):
+                raise ValueError("Baseline frozen table geometry differs: " + name)
+            decoded = api.dequantize(item.data, item.tensor_type).reshape(tuple(tensors[name].shape))
+            operand = torch.tensor(decoded, dtype=torch.float32)
+            if not bool(torch.isfinite(operand).all()):
+                raise ValueError("nonfinite Baseline frozen operand")
+            tensors[name] = operand
+            coded = cast(Array, item.data)
+            replacements.append((name, coded.shape, coded.tobytes()))
+            types.append((name, item.tensor_type.name))
+        codes = tuple(replacements)
+        native_types = tuple(types)
     model = HE4(tensors, head, mask, geometry)
+    model.frozen_format = frozen_format
+    model.frozen_baseline = None if frozen_baseline is None else frozen_baseline.sha256
+    model.native_types = native_types
     model.origin = (source.sha256, vocabulary.sha256)
     model.native_codes = codes
     return model
