@@ -288,6 +288,9 @@ class HE4(nn.Module):
         self.geometry = geometry
         self.mask = mask
         self.origin: tuple[str, str] | None = None
+        self.frozen_format = "Q4_0"
+        self.frozen_baseline: str | None = None
+        self.native_types: tuple[tuple[str, str], ...] = ()
         self.native_codes: tuple[tuple[str, tuple[int, ...], bytes], ...] = ()
         if (
             vocabulary.ndim != 2
