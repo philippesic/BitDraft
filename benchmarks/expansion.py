@@ -43,6 +43,13 @@ def names(row: Record) -> set[str]:
     return values
 
 
+def calls(message: Record) -> list[object]:
+    return [
+        (record(record(call)["function"])["name"], record(record(call)["function"])["arguments"])
+        for call in sequence(message.get("tool_calls", []))
+    ]
+
+
 def session_row(
     task: Record, transcript: Record, tokenizer: Tokenizer, end_token: int
 ) -> tuple[Record | None, Counter[str], str]:
@@ -52,13 +59,21 @@ def session_row(
     rendered = tokenizer.render(messages, TOOLS)
     tokens = tokenizer.tokenize(rendered)
     spans: list[list[int]] = []
+    if sum(message["role"] == "assistant" for message in messages) != len(responses):
+        raise ValueError("session transcript and responses disagree")
     turn = 0
+    previous: object = None
     for index, message in enumerate(messages):
         if message["role"] != "assistant":
             continue
         response = responses[turn]
         turn += 1
         stats["assistant_turns"] += 1
+        action = (message.get("content"), calls(message))
+        if action == previous:
+            stats["stopped_at_repeated_turn"] += 1
+            break
+        previous = action
         prefix = tokenizer.render(messages[:index], TOOLS)
         prompt = tokenizer.tokenize(prefix)
         if prefix != response["prompt"]:
@@ -80,13 +95,11 @@ def session_row(
         generated = tuple(integer(value) for value in sequence(response["tokens"]))
         stats[
             "identical_turn_tokens"
-            if tokens[len(prompt) : end] == generated
+            if tokens[len(prompt) : end + 1] == generated
             else "retokenized_turns"
         ] += 1
         stats["generated_tokens"] += len(generated)
         spans.append([len(prompt) - 1, end - 1])
-    if turn != len(responses):
-        raise ValueError("session transcript and responses disagree")
     if not spans:
         return None, stats, rendered
     length = spans[-1][1] + 2
