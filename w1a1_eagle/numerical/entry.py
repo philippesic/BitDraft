@@ -224,7 +224,8 @@ def run_leased(
 
     phase("model-load-began")
     model = load_he4(
-        intent.source, intent.vocabulary, intent.memory_bytes, cfg, intent.initialization
+        intent.source, intent.vocabulary, intent.memory_bytes, cfg, intent.initialization,
+        intent.frozen_format, intent.frozen_baseline
     )
     model.to(str(intent.raw["device"]))
     if model.vocabulary.device.type == "cuda":
