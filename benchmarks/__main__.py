@@ -55,6 +55,8 @@ def main() -> int:
         "prepare-checks",
         "prepare-initialization",
         "calibrate-depth",
+        "profile-rounds",
+        "round-profile-report",
     ):
         comparison = commands.add_parser(name)
         comparison.add_argument("input", type=Path)
@@ -147,6 +149,14 @@ def main() -> int:
             from benchmarks.calibration import calibrate
 
             result = calibrate(args.input, args.output)
+        elif args.command == "profile-rounds":
+            from benchmarks.round_profile import profile_rounds
+
+            result = profile_rounds(args.input, args.output)
+        elif args.command == "round-profile-report":
+            from benchmarks.round_profile import reanalyse
+
+            result = reanalyse(args.input, args.output)
         elif args.command == "prepare-initialization":
             from w1a1_eagle.contracts import integer, record
             from w1a1_eagle.intent import Intent
