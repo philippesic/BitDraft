@@ -549,7 +549,8 @@ maximum and relative range. One multiply-add is counted as one operation.
 The activation manifest has schema `kernel-activations-v1`, role `dev`, and a
 `tensors` mapping from names such as `blk.0.ffn_gate.4` or `blk.0.ffn_down.16`
 to authenticated, token-major F32 files. Each file contains exactly slots × input
-width elements. Retain how these inputs were captured and their source identities.
+width elements. The capture specification must identify the same drafter bytes as
+the measurement. Retain how these inputs were captured and their source identities.
 Gate and up share the same input. The runtime's quantizer applies the export's real
 input gains, clipping mode and clip value. Quantization is outside one-bit kernel
 timing; scales, row midpoints and the complete F32 affine epilogue are inside it.

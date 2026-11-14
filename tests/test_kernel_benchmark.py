@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from benchmarks.kernel_benchmark import Weights, metrics, samples
-from w1a1_eagle.contracts import number
+from benchmarks.kernel_benchmark import Weights, metrics, samples, validate_activation_manifest
+from w1a1_eagle.contracts import Record, number
 
 
 def test_sample_failure_is_retained() -> None:
@@ -60,3 +60,25 @@ def test_preserve_baseline_quantized_payload(tmp_path: Path, kind: int, size: in
     assert weights.tensors["weight"].kind == kind
     assert weights.tensors["weight"].size == size
     assert weights.tensor("weight", {12, 14}) == payload
+
+
+@pytest.mark.parametrize(("role", "digest"), [("heldout", "expected"), ("dev", "different")])
+def test_activation_manifest_rejects_wrong_role_or_drafter(role: str, digest: str) -> None:
+    manifest: Record = {
+        "schema": "kernel-activations-v1",
+        "role": role,
+        "specification": {"drafter": {"sha256": digest}},
+    }
+    with pytest.raises(ValueError):
+        validate_activation_manifest(manifest, "expected")
+
+
+def test_activation_manifest_accepts_captured_drafter() -> None:
+    validate_activation_manifest(
+        {
+            "schema": "kernel-activations-v1",
+            "role": "dev",
+            "specification": {"drafter": {"sha256": "expected"}},
+        },
+        "expected",
+    )
