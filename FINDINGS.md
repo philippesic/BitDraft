@@ -136,6 +136,16 @@ complete-request clock and 2.5% on decode; screen decode ratios at depths 2–15
 sessions. Summing per-position acceptance instead of splitting deep rounds undercounts
 shallow depths by up to 14%. [Result](results/draft-depth-calibration/result.md).
 
+### F022: Should HE4 train on the block size it is served with?
+
+Yes. At about equal optimizer time from arm D's start, training every update on 4-slot
+blocks raised screen acceptance over 16-slot training by 6.6, 6.0 and 5.1 points at depths
+2, 3 and 4 (60.0%, 49.1%, 40.7%). Random 3–16-slot blocks with reach-weighted positions
+gained 4.1–5.0 points but trailed 4-slot blocks by 1.0–1.6 at every tested depth; they
+keep deeper positions better on DEV, untested natively beyond depth 4. Baseline still
+leads by about 10 points. The 4-slot state is kept. One seed.
+[Result](results/block-size-and-reach-weights/result.md).
+
 ## Earlier experiments and durable lessons
 
 ### Packed low-bit paths did not beat ordinary EAGLE in the Turing suite

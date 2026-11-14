@@ -78,7 +78,9 @@ normalization parameters, without weight decay. Their step sizes, a step-size sc
 the latent scale are recipe settings ([execution](execution.md#optimization)). The defaults,
 1e-3 for signs and 1e-5 for the rest at a constant rate with raw latents, were chosen for
 one window per update. A [four-arm test](../results/step-size-schedule-latent-scale/result.md)
-favours cosine decay, and a 4e-3 sign step with the bounded latent scale. A nonfinite loss or
+favours cosine decay, and a 4e-3 sign step with the bounded latent scale. A
+[block-size test](../results/block-size-and-reach-weights/result.md) favours 4-slot blocks
+for depths 2–4 over sixteen slots and over random 3–16-slot blocks with reach weights. A nonfinite loss or
 gradient fails the update immediately. The all-parameters-finite scan runs every 32
 updates and before every checkpoint and export. Frozen operands are fingerprinted and
 checked before publication.
