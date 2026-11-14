@@ -7,7 +7,7 @@ from benchmarks.runner import prompt_tokens
 from benchmarks.scenarios import PRIMARY, faster_verdict, level2_decision, task_scenario
 from benchmarks.statistics import paired
 from tests.test_references import evidence
-from w1a1_eagle.contracts import Record, record
+from w1a1_eagle.contracts import Record, record, sequence
 from w1a1_eagle.records import canonical, read
 
 
@@ -55,9 +55,18 @@ def test_level2_regression_or_direction_disagreement_requires_level3() -> None:
     historical = level2_decision(slices, main, "candidate")
     assert historical["level3_required"]
     assert historical["timing_unresolved"]
+    assert "sampled: direction disagrees with main panel against baseline" in sequence(
+        historical["reasons"]
+    )
     slices["sampled"] = scenario(1.01)
     assert not level2_decision(slices, main, "candidate")["level3_required"]
     assert level2_decision(slices, {}, "candidate")["level3_required"]
+    candidate = record(record(record(slices["agentic-coding"])["summary"])["candidate"])
+    candidate["completed_tasks"] = 11
+    assert level2_decision(slices, main, "candidate")["level3_required"]
+    candidate["completed_tasks"] = 12
+    candidate["correct"] = False
+    assert level2_decision(slices, main, "candidate")["level3_required"]
 
 
 def test_sampled_pairing_keeps_seeds_and_rejects_unmatched_seed() -> None:
@@ -184,3 +193,76 @@ def test_workflow_totals_do_not_infer_model_calls_from_task_count() -> None:
     assert summary["tokens_per_second"] == 6.0
     assert summary["acceptance"] == 0.5
     assert "derived_rounds" not in summary and "cap_hits" not in summary
+
+
+def test_fixed_variant_coverage_and_confirmation_settings(tmp_path: Path) -> None:
+    from dataclasses import replace
+
+    from benchmarks.comparison import Sampling, require_cohort, routine_sampled
+    from benchmarks.scenario_report import qualified_scenario
+
+    tasks: tuple[Record, ...] = tuple(
+        {
+            "id": str(index),
+            "group": str(index),
+            "category": "code" if index < 6 else "reasoning",
+            "thinking": False,
+            "output_cap": 2048,
+        }
+        for index in range(12)
+    )
+    require_cohort("sampled-slice", tasks)
+    require_cohort(
+        "sampled-slice",
+        tuple({key: value for key, value in task.items() if key != "thinking"} for task in tasks),
+    )
+    for change in (
+        {"category": "writing"},
+        {"group": "1"},
+        {"thinking": True},
+        {"output_cap": 128},
+    ):
+        with pytest.raises(ValueError, match="scenario cohort"):
+            require_cohort("sampled-slice", (tasks[0] | change, *tasks[1:]))
+    require_cohort("thinking-slice", tuple(task | {"thinking": True} for task in tasks))
+    spec = Comparison.load(evidence(tmp_path))
+    selected = tuple(
+        spec.tasks[0]
+        | {
+            "id": str(index),
+            "group": str(index),
+            "role": "confirmation",
+            "scenario": "thinking-on",
+            "thinking": False,
+            "output_cap": 2048,
+        }
+        for index in range(20)
+    )
+    confirmation = replace(spec, role="confirmation", tasks=selected)
+    assert not qualified_scenario(confirmation, 3, "thinking-on")
+    thinking = replace(confirmation, tasks=tuple(task | {"thinking": True} for task in selected))
+    assert qualified_scenario(thinking, 3, "thinking-on")
+    sampled = replace(
+        confirmation,
+        tasks=tuple(task | {"scenario": "sampled"} for task in selected),
+        sampling=Sampling(0.7, 0.9, 0, 0.0, (9101, 9102, 9103), spec.source),
+    )
+    assert routine_sampled(sampled.sampling)
+    assert qualified_scenario(sampled, 3, "sampled")
+    assert qualified_scenario(
+        replace(
+            sampled,
+            tasks=tuple(
+                {key: value for key, value in task.items() if key != "thinking"}
+                for task in sampled.tasks
+            ),
+        ),
+        3,
+        "sampled",
+    )
+    assert not qualified_scenario(
+        replace(sampled, sampling=replace(sampled.sampling, temperature=0.1)), 3, "sampled"
+    )
+    assert not qualified_scenario(
+        replace(sampled, sampling=replace(sampled.sampling, seeds=(9101, 9102))), 3, "sampled"
+    )

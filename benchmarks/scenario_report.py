@@ -1,10 +1,11 @@
 from pathlib import Path
 
-from benchmarks.comparison import Comparison
+from benchmarks.comparison import Comparison, routine_sampled
 from benchmarks.scenarios import faster_verdict, level2_decision, scenario_report, task_scenario
 from benchmarks.statistics import paired
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, record, sequence, string
+from w1a1_eagle.identity import source_identity
 from w1a1_eagle.records import artifact, canonical, read
 
 
@@ -132,6 +133,7 @@ def report(specification: Path, output: Path) -> Record:
         verdict = faster_verdict(scenarios, candidate, confirmed=True)
     final: Record = {
         "schema": "scenario-report-result-v1",
+        "code_sha256": source_identity(Path(__file__).resolve().parents[1]),
         "level": level,
         "candidate": candidate,
         "candidate_sha256": next(iter(model_identities)),
@@ -174,9 +176,30 @@ def validate_panel(spec: Comparison, result: Record) -> None:
 
 def qualified_scenario(spec: Comparison, level: int, scenario: str) -> bool:
     if spec.role == "confirmation":
-        return sum(
-            task_scenario(task, spec.sampling.temperature > 0) == scenario for task in spec.tasks
-        ) >= (15 if scenario == "agentic-coding" else 20)
+        selected = [
+            task
+            for task in spec.tasks
+            if task_scenario(task, spec.sampling.temperature > 0) == scenario
+        ]
+        if len(selected) < (15 if scenario == "agentic-coding" else 20):
+            return False
+        if scenario == "agentic-coding":
+            return spec.tier == "agentic-confirmation"
+        if scenario == "thinking-on":
+            return spec.sampling.temperature == 0 and all(
+                task.get("thinking") is True and task["output_cap"] == 2048 for task in selected
+            )
+        if scenario == "sampled":
+            return (
+                routine_sampled(spec.sampling)
+                and spec.sampling.qualification is not None
+                and len(spec.sampling.seeds) == 3
+                and all(
+                    task.get("thinking", False) is False and task["output_cap"] == 2048
+                    for task in selected
+                )
+            )
+        return True
     if scenario == "thinking-on":
         return spec.tier in (
             {"thinking-suite"} if level == 3 else {"thinking-suite", "thinking-slice"}

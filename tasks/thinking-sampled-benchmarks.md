@@ -23,9 +23,13 @@ routine cohorts alongside S4. The unchanged 120 training diagnostic windows have
 
 ## State
 
-Implementation checkpoints `8d9e772d`, `40c4d5bd`, `2e64d3c3`; latest committed full gate
-passed 136 tests and 92 proofs. Pending small report changes fix historical-direction
-escalation and describe potentially unequal sampled paths; focused tests pass.
+Implementation and reference/report admission checks pass the full gate: 138 tests and
+92 proofs (`logs/check-full-08.log`). Fixed thinking/sample quotas, mode/cap/sampler
+settings and confirmation coverage are enforced. Omitted thinking preserves the existing
+disabled default. All 12 saved-reference and 12 unexecuted confirmation specifications
+validate against frozen source `ee660d1b…`; the latter received no inference. Level 2
+also escalates invalid outputs and agentic completion regressions. Earlier S4 reports
+were regenerated as `reports/previous-{q4km,nvfp4}-level3-v2/` with code identity.
 Both thinking suites completed exactly on all 40 requests in all three arms: Q4KM 797.6 s,
 NVFP4 630.2 s. Q4KM sampled completed all 360 rows in 1658.5 s (1661.9 s outer allocation).
 HE4 194.1 tok/s, target 153.3, Baseline 203.4; HE4/target 1.266 (1.233–1.310), HE4/Baseline 0.954
@@ -44,12 +48,14 @@ Confirmation has 120 frozen requests and 12 validated, unexecuted specifications
 `confirmation/protection-v2.json` for future exclusions. Previous protocol-v3 reports were
 regenerated through scenario-report; neither format establishes faster under the new rule.
 
-Q4KM sampled controller 4168453 and lease 4168457 exited. Agentic owner has priority now
-for Q4 tail 3, NVFP4 target-only 60, then their reference panels (last lease 4179157). Keep
-`gpu-yield` and coordinate before more GPU work. The launcher accepts named jobs after
-its frozen source argument and allocates only those names. `report-source.txt` points to
-current source; inspect actual clients and recorded owners before launch. A ten-minute
-healthcheck remains (next 20:00 UTC November 14 at last update).
+Q4KM sampled controller 4168453 and lease 4168457 exited. Agentic owner has priority
+through both full reference panels. On November 14 at 20:44 UTC, its Q4 v5 panel was
+146/180 rows, with NVFP4 still requiring about 25–30 minutes. Keep `gpu-yield`; the owner
+will notify release. Our eight routine panels do not include agentic. Agentic slice
+costs, like our thinking/sample slices, may project from valid full evidence.
+The launcher accepts named jobs after its frozen source argument and allocates only
+those names. `report-source.txt` points to current source; inspect actual clients and
+recorded owners before launch. A ten-minute healthcheck remains active.
 
 All relative paths above are under the main checkout's
 `artifacts/benchmarks/scenario-levels-01/`. Conservative compute used is about 3478 s of

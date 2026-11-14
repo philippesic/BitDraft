@@ -179,6 +179,23 @@ def level2_decision(slices: Record, main_panel: Record, candidate: str) -> Recor
         reasons.append("missing broader-request comparison")
     timing_unresolved: list[str] = []
     for scenario, value in slices.items():
+        summaries = record(record(value).get("summary", {}))
+        candidate_summary = record(summaries.get(candidate, {}))
+        if candidate_summary.get("correct") is not True:
+            reasons.append(scenario + ": invalid or unavailable candidate output")
+        if scenario == "agentic-coding":
+            for control in ("baseline", "prior-leader"):
+                other = record(summaries.get(control, {}))
+                if not other and control == "prior-leader":
+                    continue
+                if "completed_tasks" not in candidate_summary or "completed_tasks" not in other:
+                    reasons.append(
+                        scenario + ": completion comparison unavailable against " + control
+                    )
+                elif number(candidate_summary["completed_tasks"]) < number(
+                    other["completed_tasks"]
+                ):
+                    reasons.append(scenario + ": fewer completed tasks than " + control)
         comparisons = record(record(value)["comparisons"])
         for control in ("baseline", "prior-leader"):
             key = candidate + "/" + control

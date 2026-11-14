@@ -191,6 +191,10 @@ class Comparison:
             raise ValueError(
                 "sampled cohorts require their fixed seed count and native verifier qualification"
             )
+        if tier in {"sampled-slice", "sampled-suite"} and not routine_sampled(sampling):
+            raise ValueError(
+                "routine sampled cohorts require temperature 0.7, top-p 0.9 and no top-k/min-p filter"
+            )
         expected = {
             "short": 120,
             "full": 600,
@@ -277,10 +281,6 @@ class Comparison:
             or not 1 <= depth <= 15
         ):
             raise ValueError("comparison execution bounds invalid")
-        if tier.startswith("thinking-") and any(
-            task.get("thinking") is not True or task["output_cap"] != 2048 for task in tasks
-        ):
-            raise ValueError("thinking cohorts require thinking enabled and 2048-token caps")
         if (references and repeats != 1) or (
             tier == "screen" and (repeats != 1 or sampling.temperature)
         ):
@@ -526,6 +526,21 @@ class Comparison:
 
 
 def require_cohort(tier: str, tasks: tuple[Record, ...]) -> None:
+    if tier in {"thinking-slice", "thinking-suite", "sampled-slice", "sampled-suite"}:
+        count = 6 if tier.endswith("slice") else 20
+        thinking = tier.startswith("thinking-")
+        if (
+            Counter(string(task["category"]) for task in tasks)
+            != {"code": count, "reasoning": count}
+            or len({string(task["group"]) for task in tasks}) != 2 * count
+            or any(
+                task.get("thinking", False) is not thinking or task["output_cap"] != 2048
+                for task in tasks
+            )
+        ):
+            raise ValueError(
+                "scenario cohort requires balanced independent coding/reasoning requests, matching thinking policy and 2048-token caps"
+            )
     if tier in {"short", "full", "sampled", "screen", "comparison"}:
         categories = ("code", "reasoning", "documents", "conversation", "structured", "writing")
         counts = (15, 10, 12, 10, 8, 5) if tier == "screen" else FULL if tier == "full" else SHORT
@@ -596,4 +611,13 @@ def protocol_covers(source: Record, desired: Record) -> bool:
         left == right
         and source_sampling[:4] == desired_sampling[:4]
         and set(desired_sampling[4:]) <= set(source_sampling[4:])
+    )
+
+
+def routine_sampled(sampling: Sampling) -> bool:
+    return (sampling.temperature, sampling.top_p, sampling.top_k, sampling.min_p) == (
+        0.7,
+        0.9,
+        0,
+        0.0,
     )

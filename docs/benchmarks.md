@@ -55,7 +55,9 @@ speed direction disagrees with the broader request panel, Level 3 is required be
 a decision. Saved timing is descriptive; acceptance regression against a saved leader
 also triggers escalation. Historical speed direction still participates in the disagreement
 check. The report lists unresolved timing when no paired interval exists; absence of an
-escalation trigger is not speed qualification. Missing scenarios prevent a Level 2 clearance.
+escalation trigger is not speed qualification. Invalid outputs or an agentic completion
+regression also block clearance. Missing scenarios or the broader-request comparison
+prevent a Level 2 clearance.
 
 Level 3 is required to claim **faster**: all routine request coverage, all 40 thinking
 requests, the same 40 sampled requests with three seeds, and the comprehensive
@@ -325,7 +327,9 @@ requests from broader120, sort each category by SHA256 of `scenario-levels-v1:` 
 source group, then take 20 per category; the slice takes six per category from that order.
 `sampled-slice`/`sampled-suite` use the same IDs and caps, with thinking disabled and two/
 three seeds. The slice is nested, not independent confirmation. Both target precisions
-use the same selection. An enabled template changes token identity, so its old token hash
+use the same selection. Admission checks independent source groups, balanced coding/
+reasoning counts, thinking policy, caps and the fixed sampled settings above. Omitted
+thinking means the existing disabled default. An enabled template changes token identity, so its old token hash
 cannot be reused; native rendering and raw request/response receipts bind the new prompt.
 The runtime receives `chat_template_kwargs.enable_thinking: true` for rendering; direct
 completion consumes that tokenized thinking prompt. Greedy verification still compares
@@ -347,6 +351,8 @@ cannot duplicate a scenario. The names `screen`, `prefix`, and `live` are supple
 and do not replace the dedicated agentic suite. Level 3 requires the full thinking,
 sampled and agentic suite tiers; a pilot or slice cannot supply its primary coverage.
 Fresh confirmation needs at least 20 requests per request scenario and 15 agentic tasks.
+Its thinking and sampled requests keep the same mode, cap and sampling policy as DEV;
+sampled confirmation requires three fresh seeds and authenticated sampler qualification.
 Use separate reports for Q4KM and NVFP4.
 Reports include speed versus target-only and Baseline, paired 95% intervals for fresh
 matched arms, acceptance, drafter bytes, and recorded resident GPU MiB. Application panels
