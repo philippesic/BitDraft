@@ -729,6 +729,47 @@ class TestNumerical(unittest.TestCase):
         self.assertFalse(torch.equal(before, first.gate.latent_sign))
         self.assertFalse(torch.cuda.is_initialized())
 
+    def test_baseline_frozen_tables_export_and_branch(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="binary-frozen-") as directory:
+            root = Path(directory)
+            loaded = loader_fixture(root)
+            cfg = LOADER_GEOMETRY
+            old = load_he4(loaded.source, loaded.vocabulary, 64 * 1024 * 1024, cfg)
+            baseline_path = root / "baseline.gguf"
+            writer = gguf.GGUFWriter(str(baseline_path), "dflash")
+            expected = {}
+            for index, (name, _, _) in enumerate(old.native_codes):
+                if name == "output.weight":
+                    continue
+                kind = gguf.GGMLQuantizationType.Q4_K if index % 2 else gguf.GGMLQuantizationType.Q6_K
+                shape = shapes(cfg)[name]
+                width = 144 if kind == gguf.GGMLQuantizationType.Q4_K else 210
+                data = np.zeros((shape[0], shape[1] // 256 * width), dtype=np.uint8)
+                writer.add_tensor(name, data, raw_dtype=kind)
+                expected[name] = (kind, data.tobytes())
+            writer.write_header_to_file()
+            writer.write_kv_data_to_file()
+            writer.write_tensors_to_file()
+            writer.close()
+            baseline = authenticated(baseline_path)
+            model = load_he4(loaded.source, loaded.vocabulary, 64 * 1024 * 1024, cfg, None, "baseline-k", baseline)
+            corpus = Corpus(loaded.corpus, 17, 64 * 1024 * 1024, 256)
+            parent = TensorWorker(old, corpus, "old")
+            state = parent.checkpoint(Store(root / "states"), 64 * 1024 * 1024)
+            worker = TensorWorker(model, corpus, "new")
+            self.assertEqual(model.parent_frozen_sha256, parent.frozen_sha256)
+            with self.assertRaisesRegex(ValueError, "recipe"):
+                worker.restore(state, 64 * 1024 * 1024)
+            worker.restore(state, 64 * 1024 * 1024, "branch")
+            self.assertIsNotNone(worker.frozen_transition)
+            exported = export_he4(worker, loaded.source, loaded.vocabulary, Store(root / "exports"), 8 * 1024 * 1024, 32 * 1024 * 1024)
+            for tensor in gguf.GGUFReader(str(exported.artifact.path)).tensors:
+                if tensor.name in expected:
+                    self.assertEqual((tensor.tensor_type, tensor.data.tobytes()), expected[tensor.name])
+            model.native_types = ()
+            with self.assertRaisesRegex(ValueError, "frozen"):
+                worker.verify_frozen()
+
     def test_gguf_loading_and_preflight(self) -> None:
         cfg = LOADER_GEOMETRY
         with tempfile.TemporaryDirectory(prefix="binary-loader-") as directory:

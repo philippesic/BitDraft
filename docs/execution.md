@@ -271,3 +271,19 @@ CPU checks cover reduced fixtures. Separate [migration](../results/he4-checkpoin
 and [FP16 qualification](../results/fp16-storage-adoption/result.md) establish scoped
 full-size GPU behavior. Neither proves useful learning or serving gains. Reports distinguish
 controller outcome, worker stop, activation and scientific evidence; unknown stays unknown.
+
+## Frozen table storage
+
+The optional intent setting `frozen_format` defaults to `Q4_0`. Omission and explicit
+`Q4_0` preserve existing recipe identities and frozen operands. `baseline-k` requires
+`frozen_baseline`, an authenticated artifact reference (`path`, `sha256`, `bytes`).
+It copies attention and fusion table bytes from that file, preserving each Q4_K or
+Q6_K type, and uses their dequantized values in the model. The pinned GGUF package
+cannot quantize Q4_K; authenticated copying needs no additional dependency.
+
+The Baseline identity enters the new recipe. Export preserves its codes and checks
+that they decode exactly to the frozen operands, then verifies GGUF payload readback.
+A changed frozen fingerprint is accepted only in branch mode and only when the parent
+fingerprint matches the independently rebuilt Q4_0 model from the same inputs. The
+checkpoint records parent state, old/new fingerprints, format and Baseline identity.
+Branch resets the optimizer; exact resume continues to require matching operands.
