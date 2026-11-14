@@ -144,11 +144,16 @@ class TensorWorker:
                 digest.update(data[offset : offset + 1024 * 1024])
         self.frozen_sha256 = digest.hexdigest()
         self.native_codes = model.native_codes
+        self.native_types = model.native_types
+        self.frozen_configuration = (model.frozen_format, model.frozen_baseline, model.parent_frozen_sha256)
+        self.frozen_transition: Record | None = None
 
     def verify_frozen(self) -> None:
         current = dict(self.model.named_buffers())
         if (
             self.model.native_codes is not self.native_codes
+            or self.model.native_types is not self.native_types
+            or (self.model.frozen_format, self.model.frozen_baseline, self.model.parent_frozen_sha256) != self.frozen_configuration
             or set(current) != set(self.frozen)
             or any(
                 current[name] is not value or value._version != version
@@ -434,6 +439,7 @@ class TensorWorker:
                     for name, value in self.model.named_parameters(remove_duplicate=False)
                 },
                 "frozen_sha256": self.frozen_sha256,
+                **({"frozen_transition": self.frozen_transition} if self.frozen_transition is not None else {}),
                 "optimizer": cast(dict[str, object], self.optimizer.state_dict()),
                 "rng": torch.get_rng_state(),
                 "device": self.model.vocabulary.device.type,
@@ -493,6 +499,7 @@ class TensorWorker:
             schema = integer(state["schema"])
             if schema not in {3, 4, 5} or set(state) != (
                 required
+                | ({"frozen_transition"} if "frozen_transition" in state else set())
                 | ({"accounting"} if schema >= 4 else set())
                 | ({"position_weights"} if schema == 5 else set())
             ):
@@ -530,8 +537,22 @@ class TensorWorker:
             if updates != reference.updates or updates < 0 or cursor < 0:
                 raise ValueError("state accounting mismatch")
             self.verify_frozen()
+            transition = record(state["frozen_transition"]) if "frozen_transition" in state else None
             if state["frozen_sha256"] != self.frozen_sha256:
-                raise ValueError("frozen initialization fingerprint mismatch")
+                if (
+                    mode != "branch"
+                    or self.model.frozen_format != "baseline-k"
+                    or state["frozen_sha256"] != self.model.parent_frozen_sha256
+                ):
+                    raise ValueError("frozen initialization fingerprint mismatch")
+                transition = {
+                    "parent": reference.artifact.sha256,
+                    "from": state["frozen_sha256"],
+                    "to": self.frozen_sha256,
+                    "format": self.model.frozen_format,
+                    "baseline": self.model.frozen_baseline,
+                }
+            self.frozen_transition = transition
             saved = record(state["model"])
             expected = dict(self.model.named_parameters(remove_duplicate=False))
             if set(saved) != set(expected):

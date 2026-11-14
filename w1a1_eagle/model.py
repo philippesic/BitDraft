@@ -290,6 +290,7 @@ class HE4(nn.Module):
         self.origin: tuple[str, str] | None = None
         self.frozen_format = "Q4_0"
         self.frozen_baseline: str | None = None
+        self.parent_frozen_sha256: str | None = None
         self.native_types: tuple[tuple[str, str], ...] = ()
         self.native_codes: tuple[tuple[str, tuple[int, ...], bytes], ...] = ()
         if (

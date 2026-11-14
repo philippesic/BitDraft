@@ -1,3 +1,4 @@
+import hashlib
 import math
 import zipfile
 from dataclasses import asdict
@@ -234,7 +235,15 @@ def load_he4(
             )
         codes = tuple(entries)
     native_types: tuple[tuple[str, str], ...] = ()
+    parent_frozen_sha256 = None
     if frozen_baseline is not None:
+        parent_model = HE4(tensors, head, mask, geometry)
+        digest = hashlib.sha256()
+        for name, value in parent_model.named_buffers():
+            digest.update(canonical([name, str(value.dtype), list(value.shape)]))
+            digest.update(value.detach().cpu().contiguous().numpy().tobytes())
+        parent_frozen_sha256 = digest.hexdigest()
+        del parent_model
         frozen_baseline.verify()
         api = cast(GGUF, gguf)
         baseline = api.GGUFReader(str(frozen_baseline.path))
@@ -263,6 +272,7 @@ def load_he4(
         codes = tuple(replacements)
         native_types = tuple(types)
     model = HE4(tensors, head, mask, geometry)
+    model.parent_frozen_sha256 = parent_frozen_sha256
     model.frozen_format = frozen_format
     model.frozen_baseline = None if frozen_baseline is None else frozen_baseline.sha256
     model.native_types = native_types

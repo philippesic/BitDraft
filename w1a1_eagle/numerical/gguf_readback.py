@@ -140,7 +140,7 @@ def verify(path: Path, expected: Expected, recipe: str) -> None:
             kind_name, wanted_shape, size, digest = expected[name]
             if (
                 shape != wanted_shape
-                or kind != {"F32": 0, "Q4_0": 2, "Q4_K": 12, "I32": 26}[kind_name]
+                or kind != {"F32": 0, "Q4_0": 2, "Q4_K": 12, "Q6_K": 14, "I32": 26}[kind_name]
             ):
                 raise ValueError("GGUF tensor type or geometry differs")
             if not all(shape) or offset % alignment or beginning + offset + size > reader.size:
