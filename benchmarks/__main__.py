@@ -46,6 +46,8 @@ def main() -> int:
         "verify-sampler",
         "verify-greedy",
         "select-supplement",
+        "generate-sessions",
+        "select-expansion",
         "profile-native",
         "prepare-project-workflows",
         "prepare-replays",
@@ -66,6 +68,8 @@ def main() -> int:
                 "curate": "bank",
                 "admit-bank": "bank",
                 "select-supplement": "bank",
+                "generate-sessions": "datasets",
+                "select-expansion": "bank",
                 "native-build": "native",
                 "native-helpers": "native",
                 "campaign": "training",
@@ -111,6 +115,7 @@ def main() -> int:
                 in {
                     "curate",
                     "admit-bank",
+                    "select-expansion",
                     "prepare-replays",
                     "capture",
                     "evaluate",
@@ -182,6 +187,14 @@ def main() -> int:
             from benchmarks.profiling import profile
 
             result = profile(args.input, args.output)
+        elif args.command == "generate-sessions":
+            from benchmarks.sessions import generate
+
+            result = generate(args.input, args.output)
+        elif args.command == "select-expansion":
+            from benchmarks.expansion import expand
+
+            result = expand(args.input, args.output)
         elif args.command == "select-supplement":
             from benchmarks.supplement import supplement
 

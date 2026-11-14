@@ -204,6 +204,9 @@ def capture(specification: Path, output: Path) -> Record:
                     ):
                         raise ValueError("rendered source matches a protected identity")
                     tokens = tokenizer.tokenize(rendered)
+                    spans = row.get("supervised_spans")
+                    if spans is not None:
+                        tokens = tokens[: integer(row["input_tokens"])]
                     if (
                         len(tokens) != integer(row["input_tokens"])
                         or identity({"tokens": list(tokens)}) != row["token_sha256"]
@@ -218,6 +221,8 @@ def capture(specification: Path, output: Path) -> Record:
                         "output": str(destination),
                         "feature_dtype": dtype,
                     }
+                    if spans is not None:
+                        request["spans"] = spans
                     process.stdin.write(canonical(request) + b"\n")
                     process.stdin.flush()
                     response = replies.receive(1800)
@@ -231,6 +236,7 @@ def capture(specification: Path, output: Path) -> Record:
                         tuple(integer(v) for v in sequence(metadata["input_tokens"])[: len(tokens)])
                         != tokens
                         or metadata.get("feature_dtype") != dtype
+                        or metadata.get("supervised_spans") != spans
                     ):
                         raise ValueError("capture prefix or storage precision mismatch")
                     cell.atomic(cell.root / "source.json", canonical(row))

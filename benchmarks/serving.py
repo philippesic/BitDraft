@@ -12,6 +12,7 @@ from benchmarks.runtime_policy import arguments
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.config import native_environment
 from w1a1_eagle.contracts import Record
+from w1a1_eagle.data import Artifact
 from w1a1_eagle.processes import ProcessIdentity
 from w1a1_eagle.records import canonical, reference
 
@@ -31,9 +32,29 @@ def server_arguments(spec: Comparison, arm: Arm, port: int) -> list[str]:
 def session(
     spec: Comparison, arm: Arm, cell: Store, managed_group: bool = False, consistent: bool = True
 ) -> Iterator[int]:
+    with native_server(
+        spec.binary, spec.target, arm, spec.context, spec.depth, cell, managed_group, consistent
+    ) as port:
+        yield port
+
+
+@contextmanager
+def native_server(
+    binary: Artifact,
+    target: Artifact,
+    arm: Arm | None,
+    context: int,
+    depth: int,
+    cell: Store,
+    managed_group: bool = False,
+    consistent: bool = True,
+) -> Iterator[int]:
     port = port_number()
-    argv = server_arguments(spec, arm, port)
-    environment = native_environment(spec.binary.path.parent)
+    drafter = arm.drafter if arm else None
+    argv = arguments(
+        binary.path, target.path, drafter.path if drafter else None, context, depth, port
+    )
+    environment = native_environment(binary.path.parent)
     if not consistent:
         environment["GGML_CUDA_DECODE_CONSISTENT"] = "0"
     cell.atomic(
@@ -41,8 +62,8 @@ def session(
         canonical(
             {
                 "argv": argv,
-                "binary": reference(spec.binary),
-                "target": reference(spec.target),
+                "binary": reference(binary),
+                "target": reference(target),
                 "decode_consistent": environment["GGML_CUDA_DECODE_CONSISTENT"],
             }
         ),

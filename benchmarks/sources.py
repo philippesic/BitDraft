@@ -340,3 +340,100 @@ def commitpack(path: Path) -> Iterator[Record]:
         )
         result["source_license"] = row["license"]
         yield result
+
+
+def math_problems(path: Path) -> Iterator[Record]:
+    for row in parquet_rows(path):
+        problem = text_field(row["problem"]).strip()
+        if not problem:
+            continue
+        key = identity({"problem": problem})
+        result = candidate(
+            "math",
+            key,
+            key,
+            "reasoning",
+            "competition_math",
+            [{"role": "user", "content": problem}],
+        )
+        result["topic"] = string(row["type"])
+        yield result
+
+
+def oasst2_flagged(row: Record) -> bool:
+    if row.get("labels") is not None:
+        labels = record(row["labels"])
+        pairs = zip(sequence(labels.get("name") or []), sequence(labels.get("value") or []))
+        if any(name == "pii" and isinstance(value, float) and value > 0 for name, value in pairs):
+            return True
+    if row.get("detoxify") is not None:
+        toxicity = record(row["detoxify"]).get("toxicity")
+        return isinstance(toxicity, float) and toxicity > 0.5
+    return False
+
+
+def message_identity(row: Record) -> str:
+    return string(row["message_id"])
+
+
+def oasst2(path: Path) -> Iterator[Record]:
+    rows = [
+        row
+        for row in parquet_rows(path)
+        if row["lang"] == "en" and row["deleted"] is not True and row["review_result"] is not False
+    ]
+    children: dict[str, list[Record]] = {}
+    for row in rows:
+        if row["parent_id"] is not None:
+            children.setdefault(string(row["parent_id"]), []).append(row)
+
+    def rank(row: Record) -> tuple[int, str]:
+        value = row.get("rank")
+        return (value if isinstance(value, int) else 1 << 30), string(row["created_date"])
+
+    for root in sorted(
+        (row for row in rows if row["parent_id"] is None and row["role"] == "prompter"),
+        key=message_identity,
+    ):
+        thread = [root]
+        while True:
+            replies = sorted(
+                (
+                    row
+                    for row in children.get(string(thread[-1]["message_id"]), [])
+                    if row["role"] == "assistant"
+                ),
+                key=rank,
+            )
+            if not replies:
+                break
+            prompts = sorted(
+                (
+                    row
+                    for row in children.get(string(replies[0]["message_id"]), [])
+                    if row["role"] == "prompter"
+                ),
+                key=rank,
+            )
+            if not prompts:
+                break
+            thread.extend((replies[0], prompts[0]))
+        if any(oasst2_flagged(row) for row in thread):
+            continue
+        messages: list[Record] = [
+            {
+                "role": "user" if row["role"] == "prompter" else "assistant",
+                "content": text_field(row["text"]),
+            }
+            for row in thread
+        ]
+        if any(not string(message["content"]).strip() for message in messages):
+            continue
+        label = ultrachat_label(string(messages[0]["content"]))
+        category, subtype = (
+            (label[0], label[1] if len(messages) == 1 else label[1] + "_followup")
+            if label is not None and label[0] == "writing"
+            else ("conversation", "followup" if len(messages) > 1 else "open_request")
+        )
+        key = string(root["message_tree_id"])
+        yield candidate("oasst2", key, key, category, subtype, messages)

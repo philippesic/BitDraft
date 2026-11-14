@@ -91,7 +91,15 @@ int main(int argc, char ** argv) {
             const std::string dtype = request.at("feature_dtype").get<std::string>();
             const bool half = dtype == "float16";
             require(half || dtype == "float32", "unsupported feature dtype");
-            require(prompt > 0 && cap > 0 && cap <= 2048 && prompt + cap <= context, "capture request exceeds context");
+            std::vector<std::pair<int,int>> spans;
+            if (request.contains("spans")) spans = request.at("spans").get<std::vector<std::pair<int,int>>>();
+            int previous = -1;
+            for (auto [first, last] : spans) {
+                require(previous < first && first <= last && last + 1 < prompt, "invalid supervised span");
+                previous = last;
+            }
+            require(prompt > 0 && (spans.empty() ? cap > 0 : cap == 0) && cap <= 2048 && prompt + cap <= context,
+                    "capture request exceeds context");
             for (int token : inputs) require(token >= 0 && token < vocabulary, "invalid input token");
             require(!fs::exists(output) && fs::is_directory(output.parent_path()), "new output directory required");
             const uint64_t bound = uint64_t(prompt + cap) * 2560 * taps.size() * (half ? 2 : 4);
@@ -128,9 +136,19 @@ int main(int argc, char ** argv) {
                     positions.push_back(start+count-1); labels.push_back(next);
                 }
             };
-            for (int start = 0; start < prompt; start += 512)
-                consume(start, std::min(512, prompt-start), start+512 >= prompt);
-            while (int(generated.size()) < cap && !llama_vocab_is_eog(vocab, next)) {
+            auto prefill = [&](int from, int to, bool prediction) {
+                for (int start = from; start < to; start += 512)
+                    consume(start, std::min(512, to-start), prediction && start+512 >= to);
+            };
+            if (spans.empty()) prefill(0, prompt, true);
+            int position = 0;
+            for (auto [first, last] : spans) {
+                prefill(position, first+1, true);
+                for (int token = first+1; token <= last; ++token) consume(token, 1, true);
+                position = last+1;
+            }
+            if (!spans.empty()) prefill(position, prompt, false);
+            while (spans.empty() && int(generated.size()) < cap && !llama_vocab_is_eog(vocab, next)) {
                 generated.push_back(next); inputs.push_back(next);
                 consume(inputs.size()-1, 1, true);
             }
@@ -138,11 +156,12 @@ int main(int argc, char ** argv) {
             const bool stopped = llama_vocab_is_eog(vocab, next);
             json metadata = {{"schema",2},{"status","native_capture_complete"},{"feature_dtype",dtype},
                 {"feature_semantics","zero_based_pre_block_input_all_tokens"},{"feature_shape",{inputs.size(),2560}},
-                {"taps",taps},{"input_tokens",inputs},{"prompt_tokens",prompt},{"greedy_ids",labels},
-                {"logit_positions",positions},{"eog_ids",eog},{"generated_tokens",generated},
-                {"stop_type",stopped ? "eos" : "limit"},{"output_cap",cap},
+                {"taps",taps},{"input_tokens",inputs},{"prompt_tokens",spans.empty() ? prompt : spans[0].first+1},
+                {"greedy_ids",labels},{"logit_positions",positions},{"eog_ids",eog},{"generated_tokens",generated},
+                {"stop_type",!spans.empty() ? "spans" : stopped ? "eos" : "limit"},{"output_cap",cap},
                 {"settings",{{"context",context},{"batch",512},{"ubatch",512},{"kv","F16"},
                     {"flash_attention","on"},{"consistent",32},{"sampling","raw_argmax_lowest_id_tie"}}}};
+            if (!spans.empty()) metadata["supervised_spans"] = spans;
             std::ofstream meta(output/"capture.json"); meta << metadata.dump(2) << '\n';
             meta.close(); require(bool(meta), "capture metadata write failed");
             std::ifstream maps("/proc/self/maps"); std::ofstream mapped(output/"loaded-library-maps.txt");

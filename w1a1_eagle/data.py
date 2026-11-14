@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
 
-from w1a1_eagle.contracts import components
+from w1a1_eagle.contracts import Record, components, integer, sequence, string
 from w1a1_eagle.storage import relocated
 
 Role = Literal["train", "dev", "calibration", "heldout"]
@@ -400,6 +400,74 @@ def supervision(
         if available:
             selected.append(TailWindow(trajectory, anchor, tuple(available)))
     return tuple(selected)
+
+
+def span_supervision(
+    trajectory: str,
+    tokens: tuple[int, ...],
+    spans: tuple[tuple[int, int], ...],
+    positions: tuple[int, ...],
+    labels: tuple[int, ...],
+    eog: frozenset[int],
+    policy: str,
+) -> tuple[Supervision, ...]:
+    if policy not in ("full15", "up-to-15"):
+        raise ValueError("explicit supported supervision policy required")
+    if not trajectory or not spans:
+        raise ValueError("supervised spans required")
+    previous = -1
+    for first, last in spans:
+        if not previous < first <= last or last + 1 >= len(tokens):
+            raise ValueError("supervised spans must be ordered inside the sequence")
+        previous = last
+    if len(labels) != len(positions) or positions != tuple(
+        position for first, last in spans for position in range(first, last + 1)
+    ):
+        raise ValueError("logit positions must cover the supervised spans exactly")
+    if any(type(value) is not int or value < 0 for value in (*tokens, *labels)):
+        raise ValueError("invalid token identity")
+    mapping = dict(zip(positions, labels, strict=True))
+    selected: list[Supervision] = []
+    for first, last in spans:
+        follows = [
+            mapping[position] == tokens[position + 1] and mapping[position] not in eog
+            for position in range(first, last)
+        ]
+        for anchor in range(first, last + 1):
+            end = anchor
+            while end - anchor < 14 and end < last and follows[end - first]:
+                end += 1
+            chain = tuple(mapping[position] for position in range(anchor, end + 1))
+            if len(chain) == 15:
+                selected.append(Window(trajectory, anchor, chain))
+            elif policy == "up-to-15":
+                selected.append(TailWindow(trajectory, anchor, chain))
+    return tuple(selected)
+
+
+def capture_supervision(trajectory: str, metadata: Record) -> tuple[Supervision, ...]:
+    tokens = tuple(integer(value) for value in sequence(metadata["input_tokens"]))
+    positions = tuple(integer(value) for value in sequence(metadata["logit_positions"]))
+    labels = tuple(integer(value) for value in sequence(metadata["greedy_ids"]))
+    eog = frozenset(integer(value) for value in sequence(metadata["eog_ids"]))
+    policy = string(metadata.get("window_policy", "full15"))
+    if "supervised_spans" in metadata:
+        spans: list[tuple[int, int]] = []
+        for value in sequence(metadata["supervised_spans"]):
+            first, last = (integer(item) for item in sequence(value))
+            spans.append((first, last))
+        return span_supervision(trajectory, tokens, tuple(spans), positions, labels, eog, policy)
+    if any(value in eog for value in labels[:-1]):
+        raise ValueError("post-EOG label exposure")
+    return supervision(
+        trajectory,
+        tokens,
+        integer(metadata["prompt_tokens"]),
+        positions,
+        labels,
+        labels[-1] if labels and labels[-1] in eog else None,
+        policy,
+    )
 
 
 def supervision_positions(selected: tuple[Supervision, ...]) -> int:

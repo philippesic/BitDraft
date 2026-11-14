@@ -368,3 +368,33 @@ def test_partial_supervision_is_explicit_and_stops_at_eos() -> None:
         supervision("short", tokens, 2, positions, (3, 9, 4), 9, "up-to-15")
     with pytest.raises(ValueError):
         Window("short", 1, (3, 4, 9))
+
+
+def test_session_span_windows_end_at_each_label_disagreement() -> None:
+    from w1a1_eagle.data import TailWindow, capture_supervision, supervision_positions
+
+    tokens = (5, 6, 7, 9, 5, 6, 8, 9, 5)
+    metadata: Record = {
+        "input_tokens": list(tokens),
+        "logit_positions": [1, 2, 5, 6],
+        "greedy_ids": [7, 9, 1, 9],
+        "eog_ids": [9],
+        "prompt_tokens": 2,
+        "supervised_spans": [[1, 2], [5, 6]],
+        "window_policy": "up-to-15",
+    }
+    selected = capture_supervision("session", metadata)
+    assert all(isinstance(window, TailWindow) for window in selected)
+    assert tuple((window.anchor, window.labels) for window in selected) == (
+        (1, (7, 9)),
+        (2, (9,)),
+        (5, (1,)),
+        (6, (9,)),
+    )
+    assert supervision_positions(selected) == 4
+    assert capture_supervision("session", metadata | {"window_policy": "full15"}) == ()
+    for spans in ([[1, 2], [2, 6]], [[1, 2], [5, 8]], [[5, 6], [1, 2]]):
+        with pytest.raises(ValueError, match="ordered"):
+            capture_supervision("session", metadata | {"supervised_spans": spans})
+    with pytest.raises(ValueError, match="cover"):
+        capture_supervision("session", metadata | {"logit_positions": [1, 2, 4, 6]})

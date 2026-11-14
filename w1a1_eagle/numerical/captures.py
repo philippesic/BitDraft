@@ -10,7 +10,7 @@ from torch import Tensor
 
 from w1a1_eagle.contracts import Record, integer, record, sequence
 from w1a1_eagle.data import CaptureSpec as CaptureSpec
-from w1a1_eagle.data import Supervision, supervision
+from w1a1_eagle.data import Supervision, capture_supervision
 
 HalfArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.float16]]"
 FloatArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.float32]]"
@@ -59,19 +59,7 @@ def load_capture(
     tokens = tuple(integer(v) for v in sequence(metadata["input_tokens"]))
     positions = tuple(integer(v) for v in sequence(metadata["logit_positions"]))
     labels = tuple(integer(v) for v in sequence(metadata["greedy_ids"]))
-    prompt_tokens = integer(metadata["prompt_tokens"])
-    eog = tuple(integer(v) for v in sequence(metadata["eog_ids"]))
-    if any(value in eog for value in labels[:-1]):
-        raise ValueError("post-EOG label exposure")
-    selected = supervision(
-        spec.identity,
-        tokens,
-        prompt_tokens,
-        positions,
-        labels,
-        labels[-1] if labels and labels[-1] in eog else None,
-        str(metadata.get("window_policy", "full15")),
-    )
+    selected = capture_supervision(spec.identity, metadata)
     feature_dtype = metadata.get("feature_dtype", "float32")
     if feature_dtype not in ("float32", "float16"):
         raise ValueError("unsupported feature storage dtype")

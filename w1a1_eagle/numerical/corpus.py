@@ -11,9 +11,9 @@ from w1a1_eagle.data import (
     Prompt,
     Role,
     Supervision,
+    capture_supervision,
     optional_topic,
     prior_use,
-    supervision,
     supervision_positions,
 )
 from w1a1_eagle.model import Geometry
@@ -131,19 +131,7 @@ class Corpus:
                 raise ValueError("capture semantics mismatch")
             if metadata.get("target_sha256", self.target) != self.target:
                 raise ValueError("individual capture and corpus target identities differ")
-            eog = {integer(v) for v in sequence(metadata["eog_ids"])}
-            labels = tuple(integer(v) for v in sequence(metadata["greedy_ids"]))
-            if any(v in eog for v in labels[:-1]):
-                raise ValueError("post-EOG training labels")
-            selected = supervision(
-                prompt.identity,
-                tuple(integer(v) for v in sequence(metadata["input_tokens"])),
-                integer(metadata["prompt_tokens"]),
-                tuple(integer(v) for v in sequence(metadata["logit_positions"])),
-                labels,
-                labels[-1] if labels and labels[-1] in eog else None,
-                string(metadata.get("window_policy", "full15")),
-            )
+            selected = capture_supervision(prompt.identity, metadata)
             anchors = tuple(window.anchor for window in selected)
             retained_bytes += (
                 len(anchors) * 40
