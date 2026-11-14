@@ -173,6 +173,17 @@ unchanged. Live, S4 ties Baseline: Q4KM 55.0 vs 55.4 s (target-only 78.1), NVFP4
 reference binds its runtime; S4 is the prior leader on all four cohorts. No speed cost was
 measured on a quiet host. [Result](results/stop-token-cache-exactness/result.md).
 
+### F025: Does more training on more data still help S4, and where does it flatten?
+
+Yes, up to about two passes. Continuing S4 on the 6K corpus plus 6,000 new natural prompts
+from the original corpus raised screen acceptance from 49.1% to 55.2% by three
+optimizer-hours (1.85 passes, 53,000 updates), then flat to the end (54.9% at 4.06 hours).
+On the 120-request Q4KM panel the final state accepts 46.6%, 5.2 points above S4, and
+trails Baseline by 6.8 instead of 12.0. Training loss kept falling and repeated groups score
+0.6–0.75 lower than on first sight while DEV moved a few points: the drafter mostly memorizes
+after two passes. The flattening coincides with the cosine tail, and no 6K-only control ran,
+so the old prompts' own effect is unknown. [Result](results/s4-data-curve/result.md).
+
 ## Earlier experiments and durable lessons
 
 ### Packed low-bit paths did not beat ordinary EAGLE in the Turing suite

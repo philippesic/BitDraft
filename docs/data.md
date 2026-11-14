@@ -14,6 +14,11 @@ enforced, and source/group aliases plus exact tokenized prompt prefixes cannot o
 across components. Repeated captures already inside a legacy component are preserved.
 The mixture identity and sampling artifact bind the new candidate recipe. This supports
 explicit same-target mixtures, not automatic transfer between models.
+To use part of the original index, copy the selected rows unchanged into a new index with
+updated `sequences`, `windows` and `unique_labels_in_windows`, and bind it through a
+retained-index intent with the same counts; rows are still authenticated against the
+original receipts. [The S4 data curve](../results/s4-data-curve/result.md) records one
+such selection.
 
 Training data enters through a typed ledger. Admission reads metadata, checks roles
 and counts, and refuses before any training starts. Raw tensors are authenticated when

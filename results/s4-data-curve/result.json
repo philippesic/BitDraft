@@ -1,0 +1,6064 @@
+{
+ "schema": 1,
+ "start": {
+  "updates": 8209,
+  "optimizer_seconds": 1713.2198398745968,
+  "labels": 2458062,
+  "screen_acceptance": {
+   "acceptance": 0.49072662601626016,
+   "accepted": 3863,
+   "proposed": 7872,
+   "accepted_per_round": 1.4538953707188558,
+   "tokens": 6580,
+   "tokens_per_second": 187.8945100744319,
+   "speed_vs_target": 1.2689985162973514,
+   "speed_vs_baseline": 0.9260132169003361,
+   "cap_hits": 47,
+   "eos_stops": 13
+  },
+  "panel": {
+   "acceptance": 0.4138601463125288,
+   "accepted": 25118,
+   "proposed": 60692,
+   "accepted_per_round": 1.2405175819834058,
+   "tokens": 45486,
+   "tokens_per_second": 222.55734940260166,
+   "speed_vs_target": 1.2736932050826033,
+   "speed_vs_baseline": 0.8900042270993894,
+   "cap_hits": 36,
+   "eos_stops": 84
+  }
+ },
+ "mixture": {
+  "windows": {
+   "six_k": 2283089,
+   "old": 653302
+  },
+  "groups_per_pass": 28761,
+  "selection_counts": {
+   "excluded": 7879,
+   "selected": 6000,
+   "eligible, not sampled": 1768
+  },
+  "old_selected": {
+   "records": 6000,
+   "windows": 653302,
+   "unique_positions": 737302,
+   "domains": {
+    "code": 2010,
+    "prose": 1788,
+    "reasoning": 2202
+   },
+   "pools": {
+    "historical_optimizer": 5867,
+    "unused_modern_reserved": 133
+   },
+   "prompt_token_bands": {
+    "128-511": 2082,
+    "512-2047": 13,
+    "<128": 3905
+   },
+   "mean_prompt_tokens": 143.00466666666668,
+   "mean_total_tokens": 264.8883333333333,
+   "feature_bytes_fp32": 130197913600
+  },
+  "six_k": {
+   "records": 6000,
+   "windows": 2283089,
+   "topics": {
+    "code": 1500,
+    "conversation": 1000,
+    "documents": 1250,
+    "reasoning": 1000,
+    "structured": 750,
+    "writing": 500
+   },
+   "prompt_token_bands": {
+    "128-511": 2136,
+    "512-2047": 1800,
+    "<128": 1584,
+    ">=2048": 480
+   },
+   "mean_prompt_tokens": 624.9943333333333,
+   "mean_total_tokens": 1004.5091666666667
+  }
+ },
+ "screens": [
+  {
+   "evaluation": "campaign/0000-evaluation",
+   "updates": 17048,
+   "new_updates": 8839,
+   "optimizer_seconds": 1791.9228690770105,
+   "consumed": {
+    "mixture_passes": 0.30732589270192273,
+    "component_passes": {
+     "six_k": 0.3104999410885866,
+     "old": 0.2959932772286018
+    },
+    "groups": {
+     "six_k": 7065,
+     "old": 1774
+    },
+    "windows": 902272,
+    "labels": 2701316
+   },
+   "state": "bb373714e6e840cd32db8e259e48aae052ab982fd5c3ae911cc18c059cd26d86",
+   "drafter": "d7bb65833ec78e306f7b662d04d91442e2089a9cb991427edbbb61afd7f8b1aa",
+   "summary": {
+    "acceptance": 0.49248790425261013,
+    "accepted": 3868,
+    "proposed": 7854,
+    "accepted_per_round": 1.458521870286576,
+    "tokens": 6580,
+    "tokens_per_second": 186.61539091842891,
+    "speed_vs_target": 1.2603596246634643,
+    "speed_vs_baseline": 0.9197092474869671,
+    "cap_hits": 47,
+    "eos_stops": 13
+   },
+   "vs_s4": {
+    "acceptance_difference": 0.0017612782363499724,
+    "acceptance_difference_95_interval": {
+     "lower": -0.008492882578400418,
+     "upper": 0.012304410832089885
+    },
+    "groups": 60,
+    "bootstrap_draws": 2000
+   },
+   "vs_current_leader": {
+    "lower": -0.008492882578400418,
+    "upper": 0.012304410832089885
+   },
+   "elapsed_seconds": 40.3599410840543,
+   "per_request": {
+    "ultrachat-aad766460e635aee55af0665": [
+     13,
+     21,
+     21
+    ],
+    "ultrachat-b56e755e49f41a18789c662b": [
+     76,
+     151,
+     128
+    ],
+    "ultrachat-bc394b78f1127f75bc6bd14a": [
+     17,
+     24,
+     26
+    ],
+    "ultrachat-376f2a5b153b37ae6795207f": [
+     63,
+     188,
+     128
+    ],
+    "ultrachat-3eab761e31b10569391ae181": [
+     67,
+     174,
+     128
+    ],
+    "ultrachat-3a4efa731d2d9fb3d5af526a": [
+     56,
+     208,
+     128
+    ],
+    "ultrachat-36c8ed1a6f9c6cb986ad2f2d": [
+     57,
+     208,
+     128
+    ],
+    "glaive-aeb988e16e5c239a435ea8ef": [
+     14,
+     18,
+     21
+    ],
+    "ultrachat-eb95919979c1cce5ccb0523a": [
+     65,
+     185,
+     128
+    ],
+    "ultrachat-4c0b97b6b9af7f00fa7f3c4e": [
+     67,
+     174,
+     128
+    ],
+    "legacy-dolly-4e178e43b085c48c89d5a889": [
+     83,
+     131,
+     128
+    ],
+    "ultrachat-3d6ce19010cc978030a0c9bd": [
+     67,
+     179,
+     128
+    ],
+    "glaive-c3f20cf45440d2b87594ef8b": [
+     21,
+     21,
+     28
+    ],
+    "ultrachat-1c324c803d05e48b8542093b": [
+     57,
+     206,
+     128
+    ],
+    "ultrachat-70f61a09c0837cde600fc00f": [
+     53,
+     219,
+     128
+    ],
+    "qasper-8804bfbe32f030f81894a985": [
+     76,
+     152,
+     128
+    ],
+    "ultrachat-4b643e10f47eb7a764152614": [
+     50,
+     228,
+     128
+    ],
+    "ultrachat-72d0890fc8655c4d12310f95": [
+     68,
+     172,
+     128
+    ],
+    "glaive-30d9e97960e4fb0323a42533": [
+     37,
+     39,
+     51
+    ],
+    "commitpack-b52cdbe680771c7d9d299f38": [
+     92,
+     104,
+     128
+    ],
+    "ultrachat-56547243046fb80d00c3c4f5": [
+     66,
+     180,
+     128
+    ],
+    "ultrachat-133b5c365903a3eee6c24b95": [
+     62,
+     191,
+     128
+    ],
+    "glaive-a733ea18d5ee383cc0a2491b": [
+     11,
+     18,
+     18
+    ],
+    "glaive-177b80c11700fe5d8a04f333": [
+     43,
+     45,
+     59
+    ],
+    "legacy-magicoder-2e10d4f24775cd02bcbd5397": [
+     77,
+     149,
+     128
+    ],
+    "glaive-955f22c274ecba750b315eb4": [
+     33,
+     33,
+     44
+    ],
+    "glaive-81578f310e9084e4195d5d57": [
+     36,
+     39,
+     50
+    ],
+    "legacy-magicoder-6cd094d207aa172b0e160ff4": [
+     84,
+     126,
+     128
+    ],
+    "legacy-gsm8k-399e6db6b51879ad30662160": [
+     88,
+     117,
+     128
+    ],
+    "ultrachat-a759c3be98f5dbdedbdfd71d": [
+     60,
+     199,
+     128
+    ],
+    "ultrachat-90bf7f973b498609ca03de3a": [
+     68,
+     174,
+     128
+    ],
+    "commitpack-ab1cbafe648637468fc0768f": [
+     94,
+     98,
+     128
+    ],
+    "commitpack-4f0497e9e3b8a56de5ae96ab": [
+     93,
+     101,
+     128
+    ],
+    "qasper-df6098a3e8ddde4eda62fed2": [
+     75,
+     155,
+     128
+    ],
+    "commitpack-6f74a0c69d50e5f24db8c498": [
+     91,
+     105,
+     128
+    ],
+    "ultrachat-e8bfa79bb9fa6f12061db61b": [
+     70,
+     167,
+     128
+    ],
+    "ultrachat-682dd88e9c11498431b4805d": [
+     61,
+     197,
+     128
+    ],
+    "ultrachat-706515e8cd15f41a372165c1": [
+     66,
+     181,
+     128
+    ],
+    "legacy-gsm8k-612814488acc0bd65cea0e30": [
+     93,
+     100,
+     128
+    ],
+    "ultrachat-b6e7324d4dad02d66cde6904": [
+     52,
+     222,
+     128
+    ],
+    "commitpack-33a11c09799b2837faa58c27": [
+     88,
+     117,
+     128
+    ],
+    "legacy-gsm8k-18ade2ae71f7127a282f39bb": [
+     87,
+     119,
+     128
+    ],
+    "legacy-dolly-292e1de08ed9c385d897d8d7": [
+     71,
+     166,
+     128
+    ],
+    "commitpack-81cc9fd2681bb067a9469ecd": [
+     91,
+     104,
+     128
+    ],
+    "commitpack-31fdf576e4bd0c2abb64e825": [
+     93,
+     101,
+     128
+    ],
+    "legacy-dolly-55e047e4952c12f718c0e711": [
+     52,
+     177,
+     112
+    ],
+    "legacy-dolly-10dd03a1436128d44546ca94": [
+     79,
+     141,
+     128
+    ],
+    "legacy-dolly-17da403a2249e284001fcc51": [
+     83,
+     132,
+     128
+    ],
+    "legacy-dolly-f9f0bf1fb6236ec9c2819dd9": [
+     75,
+     156,
+     128
+    ],
+    "qasper-83e708263727cf48ee85fb86": [
+     72,
+     160,
+     128
+    ],
+    "qasper-ac93ece9e673ee353677ee06": [
+     75,
+     151,
+     128
+    ],
+    "qasper-609c07fa0d439dad7a031189": [
+     70,
+     170,
+     128
+    ],
+    "project-replay-46dc1ed549310316d500685f": [
+     23,
+     30,
+     33
+    ],
+    "project-replay-7de20fc983d2957624ad3d2f": [
+     17,
+     27,
+     27
+    ],
+    "project-replay-cb6b6e5b599427735da400c5": [
+     92,
+     103,
+     128
+    ],
+    "project-replay-7619a1127f50da56bf1f5f1c": [
+     39,
+     102,
+     74
+    ],
+    "project-replay-644180bb7132fa94c304cd21": [
+     92,
+     103,
+     128
+    ],
+    "project-replay-550ff6b10cd3de8886849db6": [
+     92,
+     105,
+     128
+    ],
+    "project-replay-0de07a92a147f372b0971e61": [
+     64,
+     185,
+     128
+    ],
+    "project-replay-4da693148e964a691683d90b": [
+     91,
+     106,
+     128
+    ]
+   }
+  },
+  {
+   "evaluation": "campaign/0001-evaluation",
+   "updates": 25917,
+   "new_updates": 17708,
+   "optimizer_seconds": 3598.732175794372,
+   "consumed": {
+    "mixture_passes": 0.6156948645735545,
+    "component_passes": {
+     "six_k": 0.6183775577737004,
+     "old": 0.603310566935353
+    },
+    "groups": {
+     "six_k": 14089,
+     "old": 3619
+    },
+    "windows": 1805955,
+    "labels": 5406762
+   },
+   "state": "45203729d114c40c0d1b4b95be2e94cc3a89dea0b19febb79eefe0f08a3b703a",
+   "drafter": "7900a4df298c7b3cf42f5258b3948082697f95164dce04dc88bd757fb19c77f3",
+   "summary": {
+    "acceptance": 0.5033531080732525,
+    "accepted": 3903,
+    "proposed": 7754,
+    "accepted_per_round": 1.4914023691249523,
+    "tokens": 6580,
+    "tokens_per_second": 188.8796313527883,
+    "speed_vs_target": 1.2756518104255938,
+    "speed_vs_baseline": 0.9308682566971157,
+    "cap_hits": 47,
+    "eos_stops": 13
+   },
+   "vs_s4": {
+    "acceptance_difference": 0.01262648205699235,
+    "acceptance_difference_95_interval": {
+     "lower": 0.001616412844029691,
+     "upper": 0.02349963511998776
+    },
+    "groups": 60,
+    "bootstrap_draws": 2000
+   },
+   "vs_current_leader": {
+    "lower": 0.001616412844029691,
+    "upper": 0.02349963511998776
+   },
+   "elapsed_seconds": 41.749722911044955,
+   "per_request": {
+    "ultrachat-aad766460e635aee55af0665": [
+     15,
+     18,
+     21
+    ],
+    "ultrachat-b56e755e49f41a18789c662b": [
+     73,
+     160,
+     128
+    ],
+    "ultrachat-bc394b78f1127f75bc6bd14a": [
+     19,
+     21,
+     26
+    ],
+    "ultrachat-376f2a5b153b37ae6795207f": [
+     64,
+     185,
+     128
+    ],
+    "ultrachat-3eab761e31b10569391ae181": [
+     70,
+     167,
+     128
+    ],
+    "ultrachat-3a4efa731d2d9fb3d5af526a": [
+     57,
+     207,
+     128
+    ],
+    "ultrachat-36c8ed1a6f9c6cb986ad2f2d": [
+     56,
+     211,
+     128
+    ],
+    "glaive-aeb988e16e5c239a435ea8ef": [
+     13,
+     21,
+     21
+    ],
+    "ultrachat-eb95919979c1cce5ccb0523a": [
+     63,
+     191,
+     128
+    ],
+    "ultrachat-4c0b97b6b9af7f00fa7f3c4e": [
+     67,
+     174,
+     128
+    ],
+    "legacy-dolly-4e178e43b085c48c89d5a889": [
+     81,
+     137,
+     128
+    ],
+    "ultrachat-3d6ce19010cc978030a0c9bd": [
+     65,
+     185,
+     128
+    ],
+    "glaive-c3f20cf45440d2b87594ef8b": [
+     21,
+     21,
+     28
+    ],
+    "ultrachat-1c324c803d05e48b8542093b": [
+     60,
+     197,
+     128
+    ],
+    "ultrachat-70f61a09c0837cde600fc00f": [
+     56,
+     210,
+     128
+    ],
+    "qasper-8804bfbe32f030f81894a985": [
+     75,
+     154,
+     128
+    ],
+    "ultrachat-4b643e10f47eb7a764152614": [
+     50,
+     228,
+     128
+    ],
+    "ultrachat-72d0890fc8655c4d12310f95": [
+     73,
+     157,
+     128
+    ],
+    "glaive-30d9e97960e4fb0323a42533": [
+     37,
+     39,
+     51
+    ],
+    "commitpack-b52cdbe680771c7d9d299f38": [
+     91,
+     107,
+     128
+    ],
+    "ultrachat-56547243046fb80d00c3c4f5": [
+     70,
+     169,
+     128
+    ],
+    "ultrachat-133b5c365903a3eee6c24b95": [
+     63,
+     188,
+     128
+    ],
+    "glaive-a733ea18d5ee383cc0a2491b": [
+     11,
+     18,
+     18
+    ],
+    "glaive-177b80c11700fe5d8a04f333": [
+     44,
+     45,
+     59
+    ],
+    "legacy-magicoder-2e10d4f24775cd02bcbd5397": [
+     82,
+     133,
+     128
+    ],
+    "glaive-955f22c274ecba750b315eb4": [
+     33,
+     33,
+     44
+    ],
+    "glaive-81578f310e9084e4195d5d57": [
+     36,
+     39,
+     50
+    ],
+    "legacy-magicoder-6cd094d207aa172b0e160ff4": [
+     86,
+     120,
+     128
+    ],
+    "legacy-gsm8k-399e6db6b51879ad30662160": [
+     89,
+     114,
+     128
+    ],
+    "ultrachat-a759c3be98f5dbdedbdfd71d": [
+     61,
+     196,
+     128
+    ],
+    "ultrachat-90bf7f973b498609ca03de3a": [
+     65,
+     183,
+     128
+    ],
+    "commitpack-ab1cbafe648637468fc0768f": [
+     94,
+     98,
+     128
+    ],
+    "commitpack-4f0497e9e3b8a56de5ae96ab": [
+     92,
+     103,
+     128
+    ],
+    "qasper-df6098a3e8ddde4eda62fed2": [
+     76,
+     151,
+     128
+    ],
+    "commitpack-6f74a0c69d50e5f24db8c498": [
+     91,
+     105,
+     128
+    ],
+    "ultrachat-e8bfa79bb9fa6f12061db61b": [
+     68,
+     173,
+     128
+    ],
+    "ultrachat-682dd88e9c11498431b4805d": [
+     65,
+     185,
+     128
+    ],
+    "ultrachat-706515e8cd15f41a372165c1": [
+     65,
+     183,
+     128
+    ],
+    "legacy-gsm8k-612814488acc0bd65cea0e30": [
+     88,
+     115,
+     128
+    ],
+    "ultrachat-b6e7324d4dad02d66cde6904": [
+     54,
+     216,
+     128
+    ],
+    "commitpack-33a11c09799b2837faa58c27": [
+     89,
+     111,
+     128
+    ],
+    "legacy-gsm8k-18ade2ae71f7127a282f39bb": [
+     87,
+     119,
+     128
+    ],
+    "legacy-dolly-292e1de08ed9c385d897d8d7": [
+     68,
+     175,
+     128
+    ],
+    "commitpack-81cc9fd2681bb067a9469ecd": [
+     91,
+     104,
+     128
+    ],
+    "commitpack-31fdf576e4bd0c2abb64e825": [
+     94,
+     98,
+     128
+    ],
+    "legacy-dolly-55e047e4952c12f718c0e711": [
+     54,
+     171,
+     112
+    ],
+    "legacy-dolly-10dd03a1436128d44546ca94": [
+     77,
+     149,
+     128
+    ],
+    "legacy-dolly-17da403a2249e284001fcc51": [
+     84,
+     128,
+     128
+    ],
+    "legacy-dolly-f9f0bf1fb6236ec9c2819dd9": [
+     82,
+     133,
+     128
+    ],
+    "qasper-83e708263727cf48ee85fb86": [
+     79,
+     142,
+     128
+    ],
+    "qasper-ac93ece9e673ee353677ee06": [
+     75,
+     151,
+     128
+    ],
+    "qasper-609c07fa0d439dad7a031189": [
+     71,
+     165,
+     128
+    ],
+    "project-replay-46dc1ed549310316d500685f": [
+     22,
+     30,
+     33
+    ],
+    "project-replay-7de20fc983d2957624ad3d2f": [
+     16,
+     30,
+     27
+    ],
+    "project-replay-cb6b6e5b599427735da400c5": [
+     93,
+     99,
+     128
+    ],
+    "project-replay-7619a1127f50da56bf1f5f1c": [
+     37,
+     108,
+     74
+    ],
+    "project-replay-644180bb7132fa94c304cd21": [
+     91,
+     108,
+     128
+    ],
+    "project-replay-550ff6b10cd3de8886849db6": [
+     93,
+     101,
+     128
+    ],
+    "project-replay-0de07a92a147f372b0971e61": [
+     70,
+     170,
+     128
+    ],
+    "project-replay-4da693148e964a691683d90b": [
+     91,
+     105,
+     128
+    ]
+   }
+  },
+  {
+   "evaluation": "campaign/0002-evaluation",
+   "updates": 34777,
+   "new_updates": 26568,
+   "optimizer_seconds": 5386.803770683764,
+   "consumed": {
+    "mixture_passes": 0.9237509126942735,
+    "component_passes": {
+     "six_k": 0.9244422797359192,
+     "old": 0.9204625119776153
+    },
+    "groups": {
+     "six_k": 21046,
+     "old": 5522
+    },
+    "windows": 2711924,
+    "labels": 8119185
+   },
+   "state": "2023192cea40fa0a1077c25fc95b85d5756e0bab7c270999b6705bff8bda833e",
+   "drafter": "091e24848ac8e146af27e139cf5962cf1d96e9dd7e741d820efc1fc121b4f9b9",
+   "summary": {
+    "acceptance": 0.5213607594936709,
+    "accepted": 3954,
+    "proposed": 7584,
+    "accepted_per_round": 1.5409197194076383,
+    "tokens": 6580,
+    "tokens_per_second": 190.82041970683332,
+    "speed_vs_target": 1.2887594714251338,
+    "speed_vs_baseline": 0.9404331751523702,
+    "cap_hits": 47,
+    "eos_stops": 13
+   },
+   "vs_s4": {
+    "acceptance_difference": 0.03063413347741073,
+    "acceptance_difference_95_interval": {
+     "lower": 0.01919102465395761,
+     "upper": 0.041395589728790094
+    },
+    "groups": 60,
+    "bootstrap_draws": 2000
+   },
+   "vs_current_leader": {
+    "lower": 0.009143299374164693,
+    "upper": 0.026112575866699683
+   },
+   "elapsed_seconds": 40.02509812399512,
+   "per_request": {
+    "ultrachat-aad766460e635aee55af0665": [
+     15,
+     18,
+     21
+    ],
+    "ultrachat-b56e755e49f41a18789c662b": [
+     78,
+     145,
+     128
+    ],
+    "ultrachat-bc394b78f1127f75bc6bd14a": [
+     17,
+     24,
+     26
+    ],
+    "ultrachat-376f2a5b153b37ae6795207f": [
+     64,
+     185,
+     128
+    ],
+    "ultrachat-3eab761e31b10569391ae181": [
+     71,
+     164,
+     128
+    ],
+    "ultrachat-3a4efa731d2d9fb3d5af526a": [
+     59,
+     199,
+     128
+    ],
+    "ultrachat-36c8ed1a6f9c6cb986ad2f2d": [
+     59,
+     202,
+     128
+    ],
+    "glaive-aeb988e16e5c239a435ea8ef": [
+     14,
+     18,
+     21
+    ],
+    "ultrachat-eb95919979c1cce5ccb0523a": [
+     63,
+     191,
+     128
+    ],
+    "ultrachat-4c0b97b6b9af7f00fa7f3c4e": [
+     68,
+     171,
+     128
+    ],
+    "legacy-dolly-4e178e43b085c48c89d5a889": [
+     80,
+     139,
+     128
+    ],
+    "ultrachat-3d6ce19010cc978030a0c9bd": [
+     68,
+     171,
+     128
+    ],
+    "glaive-c3f20cf45440d2b87594ef8b": [
+     21,
+     21,
+     28
+    ],
+    "ultrachat-1c324c803d05e48b8542093b": [
+     63,
+     188,
+     128
+    ],
+    "ultrachat-70f61a09c0837cde600fc00f": [
+     59,
+     201,
+     128
+    ],
+    "qasper-8804bfbe32f030f81894a985": [
+     79,
+     142,
+     128
+    ],
+    "ultrachat-4b643e10f47eb7a764152614": [
+     54,
+     216,
+     128
+    ],
+    "ultrachat-72d0890fc8655c4d12310f95": [
+     73,
+     160,
+     128
+    ],
+    "glaive-30d9e97960e4fb0323a42533": [
+     37,
+     39,
+     51
+    ],
+    "commitpack-b52cdbe680771c7d9d299f38": [
+     93,
+     102,
+     128
+    ],
+    "ultrachat-56547243046fb80d00c3c4f5": [
+     67,
+     178,
+     128
+    ],
+    "ultrachat-133b5c365903a3eee6c24b95": [
+     64,
+     185,
+     128
+    ],
+    "glaive-a733ea18d5ee383cc0a2491b": [
+     10,
+     21,
+     18
+    ],
+    "glaive-177b80c11700fe5d8a04f333": [
+     43,
+     45,
+     59
+    ],
+    "legacy-magicoder-2e10d4f24775cd02bcbd5397": [
+     82,
+     133,
+     128
+    ],
+    "glaive-955f22c274ecba750b315eb4": [
+     33,
+     33,
+     44
+    ],
+    "glaive-81578f310e9084e4195d5d57": [
+     36,
+     39,
+     50
+    ],
+    "legacy-magicoder-6cd094d207aa172b0e160ff4": [
+     85,
+     123,
+     128
+    ],
+    "legacy-gsm8k-399e6db6b51879ad30662160": [
+     90,
+     111,
+     128
+    ],
+    "ultrachat-a759c3be98f5dbdedbdfd71d": [
+     65,
+     183,
+     128
+    ],
+    "ultrachat-90bf7f973b498609ca03de3a": [
+     69,
+     172,
+     128
+    ],
+    "commitpack-ab1cbafe648637468fc0768f": [
+     94,
+     96,
+     128
+    ],
+    "commitpack-4f0497e9e3b8a56de5ae96ab": [
+     94,
+     97,
+     128
+    ],
+    "qasper-df6098a3e8ddde4eda62fed2": [
+     79,
+     143,
+     128
+    ],
+    "commitpack-6f74a0c69d50e5f24db8c498": [
+     91,
+     105,
+     128
+    ],
+    "ultrachat-e8bfa79bb9fa6f12061db61b": [
+     71,
+     164,
+     128
+    ],
+    "ultrachat-682dd88e9c11498431b4805d": [
+     66,
+     182,
+     128
+    ],
+    "ultrachat-706515e8cd15f41a372165c1": [
+     65,
+     183,
+     128
+    ],
+    "legacy-gsm8k-612814488acc0bd65cea0e30": [
+     91,
+     106,
+     128
+    ],
+    "ultrachat-b6e7324d4dad02d66cde6904": [
+     56,
+     210,
+     128
+    ],
+    "commitpack-33a11c09799b2837faa58c27": [
+     90,
+     108,
+     128
+    ],
+    "legacy-gsm8k-18ade2ae71f7127a282f39bb": [
+     86,
+     122,
+     128
+    ],
+    "legacy-dolly-292e1de08ed9c385d897d8d7": [
+     71,
+     166,
+     128
+    ],
+    "commitpack-81cc9fd2681bb067a9469ecd": [
+     90,
+     107,
+     128
+    ],
+    "commitpack-31fdf576e4bd0c2abb64e825": [
+     94,
+     98,
+     128
+    ],
+    "legacy-dolly-55e047e4952c12f718c0e711": [
+     57,
+     162,
+     112
+    ],
+    "legacy-dolly-10dd03a1436128d44546ca94": [
+     77,
+     147,
+     128
+    ],
+    "legacy-dolly-17da403a2249e284001fcc51": [
+     85,
+     126,
+     128
+    ],
+    "legacy-dolly-f9f0bf1fb6236ec9c2819dd9": [
+     80,
+     139,
+     128
+    ],
+    "qasper-83e708263727cf48ee85fb86": [
+     75,
+     152,
+     128
+    ],
+    "qasper-ac93ece9e673ee353677ee06": [
+     79,
+     139,
+     128
+    ],
+    "qasper-609c07fa0d439dad7a031189": [
+     74,
+     159,
+     128
+    ],
+    "project-replay-46dc1ed549310316d500685f": [
+     22,
+     30,
+     33
+    ],
+    "project-replay-7de20fc983d2957624ad3d2f": [
+     16,
+     30,
+     27
+    ],
+    "project-replay-cb6b6e5b599427735da400c5": [
+     93,
+     99,
+     128
+    ],
+    "project-replay-7619a1127f50da56bf1f5f1c": [
+     36,
+     111,
+     74
+    ],
+    "project-replay-644180bb7132fa94c304cd21": [
+     90,
+     108,
+     128
+    ],
+    "project-replay-550ff6b10cd3de8886849db6": [
+     93,
+     101,
+     128
+    ],
+    "project-replay-0de07a92a147f372b0971e61": [
+     68,
+     173,
+     128
+    ],
+    "project-replay-4da693148e964a691683d90b": [
+     92,
+     102,
+     128
+    ]
+   }
+  },
+  {
+   "evaluation": "campaign/0003-evaluation",
+   "updates": 43629,
+   "new_updates": 35420,
+   "optimizer_seconds": 7196.242310401169,
+   "consumed": {
+    "mixture_passes": 1.2315288063697367,
+    "component_passes": {
+     "six_k": 1.2347727136349043,
+     "old": 1.2207034418997647
+    },
+    "groups": {
+     "six_k": 28093,
+     "old": 7327
+    },
+    "windows": 3616584,
+    "labels": 10827600
+   },
+   "state": "5c372c1a7f768b21926835aebd70a1f2d63fe5770d6f21115257f156da938942",
+   "drafter": "1a31f2c4a0d759a829f51f4da0151468027e4af25798bc76ad2f33f6e62dce65",
+   "summary": {
+    "acceptance": 0.532017075773746,
+    "accepted": 3988,
+    "proposed": 7496,
+    "accepted_per_round": 1.5750394944707742,
+    "tokens": 6580,
+    "tokens_per_second": 193.19058232013643,
+    "speed_vs_target": 1.3047670324681555,
+    "speed_vs_baseline": 0.9521142077980408,
+    "cap_hits": 47,
+    "eos_stops": 13
+   },
+   "vs_s4": {
+    "acceptance_difference": 0.04129044975748586,
+    "acceptance_difference_95_interval": {
+     "lower": 0.029200815200823682,
+     "upper": 0.053095709345709396
+    },
+    "groups": 60,
+    "bootstrap_draws": 2000
+   },
+   "vs_current_leader": {
+    "lower": -0.00043925408459966064,
+    "upper": 0.021777404296137337
+   },
+   "elapsed_seconds": 40.09209681500215,
+   "per_request": {
+    "ultrachat-aad766460e635aee55af0665": [
+     15,
+     18,
+     21
+    ],
+    "ultrachat-b56e755e49f41a18789c662b": [
+     80,
+     139,
+     128
+    ],
+    "ultrachat-bc394b78f1127f75bc6bd14a": [
+     17,
+     24,
+     26
+    ],
+    "ultrachat-376f2a5b153b37ae6795207f": [
+     65,
+     182,
+     128
+    ],
+    "ultrachat-3eab761e31b10569391ae181": [
+     71,
+     164,
+     128
+    ],
+    "ultrachat-3a4efa731d2d9fb3d5af526a": [
+     66,
+     180,
+     128
+    ],
+    "ultrachat-36c8ed1a6f9c6cb986ad2f2d": [
+     59,
+     202,
+     128
+    ],
+    "glaive-aeb988e16e5c239a435ea8ef": [
+     13,
+     21,
+     21
+    ],
+    "ultrachat-eb95919979c1cce5ccb0523a": [
+     64,
+     185,
+     128
+    ],
+    "ultrachat-4c0b97b6b9af7f00fa7f3c4e": [
+     69,
+     168,
+     128
+    ],
+    "legacy-dolly-4e178e43b085c48c89d5a889": [
+     83,
+     131,
+     128
+    ],
+    "ultrachat-3d6ce19010cc978030a0c9bd": [
+     68,
+     176,
+     128
+    ],
+    "glaive-c3f20cf45440d2b87594ef8b": [
+     21,
+     21,
+     28
+    ],
+    "ultrachat-1c324c803d05e48b8542093b": [
+     65,
+     185,
+     128
+    ],
+    "ultrachat-70f61a09c0837cde600fc00f": [
+     54,
+     216,
+     128
+    ],
+    "qasper-8804bfbe32f030f81894a985": [
+     79,
+     143,
+     128
+    ],
+    "ultrachat-4b643e10f47eb7a764152614": [
+     52,
+     222,
+     128
+    ],
+    "ultrachat-72d0890fc8655c4d12310f95": [
+     72,
+     160,
+     128
+    ],
+    "glaive-30d9e97960e4fb0323a42533": [
+     37,
+     39,
+     51
+    ],
+    "commitpack-b52cdbe680771c7d9d299f38": [
+     93,
+     100,
+     128
+    ],
+    "ultrachat-56547243046fb80d00c3c4f5": [
+     69,
+     169,
+     128
+    ],
+    "ultrachat-133b5c365903a3eee6c24b95": [
+     62,
+     191,
+     128
+    ],
+    "glaive-a733ea18d5ee383cc0a2491b": [
+     12,
+     15,
+     18
+    ],
+    "glaive-177b80c11700fe5d8a04f333": [
+     43,
+     45,
+     59
+    ],
+    "legacy-magicoder-2e10d4f24775cd02bcbd5397": [
+     78,
+     145,
+     128
+    ],
+    "glaive-955f22c274ecba750b315eb4": [
+     32,
+     33,
+     44
+    ],
+    "glaive-81578f310e9084e4195d5d57": [
+     36,
+     39,
+     50
+    ],
+    "legacy-magicoder-6cd094d207aa172b0e160ff4": [
+     87,
+     119,
+     128
+    ],
+    "legacy-gsm8k-399e6db6b51879ad30662160": [
+     90,
+     111,
+     128
+    ],
+    "ultrachat-a759c3be98f5dbdedbdfd71d": [
+     62,
+     193,
+     128
+    ],
+    "ultrachat-90bf7f973b498609ca03de3a": [
+     74,
+     157,
+     128
+    ],
+    "commitpack-ab1cbafe648637468fc0768f": [
+     94,
+     97,
+     128
+    ],
+    "commitpack-4f0497e9e3b8a56de5ae96ab": [
+     93,
+     100,
+     128
+    ],
+    "qasper-df6098a3e8ddde4eda62fed2": [
+     74,
+     158,
+     128
+    ],
+    "commitpack-6f74a0c69d50e5f24db8c498": [
+     91,
+     105,
+     128
+    ],
+    "ultrachat-e8bfa79bb9fa6f12061db61b": [
+     72,
+     161,
+     128
+    ],
+    "ultrachat-682dd88e9c11498431b4805d": [
+     67,
+     179,
+     128
+    ],
+    "ultrachat-706515e8cd15f41a372165c1": [
+     68,
+     175,
+     128
+    ],
+    "legacy-gsm8k-612814488acc0bd65cea0e30": [
+     91,
+     106,
+     128
+    ],
+    "ultrachat-b6e7324d4dad02d66cde6904": [
+     59,
+     201,
+     128
+    ],
+    "commitpack-33a11c09799b2837faa58c27": [
+     90,
+     108,
+     128
+    ],
+    "legacy-gsm8k-18ade2ae71f7127a282f39bb": [
+     89,
+     113,
+     128
+    ],
+    "legacy-dolly-292e1de08ed9c385d897d8d7": [
+     76,
+     151,
+     128
+    ],
+    "commitpack-81cc9fd2681bb067a9469ecd": [
+     90,
+     107,
+     128
+    ],
+    "commitpack-31fdf576e4bd0c2abb64e825": [
+     95,
+     95,
+     128
+    ],
+    "legacy-dolly-55e047e4952c12f718c0e711": [
+     58,
+     159,
+     112
+    ],
+    "legacy-dolly-10dd03a1436128d44546ca94": [
+     79,
+     143,
+     128
+    ],
+    "legacy-dolly-17da403a2249e284001fcc51": [
+     84,
+     128,
+     128
+    ],
+    "legacy-dolly-f9f0bf1fb6236ec9c2819dd9": [
+     85,
+     124,
+     128
+    ],
+    "qasper-83e708263727cf48ee85fb86": [
+     74,
+     158,
+     128
+    ],
+    "qasper-ac93ece9e673ee353677ee06": [
+     79,
+     143,
+     128
+    ],
+    "qasper-609c07fa0d439dad7a031189": [
+     72,
+     162,
+     128
+    ],
+    "project-replay-46dc1ed549310316d500685f": [
+     22,
+     30,
+     33
+    ],
+    "project-replay-7de20fc983d2957624ad3d2f": [
+     18,
+     24,
+     27
+    ],
+    "project-replay-cb6b6e5b599427735da400c5": [
+     94,
+     97,
+     128
+    ],
+    "project-replay-7619a1127f50da56bf1f5f1c": [
+     36,
+     111,
+     74
+    ],
+    "project-replay-644180bb7132fa94c304cd21": [
+     93,
+     101,
+     128
+    ],
+    "project-replay-550ff6b10cd3de8886849db6": [
+     93,
+     101,
+     128
+    ],
+    "project-replay-0de07a92a147f372b0971e61": [
+     72,
+     164,
+     128
+    ],
+    "project-replay-4da693148e964a691683d90b": [
+     92,
+     102,
+     128
+    ]
+   }
+  },
+  {
+   "evaluation": "campaign/0004-evaluation",
+   "updates": 52437,
+   "new_updates": 44228,
+   "optimizer_seconds": 8994.663760053925,
+   "consumed": {
+    "mixture_passes": 1.5377768505962937,
+    "component_passes": {
+     "six_k": 1.539706073657225,
+     "old": 1.5300029695301713
+    },
+    "groups": {
+     "six_k": 35053,
+     "old": 9175
+    },
+    "windows": 4514840,
+    "labels": 13516862
+   },
+   "state": "50a688b2d72852bbd539d729eddf001ff00ca73aae381cce0a28e045de6d87a1",
+   "drafter": "5b01d77625eb042e1b8c91920d82935d663678a8df8571ad5929c1efe3e6f9f1",
+   "summary": {
+    "acceptance": 0.5454545454545454,
+    "accepted": 4026,
+    "proposed": 7381,
+    "accepted_per_round": 1.6142742582197274,
+    "tokens": 6580,
+    "tokens_per_second": 199.02010467963515,
+    "speed_vs_target": 1.3441383542912126,
+    "speed_vs_baseline": 0.9808442369562819,
+    "cap_hits": 47,
+    "eos_stops": 13
+   },
+   "vs_s4": {
+    "acceptance_difference": 0.054727919438285255,
+    "acceptance_difference_95_interval": {
+     "lower": 0.04459735128444575,
+     "upper": 0.065041720566063
+    },
+    "groups": 60,
+    "bootstrap_draws": 2000
+   },
+   "vs_current_leader": {
+    "lower": 0.014368302099806551,
+    "upper": 0.033415904282089626
+   },
+   "elapsed_seconds": 38.17368542501936,
+   "per_request": {
+    "ultrachat-aad766460e635aee55af0665": [
+     15,
+     18,
+     21
+    ],
+    "ultrachat-b56e755e49f41a18789c662b": [
+     79,
+     142,
+     128
+    ],
+    "ultrachat-bc394b78f1127f75bc6bd14a": [
+     18,
+     21,
+     26
+    ],
+    "ultrachat-376f2a5b153b37ae6795207f": [
+     68,
+     175,
+     128
+    ],
+    "ultrachat-3eab761e31b10569391ae181": [
+     68,
+     173,
+     128
+    ],
+    "ultrachat-3a4efa731d2d9fb3d5af526a": [
+     64,
+     186,
+     128
+    ],
+    "ultrachat-36c8ed1a6f9c6cb986ad2f2d": [
+     61,
+     196,
+     128
+    ],
+    "glaive-aeb988e16e5c239a435ea8ef": [
+     14,
+     18,
+     21
+    ],
+    "ultrachat-eb95919979c1cce5ccb0523a": [
+     63,
+     186,
+     128
+    ],
+    "ultrachat-4c0b97b6b9af7f00fa7f3c4e": [
+     68,
+     171,
+     128
+    ],
+    "legacy-dolly-4e178e43b085c48c89d5a889": [
+     85,
+     125,
+     128
+    ],
+    "ultrachat-3d6ce19010cc978030a0c9bd": [
+     67,
+     176,
+     128
+    ],
+    "glaive-c3f20cf45440d2b87594ef8b": [
+     21,
+     21,
+     28
+    ],
+    "ultrachat-1c324c803d05e48b8542093b": [
+     70,
+     170,
+     128
+    ],
+    "ultrachat-70f61a09c0837cde600fc00f": [
+     61,
+     195,
+     128
+    ],
+    "qasper-8804bfbe32f030f81894a985": [
+     77,
+     149,
+     128
+    ],
+    "ultrachat-4b643e10f47eb7a764152614": [
+     52,
+     222,
+     128
+    ],
+    "ultrachat-72d0890fc8655c4d12310f95": [
+     78,
+     145,
+     128
+    ],
+    "glaive-30d9e97960e4fb0323a42533": [
+     37,
+     39,
+     51
+    ],
+    "commitpack-b52cdbe680771c7d9d299f38": [
+     94,
+     97,
+     128
+    ],
+    "ultrachat-56547243046fb80d00c3c4f5": [
+     71,
+     166,
+     128
+    ],
+    "ultrachat-133b5c365903a3eee6c24b95": [
+     69,
+     173,
+     128
+    ],
+    "glaive-a733ea18d5ee383cc0a2491b": [
+     12,
+     15,
+     18
+    ],
+    "glaive-177b80c11700fe5d8a04f333": [
+     43,
+     45,
+     59
+    ],
+    "legacy-magicoder-2e10d4f24775cd02bcbd5397": [
+     80,
+     138,
+     128
+    ],
+    "glaive-955f22c274ecba750b315eb4": [
+     33,
+     33,
+     44
+    ],
+    "glaive-81578f310e9084e4195d5d57": [
+     36,
+     39,
+     50
+    ],
+    "legacy-magicoder-6cd094d207aa172b0e160ff4": [
+     87,
+     119,
+     128
+    ],
+    "legacy-gsm8k-399e6db6b51879ad30662160": [
+     90,
+     111,
+     128
+    ],
+    "ultrachat-a759c3be98f5dbdedbdfd71d": [
+     68,
+     174,
+     128
+    ],
+    "ultrachat-90bf7f973b498609ca03de3a": [
+     74,
+     157,
+     128
+    ],
+    "commitpack-ab1cbafe648637468fc0768f": [
+     94,
+     97,
+     128
+    ],
+    "commitpack-4f0497e9e3b8a56de5ae96ab": [
+     95,
+     96,
+     128
+    ],
+    "qasper-df6098a3e8ddde4eda62fed2": [
+     79,
+     142,
+     128
+    ],
+    "commitpack-6f74a0c69d50e5f24db8c498": [
+     92,
+     102,
+     128
+    ],
+    "ultrachat-e8bfa79bb9fa6f12061db61b": [
+     71,
+     164,
+     128
+    ],
+    "ultrachat-682dd88e9c11498431b4805d": [
+     66,
+     182,
+     128
+    ],
+    "ultrachat-706515e8cd15f41a372165c1": [
+     68,
+     175,
+     128
+    ],
+    "legacy-gsm8k-612814488acc0bd65cea0e30": [
+     90,
+     110,
+     128
+    ],
+    "ultrachat-b6e7324d4dad02d66cde6904": [
+     61,
+     195,
+     128
+    ],
+    "commitpack-33a11c09799b2837faa58c27": [
+     90,
+     108,
+     128
+    ],
+    "legacy-gsm8k-18ade2ae71f7127a282f39bb": [
+     89,
+     113,
+     128
+    ],
+    "legacy-dolly-292e1de08ed9c385d897d8d7": [
+     76,
+     151,
+     128
+    ],
+    "commitpack-81cc9fd2681bb067a9469ecd": [
+     89,
+     108,
+     128
+    ],
+    "commitpack-31fdf576e4bd0c2abb64e825": [
+     95,
+     95,
+     128
+    ],
+    "legacy-dolly-55e047e4952c12f718c0e711": [
+     57,
+     162,
+     112
+    ],
+    "legacy-dolly-10dd03a1436128d44546ca94": [
+     80,
+     138,
+     128
+    ],
+    "legacy-dolly-17da403a2249e284001fcc51": [
+     85,
+     124,
+     128
+    ],
+    "legacy-dolly-f9f0bf1fb6236ec9c2819dd9": [
+     81,
+     136,
+     128
+    ],
+    "qasper-83e708263727cf48ee85fb86": [
+     75,
+     154,
+     128
+    ],
+    "qasper-ac93ece9e673ee353677ee06": [
+     78,
+     146,
+     128
+    ],
+    "qasper-609c07fa0d439dad7a031189": [
+     75,
+     153,
+     128
+    ],
+    "project-replay-46dc1ed549310316d500685f": [
+     22,
+     30,
+     33
+    ],
+    "project-replay-7de20fc983d2957624ad3d2f": [
+     16,
+     30,
+     27
+    ],
+    "project-replay-cb6b6e5b599427735da400c5": [
+     93,
+     99,
+     128
+    ],
+    "project-replay-7619a1127f50da56bf1f5f1c": [
+     38,
+     105,
+     74
+    ],
+    "project-replay-644180bb7132fa94c304cd21": [
+     92,
+     104,
+     128
+    ],
+    "project-replay-550ff6b10cd3de8886849db6": [
+     94,
+     98,
+     128
+    ],
+    "project-replay-0de07a92a147f372b0971e61": [
+     69,
+     170,
+     128
+    ],
+    "project-replay-4da693148e964a691683d90b": [
+     93,
+     99,
+     128
+    ]
+   }
+  },
+  {
+   "evaluation": "campaign-resume/0000-evaluation",
+   "updates": 61307,
+   "new_updates": 53098,
+   "optimizer_seconds": 10780.505125604512,
+   "consumed": {
+    "mixture_passes": 1.8461805917735823,
+    "component_passes": {
+     "six_k": 1.8480720637697436,
+     "old": 1.8408821647568812
+    },
+    "groups": {
+     "six_k": 42052,
+     "old": 11046
+    },
+    "windows": 5421965,
+    "labels": 16232744
+   },
+   "state": "98bc20f8381c83589f2253bd884c60013c4cc84ee33cf8213b1cf6639ae764c1",
+   "drafter": "496ace42c49981c7e52c9acfeab925df6d37a83337d689012f45aec08932c9e6",
+   "summary": {
+    "acceptance": 0.5515407690209981,
+    "accepted": 4045,
+    "proposed": 7334,
+    "accepted_per_round": 1.6343434343434344,
+    "tokens": 6580,
+    "tokens_per_second": 195.58891969764647,
+    "speed_vs_target": 1.320964879719973,
+    "speed_vs_baseline": 0.9639340960389512,
+    "cap_hits": 47,
+    "eos_stops": 13
+   },
+   "vs_s4": {
+    "acceptance_difference": 0.060814143004737975,
+    "acceptance_difference_95_interval": {
+     "lower": 0.05026546274530075,
+     "upper": 0.0713383639276059
+    },
+    "groups": 60,
+    "bootstrap_draws": 2000
+   },
+   "vs_current_leader": {
+    "lower": -0.002701025039531846,
+    "upper": 0.014825032499708013
+   },
+   "elapsed_seconds": 40.08131565497024,
+   "per_request": {
+    "ultrachat-aad766460e635aee55af0665": [
+     13,
+     21,
+     21
+    ],
+    "ultrachat-b56e755e49f41a18789c662b": [
+     79,
+     142,
+     128
+    ],
+    "ultrachat-bc394b78f1127f75bc6bd14a": [
+     18,
+     21,
+     26
+    ],
+    "ultrachat-376f2a5b153b37ae6795207f": [
+     65,
+     184,
+     128
+    ],
+    "ultrachat-3eab761e31b10569391ae181": [
+     73,
+     158,
+     128
+    ],
+    "ultrachat-3a4efa731d2d9fb3d5af526a": [
+     64,
+     186,
+     128
+    ],
+    "ultrachat-36c8ed1a6f9c6cb986ad2f2d": [
+     64,
+     187,
+     128
+    ],
+    "glaive-aeb988e16e5c239a435ea8ef": [
+     14,
+     18,
+     21
+    ],
+    "ultrachat-eb95919979c1cce5ccb0523a": [
+     63,
+     188,
+     128
+    ],
+    "ultrachat-4c0b97b6b9af7f00fa7f3c4e": [
+     70,
+     165,
+     128
+    ],
+    "legacy-dolly-4e178e43b085c48c89d5a889": [
+     83,
+     131,
+     128
+    ],
+    "ultrachat-3d6ce19010cc978030a0c9bd": [
+     66,
+     179,
+     128
+    ],
+    "glaive-c3f20cf45440d2b87594ef8b": [
+     21,
+     21,
+     28
+    ],
+    "ultrachat-1c324c803d05e48b8542093b": [
+     66,
+     182,
+     128
+    ],
+    "ultrachat-70f61a09c0837cde600fc00f": [
+     64,
+     186,
+     128
+    ],
+    "qasper-8804bfbe32f030f81894a985": [
+     78,
+     146,
+     128
+    ],
+    "ultrachat-4b643e10f47eb7a764152614": [
+     57,
+     207,
+     128
+    ],
+    "ultrachat-72d0890fc8655c4d12310f95": [
+     76,
+     151,
+     128
+    ],
+    "glaive-30d9e97960e4fb0323a42533": [
+     37,
+     39,
+     51
+    ],
+    "commitpack-b52cdbe680771c7d9d299f38": [
+     94,
+     97,
+     128
+    ],
+    "ultrachat-56547243046fb80d00c3c4f5": [
+     73,
+     160,
+     128
+    ],
+    "ultrachat-133b5c365903a3eee6c24b95": [
+     69,
+     173,
+     128
+    ],
+    "glaive-a733ea18d5ee383cc0a2491b": [
+     13,
+     15,
+     18
+    ],
+    "glaive-177b80c11700fe5d8a04f333": [
+     43,
+     45,
+     59
+    ],
+    "legacy-magicoder-2e10d4f24775cd02bcbd5397": [
+     79,
+     141,
+     128
+    ],
+    "glaive-955f22c274ecba750b315eb4": [
+     33,
+     33,
+     44
+    ],
+    "glaive-81578f310e9084e4195d5d57": [
+     36,
+     39,
+     50
+    ],
+    "legacy-magicoder-6cd094d207aa172b0e160ff4": [
+     89,
+     113,
+     128
+    ],
+    "legacy-gsm8k-399e6db6b51879ad30662160": [
+     90,
+     111,
+     128
+    ],
+    "ultrachat-a759c3be98f5dbdedbdfd71d": [
+     67,
+     177,
+     128
+    ],
+    "ultrachat-90bf7f973b498609ca03de3a": [
+     73,
+     159,
+     128
+    ],
+    "commitpack-ab1cbafe648637468fc0768f": [
+     95,
+     95,
+     128
+    ],
+    "commitpack-4f0497e9e3b8a56de5ae96ab": [
+     95,
+     96,
+     128
+    ],
+    "qasper-df6098a3e8ddde4eda62fed2": [
+     79,
+     143,
+     128
+    ],
+    "commitpack-6f74a0c69d50e5f24db8c498": [
+     92,
+     102,
+     128
+    ],
+    "ultrachat-e8bfa79bb9fa6f12061db61b": [
+     69,
+     170,
+     128
+    ],
+    "ultrachat-682dd88e9c11498431b4805d": [
+     69,
+     173,
+     128
+    ],
+    "ultrachat-706515e8cd15f41a372165c1": [
+     66,
+     181,
+     128
+    ],
+    "legacy-gsm8k-612814488acc0bd65cea0e30": [
+     91,
+     106,
+     128
+    ],
+    "ultrachat-b6e7324d4dad02d66cde6904": [
+     62,
+     192,
+     128
+    ],
+    "commitpack-33a11c09799b2837faa58c27": [
+     90,
+     108,
+     128
+    ],
+    "legacy-gsm8k-18ade2ae71f7127a282f39bb": [
+     88,
+     116,
+     128
+    ],
+    "legacy-dolly-292e1de08ed9c385d897d8d7": [
+     76,
+     152,
+     128
+    ],
+    "commitpack-81cc9fd2681bb067a9469ecd": [
+     89,
+     108,
+     128
+    ],
+    "commitpack-31fdf576e4bd0c2abb64e825": [
+     94,
+     96,
+     128
+    ],
+    "legacy-dolly-55e047e4952c12f718c0e711": [
+     59,
+     159,
+     112
+    ],
+    "legacy-dolly-10dd03a1436128d44546ca94": [
+     79,
+     143,
+     128
+    ],
+    "legacy-dolly-17da403a2249e284001fcc51": [
+     88,
+     117,
+     128
+    ],
+    "legacy-dolly-f9f0bf1fb6236ec9c2819dd9": [
+     83,
+     130,
+     128
+    ],
+    "qasper-83e708263727cf48ee85fb86": [
+     77,
+     148,
+     128
+    ],
+    "qasper-ac93ece9e673ee353677ee06": [
+     80,
+     136,
+     128
+    ],
+    "qasper-609c07fa0d439dad7a031189": [
+     72,
+     162,
+     128
+    ],
+    "project-replay-46dc1ed549310316d500685f": [
+     23,
+     30,
+     33
+    ],
+    "project-replay-7de20fc983d2957624ad3d2f": [
+     17,
+     27,
+     27
+    ],
+    "project-replay-cb6b6e5b599427735da400c5": [
+     93,
+     100,
+     128
+    ],
+    "project-replay-7619a1127f50da56bf1f5f1c": [
+     37,
+     108,
+     74
+    ],
+    "project-replay-644180bb7132fa94c304cd21": [
+     93,
+     101,
+     128
+    ],
+    "project-replay-550ff6b10cd3de8886849db6": [
+     93,
+     101,
+     128
+    ],
+    "project-replay-0de07a92a147f372b0971e61": [
+     72,
+     161,
+     128
+    ],
+    "project-replay-4da693148e964a691683d90b": [
+     94,
+     98,
+     128
+    ]
+   }
+  },
+  {
+   "evaluation": "campaign-resume/0001-evaluation",
+   "updates": 70183,
+   "new_updates": 61974,
+   "optimizer_seconds": 12585.47150288598,
+   "consumed": {
+    "mixture_passes": 2.154792948784813,
+    "component_passes": {
+     "six_k": 2.1573907105680066,
+     "old": 2.14798056641492
+    },
+    "groups": {
+     "six_k": 49086,
+     "old": 12888
+    },
+    "windows": 6328795,
+    "labels": 18947694
+   },
+   "state": "b5eac28e0334d4b4842ab3e8e4f7c5d63a4506f35aaa006c905bb8e9ce49fbcf",
+   "drafter": "c4c3622f8eb3edd88c5293cb733c9dd099414508f14a52d8f821168678716617",
+   "summary": {
+    "acceptance": 0.5499591614484073,
+    "accepted": 4040,
+    "proposed": 7346,
+    "accepted_per_round": 1.6290322580645162,
+    "tokens": 6580,
+    "tokens_per_second": 195.39917748893492,
+    "speed_vs_target": 1.319683402250309,
+    "speed_vs_baseline": 0.962998976683941,
+    "cap_hits": 47,
+    "eos_stops": 13
+   },
+   "vs_s4": {
+    "acceptance_difference": 0.059232535432147126,
+    "acceptance_difference_95_interval": {
+     "lower": 0.04803271769474171,
+     "upper": 0.07081663025037233
+    },
+    "groups": 60,
+    "bootstrap_draws": 2000
+   },
+   "vs_current_leader": {
+    "lower": -0.0037575528938087466,
+    "upper": 0.013072229983662198
+   },
+   "elapsed_seconds": 39.40790584892966,
+   "per_request": {
+    "ultrachat-aad766460e635aee55af0665": [
+     15,
+     18,
+     21
+    ],
+    "ultrachat-b56e755e49f41a18789c662b": [
+     80,
+     139,
+     128
+    ],
+    "ultrachat-bc394b78f1127f75bc6bd14a": [
+     18,
+     21,
+     26
+    ],
+    "ultrachat-376f2a5b153b37ae6795207f": [
+     63,
+     188,
+     128
+    ],
+    "ultrachat-3eab761e31b10569391ae181": [
+     71,
+     164,
+     128
+    ],
+    "ultrachat-3a4efa731d2d9fb3d5af526a": [
+     66,
+     180,
+     128
+    ],
+    "ultrachat-36c8ed1a6f9c6cb986ad2f2d": [
+     63,
+     190,
+     128
+    ],
+    "glaive-aeb988e16e5c239a435ea8ef": [
+     15,
+     15,
+     21
+    ],
+    "ultrachat-eb95919979c1cce5ccb0523a": [
+     63,
+     186,
+     128
+    ],
+    "ultrachat-4c0b97b6b9af7f00fa7f3c4e": [
+     70,
+     165,
+     128
+    ],
+    "legacy-dolly-4e178e43b085c48c89d5a889": [
+     83,
+     131,
+     128
+    ],
+    "ultrachat-3d6ce19010cc978030a0c9bd": [
+     67,
+     176,
+     128
+    ],
+    "glaive-c3f20cf45440d2b87594ef8b": [
+     21,
+     21,
+     28
+    ],
+    "ultrachat-1c324c803d05e48b8542093b": [
+     69,
+     173,
+     128
+    ],
+    "ultrachat-70f61a09c0837cde600fc00f": [
+     64,
+     186,
+     128
+    ],
+    "qasper-8804bfbe32f030f81894a985": [
+     79,
+     143,
+     128
+    ],
+    "ultrachat-4b643e10f47eb7a764152614": [
+     57,
+     207,
+     128
+    ],
+    "ultrachat-72d0890fc8655c4d12310f95": [
+     77,
+     148,
+     128
+    ],
+    "glaive-30d9e97960e4fb0323a42533": [
+     37,
+     39,
+     51
+    ],
+    "commitpack-b52cdbe680771c7d9d299f38": [
+     94,
+     97,
+     128
+    ],
+    "ultrachat-56547243046fb80d00c3c4f5": [
+     71,
+     166,
+     128
+    ],
+    "ultrachat-133b5c365903a3eee6c24b95": [
+     70,
+     170,
+     128
+    ],
+    "glaive-a733ea18d5ee383cc0a2491b": [
+     12,
+     15,
+     18
+    ],
+    "glaive-177b80c11700fe5d8a04f333": [
+     43,
+     45,
+     59
+    ],
+    "legacy-magicoder-2e10d4f24775cd02bcbd5397": [
+     78,
+     144,
+     128
+    ],
+    "glaive-955f22c274ecba750b315eb4": [
+     33,
+     33,
+     44
+    ],
+    "glaive-81578f310e9084e4195d5d57": [
+     36,
+     39,
+     50
+    ],
+    "legacy-magicoder-6cd094d207aa172b0e160ff4": [
+     88,
+     116,
+     128
+    ],
+    "legacy-gsm8k-399e6db6b51879ad30662160": [
+     91,
+     108,
+     128
+    ],
+    "ultrachat-a759c3be98f5dbdedbdfd71d": [
+     65,
+     183,
+     128
+    ],
+    "ultrachat-90bf7f973b498609ca03de3a": [
+     70,
+     168,
+     128
+    ],
+    "commitpack-ab1cbafe648637468fc0768f": [
+     94,
+     96,
+     128
+    ],
+    "commitpack-4f0497e9e3b8a56de5ae96ab": [
+     95,
+     96,
+     128
+    ],
+    "qasper-df6098a3e8ddde4eda62fed2": [
+     76,
+     152,
+     128
+    ],
+    "commitpack-6f74a0c69d50e5f24db8c498": [
+     92,
+     102,
+     128
+    ],
+    "ultrachat-e8bfa79bb9fa6f12061db61b": [
+     71,
+     164,
+     128
+    ],
+    "ultrachat-682dd88e9c11498431b4805d": [
+     66,
+     182,
+     128
+    ],
+    "ultrachat-706515e8cd15f41a372165c1": [
+     66,
+     181,
+     128
+    ],
+    "legacy-gsm8k-612814488acc0bd65cea0e30": [
+     90,
+     110,
+     128
+    ],
+    "ultrachat-b6e7324d4dad02d66cde6904": [
+     62,
+     193,
+     128
+    ],
+    "commitpack-33a11c09799b2837faa58c27": [
+     90,
+     108,
+     128
+    ],
+    "legacy-gsm8k-18ade2ae71f7127a282f39bb": [
+     88,
+     116,
+     128
+    ],
+    "legacy-dolly-292e1de08ed9c385d897d8d7": [
+     77,
+     149,
+     128
+    ],
+    "commitpack-81cc9fd2681bb067a9469ecd": [
+     90,
+     106,
+     128
+    ],
+    "commitpack-31fdf576e4bd0c2abb64e825": [
+     95,
+     95,
+     128
+    ],
+    "legacy-dolly-55e047e4952c12f718c0e711": [
+     57,
+     162,
+     112
+    ],
+    "legacy-dolly-10dd03a1436128d44546ca94": [
+     78,
+     145,
+     128
+    ],
+    "legacy-dolly-17da403a2249e284001fcc51": [
+     86,
+     120,
+     128
+    ],
+    "legacy-dolly-f9f0bf1fb6236ec9c2819dd9": [
+     81,
+     135,
+     128
+    ],
+    "qasper-83e708263727cf48ee85fb86": [
+     75,
+     154,
+     128
+    ],
+    "qasper-ac93ece9e673ee353677ee06": [
+     81,
+     136,
+     128
+    ],
+    "qasper-609c07fa0d439dad7a031189": [
+     75,
+     153,
+     128
+    ],
+    "project-replay-46dc1ed549310316d500685f": [
+     24,
+     27,
+     33
+    ],
+    "project-replay-7de20fc983d2957624ad3d2f": [
+     17,
+     27,
+     27
+    ],
+    "project-replay-cb6b6e5b599427735da400c5": [
+     93,
+     99,
+     128
+    ],
+    "project-replay-7619a1127f50da56bf1f5f1c": [
+     37,
+     108,
+     74
+    ],
+    "project-replay-644180bb7132fa94c304cd21": [
+     93,
+     101,
+     128
+    ],
+    "project-replay-550ff6b10cd3de8886849db6": [
+     94,
+     99,
+     128
+    ],
+    "project-replay-0de07a92a147f372b0971e61": [
+     74,
+     158,
+     128
+    ],
+    "project-replay-4da693148e964a691683d90b": [
+     94,
+     98,
+     128
+    ]
+   }
+  },
+  {
+   "evaluation": "campaign-resume/0002-evaluation",
+   "updates": 79051,
+   "new_updates": 70842,
+   "optimizer_seconds": 14391.830577937246,
+   "consumed": {
+    "mixture_passes": 2.4631271513507875,
+    "component_passes": {
+     "six_k": 2.4645513162211374,
+     "old": 2.455172339897934
+    },
+    "groups": {
+     "six_k": 56113,
+     "old": 14729
+    },
+    "windows": 7230759,
+    "labels": 21647957
+   },
+   "state": "fecc006f14e7e8d6affd0d97a5e533c273ef5bcf5e95d6f0bbf04bed2a6ab0fa",
+   "drafter": "4c098115dfa777aead611e8b91da9396209a2b7634eb47a9c3066db9a51684c2",
+   "summary": {
+    "acceptance": 0.5498707307116615,
+    "accepted": 4041,
+    "proposed": 7349,
+    "accepted_per_round": 1.6300927793465108,
+    "tokens": 6580,
+    "tokens_per_second": 195.55106714467442,
+    "speed_vs_target": 1.3207092318378684,
+    "speed_vs_baseline": 0.9637475447430583,
+    "cap_hits": 47,
+    "eos_stops": 13
+   },
+   "vs_s4": {
+    "acceptance_difference": 0.05914410469540132,
+    "acceptance_difference_95_interval": {
+     "lower": 0.047525947074869346,
+     "upper": 0.07071456357433314
+    },
+    "groups": 60,
+    "bootstrap_draws": 2000
+   },
+   "vs_current_leader": {
+    "lower": -0.00423753934205684,
+    "upper": 0.013015422619264139
+   },
+   "elapsed_seconds": 40.462939901975915,
+   "per_request": {
+    "ultrachat-aad766460e635aee55af0665": [
+     15,
+     18,
+     21
+    ],
+    "ultrachat-b56e755e49f41a18789c662b": [
+     78,
+     145,
+     128
+    ],
+    "ultrachat-bc394b78f1127f75bc6bd14a": [
+     18,
+     21,
+     26
+    ],
+    "ultrachat-376f2a5b153b37ae6795207f": [
+     66,
+     181,
+     128
+    ],
+    "ultrachat-3eab761e31b10569391ae181": [
+     70,
+     167,
+     128
+    ],
+    "ultrachat-3a4efa731d2d9fb3d5af526a": [
+     65,
+     183,
+     128
+    ],
+    "ultrachat-36c8ed1a6f9c6cb986ad2f2d": [
+     62,
+     193,
+     128
+    ],
+    "glaive-aeb988e16e5c239a435ea8ef": [
+     15,
+     15,
+     21
+    ],
+    "ultrachat-eb95919979c1cce5ccb0523a": [
+     65,
+     180,
+     128
+    ],
+    "ultrachat-4c0b97b6b9af7f00fa7f3c4e": [
+     68,
+     171,
+     128
+    ],
+    "legacy-dolly-4e178e43b085c48c89d5a889": [
+     83,
+     131,
+     128
+    ],
+    "ultrachat-3d6ce19010cc978030a0c9bd": [
+     69,
+     170,
+     128
+    ],
+    "glaive-c3f20cf45440d2b87594ef8b": [
+     21,
+     21,
+     28
+    ],
+    "ultrachat-1c324c803d05e48b8542093b": [
+     67,
+     179,
+     128
+    ],
+    "ultrachat-70f61a09c0837cde600fc00f": [
+     65,
+     183,
+     128
+    ],
+    "qasper-8804bfbe32f030f81894a985": [
+     78,
+     146,
+     128
+    ],
+    "ultrachat-4b643e10f47eb7a764152614": [
+     57,
+     207,
+     128
+    ],
+    "ultrachat-72d0890fc8655c4d12310f95": [
+     77,
+     148,
+     128
+    ],
+    "glaive-30d9e97960e4fb0323a42533": [
+     37,
+     39,
+     51
+    ],
+    "commitpack-b52cdbe680771c7d9d299f38": [
+     94,
+     99,
+     128
+    ],
+    "ultrachat-56547243046fb80d00c3c4f5": [
+     69,
+     172,
+     128
+    ],
+    "ultrachat-133b5c365903a3eee6c24b95": [
+     70,
+     170,
+     128
+    ],
+    "glaive-a733ea18d5ee383cc0a2491b": [
+     12,
+     15,
+     18
+    ],
+    "glaive-177b80c11700fe5d8a04f333": [
+     43,
+     45,
+     59
+    ],
+    "legacy-magicoder-2e10d4f24775cd02bcbd5397": [
+     78,
+     144,
+     128
+    ],
+    "glaive-955f22c274ecba750b315eb4": [
+     33,
+     33,
+     44
+    ],
+    "glaive-81578f310e9084e4195d5d57": [
+     36,
+     39,
+     50
+    ],
+    "legacy-magicoder-6cd094d207aa172b0e160ff4": [
+     87,
+     119,
+     128
+    ],
+    "legacy-gsm8k-399e6db6b51879ad30662160": [
+     90,
+     111,
+     128
+    ],
+    "ultrachat-a759c3be98f5dbdedbdfd71d": [
+     63,
+     189,
+     128
+    ],
+    "ultrachat-90bf7f973b498609ca03de3a": [
+     74,
+     156,
+     128
+    ],
+    "commitpack-ab1cbafe648637468fc0768f": [
+     94,
+     96,
+     128
+    ],
+    "commitpack-4f0497e9e3b8a56de5ae96ab": [
+     95,
+     96,
+     128
+    ],
+    "qasper-df6098a3e8ddde4eda62fed2": [
+     80,
+     140,
+     128
+    ],
+    "commitpack-6f74a0c69d50e5f24db8c498": [
+     92,
+     102,
+     128
+    ],
+    "ultrachat-e8bfa79bb9fa6f12061db61b": [
+     70,
+     167,
+     128
+    ],
+    "ultrachat-682dd88e9c11498431b4805d": [
+     67,
+     179,
+     128
+    ],
+    "ultrachat-706515e8cd15f41a372165c1": [
+     68,
+     175,
+     128
+    ],
+    "legacy-gsm8k-612814488acc0bd65cea0e30": [
+     91,
+     107,
+     128
+    ],
+    "ultrachat-b6e7324d4dad02d66cde6904": [
+     63,
+     190,
+     128
+    ],
+    "commitpack-33a11c09799b2837faa58c27": [
+     90,
+     108,
+     128
+    ],
+    "legacy-gsm8k-18ade2ae71f7127a282f39bb": [
+     89,
+     113,
+     128
+    ],
+    "legacy-dolly-292e1de08ed9c385d897d8d7": [
+     77,
+     149,
+     128
+    ],
+    "commitpack-81cc9fd2681bb067a9469ecd": [
+     90,
+     106,
+     128
+    ],
+    "commitpack-31fdf576e4bd0c2abb64e825": [
+     95,
+     95,
+     128
+    ],
+    "legacy-dolly-55e047e4952c12f718c0e711": [
+     55,
+     168,
+     112
+    ],
+    "legacy-dolly-10dd03a1436128d44546ca94": [
+     78,
+     145,
+     128
+    ],
+    "legacy-dolly-17da403a2249e284001fcc51": [
+     86,
+     120,
+     128
+    ],
+    "legacy-dolly-f9f0bf1fb6236ec9c2819dd9": [
+     80,
+     138,
+     128
+    ],
+    "qasper-83e708263727cf48ee85fb86": [
+     77,
+     148,
+     128
+    ],
+    "qasper-ac93ece9e673ee353677ee06": [
+     81,
+     136,
+     128
+    ],
+    "qasper-609c07fa0d439dad7a031189": [
+     73,
+     159,
+     128
+    ],
+    "project-replay-46dc1ed549310316d500685f": [
+     24,
+     27,
+     33
+    ],
+    "project-replay-7de20fc983d2957624ad3d2f": [
+     17,
+     27,
+     27
+    ],
+    "project-replay-cb6b6e5b599427735da400c5": [
+     93,
+     100,
+     128
+    ],
+    "project-replay-7619a1127f50da56bf1f5f1c": [
+     36,
+     111,
+     74
+    ],
+    "project-replay-644180bb7132fa94c304cd21": [
+     94,
+     99,
+     128
+    ],
+    "project-replay-550ff6b10cd3de8886849db6": [
+     94,
+     99,
+     128
+    ],
+    "project-replay-0de07a92a147f372b0971e61": [
+     73,
+     161,
+     128
+    ],
+    "project-replay-4da693148e964a691683d90b": [
+     94,
+     98,
+     128
+    ]
+   }
+  },
+  {
+   "evaluation": "campaign-resume/0003-evaluation",
+   "updates": 80209,
+   "new_updates": 72000,
+   "optimizer_seconds": 14615.907323480642,
+   "consumed": {
+    "mixture_passes": 2.503390007301554,
+    "component_passes": {
+     "six_k": 2.50479941868232,
+     "old": 2.495340592865168
+    },
+    "groups": {
+     "six_k": 57028,
+     "old": 14972
+    },
+    "windows": 7348891,
+    "labels": 22001623
+   },
+   "state": "769e184eb783fcac7012298194dea9f83651d5cc865fca28fc905fd401ad7442",
+   "drafter": "405e326b8c6ba7a54da7fc7d5d5436f5d45284be4bb980d0062d4c7d9a104dd9",
+   "summary": {
+    "acceptance": 0.5487904321826583,
+    "accepted": 4038,
+    "proposed": 7358,
+    "accepted_per_round": 1.6269137792103143,
+    "tokens": 6580,
+    "tokens_per_second": 196.0232373429633,
+    "speed_vs_target": 1.3238981663140863,
+    "speed_vs_baseline": 0.9660745730530859,
+    "cap_hits": 47,
+    "eos_stops": 13
+   },
+   "vs_s4": {
+    "acceptance_difference": 0.05806380616639817,
+    "acceptance_difference_95_interval": {
+     "lower": 0.04670703609045851,
+     "upper": 0.07020302325056638
+    },
+    "groups": 60,
+    "bootstrap_draws": 2000
+   },
+   "vs_current_leader": {
+    "lower": -0.005622585195671492,
+    "upper": 0.01260468240736623
+   },
+   "elapsed_seconds": 38.672207370982505,
+   "per_request": {
+    "ultrachat-aad766460e635aee55af0665": [
+     15,
+     18,
+     21
+    ],
+    "ultrachat-b56e755e49f41a18789c662b": [
+     78,
+     145,
+     128
+    ],
+    "ultrachat-bc394b78f1127f75bc6bd14a": [
+     18,
+     21,
+     26
+    ],
+    "ultrachat-376f2a5b153b37ae6795207f": [
+     66,
+     181,
+     128
+    ],
+    "ultrachat-3eab761e31b10569391ae181": [
+     70,
+     167,
+     128
+    ],
+    "ultrachat-3a4efa731d2d9fb3d5af526a": [
+     66,
+     180,
+     128
+    ],
+    "ultrachat-36c8ed1a6f9c6cb986ad2f2d": [
+     61,
+     196,
+     128
+    ],
+    "glaive-aeb988e16e5c239a435ea8ef": [
+     15,
+     15,
+     21
+    ],
+    "ultrachat-eb95919979c1cce5ccb0523a": [
+     66,
+     179,
+     128
+    ],
+    "ultrachat-4c0b97b6b9af7f00fa7f3c4e": [
+     69,
+     168,
+     128
+    ],
+    "legacy-dolly-4e178e43b085c48c89d5a889": [
+     84,
+     128,
+     128
+    ],
+    "ultrachat-3d6ce19010cc978030a0c9bd": [
+     69,
+     170,
+     128
+    ],
+    "glaive-c3f20cf45440d2b87594ef8b": [
+     21,
+     21,
+     28
+    ],
+    "ultrachat-1c324c803d05e48b8542093b": [
+     67,
+     179,
+     128
+    ],
+    "ultrachat-70f61a09c0837cde600fc00f": [
+     66,
+     180,
+     128
+    ],
+    "qasper-8804bfbe32f030f81894a985": [
+     79,
+     143,
+     128
+    ],
+    "ultrachat-4b643e10f47eb7a764152614": [
+     57,
+     207,
+     128
+    ],
+    "ultrachat-72d0890fc8655c4d12310f95": [
+     76,
+     151,
+     128
+    ],
+    "glaive-30d9e97960e4fb0323a42533": [
+     37,
+     39,
+     51
+    ],
+    "commitpack-b52cdbe680771c7d9d299f38": [
+     94,
+     99,
+     128
+    ],
+    "ultrachat-56547243046fb80d00c3c4f5": [
+     69,
+     172,
+     128
+    ],
+    "ultrachat-133b5c365903a3eee6c24b95": [
+     70,
+     170,
+     128
+    ],
+    "glaive-a733ea18d5ee383cc0a2491b": [
+     12,
+     15,
+     18
+    ],
+    "glaive-177b80c11700fe5d8a04f333": [
+     43,
+     45,
+     59
+    ],
+    "legacy-magicoder-2e10d4f24775cd02bcbd5397": [
+     77,
+     147,
+     128
+    ],
+    "glaive-955f22c274ecba750b315eb4": [
+     33,
+     33,
+     44
+    ],
+    "glaive-81578f310e9084e4195d5d57": [
+     36,
+     39,
+     50
+    ],
+    "legacy-magicoder-6cd094d207aa172b0e160ff4": [
+     86,
+     122,
+     128
+    ],
+    "legacy-gsm8k-399e6db6b51879ad30662160": [
+     90,
+     111,
+     128
+    ],
+    "ultrachat-a759c3be98f5dbdedbdfd71d": [
+     63,
+     190,
+     128
+    ],
+    "ultrachat-90bf7f973b498609ca03de3a": [
+     71,
+     165,
+     128
+    ],
+    "commitpack-ab1cbafe648637468fc0768f": [
+     94,
+     96,
+     128
+    ],
+    "commitpack-4f0497e9e3b8a56de5ae96ab": [
+     95,
+     96,
+     128
+    ],
+    "qasper-df6098a3e8ddde4eda62fed2": [
+     80,
+     140,
+     128
+    ],
+    "commitpack-6f74a0c69d50e5f24db8c498": [
+     92,
+     102,
+     128
+    ],
+    "ultrachat-e8bfa79bb9fa6f12061db61b": [
+     70,
+     167,
+     128
+    ],
+    "ultrachat-682dd88e9c11498431b4805d": [
+     65,
+     185,
+     128
+    ],
+    "ultrachat-706515e8cd15f41a372165c1": [
+     67,
+     178,
+     128
+    ],
+    "legacy-gsm8k-612814488acc0bd65cea0e30": [
+     91,
+     107,
+     128
+    ],
+    "ultrachat-b6e7324d4dad02d66cde6904": [
+     63,
+     190,
+     128
+    ],
+    "commitpack-33a11c09799b2837faa58c27": [
+     90,
+     108,
+     128
+    ],
+    "legacy-gsm8k-18ade2ae71f7127a282f39bb": [
+     89,
+     113,
+     128
+    ],
+    "legacy-dolly-292e1de08ed9c385d897d8d7": [
+     75,
+     155,
+     128
+    ],
+    "commitpack-81cc9fd2681bb067a9469ecd": [
+     90,
+     106,
+     128
+    ],
+    "commitpack-31fdf576e4bd0c2abb64e825": [
+     95,
+     95,
+     128
+    ],
+    "legacy-dolly-55e047e4952c12f718c0e711": [
+     56,
+     165,
+     112
+    ],
+    "legacy-dolly-10dd03a1436128d44546ca94": [
+     78,
+     145,
+     128
+    ],
+    "legacy-dolly-17da403a2249e284001fcc51": [
+     86,
+     120,
+     128
+    ],
+    "legacy-dolly-f9f0bf1fb6236ec9c2819dd9": [
+     81,
+     135,
+     128
+    ],
+    "qasper-83e708263727cf48ee85fb86": [
+     77,
+     148,
+     128
+    ],
+    "qasper-ac93ece9e673ee353677ee06": [
+     81,
+     133,
+     128
+    ],
+    "qasper-609c07fa0d439dad7a031189": [
+     74,
+     156,
+     128
+    ],
+    "project-replay-46dc1ed549310316d500685f": [
+     24,
+     27,
+     33
+    ],
+    "project-replay-7de20fc983d2957624ad3d2f": [
+     17,
+     27,
+     27
+    ],
+    "project-replay-cb6b6e5b599427735da400c5": [
+     93,
+     100,
+     128
+    ],
+    "project-replay-7619a1127f50da56bf1f5f1c": [
+     36,
+     111,
+     74
+    ],
+    "project-replay-644180bb7132fa94c304cd21": [
+     94,
+     99,
+     128
+    ],
+    "project-replay-550ff6b10cd3de8886849db6": [
+     94,
+     99,
+     128
+    ],
+    "project-replay-0de07a92a147f372b0971e61": [
+     73,
+     161,
+     128
+    ],
+    "project-replay-4da693148e964a691683d90b": [
+     94,
+     98,
+     128
+    ]
+   }
+  }
+ ],
+ "dev": [
+  {
+   "updates": 8209,
+   "new_updates": 0,
+   "optimizer_seconds": 0.0,
+   "labels_new": 0,
+   "mixture_passes": 0.0,
+   "mean_loss": 3.41071329806,
+   "top1": 0.31805157593123207,
+   "position_top1": [
+    0.8416666666666667,
+    0.7416666666666667,
+    0.65,
+    0.525
+   ],
+   "prefix_survival": [
+    0.8416666666666667,
+    0.7,
+    0.5416666666666666,
+    0.35
+   ],
+   "category_loss": {
+    "code": 2.4113681446760893,
+    "conversation": 4.827342867851257,
+    "documents": 3.3978101958831153,
+    "reasoning": 3.136349134147167,
+    "structured": 2.435946955656012,
+    "writing": 4.608765999476115
+   }
+  },
+  {
+   "updates": 12509,
+   "new_updates": 4300,
+   "optimizer_seconds": 875.2748130181571,
+   "labels_new": 1318574,
+   "mixture_passes": 0.14950801432495392,
+   "mean_loss": 3.6355625386039416,
+   "top1": 0.29169054441260744,
+   "position_top1": [
+    0.8416666666666667,
+    0.7416666666666667,
+    0.65,
+    0.43333333333333335
+   ],
+   "prefix_survival": [
+    0.8416666666666667,
+    0.6833333333333333,
+    0.5583333333333333,
+    0.325
+   ],
+   "category_loss": {
+    "code": 2.7359658274799585,
+    "conversation": 4.836450306077798,
+    "documents": 3.4775959998369217,
+    "reasoning": 3.1465975791215897,
+    "structured": 3.563072914878527,
+    "writing": 4.6730875472227735
+   }
+  },
+  {
+   "updates": 16809,
+   "new_updates": 8600,
+   "optimizer_seconds": 1751.0531413135468,
+   "labels_new": 2626518,
+   "mixture_passes": 0.29901602864990784,
+   "mean_loss": 3.522733247714738,
+   "top1": 0.2945558739255014,
+   "position_top1": [
+    0.8333333333333334,
+    0.7166666666666667,
+    0.6166666666666667,
+    0.475
+   ],
+   "prefix_survival": [
+    0.8333333333333334,
+    0.675,
+    0.55,
+    0.36666666666666664
+   ],
+   "category_loss": {
+    "code": 2.6114190435037017,
+    "conversation": 4.906607722242673,
+    "documents": 3.508143683274587,
+    "reasoning": 3.189722239971161,
+    "structured": 2.6561156678944826,
+    "writing": 4.524966895580292
+   }
+  },
+  {
+   "updates": 21109,
+   "new_updates": 12900,
+   "optimizer_seconds": 2623.891114810016,
+   "labels_new": 3937115,
+   "mixture_passes": 0.4485240429748618,
+   "mean_loss": 3.4099266211191814,
+   "top1": 0.31002865329512896,
+   "position_top1": [
+    0.8583333333333333,
+    0.7583333333333333,
+    0.6666666666666666,
+    0.49166666666666664
+   ],
+   "prefix_survival": [
+    0.8583333333333333,
+    0.7166666666666667,
+    0.575,
+    0.4
+   ],
+   "category_loss": {
+    "code": 2.5270916828885674,
+    "conversation": 4.819805530210336,
+    "documents": 3.4292587538560233,
+    "reasoning": 3.1436171159148216,
+    "structured": 2.204795909424623,
+    "writing": 4.46594109137853
+   }
+  },
+  {
+   "updates": 25409,
+   "new_updates": 17200,
+   "optimizer_seconds": 3498.5401975885034,
+   "labels_new": 5254840,
+   "mixture_passes": 0.5980320572998157,
+   "mean_loss": 3.4142192075649898,
+   "top1": 0.2997134670487106,
+   "position_top1": [
+    0.8666666666666667,
+    0.75,
+    0.6666666666666666,
+    0.5
+   ],
+   "prefix_survival": [
+    0.8666666666666667,
+    0.6833333333333333,
+    0.5833333333333334,
+    0.375
+   ],
+   "category_loss": {
+    "code": 2.589955262839794,
+    "conversation": 4.653304698566596,
+    "documents": 3.3565358221530914,
+    "reasoning": 2.9482953399419785,
+    "structured": 2.779831742246946,
+    "writing": 4.505071471134822
+   }
+  },
+  {
+   "updates": 29709,
+   "new_updates": 21500,
+   "optimizer_seconds": 4375.644761188305,
+   "labels_new": 6570677,
+   "mixture_passes": 0.7475400716247697,
+   "mean_loss": 3.2700452606814605,
+   "top1": 0.30945558739255014,
+   "position_top1": [
+    0.8583333333333333,
+    0.7833333333333333,
+    0.6833333333333333,
+    0.48333333333333334
+   ],
+   "prefix_survival": [
+    0.8583333333333333,
+    0.7,
+    0.5666666666666667,
+    0.39166666666666666
+   ],
+   "category_loss": {
+    "code": 2.4532900154590607,
+    "conversation": 4.586665806670983,
+    "documents": 3.23784888535738,
+    "reasoning": 2.7717752903699875,
+    "structured": 2.338024334050715,
+    "writing": 4.475591793656349
+   }
+  },
+  {
+   "updates": 34009,
+   "new_updates": 25800,
+   "optimizer_seconds": 5245.521385542641,
+   "labels_new": 7886112,
+   "mixture_passes": 0.8970480859497236,
+   "mean_loss": 3.3011619878156733,
+   "top1": 0.3060171919770774,
+   "position_top1": [
+    0.875,
+    0.7666666666666667,
+    0.6583333333333333,
+    0.48333333333333334
+   ],
+   "prefix_survival": [
+    0.875,
+    0.7166666666666667,
+    0.5583333333333333,
+    0.38333333333333336
+   ],
+   "category_loss": {
+    "code": 2.4126702388748527,
+    "conversation": 4.652136209110419,
+    "documents": 3.2901912927627563,
+    "reasoning": 2.971134215593338,
+    "structured": 2.2826565502521894,
+    "writing": 4.449008733034134
+   }
+  },
+  {
+   "updates": 38309,
+   "new_updates": 30100,
+   "optimizer_seconds": 6116.275711393391,
+   "labels_new": 9200470,
+   "mixture_passes": 1.0465561002746775,
+   "mean_loss": 3.2426835178708036,
+   "top1": 0.3008595988538682,
+   "position_top1": [
+    0.85,
+    0.7333333333333333,
+    0.675,
+    0.525
+   ],
+   "prefix_survival": [
+    0.85,
+    0.6916666666666667,
+    0.5916666666666667,
+    0.425
+   ],
+   "category_loss": {
+    "code": 2.332069800235331,
+    "conversation": 4.614339058597882,
+    "documents": 3.279421254992485,
+    "reasoning": 2.8805344998836517,
+    "structured": 2.29149036295712,
+    "writing": 4.288258721431096
+   }
+  },
+  {
+   "updates": 42609,
+   "new_updates": 34400,
+   "optimizer_seconds": 6993.728516891308,
+   "labels_new": 10516334,
+   "mixture_passes": 1.1960641145996314,
+   "mean_loss": 3.3629958242954063,
+   "top1": 0.30544412607449856,
+   "position_top1": [
+    0.8666666666666667,
+    0.75,
+    0.6833333333333333,
+    0.4583333333333333
+   ],
+   "prefix_survival": [
+    0.8666666666666667,
+    0.7166666666666667,
+    0.5833333333333334,
+    0.3333333333333333
+   ],
+   "category_loss": {
+    "code": 2.5270357001572847,
+    "conversation": 4.685542499025662,
+    "documents": 3.2569787527124086,
+    "reasoning": 3.205759182572365,
+    "structured": 2.260798623940597,
+    "writing": 4.47100967168808
+   }
+  },
+  {
+   "updates": 46909,
+   "new_updates": 38700,
+   "optimizer_seconds": 7870.409553344885,
+   "labels_new": 11828037,
+   "mixture_passes": 1.3455721289245854,
+   "mean_loss": 3.324698746111244,
+   "top1": 0.31060171919770774,
+   "position_top1": [
+    0.8833333333333333,
+    0.775,
+    0.675,
+    0.5166666666666667
+   ],
+   "prefix_survival": [
+    0.8833333333333333,
+    0.7333333333333333,
+    0.6,
+    0.43333333333333335
+   ],
+   "category_loss": {
+    "code": 2.525584425777197,
+    "conversation": 4.701339930295944,
+    "documents": 3.227546180287997,
+    "reasoning": 3.1537319496273994,
+    "structured": 2.225872490865489,
+    "writing": 4.223475014170011
+   }
+  },
+  {
+   "updates": 51209,
+   "new_updates": 43000,
+   "optimizer_seconds": 8742.772565882362,
+   "labels_new": 13136251,
+   "mixture_passes": 1.4950801432495393,
+   "mean_loss": 3.2948740200838076,
+   "top1": 0.32034383954154727,
+   "position_top1": [
+    0.8666666666666667,
+    0.7916666666666666,
+    0.6833333333333333,
+    0.5666666666666667
+   ],
+   "prefix_survival": [
+    0.8666666666666667,
+    0.7416666666666667,
+    0.6083333333333333,
+    0.45
+   ],
+   "category_loss": {
+    "code": 2.458994913380593,
+    "conversation": 4.801693181196849,
+    "documents": 3.2659647713104882,
+    "reasoning": 3.013865903019905,
+    "structured": 1.9306598632441212,
+    "writing": 4.306956792871158
+   }
+  },
+  {
+   "updates": 52329,
+   "new_updates": 44120,
+   "optimizer_seconds": 8967.918055716611,
+   "labels_new": 13483497,
+   "mixture_passes": 1.5340217655853412,
+   "mean_loss": 3.2911333296525602,
+   "top1": 0.30716332378223493,
+   "position_top1": [
+    0.9,
+    0.7916666666666666,
+    0.6666666666666666,
+    0.5166666666666667
+   ],
+   "prefix_survival": [
+    0.9,
+    0.7583333333333333,
+    0.6,
+    0.43333333333333335
+   ],
+   "category_loss": {
+    "code": 2.5447606495581567,
+    "conversation": 4.677415572106838,
+    "documents": 3.2783019145329795,
+    "reasoning": 2.9843547716736794,
+    "structured": 1.9337615868231903,
+    "writing": 4.30096864203612
+   }
+  },
+  {
+   "updates": 55509,
+   "new_updates": 47300,
+   "optimizer_seconds": 9625.4119680351,
+   "labels_new": 14452939,
+   "mixture_passes": 1.6445881575744932,
+   "mean_loss": 3.3598305065107223,
+   "top1": 0.30945558739255014,
+   "position_top1": [
+    0.8916666666666667,
+    0.7666666666666667,
+    0.675,
+    0.525
+   ],
+   "prefix_survival": [
+    0.8916666666666667,
+    0.725,
+    0.6,
+    0.4
+   ],
+   "category_loss": {
+    "code": 2.5067719062790275,
+    "conversation": 4.77466444671154,
+    "documents": 3.435739735762278,
+    "reasoning": 2.9671463891863823,
+    "structured": 2.0713405819454542,
+    "writing": 4.465235849221547
+   }
+  },
+  {
+   "updates": 59809,
+   "new_updates": 51600,
+   "optimizer_seconds": 10498.541384824202,
+   "labels_new": 15772782,
+   "mixture_passes": 1.7940961718994473,
+   "mean_loss": 3.3775611964287235,
+   "top1": 0.298567335243553,
+   "position_top1": [
+    0.875,
+    0.7916666666666666,
+    0.6416666666666667,
+    0.49166666666666664
+   ],
+   "prefix_survival": [
+    0.875,
+    0.7416666666666667,
+    0.5916666666666667,
+    0.38333333333333336
+   ],
+   "category_loss": {
+    "code": 2.501101532485336,
+    "conversation": 4.7278207292159395,
+    "documents": 3.4895701880256333,
+    "reasoning": 3.0656600818037987,
+    "structured": 2.0793317245164267,
+    "writing": 4.504347542921702
+   }
+  },
+  {
+   "updates": 64109,
+   "new_updates": 55900,
+   "optimizer_seconds": 11365.980836371076,
+   "labels_new": 17085306,
+   "mixture_passes": 1.9436041862244011,
+   "mean_loss": 3.3381267523373634,
+   "top1": 0.3174785100286533,
+   "position_top1": [
+    0.8833333333333333,
+    0.7916666666666666,
+    0.675,
+    0.5333333333333333
+   ],
+   "prefix_survival": [
+    0.8833333333333333,
+    0.7583333333333333,
+    0.5833333333333334,
+    0.425
+   ],
+   "category_loss": {
+    "code": 2.4037788715213537,
+    "conversation": 4.7386335507035255,
+    "documents": 3.4488046740492186,
+    "reasoning": 3.1555131003260612,
+    "structured": 1.9753887262001324,
+    "writing": 4.413574556509654
+   }
+  },
+  {
+   "updates": 68409,
+   "new_updates": 60200,
+   "optimizer_seconds": 12237.226626462478,
+   "labels_new": 18404779,
+   "mixture_passes": 2.093112200549355,
+   "mean_loss": 3.419882420789994,
+   "top1": 0.30716332378223493,
+   "position_top1": [
+    0.875,
+    0.7666666666666667,
+    0.675,
+    0.5
+   ],
+   "prefix_survival": [
+    0.875,
+    0.7333333333333333,
+    0.5833333333333334,
+    0.38333333333333336
+   ],
+   "category_loss": {
+    "code": 2.4915222150739282,
+    "conversation": 4.822588995099068,
+    "documents": 3.566677230099837,
+    "reasoning": 3.1559114828705788,
+    "structured": 2.1495259916215823,
+    "writing": 4.418824548522632
+   }
+  },
+  {
+   "updates": 72709,
+   "new_updates": 64500,
+   "optimizer_seconds": 13111.550426600443,
+   "labels_new": 19714896,
+   "mixture_passes": 2.242620214874309,
+   "mean_loss": 3.438810049948127,
+   "top1": 0.30716332378223493,
+   "position_top1": [
+    0.875,
+    0.775,
+    0.6833333333333333,
+    0.475
+   ],
+   "prefix_survival": [
+    0.875,
+    0.7416666666666667,
+    0.6083333333333333,
+    0.375
+   ],
+   "category_loss": {
+    "code": 2.5136818336322904,
+    "conversation": 4.883495964109898,
+    "documents": 3.512821095685164,
+    "reasoning": 3.3021755069494247,
+    "structured": 1.9849709193610277,
+    "writing": 4.5044432282447815
+   }
+  },
+  {
+   "updates": 77009,
+   "new_updates": 68800,
+   "optimizer_seconds": 13986.48700770823,
+   "labels_new": 21025315,
+   "mixture_passes": 2.3921282291992627,
+   "mean_loss": 3.4508017082737448,
+   "top1": 0.30945558739255014,
+   "position_top1": [
+    0.8916666666666667,
+    0.8083333333333333,
+    0.6833333333333333,
+    0.5
+   ],
+   "prefix_survival": [
+    0.8916666666666667,
+    0.7666666666666667,
+    0.625,
+    0.4
+   ],
+   "category_loss": {
+    "code": 2.5480728400871158,
+    "conversation": 4.898372103770574,
+    "documents": 3.4904640167951584,
+    "reasoning": 3.357004813849926,
+    "structured": 1.9857662342255935,
+    "writing": 4.473711282014847
+   }
+  },
+  {
+   "updates": 80209,
+   "new_updates": 72000,
+   "optimizer_seconds": 14615.907323480642,
+   "labels_new": 22001623,
+   "mixture_passes": 2.503390007301554,
+   "mean_loss": 3.464204125490505,
+   "top1": 0.31404011461318054,
+   "position_top1": [
+    0.8916666666666667,
+    0.7833333333333333,
+    0.6916666666666667,
+    0.5083333333333333
+   ],
+   "prefix_survival": [
+    0.8916666666666667,
+    0.75,
+    0.6166666666666667,
+    0.4166666666666667
+   ],
+   "category_loss": {
+    "code": 2.568340149242431,
+    "conversation": 4.902376246949037,
+    "documents": 3.517008997499943,
+    "reasoning": 3.3884738236665726,
+    "structured": 1.9509696191720043,
+    "writing": 4.48542898396651
+   }
+  }
+ ],
+ "train_loss_bins": [
+  {
+   "cursor_start": 0,
+   "cursor_end": 4300,
+   "mixture_passes_mid": 0.07475400716247696,
+   "six_k": {
+    "updates": 3434,
+    "mean_loss": 2.428928772863554,
+    "same_group_change_vs_previous_pass": null,
+    "paired_updates": 0
+   },
+   "old": {
+    "updates": 866,
+    "mean_loss": 1.9090053957411655,
+    "same_group_change_vs_previous_pass": null,
+    "paired_updates": 0
+   }
+  },
+  {
+   "cursor_start": 4300,
+   "cursor_end": 8600,
+   "mixture_passes_mid": 0.2242620214874309,
+   "six_k": {
+    "updates": 3447,
+    "mean_loss": 2.378575820481761,
+    "same_group_change_vs_previous_pass": null,
+    "paired_updates": 0
+   },
+   "old": {
+    "updates": 853,
+    "mean_loss": 1.790192904961836,
+    "same_group_change_vs_previous_pass": null,
+    "paired_updates": 0
+   }
+  },
+  {
+   "cursor_start": 8600,
+   "cursor_end": 12900,
+   "mixture_passes_mid": 0.3737700358123848,
+   "six_k": {
+    "updates": 3385,
+    "mean_loss": 2.277987890240999,
+    "same_group_change_vs_previous_pass": null,
+    "paired_updates": 0
+   },
+   "old": {
+    "updates": 915,
+    "mean_loss": 1.7558007943174228,
+    "same_group_change_vs_previous_pass": null,
+    "paired_updates": 0
+   }
+  },
+  {
+   "cursor_start": 12900,
+   "cursor_end": 17200,
+   "mixture_passes_mid": 0.5232780501373387,
+   "six_k": {
+    "updates": 3423,
+    "mean_loss": 2.1949303447193538,
+    "same_group_change_vs_previous_pass": null,
+    "paired_updates": 0
+   },
+   "old": {
+    "updates": 877,
+    "mean_loss": 1.647231999839929,
+    "same_group_change_vs_previous_pass": null,
+    "paired_updates": 0
+   }
+  },
+  {
+   "cursor_start": 17200,
+   "cursor_end": 21500,
+   "mixture_passes_mid": 0.6727860644622927,
+   "six_k": {
+    "updates": 3371,
+    "mean_loss": 2.1270645387861373,
+    "same_group_change_vs_previous_pass": null,
+    "paired_updates": 0
+   },
+   "old": {
+    "updates": 929,
+    "mean_loss": 1.6276729210200684,
+    "same_group_change_vs_previous_pass": null,
+    "paired_updates": 0
+   }
+  },
+  {
+   "cursor_start": 21500,
+   "cursor_end": 25800,
+   "mixture_passes_mid": 0.8222940787872466,
+   "six_k": {
+    "updates": 3392,
+    "mean_loss": 2.0241643595631413,
+    "same_group_change_vs_previous_pass": null,
+    "paired_updates": 0
+   },
+   "old": {
+    "updates": 908,
+    "mean_loss": 1.47404890551359,
+    "same_group_change_vs_previous_pass": null,
+    "paired_updates": 0
+   }
+  },
+  {
+   "cursor_start": 25800,
+   "cursor_end": 30100,
+   "mixture_passes_mid": 0.9718020931122006,
+   "six_k": {
+    "updates": 3363,
+    "mean_loss": 1.9998087787706047,
+    "same_group_change_vs_previous_pass": -0.40935246337274095,
+    "paired_updates": 1054
+   },
+   "old": {
+    "updates": 937,
+    "mean_loss": 1.402234938588061,
+    "same_group_change_vs_previous_pass": -0.5098492216384202,
+    "paired_updates": 285
+   }
+  },
+  {
+   "cursor_start": 30100,
+   "cursor_end": 34400,
+   "mixture_passes_mid": 1.1213101074371545,
+   "six_k": {
+    "updates": 3466,
+    "mean_loss": 1.7724595642173033,
+    "same_group_change_vs_previous_pass": -0.6950854402045148,
+    "paired_updates": 3466
+   },
+   "old": {
+    "updates": 834,
+    "mean_loss": 1.2763528833232767,
+    "same_group_change_vs_previous_pass": -0.6216326412126172,
+    "paired_updates": 834
+   }
+  },
+  {
+   "cursor_start": 34400,
+   "cursor_end": 38700,
+   "mixture_passes_mid": 1.2708181217621084,
+   "six_k": {
+    "updates": 3409,
+    "mean_loss": 1.632721547579997,
+    "same_group_change_vs_previous_pass": -0.7056283076465469,
+    "paired_updates": 3409
+   },
+   "old": {
+    "updates": 891,
+    "mean_loss": 1.191050732331131,
+    "same_group_change_vs_previous_pass": -0.5883213982909007,
+    "paired_updates": 891
+   }
+  },
+  {
+   "cursor_start": 38700,
+   "cursor_end": 43000,
+   "mixture_passes_mid": 1.4203261360870623,
+   "six_k": {
+    "updates": 3386,
+    "mean_loss": 1.5264768240059772,
+    "same_group_change_vs_previous_pass": -0.7187337265063184,
+    "paired_updates": 3386
+   },
+   "old": {
+    "updates": 914,
+    "mean_loss": 1.146208282369566,
+    "same_group_change_vs_previous_pass": -0.5870999407290157,
+    "paired_updates": 914
+   }
+  },
+  {
+   "cursor_start": 43000,
+   "cursor_end": 47300,
+   "mixture_passes_mid": 1.5698341504120163,
+   "six_k": {
+    "updates": 3383,
+    "mean_loss": 1.437308393890782,
+    "same_group_change_vs_previous_pass": -0.7320166219802458,
+    "paired_updates": 3383
+   },
+   "old": {
+    "updates": 869,
+    "mean_loss": 1.0231538950331656,
+    "same_group_change_vs_previous_pass": -0.5653643860729246,
+    "paired_updates": 869
+   }
+  },
+  {
+   "cursor_start": 47300,
+   "cursor_end": 51600,
+   "mixture_passes_mid": 1.7193421647369702,
+   "six_k": {
+    "updates": 3383,
+    "mean_loss": 1.365223420965159,
+    "same_group_change_vs_previous_pass": -0.7517320100162173,
+    "paired_updates": 3383
+   },
+   "old": {
+    "updates": 917,
+    "mean_loss": 0.9967909044164133,
+    "same_group_change_vs_previous_pass": -0.5861901054973842,
+    "paired_updates": 917
+   }
+  },
+  {
+   "cursor_start": 51600,
+   "cursor_end": 55900,
+   "mixture_passes_mid": 1.868850179061924,
+   "six_k": {
+    "updates": 3384,
+    "mean_loss": 1.256643610256482,
+    "same_group_change_vs_previous_pass": -0.751089936644516,
+    "paired_updates": 3384
+   },
+   "old": {
+    "updates": 916,
+    "mean_loss": 0.8870792840177897,
+    "same_group_change_vs_previous_pass": -0.5782128602805686,
+    "paired_updates": 916
+   }
+  },
+  {
+   "cursor_start": 55900,
+   "cursor_end": 60200,
+   "mixture_passes_mid": 2.018358193386878,
+   "six_k": {
+    "updates": 3382,
+    "mean_loss": 1.1865716923838456,
+    "same_group_change_vs_previous_pass": -0.7398581980711573,
+    "paired_updates": 3382
+   },
+   "old": {
+    "updates": 918,
+    "mean_loss": 0.8231562186693996,
+    "same_group_change_vs_previous_pass": -0.5660384049403739,
+    "paired_updates": 918
+   }
+  },
+  {
+   "cursor_start": 60200,
+   "cursor_end": 64500,
+   "mixture_passes_mid": 2.167866207711832,
+   "six_k": {
+    "updates": 3464,
+    "mean_loss": 1.0258021954799974,
+    "same_group_change_vs_previous_pass": -0.6854174889266337,
+    "paired_updates": 3464
+   },
+   "old": {
+    "updates": 836,
+    "mean_loss": 0.7035243894543352,
+    "same_group_change_vs_previous_pass": -0.5210444377381556,
+    "paired_updates": 836
+   }
+  },
+  {
+   "cursor_start": 64500,
+   "cursor_end": 68800,
+   "mixture_passes_mid": 2.317374222036786,
+   "six_k": {
+    "updates": 3383,
+    "mean_loss": 0.9661030838291274,
+    "same_group_change_vs_previous_pass": -0.6391280645308377,
+    "paired_updates": 3383
+   },
+   "old": {
+    "updates": 917,
+    "mean_loss": 0.6918284909183119,
+    "same_group_change_vs_previous_pass": -0.508652198033553,
+    "paired_updates": 917
+   }
+  },
+  {
+   "cursor_start": 68800,
+   "cursor_end": 73100,
+   "mixture_passes_mid": 2.46688223636174,
+   "six_k": {
+    "updates": 2452,
+    "mean_loss": 0.9280644251940203,
+    "same_group_change_vs_previous_pass": -0.5962933374000132,
+    "paired_updates": 2452
+   },
+   "old": {
+    "updates": 648,
+    "mean_loss": 0.6483748334134428,
+    "same_group_change_vs_previous_pass": -0.4685684816648086,
+    "paired_updates": 648
+   }
+  }
+ ],
+ "missing_loss_cursors": 148,
+ "panels": {
+  "final": {
+   "drafter": "405e326b8c6ba7a54da7fc7d5d5436f5d45284be4bb980d0062d4c7d9a104dd9",
+   "summary": {
+    "acceptance": 0.4659499471272471,
+    "accepted": 26438,
+    "proposed": 56740,
+    "accepted_per_round": 1.396766694843618,
+    "tokens": 45486,
+    "tokens_per_second": 235.52058775037335,
+    "speed_vs_target": 1.3478816722068887,
+    "speed_vs_baseline": 0.9418440650440034,
+    "cap_hits": 36,
+    "eos_stops": 84
+   },
+   "baseline": {
+    "acceptance": 0.5334709637955423,
+    "accepted": 27908,
+    "proposed": 52314,
+    "accepted_per_round": 1.5985794478176194,
+    "tokens": 45486,
+    "tokens_per_second": 250.06324984313588,
+    "speed_vs_target": 1.4311091636426196,
+    "speed_vs_baseline": 1.0,
+    "cap_hits": 36,
+    "eos_stops": 84
+   },
+   "vs_s4": {
+    "acceptance_difference": 0.05208980081471826,
+    "acceptance_difference_95_interval": {
+     "lower": 0.046870779540810315,
+     "upper": 0.05767795823781252
+    },
+    "groups": 120,
+    "bootstrap_draws": 2000
+   },
+   "vs_baseline": {
+    "acceptance_difference": -0.06752101666829519,
+    "acceptance_difference_95_interval": {
+     "lower": -0.07521839367202987,
+     "upper": -0.058794786083028794
+    }
+   },
+   "per_request": {
+    "ultrachat-aad766460e635aee55af0665": [
+     15,
+     18,
+     21
+    ],
+    "ultrachat-b56e755e49f41a18789c662b": [
+     101,
+     207,
+     171
+    ],
+    "ultrachat-bc394b78f1127f75bc6bd14a": [
+     18,
+     21,
+     26
+    ],
+    "ultrachat-376f2a5b153b37ae6795207f": [
+     126,
+     383,
+     256
+    ],
+    "ultrachat-3eab761e31b10569391ae181": [
+     293,
+     756,
+     546
+    ],
+    "ultrachat-3a4efa731d2d9fb3d5af526a": [
+     129,
+     375,
+     256
+    ],
+    "ultrachat-36c8ed1a6f9c6cb986ad2f2d": [
+     1005,
+     3123,
+     2048
+    ],
+    "glaive-aeb988e16e5c239a435ea8ef": [
+     15,
+     15,
+     21
+    ],
+    "ultrachat-eb95919979c1cce5ccb0523a": [
+     91,
+     240,
+     171
+    ],
+    "ultrachat-4c0b97b6b9af7f00fa7f3c4e": [
+     127,
+     300,
+     228
+    ],
+    "legacy-dolly-4e178e43b085c48c89d5a889": [
+     97,
+     162,
+     152
+    ],
+    "ultrachat-3d6ce19010cc978030a0c9bd": [
+     347,
+     873,
+     639
+    ],
+    "ultrachat-9fe3551b4a1fdc8af4b56021": [
+     454,
+     1092,
+     819
+    ],
+    "ultrachat-24faa16d687511f81b08ad1b": [
+     140,
+     341,
+     256
+    ],
+    "glaive-c3f20cf45440d2b87594ef8b": [
+     21,
+     21,
+     28
+    ],
+    "ultrachat-5b87d5727e69710bb5361477": [
+     363,
+     1200,
+     764
+    ],
+    "ultrachat-1c324c803d05e48b8542093b": [
+     1119,
+     2783,
+     2048
+    ],
+    "ultrachat-ce3af39d36542cd4c0a8d4b1": [
+     96,
+     141,
+     144
+    ],
+    "ultrachat-1a95f435c73ab9f810d80ef5": [
+     513,
+     1311,
+     951
+    ],
+    "ultrachat-e17a1648d720de2e9c2d5abc": [
+     608,
+     1241,
+     1024
+    ],
+    "ultrachat-516ff6271a530b6368d9a76f": [
+     500,
+     1569,
+     1024
+    ],
+    "ultrachat-a56ef7742b366cb68b3863ac": [
+     561,
+     621,
+     769
+    ],
+    "ultrachat-1daccfe6bd47740ddfbc6cbd": [
+     177,
+     558,
+     364
+    ],
+    "ultrachat-6ea39adc0c790078321b90e4": [
+     58,
+     204,
+     127
+    ],
+    "ultrachat-70f61a09c0837cde600fc00f": [
+     134,
+     362,
+     256
+    ],
+    "qasper-8804bfbe32f030f81894a985": [
+     143,
+     261,
+     231
+    ],
+    "ultrachat-0d0f63a15285f2c9dd60ced2": [
+     545,
+     1431,
+     1024
+    ],
+    "ultrachat-4b643e10f47eb7a764152614": [
+     434,
+     1470,
+     925
+    ],
+    "ultrachat-72d0890fc8655c4d12310f95": [
+     551,
+     1410,
+     1024
+    ],
+    "glaive-30d9e97960e4fb0323a42533": [
+     37,
+     39,
+     51
+    ],
+    "commitpack-b52cdbe680771c7d9d299f38": [
+     199,
+     216,
+     271
+    ],
+    "ultrachat-56547243046fb80d00c3c4f5": [
+     142,
+     337,
+     256
+    ],
+    "ultrachat-133b5c365903a3eee6c24b95": [
+     129,
+     374,
+     256
+    ],
+    "ultrachat-db2baf85a81bf741c41ca22d": [
+     367,
+     1353,
+     819
+    ],
+    "ultrachat-68c86e0b6e5003b7d12dc2a3": [
+     137,
+     351,
+     256
+    ],
+    "glaive-a733ea18d5ee383cc0a2491b": [
+     12,
+     15,
+     18
+    ],
+    "ultrachat-7fed31562280c48fff4b0db7": [
+     517,
+     1513,
+     1024
+    ],
+    "glaive-177b80c11700fe5d8a04f333": [
+     43,
+     45,
+     59
+    ],
+    "ultrachat-f9446719c7089aa22851af60": [
+     423,
+     1455,
+     909
+    ],
+    "legacy-magicoder-2e10d4f24775cd02bcbd5397": [
+     186,
+     267,
+     275
+    ],
+    "ultrachat-7140ee7d596f7b828ebe6dfb": [
+     108,
+     438,
+     256
+    ],
+    "glaive-955f22c274ecba750b315eb4": [
+     33,
+     33,
+     44
+    ],
+    "glaive-81578f310e9084e4195d5d57": [
+     36,
+     39,
+     50
+    ],
+    "glaive-58700f8829beadd4f8e52882": [
+     38,
+     39,
+     51
+    ],
+    "legacy-magicoder-6cd094d207aa172b0e160ff4": [
+     147,
+     198,
+     213
+    ],
+    "glaive-0a2c00c787e8fc65dbe46339": [
+     31,
+     33,
+     43
+    ],
+    "glaive-c733a6b838b4d38f86cc465e": [
+     30,
+     33,
+     42
+    ],
+    "legacy-gsm8k-399e6db6b51879ad30662160": [
+     181,
+     219,
+     256
+    ],
+    "glaive-5706edba53391b9c43af513b": [
+     46,
+     48,
+     63
+    ],
+    "ultrachat-a759c3be98f5dbdedbdfd71d": [
+     127,
+     382,
+     256
+    ],
+    "glaive-c4fa42a9572666b697e25799": [
+     57,
+     57,
+     77
+    ],
+    "ultrachat-90bf7f973b498609ca03de3a": [
+     568,
+     1363,
+     1024
+    ],
+    "commitpack-ab1cbafe648637468fc0768f": [
+     190,
+     192,
+     256
+    ],
+    "commitpack-4f0497e9e3b8a56de5ae96ab": [
+     242,
+     249,
+     326
+    ],
+    "qasper-df6098a3e8ddde4eda62fed2": [
+     149,
+     297,
+     249
+    ],
+    "glaive-dfa0af13dfc84d4eaddc68ae": [
+     149,
+     153,
+     201
+    ],
+    "glaive-3302e8e3c127bd3d717caa3e": [
+     65,
+     66,
+     87
+    ],
+    "commitpack-6f74a0c69d50e5f24db8c498": [
+     144,
+     156,
+     196
+    ],
+    "qasper-1e4c111d69764415c6ace19f": [
+     108,
+     210,
+     179
+    ],
+    "ultrachat-682dd88e9c11498431b4805d": [
+     134,
+     361,
+     256
+    ],
+    "qasper-8c91bf9fb0c44f99bac72095": [
+     71,
+     87,
+     101
+    ],
+    "ultrachat-706515e8cd15f41a372165c1": [
+     145,
+     326,
+     256
+    ],
+    "legacy-gsm8k-612814488acc0bd65cea0e30": [
+     166,
+     201,
+     234
+    ],
+    "ultrachat-b6e7324d4dad02d66cde6904": [
+     489,
+     1601,
+     1024
+    ],
+    "commitpack-33a11c09799b2837faa58c27": [
+     258,
+     282,
+     352
+    ],
+    "legacy-gsm8k-18ade2ae71f7127a282f39bb": [
+     241,
+     327,
+     351
+    ],
+    "ultrachat-80132e9b2e181f4fc9b34b91": [
+     573,
+     1347,
+     1024
+    ],
+    "qasper-0758f1747bea88379bd79216": [
+     162,
+     279,
+     256
+    ],
+    "legacy-dolly-292e1de08ed9c385d897d8d7": [
+     147,
+     320,
+     256
+    ],
+    "commitpack-81cc9fd2681bb067a9469ecd": [
+     116,
+     156,
+     169
+    ],
+    "commitpack-31fdf576e4bd0c2abb64e825": [
+     150,
+     159,
+     203
+    ],
+    "ultrachat-8433b675621e318180411626": [
+     129,
+     373,
+     256
+    ],
+    "ultrachat-94f430fa82d47ada2d7dac37": [
+     1007,
+     2175,
+     1733
+    ],
+    "legacy-gsm8k-488a9dbaf04f1738bd3ecb89": [
+     299,
+     420,
+     440
+    ],
+    "legacy-gsm8k-d76a5c0303c2705a6da6e375": [
+     194,
+     231,
+     272
+    ],
+    "qasper-3824953ded9ab93e81a987b6": [
+     66,
+     108,
+     103
+    ],
+    "commitpack-938c24188a58292b0a359aa3": [
+     177,
+     186,
+     240
+    ],
+    "qasper-59c24217e3f9e4dcb7e11fad": [
+     180,
+     399,
+     314
+    ],
+    "commitpack-5a49c412062111c7d040b75c": [
+     131,
+     147,
+     181
+    ],
+    "legacy-gsm8k-2235c86b058a5f2ea3248451": [
+     448,
+     660,
+     669
+    ],
+    "commitpack-c48bdd205710cb8099f66648": [
+     70,
+     90,
+     100
+    ],
+    "commitpack-a02c322fd1a0289c4bd90964": [
+     189,
+     198,
+     256
+    ],
+    "commitpack-d7ff8440ba9cdf18ac228e62": [
+     241,
+     264,
+     330
+    ],
+    "ultrachat-3ce8d3ca1503928a022aee3b": [
+     581,
+     1324,
+     1024
+    ],
+    "commitpack-25c9eb5ae51f166a59e4bf7a": [
+     205,
+     210,
+     276
+    ],
+    "commitpack-fca44f84e048a76b8d1ad1a0": [
+     71,
+     72,
+     95
+    ],
+    "ultrachat-866f84cacec318ecdd1ba8fa": [
+     541,
+     1440,
+     1024
+    ],
+    "ultrachat-6f341575c471b76d6902a896": [
+     503,
+     1559,
+     1024
+    ],
+    "ultrachat-5f4d0487b1bc1fa1b50c992a": [
+     562,
+     1380,
+     1024
+    ],
+    "commitpack-d648f5c5669e469797da760c": [
+     147,
+     147,
+     197
+    ],
+    "legacy-magicoder-378a6cba047d668f25e7a26c": [
+     503,
+     663,
+     725
+    ],
+    "commitpack-8ee4905740509770c9e2455e": [
+     169,
+     253,
+     256
+    ],
+    "legacy-dolly-55e047e4952c12f718c0e711": [
+     56,
+     165,
+     112
+    ],
+    "commitpack-4f317134640f49c71a821abe": [
+     77,
+     81,
+     105
+    ],
+    "commitpack-484bc5a85de33c8153de20d4": [
+     299,
+     369,
+     423
+    ],
+    "qasper-92e97b761960991582d4d606": [
+     72,
+     144,
+     120
+    ],
+    "qasper-be96c19b3f6b2fa53237de91": [
+     144,
+     195,
+     209
+    ],
+    "commitpack-007b319f4730a6953453dc4b": [
+     189,
+     195,
+     256
+    ],
+    "legacy-dolly-10dd03a1436128d44546ca94": [
+     121,
+     207,
+     190
+    ],
+    "legacy-magicoder-ae3f3f6b69f3515e0105c542": [
+     61,
+     72,
+     86
+    ],
+    "commitpack-905672bccd82ef51e06f99db": [
+     157,
+     165,
+     213
+    ],
+    "legacy-dolly-17da403a2249e284001fcc51": [
+     127,
+     183,
+     189
+    ],
+    "legacy-dolly-f9f0bf1fb6236ec9c2819dd9": [
+     167,
+     260,
+     256
+    ],
+    "qasper-83e708263727cf48ee85fb86": [
+     107,
+     231,
+     184
+    ],
+    "qasper-b13fa6ebf817c8f8bf0f832a": [
+     151,
+     309,
+     256
+    ],
+    "qasper-78fde9e1ad1dc44fbf2b4439": [
+     217,
+     474,
+     375
+    ],
+    "qasper-b5865703ffd57a8460df69e0": [
+     207,
+     309,
+     311
+    ],
+    "qasper-ac93ece9e673ee353677ee06": [
+     111,
+     210,
+     182
+    ],
+    "qasper-609c07fa0d439dad7a031189": [
+     143,
+     334,
+     256
+    ],
+    "qasper-b9e06baf7371de81c0764fd4": [
+     188,
+     453,
+     340
+    ],
+    "qasper-457f41d6f7496050fe28b10c": [
+     97,
+     162,
+     152
+    ],
+    "project-replay-46dc1ed549310316d500685f": [
+     24,
+     27,
+     33
+    ],
+    "project-replay-7de20fc983d2957624ad3d2f": [
+     17,
+     27,
+     27
+    ],
+    "qasper-8844ef1c9b2a7a964fb58c5d": [
+     144,
+     264,
+     233
+    ],
+    "project-replay-cb6b6e5b599427735da400c5": [
+     235,
+     261,
+     323
+    ],
+    "project-replay-7619a1127f50da56bf1f5f1c": [
+     36,
+     111,
+     74
+    ],
+    "project-replay-644180bb7132fa94c304cd21": [
+     273,
+     285,
+     369
+    ],
+    "project-replay-550ff6b10cd3de8886849db6": [
+     168,
+     180,
+     229
+    ],
+    "project-replay-0de07a92a147f372b0971e61": [
+     198,
+     489,
+     362
+    ],
+    "project-replay-4da693148e964a691683d90b": [
+     165,
+     174,
+     224
+    ]
+   }
+  },
+  "best": {
+   "drafter": "496ace42c49981c7e52c9acfeab925df6d37a83337d689012f45aec08932c9e6",
+   "summary": {
+    "acceptance": 0.46241577765300396,
+    "accepted": 26354,
+    "proposed": 56992,
+    "accepted_per_round": 1.3861771512728802,
+    "tokens": 45486,
+    "tokens_per_second": 235.1989481377232,
+    "speed_vs_target": 1.3460409323247076,
+    "speed_vs_baseline": 0.9405578320095535,
+    "cap_hits": 36,
+    "eos_stops": 84
+   },
+   "baseline": {
+    "acceptance": 0.5334709637955423,
+    "accepted": 27908,
+    "proposed": 52314,
+    "accepted_per_round": 1.5985794478176194,
+    "tokens": 45486,
+    "tokens_per_second": 250.06324984313588,
+    "speed_vs_target": 1.4311091636426196,
+    "speed_vs_baseline": 1.0,
+    "cap_hits": 36,
+    "eos_stops": 84
+   },
+   "vs_s4": {
+    "acceptance_difference": 0.048555631340475136,
+    "acceptance_difference_95_interval": {
+     "lower": 0.04378714546229917,
+     "upper": 0.053871117769677235
+    },
+    "groups": 120,
+    "bootstrap_draws": 2000
+   },
+   "vs_baseline": {
+    "acceptance_difference": -0.0710551861425383,
+    "acceptance_difference_95_interval": {
+     "lower": -0.0780989061219296,
+     "upper": -0.06234346898852888
+    }
+   },
+   "per_request": {
+    "ultrachat-aad766460e635aee55af0665": [
+     13,
+     21,
+     21
+    ],
+    "ultrachat-b56e755e49f41a18789c662b": [
+     102,
+     204,
+     171
+    ],
+    "ultrachat-bc394b78f1127f75bc6bd14a": [
+     18,
+     21,
+     26
+    ],
+    "ultrachat-376f2a5b153b37ae6795207f": [
+     127,
+     380,
+     256
+    ],
+    "ultrachat-3eab761e31b10569391ae181": [
+     295,
+     750,
+     546
+    ],
+    "ultrachat-3a4efa731d2d9fb3d5af526a": [
+     128,
+     378,
+     256
+    ],
+    "ultrachat-36c8ed1a6f9c6cb986ad2f2d": [
+     1008,
+     3114,
+     2048
+    ],
+    "glaive-aeb988e16e5c239a435ea8ef": [
+     14,
+     18,
+     21
+    ],
+    "ultrachat-eb95919979c1cce5ccb0523a": [
+     88,
+     246,
+     171
+    ],
+    "ultrachat-4c0b97b6b9af7f00fa7f3c4e": [
+     126,
+     303,
+     228
+    ],
+    "legacy-dolly-4e178e43b085c48c89d5a889": [
+     96,
+     165,
+     152
+    ],
+    "ultrachat-3d6ce19010cc978030a0c9bd": [
+     348,
+     870,
+     639
+    ],
+    "ultrachat-9fe3551b4a1fdc8af4b56021": [
+     446,
+     1116,
+     819
+    ],
+    "ultrachat-24faa16d687511f81b08ad1b": [
+     141,
+     338,
+     256
+    ],
+    "glaive-c3f20cf45440d2b87594ef8b": [
+     21,
+     21,
+     28
+    ],
+    "ultrachat-5b87d5727e69710bb5361477": [
+     358,
+     1215,
+     764
+    ],
+    "ultrachat-1c324c803d05e48b8542093b": [
+     1112,
+     2804,
+     2048
+    ],
+    "ultrachat-ce3af39d36542cd4c0a8d4b1": [
+     94,
+     147,
+     144
+    ],
+    "ultrachat-1a95f435c73ab9f810d80ef5": [
+     503,
+     1341,
+     951
+    ],
+    "ultrachat-e17a1648d720de2e9c2d5abc": [
+     607,
+     1244,
+     1024
+    ],
+    "ultrachat-516ff6271a530b6368d9a76f": [
+     499,
+     1572,
+     1024
+    ],
+    "ultrachat-a56ef7742b366cb68b3863ac": [
+     560,
+     624,
+     769
+    ],
+    "ultrachat-1daccfe6bd47740ddfbc6cbd": [
+     175,
+     564,
+     364
+    ],
+    "ultrachat-6ea39adc0c790078321b90e4": [
+     62,
+     192,
+     127
+    ],
+    "ultrachat-70f61a09c0837cde600fc00f": [
+     132,
+     368,
+     256
+    ],
+    "qasper-8804bfbe32f030f81894a985": [
+     141,
+     267,
+     231
+    ],
+    "ultrachat-0d0f63a15285f2c9dd60ced2": [
+     538,
+     1452,
+     1024
+    ],
+    "ultrachat-4b643e10f47eb7a764152614": [
+     427,
+     1491,
+     925
+    ],
+    "ultrachat-72d0890fc8655c4d12310f95": [
+     548,
+     1419,
+     1024
+    ],
+    "glaive-30d9e97960e4fb0323a42533": [
+     37,
+     39,
+     51
+    ],
+    "commitpack-b52cdbe680771c7d9d299f38": [
+     200,
+     213,
+     271
+    ],
+    "ultrachat-56547243046fb80d00c3c4f5": [
+     144,
+     331,
+     256
+    ],
+    "ultrachat-133b5c365903a3eee6c24b95": [
+     131,
+     368,
+     256
+    ],
+    "ultrachat-db2baf85a81bf741c41ca22d": [
+     364,
+     1362,
+     819
+    ],
+    "ultrachat-68c86e0b6e5003b7d12dc2a3": [
+     138,
+     349,
+     256
+    ],
+    "glaive-a733ea18d5ee383cc0a2491b": [
+     13,
+     15,
+     18
+    ],
+    "ultrachat-7fed31562280c48fff4b0db7": [
+     526,
+     1486,
+     1024
+    ],
+    "glaive-177b80c11700fe5d8a04f333": [
+     43,
+     45,
+     59
+    ],
+    "ultrachat-f9446719c7089aa22851af60": [
+     425,
+     1449,
+     909
+    ],
+    "legacy-magicoder-2e10d4f24775cd02bcbd5397": [
+     188,
+     261,
+     275
+    ],
+    "ultrachat-7140ee7d596f7b828ebe6dfb": [
+     113,
+     423,
+     256
+    ],
+    "glaive-955f22c274ecba750b315eb4": [
+     33,
+     33,
+     44
+    ],
+    "glaive-81578f310e9084e4195d5d57": [
+     36,
+     39,
+     50
+    ],
+    "glaive-58700f8829beadd4f8e52882": [
+     37,
+     39,
+     51
+    ],
+    "legacy-magicoder-6cd094d207aa172b0e160ff4": [
+     150,
+     189,
+     213
+    ],
+    "glaive-0a2c00c787e8fc65dbe46339": [
+     31,
+     33,
+     43
+    ],
+    "glaive-c733a6b838b4d38f86cc465e": [
+     30,
+     33,
+     42
+    ],
+    "legacy-gsm8k-399e6db6b51879ad30662160": [
+     182,
+     216,
+     256
+    ],
+    "glaive-5706edba53391b9c43af513b": [
+     46,
+     48,
+     63
+    ],
+    "ultrachat-a759c3be98f5dbdedbdfd71d": [
+     132,
+     367,
+     256
+    ],
+    "glaive-c4fa42a9572666b697e25799": [
+     57,
+     57,
+     77
+    ],
+    "ultrachat-90bf7f973b498609ca03de3a": [
+     574,
+     1342,
+     1024
+    ],
+    "commitpack-ab1cbafe648637468fc0768f": [
+     190,
+     192,
+     256
+    ],
+    "commitpack-4f0497e9e3b8a56de5ae96ab": [
+     243,
+     246,
+     326
+    ],
+    "qasper-df6098a3e8ddde4eda62fed2": [
+     146,
+     306,
+     249
+    ],
+    "glaive-dfa0af13dfc84d4eaddc68ae": [
+     148,
+     156,
+     201
+    ],
+    "glaive-3302e8e3c127bd3d717caa3e": [
+     65,
+     66,
+     87
+    ],
+    "commitpack-6f74a0c69d50e5f24db8c498": [
+     144,
+     156,
+     196
+    ],
+    "qasper-1e4c111d69764415c6ace19f": [
+     107,
+     213,
+     179
+    ],
+    "ultrachat-682dd88e9c11498431b4805d": [
+     138,
+     350,
+     256
+    ],
+    "qasper-8c91bf9fb0c44f99bac72095": [
+     71,
+     87,
+     101
+    ],
+    "ultrachat-706515e8cd15f41a372165c1": [
+     141,
+     337,
+     256
+    ],
+    "legacy-gsm8k-612814488acc0bd65cea0e30": [
+     166,
+     201,
+     234
+    ],
+    "ultrachat-b6e7324d4dad02d66cde6904": [
+     481,
+     1625,
+     1024
+    ],
+    "commitpack-33a11c09799b2837faa58c27": [
+     258,
+     282,
+     352
+    ],
+    "legacy-gsm8k-18ade2ae71f7127a282f39bb": [
+     241,
+     327,
+     351
+    ],
+    "ultrachat-80132e9b2e181f4fc9b34b91": [
+     571,
+     1354,
+     1024
+    ],
+    "qasper-0758f1747bea88379bd79216": [
+     159,
+     287,
+     256
+    ],
+    "legacy-dolly-292e1de08ed9c385d897d8d7": [
+     149,
+     315,
+     256
+    ],
+    "commitpack-81cc9fd2681bb067a9469ecd": [
+     115,
+     159,
+     169
+    ],
+    "commitpack-31fdf576e4bd0c2abb64e825": [
+     149,
+     162,
+     203
+    ],
+    "ultrachat-8433b675621e318180411626": [
+     130,
+     370,
+     256
+    ],
+    "ultrachat-94f430fa82d47ada2d7dac37": [
+     993,
+     2217,
+     1733
+    ],
+    "legacy-gsm8k-488a9dbaf04f1738bd3ecb89": [
+     303,
+     408,
+     440
+    ],
+    "legacy-gsm8k-d76a5c0303c2705a6da6e375": [
+     195,
+     228,
+     272
+    ],
+    "qasper-3824953ded9ab93e81a987b6": [
+     66,
+     108,
+     103
+    ],
+    "commitpack-938c24188a58292b0a359aa3": [
+     177,
+     186,
+     240
+    ],
+    "qasper-59c24217e3f9e4dcb7e11fad": [
+     180,
+     399,
+     314
+    ],
+    "commitpack-5a49c412062111c7d040b75c": [
+     131,
+     147,
+     181
+    ],
+    "legacy-gsm8k-2235c86b058a5f2ea3248451": [
+     450,
+     657,
+     669
+    ],
+    "commitpack-c48bdd205710cb8099f66648": [
+     71,
+     84,
+     100
+    ],
+    "commitpack-a02c322fd1a0289c4bd90964": [
+     189,
+     198,
+     256
+    ],
+    "commitpack-d7ff8440ba9cdf18ac228e62": [
+     241,
+     264,
+     330
+    ],
+    "ultrachat-3ce8d3ca1503928a022aee3b": [
+     581,
+     1324,
+     1024
+    ],
+    "commitpack-25c9eb5ae51f166a59e4bf7a": [
+     204,
+     213,
+     276
+    ],
+    "commitpack-fca44f84e048a76b8d1ad1a0": [
+     71,
+     72,
+     95
+    ],
+    "ultrachat-866f84cacec318ecdd1ba8fa": [
+     536,
+     1457,
+     1024
+    ],
+    "ultrachat-6f341575c471b76d6902a896": [
+     498,
+     1572,
+     1024
+    ],
+    "ultrachat-5f4d0487b1bc1fa1b50c992a": [
+     549,
+     1419,
+     1024
+    ],
+    "commitpack-d648f5c5669e469797da760c": [
+     147,
+     147,
+     197
+    ],
+    "legacy-magicoder-378a6cba047d668f25e7a26c": [
+     501,
+     669,
+     725
+    ],
+    "commitpack-8ee4905740509770c9e2455e": [
+     171,
+     249,
+     256
+    ],
+    "legacy-dolly-55e047e4952c12f718c0e711": [
+     59,
+     159,
+     112
+    ],
+    "commitpack-4f317134640f49c71a821abe": [
+     77,
+     81,
+     105
+    ],
+    "commitpack-484bc5a85de33c8153de20d4": [
+     301,
+     366,
+     423
+    ],
+    "qasper-92e97b761960991582d4d606": [
+     73,
+     141,
+     120
+    ],
+    "qasper-be96c19b3f6b2fa53237de91": [
+     143,
+     195,
+     209
+    ],
+    "commitpack-007b319f4730a6953453dc4b": [
+     190,
+     194,
+     256
+    ],
+    "legacy-dolly-10dd03a1436128d44546ca94": [
+     122,
+     204,
+     190
+    ],
+    "legacy-magicoder-ae3f3f6b69f3515e0105c542": [
+     61,
+     72,
+     86
+    ],
+    "commitpack-905672bccd82ef51e06f99db": [
+     157,
+     165,
+     213
+    ],
+    "legacy-dolly-17da403a2249e284001fcc51": [
+     127,
+     183,
+     189
+    ],
+    "legacy-dolly-f9f0bf1fb6236ec9c2819dd9": [
+     167,
+     260,
+     256
+    ],
+    "qasper-83e708263727cf48ee85fb86": [
+     105,
+     237,
+     184
+    ],
+    "qasper-b13fa6ebf817c8f8bf0f832a": [
+     144,
+     330,
+     256
+    ],
+    "qasper-78fde9e1ad1dc44fbf2b4439": [
+     217,
+     474,
+     375
+    ],
+    "qasper-b5865703ffd57a8460df69e0": [
+     203,
+     321,
+     311
+    ],
+    "qasper-ac93ece9e673ee353677ee06": [
+     108,
+     219,
+     182
+    ],
+    "qasper-609c07fa0d439dad7a031189": [
+     141,
+     340,
+     256
+    ],
+    "qasper-b9e06baf7371de81c0764fd4": [
+     187,
+     456,
+     340
+    ],
+    "qasper-457f41d6f7496050fe28b10c": [
+     95,
+     168,
+     152
+    ],
+    "project-replay-46dc1ed549310316d500685f": [
+     23,
+     30,
+     33
+    ],
+    "project-replay-7de20fc983d2957624ad3d2f": [
+     17,
+     27,
+     27
+    ],
+    "qasper-8844ef1c9b2a7a964fb58c5d": [
+     144,
+     264,
+     233
+    ],
+    "project-replay-cb6b6e5b599427735da400c5": [
+     235,
+     261,
+     323
+    ],
+    "project-replay-7619a1127f50da56bf1f5f1c": [
+     37,
+     108,
+     74
+    ],
+    "project-replay-644180bb7132fa94c304cd21": [
+     271,
+     291,
+     369
+    ],
+    "project-replay-550ff6b10cd3de8886849db6": [
+     167,
+     183,
+     229
+    ],
+    "project-replay-0de07a92a147f372b0971e61": [
+     195,
+     498,
+     362
+    ],
+    "project-replay-4da693148e964a691683d90b": [
+     165,
+     174,
+     224
+    ]
+   }
+  },
+  "final_vs_best": {
+   "acceptance_difference": 0.0035341694742431207,
+   "acceptance_difference_95_interval": {
+    "lower": 0.0008566129205360706,
+    "upper": 0.006068676091511183
+   },
+   "groups": 120,
+   "bootstrap_draws": 2000
+  }
+ },
+ "s4_six_k_only_dev": [
+  {
+   "updates": 0,
+   "mean_loss": 7.346315407752991,
+   "top1": 0.02005730659025788,
+   "position_top1": [
+    0.05,
+    0.06666666666666667,
+    0.025,
+    0.008333333333333333,
+    0.01680672268907563,
+    0.01694915254237288,
+    0.00847457627118644,
+    0.017241379310344827,
+    0.02608695652173913,
+    0.0,
+    0.03508771929824561,
+    0.0,
+    0.0,
+    0.0,
+    0.02702702702702703
+   ],
+   "prefix_survival": [
+    0.05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "position_weights": null
+  },
+  {
+   "updates": 684,
+   "mean_loss": 4.109192713846763,
+   "top1": 0.2641833810888252,
+   "position_top1": [
+    0.7,
+    0.6083333333333333,
+    0.5333333333333333,
+    0.4083333333333333,
+    0.29411764705882354,
+    0.2711864406779661,
+    0.19491525423728814,
+    0.21551724137931033,
+    0.14782608695652175,
+    0.12173913043478261,
+    0.07017543859649122,
+    0.07079646017699115,
+    0.11504424778761062,
+    0.05309734513274336,
+    0.09009009009009009
+   ],
+   "prefix_survival": [
+    0.7,
+    0.5,
+    0.36666666666666664,
+    0.20833333333333334,
+    0.1092436974789916,
+    0.0847457627118644,
+    0.05084745762711865,
+    0.017241379310344827,
+    0.017391304347826087,
+    0.008695652173913044,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "position_weights": null
+  },
+  {
+   "updates": 1368,
+   "mean_loss": 3.817750519886613,
+   "top1": 0.2962750716332378,
+   "position_top1": [
+    0.7583333333333333,
+    0.6583333333333333,
+    0.6,
+    0.4666666666666667,
+    0.33613445378151263,
+    0.3135593220338983,
+    0.22033898305084745,
+    0.21551724137931033,
+    0.14782608695652175,
+    0.14782608695652175,
+    0.14912280701754385,
+    0.10619469026548672,
+    0.09734513274336283,
+    0.061946902654867256,
+    0.09009009009009009
+   ],
+   "prefix_survival": [
+    0.7583333333333333,
+    0.5583333333333333,
+    0.425,
+    0.2833333333333333,
+    0.15966386554621848,
+    0.11016949152542373,
+    0.06779661016949153,
+    0.04310344827586207,
+    0.017391304347826087,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "position_weights": null
+  },
+  {
+   "updates": 2052,
+   "mean_loss": 3.8262485541403293,
+   "top1": 0.2825214899713467,
+   "position_top1": [
+    0.7833333333333333,
+    0.65,
+    0.55,
+    0.43333333333333335,
+    0.3025210084033613,
+    0.2966101694915254,
+    0.19491525423728814,
+    0.1810344827586207,
+    0.1565217391304348,
+    0.14782608695652175,
+    0.14035087719298245,
+    0.09734513274336283,
+    0.07964601769911504,
+    0.07964601769911504,
+    0.07207207207207207
+   ],
+   "prefix_survival": [
+    0.7833333333333333,
+    0.575,
+    0.45,
+    0.26666666666666666,
+    0.15126050420168066,
+    0.09322033898305085,
+    0.06779661016949153,
+    0.034482758620689655,
+    0.02608695652173913,
+    0.02608695652173913,
+    0.017543859649122806,
+    0.008849557522123894,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "position_weights": null
+  },
+  {
+   "updates": 2736,
+   "mean_loss": 3.7539790496230125,
+   "top1": 0.28882521489971347,
+   "position_top1": [
+    0.8,
+    0.65,
+    0.575,
+    0.4583333333333333,
+    0.29411764705882354,
+    0.3305084745762712,
+    0.19491525423728814,
+    0.22413793103448276,
+    0.1565217391304348,
+    0.1826086956521739,
+    0.08771929824561403,
+    0.08849557522123894,
+    0.09734513274336283,
+    0.061946902654867256,
+    0.05405405405405406
+   ],
+   "prefix_survival": [
+    0.8,
+    0.5833333333333334,
+    0.45,
+    0.2916666666666667,
+    0.15966386554621848,
+    0.11864406779661017,
+    0.07627118644067797,
+    0.0603448275862069,
+    0.043478260869565216,
+    0.043478260869565216,
+    0.017543859649122806,
+    0.008849557522123894,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "position_weights": null
+  },
+  {
+   "updates": 3420,
+   "mean_loss": 3.6293182565520206,
+   "top1": 0.30544412607449856,
+   "position_top1": [
+    0.8166666666666667,
+    0.7083333333333334,
+    0.6,
+    0.49166666666666664,
+    0.33613445378151263,
+    0.3644067796610169,
+    0.17796610169491525,
+    0.25862068965517243,
+    0.2,
+    0.14782608695652175,
+    0.07017543859649122,
+    0.09734513274336283,
+    0.07079646017699115,
+    0.08849557522123894,
+    0.07207207207207207
+   ],
+   "prefix_survival": [
+    0.8166666666666667,
+    0.65,
+    0.475,
+    0.2916666666666667,
+    0.15126050420168066,
+    0.11016949152542373,
+    0.059322033898305086,
+    0.034482758620689655,
+    0.017391304347826087,
+    0.017391304347826087,
+    0.008771929824561403,
+    0.008849557522123894,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "position_weights": null
+  },
+  {
+   "updates": 4104,
+   "mean_loss": 3.5031595253696044,
+   "top1": 0.3134670487106017,
+   "position_top1": [
+    0.825,
+    0.725,
+    0.6333333333333333,
+    0.525,
+    0.36134453781512604,
+    0.3220338983050847,
+    0.2033898305084746,
+    0.20689655172413793,
+    0.2,
+    0.2,
+    0.09649122807017543,
+    0.09734513274336283,
+    0.07964601769911504,
+    0.08849557522123894,
+    0.05405405405405406
+   ],
+   "prefix_survival": [
+    0.825,
+    0.65,
+    0.5083333333333333,
+    0.35833333333333334,
+    0.20168067226890757,
+    0.1271186440677966,
+    0.0847457627118644,
+    0.05172413793103448,
+    0.017391304347826087,
+    0.008695652173913044,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "position_weights": null
+  },
+  {
+   "updates": 4788,
+   "mean_loss": 3.5210554253309967,
+   "top1": 0.30716332378223493,
+   "position_top1": [
+    0.825,
+    0.7083333333333334,
+    0.6583333333333333,
+    0.5,
+    0.37815126050420167,
+    0.3135593220338983,
+    0.17796610169491525,
+    0.20689655172413793,
+    0.2,
+    0.17391304347826086,
+    0.09649122807017543,
+    0.07079646017699115,
+    0.07964601769911504,
+    0.061946902654867256,
+    0.07207207207207207
+   ],
+   "prefix_survival": [
+    0.825,
+    0.6583333333333333,
+    0.5333333333333333,
+    0.3416666666666667,
+    0.18487394957983194,
+    0.11864406779661017,
+    0.059322033898305086,
+    0.04310344827586207,
+    0.02608695652173913,
+    0.02608695652173913,
+    0.017543859649122806,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "position_weights": null
+  },
+  {
+   "updates": 5472,
+   "mean_loss": 3.4418162149066727,
+   "top1": 0.31060171919770774,
+   "position_top1": [
+    0.8333333333333334,
+    0.7333333333333333,
+    0.6333333333333333,
+    0.48333333333333334,
+    0.36134453781512604,
+    0.3135593220338983,
+    0.22033898305084745,
+    0.2413793103448276,
+    0.21739130434782608,
+    0.1565217391304348,
+    0.07894736842105263,
+    0.07964601769911504,
+    0.08849557522123894,
+    0.07964601769911504,
+    0.05405405405405406
+   ],
+   "prefix_survival": [
+    0.8333333333333334,
+    0.675,
+    0.5333333333333333,
+    0.3333333333333333,
+    0.18487394957983194,
+    0.1271186440677966,
+    0.06779661016949153,
+    0.04310344827586207,
+    0.043478260869565216,
+    0.02608695652173913,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "position_weights": null
+  },
+  {
+   "updates": 6156,
+   "mean_loss": 3.4435746271163223,
+   "top1": 0.30945558739255014,
+   "position_top1": [
+    0.85,
+    0.7583333333333333,
+    0.6166666666666667,
+    0.5083333333333333,
+    0.36134453781512604,
+    0.3050847457627119,
+    0.1864406779661017,
+    0.2413793103448276,
+    0.20869565217391303,
+    0.14782608695652175,
+    0.09649122807017543,
+    0.07079646017699115,
+    0.08849557522123894,
+    0.07964601769911504,
+    0.036036036036036036
+   ],
+   "prefix_survival": [
+    0.85,
+    0.7083333333333334,
+    0.525,
+    0.35,
+    0.20168067226890757,
+    0.13559322033898305,
+    0.07627118644067797,
+    0.05172413793103448,
+    0.034782608695652174,
+    0.017391304347826087,
+    0.008771929824561403,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "position_weights": null
+  },
+  {
+   "updates": 6840,
+   "mean_loss": 3.4225797245278953,
+   "top1": 0.3134670487106017,
+   "position_top1": [
+    0.8416666666666667,
+    0.75,
+    0.6333333333333333,
+    0.5166666666666667,
+    0.3865546218487395,
+    0.3474576271186441,
+    0.2033898305084746,
+    0.22413793103448276,
+    0.2,
+    0.1391304347826087,
+    0.05263157894736842,
+    0.08849557522123894,
+    0.08849557522123894,
+    0.07964601769911504,
+    0.06306306306306306
+   ],
+   "prefix_survival": [
+    0.8416666666666667,
+    0.7,
+    0.5333333333333333,
+    0.35,
+    0.21008403361344538,
+    0.15254237288135594,
+    0.0847457627118644,
+    0.06896551724137931,
+    0.05217391304347826,
+    0.02608695652173913,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "position_weights": null
+  },
+  {
+   "updates": 7524,
+   "mean_loss": 3.406966058537364,
+   "top1": 0.3157593123209169,
+   "position_top1": [
+    0.8416666666666667,
+    0.7416666666666667,
+    0.6416666666666667,
+    0.5333333333333333,
+    0.3697478991596639,
+    0.3389830508474576,
+    0.2033898305084746,
+    0.2413793103448276,
+    0.19130434782608696,
+    0.12173913043478261,
+    0.08771929824561403,
+    0.08849557522123894,
+    0.08849557522123894,
+    0.07079646017699115,
+    0.09009009009009009
+   ],
+   "prefix_survival": [
+    0.8416666666666667,
+    0.6916666666666667,
+    0.5333333333333333,
+    0.35833333333333334,
+    0.20168067226890757,
+    0.15254237288135594,
+    0.09322033898305085,
+    0.07758620689655173,
+    0.043478260869565216,
+    0.017391304347826087,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "position_weights": null
+  },
+  {
+   "updates": 8208,
+   "mean_loss": 3.41071329806,
+   "top1": 0.31805157593123207,
+   "position_top1": [
+    0.8416666666666667,
+    0.7416666666666667,
+    0.65,
+    0.525,
+    0.37815126050420167,
+    0.3474576271186441,
+    0.2033898305084746,
+    0.23275862068965517,
+    0.21739130434782608,
+    0.1391304347826087,
+    0.08771929824561403,
+    0.07964601769911504,
+    0.08849557522123894,
+    0.07079646017699115,
+    0.08108108108108109
+   ],
+   "prefix_survival": [
+    0.8416666666666667,
+    0.7,
+    0.5416666666666666,
+    0.35,
+    0.19327731092436976,
+    0.16101694915254236,
+    0.09322033898305085,
+    0.06896551724137931,
+    0.06086956521739131,
+    0.017391304347826087,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "position_weights": null
+  },
+  {
+   "updates": 8209,
+   "mean_loss": 3.41071329806,
+   "top1": 0.31805157593123207,
+   "position_top1": [
+    0.8416666666666667,
+    0.7416666666666667,
+    0.65,
+    0.525,
+    0.37815126050420167,
+    0.3474576271186441,
+    0.2033898305084746,
+    0.23275862068965517,
+    0.21739130434782608,
+    0.1391304347826087,
+    0.08771929824561403,
+    0.07964601769911504,
+    0.08849557522123894,
+    0.07079646017699115,
+    0.08108108108108109
+   ],
+   "prefix_survival": [
+    0.8416666666666667,
+    0.7,
+    0.5416666666666666,
+    0.35,
+    0.19327731092436976,
+    0.16101694915254236,
+    0.09322033898305085,
+    0.06896551724137931,
+    0.06086956521739131,
+    0.017391304347826087,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "position_weights": null
+  }
+ ],
+ "status": {
+  "status": "complete",
+  "provisional_fast_leader": {
+   "drafter": {
+    "bytes": 541022016,
+    "path": "/home/philip/BitDraft/artifacts/training/s4-data-curve-01/campaign/0002-training/exports/5b01d77625eb042e1b8c91920d82935d663678a8df8571ad5929c1efe3e6f9f1.bin",
+    "sha256": "5b01d77625eb042e1b8c91920d82935d663678a8df8571ad5929c1efe3e6f9f1"
+   },
+   "evidence": {
+    "bytes": 479023,
+    "path": "/home/philip/BitDraft/artifacts/training/s4-data-curve-01/campaign/0004-evaluation/result.json",
+    "sha256": "bee67c0cfea27b2ff91554f0b9697abf95e4516fa9bb2457d182afc3a19a4cf2"
+   },
+   "metric": "acceptance",
+   "reference": {
+    "bytes": 537406,
+    "path": "/home/philip/BitDraft/artifacts/training/s4-data-curve-01/campaign/references/ffc1126dad484d2f3ac57ecfd528463aa7c8a08b032991ae699d1086de80ea45.json",
+    "sha256": "fc610f01ed04e4a47e98c8d7afa10f7490a044dd2788e00cf2f5d10f5b9b6fa7"
+   },
+   "score": 0.5454545454545454,
+   "state": {
+    "bytes": 5100530779,
+    "path": "/home/philip/BitDraft/artifacts/training/s4-data-curve-01/campaign/0002-training/states/50a688b2d72852bbd539d729eddf001ff00ca73aae381cce0a28e045de6d87a1.bin",
+    "sha256": "50a688b2d72852bbd539d729eddf001ff00ca73aae381cce0a28e045de6d87a1"
+   }
+  },
+  "model_update_seconds": 16349.510398318991
+ },
+ "boundaries": [
+  {
+   "outcome": "model-update-time"
+  },
+  {
+   "outcome": "model-update-time"
+  },
+  {
+   "outcome": "model-update-time"
+  },
+  {
+   "outcome": "model-update-time"
+  },
+  {
+   "outcome": "journal-capacity"
+  },
+  {
+   "outcome": "model-update-time"
+  },
+  {
+   "outcome": "model-update-time"
+  },
+  {
+   "outcome": "model-update-time"
+  },
+  {
+   "outcome": "model-update-time"
+  },
+  {
+   "outcome": "update-budget"
+  }
+ ],
+ "progress_last": {
+  "cursor": 71900,
+  "updates": 80109,
+  "optimizer_seconds": 14615.907323480642,
+  "data_seconds": 1312.7421347391792,
+  "dataset_labels": 21970702
+ },
+ "interruptions": {
+  "campaign": {
+   "budget_seconds": 120.0,
+   "values": [
+    {
+     "reason": "model-update-time",
+     "resumed_segment": "0001-training",
+     "scope": "last update through checkpoint/export/evaluation and next sample readiness",
+     "seconds": 64.30797657597577
+    },
+    {
+     "reason": "model-update-time",
+     "resumed_segment": "0001-training",
+     "scope": "last update through checkpoint/export/evaluation and next sample readiness",
+     "seconds": 69.6773556349799
+    },
+    {
+     "reason": "model-update-time",
+     "resumed_segment": "0001-training",
+     "scope": "last update through checkpoint/export/evaluation and next sample readiness",
+     "seconds": 67.95364196499577
+    },
+    {
+     "reason": "model-update-time",
+     "resumed_segment": "0001-training",
+     "scope": "last update through checkpoint/export/evaluation and next sample readiness",
+     "seconds": 71.29988478601445
+    },
+    {
+     "reason": "journal-capacity",
+     "resumed_segment": "0002-training",
+     "scope": "last update through checkpoint/export/evaluation and next sample readiness",
+     "seconds": 141.91595992504153
+    }
+   ]
+  },
+  "campaign-resume": {
+   "budget_seconds": 120.0,
+   "values": [
+    {
+     "reason": "model-update-time",
+     "resumed_segment": "0001-training",
+     "scope": "last update through checkpoint/export/evaluation and next sample readiness",
+     "seconds": 64.17208908300381
+    },
+    {
+     "reason": "model-update-time",
+     "resumed_segment": "0001-training",
+     "scope": "last update through checkpoint/export/evaluation and next sample readiness",
+     "seconds": 70.958212018013
+    },
+    {
+     "reason": "model-update-time",
+     "resumed_segment": "0001-training",
+     "scope": "last update through checkpoint/export/evaluation and next sample readiness",
+     "seconds": 71.73344424692914
+    }
+   ]
+  }
+ }
+}
