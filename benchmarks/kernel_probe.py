@@ -27,6 +27,12 @@ def extract_matrix(source: Path, name: str, output: Path) -> tuple[int, ...]:
 
 def runtime_kernels(source: Path) -> str:
     text = source.read_text()
-    beginning = text.index("static __device__ float gained_value")
-    end = text.index("void ggml_cuda_w1ax_pack(")
+    start = "static __device__ float gained_value"
+    finish = "void ggml_cuda_w1ax_pack("
+    if text.count(start) != 1 or text.count(finish) != 2:
+        raise ValueError("runtime kernel boundaries differ from the supported source")
+    beginning = text.index(start)
+    end = text.index(finish)
+    if beginning >= end:
+        raise ValueError("runtime kernel boundaries are reversed")
     return text[beginning:end]

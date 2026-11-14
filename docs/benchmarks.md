@@ -29,6 +29,7 @@ explicit paths and the shared saved-reference registry.
 | `verify-greedy`, `verify-sampler`, `profile-native` | Independent decisions, distributions, kernel activation |
 | `reduce-trace` | Structural round accounting, not an independent verifier |
 | `calibrate-depth` | Serving draft depth for one target, drafter, runtime and GPU |
+| `build-kernel-benchmark`, `capture-kernel-activations`, `benchmark-kernels` | Exact kernel comparisons on supplied DEV activations |
 | `profile-rounds`, `round-profile-report` | Where a drafter's time goes inside one drafting round |
 
 Execution commands freeze source and use [the numerical environment](development.md)
@@ -501,3 +502,93 @@ dependency closure. An ignored path or finished run does not establish disposal 
 
 [Measured qualification](../results/reusable-acceptance-checks/result.md) covers complete
 training pauses, exact recovery, both target precisions and reused-reference comparisons.
+
+
+## Kernel benchmark
+
+`capture-kernel-activations SPEC OUTPUT` captures the first full six-layer drafter
+round from one declared DEV request at each requested slot count. Its specification
+has schema `kernel-capture-v1`, authenticated `build` (kernel build), `target`,
+`drafter` and `workload` artifacts, a DEV `task` ID, `slots`, `context` and `cap`
+(32–256 generated tokens). The helper intercepts the runtime quantizer, saves its
+input before quantization, and calls the original runtime function. CUDA graphs are
+disabled only for capture; captured request times are not benchmark results. Capture
+validates the six gate/down pairs, activation bit widths and tensor sizes. This
+adapter currently targets the six-layer S4 geometry. The resulting activation
+manifest is an input to the separate timing command.
+
+`build-kernel-benchmark SPEC OUTPUT` builds a standalone CUDA harness against an
+existing native runtime. It copies the kernel definitions directly from that
+runtime's `w1a1.cu`, records the source and extracted-byte hashes, compiler command,
+authored harness identities and linked runtime library identities. It does not edit
+or rebuild the runtime. The build specification has schema `kernel-build-v1`,
+`runtime` (authenticated native build result), `compiler` (authenticated nvcc), and
+`architecture` (for example `120a`). Use the same compiler, architecture and
+compatibility headers as the runtime being measured. The one-bit compile preserves
+the runtime’s `-use_fast_math --ftz=false` combination and explicit F32 rounding
+in the quantizer and affine epilogue. It uses the same source bodies, separately
+compiled into the harness; it does not claim the harness is the server binary.
+
+`benchmark-kernels SPEC OUTPUT` compares named variants on the supplied drafter,
+Baseline and authenticated DEV activation inputs. It prepares all input files before
+taking the project GPU lease, then releases the lease when the measurements finish.
+A busy lease is a refusal; retry only after the current owner's release. Never run
+compilation or checks during timing. Follow the task's allocation and quiet-period
+requirements before building or executing.
+
+The `kernel-benchmark-v1` specification contains authenticated `build` (kernel build
+result), `drafter`, `baseline`, and `activations` records; distinct `layers`, `groups` (`gate` for joint gate/up, or `down`), `slots`
+(from 2, 4, 8, 16), and `variants`; positive `warmup` and `repeats`; `trials` (3–101);
+and `bandwidth_gb_s`. The bandwidth is an explicit assumption for a lower bound,
+not a measured DRAM bandwidth. For example use 10000 initial warmups, 2000 repetitions and
+nine trials. Each trial also warms up with up to 200 launches; the first trial is
+discarded in addition to the initial warmup. Each retained
+trial records its individual CUDA-event time, and the report gives median, minimum,
+maximum and relative range. One multiply-add is counted as one operation.
+
+The activation manifest has schema `kernel-activations-v1`, role `dev`, and a
+`tensors` mapping from names such as `blk.0.ffn_gate.4` or `blk.0.ffn_down.16`
+to authenticated, token-major F32 files. Each file contains exactly slots × input
+width elements. Retain how these inputs were captured and their source identities.
+Gate and up share the same input. The runtime's quantizer applies the export's real
+input gains, clipping mode and clip value. Quantization is outside one-bit kernel
+timing; scales, row midpoints and the complete F32 affine epilogue are inside it.
+
+The available variants are `reference` (joint gate/up or dispatched down DP4A),
+`cross` (runtime cross-slot DP4A), `mma` (runtime integer tensor cores),
+`mma-broadcast` (two sign words loaded per four-lane group and broadcast before
+expansion), `mma-warp` (one 16-row warp per block to increase independent blocks),
+and `baseline` (Baseline's ordinary runtime graph). MMA tiles sixteen slots
+as two eight-slot launches. Gate/up alternatives use two launches, charged together.
+Every one-bit trial compares all final output bytes with the dispatched reference,
+including signed zeros. A mismatch remains a failed result. The Baseline uses different
+weights and is checked against its own ordinary runtime output; cross-model byte
+equality is not claimed. Gate and up Baseline results are reported separately and summed
+for comparison with the joint one-bit operation. Baseline timing includes its ordinary
+activation quantization, unlike the prepacked one-bit kernel timing.
+
+CUDA graphs replay the same launch path for each variant. The Baseline graph is
+created by the linked runtime backend with the maintained decode-consistency setting;
+its replay bypasses repeated CPU graph construction. This is an isolated hot-weight
+kernel measurement, not a full-forward speed claim. Effective weight GB/s divides
+stored weight bytes by time and does not establish actual off-chip traffic. Model
+quality, attention, vocabulary scoring and server overhead remain outside this test.
+
+Add a variant in `native/kernel-variants.cuh`, dispatch it in
+`native/kernel-benchmark.cu`, and register its name in
+`benchmarks/kernel_benchmark.py`. New matrix families can reuse the authenticated
+input manifest, sample parser, timing and identity records; add a preparation/launch
+adapter for their format and ordinary-runtime reference. Do not weaken byte equality
+for an alternative arithmetic path.
+
+Artifact disposition: retain build receipts, compiler/source identities, specifications,
+activation provenance, raw timing samples and logs under `artifacts/benchmarks/`.
+Kernel helper builds default to `artifacts/native/`.
+Extracted tensor copies and binaries are reproducible scratch; original models,
+exports and input captures remain read-only retained inputs.
+
+The Q4_K_M Baseline is mixed precision: its layer 2 and layer 5 down matrices are
+Q6_K. The adapter reads the stored Q4_K or Q6_K type and records `weight_format` and
+actual payload bytes for each measurement. It does not requantize the Baseline to
+make every matrix four-bit. Aggregate down comparisons therefore use the original
+mixed-precision Baseline; individual records distinguish the two formats.
