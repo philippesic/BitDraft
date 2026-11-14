@@ -32,6 +32,8 @@ artifact disposition are written.
 - Helpers are built against runtime-v6 in `train-expansion-01/native-helpers`.
 - Sources are stored read-only in `train-expansion-01/sources`. Non-session quotas
   (`specs/quotas-nonsession.json`) select 1,759 prompts with a 193 GB maximum forecast.
+  Legacy Dolly/Magicoder rows are excluded: they come from the old corpus that the S4
+  data-curve mixture samples.
 - `specs/chain.py` (detached, started by `specs/when_idle.sh` after 10 idle GPU minutes,
   log `logs/chain.log`) runs 640 sessions, selects up to 120 GB of sessions plus the
   non-session quotas into `bank/`, and captures shard A (sessions first, then an
