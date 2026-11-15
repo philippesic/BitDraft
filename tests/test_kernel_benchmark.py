@@ -97,6 +97,20 @@ def test_experimental_runtime_uses_qualified_kernel() -> None:
     assert "n == 4 || n == 8 || n == 16" in edits[1][2]
 
 
+def test_recovered_runtime_uses_qualified_kernel() -> None:
+    from benchmarks.runtime_edits import SOURCE_EDITS
+
+    root = Path(__file__).resolve().parents[1]
+    source = (root / "native/kernel-imma.cuh").read_text()
+    kernel = source.split("static __global__ void w1a8_sum_codes", 1)[0]
+    edits = SOURCE_EDITS["kernel_recovered_imma_v1"]
+    assert edits[0][2] == kernel + "\n" + edits[0][1]
+    for _, original, replacement in edits[1:]:
+        assert replacement.endswith(original)
+        assert "n == 2 || n == 4 || n == 8" in replacement
+        assert "recovered_imma<4,false>" in replacement
+
+
 def write_kernel_weights(
     path: Path,
     metadata: dict[str, int | float],

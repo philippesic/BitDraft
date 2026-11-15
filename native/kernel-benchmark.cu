@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include "runtime-kernels.cuh"
 #include "kernel-variants.cuh"
+#include "kernel-imma.cuh"
 
 static void checked(cudaError_t status) {
     if (status != cudaSuccess) throw std::runtime_error(cudaGetErrorString(status));
@@ -93,8 +94,16 @@ static Matrix matrix(Memory & memory, const std::string & prefix, int m, int k) 
 
 static void launch_one(const std::string & variant, Matrix weight, const int8_t * q,
                        const float * b, const float * sums, float * output, int m, int k, int n,
-                       cudaStream_t stream) {
-    if (variant == "reference") {
+                       cudaStream_t stream, const int32_t * code_sums) {
+    if (variant.rfind("imma-",0)==0) {
+        if(k%128) throw std::runtime_error("recovered IMMA requires columns divisible by 128");
+        for(int offset=0;offset<n;offset+=8) {
+            const int columns=std::min(8,n-offset);
+            if(variant=="imma-expanded" && k>4096) recovered_imma<4,true><<<(m+15)/16,128,0,stream>>>(weight.weights,weight.scales,q+offset*k,code_sums+offset,b+offset,m,k,k/32,output+offset*m,nullptr,weight.midpoint,sums+offset,columns);
+            else if(variant=="imma-split1") recovered_imma<1,false><<<(m+15)/16,32,0,stream>>>(weight.weights,weight.scales,q+offset*k,nullptr,b+offset,m,k,k/32,output+offset*m,nullptr,weight.midpoint,sums+offset,columns);
+            else recovered_imma<4,false><<<(m+15)/16,128,0,stream>>>(weight.weights,weight.scales,q+offset*k,nullptr,b+offset,m,k,k/32,output+offset*m,nullptr,weight.midpoint,sums+offset,columns);
+        }
+    } else if (variant == "reference") {
         w1ax_integer_dot<<<dim3((m+3)/4,n),dim3(32,4),0,stream>>>(weight.weights,weight.scales,q,b,m,k,k/32,output,weight.midpoint,sums);
     } else if (variant == "cross") {
         if (n == 1) exec_cross_dot<1><<<dim3((m+3)/4),dim3(32,4),0,stream>>>(weight.weights,weight.scales,q,b,m,k,k/32,output,weight.midpoint,sums,n);
@@ -126,6 +135,8 @@ static void binary(const std::string & prefix, const std::string & variant, int 
     cudaStream_t stream;
     checked(cudaStreamCreateWithFlags(&stream,cudaStreamNonBlocking));
     w1ax_quantize<<<n,256,0,stream>>>(x,k,q,b,sums,bits,mode,clip,gains);
+    auto code_sums = memory.upload(std::vector<int32_t>(n));
+    if(variant=="imma-expanded" && k>4096) w1a8_sum_codes<<<n,256,0,stream>>>(q,k,code_sums);
     int * integer_output = nullptr;
     std::vector<int> integer_reference;
 #ifdef BINARY_RSR
@@ -164,8 +175,8 @@ static void binary(const std::string & prefix, const std::string & variant, int 
         if (joint && name == "reference") {
             exec_joint_dot<<<dim3((m+3)/4,n),dim3(32,4),0,stream>>>(first.weights,first.scales,first.midpoint,output,second.weights,second.scales,second.midpoint,output+m*n,q,b,sums,m,k);
         } else {
-            launch_one(name,first,q,b,sums,output,m,k,n,stream);
-            if(joint) launch_one(name,second,q,b,sums,output+m*n,m,k,n,stream);
+            launch_one(name,first,q,b,sums,output,m,k,n,stream,code_sums);
+            if(joint) launch_one(name,second,q,b,sums,output+m*n,m,k,n,stream,code_sums);
         }
     };
     dispatch("reference");

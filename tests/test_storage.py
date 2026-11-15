@@ -46,12 +46,24 @@ def test_local_output_defaults_and_escape_refusals(tmp_path: Path) -> None:
 def test_legacy_artifacts_read_without_old_directories_or_record_rewriting(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    assert_relocated_record(tmp_path, monkeypatch, "/home/philip/binary-eagle-artifacts")
+
+
+def test_kernel_worktree_records_survive_verified_relocation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    assert_relocated_record(
+        tmp_path, monkeypatch, "/home/philip/.t3/worktrees/BitDraft/t3-eccc2c84/artifacts"
+    )
+
+
+def assert_relocated_record(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, old_root: str) -> None:
     monkeypatch.setattr(storage, "project_root", lambda: tmp_path)
     root = tmp_path / "artifacts/datasets/example"
     root.mkdir(parents=True)
     payload = root / "features"
     payload.write_bytes(b"verified existing feature bytes")
-    old = "/home/philip/binary-eagle-artifacts/datasets/example/features"
+    old = old_root + "/datasets/example/features"
     document = {
         "path": old,
         "sha256": hashlib.sha256(payload.read_bytes()).hexdigest(),
@@ -60,9 +72,7 @@ def test_legacy_artifacts_read_without_old_directories_or_record_rewriting(
     raw = json.dumps(document).encode()
     metadata = root / "record.json"
     metadata.write_bytes(raw)
-    loaded = artifact(
-        read(Path("/home/philip/binary-eagle-artifacts/datasets/example/record.json")), tmp_path
-    )
+    loaded = artifact(read(Path(old_root + "/datasets/example/record.json")), tmp_path)
     loaded.verify()
     assert loaded.path == payload and metadata.read_bytes() == raw
     assert Artifact.capture(Path(old)).sha256 == loaded.sha256
@@ -74,7 +84,7 @@ def test_legacy_artifacts_read_without_old_directories_or_record_rewriting(
     screen.write_bytes(raw)
     previous = Path("/home/philip/binary-eagle-artifacts/precision-screen/result.json")
     assert Artifact.capture(previous).path == screen
-    mount = Mount(Path("/home/philip/binary-eagle-artifacts/datasets/example"), root)
+    mount = Mount(Path(old_root + "/datasets/example"), root)
     assert mount.map(document).path == payload
     document["path"] = old + "/../../outside"
     with pytest.raises(ValueError, match="escaped"):

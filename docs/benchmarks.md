@@ -650,3 +650,19 @@ raw samples, exact-check flags and a reversed-order four-slot repeat are under
 `artifacts/benchmarks/rsr-kernels`; its `report.md` explains timing boundaries,
 index sizes and noise. All 312 RSR cases passed integer and final-byte checks.
 This qualifies the measured adapter, not a served-runtime replacement.
+
+### Recovered split-reduction tensor core variant
+
+`imma-expanded` adapts the November 4 `imma_expanded<4,...>` implementation from
+the archived `residual30-native03/ggml/src/ggml-cuda/w1a8_algorithms.cuh` snapshot
+(SHA-256 `4472b75a9b82c95040681a30a014823316dfc9f5e9625201ec06611971ef2a6e`).
+The archive receipt and original header are retained under
+`artifacts/benchmarks/imma-recovery`. The original seven-slot bounds become the
+requested count (up to eight per launch); the output uses the current runtime's
+exact affine epilogue, including midpoints. Four warps split the reduction over
+the same 16 rows, with vector loads of four sign words and a shared integer sum.
+Columns must be divisible by 128. Longer rows use the original unsigned binary
+weight form and subtract exact activation-code sums, prepared outside the matmul
+timer as in the archived caller. `imma-signed` keeps signed operands for every
+shape; `imma-split1` tests one warp with the same vector loading and unrolling.
+The latter two variants distinguish reduction parallelism from loop/load changes.
