@@ -57,7 +57,13 @@ def scenario_report(
             for control in ("target", "baseline", "prior-leader"):
                 if name == control or control not in names:
                     continue
-                comparison = paired(selected, name, control)
+                comparison = paired(
+                    [{**row, "tokens": 1} for row in selected]
+                    if scenario == "agentic-coding"
+                    else selected,
+                    name,
+                    control,
+                )
                 if name in cached or control in cached:
                     comparison = {
                         key: value for key, value in comparison.items() if "speed" not in key
@@ -87,9 +93,15 @@ def scenario_report(
                         "execution": "historical" if name in cached else "measured",
                     }
                     for name in names
-                }
+                },
+                "assigned_tasks_per_second"
+                if scenario == "agentic-coding"
+                else "tokens_per_second",
             ),
             "comparisons": comparisons,
+            "speed_measure": "assigned tasks per second, including failed tasks and tools"
+            if scenario == "agentic-coding"
+            else "emitted tokens per second",
             "by_outcome": {
                 outcome: {
                     name: unit_totals(members)
@@ -117,6 +129,11 @@ def unit_totals(rows: list[Record]) -> Record:
     summary = totals(rows)
     if all("completed" in row for row in rows):
         summary["tasks"] = summary.pop("requests")
+        summary["assigned_tasks_per_second"] = len(rows) / number(summary["wall_seconds"])
+        summary["seconds_per_assigned_task"] = number(summary["wall_seconds"]) / len(rows)
+        summary["raw_wall_seconds"] = sum(
+            number(row.get("raw_wall_seconds", row["wall_seconds"])) for row in rows
+        )
         for field in (
             "derived_rounds",
             "accepted_per_round",

@@ -1,6 +1,7 @@
+from dataclasses import replace
 from pathlib import Path
 
-from benchmarks.comparison import Comparison, routine_sampled
+from benchmarks.comparison import Comparison, protocol_covers, routine_sampled
 from benchmarks.scenarios import faster_verdict, level2_decision, scenario_report, task_scenario
 from benchmarks.statistics import paired
 from w1a1_eagle.checkpoints.store import Store
@@ -28,19 +29,13 @@ def report(specification: Path, output: Path) -> Record:
     groups_seen: set[str] = set()
     main_comparisons: Record = {}
     for name, value in record(raw["panels"]).items():
-        ref = artifact(value, root)
-        ref.verify()
-        result = read(ref.path, 64 * 1024 * 1024)
-        spec = Comparison.load(ref.path.parent / "specification.json")
-        spec.verify()
-        validate_panel(spec, result)
+        spec, result, cached = load_panel(value, root)
         identities.add(spec.serving_identity())
         selected_arm = next((arm for arm in spec.arms if arm.name == candidate), None)
         if selected_arm is None or selected_arm.drafter is None:
             raise ValueError("candidate must be freshly measured in each report panel")
         model_identities.add(selected_arm.drafter.sha256)
         groups_seen.update(string(task["group"]) for task in spec.tasks)
-        cached = spec.cached()
         rows = [record(row) for row in sequence(result["rows"])] + [
             record(row) for reference in cached.values() for row in sequence(reference["rows"])
         ]
@@ -61,6 +56,11 @@ def report(specification: Path, output: Path) -> Record:
             "arm_elapsed_seconds": result.get("arm_elapsed_seconds"),
             "resident_gpu_mib": result.get("resident_gpu_mib"),
             "memory_scope": result.get("memory_scope", "not recorded"),
+            "projection": result.get("projection", False),
+            "selected_tasks": len(spec.tasks),
+            "selected_seeds": list(spec.sampling.seeds),
+            "source_elapsed_seconds": result.get("source_elapsed_seconds"),
+            "source_arm_elapsed_seconds": result.get("source_arm_elapsed_seconds"),
         }
         if name not in {"screen", "prefix", "live"}:
             if set(scenarios) & set(groups):
@@ -91,18 +91,15 @@ def report(specification: Path, output: Path) -> Record:
         ):
             raise ValueError("confirmation must be a Level 3 report for the same candidate content")
         for name, panel in fresh_panels.items():
-            evidence = artifact(record(panel)["evidence"], confirmation.path.parent)
-            evidence.verify()
-            confirmed_spec = Comparison.load(evidence.path.parent / "specification.json")
-            confirmed_spec.verify()
+            confirmed_spec, measured, confirmed_cached = load_panel(
+                record(panel)["evidence"], confirmation.path.parent
+            )
             if (
                 confirmed_spec.role != "confirmation"
-                or confirmed_spec.references
+                or confirmed_cached
                 or confirmed_spec.serving_identity()[:-1] != next(iter(identities))[:-1]
             ):
                 raise ValueError("confirmation requires fresh arms and matching serving conditions")
-            measured = read(evidence.path, 64 * 1024 * 1024)
-            validate_panel(confirmed_spec, measured)
             model = next(
                 (arm.drafter for arm in confirmed_spec.arms if arm.name == candidate), None
             )
@@ -147,6 +144,75 @@ def report(specification: Path, output: Path) -> Record:
     store.atomic(store.root / "specification.json", canonical(raw))
     store.atomic(store.root / "result.json", canonical(final))
     return final
+
+
+def load_panel(value: object, root: Path) -> tuple[Comparison, Record, dict[str, Record]]:
+    descriptor = record(value)
+    projected = "result" in descriptor
+    if projected and set(descriptor) - {"references"} != {"result", "comparison"}:
+        raise ValueError("panel projection requires result and comparison references")
+    source_ref = artifact(descriptor["result"] if projected else value, root)
+    source_ref.verify()
+    result = read(source_ref.path, 64 * 1024 * 1024)
+    source = Comparison.load(source_ref.path.parent / "specification.json")
+    source.verify()
+    validate_panel(source, result)
+    if not projected:
+        return source, result, source.cached()
+    comparison_ref = artifact(descriptor["comparison"], root)
+    comparison_ref.verify()
+    selected = Comparison.load(comparison_ref.path)
+    selected.verify()
+    original_tasks = {string(task["id"]): task for task in source.tasks}
+    if (
+        not protocol_covers(source.reference_protocol(), selected.reference_protocol())
+        or selected.arms != source.arms
+        or selected.references != source.references
+        or selected.repeats != source.repeats
+        or selected.warmups != source.warmups
+        or any(original_tasks.get(string(task["id"])) != task for task in selected.tasks)
+    ):
+        raise ValueError("panel projection changes source protocol, arms or task definitions")
+    wanted = {string(task["id"]) for task in selected.tasks}
+    rows = [
+        record(row)
+        for row in sequence(result["rows"])
+        if record(row)["task"] in wanted
+        and record(row).get("seed", 8101) in selected.sampling.seeds
+    ]
+    subset = selected.tasks != source.tasks or selected.sampling.seeds != source.sampling.seeds
+    measured = {
+        **result,
+        "rows": rows,
+        "protocol": selected.reference_protocol(),
+        "projection": subset,
+        "source_elapsed_seconds": result.get("elapsed_seconds"),
+        "source_arm_elapsed_seconds": result.get("arm_elapsed_seconds"),
+        "elapsed_seconds": None if subset else result.get("elapsed_seconds"),
+        "arm_elapsed_seconds": None if subset else result.get("arm_elapsed_seconds"),
+    }
+    validate_panel(selected, measured)
+    if "references" in descriptor:
+        refs = tuple(
+            (name, artifact(reference, root))
+            for name, reference in record(descriptor["references"]).items()
+        )
+        if {name for name, _ in refs} != {
+            arm.name for arm in selected.arms
+        } or selected.repeats != 1:
+            raise ValueError("registered panel evidence must cover every measured arm once")
+        registered = replace(selected, references=refs).cached()
+        for arm in selected.arms:
+            saved = registered[arm.name]
+            saved_model = record(saved["drafter"])["sha256"] if saved["drafter"] else None
+            if (
+                artifact(saved["result"], root) != source_ref
+                or saved["source_arm"] != arm.name
+                or saved_model != (arm.drafter.sha256 if arm.drafter else None)
+                or saved["rows"] != [row for row in rows if row["arm"] == arm.name]
+            ):
+                raise ValueError("registered panel evidence differs from this measured source")
+    return selected, measured, selected.cached()
 
 
 def validate_panel(spec: Comparison, result: Record) -> None:

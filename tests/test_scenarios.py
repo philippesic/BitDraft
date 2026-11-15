@@ -266,3 +266,196 @@ def test_fixed_variant_coverage_and_confirmation_settings(tmp_path: Path) -> Non
     assert not qualified_scenario(
         replace(sampled, sampling=replace(sampled.sampling, seeds=(9101, 9102))), 3, "sampled"
     )
+
+
+def test_projected_panel_authenticates_full_source_and_registered_arms(tmp_path: Path) -> None:
+    from benchmarks.native import file_reference
+    from benchmarks.references import register
+    from benchmarks.scenario_report import load_panel
+
+    original = evidence(tmp_path)
+    source_result = read(tmp_path / "result.json")
+    workload = read(tmp_path / "workload.json")
+    selected_task = record(sequence(workload["tasks"])[0])
+    selected_workload = tmp_path / "selected-workload.json"
+    selected_workload.write_bytes(canonical({"schema": 1, "tasks": [selected_task]}))
+    selected_spec = read(original) | {"workload": file_reference(selected_workload)}
+    selected_path = tmp_path / "selected.json"
+    selected_path.write_bytes(canonical(selected_spec))
+    references: Record = {}
+    for arm in ("target", "baseline"):
+        registration = tmp_path / (arm + "-registration.json")
+        registration.write_bytes(
+            canonical(
+                {
+                    "schema": 1,
+                    "comparison": file_reference(selected_path),
+                    "result": file_reference(tmp_path / "result.json"),
+                    "arm": arm,
+                    "rep": 0,
+                }
+            )
+        )
+        references[arm] = register(registration, tmp_path / "registry")["reference"]
+    descriptor: Record = {
+        "comparison": file_reference(selected_path),
+        "result": file_reference(tmp_path / "result.json"),
+        "references": references,
+    }
+    spec, projected, cached = load_panel(descriptor, tmp_path)
+    assert len(spec.tasks) == 1 and len(sequence(projected["rows"])) == 2
+    assert projected["projection"] is True and projected["arm_elapsed_seconds"] is None
+    assert not cached
+    with pytest.raises(ValueError, match="every measured arm"):
+        load_panel(descriptor | {"references": {"target": references["target"]}}, tmp_path)
+    separate = tmp_path / "separate-execution"
+    separate.mkdir()
+    evidence(separate)
+    (separate / "specification.json").write_bytes(
+        canonical(read(original) | {"workload": file_reference(separate / "workload.json")})
+    )
+    for command in separate.glob("*/command.json"):
+        captured = read(command)
+        command.write_bytes(
+            canonical(
+                captured
+                | {
+                    "argv": [
+                        str(value).replace(str(separate), str(tmp_path))
+                        for value in sequence(captured["argv"])
+                    ]
+                }
+            )
+        )
+    historical: Record = {}
+    for arm in ("target", "baseline"):
+        registration = separate / (arm + "-registration.json")
+        registration.write_bytes(
+            canonical(
+                {
+                    "schema": 1,
+                    "comparison": file_reference(selected_path),
+                    "result": file_reference(separate / "result.json"),
+                    "arm": arm,
+                    "rep": 0,
+                }
+            )
+        )
+        historical[arm] = register(registration, separate / "registry")["reference"]
+    with pytest.raises(ValueError, match="differs from this measured source"):
+        load_panel(descriptor | {"references": historical}, tmp_path)
+    (tmp_path / "result.json").write_bytes(
+        canonical(source_result | {"rows": sequence(source_result["rows"])[:-1]})
+    )
+    with pytest.raises(ValueError, match="incomplete"):
+        load_panel(descriptor | {"result": file_reference(tmp_path / "result.json")}, tmp_path)
+    (tmp_path / "result.json").write_bytes(canonical(source_result))
+    selected_workload.write_bytes(
+        canonical({"schema": 1, "tasks": [selected_task | {"output_cap": 3}]})
+    )
+    selected_path.write_bytes(
+        canonical(selected_spec | {"workload": file_reference(selected_workload)})
+    )
+    with pytest.raises(ValueError, match="changes source"):
+        load_panel(descriptor | {"comparison": file_reference(selected_path)}, tmp_path)
+
+
+def test_agentic_scenario_uses_assigned_task_rate_and_keeps_failures(tmp_path: Path) -> None:
+    from dataclasses import replace
+
+    from benchmarks.scenarios import scenario_report
+
+    spec = Comparison.load(evidence(tmp_path))
+    spec = replace(spec, tasks=tuple(task | {"scenario": "agentic-coding"} for task in spec.tasks))
+    measured = read(tmp_path / "result.json")
+    rows = [
+        record(row)
+        | {
+            "tokens": 100 if record(row)["arm"] == "baseline" else 10,
+            "wall_seconds": 1.0 if record(row)["arm"] == "baseline" else 2.0,
+            "raw_wall_seconds": 3.0,
+            "completed": record(row)["task"] == "0",
+        }
+        for row in sequence(measured["rows"])
+    ]
+    result = record(scenario_report(rows, spec, {})["agentic-coding"])
+    comparison = record(record(result["comparisons"])["baseline/target"])
+    summary = record(record(result["summary"])["baseline"])
+    assert comparison["speed_ratio"] == 2.0
+    assert summary["assigned_tasks_per_second"] == 1.0
+    assert summary["speed_vs_target"] == 2.0
+    assert summary["completed_tasks"] == 1 and summary["tasks"] == 2
+    assert summary["raw_wall_seconds"] == 6.0
+    assert set(record(result["by_outcome"])) == {"completed", "failed"}
+
+
+def test_merged_admission_keeps_agentic_calibration_and_request_variants(tmp_path: Path) -> None:
+    from benchmarks.native import file_reference
+
+    path = evidence(tmp_path)
+    original = read(path)
+    template = Comparison.load(path).tasks[0]
+    workload = tmp_path / "merged-workload.json"
+
+    def load(tasks: list[Record], changes: Record) -> Comparison:
+        workload.write_bytes(canonical({"schema": 1, "tasks": tasks}))
+        path.write_bytes(canonical(original | changes | {"workload": file_reference(workload)}))
+        return Comparison.load(path)
+
+    agentic = [
+        template
+        | {
+            "id": str(index),
+            "project": "owner/project" + str(index // 2),
+            "group": "project:owner/project" + str(index // 2),
+            "scenario": "agentic-coding",
+            "style": ("minimal", "coding", "tools")[index % 3],
+            "task_kind": "bug-fix",
+            "fixture": {},
+        }
+        for index in range(12)
+    ]
+    admitted = load(agentic, {"tier": "agentic-slice"})
+    assert admitted.tasks[0]["task_kind"] == "bug-fix"
+    assert admitted.reference_protocol()["policy"] == "native-live-v3"
+    assert record(admitted.reference_protocol()["live"])["loop_accounting"] == (
+        "exclude-detection-call-from-primary; retain-raw-wall"
+    )
+    calibration: Record = {
+        "tier": "pilot",
+        "calibration": "target-only",
+        "arms": [{"name": "target", "drafter": None}],
+    }
+    assert len(load(agentic[:1], calibration).arms) == 1
+    with pytest.raises(ValueError, match="calibration"):
+        load(agentic[:1], calibration | {"arms": original["arms"]})
+    requests = [
+        template
+        | {
+            "id": str(index),
+            "group": str(index),
+            "category": "code" if index < 6 else "reasoning",
+            "output_cap": 2048,
+            "thinking": True,
+        }
+        for index in range(12)
+    ]
+    thinking = load(requests, {"tier": "thinking-slice"})
+    assert thinking.reference_protocol()["policy"] == "native-greedy-request-v3"
+    assert thinking.reference_protocol()["live"] is None
+    sampled: Record = {
+        "tier": "sampled-slice",
+        "sampling": {
+            "temperature": 0.7,
+            "top_p": 0.9,
+            "top_k": 0,
+            "min_p": 0.0,
+            "seeds": [8101, 8102],
+            "qualification": original["source"],
+        },
+    }
+    with pytest.raises(ValueError, match="scenario cohort"):
+        load(requests, sampled)
+    sampling = load([task | {"thinking": False} for task in requests], sampled)
+    assert sampling.reference_protocol()["policy"] == "native-sampled-request-v3"
+    assert sampling.sampling.seeds == (8101, 8102)

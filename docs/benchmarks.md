@@ -72,20 +72,37 @@ heldout24 and its aliases remain the final reserve and are not consumed here.
 Primary scenarios are `agentic-coding`, `coding-requests`, `chat-writing`, `reasoning`,
 `long-documents`, `thinking-on`, and `sampled`. Structured/tool requests remain separately
 reported as `structured-tools`; their regressions must also be inspected. Request/task
-metadata may carry plain `scenario`, `project` and `style` fields. An agentic project
-uses one `group` across its tasks and instruction styles, preserving project-level
+metadata may carry plain `scenario`, `project`, `style` and `task_kind` fields. An agentic project
+uses `group: project:owner/repository` across its tasks and instruction styles, preserving project-level
 uncertainty. Scenario tags do not manufacture independent observations.
 
-## Routine DEV cohorts
+## Evaluation contents and cadence
 
-| Panel | Units per candidate/target | Execution |
-| --- | ---: | --- |
-| Training screen | 60 requests, 128-token caps | One candidate pass; saved controls |
-| Broader requests | 120 requests, existing longer caps | One pass |
-| Prefix sensitivity | 6 groups × 3 prefixes = 18 requests | One pass |
-| Live | 12 tasks, two per family | One round; failures stay denominated |
-| Agentic slice (Level 2) | 12 tasks, two per project | One greedy pass; saved controls; [scope](#agentic-coding-panels) |
-| Agentic suite (Level 3) | 60 tasks across six projects | One greedy pass; project-group intervals; failures stay denominated |
+| Level | Panel | Units per candidate/target | Execution |
+| --- | --- | ---: | --- |
+| 1 | Teacher-forced diagnostics | Original 120 DEV windows + 20 agentic-history + 20 thinking | Separate metrics; no native speed claim |
+| 1, 2, 3 | Training screen | 60 requests, 128-token caps | Candidate pass; saved controls |
+| 2, 3 | Broader requests | 120 requests, existing longer caps | One pass; four ordinary primary scenarios plus structured/tools |
+| 2, 3 | Prefix sensitivity | 6 groups × 3 prefixes = 18 requests | Supplementary sensitivity check |
+| 2, 3 | Legacy live | 12 tasks, two per family | Supplementary application check; failures stay denominated |
+| 2 | Thinking slice | 12 requests, thinking enabled, 2,048-token cap | One greedy pass |
+| 2 | Sampled slice | Same 12 requests, thinking disabled × 2 seeds | Temperature 0.7; paired by request and seed |
+| 2 | Agentic slice | 12 tasks, two per project | One greedy pass; [scope](#agentic-coding-panels) |
+| 3 | Thinking suite | 40 requests, thinking enabled, 2,048-token cap | One greedy pass |
+| 3 | Sampled suite | Same 40 requests, thinking disabled × 3 seeds | Same sampler as slice |
+| 3 | Agentic suite | 60 tasks across six projects | One greedy pass; project-group intervals; failures stay denominated |
+
+Level 2 is the complete development comparison, not just the broader120 panel. Level 3
+replaces the three small slices with their full sets; nested rows are not independent
+extra observations. The agentic slice completes only 5/12 Q4KM and 7/12 NVFP4, versus
+37/60 in each full suite, identically across all three arms. Keep this coverage limitation
+visible instead of selecting a more favorable slice after seeing results.
+Measured costs are below for [routine cohorts](#routine-dev-cohorts),
+[thinking, sampled and diagnostics](#measured-cost-of-thinking-and-sampled-coverage),
+and [agentic panels](#agentic-coding-panels). Each distinguishes request/task time from
+whole-arm allocation and projected slices from standalone execution.
+
+## Routine DEV cohorts
 
 Screen categories: 15 code, 12 documents, 10 reasoning, 10 conversation, 8 structured/tool,
 5 writing. Input bands: 30 below 512 tokens, 18 at 512–2047, 9 at 2048–8191, 3 at 8192–16384.
@@ -112,13 +129,29 @@ access receipts; a new label supplies no unseen data. Never consume heldout24 al
 Public dialogue is partly synthetic, planning dominates non-arithmetic reasoning, and
 long inputs are mostly papers. Length is not difficulty; this is not measured traffic.
 One-project trials cannot establish universal transfer. Workflow regressions cannot be
-rescued by request scores. Broader candidate runtime aims for 15–20 minutes/precision;
-measure it rather than treating that estimate as qualification.
+rescued by request scores. Use the measured per-panel costs below to budget the complete
+Level 2 comparison; the broader request panel alone does not represent its cost.
+
+The four shared routine cohorts have these measured costs for final export `405e326b…`.
+Target-only and Baseline columns are saved historical request/task seconds; HE4 was
+executed candidate-only. Final panel wall includes its loading, warmup and bookkeeping.
+These costs describe each format separately and do not imply matched timing intervals.
+
+| Format / cohort | Saved target s | Saved Baseline s | Final HE4 s | Final panel wall s |
+| --- | ---: | ---: | ---: | ---: |
+| Q4KM / screen | 45.9 | 34.1 | 33.5 | 38.5 |
+| Q4KM / broader120 | 261.3 | 183.8 | 195.5 | 202.7 |
+| Q4KM / prefix18 | 23.5 | 13.9 | 14.4 | 21.4 |
+| Q4KM / live12 | 81.3 | 58.8 | 53.5 | 60.4 |
+| NVFP4 / screen | 41.5 | 30.8 | 30.9 | 35.3 |
+| NVFP4 / broader120 | 243.9 | 172.2 | 182.3 | 188.2 |
+| NVFP4 / prefix18 | 22.3 | 13.0 | 13.5 | 17.1 |
+| NVFP4 / live12 | 54.8 | 42.1 | 39.7 | 48.8 |
 
 ### What each panel resembles
 
 Measured on the Q4KM target-only arm; the training column is the frozen 6K TRAIN bank.
-The current 220,095-update state was trained on the earlier 15,647-capture corpus.
+The earlier 220,095-update state was trained on the 15,647-capture corpus.
 
 | Property | 6K TRAIN bank | Training screen | DEV requests | Live tasks |
 | --- | ---: | ---: | ---: | ---: |
@@ -177,7 +210,10 @@ Request policy v3 (`native-greedy-request-v3`, `native-live-v3`) serves with run
 stopping token out of the slot cache when it was an accepted draft
 ([stop-token cache](../results/stop-token-cache-exactness/result.md)). Target and Baseline
 references exist for both targets on all four cohorts, and S4 is the prior leader on all
-four. Everything they depend on is in `artifacts/benchmarks/runtime-v7-depth3/`:
+four in the original specifications. Additive candidate/leader specifications under
+`specs/scenario-levels-01/` bind final-state references for export `405e326b…`; the
+original campaign screen and S4 records remain valid. Their shared root is
+`artifacts/benchmarks/runtime-v7-depth3/`:
 
 | Folder | Contents |
 | --- | --- |
@@ -365,14 +401,14 @@ seeds, although sampled validity does not require that equality.
 
 The separate 20 agentic and 20 thinking diagnostic windows add 10.6 seconds to the
 training-time measurement: 2.9 seconds agentic and 7.7 thinking. The combined 160-window
-pass took 20.6 seconds and preserved all original 120-window metrics exactly. The two-update resident pilot measured a complete checkpoint/export/screen/restore/next-
+pass took 20.6 seconds and preserved all original 120-window metrics exactly. The Q4KM two-update resident pilot measured a complete checkpoint/export/screen/restore/next-
 sample interruption of 73.4 seconds, below the 120-second budget. Its supplementary groups
 added 4.5–4.6 seconds per resident pass; startup and standalone timings remain separate.
 
 ### Scenario reports and decisions
 
 `scenario-report SPEC OUTPUT` accepts `schema: scenario-report-v1`, `level: 2|3`,
-`candidate`, authenticated result references in `panels`, and `confirmation: null` (or
+`candidate`, authenticated evidence in `panels`, and `confirmation: null` (or
 an authenticated successful fresh Level 3 report). Panels share the target/runtime/context/
 depth/role and candidate content. Each panel retains its own scenarios; primary panels
 cannot duplicate a scenario. The names `screen`, `prefix`, and `live` are supplementary
@@ -382,15 +418,35 @@ Fresh confirmation needs at least 20 requests per request scenario and 15 agenti
 Its thinking and sampled requests keep the same mode, cap and sampling policy as DEV;
 sampled confirmation requires three fresh seeds and authenticated sampler qualification.
 Use separate reports for Q4KM and NVFP4.
+
+Each panel accepts a result artifact reference directly, or an object containing
+authenticated `result` and desired `comparison` references, plus optional `references`
+mapping every measured arm to its saved registry record. The latter projects a fixed
+slice from a complete source suite. Source tasks, arms, protocol and seed selection are
+authenticated before projection. Registry proofs must bind that same simultaneous
+source execution and the exact selected rows; unrelated historical controls cannot gain
+a fresh interval this way. Projected panels retain source allocation time separately and
+leave standalone slice allocation time unavailable. The joint reports use this contract
+for both slice and suite references, including the agentic evidence.
+
 Reports include speed versus target-only and Baseline, paired 95% intervals for fresh
 matched arms, acceptance, drafter bytes, and recorded resident GPU MiB. Application panels
 also show completed/failed strata and completion counts; a completion regression cannot
-pass the verdict. `arm_elapsed_seconds`, when recorded, includes model load, warmups and
+pass the verdict. Agentic speed is assigned tasks divided by total primary task time,
+including tools and failed tasks; it is not generated-token throughput. Project groups
+stay together in the bootstrap. Loop-detection cost stays in raw cost reporting while
+the repeated detection call remains excluded from primary task time. Request scenarios
+use emitted tokens per request second. `arm_elapsed_seconds`, when recorded, includes model load, warmups and
 teardown; summed row seconds measure only the panel requests/tasks. Resident memory
 is a device-wide after-load observation, including target, KV, drafter and desktop; it
 is not peak allocation or incremental drafter memory. Older runs without this receipt
 report memory unavailable. Historical speed ratios never acquire paired timing intervals
 through re-reporting. Source-group intervals cover prompt variation, not between-run drift.
+The [joint final-candidate standings](../results/scenario-benchmark-levels/joint-standings.md)
+include every primary scenario for both levels and formats. Thinking/sampled regressions
+prevent a faster claim on both formats; Q4KM agentic also fails the interval rule, while
+NVFP4 agentic alone narrowly passes it. Neither outcome supplies missing fresh timing
+intervals for the ordinary request scenarios or replaces fresh confirmation.
 
 ### Frozen request confirmation reserve
 

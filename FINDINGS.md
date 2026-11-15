@@ -12,9 +12,12 @@ See [closeout specification](docs/results.md).
 
 ### F0xx: Does broader scenario coverage establish that final S4 is faster?
 
-No. Final S4 beats target-only but trails Baseline on both thinking and sampled
-requests in Q4KM and NVFP4. Three-level reporting now requires every primary scenario
-and fresh confirmation. The extended 160-window diagnostics preserved the original
+No. The joint seven-scenario reports include the registered agentic slice and suite:
+Q4KM agentic is inconclusive against Baseline and NVFP4 narrowly leads, while thinking
+and sampled requests trail Baseline on both formats. Ordinary request speeds against
+saved controls remain historical, without fresh timing intervals. Both Level 2 reports
+require Level 3 and neither full report establishes “faster.” The agentic slices complete
+5/12 and 7/12 versus 37/60 in each full suite. The extended 160-window diagnostics preserved the original
 120 metrics and passed a 73.4-second resident interruption; 120 fresh confirmation
 requests remain frozen and unexecuted. [Result](results/scenario-benchmark-levels/result.md).
 

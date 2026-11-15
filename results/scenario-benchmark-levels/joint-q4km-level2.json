@@ -1,0 +1,2352 @@
+{
+  "level2": {
+    "level3_required": true,
+    "reasons": [
+      "agentic-coding: direction disagrees with main panel against baseline",
+      "chat-writing: acceptance below saved baseline beyond interval",
+      "long-documents: acceptance below saved baseline beyond interval",
+      "reasoning: acceptance below saved baseline beyond interval",
+      "structured-tools: direction disagrees with main panel against baseline",
+      "sampled: slower than baseline beyond interval",
+      "thinking-on: slower than baseline beyond interval"
+    ],
+    "scope": "absence of an escalation trigger is not a speed qualification",
+    "timing_unresolved": [
+      "chat-writing: no paired timing interval against baseline",
+      "chat-writing: no paired timing interval against prior-leader",
+      "coding-requests: no paired timing interval against baseline",
+      "coding-requests: no paired timing interval against prior-leader",
+      "long-documents: no paired timing interval against baseline",
+      "long-documents: no paired timing interval against prior-leader",
+      "reasoning: no paired timing interval against baseline",
+      "reasoning: no paired timing interval against prior-leader",
+      "structured-tools: no paired timing interval against baseline",
+      "structured-tools: no paired timing interval against prior-leader"
+    ]
+  },
+  "panels": {
+    "agentic": {
+      "arm_elapsed_seconds": null,
+      "coverage_qualified": {
+        "agentic-coding": true
+      },
+      "elapsed_seconds": null,
+      "evidence": {
+        "comparison": {
+          "bytes": 3071,
+          "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/cohorts-v5-q4km/agentic-slice-establish.json",
+          "sha256": "31e0cb4400f1b817cff4e29f7cc2e2999bf08f66057fd3d8e66924db3d06027a"
+        },
+        "references": {
+          "baseline": {
+            "bytes": 754561,
+            "path": "/home/philip/BitDraft/artifacts/benchmarks/references/7ca1dcf6054644efd11ebe6bc306209b952db73e19222c96c94cc9feefcb281a.json",
+            "sha256": "625968009bd4deda3b1443b117227253643ee225ae0fb1488f1350fcb22b997c"
+          },
+          "candidate": {
+            "bytes": 754690,
+            "path": "/home/philip/BitDraft/artifacts/benchmarks/references/388e9dc749dbe6dba302cfbde1bf54eeeca8d58e382160ed333ab579dd4e5c3f.json",
+            "sha256": "bc7f9aadcca9f347bd3bfd82b9beafe0fa8bc9539a096223d4a8d5c017e3c8a1"
+          },
+          "target": {
+            "bytes": 754286,
+            "path": "/home/philip/BitDraft/artifacts/benchmarks/references/5db389652aba9c8e47691065f05f88aa42f231db9edf367db9a98eb5e98c251b.json",
+            "sha256": "accefd2a4b5110909466634d19e9496fde8aec10a4f89c8915287c9ca7ad09a5"
+          }
+        },
+        "result": {
+          "bytes": 3875143,
+          "path": "/home/philip/BitDraft/artifacts/benchmarks/agentic-coding-01/runs/q4km-suite-v5/result.json",
+          "sha256": "887f577543ba412335d4a47293bcef6491ecf0a41252ace49723d4b1cb36cc55"
+        }
+      },
+      "memory_scope": "not recorded",
+      "projection": true,
+      "resident_gpu_mib": null,
+      "selected_seeds": [
+        8101
+      ],
+      "selected_tasks": 12,
+      "source_arm_elapsed_seconds": {
+        "0-baseline": 557.0367050700588,
+        "0-candidate": 560.4316248130053,
+        "0-target": 737.9248752059648
+      },
+      "source_elapsed_seconds": 1855.7086279880023
+    },
+    "live": {
+      "arm_elapsed_seconds": null,
+      "coverage_qualified": {
+        "unclassified": false
+      },
+      "elapsed_seconds": 60.440927598043345,
+      "evidence": {
+        "bytes": 102866,
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/scenario-levels-01/runs/q4km-live-final/result.json",
+        "sha256": "aae0a895e69c5da17dae9275e8c691040b34cc4fdfa1903ce49811d36c2d4cb7"
+      },
+      "memory_scope": "not recorded",
+      "projection": false,
+      "resident_gpu_mib": null,
+      "selected_seeds": [
+        8101
+      ],
+      "selected_tasks": 12,
+      "source_arm_elapsed_seconds": null,
+      "source_elapsed_seconds": null
+    },
+    "prefix": {
+      "arm_elapsed_seconds": {
+        "candidate": 20.83856414805632
+      },
+      "coverage_qualified": {
+        "coding-requests": false,
+        "structured-tools": false
+      },
+      "elapsed_seconds": 21.423751956084743,
+      "evidence": {
+        "bytes": 117404,
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/scenario-levels-01/runs/q4km-harness-final/result.json",
+        "sha256": "92c666f7dfc3d5380a2764b0cff3da02b7ce41bf01891526deaffeeb81880ceb"
+      },
+      "memory_scope": "device-wide resident memory after model load; includes target, KV, drafter and desktop; not peak inference allocation",
+      "projection": false,
+      "resident_gpu_mib": {
+        "candidate": 6248.0
+      },
+      "selected_seeds": [
+        8101
+      ],
+      "selected_tasks": 18,
+      "source_arm_elapsed_seconds": null,
+      "source_elapsed_seconds": null
+    },
+    "requests": {
+      "arm_elapsed_seconds": {
+        "candidate": 201.45377292309422
+      },
+      "coverage_qualified": {
+        "chat-writing": true,
+        "coding-requests": true,
+        "long-documents": true,
+        "reasoning": true,
+        "structured-tools": true
+      },
+      "elapsed_seconds": 202.68744219793007,
+      "evidence": {
+        "bytes": 1032732,
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/scenario-levels-01/runs/q4km-requests-final/result.json",
+        "sha256": "4d0ef1aa4ac2c55e61e45ec13e5dfb93147802108534b2836a8760c4085a3dda"
+      },
+      "memory_scope": "device-wide resident memory after model load; includes target, KV, drafter and desktop; not peak inference allocation",
+      "projection": false,
+      "resident_gpu_mib": {
+        "candidate": 6248.0
+      },
+      "selected_seeds": [
+        8101
+      ],
+      "selected_tasks": 120,
+      "source_arm_elapsed_seconds": null,
+      "source_elapsed_seconds": null
+    },
+    "sampled": {
+      "arm_elapsed_seconds": null,
+      "coverage_qualified": {
+        "sampled": true
+      },
+      "elapsed_seconds": null,
+      "evidence": {
+        "comparison": {
+          "bytes": 4251,
+          "path": "/home/philip/BitDraft/artifacts/benchmarks/scenario-levels-01/specs/q4km-sampled-slice.json",
+          "sha256": "ed12047839b0f18d03c1d9670ee0455fa15967652d72d9b45cf69d950cceba75"
+        },
+        "references": {
+          "baseline": {
+            "bytes": 186133,
+            "path": "/home/philip/BitDraft/artifacts/benchmarks/references/d9d28c67dca40c6668c19f75f0176372ef140f5626857bbebdf5c4d178196a64.json",
+            "sha256": "ac002a9359c4c89cf568773311635459bcea8bafeaa69ce5e9f99dec2a8a8b29"
+          },
+          "candidate": {
+            "bytes": 186256,
+            "path": "/home/philip/BitDraft/artifacts/benchmarks/references/4246a009ddcab94495da1bd01e28373125f6f787ddc03e5accbbacdfb117bf4a.json",
+            "sha256": "6f07fc447bbed03d0947b535005caf66de283a1bfaaec3ff5e53c219858758c9"
+          },
+          "target": {
+            "bytes": 185429,
+            "path": "/home/philip/BitDraft/artifacts/benchmarks/references/6a75afe62d74db960e89042a0fba80f452a5727b2a97907a54835eac11e7610f.json",
+            "sha256": "bf9408e312c090edb35e9b4a39b2f5379912e6b089524bb9c5a48f2302a6ed60"
+          }
+        },
+        "result": {
+          "bytes": 263337,
+          "path": "/home/philip/BitDraft/artifacts/benchmarks/scenario-levels-01/runs/q4km-sampled-suite/result.json",
+          "sha256": "f6eb86500eecdb8a1301e30e20f588b64ef9c4692a606a263cc7c5dd0b2e33cb"
+        }
+      },
+      "memory_scope": "device-wide resident memory after model load; includes target, KV, drafter and desktop; not peak inference allocation",
+      "projection": true,
+      "resident_gpu_mib": {
+        "baseline": 6040.0,
+        "candidate": 6222.0,
+        "target": 4342.0
+      },
+      "selected_seeds": [
+        8101,
+        8102
+      ],
+      "selected_tasks": 12,
+      "source_arm_elapsed_seconds": {
+        "baseline": 492.34739692509174,
+        "candidate": 515.0086147990078,
+        "target": 650.783871066873
+      },
+      "source_elapsed_seconds": 1658.4761647089617
+    },
+    "screen": {
+      "arm_elapsed_seconds": {
+        "candidate": 37.620224702055566
+      },
+      "coverage_qualified": {
+        "chat-writing": false,
+        "coding-requests": false,
+        "long-documents": false,
+        "reasoning": false,
+        "structured-tools": false
+      },
+      "elapsed_seconds": 38.47181872196961,
+      "evidence": {
+        "bytes": 519921,
+        "path": "/home/philip/BitDraft/artifacts/benchmarks/scenario-levels-01/runs/q4km-screen-final/result.json",
+        "sha256": "d8ad040252390bbf5b2d1a2afdc5b08551d981efe3e41ffb18aa051ab8c75a3a"
+      },
+      "memory_scope": "device-wide resident memory after model load; includes target, KV, drafter and desktop; not peak inference allocation",
+      "projection": false,
+      "resident_gpu_mib": {
+        "candidate": 6248.0
+      },
+      "selected_seeds": [
+        8101
+      ],
+      "selected_tasks": 60,
+      "source_arm_elapsed_seconds": null,
+      "source_elapsed_seconds": null
+    },
+    "thinking": {
+      "arm_elapsed_seconds": null,
+      "coverage_qualified": {
+        "thinking-on": true
+      },
+      "elapsed_seconds": null,
+      "evidence": {
+        "comparison": {
+          "bytes": 3875,
+          "path": "/home/philip/BitDraft/artifacts/benchmarks/scenario-levels-01/specs/q4km-thinking-slice.json",
+          "sha256": "f4c05f07ec49ea81adccfe6460a5c7d0e0d2eeaa6d9e1746b3fd92d8b0d18af7"
+        },
+        "references": {
+          "baseline": {
+            "bytes": 191847,
+            "path": "/home/philip/BitDraft/artifacts/benchmarks/references/2c4101fa77147218696064e11f223b101aea35d68f06065c05ef92759fb60ce2.json",
+            "sha256": "7f2398ab57d399827b6a09b17f568bfcb91b4e46cdc08a3a87c541389556c83b"
+          },
+          "candidate": {
+            "bytes": 191980,
+            "path": "/home/philip/BitDraft/artifacts/benchmarks/references/f819edb3122dca223fe077806e908deb24639eb561fc0aea3d58fd41fa67ad15.json",
+            "sha256": "b7e9a1dcd8825fe1911f7f53b92ba29ea653ab00daa787cb8754f1b2bbeaf4c5"
+          },
+          "target": {
+            "bytes": 191454,
+            "path": "/home/philip/BitDraft/artifacts/benchmarks/references/2bca2f23342012564bf05af4966750f10a79e219395941e7fb8386908c7effdc.json",
+            "sha256": "9e21954f6d82972849144adc04ca2042dbb547fa036a93df0ad6cd54bd1f0245"
+          }
+        },
+        "result": {
+          "bytes": 142128,
+          "path": "/home/philip/BitDraft/artifacts/benchmarks/scenario-levels-01/runs/q4km-thinking-suite/result.json",
+          "sha256": "f30abb0ee10443fb38746f9728f6c9435430731da669827460a1c7179a1edf5a"
+        }
+      },
+      "memory_scope": "device-wide resident memory after model load; includes target, KV, drafter and desktop; not peak inference allocation",
+      "projection": true,
+      "resident_gpu_mib": {
+        "baseline": 6033.0,
+        "candidate": 6215.0,
+        "target": 4335.0
+      },
+      "selected_seeds": [
+        8101
+      ],
+      "selected_tasks": 12,
+      "source_arm_elapsed_seconds": null,
+      "source_elapsed_seconds": 797.5740977820242
+    }
+  },
+  "primary_scenarios": {
+    "agentic-coding": {
+      "by_outcome": {
+        "completed": {
+          "baseline": {
+            "acceptance": 0.6239794728248192,
+            "accepted": 2675,
+            "assigned_tasks_per_second": 0.12128696270693586,
+            "correct": true,
+            "proposed": 4287,
+            "raw_wall_seconds": 41.224546220037155,
+            "seconds_per_assigned_task": 8.244909244007431,
+            "server_prediction_seconds": 18.732249,
+            "server_prompt_seconds": 12.45937,
+            "tasks": 5,
+            "tokens": 4159,
+            "tokens_per_second": 100.88649557962924,
+            "wall_seconds": 41.224546220037155
+          },
+          "candidate": {
+            "acceptance": 0.6666666666666666,
+            "accepted": 2740,
+            "assigned_tasks_per_second": 0.12311990047742431,
+            "correct": true,
+            "proposed": 4110,
+            "raw_wall_seconds": 40.61081905208994,
+            "seconds_per_assigned_task": 8.122163810417987,
+            "server_prediction_seconds": 17.862541,
+            "server_prompt_seconds": 12.489213,
+            "tasks": 5,
+            "tokens": 4159,
+            "tokens_per_second": 102.41113321712155,
+            "wall_seconds": 40.61081905208994
+          },
+          "target": {
+            "acceptance": null,
+            "accepted": 0,
+            "assigned_tasks_per_second": 0.09735488507467453,
+            "correct": true,
+            "proposed": 0,
+            "raw_wall_seconds": 51.35849111387506,
+            "seconds_per_assigned_task": 10.271698222775012,
+            "server_prediction_seconds": 30.944739,
+            "server_prompt_seconds": 10.644984,
+            "tasks": 5,
+            "tokens": 4159,
+            "tokens_per_second": 80.97979340511428,
+            "wall_seconds": 51.35849111387506
+          }
+        },
+        "failed": {
+          "baseline": {
+            "acceptance": 0.615298819592899,
+            "accepted": 6620,
+            "assigned_tasks_per_second": 0.08831471987635434,
+            "correct": true,
+            "proposed": 10759,
+            "raw_wall_seconds": 80.05887957091909,
+            "seconds_per_assigned_task": 11.323140710858363,
+            "server_prediction_seconds": 48.823023000000006,
+            "server_prompt_seconds": 22.660187000000004,
+            "tasks": 7,
+            "tokens": 10303,
+            "tokens_per_second": 129.98665126943982,
+            "wall_seconds": 79.26198497600853
+          },
+          "candidate": {
+            "acceptance": 0.635036496350365,
+            "accepted": 6699,
+            "assigned_tasks_per_second": 0.08893490336858817,
+            "correct": true,
+            "proposed": 10549,
+            "raw_wall_seconds": 79.40782306494657,
+            "seconds_per_assigned_task": 11.244179305570599,
+            "server_prediction_seconds": 47.78167500000001,
+            "server_prompt_seconds": 22.871735,
+            "tasks": 7,
+            "tokens": 10303,
+            "tokens_per_second": 130.89947277236627,
+            "wall_seconds": 78.7092551389942
+          },
+          "target": {
+            "acceptance": null,
+            "accepted": 0,
+            "assigned_tasks_per_second": 0.0658397995389915,
+            "correct": true,
+            "proposed": 0,
+            "raw_wall_seconds": 107.19914486515336,
+            "seconds_per_assigned_task": 15.188381602039694,
+            "server_prediction_seconds": 79.669382,
+            "server_prompt_seconds": 19.015235,
+            "tasks": 7,
+            "tokens": 10303,
+            "tokens_per_second": 96.90677923574707,
+            "wall_seconds": 106.31867121427786
+          }
+        }
+      },
+      "comparisons": {
+        "baseline/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 6,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "simultaneous_speed_ratio_interval": {
+            "lower": 1.2303266051503972,
+            "upper": 1.3780705011421752
+          },
+          "speed_ratio": 1.3086704444299562,
+          "speed_ratio_95_interval": {
+            "lower": 1.2303266051503972,
+            "upper": 1.3780705011421752
+          },
+          "strata": {
+            "[('code', 2)]": 6
+          }
+        },
+        "candidate/baseline": {
+          "acceptance_difference": 0.026132603042100522,
+          "acceptance_difference_95_interval": {
+            "lower": -0.00425589324501241,
+            "upper": 0.07340087319808075
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 6,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": -0.00425589324501241,
+            "upper": 0.07340087319808075
+          },
+          "simultaneous_speed_ratio_interval": {
+            "lower": 0.9853513761234048,
+            "upper": 1.0355316805589085
+          },
+          "speed_ratio": 1.0097758655688862,
+          "speed_ratio_95_interval": {
+            "lower": 0.9853513761234048,
+            "upper": 1.0355316805589085
+          },
+          "strata": {
+            "[('code', 2)]": 6
+          }
+        },
+        "candidate/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 6,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "simultaneous_speed_ratio_interval": {
+            "lower": 1.2650953308891124,
+            "upper": 1.3670006932110301
+          },
+          "speed_ratio": 1.321463830768678,
+          "speed_ratio_95_interval": {
+            "lower": 1.2650953308891124,
+            "upper": 1.3670006932110301
+          },
+          "strata": {
+            "[('code', 2)]": 6
+          }
+        },
+        "target/baseline": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 6,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "simultaneous_speed_ratio_interval": {
+            "lower": 0.7256522791621894,
+            "upper": 0.8127923071920877
+          },
+          "speed_ratio": 0.7641343198788217,
+          "speed_ratio_95_interval": {
+            "lower": 0.7256522791621894,
+            "upper": 0.8127923071920877
+          },
+          "strata": {
+            "[('code', 2)]": 6
+          }
+        }
+      },
+      "speed_measure": "assigned tasks per second, including failed tasks and tools",
+      "summary": {
+        "baseline": {
+          "acceptance": 0.617772165359564,
+          "accepted": 9295,
+          "assigned_tasks_per_second": 0.09959619453625564,
+          "completed_tasks": 5,
+          "correct": true,
+          "drafter_bytes": 381456064,
+          "execution": "measured",
+          "proposed": 15046,
+          "raw_wall_seconds": 121.28342579095624,
+          "resident_gpu_mib": null,
+          "seconds_per_assigned_task": 10.040544266337141,
+          "server_prediction_seconds": 67.55527200000002,
+          "server_prompt_seconds": 35.11955700000001,
+          "speed_vs_baseline": 1.0,
+          "speed_vs_target": 1.3086704444299562,
+          "tasks": 12,
+          "tokens": 14462,
+          "tokens_per_second": 120.03001378194408,
+          "wall_seconds": 120.48653119604569
+        },
+        "candidate": {
+          "acceptance": 0.6439047684016646,
+          "accepted": 9439,
+          "assigned_tasks_per_second": 0.1005698335452147,
+          "completed_tasks": 5,
+          "correct": true,
+          "drafter_bytes": 541022016,
+          "execution": "measured",
+          "proposed": 14659,
+          "raw_wall_seconds": 120.0186421170365,
+          "resident_gpu_mib": null,
+          "seconds_per_assigned_task": 9.943339515923677,
+          "server_prediction_seconds": 65.644216,
+          "server_prompt_seconds": 35.360948,
+          "speed_vs_baseline": 1.0097758655688862,
+          "speed_vs_target": 1.321463830768678,
+          "tasks": 12,
+          "tokens": 14462,
+          "tokens_per_second": 121.20341106090792,
+          "wall_seconds": 119.32007419108413
+        },
+        "target": {
+          "acceptance": null,
+          "accepted": 0,
+          "assigned_tasks_per_second": 0.07610487037448052,
+          "completed_tasks": 5,
+          "correct": true,
+          "drafter_bytes": 0,
+          "execution": "measured",
+          "proposed": 0,
+          "raw_wall_seconds": 158.55763597902842,
+          "resident_gpu_mib": null,
+          "seconds_per_assigned_task": 13.139763527346076,
+          "server_prediction_seconds": 110.61412099999998,
+          "server_prompt_seconds": 29.660219,
+          "speed_vs_baseline": 0.7641343198788217,
+          "speed_vs_target": 1.0,
+          "tasks": 12,
+          "tokens": 14462,
+          "tokens_per_second": 91.71905294631144,
+          "wall_seconds": 157.67716232815292
+        }
+      },
+      "timing_scope": "matched greedy output paths"
+    },
+    "chat-writing": {
+      "by_outcome": {},
+      "comparisons": {
+        "baseline/prior-leader": {
+          "acceptance_difference": 0.12416039255002698,
+          "acceptance_difference_95_interval": {
+            "lower": 0.11453599400670961,
+            "upper": 0.132422315621475
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 30,
+          "historical_speed_ratio": 1.164778952068966,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": 0.11453599400670961,
+            "upper": 0.132422315621475
+          },
+          "strata": {
+            "[('conversation', 1)]": 20,
+            "[('writing', 1)]": 10
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "baseline/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 30,
+          "historical_speed_ratio": 1.3359169318568191,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('conversation', 1)]": 20,
+            "[('writing', 1)]": 10
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "candidate/baseline": {
+          "acceptance_difference": -0.08100505296442234,
+          "acceptance_difference_95_interval": {
+            "lower": -0.09036610578267962,
+            "upper": -0.06864180814964688
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 30,
+          "historical_speed_ratio": 0.9095090559690308,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": -0.09036610578267962,
+            "upper": -0.06864180814964688
+          },
+          "strata": {
+            "[('conversation', 1)]": 20,
+            "[('writing', 1)]": 10
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "candidate/prior-leader": {
+          "acceptance_difference": 0.043155339585604635,
+          "acceptance_difference_95_interval": {
+            "lower": 0.03637067470627148,
+            "upper": 0.051887879857616614
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 30,
+          "historical_speed_ratio": 1.059377005108842,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": 0.03637067470627148,
+            "upper": 0.051887879857616614
+          },
+          "strata": {
+            "[('conversation', 1)]": 20,
+            "[('writing', 1)]": 10
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "candidate/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 30,
+          "historical_speed_ratio": 1.2150285475461395,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('conversation', 1)]": 20,
+            "[('writing', 1)]": 10
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "prior-leader/baseline": {
+          "acceptance_difference": -0.12416039255002698,
+          "acceptance_difference_95_interval": {
+            "lower": -0.13243676130344317,
+            "upper": -0.11459589215236538
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 30,
+          "historical_speed_ratio": 0.8585319971860125,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": -0.13243676130344317,
+            "upper": -0.11459589215236538
+          },
+          "strata": {
+            "[('conversation', 1)]": 20,
+            "[('writing', 1)]": 10
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "prior-leader/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 30,
+          "historical_speed_ratio": 1.1469274315816451,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('conversation', 1)]": 20,
+            "[('writing', 1)]": 10
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "target/baseline": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 30,
+          "historical_speed_ratio": 0.7485495363922656,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('conversation', 1)]": 20,
+            "[('writing', 1)]": 10
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "target/prior-leader": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 30,
+          "historical_speed_ratio": 0.8718947445706935,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('conversation', 1)]": 20,
+            "[('writing', 1)]": 10
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        }
+      },
+      "speed_measure": "emitted tokens per second",
+      "summary": {
+        "baseline": {
+          "acceptance": 0.44697005423249236,
+          "accepted": 9478,
+          "accepted_per_round": 1.3392680514342234,
+          "cap_hits": 13,
+          "correct": true,
+          "derived_rounds": 7077,
+          "drafter_bytes": 381456064,
+          "emitted_per_round": 2.3392680514342237,
+          "eos_stops": 17,
+          "execution": "historical",
+          "proposed": 21205,
+          "proposed_per_round": 2.996326126889925,
+          "requests": 30,
+          "resident_gpu_mib": null,
+          "server_prediction_seconds": 64.473443,
+          "server_prompt_seconds": 2.688541,
+          "speed_vs_baseline": 1.0,
+          "speed_vs_target": 1.3359169318568191,
+          "tokens": 16585,
+          "tokens_per_second": 246.801877458664,
+          "wall_seconds": 67.1996508729062
+        },
+        "candidate": {
+          "acceptance": 0.36596500126807,
+          "accepted": 8658,
+          "accepted_per_round": 1.0963657084968976,
+          "cap_hits": 13,
+          "correct": true,
+          "derived_rounds": 7897,
+          "drafter_bytes": 541022016,
+          "emitted_per_round": 2.0963657084968976,
+          "eos_stops": 17,
+          "execution": "measured",
+          "proposed": 23658,
+          "proposed_per_round": 2.995821197923262,
+          "requests": 30,
+          "resident_gpu_mib": 6248.0,
+          "server_prediction_seconds": 71.177198,
+          "server_prompt_seconds": 2.665322,
+          "speed_vs_baseline": 0.9095090559690308,
+          "speed_vs_target": 1.2150285475461395,
+          "tokens": 16585,
+          "tokens_per_second": 224.4685425788139,
+          "wall_seconds": 73.88563140947372
+        },
+        "prior-leader": {
+          "acceptance": 0.3228096616824654,
+          "accepted": 8139,
+          "accepted_per_round": 0.9670865019011406,
+          "cap_hits": 13,
+          "correct": true,
+          "derived_rounds": 8416,
+          "drafter_bytes": 541022016,
+          "emitted_per_round": 1.9670865019011408,
+          "eos_stops": 17,
+          "execution": "historical",
+          "proposed": 25213,
+          "proposed_per_round": 2.9958412547528517,
+          "requests": 30,
+          "resident_gpu_mib": null,
+          "server_prediction_seconds": 75.51725799999998,
+          "server_prompt_seconds": 2.69837,
+          "speed_vs_baseline": 0.8585319971860125,
+          "speed_vs_target": 1.1469274315816451,
+          "tokens": 16585,
+          "tokens_per_second": 211.88730876384432,
+          "wall_seconds": 78.27273892314406
+        },
+        "target": {
+          "acceptance": null,
+          "accepted": 0,
+          "accepted_per_round": null,
+          "cap_hits": 13,
+          "correct": true,
+          "derived_rounds": null,
+          "drafter_bytes": 0,
+          "emitted_per_round": null,
+          "eos_stops": 17,
+          "execution": "historical",
+          "proposed": 0,
+          "proposed_per_round": null,
+          "requests": 30,
+          "resident_gpu_mib": null,
+          "server_prediction_seconds": 87.28408999999999,
+          "server_prompt_seconds": 2.454302,
+          "speed_vs_baseline": 0.7485495363922656,
+          "speed_vs_target": 1.0,
+          "tokens": 16585,
+          "tokens_per_second": 184.7434309524237,
+          "wall_seconds": 89.77315141598228
+        }
+      },
+      "timing_scope": "matched greedy output paths"
+    },
+    "coding-requests": {
+      "by_outcome": {},
+      "comparisons": {
+        "baseline/prior-leader": {
+          "acceptance_difference": 0.11559645178138411,
+          "acceptance_difference_95_interval": {
+            "lower": 0.0705625827187546,
+            "upper": 0.15300625654895006
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 30,
+          "historical_speed_ratio": 1.084269081296079,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": 0.0705625827187546,
+            "upper": 0.15300625654895006
+          },
+          "strata": {
+            "[('code', 1)]": 30
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "baseline/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 30,
+          "historical_speed_ratio": 1.8811500331117255,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('code', 1)]": 30
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "candidate/baseline": {
+          "acceptance_difference": -0.032321960880231204,
+          "acceptance_difference_95_interval": {
+            "lower": -0.059565606434614504,
+            "upper": 0.0002302913280227692
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 30,
+          "historical_speed_ratio": 0.9879711053083806,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": -0.059565606434614504,
+            "upper": 0.0002302913280227692
+          },
+          "strata": {
+            "[('code', 1)]": 30
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "candidate/prior-leader": {
+          "acceptance_difference": 0.08327449090115291,
+          "acceptance_difference_95_interval": {
+            "lower": 0.05782577829766633,
+            "upper": 0.11177495643515067
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 30,
+          "historical_speed_ratio": 1.0712265226997895,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": 0.05782577829766633,
+            "upper": 0.11177495643515067
+          },
+          "strata": {
+            "[('code', 1)]": 30
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "candidate/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 30,
+          "historical_speed_ratio": 1.8585218774642882,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('code', 1)]": 30
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "prior-leader/baseline": {
+          "acceptance_difference": -0.11559645178138411,
+          "acceptance_difference_95_interval": {
+            "lower": -0.15306984534984436,
+            "upper": -0.07087342659149554
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 30,
+          "historical_speed_ratio": 0.922280287476843,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": -0.15306984534984436,
+            "upper": -0.07087342659149554
+          },
+          "strata": {
+            "[('code', 1)]": 30
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "prior-leader/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 30,
+          "historical_speed_ratio": 1.7349475933253546,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('code', 1)]": 30
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "target/baseline": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 30,
+          "historical_speed_ratio": 0.5315897096978697,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('code', 1)]": 30
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "target/prior-leader": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 30,
+          "historical_speed_ratio": 0.5763862861605584,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('code', 1)]": 30
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        }
+      },
+      "speed_measure": "emitted tokens per second",
+      "summary": {
+        "baseline": {
+          "acceptance": 0.8929080541696365,
+          "accepted": 5011,
+          "accepted_per_round": 2.6811128945960405,
+          "cap_hits": 4,
+          "correct": true,
+          "derived_rounds": 1869,
+          "drafter_bytes": 381456064,
+          "emitted_per_round": 3.6811128945960405,
+          "eos_stops": 26,
+          "execution": "historical",
+          "proposed": 5612,
+          "proposed_per_round": 3.0026752273943287,
+          "requests": 30,
+          "resident_gpu_mib": null,
+          "server_prediction_seconds": 17.796198000000004,
+          "server_prompt_seconds": 2.7368219999999996,
+          "speed_vs_baseline": 1.0,
+          "speed_vs_target": 1.8811500331117255,
+          "tokens": 6910,
+          "tokens_per_second": 335.9983012187258,
+          "wall_seconds": 20.565580167924054
+        },
+        "candidate": {
+          "acceptance": 0.8605860932894053,
+          "accepted": 4963,
+          "accepted_per_round": 2.588941053729786,
+          "cap_hits": 4,
+          "correct": true,
+          "derived_rounds": 1917,
+          "drafter_bytes": 541022016,
+          "emitted_per_round": 3.588941053729786,
+          "eos_stops": 26,
+          "execution": "measured",
+          "proposed": 5767,
+          "proposed_per_round": 3.0083463745435575,
+          "requests": 30,
+          "resident_gpu_mib": 6248.0,
+          "server_prediction_seconds": 18.032497000000003,
+          "server_prompt_seconds": 2.739154,
+          "speed_vs_baseline": 0.9879711053083806,
+          "speed_vs_target": 1.8585218774642882,
+          "tokens": 6910,
+          "tokens_per_second": 331.95661303680276,
+          "wall_seconds": 20.815973318880424
+        },
+        "prior-leader": {
+          "acceptance": 0.7773116023882524,
+          "accepted": 4817,
+          "accepted_per_round": 2.3349491032476974,
+          "cap_hits": 4,
+          "correct": true,
+          "derived_rounds": 2063,
+          "drafter_bytes": 541022016,
+          "emitted_per_round": 3.3349491032476974,
+          "eos_stops": 26,
+          "execution": "historical",
+          "proposed": 6197,
+          "proposed_per_round": 3.003877847794474,
+          "requests": 30,
+          "resident_gpu_mib": null,
+          "server_prediction_seconds": 19.406357,
+          "server_prompt_seconds": 2.8297610000000004,
+          "speed_vs_baseline": 0.922280287476843,
+          "speed_vs_target": 1.7349475933253546,
+          "tokens": 6910,
+          "tokens_per_second": 309.8846098397373,
+          "wall_seconds": 22.298622714995872
+        },
+        "target": {
+          "acceptance": null,
+          "accepted": 0,
+          "accepted_per_round": null,
+          "cap_hits": 4,
+          "correct": true,
+          "derived_rounds": null,
+          "drafter_bytes": 0,
+          "emitted_per_round": null,
+          "eos_stops": 26,
+          "execution": "historical",
+          "proposed": 0,
+          "proposed_per_round": null,
+          "requests": 30,
+          "resident_gpu_mib": null,
+          "server_prediction_seconds": 36.144451999999994,
+          "server_prompt_seconds": 2.5103340000000003,
+          "speed_vs_baseline": 0.5315897096978697,
+          "speed_vs_target": 1.0,
+          "tokens": 6910,
+          "tokens_per_second": 178.61323940383983,
+          "wall_seconds": 38.68694181385217
+        }
+      },
+      "timing_scope": "matched greedy output paths"
+    },
+    "long-documents": {
+      "by_outcome": {},
+      "comparisons": {
+        "baseline/prior-leader": {
+          "acceptance_difference": 0.12251147273436563,
+          "acceptance_difference_95_interval": {
+            "lower": 0.10517680161552667,
+            "upper": 0.1402280311180809
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 25,
+          "historical_speed_ratio": 1.0849150053832477,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": 0.10517680161552667,
+            "upper": 0.1402280311180809
+          },
+          "strata": {
+            "[('documents', 1)]": 25
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "baseline/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 25,
+          "historical_speed_ratio": 1.324234281451975,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('documents', 1)]": 25
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "candidate/baseline": {
+          "acceptance_difference": -0.08480297193141306,
+          "acceptance_difference_95_interval": {
+            "lower": -0.10217768284326323,
+            "upper": -0.06752510524782251
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 25,
+          "historical_speed_ratio": 0.9535662786767823,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": -0.10217768284326323,
+            "upper": -0.06752510524782251
+          },
+          "strata": {
+            "[('documents', 1)]": 25
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "candidate/prior-leader": {
+          "acceptance_difference": 0.03770850080295257,
+          "acceptance_difference_95_interval": {
+            "lower": 0.02527653447764444,
+            "upper": 0.05135687063977812
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 25,
+          "historical_speed_ratio": 1.0345383643639048,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": 0.02527653447764444,
+            "upper": 0.05135687063977812
+          },
+          "strata": {
+            "[('documents', 1)]": 25
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "candidate/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 25,
+          "historical_speed_ratio": 1.2627451558603826,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('documents', 1)]": 25
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "prior-leader/baseline": {
+          "acceptance_difference": -0.12251147273436563,
+          "acceptance_difference_95_interval": {
+            "lower": -0.14038671252411705,
+            "upper": -0.10524593393083703
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 25,
+          "historical_speed_ratio": 0.9217311909579023,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": -0.14038671252411705,
+            "upper": -0.10524593393083703
+          },
+          "strata": {
+            "[('documents', 1)]": 25
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "prior-leader/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 25,
+          "historical_speed_ratio": 1.220588041350011,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('documents', 1)]": 25
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "target/baseline": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 25,
+          "historical_speed_ratio": 0.75515338487049,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('documents', 1)]": 25
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "target/prior-leader": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 25,
+          "historical_speed_ratio": 0.8192772386119453,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('documents', 1)]": 25
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        }
+      },
+      "speed_measure": "emitted tokens per second",
+      "summary": {
+        "baseline": {
+          "acceptance": 0.6027698023982435,
+          "accepted": 3569,
+          "accepted_per_round": 1.8080040526849037,
+          "cap_hits": 5,
+          "correct": true,
+          "derived_rounds": 1974,
+          "drafter_bytes": 381456064,
+          "emitted_per_round": 2.808004052684904,
+          "eos_stops": 20,
+          "execution": "historical",
+          "proposed": 5921,
+          "proposed_per_round": 2.9994934143870315,
+          "requests": 25,
+          "resident_gpu_mib": null,
+          "server_prediction_seconds": 20.943375999999997,
+          "server_prompt_seconds": 12.882868000000002,
+          "speed_vs_baseline": 1.0,
+          "speed_vs_target": 1.324234281451975,
+          "tokens": 5568,
+          "tokens_per_second": 164.3135920834858,
+          "wall_seconds": 33.88642369385343
+        },
+        "candidate": {
+          "acceptance": 0.5179668304668305,
+          "accepted": 3373,
+          "accepted_per_round": 1.5543778801843318,
+          "cap_hits": 5,
+          "correct": true,
+          "derived_rounds": 2170,
+          "drafter_bytes": 541022016,
+          "emitted_per_round": 2.5543778801843318,
+          "eos_stops": 20,
+          "execution": "measured",
+          "proposed": 6512,
+          "proposed_per_round": 3.000921658986175,
+          "requests": 25,
+          "resident_gpu_mib": 6248.0,
+          "server_prediction_seconds": 22.551152999999996,
+          "server_prompt_seconds": 12.804469000000003,
+          "speed_vs_baseline": 0.9535662786767823,
+          "speed_vs_target": 1.2627451558603826,
+          "tokens": 5568,
+          "tokens_per_second": 156.68390053906435,
+          "wall_seconds": 35.53651639283635
+        },
+        "prior-leader": {
+          "acceptance": 0.4802583296638779,
+          "accepted": 3272,
+          "accepted_per_round": 1.4407749889916337,
+          "cap_hits": 5,
+          "correct": true,
+          "derived_rounds": 2271,
+          "drafter_bytes": 541022016,
+          "emitted_per_round": 2.4407749889916337,
+          "eos_stops": 20,
+          "execution": "historical",
+          "proposed": 6813,
+          "proposed_per_round": 3.0,
+          "requests": 25,
+          "resident_gpu_mib": null,
+          "server_prediction_seconds": 23.683964000000003,
+          "server_prompt_seconds": 12.940535999999998,
+          "speed_vs_baseline": 0.9217311909579023,
+          "speed_vs_target": 1.220588041350011,
+          "tokens": 5568,
+          "tokens_per_second": 151.4529629216823,
+          "wall_seconds": 36.76388954423601
+        },
+        "target": {
+          "acceptance": null,
+          "accepted": 0,
+          "accepted_per_round": null,
+          "cap_hits": 5,
+          "correct": true,
+          "derived_rounds": null,
+          "drafter_bytes": 0,
+          "emitted_per_round": null,
+          "eos_stops": 20,
+          "execution": "historical",
+          "proposed": 0,
+          "proposed_per_round": null,
+          "requests": 25,
+          "resident_gpu_mib": null,
+          "server_prediction_seconds": 33.067845999999996,
+          "server_prompt_seconds": 11.755565000000002,
+          "speed_vs_baseline": 0.75515338487049,
+          "speed_vs_target": 1.0,
+          "tokens": 5568,
+          "tokens_per_second": 124.08196524207324,
+          "wall_seconds": 44.87356393120717
+        }
+      },
+      "timing_scope": "matched greedy output paths"
+    },
+    "reasoning": {
+      "by_outcome": {},
+      "comparisons": {
+        "baseline/prior-leader": {
+          "acceptance_difference": 0.11739162865548075,
+          "acceptance_difference_95_interval": {
+            "lower": 0.10762274075317552,
+            "upper": 0.13005203553793265
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 20,
+          "historical_speed_ratio": 1.1463378445098067,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": 0.10762274075317552,
+            "upper": 0.13005203553793265
+          },
+          "strata": {
+            "[('reasoning', 1)]": 20
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "baseline/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 20,
+          "historical_speed_ratio": 1.4109302364352612,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('reasoning', 1)]": 20
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "candidate/baseline": {
+          "acceptance_difference": -0.0607646631031436,
+          "acceptance_difference_95_interval": {
+            "lower": -0.07504599502551546,
+            "upper": -0.050921053821521456
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 20,
+          "historical_speed_ratio": 0.9364632454647984,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": -0.07504599502551546,
+            "upper": -0.050921053821521456
+          },
+          "strata": {
+            "[('reasoning', 1)]": 20
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "candidate/prior-leader": {
+          "acceptance_difference": 0.05662696555233715,
+          "acceptance_difference_95_interval": {
+            "lower": 0.04870082866540426,
+            "upper": 0.06353488650958128
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 20,
+          "historical_speed_ratio": 1.0735032582687751,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": 0.04870082866540426,
+            "upper": 0.06353488650958128
+          },
+          "strata": {
+            "[('reasoning', 1)]": 20
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "candidate/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 20,
+          "historical_speed_ratio": 1.32128430833658,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('reasoning', 1)]": 20
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "prior-leader/baseline": {
+          "acceptance_difference": -0.11739162865548075,
+          "acceptance_difference_95_interval": {
+            "lower": -0.1300937042576053,
+            "upper": -0.10763057135708859
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 20,
+          "historical_speed_ratio": 0.8723431794469079,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": -0.1300937042576053,
+            "upper": -0.10763057135708859
+          },
+          "strata": {
+            "[('reasoning', 1)]": 20
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "prior-leader/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 20,
+          "historical_speed_ratio": 1.2308153684297132,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('reasoning', 1)]": 20
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "target/baseline": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 20,
+          "historical_speed_ratio": 0.7087522644113977,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('reasoning', 1)]": 20
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "target/prior-leader": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 20,
+          "historical_speed_ratio": 0.8124695430768063,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('reasoning', 1)]": 20
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        }
+      },
+      "speed_measure": "emitted tokens per second",
+      "summary": {
+        "baseline": {
+          "acceptance": 0.4912042567053969,
+          "accepted": 9047,
+          "accepted_per_round": 1.4705786736020807,
+          "cap_hits": 14,
+          "correct": true,
+          "derived_rounds": 6152,
+          "drafter_bytes": 381456064,
+          "emitted_per_round": 2.4705786736020805,
+          "eos_stops": 6,
+          "execution": "historical",
+          "proposed": 18418,
+          "proposed_per_round": 2.993823146944083,
+          "requests": 20,
+          "resident_gpu_mib": null,
+          "server_prediction_seconds": 55.953918,
+          "server_prompt_seconds": 0.762033,
+          "speed_vs_baseline": 1.0,
+          "speed_vs_target": 1.4109302364352612,
+          "tokens": 15219,
+          "tokens_per_second": 268.2191345351812,
+          "wall_seconds": 56.74091830314137
+        },
+        "candidate": {
+          "acceptance": 0.4304395936022533,
+          "accepted": 8558,
+          "accepted_per_round": 1.2886613461828038,
+          "cap_hits": 14,
+          "correct": true,
+          "derived_rounds": 6641,
+          "drafter_bytes": 541022016,
+          "emitted_per_round": 2.2886613461828036,
+          "eos_stops": 6,
+          "execution": "measured",
+          "proposed": 19882,
+          "proposed_per_round": 2.993826230989309,
+          "requests": 20,
+          "resident_gpu_mib": 6248.0,
+          "server_prediction_seconds": 59.815635,
+          "server_prompt_seconds": 0.7403470000000001,
+          "speed_vs_baseline": 0.9364632454647984,
+          "speed_vs_target": 1.32128430833658,
+          "tokens": 15219,
+          "tokens_per_second": 251.17736122257517,
+          "wall_seconds": 60.59065166511573
+        },
+        "prior-leader": {
+          "acceptance": 0.37381262804991616,
+          "accepted": 8028,
+          "accepted_per_round": 1.1195091340119927,
+          "cap_hits": 14,
+          "correct": true,
+          "derived_rounds": 7171,
+          "drafter_bytes": 541022016,
+          "emitted_per_round": 2.119509134011993,
+          "eos_stops": 6,
+          "execution": "historical",
+          "proposed": 21476,
+          "proposed_per_round": 2.994840329103333,
+          "requests": 20,
+          "resident_gpu_mib": null,
+          "server_prediction_seconds": 64.211433,
+          "server_prompt_seconds": 0.807753,
+          "speed_vs_baseline": 0.8723431794469079,
+          "speed_vs_target": 1.2308153684297132,
+          "tokens": 15219,
+          "tokens_per_second": 233.9791326089179,
+          "wall_seconds": 65.04426198313013
+        },
+        "target": {
+          "acceptance": null,
+          "accepted": 0,
+          "accepted_per_round": null,
+          "cap_hits": 14,
+          "correct": true,
+          "derived_rounds": null,
+          "drafter_bytes": 0,
+          "emitted_per_round": null,
+          "eos_stops": 6,
+          "execution": "historical",
+          "proposed": 0,
+          "proposed_per_round": null,
+          "requests": 20,
+          "resident_gpu_mib": null,
+          "server_prediction_seconds": 79.358931,
+          "server_prompt_seconds": 0.6765169999999998,
+          "speed_vs_baseline": 0.7087522644113977,
+          "speed_vs_target": 1.0,
+          "tokens": 15219,
+          "tokens_per_second": 190.10091896027498,
+          "wall_seconds": 80.05747727700509
+        }
+      },
+      "timing_scope": "matched greedy output paths"
+    },
+    "sampled": {
+      "by_outcome": {},
+      "comparisons": {
+        "baseline/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 12,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "simultaneous_speed_ratio_interval": {
+            "lower": 1.2703204652171887,
+            "upper": 1.4240740592148775
+          },
+          "speed_ratio": 1.3221069935575582,
+          "speed_ratio_95_interval": {
+            "lower": 1.2703204652171887,
+            "upper": 1.4240740592148775
+          },
+          "strata": {
+            "[('code', 2)]": 6,
+            "[('reasoning', 2)]": 6
+          }
+        },
+        "candidate/baseline": {
+          "acceptance_difference": -0.06677999896605158,
+          "acceptance_difference_95_interval": {
+            "lower": -0.0744283986717666,
+            "upper": -0.051942168989920656
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 12,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": -0.0744283986717666,
+            "upper": -0.051942168989920656
+          },
+          "simultaneous_speed_ratio_interval": {
+            "lower": 0.9446509912590448,
+            "upper": 0.9764689657019813
+          },
+          "speed_ratio": 0.9562310585018048,
+          "speed_ratio_95_interval": {
+            "lower": 0.9446509912590448,
+            "upper": 0.9764689657019813
+          },
+          "strata": {
+            "[('code', 2)]": 6,
+            "[('reasoning', 2)]": 6
+          }
+        },
+        "candidate/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 12,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "simultaneous_speed_ratio_interval": {
+            "lower": 1.2028160495977953,
+            "upper": 1.3874397104588665
+          },
+          "speed_ratio": 1.2642397699021826,
+          "speed_ratio_95_interval": {
+            "lower": 1.2028160495977953,
+            "upper": 1.3874397104588665
+          },
+          "strata": {
+            "[('code', 2)]": 6,
+            "[('reasoning', 2)]": 6
+          }
+        },
+        "target/baseline": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 12,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "simultaneous_speed_ratio_interval": {
+            "lower": 0.7017356025495854,
+            "upper": 0.7871764884117283
+          },
+          "speed_ratio": 0.7563684368003949,
+          "speed_ratio_95_interval": {
+            "lower": 0.7017356025495854,
+            "upper": 0.7871764884117283
+          },
+          "strata": {
+            "[('code', 2)]": 6,
+            "[('reasoning', 2)]": 6
+          }
+        }
+      },
+      "speed_measure": "emitted tokens per second",
+      "summary": {
+        "baseline": {
+          "acceptance": 0.5149237821127811,
+          "accepted": 9661,
+          "accepted_per_round": 1.5460073611777885,
+          "cap_hits": 0,
+          "correct": true,
+          "derived_rounds": 6249,
+          "drafter_bytes": 381456064,
+          "emitted_per_round": 2.5460073611777885,
+          "eos_stops": 24,
+          "execution": "measured",
+          "proposed": 18762,
+          "proposed_per_round": 3.00240038406145,
+          "requests": 24,
+          "resident_gpu_mib": 6040.0,
+          "server_prediction_seconds": 76.620295,
+          "server_prompt_seconds": 1.5822349999999998,
+          "speed_vs_baseline": 1.0,
+          "speed_vs_target": 1.3221069935575582,
+          "tokens": 15934,
+          "tokens_per_second": 203.67855166061284,
+          "wall_seconds": 78.23111402790528
+        },
+        "candidate": {
+          "acceptance": 0.44814378314672954,
+          "accepted": 9126,
+          "accepted_per_round": 1.3452240566037736,
+          "cap_hits": 0,
+          "correct": true,
+          "derived_rounds": 6784,
+          "drafter_bytes": 541022016,
+          "emitted_per_round": 2.3452240566037736,
+          "eos_stops": 24,
+          "execution": "measured",
+          "proposed": 20364,
+          "proposed_per_round": 3.0017688679245285,
+          "requests": 24,
+          "resident_gpu_mib": 6222.0,
+          "server_prediction_seconds": 80.19779600000001,
+          "server_prompt_seconds": 1.5855730000000001,
+          "speed_vs_baseline": 0.9562310585018048,
+          "speed_vs_target": 1.2642397699021826,
+          "tokens": 15934,
+          "tokens_per_second": 194.76375704854235,
+          "wall_seconds": 81.8119358625263
+        },
+        "target": {
+          "acceptance": null,
+          "accepted": 0,
+          "accepted_per_round": null,
+          "cap_hits": 0,
+          "correct": true,
+          "derived_rounds": null,
+          "drafter_bytes": 0,
+          "emitted_per_round": null,
+          "eos_stops": 24,
+          "execution": "measured",
+          "proposed": 0,
+          "proposed_per_round": null,
+          "requests": 24,
+          "resident_gpu_mib": 4342.0,
+          "server_prediction_seconds": 102.011799,
+          "server_prompt_seconds": 1.3922289999999997,
+          "speed_vs_baseline": 0.7563684368003949,
+          "speed_vs_target": 1.0,
+          "tokens": 15934,
+          "tokens_per_second": 154.0560277293062,
+          "wall_seconds": 103.42990297009237
+        }
+      },
+      "timing_scope": "sampled throughput: same requests and seeds, potentially unequal token paths; not a quality or latency equivalence claim"
+    },
+    "structured-tools": {
+      "by_outcome": {},
+      "comparisons": {
+        "baseline/prior-leader": {
+          "acceptance_difference": -0.1746395754739133,
+          "acceptance_difference_95_interval": {
+            "lower": -0.38693710008451054,
+            "upper": -0.03908509827715145
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 15,
+          "historical_speed_ratio": 0.9054268098088347,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": -0.38693710008451054,
+            "upper": -0.03908509827715145
+          },
+          "strata": {
+            "[('structured', 1)]": 15
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "baseline/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 15,
+          "historical_speed_ratio": 1.4746156699430113,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('structured', 1)]": 15
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "candidate/baseline": {
+          "acceptance_difference": 0.26856086817100133,
+          "acceptance_difference_95_interval": {
+            "lower": 0.17033401646711965,
+            "upper": 0.4181450357920946
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 15,
+          "historical_speed_ratio": 1.1513111375517022,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": 0.17033401646711965,
+            "upper": 0.4181450357920946
+          },
+          "strata": {
+            "[('structured', 1)]": 15
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "candidate/prior-leader": {
+          "acceptance_difference": 0.09392129269708804,
+          "acceptance_difference_95_interval": {
+            "lower": 0.01383647798742138,
+            "upper": 0.13714800697337703
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 15,
+          "historical_speed_ratio": 1.0424279703708181,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": 0.01383647798742138,
+            "upper": 0.13714800697337703
+          },
+          "strata": {
+            "[('structured', 1)]": 15
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "candidate/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 15,
+          "historical_speed_ratio": 1.6977414444136538,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('structured', 1)]": 15
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "prior-leader/baseline": {
+          "acceptance_difference": 0.1746395754739133,
+          "acceptance_difference_95_interval": {
+            "lower": 0.03847663918335298,
+            "upper": 0.38685940534887187
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 15,
+          "historical_speed_ratio": 1.104451501950923,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": 0.03847663918335298,
+            "upper": 0.38685940534887187
+          },
+          "strata": {
+            "[('structured', 1)]": 15
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "prior-leader/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 15,
+          "historical_speed_ratio": 1.6286414914689251,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('structured', 1)]": 15
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "target/baseline": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 15,
+          "historical_speed_ratio": 0.6781428004482324,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('structured', 1)]": 15
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        },
+        "target/prior-leader": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 15,
+          "historical_speed_ratio": 0.6140086724046722,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "strata": {
+            "[('structured', 1)]": 15
+          },
+          "timing_scope": "separate executions; no paired timing interval"
+        }
+      },
+      "speed_measure": "emitted tokens per second",
+      "summary": {
+        "baseline": {
+          "acceptance": 0.6934369602763385,
+          "accepted": 803,
+          "accepted_per_round": 2.0803108808290154,
+          "cap_hits": 0,
+          "correct": true,
+          "derived_rounds": 386,
+          "drafter_bytes": 381456064,
+          "emitted_per_round": 3.0803108808290154,
+          "eos_stops": 15,
+          "execution": "historical",
+          "proposed": 1158,
+          "proposed_per_round": 3.0,
+          "requests": 15,
+          "resident_gpu_mib": null,
+          "server_prediction_seconds": 3.7569140000000005,
+          "server_prompt_seconds": 1.6026099999999999,
+          "speed_vs_baseline": 1.0,
+          "speed_vs_target": 1.4746156699430113,
+          "tokens": 1204,
+          "tokens_per_second": 223.98987336600385,
+          "wall_seconds": 5.375243004993536
+        },
+        "candidate": {
+          "acceptance": 0.9619978284473398,
+          "accepted": 886,
+          "accepted_per_round": 2.924092409240924,
+          "cap_hits": 0,
+          "correct": true,
+          "derived_rounds": 303,
+          "drafter_bytes": 541022016,
+          "emitted_per_round": 3.924092409240924,
+          "eos_stops": 15,
+          "execution": "measured",
+          "proposed": 921,
+          "proposed_per_round": 3.0396039603960396,
+          "requests": 15,
+          "resident_gpu_mib": 6248.0,
+          "server_prediction_seconds": 3.0325189999999997,
+          "server_prompt_seconds": 1.6094010000000003,
+          "speed_vs_baseline": 1.1513111375517022,
+          "speed_vs_target": 1.6977414444136538,
+          "tokens": 1204,
+          "tokens_per_second": 257.8820359050756,
+          "wall_seconds": 4.668801360181533
+        },
+        "prior-leader": {
+          "acceptance": 0.8680765357502518,
+          "accepted": 862,
+          "accepted_per_round": 2.636085626911315,
+          "cap_hits": 0,
+          "correct": true,
+          "derived_rounds": 327,
+          "drafter_bytes": 541022016,
+          "emitted_per_round": 3.636085626911315,
+          "eos_stops": 15,
+          "execution": "historical",
+          "proposed": 993,
+          "proposed_per_round": 3.036697247706422,
+          "requests": 15,
+          "resident_gpu_mib": null,
+          "server_prediction_seconds": 3.250958,
+          "server_prompt_seconds": 1.5928689999999996,
+          "speed_vs_baseline": 1.104451501950923,
+          "speed_vs_target": 1.6286414914689251,
+          "tokens": 1204,
+          "tokens_per_second": 247.38595206087996,
+          "wall_seconds": 4.866889125958551
+        },
+        "target": {
+          "acceptance": null,
+          "accepted": 0,
+          "accepted_per_round": null,
+          "cap_hits": 0,
+          "correct": true,
+          "derived_rounds": null,
+          "drafter_bytes": 0,
+          "emitted_per_round": null,
+          "eos_stops": 15,
+          "execution": "historical",
+          "proposed": 0,
+          "proposed_per_round": null,
+          "requests": 15,
+          "resident_gpu_mib": null,
+          "server_prediction_seconds": 6.452956,
+          "server_prompt_seconds": 1.4582810000000004,
+          "speed_vs_baseline": 0.6781428004482324,
+          "speed_vs_target": 1.0,
+          "tokens": 1204,
+          "tokens_per_second": 151.89711999646678,
+          "wall_seconds": 7.9264175649150275
+        }
+      },
+      "timing_scope": "matched greedy output paths"
+    },
+    "thinking-on": {
+      "by_outcome": {},
+      "comparisons": {
+        "baseline/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 12,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "simultaneous_speed_ratio_interval": {
+            "lower": 1.6303586045645122,
+            "upper": 1.8172718342987806
+          },
+          "speed_ratio": 1.7136220267953286,
+          "speed_ratio_95_interval": {
+            "lower": 1.6303586045645122,
+            "upper": 1.8172718342987806
+          },
+          "strata": {
+            "[('code', 1)]": 6,
+            "[('reasoning', 1)]": 6
+          }
+        },
+        "candidate/baseline": {
+          "acceptance_difference": -0.13364811181776037,
+          "acceptance_difference_95_interval": {
+            "lower": -0.15035326808037547,
+            "upper": -0.11403048659690285
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 12,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "lower": -0.15035326808037547,
+            "upper": -0.11403048659690285
+          },
+          "simultaneous_speed_ratio_interval": {
+            "lower": 0.8630268849852456,
+            "upper": 0.9126995718181975
+          },
+          "speed_ratio": 0.8861449980794561,
+          "speed_ratio_95_interval": {
+            "lower": 0.8630268849852456,
+            "upper": 0.9126995718181975
+          },
+          "strata": {
+            "[('code', 1)]": 6,
+            "[('reasoning', 1)]": 6
+          }
+        },
+        "candidate/target": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 12,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "simultaneous_speed_ratio_interval": {
+            "lower": 1.4245947498951568,
+            "upper": 1.643619439416804
+          },
+          "speed_ratio": 1.5185175876434602,
+          "speed_ratio_95_interval": {
+            "lower": 1.4245947498951568,
+            "upper": 1.643619439416804
+          },
+          "strata": {
+            "[('code', 1)]": 6,
+            "[('reasoning', 1)]": 6
+          }
+        },
+        "target/baseline": {
+          "acceptance_difference": null,
+          "acceptance_difference_95_interval": {
+            "available": false
+          },
+          "bootstrap_draws": 2000,
+          "comparison_family": 1,
+          "groups": 12,
+          "interval_available": true,
+          "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+          "simultaneous_acceptance_difference_interval": {
+            "available": false
+          },
+          "simultaneous_speed_ratio_interval": {
+            "lower": 0.5501291105264519,
+            "upper": 0.6133092285527882
+          },
+          "speed_ratio": 0.5835592589050199,
+          "speed_ratio_95_interval": {
+            "lower": 0.5501291105264519,
+            "upper": 0.6133092285527882
+          },
+          "strata": {
+            "[('code', 1)]": 6,
+            "[('reasoning', 1)]": 6
+          }
+        }
+      },
+      "speed_measure": "emitted tokens per second",
+      "summary": {
+        "baseline": {
+          "acceptance": 0.6621083234629052,
+          "accepted": 12298,
+          "accepted_per_round": 1.9854698094930578,
+          "cap_hits": 8,
+          "correct": true,
+          "derived_rounds": 6194,
+          "drafter_bytes": 381456064,
+          "emitted_per_round": 2.9854698094930576,
+          "eos_stops": 4,
+          "execution": "measured",
+          "proposed": 18574,
+          "proposed_per_round": 2.998708427510494,
+          "requests": 12,
+          "resident_gpu_mib": 6033.0,
+          "server_prediction_seconds": 58.088435999999994,
+          "server_prompt_seconds": 0.763821,
+          "speed_vs_baseline": 1.0,
+          "speed_vs_target": 1.7136220267953286,
+          "tokens": 18504,
+          "tokens_per_second": 314.33205892727744,
+          "wall_seconds": 58.867682994692586
+        },
+        "candidate": {
+          "acceptance": 0.5284602116451448,
+          "accepted": 11336,
+          "accepted_per_round": 1.5841252096143097,
+          "cap_hits": 8,
+          "correct": true,
+          "derived_rounds": 7156,
+          "drafter_bytes": 541022016,
+          "emitted_per_round": 2.5841252096143097,
+          "eos_stops": 4,
+          "execution": "measured",
+          "proposed": 21451,
+          "proposed_per_round": 2.997624371157071,
+          "requests": 12,
+          "resident_gpu_mib": 6215.0,
+          "server_prediction_seconds": 65.637324,
+          "server_prompt_seconds": 0.7783829999999999,
+          "speed_vs_baseline": 0.8861449980794561,
+          "speed_vs_target": 1.5185175876434602,
+          "tokens": 18504,
+          "tokens_per_second": 278.5437817544238,
+          "wall_seconds": 66.43120834883302
+        },
+        "target": {
+          "acceptance": null,
+          "accepted": 0,
+          "accepted_per_round": null,
+          "cap_hits": 8,
+          "correct": true,
+          "derived_rounds": null,
+          "drafter_bytes": 0,
+          "emitted_per_round": null,
+          "eos_stops": 4,
+          "execution": "measured",
+          "proposed": 0,
+          "proposed_per_round": null,
+          "requests": 12,
+          "resident_gpu_mib": 4335.0,
+          "server_prediction_seconds": 100.102203,
+          "server_prompt_seconds": 0.747702,
+          "speed_vs_baseline": 0.5835592589050199,
+          "speed_vs_target": 1.0,
+          "tokens": 18504,
+          "tokens_per_second": 183.43138335769106,
+          "wall_seconds": 100.87695824611001
+        }
+      },
+      "timing_scope": "matched greedy output paths"
+    }
+  },
+  "result": {
+    "bytes": 185815,
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/scenario-levels-01/joint-01/reports/q4km-level2/result.json",
+    "sha256": "ab6ef03f85d4641bf64cc2ca341d0bbe6db606ab28619f51c54e29f562290373"
+  },
+  "verdict": null
+}

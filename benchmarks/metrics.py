@@ -129,9 +129,9 @@ def rounds(requests: int, tokens: int, proposed: int, accepted: int) -> Record:
     }
 
 
-def relative_speed(summaries: Record) -> Record:
+def relative_speed(summaries: Record, metric: str = "tokens_per_second") -> Record:
     references = {
-        name: number(record(summaries[name])["tokens_per_second"])
+        name: number(record(summaries[name])[metric])
         for name in ("target", "baseline")
         if name in summaries
     }
@@ -139,7 +139,7 @@ def relative_speed(summaries: Record) -> Record:
         arm: {
             **record(value),
             **{
-                "speed_vs_" + name: number(record(value)["tokens_per_second"]) / speed
+                "speed_vs_" + name: number(record(value)[metric]) / speed
                 for name, speed in references.items()
             },
         }

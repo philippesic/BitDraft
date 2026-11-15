@@ -1,0 +1,125 @@
+{
+  "candidate_sha256": "405e326b8c6ba7a54da7fc7d5d5436f5d45284be4bb980d0062d4c7d9a104dd9",
+  "code_sha256": "6531097afa92e7257d44d581358fb2f5ed97e2da8c469cd424a60ebaeea39f1e",
+  "executed_source": "/home/philip/BitDraft/artifacts/benchmarks/scenario-levels-01/joint-01/executed-sources/6531097afa92e7257d44d581358fb2f5ed97e2da8c469cd424a60ebaeea39f1e",
+  "reports": {
+    "nvfp4-level2": {
+      "facts": {
+        "bytes": 92106,
+        "path": "joint-nvfp4-level2.json",
+        "sha256": "3a6ab7168cba7e4a7545250776e93bf99739d9d762029bcbd5b156d5c6bb0c65"
+      },
+      "level2": {
+        "level3_required": true,
+        "reasons": [
+          "agentic-coding: direction disagrees with main panel against baseline",
+          "chat-writing: acceptance below saved baseline beyond interval",
+          "coding-requests: acceptance below saved baseline beyond interval",
+          "long-documents: acceptance below saved baseline beyond interval",
+          "reasoning: acceptance below saved baseline beyond interval",
+          "structured-tools: direction disagrees with main panel against baseline",
+          "sampled: slower than baseline beyond interval",
+          "thinking-on: slower than baseline beyond interval"
+        ],
+        "scope": "absence of an escalation trigger is not a speed qualification",
+        "timing_unresolved": [
+          "chat-writing: no paired timing interval against baseline",
+          "chat-writing: no paired timing interval against prior-leader",
+          "coding-requests: no paired timing interval against baseline",
+          "coding-requests: no paired timing interval against prior-leader",
+          "long-documents: no paired timing interval against baseline",
+          "long-documents: no paired timing interval against prior-leader",
+          "reasoning: no paired timing interval against baseline",
+          "reasoning: no paired timing interval against prior-leader",
+          "structured-tools: no paired timing interval against baseline",
+          "structured-tools: no paired timing interval against prior-leader"
+        ]
+      },
+      "verdict": null
+    },
+    "nvfp4-level3": {
+      "facts": {
+        "bytes": 91651,
+        "path": "joint-nvfp4-level3.json",
+        "sha256": "29aaa2430467ee584d7d5a5cb2d16ca95ea679a31c424bcd6ec4f8f8187dd8ef"
+      },
+      "level2": null,
+      "verdict": {
+        "confirmation": "fresh protected data not yet evaluated",
+        "deciding_scenario": "agentic-coding",
+        "scenarios": {
+          "agentic-coding": "pass",
+          "chat-writing": "insufficient",
+          "coding-requests": "insufficient",
+          "long-documents": "insufficient",
+          "reasoning": "insufficient",
+          "sampled": "fail",
+          "thinking-on": "fail"
+        },
+        "verdict": "not-established"
+      }
+    },
+    "q4km-level2": {
+      "facts": {
+        "bytes": 91915,
+        "path": "joint-q4km-level2.json",
+        "sha256": "37e2eb1933a540a442dd08185e50831bdd91d4c5e1ef385d76d643272e50dfe8"
+      },
+      "level2": {
+        "level3_required": true,
+        "reasons": [
+          "agentic-coding: direction disagrees with main panel against baseline",
+          "chat-writing: acceptance below saved baseline beyond interval",
+          "long-documents: acceptance below saved baseline beyond interval",
+          "reasoning: acceptance below saved baseline beyond interval",
+          "structured-tools: direction disagrees with main panel against baseline",
+          "sampled: slower than baseline beyond interval",
+          "thinking-on: slower than baseline beyond interval"
+        ],
+        "scope": "absence of an escalation trigger is not a speed qualification",
+        "timing_unresolved": [
+          "chat-writing: no paired timing interval against baseline",
+          "chat-writing: no paired timing interval against prior-leader",
+          "coding-requests: no paired timing interval against baseline",
+          "coding-requests: no paired timing interval against prior-leader",
+          "long-documents: no paired timing interval against baseline",
+          "long-documents: no paired timing interval against prior-leader",
+          "reasoning: no paired timing interval against baseline",
+          "reasoning: no paired timing interval against prior-leader",
+          "structured-tools: no paired timing interval against baseline",
+          "structured-tools: no paired timing interval against prior-leader"
+        ]
+      },
+      "verdict": null
+    },
+    "q4km-level3": {
+      "facts": {
+        "bytes": 91402,
+        "path": "joint-q4km-level3.json",
+        "sha256": "ed358e92783bb0343329efbdea6ec1f2e5270cd6a9910b143cc90d31e0ba80c9"
+      },
+      "level2": null,
+      "verdict": {
+        "confirmation": "fresh protected data not yet evaluated",
+        "deciding_scenario": "agentic-coding",
+        "scenarios": {
+          "agentic-coding": "fail",
+          "chat-writing": "insufficient",
+          "coding-requests": "insufficient",
+          "long-documents": "insufficient",
+          "reasoning": "insufficient",
+          "sampled": "fail",
+          "thinking-on": "fail"
+        },
+        "verdict": "not-established"
+      }
+    }
+  },
+  "schema": "joint-scenario-standings-v1",
+  "scope": "Recomputed existing evidence only. Historical controls have no new paired timing intervals. All failed agentic tasks retained. Confirmation remains unexecuted.",
+  "script": {
+    "bytes": 9933,
+    "path": "/home/philip/BitDraft/artifacts/benchmarks/scenario-levels-01/joint-01/publish.py",
+    "sha256": "6cffa4855a8e2bd8dea0ad002355f1aae60e04c9c306cb2a9f7f4625f1be9b74"
+  }
+}
