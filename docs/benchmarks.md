@@ -598,3 +598,10 @@ metadata at the supplied bandwidth. It is not a physical lower bound for these
 cache-resident repeats: a Baseline matrix may finish faster than its cold-read floor.
 Report this distinction alongside effective GB/s, and retain outlier samples when
 stating the timing spread.
+
+The RTX 5080 qualification inputs, all per-layer samples, byte checks, repeat checks
+and served experiment are retained under `artifacts/benchmarks/w1-kernels/`.
+`all-spec.json` reproduces the full kernel grid into a new output, and `report.md`
+explains its scope and artifact disposition. A separate activation trace verifies
+that the experimental runtime executes twelve gate/up MMA launches and six down
+DP4A launches per full six-layer round; trace times are excluded from clean timing.
