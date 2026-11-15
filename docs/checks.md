@@ -187,3 +187,9 @@ Result pages must state `Artifact disposition`: the retained inputs/evidence and
 outputs discarded after verification. `REPO_OUTPUTS` rejects a missing disposition.
 The public retirement command checks exact files before authorized removal; see
 [closeout and retirement](results.md#retirement-command).
+
+RSR benchmark CPU coverage in `tests/test_rsr.py` checks literal device extraction,
+refusal of changed upstream source/licence, and preservation of integer-check
+failures independently of affine byte checks. GPU qualification additionally needs
+real prepared indexes, integer equality and final-byte equality at each slot count;
+the CPU gate alone does not establish kernel correctness or speed.

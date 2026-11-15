@@ -58,6 +58,7 @@ def main() -> int:
         "capture-kernel-activations",
         "build-kernel-benchmark",
         "benchmark-kernels",
+        "prepare-rsr",
         "profile-rounds",
         "round-profile-report",
     ):
@@ -161,6 +162,10 @@ def main() -> int:
             from benchmarks.kernel_benchmark import build_kernel_benchmark
 
             result = build_kernel_benchmark(args.input, args.output)
+        elif args.command == "prepare-rsr":
+            from benchmarks.kernel_benchmark import prepare_rsr
+
+            result = prepare_rsr(args.input, args.output)
         elif args.command == "benchmark-kernels":
             from benchmarks.kernel_benchmark import benchmark_kernels
 
