@@ -43,6 +43,7 @@ tables (0.27 ms) are still 4-bit.
 | 7 | Train the vocabulary table. Order after an independent review: save a pilot set of slot values split by prompt; probe per-token scale, per-token bias, a 2,560 × 2,560 output map and a rank-16 correction on it; convert to 4-bit and screen with the table tied; then frequent-token rows or a full table pulled toward the original; then joint training of table and body, trying both a low-rank correction and an optimizer with per-row and per-column statistics (Adafactor-style), each against a matched body-only control | Does a trainable table add acceptance once deployed tied and in 4-bit? Expected 0–3 points | First go or no-go about 1–2.5 GPU hours; full path 6–12 | Yes | The candidate carries its own table; Baseline borrows the target's and cannot train it | Not started. Owner decision 2026-11-14: run on the planned native Linux install, where about 15.5 GiB should be usable against about 14 GiB under WSL |
 | 8 | Store the frozen attention and fusion tables as Q4_K instead of Q4_0 | Does the runtime's shared-read path remove the 0.13 ms per round these tables cost over Baseline, and does acceptance hold? | GPU minutes, plus at most one optimizer-hour if acceptance drops | Only if acceptance drops | No: removes a handicap | Done 2026-11-14 on the continued state, no retraining needed (branch `t3/q4k-frozen-tables`, export `5749a05f…`, copying Baseline's own tables): the four table groups fell from 417 to 281 µs per round at depth 3, equal to Baseline's 282; screen acceptance 54.88% unchanged against 55.23% switched, difference +0.35 points (−0.37, +1.08). Merged. Owner decision 2026-11-14: `baseline-k` is the frozen table format of every new candidate recipe ([execution](../docs/execution.md#frozen-table-storage)). The screen also showed request speed 7.5% higher (5.4–10.0%) with the arms run one after the other; the paired check moves to item 9. Result entry pending |
 | 9 | Re-measure Baseline and the candidate on the native Linux host: new saved controls for every cohort and precision, and a round profile of both | What are the real speeds and time shares on the new host, and how much CPU-side waiting was WSL? | About an hour of GPU time | No | No: measurement | Decided by the owner 2026-11-14; starts after the move. No timing from the WSL host is to be used for decisions after it |
+| 10 | Train the attention and fusion tables together with feed-forward, against a matched run with them frozen | Does letting the 4-bit tables adapt to the one-bit feed-forward recover acceptance at no cost in size or speed? | GPU hours, two matched runs | Yes | Partly: the candidate is trained and Baseline is a fixed release, but nothing here needs one-bit arithmetic | Listed by the owner 2026-11-14, not started. About 0.8 GiB per extra copy: 2.4 GiB more with the current optimizer, 0.8 GiB with one that keeps only row and column statistics. Trained tables cannot be copied from Baseline, so export needs its own Q4_K conversion, which the pinned GGUF package lacks. Together with item 7's full-table arm it exceeds the card unless one of them uses the lighter method |
 
 Evidence behind items 1–3: the November 4 binary-method screen and the November 5 execution
 campaign ([speed and model quality](../results/execution-speed-and-model-quality/result.md),
@@ -81,14 +82,14 @@ Possible later arm, not a listed test: a language model choosing training step s
 paper the owner mentioned has not been identified; its decisions would have to be journaled
 for exact replay.
 
-Not yet listed, owner decision pending: training the attention and fusion tables, which
-are frozen copies today, and quantizer features (finer scales, a second one-bit layer,
-three-valued weights, selective higher precision). Earlier evidence is from untrained
+Not yet listed, owner decision pending: quantizer features (finer scales, a second one-bit
+layer, three-valued weights, selective higher precision). Earlier evidence is from untrained
 conversions of the older EAGLE drafter in September
 ([result](../results/scale-and-head-recovery/result.md)): one fitted scale per 128 weights
 raised accepted drafts per round from 0.12 to 0.43 against 1.04 for the 4-bit control, and
 keeping one table at 8 bits helped most for attention (0.61) and least for the down table
-(0.47). Neither has been tested under training with the current recipe.
+(0.47). Neither has been tested under training with the current recipe. Item 10 covers training
+the attention and fusion tables.
 
 Open question, not yet a listed test: whether the
 [learning curve](../results/s4-data-curve/result.md) flattened because of data or because
@@ -97,5 +98,5 @@ the step size reached zero.
 ## Next
 
 Write result entries for items 1, 2, 3 and 8. The owner decides which of items 4–7 to
-start and whether to list the trainable-table and quantizer-feature tests; item 9 waits for
+start, or item 10, and whether to list the quantizer-feature tests; item 9 waits for
 the native Linux host.
