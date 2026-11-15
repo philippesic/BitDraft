@@ -688,3 +688,18 @@ weight form and subtract exact activation-code sums, prepared outside the matmul
 timer as in the archived caller. `imma-signed` keeps signed operands for every
 shape; `imma-split1` tests one warp with the same vector loading and unrolling.
 The latter two variants distinguish reduction parallelism from loop/load changes.
+
+S4 qualification covers every layer and gate/up/down group at 2/4/8 slots, with
+400 exact-output cases including the pilot. The separate `runtime-v7-kernel-imma`
+build applies `kernel_recovered_imma_v1`; its signed kernel body is checked against
+the benchmark source by a CPU test. Clean-clock served checks at depths 1/3/7
+retain identical tokens and proposal/acceptance counts across three DEV requests
+and three trials per runtime. Evidence and the recovered-source adaptation diff
+are retained under `artifacts/benchmarks/imma-recovery` in the main checkout.
+
+The relocation receipt at `artifacts/receipts/kernel-benchmark-relocation-01` records
+file identities, preserved original summaries, and 101 successful kernel replay
+cases from the main checkout after verified worktree-copy removal. A relocated
+experimental-server replay also reproduces tokens and proposal/acceptance counts.
+`replay-plan.json` names the retained branch source snapshot and exact commands,
+so replay does not require a surviving worktree or changes to main's source.

@@ -1,8 +1,12 @@
 # Project storage
 
-All BitDraft-owned files live in this checkout. Source, instructions, benchmark definitions
-and compact results are tracked by Git. Large inputs, outputs, archived evidence and
-project caches live under ignored `artifacts/`; ignoring them does not make them disposable.
+Durable project artifacts live under `/home/philip/BitDraft/artifacts/` in the main
+checkout. Source, instructions, benchmark definitions and compact results are tracked
+by Git. Worktree-local artifacts are temporary working copies: before handoff or
+worktree removal, copy retained files to identical main-checkout paths, verify every
+SHA-256, preserve raw bytes and relocation receipts, update derived summaries, and
+verify replay through the maintained reader before removing verified duplicates.
+Ignoring artifacts does not make them disposable.
 Shared host tools, drivers, global agent policy and the machine GPU lease are host resources.
 
 ## Artifact map
