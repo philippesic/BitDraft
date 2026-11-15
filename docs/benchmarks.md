@@ -643,3 +643,10 @@ the resident index plus row scales/midpoints, rather than pretending the kernel
 reads only packed signs. Preprocessing and index upload are outside timing. Blocks
 4/8/12 expose the trade-off between permutation size and the growing number of
 pattern groups; no claim that one block size is universally optimal is made.
+
+The S4 GPU qualification covers all six layers, individual gate/up/down and joint
+gate/up, at 1/2/4/8 slots with all three RSR blocks. Retained specifications, indexes,
+raw samples, exact-check flags and a reversed-order four-slot repeat are under
+`artifacts/benchmarks/rsr-kernels`; its `report.md` explains timing boundaries,
+index sizes and noise. All 312 RSR cases passed integer and final-byte checks.
+This qualifies the measured adapter, not a served-runtime replacement.
