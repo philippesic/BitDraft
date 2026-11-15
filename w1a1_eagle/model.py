@@ -288,9 +288,15 @@ class Projection(nn.Module):
         step = bound / maximum
         if not self.weights.default:
             values = codes * step
-            return functional.linear(values, self.effective_weight()) + (
+            weight = self.effective_weight()
+            if not bool(torch.isfinite(weight).all()):
+                raise ValueError(f"nonfinite prototype weight {tuple(weight.shape)}")
+            output = functional.linear(values, weight) + (
                 values.sum(-1, keepdim=True) * self.midpoint
             )
+            if not bool(torch.isfinite(output).all()):
+                raise ValueError(f"nonfinite prototype output {tuple(weight.shape)}")
+            return output
         signs = hard_sign(self.latent_sign)
         scale = self.scale.clamp_min(0)
         native = (functional.linear(codes, signs) * scale) * step + (

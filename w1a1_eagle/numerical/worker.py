@@ -332,6 +332,16 @@ class TensorWorker:
             self.ready = False
             raise ValueError("nonfinite post-update state")
 
+    def require_finite(self, kind: str) -> None:
+        names: list[str] = []
+        for name, parameter in self.model.named_parameters():
+            value = parameter if kind == "parameter" else parameter.grad
+            if value is not None and not bool(torch.isfinite(value).all()):
+                names.append(name)
+        if names:
+            self.ready = False
+            raise ValueError(f"nonfinite {kind} at update {self.updates}: {names[:8]}")
+
     def refresh_position_weights(self, measured: Record) -> tuple[float, ...]:
         positions = record(measured["positions"])
         weights = reach_weights(
@@ -423,6 +433,8 @@ class TensorWorker:
         multiplier = self.optimization.schedule.multiplier(self.updates)
         self.optimizer.zero_grad(set_to_none=True)
         loss = self.group_loss(capture, windows, slots)
+        if not self.model.prototype.servable:
+            self.require_finite("gradient")
         norm = torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0, error_if_nonfinite=True)
         self.last_gradient_norm = float(norm)
         for group in cast(list[dict[str, object]], self.optimizer.param_groups):
@@ -434,6 +446,8 @@ class TensorWorker:
                     module.scale.clamp_(min=0)
         if self.optimization.latent_multiple is not None:
             clamp_latents(self.model)
+        if not self.model.prototype.servable:
+            self.require_finite("parameter")
         if (self.updates + 1) % FINITE_SCAN_UPDATES == 0:
             self.verify_finite()
         self.verify_frozen()
