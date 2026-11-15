@@ -4,9 +4,10 @@ from pathlib import Path
 from typing import Literal, cast
 
 from w1a1_eagle.checkpoints.store import Store
-from w1a1_eagle.contracts import Record, integer, number, record, string
+from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
 from w1a1_eagle.data import Artifact
 from w1a1_eagle.index import IndexSpec, Mount
+from w1a1_eagle.prototype import Levels, Prototype
 from w1a1_eagle.records import artifact, canonical, identity, read
 from w1a1_eagle.storage import relocated
 from w1a1_eagle.training import TABLE_GROUP, Blocks, Budget, Grouping, Optimization, Schedule
@@ -37,6 +38,33 @@ def optimization(value: object) -> Optimization:
             None if schedule["final_update"] is None else integer(schedule["final_update"]),
         ),
         multiple,
+    )
+
+
+def prototype(value: object) -> Prototype:
+    raw = record(value)
+    if not raw or set(raw) - {"levels", "block_scale", "residual", "down_int4_layers", "teacher"}:
+        raise ValueError(
+            "prototype takes levels, block_scale, residual, down_int4_layers and teacher"
+        )
+    teacher = record(raw["teacher"]) if "teacher" in raw else None
+    if teacher is not None and set(teacher) != {"target", "weight"}:
+        raise ValueError("prototype teacher requires target and weight")
+    if "residual" in raw and raw["residual"] is not True:
+        raise ValueError("prototype residual is true when stated")
+    levels = string(raw.get("levels", "sign"))
+    if levels not in ("sign", "ternary", "int2", "int4", "full"):
+        raise ValueError("unsupported prototype weight levels")
+    target = None if teacher is None else string(teacher["target"])
+    if target not in (None, "logits", "hidden"):
+        raise ValueError("teacher target must be logits or hidden")
+    return Prototype(
+        cast(Levels, levels),
+        integer(raw["block_scale"]) if "block_scale" in raw else None,
+        "residual" in raw,
+        tuple(integer(item) for item in sequence(raw.get("down_int4_layers", []))),
+        "logits" if target == "logits" else "hidden" if target == "hidden" else None,
+        0.0 if teacher is None else number(teacher["weight"]),
     )
 
 
@@ -174,6 +202,7 @@ class Intent:
                 "grouping",
                 "optimization",
                 "blocks",
+                "prototype",
             }
             != required
             or type(raw["schema"]) is not int
@@ -248,6 +277,30 @@ class Intent:
             )
         if "grouping" in raw:
             grouping(raw["grouping"])
+        if "prototype" in raw:
+            variant = prototype(raw["prototype"])
+            latent = record(record(raw.get("optimization", {})).get("latent_scale", {}))
+            if (
+                (variant.levels != "sign" or variant.residual or variant.down_int4_layers)
+                and latent != {"kind": "row", "multiple": 3.0}
+                and latent
+                != {
+                    "kind": "row",
+                    "multiple": 3,
+                }
+            ):
+                raise ValueError(
+                    "prototype weight levels require the row latent scale with multiple 3"
+                )
+            if variant.teacher is not None and "initialization" not in raw:
+                raise ValueError("a prototype teacher reads its weights from the initialization")
+            if any(
+                layer >= integer(record(raw["geometry"])["layers"])
+                for layer in variant.down_int4_layers
+            ):
+                raise ValueError("4-bit down layers must exist")
+            if trained_tables:
+                raise ValueError("prototypes are not combined with trained tables")
         table_step = (
             "optimization" in raw and TABLE_GROUP in optimization(raw["optimization"]).step_sizes
         )
@@ -398,6 +451,10 @@ class Intent:
         return self.raw.get("trained_tables", False) is True
 
     @property
+    def prototype(self) -> Prototype:
+        return prototype(self.raw["prototype"]) if "prototype" in self.raw else Prototype()
+
+    @property
     def cpu_threads(self) -> int:
         return integer(self.raw.get("cpu_threads", 2))
 
@@ -448,6 +505,7 @@ class Intent:
                     else {}
                 ),
                 **({"trained_tables": True} if self.trained_tables else {}),
+                **({"prototype": self.raw["prototype"]} if "prototype" in self.raw else {}),
                 "sampling": None
                 if self.sampling is None
                 else {"sha256": self.sampling.sha256, "bytes": self.sampling.size},

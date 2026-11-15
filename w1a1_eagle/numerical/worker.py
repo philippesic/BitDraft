@@ -15,7 +15,7 @@ from w1a1_eagle.clock import Clock, Monotonic
 from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
 from w1a1_eagle.data import Supervision
 from w1a1_eagle.device import DeviceClock
-from w1a1_eagle.model import HE4, Projection, clamp_latents
+from w1a1_eagle.model import HE4, Projection, Teacher, clamp_latents
 from w1a1_eagle.numerical.accounting import Accounting
 from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.records import canonical
@@ -115,6 +115,8 @@ class TensorWorker:
             "log_gain": "gain",
             "log_clip": "clip",
             "operand": TABLE_GROUP,
+            "residual_scale": "scale",
+            "block_scale": "scale",
         }
         groups: dict[str, list[Tensor]] = {key: [] for key in self.optimization.groups}
         for name, parameter in model.named_parameters():
@@ -163,6 +165,7 @@ class TensorWorker:
             model.parent_frozen_sha256,
         )
         self.frozen_transition: Record | None = None
+        self.teacher: Teacher | None = None
 
     def verify_frozen(self) -> None:
         current = dict(self.model.named_buffers())
@@ -353,9 +356,14 @@ class TensorWorker:
             if self.position_weights is None:
                 raise ValueError("reach weights require a development refresh before updating")
             positions = self.position_weights
-        hidden = model.group_hidden(
-            capture.features, capture.tokens, tuple(window.anchor for window in windows), size
-        )
+        anchors = tuple(window.anchor for window in windows)
+        teacher_hidden: Tensor | None = None
+        if self.teacher is not None:
+            with torch.no_grad():
+                teacher_hidden = model.group_hidden(
+                    capture.features, capture.tokens, anchors, size, self.teacher
+                )
+        hidden = model.group_hidden(capture.features, capture.tokens, anchors, size)
         lengths = tuple(min(len(window.labels), size - 1) for window in windows)
         indices: list[int] = [
             index * size + 1 + offset
@@ -373,14 +381,34 @@ class TensorWorker:
         selected = hidden.view(-1, hidden.shape[-1]).index_select(0, rows)
         head = selected.detach().requires_grad_()
         total = torch.zeros((), device=device)
+        prototype = model.prototype
+        target = (
+            None
+            if teacher_hidden is None
+            else teacher_hidden.view(-1, hidden.shape[-1]).index_select(0, rows)
+        )
         for start in range(0, len(targets), HEAD_ROWS):
             end = start + HEAD_ROWS
-            losses = torch.nn.functional.cross_entropy(
-                torch.nn.functional.linear(head[start:end], model.vocabulary),
-                labels[start:end],
-                reduction="none",
-            )
+            logits = torch.nn.functional.linear(head[start:end], model.vocabulary)
+            losses = torch.nn.functional.cross_entropy(logits, labels[start:end], reduction="none")
+            if target is not None and prototype.teacher == "logits":
+                with torch.no_grad():
+                    reference = torch.nn.functional.log_softmax(
+                        torch.nn.functional.linear(target[start:end], model.vocabulary), -1
+                    )
+                divergence = torch.nn.functional.kl_div(
+                    torch.nn.functional.log_softmax(logits, -1),
+                    reference,
+                    reduction="none",
+                    log_target=True,
+                ).sum(-1)
+                losses = losses + prototype.teacher_weight * divergence
             loss = (losses * weights[start:end]).sum()
+            torch.autograd.backward(loss)
+            total = total + loss.detach()
+        if target is not None and prototype.teacher == "hidden":
+            error = (head - target).square().sum(-1) / target.square().sum(-1).clamp_min(1e-12)
+            loss = (prototype.teacher_weight * error * weights).sum()
             torch.autograd.backward(loss)
             total = total + loss.detach()
         if not bool(torch.isfinite(total)) or head.grad is None:

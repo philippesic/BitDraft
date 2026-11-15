@@ -7,6 +7,8 @@ from torch import Tensor, nn
 from torch.autograd.function import FunctionCtx
 from torch.nn import functional as functional
 
+from w1a1_eagle.prototype import Levels, Prototype, Weights
+
 
 @dataclass(frozen=True)
 class Geometry:
@@ -95,6 +97,105 @@ def hard_sign(value: Tensor) -> Tensor:
     return SIGN(value)
 
 
+TERNARY_THRESHOLD = 0.7 / 3
+RESIDUAL_THRESHOLD = 1 / 3
+
+
+def uniform_levels(value: Tensor, bits: int) -> Tensor:
+    half = 1 << (bits - 1)
+    top = (half - 0.5) / half
+    return ((value * half).floor() + 0.5).div(half).clamp(-top, top)
+
+
+def levels(value: Tensor, kind: Levels) -> Tensor:
+    if kind == "sign":
+        return torch.where(value >= 0, 1.0, -1.0)
+    if kind == "ternary":
+        return torch.where(value.abs() > TERNARY_THRESHOLD, torch.where(value >= 0, 1.0, -1.0), 0.0)
+    if kind == "int2":
+        return uniform_levels(value, 2)
+    if kind == "int4":
+        return uniform_levels(value, 4)
+    return value
+
+
+def residual_signs(value: Tensor) -> Tensor:
+    return torch.where(value - RESIDUAL_THRESHOLD * levels(value, "sign") >= 0, 1.0, -1.0)
+
+
+def effective_forward(
+    context: FunctionCtx, latent: Tensor, scale: Tensor, residual: Tensor, block: Tensor
+) -> Tensor:
+    kind = cast(Levels, getattr(context, "levels"))
+    context.save_for_backward(latent, scale, residual, block)
+    quantized = levels(latent, kind)
+    if block.numel():
+        quantized = (quantized.view(block.shape[0], block.shape[1], -1) * block[:, :, None]).view(
+            latent.shape
+        )
+    weight = quantized * scale[:, None]
+    if residual.numel():
+        weight = weight + residual_signs(latent) * residual[:, None]
+    return weight
+
+
+def effective_backward(
+    context: FunctionCtx, gradient: Tensor
+) -> tuple[Tensor, Tensor, Tensor, Tensor]:
+    kind = cast(Levels, getattr(context, "levels"))
+    latent, scale, residual, block = cast(
+        tuple[Tensor, Tensor, Tensor, Tensor], getattr(context, "saved_tensors")
+    )
+    inside = (latent.abs() <= 1).to(gradient.dtype)
+    quantized = levels(latent, kind)
+    if block.numel():
+        rows, groups = block.shape
+        expanded = block[:, :, None].expand(rows, groups, latent.shape[1] // groups)
+        expanded = expanded.reshape(latent.shape)
+        block_gradient = (gradient * quantized * scale[:, None]).view(rows, groups, -1).sum(-1)
+        quantized = quantized * expanded
+        latent_gradient = gradient * scale[:, None] * expanded * inside
+    else:
+        block_gradient = torch.zeros_like(block)
+        latent_gradient = gradient * scale[:, None] * inside
+    scale_gradient = (gradient * quantized).sum(-1)
+    if residual.numel():
+        offset = latent - RESIDUAL_THRESHOLD * levels(latent, "sign")
+        latent_gradient = latent_gradient + gradient * residual[:, None] * (offset.abs() <= 1).to(
+            gradient.dtype
+        )
+        residual_gradient = (gradient * residual_signs(latent)).sum(-1)
+    else:
+        residual_gradient = torch.zeros_like(residual)
+    return latent_gradient, scale_gradient, residual_gradient, block_gradient
+
+
+def effective_function(kind: Levels) -> Callable[[Tensor, Tensor, Tensor, Tensor], Tensor]:
+    def forward(
+        context: FunctionCtx, latent: Tensor, scale: Tensor, residual: Tensor, block: Tensor
+    ) -> Tensor:
+        setattr(context, "levels", kind)
+        return effective_forward(context, latent, scale, residual, block)
+
+    def backward(context: FunctionCtx, gradient: Tensor) -> tuple[Tensor, Tensor, Tensor, Tensor]:
+        setattr(context, "levels", kind)
+        return effective_backward(context, gradient)
+
+    namespace: dict[str, object] = {
+        "forward": staticmethod(forward),
+        "backward": staticmethod(backward),
+    }
+    bases: tuple[type, ...] = (cast(type, getattr(torch.autograd, "Function")),)
+    function = type("Effective" + kind.capitalize(), bases, namespace)
+    return cast(Callable[[Tensor, Tensor, Tensor, Tensor], Tensor], getattr(function, "apply"))
+
+
+LEVELS: tuple[Levels, ...] = ("sign", "ternary", "int2", "int4", "full")
+EFFECTIVE: dict[str, Callable[[Tensor, Tensor, Tensor, Tensor], Tensor]] = {
+    kind: effective_function(kind) for kind in LEVELS
+}
+
+
 def cache_storage(value: Tensor) -> Tensor:
     rounded = value.half().float()
     if not bool(torch.isfinite(rounded).all()):
@@ -118,16 +219,59 @@ class Table(nn.Module):
 
 
 class Projection(nn.Module):
-    def __init__(self, weight: Tensor, bits: int, gain: nn.Parameter, clip: nn.Parameter) -> None:
+    def __init__(
+        self,
+        weight: Tensor,
+        bits: int,
+        gain: nn.Parameter,
+        clip: nn.Parameter,
+        weights: Weights = Weights(),
+    ) -> None:
         super().__init__()
         if bits not in (4, 8) or weight.ndim != 2 or not bool(torch.isfinite(weight).all()):
             raise ValueError("invalid HE4 projection")
         self.bits = bits
+        self.weights = weights
         self.latent_sign = nn.Parameter(weight.detach().float().clone())
         self.scale = nn.Parameter(weight.detach().float().abs().mean(-1))
         self.midpoint = nn.Parameter(torch.zeros(weight.shape[0]))
         self.log_gain = gain
         self.log_clip = clip
+        if not weights.default:
+            self.initialize_prototype(weight.detach().float())
+
+    def initialize_prototype(self, weight: Tensor) -> None:
+        rows, columns = weight.shape
+        magnitude = weight.abs()
+        mean = magnitude.mean(-1, keepdim=True)
+        bounded = (weight / torch.where(mean > 0, mean * 3, 1.0)).clamp(-1, 1)
+        quantized = levels(bounded, self.weights.levels).abs()
+        if self.weights.block is not None:
+            if columns % self.weights.block:
+                raise ValueError("block scale must divide the input width")
+            groups = columns // self.weights.block
+            block_mean = magnitude.view(rows, groups, -1).mean(-1)
+            self.block_scale = nn.Parameter(
+                torch.where(mean > 0, block_mean / torch.where(mean > 0, mean, 1.0), 1.0)
+            )
+            return
+        numerator = (magnitude * quantized).sum(-1)
+        denominator = quantized.square().sum(-1)
+        with torch.no_grad():
+            self.scale.copy_(
+                torch.where(denominator > 0, numerator / denominator.clamp_min(1e-30), 0.0)
+            )
+        if self.weights.residual:
+            remainder = (magnitude - mean).abs().mean(-1)
+            self.residual_scale = nn.Parameter(remainder)
+
+    def effective_weight(self) -> Tensor:
+        empty = self.latent_sign.new_zeros(0)
+        residual = cast(Tensor, getattr(self, "residual_scale", empty))
+        block = cast(Tensor, getattr(self, "block_scale", empty.view(0, 0)))
+        return EFFECTIVE[self.weights.levels](
+            self.latent_sign, self.scale.clamp_min(0), residual, block
+        )
 
     def forward(self, value: Tensor) -> Tensor:
         gained = value.float() * self.log_gain.exp()
@@ -142,6 +286,11 @@ class Projection(nn.Module):
         rounded = normalized.round().clamp(-maximum, maximum)
         codes = normalized + (rounded - normalized).detach()
         step = bound / maximum
+        if not self.weights.default:
+            values = codes * step
+            return functional.linear(values, self.effective_weight()) + (
+                values.sum(-1, keepdim=True) * self.midpoint
+            )
         signs = hard_sign(self.latent_sign)
         scale = self.scale.clamp_min(0)
         native = (functional.linear(codes, signs) * scale) * step + (
@@ -173,9 +322,59 @@ def clamp_latents(model: nn.Module) -> None:
                 module.latent_sign.clamp_(-1, 1)
 
 
+class TeacherLayer(nn.Module):
+    attn_norm: Tensor
+    q_norm: Tensor
+    k_norm: Tensor
+    ffn_norm: Tensor
+    gate: Tensor
+    up: Tensor
+    down: Tensor
+
+    def __init__(self, tensors: dict[str, Tensor], prefix: str) -> None:
+        super().__init__()
+        for name, key in (
+            ("attn_norm", "attn_norm"),
+            ("q_norm", "attn_q_norm"),
+            ("k_norm", "attn_k_norm"),
+            ("ffn_norm", "ffn_norm"),
+        ):
+            self.register_buffer(name, tensors[prefix + key + ".weight"].detach().float().clone())
+        for name in ("gate", "up", "down"):
+            weight = tensors[prefix + "ffn_" + name + ".weight"].detach()
+            stored = weight.to(torch.bfloat16)
+            if not torch.equal(stored.float(), weight.float()):
+                raise ValueError("teacher feed-forward weights must be exact in BF16")
+            self.register_buffer(name, stored)
+
+    def feed(self, norm: Tensor) -> Tensor:
+        gate = functional.linear(norm, self.gate.float())
+        up = functional.linear(norm, self.up.float())
+        return functional.linear(functional.silu(gate) * up, self.down.float())
+
+
+class Teacher(nn.Module):
+    encoder_norm: Tensor
+    output_norm: Tensor
+
+    def __init__(self, tensors: dict[str, Tensor], geometry: Geometry) -> None:
+        super().__init__()
+        self.register_buffer("encoder_norm", tensors["enc.output_norm.weight"].float().clone())
+        self.register_buffer("output_norm", tensors["output_norm.weight"].float().clone())
+        self.layers = nn.ModuleList(
+            [TeacherLayer(tensors, f"blk.{i}.") for i in range(geometry.layers)]
+        )
+
+
 class Layer(nn.Module):
     def __init__(
-        self, tensors: dict[str, Tensor], prefix: str, geometry: Geometry, trained: bool = False
+        self,
+        tensors: dict[str, Tensor],
+        prefix: str,
+        geometry: Geometry,
+        trained: bool = False,
+        gate_up: Weights = Weights(),
+        down: Weights = Weights(),
     ) -> None:
         super().__init__()
         self.geometry = geometry
@@ -189,20 +388,24 @@ class Layer(nn.Module):
         self.output = Table(tensors[prefix + "attn_output.weight"], trained)
         gain = nn.Parameter(torch.zeros(geometry.hidden))
         clip = nn.Parameter(torch.tensor(0.0))
-        self.gate = Projection(tensors[prefix + "ffn_gate.weight"], 4, gain, clip)
-        self.up = Projection(tensors[prefix + "ffn_up.weight"], 4, gain, clip)
+        self.gate = Projection(tensors[prefix + "ffn_gate.weight"], 4, gain, clip, gate_up)
+        self.up = Projection(tensors[prefix + "ffn_up.weight"], 4, gain, clip, gate_up)
         self.down = Projection(
             tensors[prefix + "ffn_down.weight"],
             8,
             nn.Parameter(torch.zeros(geometry.intermediate)),
             nn.Parameter(torch.tensor(0.0)),
+            down,
         )
 
-    def context(self, encoded: Tensor, positions: Tensor) -> tuple[Tensor, Tensor]:
+    def context(
+        self, encoded: Tensor, positions: Tensor, teacher: TeacherLayer | None = None
+    ) -> tuple[Tensor, Tensor]:
         cfg = self.geometry
         key = self.key.forward(encoded).view(-1, cfg.kv_heads, cfg.head_dim)
         value = self.value.forward(encoded).view(-1, cfg.kv_heads, cfg.head_dim)
-        key = rope(rms(key, self.k_norm, cfg.epsilon), positions, cfg.theta)
+        k_norm = self.k_norm if teacher is None else teacher.k_norm
+        key = rope(rms(key, k_norm, cfg.epsilon), positions, cfg.theta)
         return cache_storage(key), cache_storage(value)
 
     def forward(
@@ -235,17 +438,23 @@ class Layer(nn.Module):
         positions: Tensor,
         allowed: Tensor,
         slot_allowed: Tensor | None,
+        teacher: TeacherLayer | None = None,
     ) -> Tensor:
         cfg = self.geometry
         count, slots, length = positions.shape[0], positions.shape[1], context[0].shape[0]
         groups, heads = cfg.heads // cfg.kv_heads, cfg.kv_heads
         flat = positions.reshape(-1)
-        norm = rms(state, self.attn_norm, cfg.epsilon)
+        norms = (
+            (self.attn_norm, self.q_norm, self.k_norm, self.ffn_norm)
+            if teacher is None
+            else (teacher.attn_norm, teacher.q_norm, teacher.k_norm, teacher.ffn_norm)
+        )
+        norm = rms(state, norms[0], cfg.epsilon)
         query = self.query.forward(norm).view(-1, cfg.heads, cfg.head_dim)
         key = self.key.forward(norm).view(-1, heads, cfg.head_dim)
         value = self.value.forward(norm).view(-1, heads, cfg.head_dim)
-        query = rope(rms(query, self.q_norm, cfg.epsilon), flat, cfg.theta)
-        key = cache_storage(rope(rms(key, self.k_norm, cfg.epsilon), flat, cfg.theta))
+        query = rope(rms(query, norms[1], cfg.epsilon), flat, cfg.theta)
+        key = cache_storage(rope(rms(key, norms[2], cfg.epsilon), flat, cfg.theta))
         value = cache_storage(value)
         query = (
             query.view(count, slots, heads, groups, cfg.head_dim)
@@ -274,7 +483,9 @@ class Layer(nn.Module):
         ).view(heads, count, groups, slots, cfg.head_dim)
         attended = attended.permute(1, 3, 0, 2, 4).reshape(count * slots, -1)
         residual = state + self.output.forward(attended)
-        norm = rms(residual, self.ffn_norm, cfg.epsilon)
+        norm = rms(residual, norms[3], cfg.epsilon)
+        if teacher is not None:
+            return residual + teacher.feed(norm)
         return residual + self.down.forward(
             functional.silu(self.gate.forward(norm)) * self.up.forward(norm)
         )
@@ -290,10 +501,12 @@ class HE4(nn.Module):
         mask: int,
         geometry: Geometry = Geometry(),
         trained_tables: bool = False,
+        prototype: Prototype = Prototype(),
     ) -> None:
         super().__init__()
         self.geometry = geometry
         self.trained_tables = trained_tables
+        self.prototype = prototype
         self.mask = mask
         self.origin: tuple[str, str] | None = None
         self.frozen_format = "Q4_0"
@@ -314,7 +527,17 @@ class HE4(nn.Module):
         self.encoder_norm = nn.Parameter(tensors["enc.output_norm.weight"].clone())
         self.output_norm = nn.Parameter(tensors["output_norm.weight"].clone())
         self.blocks = nn.ModuleList(
-            [Layer(tensors, f"blk.{i}.", geometry, trained_tables) for i in range(geometry.layers)]
+            [
+                Layer(
+                    tensors,
+                    f"blk.{i}.",
+                    geometry,
+                    trained_tables,
+                    prototype.weights(i, False),
+                    prototype.weights(i, True),
+                )
+                for i in range(geometry.layers)
+            ]
         )
 
     def check(self, features: Tensor, tokens: tuple[int, ...], anchors: tuple[int, ...]) -> None:
@@ -344,6 +567,7 @@ class HE4(nn.Module):
         tokens: tuple[int, ...],
         anchors: tuple[int, ...],
         slots: int | None = None,
+        teacher: Teacher | None = None,
     ) -> Tensor:
         self.check(features, tokens, anchors)
         cfg = self.geometry
@@ -359,7 +583,9 @@ class HE4(nn.Module):
         identifiers[:, 0] = torch.tensor(first, device=device)
         state = functional.embedding(identifiers.reshape(-1), self.vocabulary)
         encoded = rms(
-            self.fusion.forward(features[:last].to(device).float()), self.encoder_norm, cfg.epsilon
+            self.fusion.forward(features[:last].to(device).float()),
+            self.encoder_norm if teacher is None else teacher.encoder_norm,
+            cfg.epsilon,
         )
         visible = context_positions[None, None, :] < starts[:, None, None]
         local = visible & (
@@ -369,14 +595,17 @@ class HE4(nn.Module):
         for index, module in enumerate(self.blocks):
             block = cast(Layer, module)
             final = index == cfg.layers - 1
+            layer = None if teacher is None else cast(TeacherLayer, teacher.layers[index])
             state = block.group(
                 state,
-                block.context(encoded, context_positions),
+                block.context(encoded, context_positions, layer),
                 positions,
                 visible if final else local,
                 None if final else slot_local,
+                layer,
             )
-        return rms(state, self.output_norm, cfg.epsilon).view(len(anchors), size, cfg.hidden)
+        output_norm = self.output_norm if teacher is None else teacher.output_norm
+        return rms(state, output_norm, cfg.epsilon).view(len(anchors), size, cfg.hidden)
 
     def forward(
         self, features: Tensor, tokens: tuple[int, ...], anchor: int, slots: int | None = None
@@ -406,3 +635,22 @@ class HE4(nn.Module):
                 state, block.context(encoded, context_positions), positions, allowed
             )
         return functional.linear(rms(state, self.output_norm, cfg.epsilon), self.vocabulary)
+
+
+class TeacherView:
+    def __init__(self, student: HE4, teacher: Teacher) -> None:
+        self.student = student
+        self.teacher = teacher
+
+    @property
+    def vocabulary(self) -> Tensor:
+        return self.student.vocabulary
+
+    def block(self, slots: int | None) -> int:
+        return self.student.block(slots)
+
+    def forward(
+        self, features: Tensor, tokens: tuple[int, ...], anchor: int, slots: int | None = None
+    ) -> Tensor:
+        hidden = self.student.group_hidden(features, tokens, (anchor,), slots, self.teacher)
+        return functional.linear(hidden[0], self.student.vocabulary)

@@ -295,6 +295,8 @@ def export_he4(
             or scratch_bytes < 1
         ):
             raise ValueError("positive export byte and scratch budgets required")
+        if not worker.model.prototype.servable:
+            raise ValueError("prototype weight formats have no W1Ax export")
         parameters = list(worker.model.parameters())
         operands = parameters + list(worker.model.buffers())
         estimate = (

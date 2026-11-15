@@ -19,13 +19,13 @@ from w1a1_eagle.identity import loaded_identity, source_identity
 from w1a1_eagle.index import IndexReader
 from w1a1_eagle.intent import Intent
 from w1a1_eagle.lifecycle import Journal, control
-from w1a1_eagle.model import HE4, Geometry, bound_latents
+from w1a1_eagle.model import HE4, Geometry, TeacherView, bound_latents
 from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.diagnostics import Diagnostics
 from w1a1_eagle.numerical.export import export_he4
 from w1a1_eagle.numerical.mixture import mixture
-from w1a1_eagle.numerical.weights import exported_tables, load_he4
+from w1a1_eagle.numerical.weights import exported_tables, load_he4, load_teacher
 from w1a1_eagle.numerical.worker import TensorWorker, checkpoint_accounting
 from w1a1_eagle.processes import ProcessIdentity
 from w1a1_eagle.records import artifact
@@ -247,8 +247,14 @@ def run_leased(
         intent.frozen_format,
         intent.frozen_baseline,
         intent.trained_tables,
+        intent.prototype,
     )
     model.to(str(intent.raw["device"]))
+    teacher = (
+        load_teacher(intent.initialization, intent.memory_bytes, cfg).to(str(intent.raw["device"]))
+        if intent.prototype.teacher is not None and intent.initialization is not None
+        else None
+    )
     if model.vocabulary.device.type == "cuda":
         device_admission(intent, corpus, model)
         total = torch.cuda.get_device_properties(model.vocabulary.device).total_memory
@@ -270,6 +276,7 @@ def run_leased(
         blocks=intent.blocks,
         block_slots=corpus.slots,
     )
+    worker.teacher = teacher
     diagnostics = (
         Diagnostics(artifact(intent.raw["development"], intent.base), corpus, intent.memory_bytes)
         if "development" in intent.raw
@@ -333,9 +340,23 @@ def run_leased(
     last_loss_updates = worker.updates
     losses: list[float | None] = []
 
+    teacher_measured = False
+
     def diagnose(diagnostics: Diagnostics, refresh: bool) -> None:
-        nonlocal last_diagnostic_updates
+        nonlocal last_diagnostic_updates, teacher_measured
         worker.verify_frozen()
+        if teacher is not None and not teacher_measured:
+            began = clock.now()
+            measured = diagnostics.measure(cast(HE4, TeacherView(model, teacher)))
+            journal.append(
+                {
+                    "kind": "teacher-diagnostic",
+                    "attempt": attempt,
+                    "seconds": clock.now() - began,
+                    "result": measured,
+                }
+            )
+            teacher_measured = True
         began = clock.now()
         result = diagnostics.measure(model)
         exported = (
@@ -532,6 +553,37 @@ def run_leased(
         phase("checkpoint-complete")
         retain_states()
         export_store = Store(root / "exports", intent.disk_reserve_bytes)
+        if not model.prototype.servable:
+            if boundary is not None:
+                raise ValueError("campaigns require a servable export")
+            journal.append(
+                {
+                    "kind": "worker",
+                    "attempt": attempt,
+                    "outcome": result,
+                    "updates": worker.updates,
+                    "cursor": worker.cursor,
+                    "accounting": worker.accounting.encode(),
+                    "attempts": worker.progress.attempts,
+                    "state": reference.artifact.sha256,
+                    "export": None,
+                    "activation": {
+                        "actual_optimizer_updates": worker.optimizer_updates,
+                        "training_device": model.vocabulary.device.type,
+                        "peak_cuda_allocated_bytes": torch.cuda.max_memory_allocated()
+                        if model.vocabulary.device.type == "cuda"
+                        else None,
+                        "peak_cuda_reserved_bytes": torch.cuda.max_memory_reserved()
+                        if model.vocabulary.device.type == "cuda"
+                        else None,
+                    },
+                    "scientific": "prototype without W1Ax export; DEV diagnostics only",
+                    "objective": "unknown: no benchmark",
+                }
+            )
+            if source_identity(code_root) != intent.raw["code_sha256"]:
+                raise ValueError("executable source drifted during this attempt")
+            return
         exported = export_he4(
             worker,
             intent.source,

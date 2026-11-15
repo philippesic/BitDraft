@@ -12,7 +12,8 @@ from torch import Tensor
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, record, sequence, string
 from w1a1_eagle.data import Artifact
-from w1a1_eagle.model import HE4, Geometry
+from w1a1_eagle.model import HE4, Geometry, Teacher
+from w1a1_eagle.prototype import Prototype
 from w1a1_eagle.records import canonical, reference
 
 
@@ -247,6 +248,7 @@ def load_he4(
     frozen_format: Literal["Q4_0", "baseline-k"] = "Q4_0",
     frozen_baseline: Artifact | None = None,
     trained_tables: bool = False,
+    prototype: Prototype = Prototype(),
 ) -> HE4:
     if frozen_format not in {"Q4_0", "baseline-k"}:
         raise ValueError("unsupported frozen table format")
@@ -348,7 +350,7 @@ def load_he4(
             types.append((name, item.tensor_type.name))
         codes = tuple(replacements)
         native_types = tuple(types)
-    model = HE4(tensors, head, mask, geometry, trained_tables)
+    model = HE4(tensors, head, mask, geometry, trained_tables, prototype)
     model.parent_frozen_sha256 = parent_frozen_sha256
     model.frozen_format = frozen_format
     model.frozen_baseline = None if frozen_baseline is None else frozen_baseline.sha256
@@ -356,6 +358,29 @@ def load_he4(
     model.origin = (source.sha256, vocabulary.sha256)
     model.native_codes = codes
     return model
+
+
+def load_teacher(initialization: Artifact, memory_budget_bytes: int, geometry: Geometry) -> Teacher:
+    initialization.verify()
+    with zipfile.ZipFile(initialization.path) as archive:
+        if sum(item.file_size for item in archive.infolist()) * 2 > memory_budget_bytes:
+            raise ValueError("materialized initialization exceeds memory budget")
+    raw = record(
+        cast(
+            object,
+            torch.load(initialization.path, map_location="cpu", weights_only=True, mmap=True),
+        )
+    )
+    if raw.get("schema") != "he4-initialization-v1" or raw.get("geometry") != cast(
+        Record, asdict(geometry)
+    ):
+        raise ValueError("materialized initialization schema/geometry differs")
+    tensors: dict[str, Tensor] = {}
+    for name, value in record(raw["tensors"]).items():
+        if not torch.is_tensor(value) or not bool(torch.isfinite(value).all()):
+            raise ValueError("invalid materialized teacher tensor")
+        tensors[name] = value
+    return Teacher(tensors, geometry)
 
 
 def prepare_initialization(
