@@ -39,7 +39,15 @@ from w1a1_eagle.numerical.captures import Capture, CaptureCache, CaptureSpec, lo
 from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.entry import admission, run_leased
 from w1a1_eagle.numerical.export import export_he4, packed_signs
-from w1a1_eagle.numerical.weights import load_he4, prepare_initialization, shapes
+from w1a1_eagle.numerical.weights import (
+    exported_tables,
+    is_table,
+    load_he4,
+    prepare_initialization,
+    q4_0_codes,
+    shapes,
+    table_names,
+)
 from w1a1_eagle.numerical.worker import TensorWorker, label_weights
 from w1a1_eagle.processes import ProcessIdentity
 from w1a1_eagle.records import artifact, canonical, read, reference
@@ -86,13 +94,18 @@ def tiny_model(window: int = 4096) -> tuple[HE4, torch.Tensor]:
     return model, features
 
 
-def gguf_fixture(root: Path, cfg: Geometry) -> tuple[Artifact, Artifact]:
+def gguf_fixture(root: Path, cfg: Geometry, seed: int | None = None) -> tuple[Artifact, Artifact]:
     source = root / "source.gguf"
     writer = gguf.GGUFWriter(str(source), "dflash")
     writer.add_array("dflash.target_layers", [2, 6, 10, 14, 18, 22, 26, 30])
     writer.add_uint32("tokenizer.ggml.mask_token_id", 19)
+    generator = np.random.default_rng(seed)
     for name, shape in shapes(cfg).items():
-        data = np.ones(shape, dtype=np.float32)
+        data = (
+            np.ones(shape, dtype=np.float32)
+            if seed is None or len(shape) == 1
+            else (generator.standard_normal(shape) * 0.1).astype(np.float32)
+        )
         encoded = gguf.quantize(data, gguf.GGMLQuantizationType.BF16)
         writer.add_tensor(name, encoded, raw_dtype=gguf.GGMLQuantizationType.BF16)
     writer.write_header_to_file()
@@ -101,11 +114,11 @@ def gguf_fixture(root: Path, cfg: Geometry) -> tuple[Artifact, Artifact]:
     writer.close()
     vocabulary = root / "vocabulary.gguf"
     writer = gguf.GGUFWriter(str(vocabulary), "qwen35")
-    writer.add_tensor(
-        "token_embd.weight",
-        np.zeros((20, 144), dtype=np.uint8),
-        raw_dtype=gguf.GGMLQuantizationType.Q4_K,
-    )
+    head = np.zeros((20, 144), dtype=np.uint8)
+    if seed is not None:
+        head = generator.integers(0, 256, (20, 144), dtype=np.uint8)
+        head[:, 0:4] = np.array([0.01, 0.0], dtype=np.float16).view(np.uint8)
+    writer.add_tensor("token_embd.weight", head, raw_dtype=gguf.GGMLQuantizationType.Q4_K)
     writer.write_header_to_file()
     writer.write_kv_data_to_file()
     writer.write_tensors_to_file()
@@ -1718,3 +1731,414 @@ class TestNumerical(unittest.TestCase):
         self.assertEqual(record(record(extended["groups"])["agentic-coding"])["windows"], 20)
         self.assertGreaterEqual(number(extended["added_seconds"]), 0)
         self.assertTrue(torch.equal(before, torch.get_rng_state()))
+
+
+TABLE_RATES = {**default_step_sizes(), "table": 1e-4}
+OMITTED_RECIPE = "75522ef2453c56d78b8b8d5bfef298c2d0cb611d0fe97064be0a15663d62f2da"
+OMITTED_OPTIMIZED_RECIPE = "f91f0ed820c22f3fbc33595acf66dbc6af6e22568dccf175206d87c2d14d115c"
+OMITTED_FROZEN = "2497bf9e0074fbfffb8a8c59c68b74515d6c62d259b616d70bba0e8d64babe5e"
+OMITTED_EXPORT = "8d76fc3fe04fe227b9ba193d4645b940c554339f6f94b426ad23ec6cc6723250"
+TINY_FROZEN = "5027f6ecc69649f3490c41bb4c90a8568fe53d4aee85ce71d3314eca35b24a40"
+
+
+def table_optimization() -> Record:
+    return {**row_optimization(), "step_sizes": TABLE_RATES}
+
+
+def execute_leased(intent_path: Path, output: Path) -> Intent:
+    admitted = Intent.load(intent_path)
+    receipt = admitted.seal(output / "intents")
+    journal = Journal(output)
+    journal.append(
+        {
+            "kind": "started",
+            "attempt": "test",
+            "intent": admitted.sha256,
+            "controller": cast(Record, asdict(ProcessIdentity.read(os.getppid()))),
+        }
+    )
+    journal.append(
+        {
+            "kind": "process",
+            "attempt": "test",
+            "owner": cast(Record, asdict(ProcessIdentity.read(os.getpid()))),
+        }
+    )
+    handlers = {value: signal.getsignal(value) for value in (signal.SIGINT, signal.SIGTERM)}
+    try:
+        run_leased(receipt, output, "test")
+    finally:
+        for value, handler in handlers.items():
+            signal.signal(value, handler)
+    return admitted
+
+
+def gguf_tables(path: Path) -> dict[str, tuple[str, bytes]]:
+    return {
+        tensor.name: (tensor.tensor_type.name, tensor.data.tobytes())
+        for tensor in gguf.GGUFReader(str(path)).tensors
+        if is_table(tensor.name)
+    }
+
+
+class TestTrainedTables(unittest.TestCase):
+    def test_omitted_trained_tables_keep_recipe_fingerprint_and_export(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="binary-tables-") as directory:
+            root = Path(directory)
+            loaded = loader_fixture(root)
+            fixed = {
+                key: {
+                    "path": str(record(loaded.intent[key])["path"]),
+                    "sha256": str(i) * 64,
+                    "bytes": 7,
+                }
+                for i, key in enumerate(("source", "vocabulary", "corpus", "initialization"), 1)
+            }
+            base: Record = {**loaded.intent, **fixed, "code_sha256": "0" * 64}
+            path = root / "intent.json"
+
+            def parse(changes: Record) -> Intent:
+                path.write_bytes(canonical({**base, **changes}))
+                return Intent.load(path)
+
+            self.assertEqual(parse({}).recipe, OMITTED_RECIPE)
+            self.assertEqual(parse({"trained_tables": False}).recipe, OMITTED_RECIPE)
+            self.assertFalse(parse({"trained_tables": False}).trained_tables)
+            optimized: Record = {"optimization": row_optimization()}
+            self.assertEqual(parse(optimized).recipe, OMITTED_OPTIMIZED_RECIPE)
+            self.assertEqual(
+                parse({**optimized, "trained_tables": False}).recipe, OMITTED_OPTIMIZED_RECIPE
+            )
+            trained = parse({"trained_tables": True, "optimization": table_optimization()})
+            self.assertTrue(trained.trained_tables)
+            self.assertEqual(trained.optimization.step_sizes["table"], 1e-4)
+            self.assertNotIn(trained.recipe, (OMITTED_RECIPE, OMITTED_OPTIMIZED_RECIPE))
+            larger = parse(
+                {
+                    "trained_tables": True,
+                    "optimization": {
+                        **row_optimization(),
+                        "step_sizes": {**TABLE_RATES, "table": 1e-3},
+                    },
+                }
+            )
+            self.assertNotEqual(larger.recipe, trained.recipe)
+            refusals: list[tuple[Record, str]] = [
+                ({"trained_tables": True}, "explicit table step size"),
+                ({"trained_tables": True, **optimized}, "explicit table step size"),
+                ({"optimization": table_optimization()}, "requires trained_tables"),
+                ({"trained_tables": 1, "optimization": table_optimization()}, "true or false"),
+                (
+                    {
+                        "trained_tables": True,
+                        "optimization": table_optimization(),
+                        "frozen_format": "baseline-k",
+                        "frozen_baseline": fixed["source"],
+                    },
+                    "baseline-k",
+                ),
+            ]
+            for changes, message in refusals:
+                with self.assertRaisesRegex(ValueError, message):
+                    parse(changes)
+            with self.assertRaisesRegex(ValueError, "step sizes"):
+                Optimization({**TABLE_RATES, "other": 1e-4})
+            corpus = Corpus(loaded.corpus, 17, 64 * 1024 * 1024, 256)
+            for model in (
+                load_he4(loaded.source, loaded.vocabulary, 64 * 1024 * 1024, LOADER_GEOMETRY),
+                load_he4(
+                    loaded.source,
+                    loaded.vocabulary,
+                    64 * 1024 * 1024,
+                    LOADER_GEOMETRY,
+                    loaded.initialization,
+                    trained_tables=False,
+                ),
+            ):
+                self.assertFalse(
+                    any(name.endswith(".operand") for name, _ in model.named_parameters())
+                )
+                worker = TensorWorker(model, corpus, "export-fixture")
+                self.assertEqual(worker.frozen_sha256, OMITTED_FROZEN)
+                exported = export_he4(
+                    worker,
+                    loaded.source,
+                    loaded.vocabulary,
+                    Store(root / ("export-" + str(id(model)))),
+                    8 * 1024 * 1024,
+                    32 * 1024 * 1024,
+                )
+                self.assertEqual(exported.artifact.sha256, OMITTED_EXPORT)
+            tiny, _ = tiny_model()
+            self.assertEqual(TensorWorker(tiny, corpus, "tiny").frozen_sha256, TINY_FROZEN)
+
+    def test_trained_tables_export_resume_and_branch(self) -> None:
+        cfg = LOADER_GEOMETRY
+        memory = 64 * 1024 * 1024
+        with tempfile.TemporaryDirectory(prefix="binary-tables-") as directory:
+            root = Path(directory)
+            source, vocabulary = gguf_fixture(root, cfg, seed=5)
+            prepared = prepare_initialization(source, vocabulary, memory, cfg, root / "init")
+            initialization = artifact(prepared["materialized"], root)
+            corpus = Corpus(fixture_corpus(root, 256), 17, memory, 256, shape=cfg)
+            frozen = load_he4(source, vocabulary, memory, cfg)
+            trained = load_he4(source, vocabulary, memory, cfg, initialization, trained_tables=True)
+            reader = gguf.GGUFReader(str(source.path))
+            names = table_names(cfg)
+            self.assertEqual(len(names), 5)
+            for item in reader.tensors:
+                if item.name in names:
+                    decoded = torch.tensor(
+                        gguf.dequantize(item.data, item.tensor_type)
+                        .reshape(tuple(reversed([int(v) for v in item.shape])))
+                        .astype("float32")
+                    )
+                    value = trained.get_parameter(names[item.name])
+                    self.assertTrue(value.requires_grad)
+                    self.assertTrue(torch.equal(value.detach(), decoded), item.name)
+                    self.assertFalse(
+                        torch.equal(value.detach(), frozen.get_buffer(names[item.name])), item.name
+                    )
+            self.assertEqual([name for name, _ in trained.named_buffers()], ["vocabulary"])
+            self.assertEqual([name for name, _, _ in trained.native_codes], ["output.weight"])
+            frozen_worker = TensorWorker(frozen, corpus, "frozen")
+            self.assertEqual(trained.parent_frozen_sha256, frozen_worker.frozen_sha256)
+            with self.assertRaisesRegex(ValueError, "table step size"):
+                TensorWorker(trained, corpus, "trained")
+            optimization = Optimization(TABLE_RATES, Schedule("cosine", 1, 0, 8))
+            with self.assertRaisesRegex(ValueError, "requires trained tables"):
+                TensorWorker(frozen, corpus, "frozen", optimization=optimization)
+            with self.assertRaisesRegex(ValueError, "baseline-k"):
+                load_he4(source, vocabulary, memory, cfg, None, "baseline-k", source, True)
+
+            def worker() -> TensorWorker:
+                model = load_he4(
+                    source, vocabulary, memory, cfg, initialization, trained_tables=True
+                )
+                return TensorWorker(model, corpus, "trained", optimization=optimization)
+
+            original = TensorWorker(trained, corpus, "trained", optimization=optimization)
+            self.assertNotEqual(original.frozen_sha256, frozen_worker.frozen_sha256)
+            exports = Store(root / "exports")
+            frozen_export = export_he4(
+                frozen_worker, source, vocabulary, Store(root / "frozen-export"), 8 << 20, 32 << 20
+            )
+            initial_export = export_he4(original, source, vocabulary, exports, 8 << 20, 32 << 20)
+            uncached_model = load_he4(source, vocabulary, memory, cfg, trained_tables=True)
+            uncached_model.native_codes = ()
+            uncached = TensorWorker(uncached_model, corpus, "trained", optimization=optimization)
+            uncached_export = export_he4(
+                uncached, source, vocabulary, Store(root / "uncached"), 8 << 20, 32 << 20
+            )
+            expected_tables = gguf_tables(frozen_export.artifact.path)
+            self.assertEqual(set(expected_tables), set(names))
+            self.assertTrue(all(kind == "Q4_0" for kind, _ in expected_tables.values()))
+            self.assertEqual(gguf_tables(initial_export.artifact.path), expected_tables)
+            self.assertEqual(gguf_tables(uncached_export.artifact.path), expected_tables)
+            group = next(g for g in original.optimizer.param_groups if g["name"] == "table")
+            self.assertEqual(
+                {id(value) for value in group["params"]},
+                {id(trained.get_parameter(name)) for name in names.values()},
+            )
+            original.run(Monotonic(), Budget(1, 60, 1), lambda: False)
+            self.assertEqual(group["lr"], 1e-4 * optimization.schedule.multiplier(0))
+            parent = original.checkpoint(Store(root / "states"), 16 * 1024 * 1024)
+            original.run(Monotonic(), Budget(3, 60, 3), lambda: False)
+            state = torch.load(parent.artifact.path, map_location="cpu", weights_only=True)
+            self.assertTrue(set(names.values()) <= set(state["model"]))
+            self.assertEqual(state["frozen_sha256"], original.frozen_sha256)
+            resumed = worker()
+            resumed.restore(parent, 64 * 1024 * 1024)
+            resumed.run(Monotonic(), Budget(3, 60, 3), lambda: False)
+            self.assertEqual(resumed.progress.last_loss, original.progress.last_loss)
+            expected = dict(original.model.named_parameters())
+            for name, value in resumed.model.named_parameters():
+                self.assertTrue(torch.equal(value, expected[name]), name)
+            moments = original.optimizer.state_dict()["state"]
+            resumed_moments = resumed.optimizer.state_dict()["state"]
+            self.assertEqual(set(resumed_moments), set(moments))
+            for key, saved in resumed_moments.items():
+                for field in ("exp_avg", "exp_avg_sq"):
+                    self.assertTrue(torch.equal(saved[field], moments[key][field]))
+            for name in names.values():
+                self.assertFalse(
+                    torch.equal(trained.get_parameter(name), worker().model.get_parameter(name))
+                )
+            final = export_he4(original, source, vocabulary, exports, 8 << 20, 32 << 20)
+            final_tables = gguf_tables(final.artifact.path)
+            self.assertNotEqual(final_tables, expected_tables)
+            for gguf_name, module in names.items():
+                self.assertEqual(
+                    final_tables[gguf_name],
+                    ("Q4_0", q4_0_codes(trained.get_parameter(module).detach()).tobytes()),
+                )
+            with self.assertRaisesRegex(ValueError, "fingerprint"):
+                TensorWorker(load_he4(source, vocabulary, memory, cfg), corpus, "trained").restore(
+                    parent, 64 * 1024 * 1024, "branch"
+                )
+
+            frozen_worker.run(Monotonic(), Budget(1, 60, 1), lambda: False)
+            frozen_state = frozen_worker.checkpoint(Store(root / "frozen"), 16 * 1024 * 1024)
+            for mode in ("resume", "continue"):
+                with self.assertRaisesRegex(ValueError, "fingerprint|recipe"):
+                    worker().restore(frozen_state, 64 * 1024 * 1024, mode)
+            branch = worker()
+            branch.restore(frozen_state, 64 * 1024 * 1024, "branch")
+            transition = record(branch.frozen_transition)
+            self.assertEqual(transition["tables"], "trained")
+            self.assertEqual(transition["from"], frozen_worker.frozen_sha256)
+            self.assertEqual(transition["to"], branch.frozen_sha256)
+            self.assertEqual((branch.updates, branch.cursor, branch.optimizer_updates), (1, 0, 0))
+            parent_parameters = dict(frozen_worker.model.named_parameters())
+            fresh = worker().model
+            for name, value in branch.model.named_parameters():
+                source_value = (
+                    fresh.get_parameter(name)
+                    if name.endswith(".operand")
+                    else parent_parameters[name]
+                )
+                self.assertTrue(torch.equal(value, source_value), name)
+            branch.run(Monotonic(), Budget(2, 60, 2), lambda: False)
+            child = branch.checkpoint(Store(root / "branch"), 16 * 1024 * 1024)
+            again = worker()
+            again.restore(child, 64 * 1024 * 1024)
+            self.assertEqual(again.frozen_transition, branch.frozen_transition)
+            with torch.no_grad():
+                branch.model.vocabulary[0, 0] += 1
+            with self.assertRaisesRegex(ValueError, "frozen"):
+                branch.verify_frozen()
+
+    def test_exported_table_diagnostics_and_device_budget(self) -> None:
+        from w1a1_eagle.numerical.diagnostics import Diagnostics
+
+        cfg = LOADER_GEOMETRY
+        memory = 64 * 1024 * 1024
+        with tempfile.TemporaryDirectory(prefix="binary-tables-") as directory:
+            root = Path(directory)
+            small = Geometry(hidden=32, intermediate=32, heads=4, kv_heads=1, head_dim=8, layers=2)
+            generator = torch.Generator().manual_seed(3)
+            weights = {
+                name: torch.ones(shape)
+                if len(shape) == 1
+                else torch.randn(shape, generator=generator) * 0.1
+                for name, shape in shapes(small).items()
+            }
+            head = torch.randn((20, 32), generator=generator)
+            model = HE4(weights, head, 19, small, trained_tables=True)
+            features = torch.randn((24, small.taps * small.hidden), generator=generator)
+            capture = Capture(tuple([1] * 24), features, (Window("sample", 6, tuple([1] * 15)),))
+
+            class Cache(CaptureCache):
+                def get(self, spec: CaptureSpec) -> Capture:
+                    return capture
+
+            diagnostics = Diagnostics.__new__(Diagnostics)
+            diagnostics.windows = tuple((str(index), 6) for index in range(120))
+            placeholder = Artifact(Path("/unused"), "a" * 64, 1)
+            diagnostics.specs = {
+                str(index): CaptureSpec(str(index), placeholder, ()) for index in range(120)
+            }
+            diagnostics.categories = {str(index): "code" for index in range(120)}
+            diagnostics.cache = Cache(1024)
+            diagnostics.groups = {}
+            tables = exported_tables(model)
+            self.assertEqual(set(tables), set(table_names(small).values()))
+            versions = {name: value._version for name, value in model.named_parameters()}
+            values = {name: value.detach().clone() for name, value in model.named_parameters()}
+            full = diagnostics.measure(model)
+            served = diagnostics.measure(model, tables=tables)
+            self.assertNotEqual(full["mean_loss"], served["mean_loss"])
+            for name, value in model.named_parameters():
+                self.assertEqual(value._version, versions[name], name)
+                self.assertTrue(torch.equal(value, values[name]), name)
+            self.assertEqual(diagnostics.measure(model), full)
+            replica = HE4(weights, head, 19, small, trained_tables=True)
+            with torch.no_grad():
+                for name, table in tables.items():
+                    replica.get_parameter(name).copy_(table)
+            self.assertEqual(diagnostics.measure(replica), served)
+
+            from w1a1_eagle.numerical.entry import device_admission
+
+            loaded = loader_fixture(root)
+            model = load_he4(loaded.source, loaded.vocabulary, memory, cfg, trained_tables=True)
+            path = root / "intent.json"
+            intent = {
+                **loaded.intent,
+                "trained_tables": True,
+                "optimization": table_optimization(),
+                "grouping": {"max_windows": 32, "activation_bytes": 1024, "device_bytes": 1 << 30},
+            }
+            path.write_bytes(canonical(intent))
+            admitted = Intent.load(path)
+            corpus = Corpus(loaded.corpus, 17, memory, 256, shape=cfg)
+            longest = max(max(row.anchors) for row in corpus.rows)
+            frozen_bytes = 4 * model.vocabulary.numel()
+            trained_bytes = 4 * sum(value.numel() for value in model.parameters())
+            retained = 4 * cfg.taps * cfg.hidden * longest
+            self.assertEqual(
+                device_admission(admitted, corpus, model),
+                frozen_bytes + 4 * trained_bytes + retained + 1024,
+            )
+            frozen_model = load_he4(loaded.source, loaded.vocabulary, memory, cfg)
+            frozen_demand = device_admission(admitted, corpus, frozen_model)
+            self.assertEqual(
+                frozen_demand,
+                4 * sum(value.numel() for value in frozen_model.buffers())
+                + 16 * sum(value.numel() for value in frozen_model.parameters())
+                + 1024,
+            )
+            with self.assertRaisesRegex(ValueError, "lower activation_bytes or raise device_bytes"):
+                Grouping(32, 1024, frozen_demand - 1).admit_device(
+                    frozen_demand - 1024 - 16 * sum(v.numel() for v in frozen_model.parameters()),
+                    4 * sum(value.numel() for value in frozen_model.parameters()),
+                    0,
+                )
+            gib = 1024**3
+            full_size = Grouping(32, 3 * gib, 14 * gib)
+            self.assertLess(full_size.admit_device(3 * gib, int(1.6 * gib), 0), 14 * gib)
+            with self.assertRaisesRegex(ValueError, "device_bytes"):
+                full_size.admit_device(3 * gib, int(1.8 * gib), gib)
+
+    def test_trained_tables_run_and_resume_through_the_worker_entry(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="binary-tables-") as directory:
+            root = Path(directory)
+            loaded, intent, path = scenario_intent(root)
+            intent.update(
+                trained_tables=True,
+                state_bytes=32 * 1024 * 1024,
+                optimization=table_optimization(),
+                science_policy={
+                    "id": "synthetic-fixture-only",
+                    "min_unique_positions": 16,
+                    "max_mean_visits": 8,
+                },
+            )
+            path.write_bytes(canonical(intent))
+            first = root / "first"
+            admitted = execute_leased(path, first)
+            journal = Journal(first)
+            admission_row = record(journal.report()["admission"])
+            self.assertIs(admission_row["trained_tables"], True)
+            self.assertEqual(record(admission_row["optimization"])["step_sizes"], TABLE_RATES)
+            state = Store(first / "states").latest(admitted.recipe)
+            drafter = Store(first / "exports").latest(admitted.recipe)
+            assert state is not None and drafter is not None
+            self.assertEqual(state.updates, 1)
+            saved = torch.load(state.artifact.path, map_location="cpu", weights_only=True)
+            tables = gguf_tables(drafter.artifact.path)
+            for gguf_name, module in table_names(LOADER_GEOMETRY).items():
+                self.assertEqual(
+                    tables[gguf_name], ("Q4_0", q4_0_codes(saved["model"][module]).tobytes())
+                )
+            intent.update(
+                mode="resume",
+                parent=reference(state.artifact),
+                budget={"updates": 2, "wall_seconds": 60, "attempts": 3, "retries": 0},
+            )
+            path.write_bytes(canonical(intent))
+            resumed = execute_leased(path, root / "second")
+            self.assertEqual(resumed.recipe, admitted.recipe)
+            latest = Store(root / "second" / "states").latest(resumed.recipe)
+            assert latest is not None
+            self.assertEqual(latest.updates, 2)

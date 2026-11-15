@@ -102,12 +102,16 @@ def cache_storage(value: Tensor) -> Tensor:
     return value + (rounded - value).detach()
 
 
-class FrozenLinear(nn.Module):
+class Table(nn.Module):
     operand: Tensor
 
-    def __init__(self, weight: Tensor) -> None:
+    def __init__(self, weight: Tensor, trained: bool = False) -> None:
         super().__init__()
-        self.register_buffer("operand", weight.detach().float().clone())
+        value = weight.detach().float().clone()
+        if trained:
+            self.operand = nn.Parameter(value)
+        else:
+            self.register_buffer("operand", value)
 
     def forward(self, value: Tensor) -> Tensor:
         return functional.linear(value, self.operand)
@@ -170,17 +174,19 @@ def clamp_latents(model: nn.Module) -> None:
 
 
 class Layer(nn.Module):
-    def __init__(self, tensors: dict[str, Tensor], prefix: str, geometry: Geometry) -> None:
+    def __init__(
+        self, tensors: dict[str, Tensor], prefix: str, geometry: Geometry, trained: bool = False
+    ) -> None:
         super().__init__()
         self.geometry = geometry
         self.attn_norm = nn.Parameter(tensors[prefix + "attn_norm.weight"].clone())
         self.q_norm = nn.Parameter(tensors[prefix + "attn_q_norm.weight"].clone())
         self.k_norm = nn.Parameter(tensors[prefix + "attn_k_norm.weight"].clone())
         self.ffn_norm = nn.Parameter(tensors[prefix + "ffn_norm.weight"].clone())
-        self.query = FrozenLinear(tensors[prefix + "attn_q.weight"])
-        self.key = FrozenLinear(tensors[prefix + "attn_k.weight"])
-        self.value = FrozenLinear(tensors[prefix + "attn_v.weight"])
-        self.output = FrozenLinear(tensors[prefix + "attn_output.weight"])
+        self.query = Table(tensors[prefix + "attn_q.weight"], trained)
+        self.key = Table(tensors[prefix + "attn_k.weight"], trained)
+        self.value = Table(tensors[prefix + "attn_v.weight"], trained)
+        self.output = Table(tensors[prefix + "attn_output.weight"], trained)
         gain = nn.Parameter(torch.zeros(geometry.hidden))
         clip = nn.Parameter(torch.tensor(0.0))
         self.gate = Projection(tensors[prefix + "ffn_gate.weight"], 4, gain, clip)
@@ -283,9 +289,11 @@ class HE4(nn.Module):
         vocabulary: Tensor,
         mask: int,
         geometry: Geometry = Geometry(),
+        trained_tables: bool = False,
     ) -> None:
         super().__init__()
         self.geometry = geometry
+        self.trained_tables = trained_tables
         self.mask = mask
         self.origin: tuple[str, str] | None = None
         self.frozen_format = "Q4_0"
@@ -302,11 +310,11 @@ class HE4(nn.Module):
         ):
             raise ValueError("invalid frozen vocabulary geometry or mask")
         self.register_buffer("vocabulary", vocabulary.detach().float().clone())
-        self.fusion = FrozenLinear(tensors["fc.weight"])
+        self.fusion = Table(tensors["fc.weight"], trained_tables)
         self.encoder_norm = nn.Parameter(tensors["enc.output_norm.weight"].clone())
         self.output_norm = nn.Parameter(tensors["output_norm.weight"].clone())
         self.blocks = nn.ModuleList(
-            [Layer(tensors, f"blk.{i}.", geometry) for i in range(geometry.layers)]
+            [Layer(tensors, f"blk.{i}.", geometry, trained_tables) for i in range(geometry.layers)]
         )
 
     def check(self, features: Tensor, tokens: tuple[int, ...], anchors: tuple[int, ...]) -> None:

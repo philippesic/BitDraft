@@ -21,7 +21,7 @@ from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.records import canonical
 from w1a1_eagle.training import (
     MAXIMUM_SLOTS,
-    PARAMETER_GROUPS,
+    TABLE_GROUP,
     Blocks,
     Budget,
     Optimization,
@@ -114,11 +114,17 @@ class TensorWorker:
             "midpoint": "midpoint",
             "log_gain": "gain",
             "log_clip": "clip",
+            "operand": TABLE_GROUP,
         }
-        groups: dict[str, list[Tensor]] = {key: [] for key in PARAMETER_GROUPS}
+        groups: dict[str, list[Tensor]] = {key: [] for key in self.optimization.groups}
         for name, parameter in model.named_parameters():
             if parameter.requires_grad:
-                groups[suffixes.get(name.rsplit(".", 1)[-1], "norm")].append(parameter)
+                key = suffixes.get(name.rsplit(".", 1)[-1], "norm")
+                if key not in groups:
+                    raise ValueError("trained tables require an explicit table step size")
+                groups[key].append(parameter)
+        if TABLE_GROUP in groups and not groups[TABLE_GROUP]:
+            raise ValueError("a table step size requires trained tables")
         self.optimizer = torch.optim.AdamW(
             [
                 {"params": values, "lr": rates[key], "name": key}
@@ -559,24 +565,28 @@ class TensorWorker:
             transition = (
                 record(state["frozen_transition"]) if "frozen_transition" in state else None
             )
+            unfreezing = False
             if state["frozen_sha256"] != self.frozen_sha256:
                 if (
                     mode != "branch"
-                    or self.model.frozen_format != "baseline-k"
+                    or (self.model.frozen_format != "baseline-k" and not self.model.trained_tables)
                     or state["frozen_sha256"] != self.model.parent_frozen_sha256
                 ):
                     raise ValueError("frozen initialization fingerprint mismatch")
+                unfreezing = self.model.trained_tables
                 transition = {
                     "parent": reference.artifact.sha256,
                     "from": state["frozen_sha256"],
                     "to": self.frozen_sha256,
                     "format": self.model.frozen_format,
                     "baseline": self.model.frozen_baseline,
+                    **({"tables": "trained"} if unfreezing else {}),
                 }
             self.frozen_transition = transition
             saved = record(state["model"])
             expected = dict(self.model.named_parameters(remove_duplicate=False))
-            if set(saved) != set(expected):
+            initial = {name for name in expected if unfreezing and name.endswith(".operand")}
+            if set(saved) != set(expected) - initial:
                 raise ValueError("state tensor coverage mismatch")
             tensors: dict[str, Tensor] = {}
             for name, value in saved.items():
@@ -590,6 +600,8 @@ class TensorWorker:
                 tensors[name] = value
             aliases: dict[int, str] = {}
             for name, parameter in self.model.named_parameters(remove_duplicate=False):
+                if name in initial:
+                    continue
                 previous = aliases.setdefault(id(parameter), name)
                 if not torch.equal(tensors[name], tensors[previous]):
                     raise ValueError("shared tensor alias conflict")
@@ -600,6 +612,10 @@ class TensorWorker:
             saved_groups = sequence(optimizer_state["param_groups"])
             current_optimizer = cast(dict[str, object], self.optimizer.state_dict())
             fresh_groups = sequence(current_optimizer["param_groups"])
+            if unfreezing:
+                saved_groups = fresh_groups
+                optimizer_updates = 0
+                optimizer_state = {"state": {}, "param_groups": fresh_groups}
             if [optimizer_options(group) for group in saved_groups] != [
                 optimizer_options(group) for group in fresh_groups
             ]:
@@ -684,7 +700,8 @@ class TensorWorker:
                 progress.validate()
             with torch.no_grad():
                 for name, parameter in expected.items():
-                    parameter.copy_(tensors[name])
+                    if name not in initial:
+                        parameter.copy_(tensors[name])
             if mode in {"continue", "branch"} and (
                 dataset is None or accounting.dataset != dataset
             ):

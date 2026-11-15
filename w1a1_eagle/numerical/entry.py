@@ -19,13 +19,13 @@ from w1a1_eagle.identity import loaded_identity, source_identity
 from w1a1_eagle.index import IndexReader
 from w1a1_eagle.intent import Intent
 from w1a1_eagle.lifecycle import Journal, control
-from w1a1_eagle.model import Geometry, bound_latents
+from w1a1_eagle.model import HE4, Geometry, bound_latents
 from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.diagnostics import Diagnostics
 from w1a1_eagle.numerical.export import export_he4
 from w1a1_eagle.numerical.mixture import mixture
-from w1a1_eagle.numerical.weights import load_he4
+from w1a1_eagle.numerical.weights import exported_tables, load_he4
 from w1a1_eagle.numerical.worker import TensorWorker, checkpoint_accounting
 from w1a1_eagle.processes import ProcessIdentity
 from w1a1_eagle.records import artifact
@@ -105,6 +105,7 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
         "grouping": cast(Record, asdict(intent.grouping)),
         "optimization": cast(Record, asdict(intent.optimization)),
         "blocks": intent.blocks.encode(),
+        **({"trained_tables": True} if intent.trained_tables else {}),
         "exposure": exposure,
         "prior_use_warning": "Prior training is marked for "
         + str(exposure["historical_training_sequences"])
@@ -166,6 +167,18 @@ def read_corpus(intent: Intent) -> Corpus:
         cfg,
         intent.blocks,
     )
+
+
+def device_admission(intent: Intent, corpus: Corpus, model: HE4) -> int:
+    frozen = sum(value.numel() * value.element_size() for value in model.buffers())
+    trained = sum(
+        value.numel() * value.element_size() for value in model.parameters() if value.requires_grad
+    )
+    context = max((max(row.anchors) for row in corpus.rows if row.anchors), default=0)
+    retained = (
+        4 * model.geometry.taps * model.geometry.hidden * context if model.trained_tables else 0
+    )
+    return intent.grouping.admit_device(frozen, trained, retained)
 
 
 def run(intent_path: Path, root: Path, attempt: str, boundary: Boundary | None = None) -> None:
@@ -233,9 +246,11 @@ def run_leased(
         intent.initialization,
         intent.frozen_format,
         intent.frozen_baseline,
+        intent.trained_tables,
     )
     model.to(str(intent.raw["device"]))
     if model.vocabulary.device.type == "cuda":
+        device_admission(intent, corpus, model)
         total = torch.cuda.get_device_properties(model.vocabulary.device).total_memory
         torch.cuda.set_per_process_memory_fraction(
             min(1.0, intent.grouping.device_bytes / total), model.vocabulary.device
@@ -323,6 +338,11 @@ def run_leased(
         worker.verify_frozen()
         began = clock.now()
         result = diagnostics.measure(model)
+        exported = (
+            diagnostics.measure(model, tables=exported_tables(model))
+            if model.trained_tables
+            else None
+        )
         worker.verify_frozen()
         weights = (
             list(worker.refresh_position_weights(result))
@@ -336,6 +356,7 @@ def run_leased(
                 "updates": worker.updates,
                 "seconds": clock.now() - began,
                 "result": result,
+                **({"exported_tables": exported} if exported is not None else {}),
                 **({"position_weights": weights} if weights is not None else {}),
             }
         )

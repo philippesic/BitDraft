@@ -127,7 +127,12 @@ four slots, 170 for three). The device cap is unchanged. The estimate
 in `w1a1_eagle/training.py` was fitted on the RTX 5080: about 4.2 MB per slot row plus
 0.9 KB per row per context token and 117 KB per context token, on top of about 9.7 GiB
 of resident state and gradients. The default keeps measured peak allocation near 12.7 GiB, below the
-cap and the roughly 14.3 GiB where WSL spills into slow shared memory. On the frozen bank it allows 32 windows up to about 1,600 context tokens,
+cap and the roughly 14.3 GiB where WSL spills into slow shared memory. Before training, a CUDA
+worker refuses a recipe whose resident estimate plus `activation_bytes` exceeds `device_bytes`.
+The estimate counts 4 bytes per frozen buffer value and 16 per trained value (weight, gradient
+and two Adam moments); with [trained tables](#trained-tables) it adds the F32 fusion input of the
+corpus's longest sequence, which backward keeps. It gives 9.5 GiB for the frozen recipe, about
+0.2 GiB below the measurement. On the frozen bank it allows 32 windows up to about 1,600 context tokens,
 20 at 4,100 and 4 at the longest sequence (13,470); see
 [grouped updates](../results/grouped-updates/result.md).
 
@@ -175,7 +180,9 @@ Optional `development` binds 120 fixed DEV windows and cadence; diagnostics pres
 and report category loss/top1 over all fifteen positions. A run that ends also measures
 its final update unless the cadence already did; a campaign's intermediate boundaries do not.
 `positions` adds, for each of positions 1–15, the windows reaching it, top-1 hits, and
-prefix survivors (positions 1 through i all correct) with their rates. Training
+prefix survivors (positions 1 through i all correct) with their rates. With trained tables
+the event's `exported_tables` repeats the measurement with every table at its exported Q4_0
+values, beside the full-precision `result`. Training
 diagnostics use one sixteen-slot block; `Diagnostics.measure` takes another block size
 for the depth+1 blocks a server builds. Teacher-forced top-1 is not native acceptance.
 `model_update_seconds` bounds synchronized optimizer work.
@@ -227,7 +234,8 @@ as an omitted field. Without it training uses today's defaults.
 }
 ```
 
-- `step_sizes` gives every AdamW group a positive base step size.
+- `step_sizes` gives every AdamW group a positive base step size. It contains `table`
+  exactly when the recipe sets [`trained_tables`](#trained-tables).
 - `schedule` multiplies all of them by a pure function of the absolute update count `u`:
   (u − start + 1) / warmup during the first `warmup_updates` after `start_update`, then 1
   (`constant`, `final_update` null) or a cosine from 1 to 0 at `final_update` (`cosine`).
@@ -292,3 +300,40 @@ A changed frozen fingerprint is accepted only in branch mode and only when the p
 fingerprint matches the independently rebuilt Q4_0 model from the same inputs. The
 checkpoint records parent state, old/new fingerprints, format and Baseline identity.
 Branch resets the optimizer; exact resume continues to require matching operands.
+
+## Trained tables
+
+The optional intent setting `trained_tables` defaults to `false`. Omission and explicit
+`false` preserve existing recipe identities, frozen fingerprints, states and exports. With
+`true`, the fusion table and the four attention tables of every layer are F32 parameters
+initialized from the source drafter's own values, read from the source file rather than its
+Q4_0 rounding. They train without quantization in their own AdamW group, without weight
+decay, under the shared schedule and gradient-norm clip. Its step size is `table` in
+`optimization.step_sizes`, which must be stated with the setting and is refused without it.
+
+```json
+"trained_tables": true,
+"optimization": {
+  "step_sizes": {"sign": 0.004, "scale": 1e-05, "midpoint": 1e-05, "gain": 1e-05, "clip": 1e-05, "norm": 1e-05, "table": 1e-05},
+  "schedule": {"decay": "cosine", "warmup_updates": 156, "start_update": 0, "final_update": 7800},
+  "latent_scale": {"kind": "row", "multiple": 3}
+}
+```
+
+Export converts each trained table to Q4_0 and verifies GGUF payload readback. Before the
+first update the exported tables equal the frozen `Q4_0` export from the same inputs. The
+setting cannot be combined with `frozen_format: baseline-k`, because trained tables are not
+copied from Baseline. Training and serving therefore differ: the DEV diagnostic reports both
+([sampling and clocks](#sampling-and-clocks)).
+
+Only the vocabulary remains a frozen buffer, so the frozen fingerprint covers it alone. States
+store the tables and their Adam moments; exact resume and continue need them. Branch also
+accepts a parent with frozen `Q4_0` tables when its fingerprint matches the independently
+rebuilt `Q4_0` model: it keeps the parent's feed-forward and norm values, starts the tables
+from the source values with a fresh optimizer, and records the transition with
+`"tables": "trained"`. Parents with `baseline-k` tables are refused.
+
+On full-size geometry the tables hold 209.7 million values (0.78 GiB per F32 copy). Gradients
+and Adam moments add 2.34 GiB, and backward keeps up to 1.03 GiB of fusion input at the
+longest sequence (13,470 tokens), so the default grouping is refused. The device check under
+[sampling and clocks](#sampling-and-clocks) applies; matched arms should share their grouping.

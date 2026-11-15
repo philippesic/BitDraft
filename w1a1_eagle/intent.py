@@ -9,7 +9,7 @@ from w1a1_eagle.data import Artifact
 from w1a1_eagle.index import IndexSpec, Mount
 from w1a1_eagle.records import artifact, canonical, identity, read
 from w1a1_eagle.storage import relocated
-from w1a1_eagle.training import Blocks, Budget, Grouping, Optimization, Schedule
+from w1a1_eagle.training import TABLE_GROUP, Blocks, Budget, Grouping, Optimization, Schedule
 
 
 def optimization(value: object) -> Optimization:
@@ -169,6 +169,7 @@ class Intent:
                 "initialization",
                 "frozen_format",
                 "frozen_baseline",
+                "trained_tables",
                 "cpu_threads",
                 "grouping",
                 "optimization",
@@ -237,10 +238,23 @@ class Intent:
             raise ValueError("unsupported frozen table format")
         if (frozen_format == "baseline-k") != ("frozen_baseline" in raw):
             raise ValueError("baseline-k requires an authenticated Baseline artifact")
+        trained_tables = raw.get("trained_tables", False)
+        if type(trained_tables) is not bool:
+            raise ValueError("trained_tables must be true or false")
+        if trained_tables and frozen_format != "Q4_0":
+            raise ValueError(
+                "trained_tables cannot use frozen_format baseline-k: trained tables are not"
+                " copied from Baseline and export as Q4_0"
+            )
         if "grouping" in raw:
             grouping(raw["grouping"])
-        if "optimization" in raw:
-            optimization(raw["optimization"])
+        table_step = (
+            "optimization" in raw and TABLE_GROUP in optimization(raw["optimization"]).step_sizes
+        )
+        if trained_tables and not table_step:
+            raise ValueError("trained_tables requires an explicit table step size in optimization")
+        if table_step and not trained_tables:
+            raise ValueError("a table step size requires trained_tables")
         if "blocks" in raw and (
             blocks(raw["blocks"]).position_weights == "reach" and "development" not in raw
         ):
@@ -380,6 +394,10 @@ class Intent:
         )
 
     @property
+    def trained_tables(self) -> bool:
+        return self.raw.get("trained_tables", False) is True
+
+    @property
     def cpu_threads(self) -> int:
         return integer(self.raw.get("cpu_threads", 2))
 
@@ -429,6 +447,7 @@ class Intent:
                     if self.frozen_baseline is not None
                     else {}
                 ),
+                **({"trained_tables": True} if self.trained_tables else {}),
                 "sampling": None
                 if self.sampling is None
                 else {"sha256": self.sampling.sha256, "bytes": self.sampling.size},

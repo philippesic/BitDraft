@@ -37,7 +37,9 @@ It does not demonstrate binary hardware execution or native inference speed.
 The eighteen feed-forward projections have learned sign latents, nonnegative row
 scales and row midpoints. Gate/up projections share learned input gains and clipping;
 the down projection has its own gain and clipping. Normalization weights also train.
-Attention and fusion operands and the vocabulary matrix remain frozen.
+Attention and fusion operands and the vocabulary matrix remain frozen, unless the recipe
+sets `trained_tables`; then the attention and fusion tables train in full precision and only
+the vocabulary stays frozen ([trained tables](execution.md#trained-tables)).
 
 The forward path uses hard binary signs and quantized activations. Backward uses a
 surrogate derivative so the continuous latent parameters can receive gradients.
@@ -74,7 +76,7 @@ the same size as running the single-window path on CPU instead of GPU; see
 [grouped updates](../results/grouped-updates/result.md).
 
 The worker uses separate fused AdamW groups for sign, scale, midpoint, gain, clipping and
-normalization parameters, without weight decay. Their step sizes, a step-size schedule and
+normalization parameters, plus a table group when tables train, without weight decay. Their step sizes, a step-size schedule and
 the latent scale are recipe settings ([execution](execution.md#optimization)). The defaults,
 1e-3 for signs and 1e-5 for the rest at a constant rate with raw latents, were chosen for
 one window per update. A [four-arm test](../results/step-size-schedule-latent-scale/result.md)
@@ -83,7 +85,8 @@ favours cosine decay, and a 4e-3 sign step with the bounded latent scale. A
 for depths 2–4 over sixteen slots and over random 3–16-slot blocks with reach weights. A nonfinite loss or
 gradient fails the update immediately. The all-parameters-finite scan runs every 32
 updates and before every checkpoint and export. Frozen operands are fingerprinted and
-checked before publication.
+checked before publication. Trained tables are exported as Q4_0, so the DEV diagnostic
+also measures the model with the exported table values.
 
 ## What has been established
 

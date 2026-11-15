@@ -91,6 +91,82 @@ def shapes(geometry: Geometry) -> dict[str, tuple[int, ...]]:
     return result
 
 
+TABLE_LAYERS = (
+    ("query", "attn_q"),
+    ("key", "attn_k"),
+    ("value", "attn_v"),
+    ("output", "attn_output"),
+)
+
+
+def is_table(name: str) -> bool:
+    return name == "fc.weight" or name.endswith(
+        tuple(f".{part}.weight" for _, part in TABLE_LAYERS)
+    )
+
+
+def table_names(geometry: Geometry) -> dict[str, str]:
+    return {
+        "fc.weight": "fusion.operand",
+        **{
+            f"blk.{index}.{part}.weight": f"blocks.{index}.{module}.operand"
+            for index in range(geometry.layers)
+            for module, part in TABLE_LAYERS
+        },
+    }
+
+
+def frozen_fingerprint(tensors: dict[str, Tensor], head: Tensor, geometry: Geometry) -> str:
+    digest = hashlib.sha256()
+    operands = [("vocabulary", head)] + [
+        (module, tensors[name]) for name, module in table_names(geometry).items()
+    ]
+    for name, value in operands:
+        operand = value.detach().float().cpu().contiguous()
+        digest.update(canonical([name, str(operand.dtype), list(operand.shape)]))
+        digest.update(cast(Array, operand.numpy()).tobytes())
+    return digest.hexdigest()
+
+
+def full_precision_tables(source: Artifact, geometry: Geometry) -> dict[str, Tensor]:
+    api = cast(GGUF, gguf)
+    expected = shapes(geometry)
+    result: dict[str, Tensor] = {}
+    for item in api.GGUFReader(str(source.path)).tensors:
+        if is_table(item.name):
+            decoded = (
+                api.dequantize(item.data, item.tensor_type)
+                .reshape(expected[item.name])
+                .astype("float32")
+            )
+            result[item.name] = torch.tensor(decoded, dtype=torch.float32)
+            if not bool(torch.isfinite(result[item.name]).all()):
+                raise ValueError("nonfinite source table")
+    if set(result) != set(table_names(geometry)):
+        raise ValueError("source table coverage mismatch")
+    return result
+
+
+def q4_0_codes(value: Tensor) -> Array:
+    if value.dtype != torch.float32 or value.ndim != 2 or not bool(torch.isfinite(value).all()):
+        raise ValueError("finite F32 table required for Q4_0 conversion")
+    api = cast(GGUF, gguf)
+    operand = cast(Array, value.detach().cpu().contiguous().numpy())
+    return api.quantize(operand, api.GGMLQuantizationType.Q4_0)
+
+
+def exported_tables(model: HE4) -> dict[str, Tensor]:
+    api = cast(GGUF, gguf)
+    result: dict[str, Tensor] = {}
+    for name in table_names(model.geometry).values():
+        operand = model.get_parameter(name)
+        restored = api.dequantize(q4_0_codes(operand), api.GGMLQuantizationType.Q4_0)
+        result[name] = torch.tensor(
+            restored.reshape(tuple(operand.shape)), dtype=torch.float32, device=operand.device
+        )
+    return result
+
+
 def decode(
     source: Artifact,
     vocabulary: Artifact,
@@ -144,12 +220,7 @@ def decode(
             .reshape(expected[name])
             .astype("float32")
         )
-        if (
-            name.endswith(
-                tuple(f".{part}.weight" for part in ("attn_q", "attn_k", "attn_v", "attn_output"))
-            )
-            or name == "fc.weight"
-        ):
+        if is_table(name):
             coded = api.quantize(decoded, api.GGMLQuantizationType.Q4_0)
             codes.append((name, coded.shape, coded.tobytes()))
             decoded = api.dequantize(coded, api.GGMLQuantizationType.Q4_0).reshape(expected[name])
@@ -175,11 +246,17 @@ def load_he4(
     initialization: Artifact | None = None,
     frozen_format: Literal["Q4_0", "baseline-k"] = "Q4_0",
     frozen_baseline: Artifact | None = None,
+    trained_tables: bool = False,
 ) -> HE4:
     if frozen_format not in {"Q4_0", "baseline-k"}:
         raise ValueError("unsupported frozen table format")
     if (frozen_format == "baseline-k") != (frozen_baseline is not None):
         raise ValueError("baseline-k requires an authenticated Baseline artifact")
+    if trained_tables and frozen_format != "Q4_0":
+        raise ValueError(
+            "trained tables cannot use frozen_format baseline-k: they are not copied from"
+            " Baseline and export as Q4_0"
+        )
     if initialization is None:
         tensors, head, mask, codes = decode(source, vocabulary, memory_budget_bytes, geometry)
     else:
@@ -236,14 +313,12 @@ def load_he4(
         codes = tuple(entries)
     native_types: tuple[tuple[str, str], ...] = ()
     parent_frozen_sha256 = None
+    if trained_tables:
+        parent_frozen_sha256 = frozen_fingerprint(tensors, head, geometry)
+        tensors = {**tensors, **full_precision_tables(source, geometry)}
+        codes = tuple(entry for entry in codes if entry[0] == "output.weight")
     if frozen_baseline is not None:
-        parent_model = HE4(tensors, head, mask, geometry)
-        digest = hashlib.sha256()
-        for name, value in parent_model.named_buffers():
-            digest.update(canonical([name, str(value.dtype), list(value.shape)]))
-            digest.update(cast(Array, value.detach().cpu().contiguous().numpy()).tobytes())
-        parent_frozen_sha256 = digest.hexdigest()
-        del parent_model
+        parent_frozen_sha256 = frozen_fingerprint(tensors, head, geometry)
         frozen_baseline.verify()
         api = cast(GGUF, gguf)
         baseline = api.GGUFReader(str(frozen_baseline.path))
@@ -273,7 +348,7 @@ def load_he4(
             types.append((name, item.tensor_type.name))
         codes = tuple(replacements)
         native_types = tuple(types)
-    model = HE4(tensors, head, mask, geometry)
+    model = HE4(tensors, head, mask, geometry, trained_tables)
     model.parent_frozen_sha256 = parent_frozen_sha256
     model.frozen_format = frozen_format
     model.frozen_baseline = None if frozen_baseline is None else frozen_baseline.sha256

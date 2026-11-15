@@ -6,6 +6,7 @@ from typing import Callable, Literal, Protocol, Sequence
 from w1a1_eagle.clock import Clock
 
 PARAMETER_GROUPS = ("sign", "scale", "midpoint", "gain", "clip", "norm")
+TABLE_GROUP = "table"
 MAXIMUM_SLOTS = 16
 ROW_COPIES = 15.0
 ROW_TOKEN_COPIES = 1.25
@@ -52,6 +53,22 @@ class Grouping:
         shared = CONTEXT_COPIES * (shape.taps + shape.layers) * shape.hidden * context
         available = int((self.activation_bytes - 4 * shared) // (4 * block * row))
         return max(1, min(self.max_windows * shape.slots // block, available))
+
+    def admit_device(self, frozen_bytes: int, trained_bytes: int, retained_bytes: int) -> int:
+        if any(
+            type(value) is not int or value < 0
+            for value in (frozen_bytes, trained_bytes, retained_bytes)
+        ):
+            raise ValueError("nonnegative resident byte counts required")
+        demand = frozen_bytes + 4 * trained_bytes + retained_bytes + self.activation_bytes
+        if demand > self.device_bytes:
+            raise ValueError(
+                f"resident state ({frozen_bytes} frozen, 4 x {trained_bytes} trained with"
+                f" gradients and Adam moments, {retained_bytes} retained fusion input) plus"
+                f" activation_bytes {self.activation_bytes} needs {demand} bytes, more than"
+                f" device_bytes {self.device_bytes}; lower activation_bytes or raise device_bytes"
+            )
+        return demand
 
 
 @dataclass(frozen=True)
@@ -154,7 +171,10 @@ class Optimization:
     latent_multiple: float | None = None
 
     def __post_init__(self) -> None:
-        if tuple(sorted(self.step_sizes)) != tuple(sorted(PARAMETER_GROUPS)) or any(
+        if set(self.step_sizes) not in (
+            set(PARAMETER_GROUPS),
+            {*PARAMETER_GROUPS, TABLE_GROUP},
+        ) or any(
             type(value) is not float or not math.isfinite(value) or value <= 0
             for value in self.step_sizes.values()
         ):
@@ -165,6 +185,10 @@ class Optimization:
             or self.latent_multiple <= 0
         ):
             raise ValueError("bounded latent scale requires a positive finite multiple")
+
+    @property
+    def groups(self) -> tuple[str, ...]:
+        return PARAMETER_GROUPS + ((TABLE_GROUP,) if TABLE_GROUP in self.step_sizes else ())
 
 
 @dataclass(frozen=True)

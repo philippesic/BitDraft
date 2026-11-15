@@ -12,7 +12,7 @@ from w1a1_eagle.data import Artifact
 from w1a1_eagle.model import Layer
 from w1a1_eagle.numerical.gguf_readback import Expected, metadata
 from w1a1_eagle.numerical.gguf_readback import verify as verify_gguf
-from w1a1_eagle.numerical.weights import GGUF
+from w1a1_eagle.numerical.weights import GGUF, q4_0_codes
 from w1a1_eagle.numerical.worker import TensorWorker
 
 NativeArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.uint8 | np.int32 | np.float32]]"
@@ -164,7 +164,7 @@ def prepare(
     ]
     writer.add_array("dflash.w1ax.tensors", sorted(selected))
     tensors: list[ExportTensor] = []
-    frozen = {"fc.weight": model.fusion.operand}
+    tables = {"fc.weight": model.fusion.operand}
 
     def add(name: str, value: Tensor) -> None:
         tensors.append(ExportTensor(name, f32(value), kinds.F32, "F32"))
@@ -179,7 +179,7 @@ def prepare(
             ("attn_v", block.value.operand),
             ("attn_output", block.output.operand),
         ):
-            frozen[f"blk.{index}.{name}.weight"] = operand
+            tables[f"blk.{index}.{name}.weight"] = operand
         for name, value in (
             ("attn_norm", block.attn_norm),
             ("attn_q_norm", block.q_norm),
@@ -204,6 +204,13 @@ def prepare(
             add(base + ".w1ax_midpoint", projection.midpoint)
             if name != "up":
                 add(base + ".w1ax_gain", projection.log_gain.detach().float().cpu().exp())
+    trained = {name: value for name, value in tables.items() if value.requires_grad}
+    if len(trained) != (len(tables) if model.trained_tables else 0):
+        raise ValueError("trained table coverage differs from the model setting")
+    frozen = {name: value for name, value in tables.items() if name not in trained}
+    for name, value in trained.items():
+        coded = cast(NativeArray, q4_0_codes(value))
+        tensors.append(ExportTensor(name, coded, kinds.Q4_0, "Q4_0"))
     if model.native_codes:
         cached = {name: (shape, data) for name, shape, data in model.native_codes}
         if len(cached) != len(model.native_codes) or set(cached) != {*frozen, "output.weight"}:
@@ -232,7 +239,7 @@ def prepare(
         if reader is None:
             raise ValueError("source reader unavailable")
         for tensor in reader.tensors:
-            if tensor.name in selected or "norm.weight" in tensor.name:
+            if tensor.name in selected or tensor.name in trained or "norm.weight" in tensor.name:
                 continue
             decoded = (
                 api.dequantize(tensor.data, tensor.tensor_type)

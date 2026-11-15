@@ -1,4 +1,8 @@
+from typing import cast
+
 import torch
+from torch import Tensor
+from torch.func import functional_call
 
 from w1a1_eagle.clock import Monotonic
 from w1a1_eagle.contracts import Record, integer, record, sequence, string
@@ -99,17 +103,19 @@ class Diagnostics:
                 raise ValueError("diagnostic groups overlap")
             seen_windows.update(group.windows)
 
-    def measure(self, model: HE4, slots: int = MAXIMUM_SLOTS) -> Record:
+    def measure(
+        self, model: HE4, slots: int = MAXIMUM_SLOTS, tables: dict[str, Tensor] | None = None
+    ) -> Record:
         clock = Monotonic()
         began = clock.now()
-        result = self.measure_windows(model, slots)
+        result = self.measure_windows(model, slots, tables)
         if not self.groups:
             return result
         base_seconds = clock.now() - began
         groups: Record = {}
         for name, group in self.groups.items():
             start = clock.now()
-            measured = group.measure_windows(model, slots)
+            measured = group.measure_windows(model, slots, tables)
             groups[name] = {**measured, "seconds": clock.now() - start}
             group.cache.clear()
         return {
@@ -119,7 +125,9 @@ class Diagnostics:
             "added_seconds": clock.now() - began - base_seconds,
         }
 
-    def measure_windows(self, model: HE4, slots: int = MAXIMUM_SLOTS) -> Record:
+    def measure_windows(
+        self, model: HE4, slots: int = MAXIMUM_SLOTS, tables: dict[str, Tensor] | None = None
+    ) -> Record:
         size = model.block(slots)
         cpu_rng = torch.get_rng_state()
         cuda_rng = torch.cuda.get_rng_state_all() if model.vocabulary.device.type == "cuda" else []
@@ -135,9 +143,12 @@ class Diagnostics:
                     raise ValueError("diagnostic anchor is not eligible in authenticated capture")
                 window = selected[0]
                 length = min(len(window.labels), size - 1)
-                logits = model.forward(capture.features, capture.tokens, anchor, size)[
-                    1 : 1 + length
-                ]
+                inputs = (capture.features, capture.tokens, anchor, size)
+                logits = (
+                    model.forward(*inputs)
+                    if tables is None
+                    else cast(Tensor, functional_call(model, tables, inputs))
+                )[1 : 1 + length]
                 labels = torch.tensor(
                     window.labels[:length], device=logits.device, dtype=torch.int64
                 )
