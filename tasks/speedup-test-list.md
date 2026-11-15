@@ -58,6 +58,17 @@ Parked by the owner on 2026-11-14:
 - Mask-and-count (bit-plane popcount) and activations below 4 bits. They pay only with
   2-bit or 1-bit inputs, which is an acceptance question first.
 
+Activation precision, reviewed with the owner on 2026-11-14 and left as it is (4-bit inputs
+to gate and up, 8-bit to down). The November 4 campaign's heldout acceptance was 30.3% with
+8-bit gate/up inputs, 30.0% with 4-bit, 7.3% with 2-bit and 14.5% with 1-bit
+([result](../results/activation-family-comparison/result.md)); fewer bits buy no time while
+the kernel computes in 8-bit, and feed-forward is about 0.14 ms of a round with the
+recovered kernel. One untested lead, not a listed test: the compiler for this card accepts
+a 4-bit integer tensor-core instruction that covers 64 inputs where the 8-bit one covers 32
+(`mma.sync.aligned.m16n8k64` with `.s4`, checked by assembling a probe; speed unmeasured).
+Gate and up inputs already fit it without retraining. It matters most if the vocabulary
+table becomes one-bit.
+
 Generic, helps Baseline equally, not counted toward the gap: runtime CPU overhead (the GPU
 idles about 3 ms per round), merging the small attention and handoff kernels, scoring and
 picking the token in one kernel, a vocabulary shortlist.
