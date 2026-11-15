@@ -25,6 +25,9 @@ VARIANTS = (
     "mma",
     "mma-broadcast",
     "mma-warp",
+    "imma-expanded",
+    "imma-signed",
+    "imma-split1",
     "baseline",
     "rsr-4",
     "rsr-8",
@@ -156,6 +159,7 @@ def build_kernel_benchmark(specification: Path, output: Path) -> Record:
         for name in (
             "kernel-benchmark.cu",
             "kernel-variants.cuh",
+            "kernel-imma.cuh",
             "kernel-capture.cpp",
             "kernel-rsr.cuh",
             "kernel-rsr-prep.cpp",

@@ -97,3 +97,10 @@ to be updated after a checkout move.
 For Windows storage audits, enumerate from an extended path such as `\\?\C:\...` so
 deep descendants are included. Require the physical source folder to contain no files
 or unrecorded links before removing it; a complete initial inventory alone is insufficient.
+
+The kernel-benchmark worktree's retained artifacts are relocated to the same
+relative paths in the main checkout. Its old
+`/home/philip/.t3/worktrees/BitDraft/t3-eccc2c84/artifacts` prefix is translated by
+the maintained reader, preserving immutable records and their hashes. The receipt
+under `artifacts/receipts/kernel-benchmark-relocation-01` records per-file copies,
+SHA-256 verification, derived-summary updates and removal of verified duplicates.

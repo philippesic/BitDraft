@@ -14,6 +14,10 @@ def relocated(path: Path, root: Path | None = None) -> Path:
     checkout = project_root() if root is None else root
     prefixes = (
         (
+            "/home/philip/.t3/worktrees/BitDraft/t3-eccc2c84/artifacts",
+            "artifacts",
+        ),
+        (
             "/home/philip/binary-eagle-decoding/runs/he4broad-20261110-01",
             "artifacts/datasets/retained-he4broad-original",
         ),
