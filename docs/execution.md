@@ -281,6 +281,11 @@ It copies attention and fusion table bytes from that file, preserving each Q4_K 
 Q6_K type, and uses their dequantized values in the model. The pinned GGUF package
 cannot quantize Q4_K; authenticated copying needs no additional dependency.
 
+New candidate recipes set `baseline-k` with the Baseline artifact: it costs no measured
+acceptance and removes the per-slot table reads of `Q4_0`
+([test list](../tasks/speedup-test-list.md), item 8). `Q4_0` remains the meaning of an
+omitted setting so that existing states resume unchanged.
+
 The Baseline identity enters the new recipe. Export preserves its codes and checks
 that they decode exactly to the frozen operands, then verifies GGUF payload readback.
 A changed frozen fingerprint is accepted only in branch mode and only when the parent
