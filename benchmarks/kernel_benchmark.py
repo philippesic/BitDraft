@@ -10,6 +10,7 @@ from typing import cast
 from benchmarks.kernel_probe import runtime_kernels
 from benchmarks.measurement import now
 from benchmarks.native import file_reference
+from benchmarks.rsr import index_entry, install_rsr, integer_identity
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.config import native_environment
 from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
@@ -18,7 +19,17 @@ from w1a1_eagle.device import cuda_identity, device_lease
 from w1a1_eagle.numerical.gguf_readback import Reader
 from w1a1_eagle.records import artifact, canonical, read
 
-VARIANTS = ("reference", "cross", "mma", "mma-broadcast", "mma-warp", "baseline")
+VARIANTS = (
+    "reference",
+    "cross",
+    "mma",
+    "mma-broadcast",
+    "mma-warp",
+    "baseline",
+    "rsr-4",
+    "rsr-8",
+    "rsr-12",
+)
 
 
 @dataclass(frozen=True)
@@ -116,7 +127,7 @@ def metrics(
 def build_kernel_benchmark(specification: Path, output: Path) -> Record:
     raw = read(specification)
     if (
-        set(raw) != {"schema", "runtime", "compiler", "architecture"}
+        set(raw) - {"rsr"} != {"schema", "runtime", "compiler", "architecture"}
         or raw["schema"] != "kernel-build-v1"
     ):
         raise ValueError("unsupported kernel build specification")
@@ -142,7 +153,13 @@ def build_kernel_benchmark(specification: Path, output: Path) -> Record:
     project = Path(__file__).resolve().parents[1]
     authored = [
         project / "native" / name
-        for name in ("kernel-benchmark.cu", "kernel-variants.cuh", "kernel-capture.cpp")
+        for name in (
+            "kernel-benchmark.cu",
+            "kernel-variants.cuh",
+            "kernel-capture.cpp",
+            "kernel-rsr.cuh",
+            "kernel-rsr-prep.cpp",
+        )
     ]
     for path in authored:
         owner.atomic(output / path.name, path.read_bytes())
@@ -174,6 +191,10 @@ def build_kernel_benchmark(specification: Path, output: Path) -> Record:
         "--ftz=false",
         "-DGGML_CUDA_USE_GRAPHS",
     ]
+    rsr_build: Record | None = None
+    if "rsr" in raw:
+        rsr_build = install_rsr(record(raw["rsr"]), root, output)
+        command.append("-DBINARY_RSR")
     command.extend("-I" + str(path) for path in includes)
     command.extend(
         [
@@ -242,6 +263,27 @@ def build_kernel_benchmark(specification: Path, output: Path) -> Record:
             for name in ("libggml-cuda.so", "libggml-base.so", "libggml.so")
         ],
     }
+    if rsr_build is not None:
+        record_out["rsr"] = rsr_build
+        prep_command = [
+            "nice",
+            "-n",
+            "19",
+            "c++",
+            "-O3",
+            "-std=c++17",
+            str(output / "kernel-rsr-prep.cpp"),
+            "-o",
+            str(output / "rsr-preprocess"),
+        ]
+        prep_result = subprocess.run(prep_command, capture_output=True, text=True, check=False)
+        owner.atomic(
+            output / "prepare-build.log", (prep_result.stdout + prep_result.stderr).encode()
+        )
+        if prep_result.returncode:
+            raise ValueError("RSR preprocessor compile failed")
+        record_out["rsr_prepare_command"] = prep_command
+        record_out["rsr_preprocessor"] = file_reference(output / "rsr-preprocess")
     owner.atomic(output / "result.json", canonical(record_out))
     return record_out
 
@@ -271,16 +313,18 @@ def prepare_feed_forward(
     one, four = Weights(inputs["drafter"].path), Weights(inputs["baseline"].path)
     prepared: list[tuple[list[str], Record]] = []
     activation_rows = record(activation_manifest["tensors"])
+    rsr_manifest = read(inputs["rsr_indexes"].path) if "rsr_indexes" in inputs else None
     for layer in layers:
         for group in groups:
-            base = f"blk.{layer}.ffn_{group}"
+            base = f"blk.{layer}.ffn_{'gate' if group == 'gate-only' else group}"
+            input_base = f"blk.{layer}.ffn_gate" if group in {"gate", "gate-only", "up"} else base
             geometry = one.tensors[base + ".w1a1_packed"].shape
             if len(geometry) != 2:
                 raise ValueError("matrix tensor required")
             k, m = geometry[0] * 32, geometry[1]
-            bits = integer(one.metadata[base + ".w1ax.bits"])
-            mode = integer(one.metadata[base + ".w1ax.mode"])
-            clip_value = one.metadata[base + ".w1ax.clip"]
+            bits = integer(one.metadata[input_base + ".w1ax.bits"])
+            mode = integer(one.metadata[input_base + ".w1ax.mode"])
+            clip_value = one.metadata[input_base + ".w1ax.clip"]
             clip = (
                 cast(tuple[float], struct.unpack("<e", struct.pack("<H", integer(clip_value))))[0]
                 if type(clip_value) is int
@@ -289,12 +333,14 @@ def prepare_feed_forward(
             for count in slots:
                 prefix = output / f"layer-{layer}-{group}-{count}"
                 activation = artifact(
-                    activation_rows[f"{base}.{count}"], inputs["activations"].path.parent
+                    activation_rows[f"{input_base}.{2 if count == 1 else count}"],
+                    inputs["activations"].path.parent,
                 )
                 activation.verify()
-                if activation.size != k * count * 4:
+                if activation.size != k * (2 if count == 1 else count) * 4:
                     raise ValueError("activation geometry differs")
-                owner.atomic(Path(str(prefix) + ".input"), activation.path.read_bytes())
+                activation_bytes = activation.path.read_bytes()[: k * count * 4]
+                owner.atomic(Path(str(prefix) + ".input"), activation_bytes)
                 for suffix, tensor_suffix, kinds in (
                     ("weights", "w1a1_packed", {26}),
                     ("scales", "w1a1_scale", {0, 1}),
@@ -303,7 +349,9 @@ def prepare_feed_forward(
                 ):
                     owner.atomic(
                         Path(str(prefix) + "." + suffix),
-                        one.tensor(base + "." + tensor_suffix, kinds),
+                        one.tensor(
+                            (input_base if suffix == "gain" else base) + "." + tensor_suffix, kinds
+                        ),
                     )
                 if group == "gate":
                     for suffix, tensor_suffix, kinds in (
@@ -316,8 +364,40 @@ def prepare_feed_forward(
                             one.tensor(f"blk.{layer}.ffn_up." + tensor_suffix, kinds),
                         )
                 for variant in variants:
+                    rsr_metadata: Record = {}
+                    if variant.startswith("rsr-"):
+                        if rsr_manifest is None:
+                            raise ValueError("RSR variant requires authenticated indexes")
+                        block = int(variant[4:])
+                        index_bytes, index_groups = 0, 0
+                        targets = [(base, prefix)]
+                        if group == "gate":
+                            targets.append((f"blk.{layer}.ffn_up", Path(str(prefix) + ".up")))
+                        for tensor_name, destination in targets:
+                            entry = index_entry(rsr_manifest, tensor_name, block)
+                            if integer(entry["m"]) != m or integer(entry["k"]) != k:
+                                raise ValueError("RSR index geometry differs")
+                            for suffix, value in record(entry["files"]).items():
+                                source_index = artifact(value, inputs["rsr_indexes"].path.parent)
+                                source_index.verify()
+                                owner.atomic(
+                                    Path(str(destination) + f".rsr{block}." + suffix),
+                                    source_index.path.read_bytes(),
+                                )
+                            index_bytes += integer(entry["index_bytes"])
+                            index_groups += integer(entry["groups"])
+                        rsr_metadata = {
+                            "rsr_block": block,
+                            "rsr_index_bytes": index_bytes,
+                            "rsr_groups": index_groups,
+                            "rsr_bits_per_weight": index_bytes * 8 / (m * k * len(targets)),
+                            "packed_weight_bytes": m * k * len(targets) // 8,
+                            "repeated_per_slot": True,
+                        }
                     names = (
-                        ("gate", "up") if variant == "baseline" and group == "gate" else (group,)
+                        ("gate", "up")
+                        if variant == "baseline" and group == "gate"
+                        else ("gate" if group == "gate-only" else group,)
                     )
                     for name in names:
                         selected = prefix
@@ -325,9 +405,7 @@ def prepare_feed_forward(
                             if four.tensors[f"blk.{layer}.ffn_{name}.weight"].shape != (k, m):
                                 raise ValueError("Baseline and one-bit matrix geometries differ")
                             selected = Path(str(prefix) + "." + name)
-                            owner.atomic(
-                                Path(str(selected) + ".input"), activation.path.read_bytes()
-                            )
+                            owner.atomic(Path(str(selected) + ".input"), activation_bytes)
                             owner.atomic(
                                 Path(str(selected) + ".quantized"),
                                 four.tensor(f"blk.{layer}.ffn_{name}.weight", {12, 14}),
@@ -338,6 +416,10 @@ def prepare_feed_forward(
                             if variant == "baseline"
                             else matrices * (m * k // 8 + m * 8)
                         )
+                        if rsr_metadata:
+                            weight_bytes = (
+                                integer(rsr_metadata["rsr_index_bytes"]) + matrices * m * 8
+                            )
                         command = [
                             str(executable),
                             str(selected),
@@ -374,6 +456,8 @@ def prepare_feed_forward(
                             if variant == "baseline"
                             else "W1Ax",
                             "activation": file_reference(activation.path),
+                            "activation_prefix_slots": count,
+                            **rsr_metadata,
                         }
                         prepared.append((command, row))
     return prepared
@@ -396,15 +480,25 @@ def benchmark_kernels(specification: Path, output: Path) -> Record:
         "trials",
         "bandwidth_gb_s",
     }
-    if set(raw) != required or raw["schema"] != "kernel-benchmark-v1":
+    if set(raw) - {"rsr_indexes"} != required or raw["schema"] != "kernel-benchmark-v1":
         raise ValueError("unsupported kernel benchmark specification")
     root = specification.parent
     inputs = {
         name: artifact(raw[name], root) for name in ("build", "drafter", "baseline", "activations")
     }
+    if "rsr_indexes" in raw:
+        inputs["rsr_indexes"] = artifact(raw["rsr_indexes"], root)
     for value in inputs.values():
         value.verify()
     build = read(inputs["build"].path)
+    if "rsr_indexes" in inputs:
+        indexes = read(inputs["rsr_indexes"].path)
+        if (
+            indexes.get("schema") != "rsr-index-result-v1"
+            or record(indexes["drafter"])["sha256"] != inputs["drafter"].sha256
+            or "rsr" not in build
+        ):
+            raise ValueError("RSR build or index drafter identity differs")
     executable = artifact(build["executable"], inputs["build"].path.parent)
     executable.verify()
     libraries = [
@@ -429,13 +523,13 @@ def benchmark_kernels(specification: Path, output: Path) -> Record:
     if (
         not groups
         or len(set(groups)) != len(groups)
-        or any(value not in {"gate", "down"} for value in groups)
+        or any(value not in {"gate", "gate-only", "up", "down"} for value in groups)
     ):
-        raise ValueError("distinct gate/down matrix groups required")
+        raise ValueError("distinct feed-forward matrix groups required")
     if (
         not slots
         or len(set(slots)) != len(slots)
-        or any(value not in {2, 4, 8, 16} for value in slots)
+        or any(value not in {1, 2, 4, 8, 16} for value in slots)
     ):
         raise ValueError("distinct supported slot counts required")
     if (
@@ -495,6 +589,8 @@ def benchmark_kernels(specification: Path, output: Path) -> Record:
                     else "runtime-v7 dispatched one-bit output",
                 }
             )
+            if string(row["variant"]).startswith("rsr-"):
+                row["integer_identical"] = integer_identity(measured.stdout)
             results.append(row)
             owner.atomic(output / "partial.json", canonical({"rows": results}))
         seconds = now() - began
@@ -505,7 +601,77 @@ def benchmark_kernels(specification: Path, output: Path) -> Record:
         "gpu_seconds": seconds,
         "rows": results,
         "all_byte_identical": all(row["byte_identical"] is True for row in results),
+        "all_integer_identical": all(row.get("integer_identical", True) is True for row in results),
         "artifact_disposition": "Retain source/input/build identities, specifications, raw samples and logs; extracted tensors are reproducible copies of retained read-only inputs.",
     }
     owner.atomic(output / "result.json", canonical(result))
     return result
+
+
+def prepare_rsr(specification: Path, output: Path) -> Record:
+    raw = read(specification)
+    if (
+        set(raw) != {"schema", "build", "drafter", "layers", "blocks"}
+        or raw["schema"] != "rsr-index-v1"
+    ):
+        raise ValueError("unsupported RSR preparation specification")
+    build, drafter = (artifact(raw[name], specification.parent) for name in ("build", "drafter"))
+    build.verify()
+    drafter.verify()
+    built = read(build.path)
+    if "rsr" not in built:
+        raise ValueError("RSR-enabled kernel build required")
+    executable = artifact(built["rsr_preprocessor"], build.path.parent)
+    executable.verify()
+    layers = [integer(value) for value in sequence(raw["layers"])]
+    blocks = [integer(value) for value in sequence(raw["blocks"])]
+    if not layers or len(layers) != len(set(layers)) or any(not 0 <= x < 64 for x in layers):
+        raise ValueError("distinct layer indices required")
+    if not blocks or len(blocks) != len(set(blocks)) or any(x not in {4, 8, 12} for x in blocks):
+        raise ValueError("RSR blocks must be distinct values from 4, 8, 12")
+    if output.exists():
+        raise ValueError("RSR preparation output must be new")
+    owner = Store(output)
+    weights = Weights(drafter.path)
+    tensors: Record = {}
+    for layer in layers:
+        for group in ("gate", "up", "down"):
+            name = f"blk.{layer}.ffn_{group}"
+            geometry = weights.tensors[name + ".w1a1_packed"].shape
+            if len(geometry) != 2:
+                raise ValueError("matrix required")
+            k, m = geometry[0] * 32, geometry[1]
+            prefix = output / name
+            owner.atomic(
+                Path(str(prefix) + ".weights"), weights.tensor(name + ".w1a1_packed", {26})
+            )
+            for block in blocks:
+                command = [str(executable.path), str(prefix), str(m), str(k), str(block)]
+                result = subprocess.run(command, capture_output=True, text=True, check=True)
+                owner.atomic(output / f"{name}.{block}.log", result.stdout.encode())
+                fields = result.stdout.strip().split(",")
+                if len(fields) != 4 or fields[0] != "index":
+                    raise ValueError("invalid native RSR preparation record")
+                tensors[name + "." + str(block)] = {
+                    "m": m,
+                    "k": k,
+                    "block": block,
+                    "index_bytes": int(fields[1]),
+                    "groups": int(fields[2]),
+                    "padded_rows": int(fields[3]),
+                    "packed_bytes": m * k // 8,
+                    "files": {
+                        suffix: file_reference(Path(str(prefix) + f".rsr{block}." + suffix))
+                        for suffix in ("perms", "groups", "meta", "sizes")
+                    },
+                }
+    result_out: Record = {
+        "schema": "rsr-index-result-v1",
+        "drafter": raw["drafter"],
+        "build": raw["build"],
+        "tensors": tensors,
+        "artifact_disposition": "Retain indexes, packed inputs, specifications, source and licence identities for replay; inputs unchanged.",
+    }
+    owner.atomic(output / "specification.json", canonical(raw))
+    owner.atomic(output / "result.json", canonical(result_out))
+    return result_out

@@ -120,7 +120,8 @@ def write_kernel_weights(
     path.write_bytes(header + bytes((-len(header)) % 32) + payload)
 
 
-def test_feed_forward_adapter_preserves_geometry_and_payload(tmp_path: Path) -> None:
+@pytest.mark.parametrize("slots", [1, 4])
+def test_feed_forward_adapter_preserves_geometry_and_payload(tmp_path: Path, slots: int) -> None:
     from benchmarks.kernel_benchmark import prepare_feed_forward
     from benchmarks.native import file_reference
     from w1a1_eagle.data import Artifact
@@ -141,7 +142,8 @@ def test_feed_forward_adapter_preserves_geometry_and_payload(tmp_path: Path) -> 
     )
     payload = bytes(range(210)) * 16
     write_kernel_weights(baseline, {}, [(base + ".weight", (256, 16), 14, payload)])
-    activation.write_bytes(bytes(4096))
+    captured_slots = 2 if slots == 1 else slots
+    activation.write_bytes(struct.pack("<f", 3.0) * (256 * captured_slots))
     manifest.write_text("{}")
     inputs = {
         key: Artifact.capture(path)
@@ -150,7 +152,7 @@ def test_feed_forward_adapter_preserves_geometry_and_payload(tmp_path: Path) -> 
     specification: Record = {
         "layers": [0],
         "groups": ["down"],
-        "slots": [4],
+        "slots": [slots],
         "variants": ["reference", "baseline"],
         "warmup": 1,
         "repeats": 1,
@@ -161,22 +163,24 @@ def test_feed_forward_adapter_preserves_geometry_and_payload(tmp_path: Path) -> 
         specification,
         inputs,
         tmp_path / "probe",
-        {"tensors": {base + ".4": file_reference(activation)}},
+        {"tensors": {base + f".{captured_slots}": file_reference(activation)}},
         output,
     )
     assert len(prepared) == 2
     command, row = prepared[1]
-    assert command[3:7] == ["16", "256", "4", "14"]
+    assert command[3:7] == ["16", "256", str(slots), "14"]
     assert row["weight_format"] == "Q6_K"
     assert row["weight_bytes"] == 3360
-    assert (output / "layer-0-down-4.down.quantized").read_bytes() == payload
-    assert (output / "layer-0-down-4.down.input").read_bytes() == activation.read_bytes()
+    assert (output / f"layer-0-down-{slots}.down.quantized").read_bytes() == payload
+    assert (output / f"layer-0-down-{slots}.down.input").read_bytes() == activation.read_bytes()[
+        : 256 * slots * 4
+    ]
     write_kernel_weights(baseline, {}, [(base + ".weight", (512, 8), 14, payload)])
     with pytest.raises(ValueError, match="geometries differ"):
         prepare_feed_forward(
             specification,
             inputs,
             tmp_path / "probe",
-            {"tensors": {base + ".4": file_reference(activation)}},
+            {"tensors": {base + f".{captured_slots}": file_reference(activation)}},
             tmp_path / "mismatched",
         )

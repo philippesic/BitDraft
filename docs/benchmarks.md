@@ -605,3 +605,41 @@ and served experiment are retained under `artifacts/benchmarks/w1-kernels/`.
 explains its scope and artifact disposition. A separate activation trace verifies
 that the experimental runtime executes twelve gate/up MMA launches and six down
 DP4A launches per full six-layer round; trace times are excluded from clean timing.
+
+### RSR-core binary variant
+
+An optional `rsr` field in the kernel build specification supplies authenticated
+`source` (`kernels/bit_1/cuda/rsr_v5_9.cu`), `licence`, and the reviewed `commit`
+`99bcccded70416839f1ef1fc6d58726c507d1fb9`. Source and MIT notice hashes are pinned.
+The builder copies the device definitions literally, preserves `RSR-LICENSE`, and
+uses the public rectangular wrapper's 256-thread (k ≤ 4) or 512-thread policy.
+It does not import upstream Python, run its installer, or use its Torch JIT builds.
+
+`prepare-rsr SPEC OUTPUT` is an offline CPU command. Its `rsr-index-v1` specification
+contains authenticated `build` and `drafter`, distinct `layers`, and `blocks` chosen
+from 4, 8, 12. A separate native executable with no CUDA dependency constructs the
+public uint16 permutation / int4 group / int32 block-metadata layout. Columns within
+each pattern group remain sorted. Output indexes authenticate their source drafter,
+geometry, padded rows, resident index bytes and every generated file.
+
+Add the authenticated preparation result as `rsr_indexes` to the kernel timing
+specification and select `rsr-4`, `rsr-8` or `rsr-12`. Groups now also accept
+`gate-only` and `up` for individual calls; `gate` retains the real fused gate/up
+reference. Slot count 1 uses the first unchanged slot from the captured two-slot
+DEV input, recorded as `activation_prefix_slots`. Other counts use their own captures.
+
+The binary kernel computes Bq for B=(W+1)/2. The adapter converts the exact integer
+codes to F32, computes their integer sum once outside timing, and applies
+Wq=2Bq−sum(q). The signed conversion and original affine epilogue are timed.
+The public kernel has one input vector per launch, so it is repeated per slot.
+Integer equality is checked separately against the original dispatched DP4A body
+with unit affine parameters; final F32 byte equality is still required. These
+integer-code sums stay below F32's exact integer limit for the admitted S4 shapes.
+A false integer check is retained even if the affine output happens to match.
+
+Results report `rsr_index_bytes`, `rsr_bits_per_weight`, `packed_weight_bytes`,
+`rsr_block` and `rsr_groups`. Effective weight GB/s and the assumed read floor use
+the resident index plus row scales/midpoints, rather than pretending the kernel
+reads only packed signs. Preprocessing and index upload are outside timing. Blocks
+4/8/12 expose the trade-off between permutation size and the growing number of
+pattern groups; no claim that one block size is universally optimal is made.

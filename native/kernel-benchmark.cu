@@ -41,16 +41,18 @@ static std::vector<float> download(const float * pointer, size_t count) {
 }
 
 static void measure(const std::function<void()> & launch, cudaStream_t stream, const float * output,
-                    size_t count, const std::vector<float> & reference, int warmup, int repeats, int trials) {
+                    size_t count, const std::vector<float> & reference, int warmup, int repeats, int trials, const int * integers = nullptr, const std::vector<int> & integer_reference = {}) {
     cudaEvent_t start, stop;
     checked(cudaEventCreate(&start));
     checked(cudaEventCreate(&stop));
     bool identical = true;
+    bool integer_identical = true;
     for (int j = 0; j < warmup; ++j) launch();
     checked(cudaStreamSynchronize(stream));
     printf("warmup,%d,per_trial,%d\n",warmup,std::min(warmup,200));
     for (int trial = -1; trial < trials; ++trial) {
         checked(cudaMemsetAsync(const_cast<float *>(output), 0xff, count * sizeof(float), stream));
+        if(integers) checked(cudaMemsetAsync(const_cast<int *>(integers),0x80,count*sizeof(int),stream));
         for (int j = 0; j < std::min(warmup,200); ++j) launch();
         checked(cudaEventRecord(start, stream));
         for (int j = 0; j < repeats; ++j) launch();
@@ -61,8 +63,14 @@ static void measure(const std::function<void()> & launch, cudaStream_t stream, c
         checked(cudaEventElapsedTime(&milliseconds, start, stop));
         const auto actual = download(output, count);
         identical = identical && memcmp(actual.data(), reference.data(), count * sizeof(float)) == 0;
+        if (integers) {
+            std::vector<int> actual_integers(count);
+            checked(cudaMemcpy(actual_integers.data(),integers,count*sizeof(int),cudaMemcpyDeviceToHost));
+            integer_identical = integer_identical && actual_integers == integer_reference;
+        }
         if (trial >= 0) printf("sample,%d,%.12g,%d\n", trial, double(milliseconds) * 1000 / repeats, identical);
     }
+    if(integers) printf("integers,%d\n",integer_identical);
     checked(cudaEventDestroy(start));
     checked(cudaEventDestroy(stop));
 }
@@ -81,13 +89,16 @@ static Matrix matrix(Memory & memory, const std::string & prefix, int m, int k) 
     };
 }
 
+#include "kernel-rsr.cuh"
+
 static void launch_one(const std::string & variant, Matrix weight, const int8_t * q,
                        const float * b, const float * sums, float * output, int m, int k, int n,
                        cudaStream_t stream) {
     if (variant == "reference") {
         w1ax_integer_dot<<<dim3((m+3)/4,n),dim3(32,4),0,stream>>>(weight.weights,weight.scales,q,b,m,k,k/32,output,weight.midpoint,sums);
     } else if (variant == "cross") {
-        if (n == 2) exec_cross_dot<2><<<dim3((m+3)/4),dim3(32,4),0,stream>>>(weight.weights,weight.scales,q,b,m,k,k/32,output,weight.midpoint,sums,n);
+        if (n == 1) exec_cross_dot<1><<<dim3((m+3)/4),dim3(32,4),0,stream>>>(weight.weights,weight.scales,q,b,m,k,k/32,output,weight.midpoint,sums,n);
+        else if (n == 2) exec_cross_dot<2><<<dim3((m+3)/4),dim3(32,4),0,stream>>>(weight.weights,weight.scales,q,b,m,k,k/32,output,weight.midpoint,sums,n);
         else if (n == 4) exec_cross_dot<4><<<dim3((m+3)/4),dim3(32,4),0,stream>>>(weight.weights,weight.scales,q,b,m,k,k/32,output,weight.midpoint,sums,n);
         else if (n == 8) exec_cross_dot<8><<<dim3((m+3)/4),dim3(32,4),0,stream>>>(weight.weights,weight.scales,q,b,m,k,k/32,output,weight.midpoint,sums,n);
         else exec_cross_dot<16><<<dim3((m+3)/4),dim3(32,4),0,stream>>>(weight.weights,weight.scales,q,b,m,k,k/32,output,weight.midpoint,sums,n);
@@ -115,7 +126,41 @@ static void binary(const std::string & prefix, const std::string & variant, int 
     cudaStream_t stream;
     checked(cudaStreamCreateWithFlags(&stream,cudaStreamNonBlocking));
     w1ax_quantize<<<n,256,0,stream>>>(x,k,q,b,sums,bits,mode,clip,gains);
+    int * integer_output = nullptr;
+    std::vector<int> integer_reference;
+#ifdef BINARY_RSR
+    const bool is_rsr = variant.rfind("rsr-",0)==0;
+    RsrIndex rsr_first{},rsr_second{};
+    float * values = nullptr;
+    float * binary_output = nullptr;
+    int * totals = nullptr;
+    if(is_rsr) {
+        const int block=std::stoi(variant.substr(4));
+        rsr_first=rsr_index(memory,prefix,m,k,block);
+        rsr_second=joint ? rsr_index(memory,prefix+".up",m,k,block) : rsr_first;
+        values=memory.upload(std::vector<float>(k*n));
+        totals=memory.upload(std::vector<int>(n));
+        binary_output=memory.upload(std::vector<float>(rsr_first.padded*n*(joint?2:1)));
+        integer_output=memory.upload(std::vector<int>(m*n*(joint?2:1)));
+        rsr_codes<<<n,256,0,stream>>>(q,values,totals,k);
+        auto unit_rows=memory.upload(std::vector<float>(m,1.0f));
+        auto unit_slots=memory.upload(std::vector<float>(n,1.0f));
+        auto zero_slots=memory.upload(std::vector<float>(n));
+        auto raw=memory.upload(std::vector<float>(m*n*(joint?2:1)));
+        w1ax_integer_dot<<<dim3((m+3)/4,n),dim3(32,4),0,stream>>>(first.weights,unit_rows,q,unit_slots,m,k,k/32,raw,nullptr,zero_slots);
+        if(joint) w1ax_integer_dot<<<dim3((m+3)/4,n),dim3(32,4),0,stream>>>(second.weights,unit_rows,q,unit_slots,m,k,k/32,raw+m*n,nullptr,zero_slots);
+        checked(cudaStreamSynchronize(stream));
+        for(float value:download(raw,size_t(m)*n*(joint?2:1))) integer_reference.push_back(int(value));
+    }
+#endif
     auto dispatch = [&](const std::string & name) {
+#ifdef BINARY_RSR
+        if(is_rsr && name==variant) {
+            launch_rsr(rsr_first,values,binary_output,integer_output,totals,first,b,sums,output,m,k,n,stream);
+            if(joint) launch_rsr(rsr_second,values,binary_output+rsr_first.padded*n,integer_output+m*n,totals,second,b,sums,output+m*n,m,k,n,stream);
+            return;
+        }
+#endif
         if (joint && name == "reference") {
             exec_joint_dot<<<dim3((m+3)/4,n),dim3(32,4),0,stream>>>(first.weights,first.scales,first.midpoint,output,second.weights,second.scales,second.midpoint,output+m*n,q,b,sums,m,k);
         } else {
@@ -134,7 +179,7 @@ static void binary(const std::string & prefix, const std::string & variant, int 
     dispatch(variant);
     checked(cudaStreamEndCapture(stream,&graph));
     checked(cudaGraphInstantiate(&executable,graph,nullptr,nullptr,0));
-    measure([&] { checked(cudaGraphLaunch(executable,stream)); },stream,output,count,reference,warmup,repeats,trials);
+    measure([&] { checked(cudaGraphLaunch(executable,stream)); },stream,output,count,reference,warmup,repeats,trials,integer_output,integer_reference);
     checked(cudaGraphExecDestroy(executable));
     checked(cudaGraphDestroy(graph));
     checked(cudaStreamDestroy(stream));
@@ -183,7 +228,7 @@ int main(int argc,char ** argv) {
         const float clip=std::stof(argv[8]);
         const int warmup=std::stoi(argv[9]),repeats=std::stoi(argv[10]),trials=std::stoi(argv[11]);
         const bool joint=std::stoi(argv[12])!=0;
-        if(std::string(argv[13])!="v1" || m<=0 || k<=0 || k%32 || m%16 || (n!=2&&n!=4&&n!=8&&n!=16) || warmup<1 || repeats<1 || trials<1)
+        if(std::string(argv[13])!="v1" || m<=0 || k<=0 || k%32 || m%16 || (n!=1&&n!=2&&n!=4&&n!=8&&n!=16) || warmup<1 || repeats<1 || trials<1)
             throw std::runtime_error("invalid benchmark bounds");
         cudaDeviceProp properties;
         checked(cudaGetDeviceProperties(&properties,0));
