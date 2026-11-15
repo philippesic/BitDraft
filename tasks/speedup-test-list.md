@@ -10,7 +10,8 @@ The list is a record of what to test and why, not a schedule.
 
 Recording only. Items 1, 2, 3 and 8 were authorized by the owner on 2026-11-14 and are
 finished. The other items are listed, not authorized: each starts only on the owner's
-explicit go-ahead. GPU and CPU-heavy work waits until no other thread holds the GPU lease.
+explicit go-ahead. The overnight screening sheet under State was authorized on 2026-11-15.
+GPU and CPU-heavy work waits until no other thread holds the GPU lease.
 
 ## Done when
 
@@ -102,12 +103,28 @@ keeping one table at 8 bits helped most for attention (0.61) and least for the d
 (0.47). Neither has been tested under training with the current recipe. Item 10 covers training
 the attention and fusion tables.
 
+Overnight screening sheet, authorized by the owner on 2026-11-15 and run by a separate
+Opus thread on the WSL host. Every arm is a fresh 30-minute run on the S4 recipe on the
+same data, compared against a matched control; results rank features and do not decide
+them. Block A: the control, the control again with a different data order to measure
+run-to-run noise, and a one-hour restart of the starting-point state at a fresh step size,
+which answers the open question below. Block B is item 4 as short runs: feed-forward
+weights three-valued, 2-bit, 4-bit and full precision. Block C is a first look at item 6:
+matching the full-precision drafter's output scores, and matching its final internal
+values. Block D: a second one-bit layer, one scale per 128 inputs, and down tables at
+4-bit in layers 2 and 5. Block E, if hours remain: the best of B with the best of C. The
+code for B–D is a prototype on a side branch and is not merged. Arms the serving runtime
+cannot run are scored on the 120 fixed DEV windows inside training, not on drafting; the
+control and teacher arms also get the 60-request DEV screen. Not included: a language model
+choosing step sizes (one run's noise is about one point), item 10 and anything that
+measures speed.
+
 Open question, not yet a listed test: whether the
 [learning curve](../results/s4-data-curve/result.md) flattened because of data or because
 the step size reached zero.
 
 ## Next
 
-Write result entries for items 1, 2, 3 and 8. The owner decides which of items 4–7 to
-start, or item 10, and whether to list the quantizer-feature tests; item 9 waits for
-the native Linux host.
+The overnight screening sheet reports to the owner, who then chooses features and which
+arms get a longer confirmation. Write result entries for items 1, 2, 3 and 8. Items 5, 7,
+9 and 10 wait for the native Linux host.
