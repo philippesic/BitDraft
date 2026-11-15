@@ -10,7 +10,7 @@ See [closeout specification](docs/results.md).
 
 ## Current candidate and retained controls
 
-### F0xx: Does broader scenario coverage establish that final S4 is faster?
+### F028: Does broader scenario coverage establish that final S4 is faster?
 
 No. The joint seven-scenario reports include the registered agentic slice and suite:
 Q4KM agentic is inconclusive against Baseline and NVFP4 narrowly leads, while thinking
@@ -321,7 +321,7 @@ checkouts and obsolete external artifacts have been removed after preservation c
 Target work and host waiting dominate; one-bit feed-forward saves no time at depth 3.
 The drafter counter excludes handoff. [Result](results/round-profile-baseline-s4/result.md).
 
-### F0xx: Does the six-project agentic suite distinguish S4 from Baseline?
+### F027: Does the six-project agentic suite distinguish S4 from Baseline?
 
 The frozen 60-task suite completes 37/60 on both target formats, with exact
 Baseline/S4 agreement to target-only on all tasks. S4/Baseline task rate is
