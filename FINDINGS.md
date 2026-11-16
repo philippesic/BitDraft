@@ -194,6 +194,21 @@ trails Baseline by 6.8 instead of 12.0. Training loss kept falling and repeated 
 0.6–0.75 lower than on first sight while DEV moved a few points: the drafter mostly memorizes
 after two passes. The flattening coincides with the cosine tail, and no 6K-only control ran,
 so the old prompts' own effect is unknown. [Result](results/s4-data-curve/result.md).
+2026-11-16: a restart at a fresh step size on the same data gained nothing, so the flattening came from
+the data; see F029.
+
+### F029: Which quantizer or teacher features help S4 in short matched runs?
+
+None clearly. In 30-minute runs matched to S4's control:
+- three-valued feed-forward weights raised DEV prefix survival by 4.2 points and a second one-bit plane
+  by 3.3; neither is servable yet;
+- full precision gained only about 2 points, so weight precision is not the limit at this length;
+- 2-bit weights and per-128-input scales showed nothing;
+- matching a full-precision teacher's hidden values gave +0.2 acceptance points (−0.4, +1.0) at the
+  normal memory setting on native Linux, and the owner rejected the teacher;
+- one more optimizer-hour at a fresh step size on the data curve's own prompts gained +0.4 (−0.7, +1.4).
+
+[Result](results/s4-feature-screen/result.md).
 
 ## Earlier experiments and durable lessons
 

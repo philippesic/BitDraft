@@ -1,0 +1,3251 @@
+{
+ "schema": 1,
+ "dev_windows": 120,
+ "screen": "60-request Q4KM DEV screen, depth 3, greedy",
+ "arms": {
+  "a1-control": {
+   "complete": true,
+   "updates": 8209,
+   "dev_top1_positions_1_3": 0.7361,
+   "dev_survival_3": 0.5333,
+   "dev_top1_positions_1_4": [
+    0.8417,
+    0.7333,
+    0.6333,
+    0.4917
+   ],
+   "dev_survivors_1_4": [
+    101,
+    82,
+    64,
+    45
+   ],
+   "dev_loss_15": 3.3994,
+   "optimizer_seconds": 1721.9,
+   "peak_allocated_gib": 12.53,
+   "state": "802243da5b732bdafa5c59e024f22f71ec167c5e73eff45d5adc9583518bde69",
+   "export": "77ba0a567709e01a242b549a7314551062871a74b676e852fd620c89ec532a13",
+   "screen": {
+    "acceptance": 0.49699219249968,
+    "accepted_per_round": 1.472506636329162,
+    "accepted": 3883,
+    "proposed": 7813
+   }
+  },
+  "a2-reorder": {
+   "complete": true,
+   "updates": 8209,
+   "dev_top1_positions_1_3": 0.7444,
+   "dev_survival_3": 0.5417,
+   "dev_top1_positions_1_4": [
+    0.825,
+    0.7417,
+    0.6667,
+    0.5333
+   ],
+   "dev_survivors_1_4": [
+    99,
+    81,
+    65,
+    46
+   ],
+   "dev_loss_15": 3.4176,
+   "optimizer_seconds": 1708.6,
+   "peak_allocated_gib": 12.54,
+   "state": "de8157cb3dad4914a48f38411fae1dbf1e2f32c1d4f91b229fbeb0b28e10e90d",
+   "export": "63a38ea5b112ce525b754f6914153faed38e21495be1a17c1511e3ce897d8e0d",
+   "screen": {
+    "acceptance": 0.496415770609319,
+    "accepted_per_round": 1.4678274034822105,
+    "accepted": 3878,
+    "proposed": 7812,
+    "vs_control": {
+     "difference": -0.00058,
+     "lower": -0.00848,
+     "upper": 0.00763
+    },
+    "control": "a1-control"
+   }
+  },
+  "a3-restart": {
+   "complete": true,
+   "updates": 80209,
+   "dev_top1_positions_1_3": 0.7917,
+   "dev_survival_3": 0.6083,
+   "dev_top1_positions_1_4": [
+    0.9,
+    0.7833,
+    0.6917,
+    0.525
+   ],
+   "dev_survivors_1_4": [
+    108,
+    91,
+    73,
+    49
+   ],
+   "dev_loss_15": 3.4652,
+   "optimizer_seconds": 16349.5,
+   "peak_allocated_gib": 5.51,
+   "state": "538e2b005f3c6064c40c87aff6ba97bcfd1a3097c26fdbe23c6aef7427f4a02e",
+   "export": "8062380c8cf150177a30b9e07435e382ba5424fb2e9025969c4aad4d8aafe776",
+   "dev_start": {
+    "top1_1_3": 0.7917,
+    "survival_3": 0.6083,
+    "updates": 80209
+   },
+   "screen": {
+    "acceptance": 0.5522652838427947,
+    "accepted_per_round": 1.6364739183178325,
+    "accepted": 4047,
+    "proposed": 7328,
+    "vs_control": {
+     "difference": 0.05527,
+     "lower": 0.04398,
+     "upper": 0.06658
+    },
+    "control": "a1-control"
+   }
+  },
+  "a3-restart-r2": {
+   "complete": true,
+   "updates": 97909,
+   "dev_top1_positions_1_3": 0.7833,
+   "dev_survival_3": 0.5833,
+   "dev_top1_positions_1_4": [
+    0.8917,
+    0.8,
+    0.6583,
+    0.5583
+   ],
+   "dev_survivors_1_4": [
+    107,
+    90,
+    70,
+    54
+   ],
+   "dev_loss_15": 3.5222,
+   "optimizer_seconds": 19951.2,
+   "peak_allocated_gib": 12.66,
+   "state": "54f90e6ab35f1533f1088b34d0c2489072975944ed4ba1350a42dc37b53503c6",
+   "export": "aff2c33787b3268917549a8231f50b5c41da31b247ae911cce0a0ef8c3e8d519",
+   "dev_start": {
+    "top1_1_3": 0.7917,
+    "survival_3": 0.6083,
+    "updates": 80209
+   },
+   "screen": {
+    "acceptance": 0.5558448677538714,
+    "accepted_per_round": 1.646103896103896,
+    "accepted": 4056,
+    "proposed": 7297,
+    "vs_control": {
+     "difference": 0.05885,
+     "lower": 0.04378,
+     "upper": 0.07386
+    },
+    "vs_start_state": {
+     "difference": 0.00358,
+     "lower": -0.00684,
+     "upper": 0.01413
+    },
+    "control": "a1-control"
+   }
+  },
+  "b1-ternary": {
+   "complete": true,
+   "updates": 8209,
+   "dev_top1_positions_1_3": 0.7556,
+   "dev_survival_3": 0.575,
+   "dev_top1_positions_1_4": [
+    0.8583,
+    0.7083,
+    0.7,
+    0.5583
+   ],
+   "dev_survivors_1_4": [
+    103,
+    82,
+    69,
+    52
+   ],
+   "dev_loss_15": 3.3254,
+   "optimizer_seconds": 1930.8,
+   "peak_allocated_gib": 12.48,
+   "state": "f383f1f91ed42fd5b08b4359385e6e935d6b62e4d99dd66672276b13c0ec38ce",
+   "export": null
+  },
+  "b2-int2": {
+   "complete": true,
+   "updates": 8209,
+   "dev_top1_positions_1_3": 0.75,
+   "dev_survival_3": 0.5333,
+   "dev_top1_positions_1_4": [
+    0.85,
+    0.75,
+    0.65,
+    0.475
+   ],
+   "dev_survivors_1_4": [
+    102,
+    85,
+    64,
+    45
+   ],
+   "dev_loss_15": 3.3523,
+   "optimizer_seconds": 2014.1,
+   "peak_allocated_gib": 12.49,
+   "state": "7bf94f53526cb9ab0191ce460e09abf293a6ac43514172dd408ab43171dd548a",
+   "export": null
+  },
+  "b3-int4": {
+   "complete": false,
+   "updates": 3200,
+   "failures": [
+    {
+     "kind": "worker-failure",
+     "cause": null,
+     "detail": null
+    },
+    {
+     "kind": "failure",
+     "cause": "ValueError",
+     "detail": "F16 cache storage overflow"
+    }
+   ]
+  },
+  "b4-full": {
+   "complete": true,
+   "updates": 8209,
+   "dev_top1_positions_1_3": 0.7583,
+   "dev_survival_3": 0.55,
+   "dev_top1_positions_1_4": [
+    0.8583,
+    0.7583,
+    0.6583,
+    0.5417
+   ],
+   "dev_survivors_1_4": [
+    103,
+    87,
+    66,
+    49
+   ],
+   "dev_loss_15": 3.3707,
+   "optimizer_seconds": 1684.5,
+   "peak_allocated_gib": 12.48,
+   "state": "0635676961f680d395e8bb83405919dd4bf4eedd2558b92e7827d016c0771dc4",
+   "export": null
+  },
+  "c1-logits": {
+   "complete": false,
+   "updates": 0,
+   "failures": [
+    {
+     "kind": "worker-failure",
+     "cause": null,
+     "detail": null
+    },
+    {
+     "kind": "failure",
+     "cause": "OutOfMemoryError",
+     "detail": "CUDA out of memory. Tried to allocate 122.00 MiB. GPU 0 has a total capacity of 15.89 GiB of which 456.54 MiB is free. Including non-PyTorch memory, this process has 17179869184.00 GiB memory in use. 14.00 GiB allowed; Of the allocated memory 13.44 GiB is allocated by PyTorch, and 512.92 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)"
+    }
+   ]
+  },
+  "c2-hidden": {
+   "complete": false,
+   "updates": 0,
+   "failures": [
+    {
+     "kind": "worker-failure",
+     "cause": null,
+     "detail": null
+    },
+    {
+     "kind": "failure",
+     "cause": "OutOfMemoryError",
+     "detail": "CUDA out of memory. Tried to allocate 142.00 MiB. GPU 0 has a total capacity of 15.89 GiB of which 524.54 MiB is free. Including non-PyTorch memory, this process has 17179869184.00 GiB memory in use. 14.00 GiB allowed; Of the allocated memory 13.05 GiB is allocated by PyTorch, and 838.55 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)"
+    }
+   ]
+  },
+  "c0-control-2g": {
+   "complete": true,
+   "updates": 8209,
+   "dev_top1_positions_1_3": 0.7389,
+   "dev_survival_3": 0.5417,
+   "dev_top1_positions_1_4": [
+    0.825,
+    0.7417,
+    0.65,
+    0.5083
+   ],
+   "dev_survivors_1_4": [
+    99,
+    81,
+    65,
+    47
+   ],
+   "dev_loss_15": 3.5781,
+   "optimizer_seconds": 1556.5,
+   "peak_allocated_gib": 11.83,
+   "state": "8918011b4b61ea454a253f8dff292019e03aa198bffd75876f9903c2235bee0d",
+   "export": "ca054bbb3b55273327b38948cc3b883ccd1fb6b45f5a98c03921a66f0b5b7125",
+   "screen": {
+    "acceptance": 0.48361482228384167,
+    "accepted_per_round": 1.4301155423033918,
+    "accepted": 3837,
+    "proposed": 7934,
+    "vs_control": {
+     "difference": -0.01338,
+     "lower": -0.02248,
+     "upper": -0.00392
+    },
+    "control": "a1-control"
+   }
+  },
+  "c1-logits-2g": {
+   "complete": false,
+   "updates": 3300,
+   "failures": [
+    {
+     "kind": "worker-failure",
+     "cause": null,
+     "detail": null
+    },
+    {
+     "kind": "failure",
+     "cause": "ValueError",
+     "detail": "F16 cache storage overflow"
+    }
+   ]
+  },
+  "c2-hidden-2g": {
+   "complete": false,
+   "updates": 0,
+   "failures": []
+  },
+  "d1-residual": {
+   "complete": false,
+   "updates": 2900,
+   "failures": [
+    {
+     "kind": "worker-failure",
+     "cause": null,
+     "detail": null
+    },
+    {
+     "kind": "failure",
+     "cause": "ValueError",
+     "detail": "F16 cache storage overflow"
+    }
+   ]
+  },
+  "d1-residual-r2": {
+   "complete": false,
+   "updates": 5200,
+   "failures": [
+    {
+     "kind": "worker-failure",
+     "cause": null,
+     "detail": null
+    },
+    {
+     "kind": "failure",
+     "cause": "ValueError",
+     "detail": "artifact content mismatch"
+    }
+   ]
+  },
+  "d2-block128": {
+   "complete": true,
+   "updates": 8209,
+   "dev_top1_positions_1_3": 0.7472,
+   "dev_survival_3": 0.5417,
+   "dev_top1_positions_1_4": [
+    0.8417,
+    0.7333,
+    0.6667,
+    0.525
+   ],
+   "dev_survivors_1_4": [
+    101,
+    81,
+    65,
+    48
+   ],
+   "dev_loss_15": 3.4106,
+   "optimizer_seconds": 2007.9,
+   "peak_allocated_gib": 12.54,
+   "state": "5211d55dc9615586d136711599105b4724db7799ccd1a5a50c3bd2956c3c79a9",
+   "export": null
+  },
+  "c1-logits-r2": {
+   "complete": true,
+   "updates": 8209,
+   "dev_top1_positions_1_3": 0.7556,
+   "dev_survival_3": 0.5333,
+   "dev_top1_positions_1_4": [
+    0.875,
+    0.7417,
+    0.65,
+    0.4917
+   ],
+   "dev_survivors_1_4": [
+    105,
+    83,
+    64,
+    47
+   ],
+   "dev_loss_15": 3.4675,
+   "optimizer_seconds": 2064.7,
+   "peak_allocated_gib": 13.01,
+   "state": "815399d14caaaf1f2aa705340cd9fe714a7d58be7df34364f77db16ba571a3ce",
+   "export": "7c10992bd55762d03b6236d1d60de9b19c633302be4913ac04782fee4987ae83",
+   "screen": {
+    "acceptance": 0.49324152002040295,
+    "accepted_per_round": 1.458521870286576,
+    "accepted": 3868,
+    "proposed": 7842,
+    "vs_control": {
+     "difference": 0.00963,
+     "lower": 0.00043,
+     "upper": 0.0191
+    },
+    "vs_default_control": {
+     "difference": -0.00375,
+     "lower": -0.01323,
+     "upper": 0.00672
+    },
+    "control": "c0-control-2g"
+   }
+  },
+  "c2-hidden-r": {
+   "complete": true,
+   "updates": 8209,
+   "dev_top1_positions_1_3": 0.7556,
+   "dev_survival_3": 0.55,
+   "dev_top1_positions_1_4": [
+    0.875,
+    0.7417,
+    0.65,
+    0.5
+   ],
+   "dev_survivors_1_4": [
+    105,
+    85,
+    66,
+    47
+   ],
+   "dev_loss_15": 3.4296,
+   "optimizer_seconds": 1921.2,
+   "peak_allocated_gib": 12.65,
+   "state": "27708c5af5a0de2f68e3fcbce15a1cb579988ba1627d0e455d773e9f4659bd87",
+   "export": "6be41c9b5061f69105693e8863dabd6b730433a8c60da22271bd57f4e6780ff2",
+   "screen": {
+    "acceptance": 0.4952076677316294,
+    "accepted_per_round": 1.4650283553875236,
+    "accepted": 3875,
+    "proposed": 7825,
+    "vs_control": {
+     "difference": 0.01159,
+     "lower": 0.00337,
+     "upper": 0.02017
+    },
+    "vs_default_control": {
+     "difference": -0.00178,
+     "lower": -0.01085,
+     "upper": 0.00784
+    },
+    "control": "c0-control-2g"
+   }
+  },
+  "d1-residual-r3": {
+   "complete": true,
+   "updates": 8209,
+   "dev_top1_positions_1_3": 0.7556,
+   "dev_survival_3": 0.5667,
+   "dev_top1_positions_1_4": [
+    0.825,
+    0.75,
+    0.6917,
+    0.5333
+   ],
+   "dev_survivors_1_4": [
+    99,
+    83,
+    68,
+    51
+   ],
+   "dev_loss_15": 3.3225,
+   "optimizer_seconds": 2915.5,
+   "peak_allocated_gib": 12.69,
+   "state": "c4d8b71832a6bc2885d49f2050fc00f155ed31b8a6310dc83324324788194041",
+   "export": null
+  }
+ },
+ "linux_teacher": {
+  "arm": "l2-hidden-linux",
+  "state": "f4de7a0dde0502129d02f8fd4d50d06a6a3fc89e95496975a15e58965f9ecc08",
+  "export": "da8a801010fa66632a1bdf0d99d5b0cb74731b314a51eb4007582b7e7bff8c83",
+  "dev_top1_positions_1_3": 0.7611,
+  "dev_survival_3": 0.55,
+  "dev_top1_positions_1_4": [
+   0.8583,
+   0.75,
+   0.675,
+   0.5167
+  ],
+  "dev_survivors_1_4": [
+   103,
+   85,
+   66,
+   46
+  ],
+  "dev_loss_15": 3.3628,
+  "optimizer_seconds": 1987.4,
+  "peak_allocated_gib": 13.47,
+  "screen_control": 0.49699219249968,
+  "screen_teacher": 0.4993578217313126,
+  "paired_teacher_minus_control": {
+   "difference": 0.00237,
+   "lower": -0.00445,
+   "upper": 0.0098,
+   "groups": 60
+  },
+  "parity": {
+   "update0_diagnostic_equal": true,
+   "update100_loss": [
+    2.7793257236480713,
+    2.7793257236480713
+   ],
+   "update100_losses_equal": true,
+   "update100_gradient_norm": [
+    1.3183929920196533,
+    1.3183929920196533
+   ],
+   "groups_equal": true,
+   "exact": true
+  }
+ },
+ "screen_groups": {
+  "a1-control (WSL, saved controls)": {
+   "ultrachat:73ea29124608350f4c9061687e1cdccad7a4c5dc4c83835dfefc827b1c0ec574": {
+    "category": "writing",
+    "accepted": 14,
+    "proposed": 21
+   },
+   "ultrachat:0c6070b6eab22bbf0ff853e5a2c0c6b3d5ab994cd8be630aced31e1b582ea850": {
+    "category": "conversation",
+    "accepted": 77,
+    "proposed": 148
+   },
+   "ultrachat:4dc9863e8f25deb51eb67326b70d4a25a39ba97e4ddcaae730ddf2ee14f83fb7": {
+    "category": "conversation",
+    "accepted": 17,
+    "proposed": 24
+   },
+   "ultrachat:c9040e5cb6dd4622e386df9be726a6855ab4f0f42abd15a2c0573aa91fec5cdb": {
+    "category": "conversation",
+    "accepted": 66,
+    "proposed": 182
+   },
+   "ultrachat:fd9a89927837175325b3da0502d12b55096166b103731c34fa207100bd2ee82e": {
+    "category": "conversation",
+    "accepted": 69,
+    "proposed": 170
+   },
+   "ultrachat:c5dca62d903b83f1763112d361e83a898eb78ec187b9b3bd4c42bc50f8b6bcdc": {
+    "category": "conversation",
+    "accepted": 54,
+    "proposed": 216
+   },
+   "ultrachat:9c3930686910a9e27207d0229d7eae4f2fdf66695ec6b67072a8ab7276d40d17": {
+    "category": "writing",
+    "accepted": 59,
+    "proposed": 202
+   },
+   "glaive:32219": {
+    "category": "structured",
+    "accepted": 14,
+    "proposed": 18
+   },
+   "ultrachat:9de4541bb2024205858b4c6bcefca16bc85d1664b0137caea4df28ba755076ef": {
+    "category": "conversation",
+    "accepted": 64,
+    "proposed": 188
+   },
+   "ultrachat:fe17235e95aa6121f300977212db50fc234d44a58a7e8f0bdc77858ccc452b91": {
+    "category": "conversation",
+    "accepted": 66,
+    "proposed": 177
+   },
+   "legacy-dolly:topic:dolly:context:6e41a981df3dedaf9e2357fd7bff7196164aabfc581076857bb7ad43777a62aa": {
+    "category": "documents",
+    "accepted": 84,
+    "proposed": 128
+   },
+   "ultrachat:3bdcc75bf832910877a28a5ec0cfbb8c9219d9f3980fcf67496502d63e5f0c4f": {
+    "category": "conversation",
+    "accepted": 66,
+    "proposed": 179
+   },
+   "glaive:83618": {
+    "category": "structured",
+    "accepted": 20,
+    "proposed": 21
+   },
+   "ultrachat:ee6e0ca656ff655b5fb58d6cf33298f89d48b8565a00aafb8cf9b453d147af02": {
+    "category": "reasoning",
+    "accepted": 58,
+    "proposed": 203
+   },
+   "ultrachat:1e3d1a74fcc867c5ceb10760934ad935a59a97c9e7374c68cb6805049888ed4c": {
+    "category": "writing",
+    "accepted": 57,
+    "proposed": 207
+   },
+   "qasper:2002.07306": {
+    "category": "documents",
+    "accepted": 76,
+    "proposed": 152
+   },
+   "ultrachat:9f05ab404605f0ea7b957f146d6f5667a8bdb028f6d118e9c964bb45abd485a8": {
+    "category": "writing",
+    "accepted": 47,
+    "proposed": 237
+   },
+   "ultrachat:5411b5238cb1fd8fd508b7d392ce09abce3e889c82adb19c1237810cadb00179": {
+    "category": "reasoning",
+    "accepted": 69,
+    "proposed": 169
+   },
+   "glaive:4542": {
+    "category": "structured",
+    "accepted": 37,
+    "proposed": 39
+   },
+   "commitpack:jni/viridis": {
+    "category": "code",
+    "accepted": 87,
+    "proposed": 116
+   },
+   "ultrachat:fb6969144b30d9dc462b139826da7d10e3b1da612acddebb6c42d5752455a54c": {
+    "category": "writing",
+    "accepted": 69,
+    "proposed": 171
+   },
+   "ultrachat:aa076f5cfa73b48685c37f83b9291499fe7e0016b18633aa684b2848c8181b73": {
+    "category": "conversation",
+    "accepted": 68,
+    "proposed": 173
+   },
+   "glaive:42759": {
+    "category": "structured",
+    "accepted": 12,
+    "proposed": 15
+   },
+   "glaive:72162": {
+    "category": "structured",
+    "accepted": 43,
+    "proposed": 45
+   },
+   "legacy-magicoder:topic:magicoder:oss-seed:0a4a8e4e7be9dd8335259e1793e1b78776fdaaea5dacf3f9cda684be8f18166f": {
+    "category": "code",
+    "accepted": 76,
+    "proposed": 152
+   },
+   "glaive:79116": {
+    "category": "structured",
+    "accepted": 33,
+    "proposed": 33
+   },
+   "glaive:21954": {
+    "category": "structured",
+    "accepted": 36,
+    "proposed": 39
+   },
+   "legacy-magicoder:topic:magicoder:oss-seed:0dbddd56bcc595217aa17e110fd2ee75e0a526d54e9261627d18f1dad81e2735": {
+    "category": "code",
+    "accepted": 83,
+    "proposed": 129
+   },
+   "legacy-gsm8k:group:gsm8k:train-006282": {
+    "category": "reasoning",
+    "accepted": 89,
+    "proposed": 114
+   },
+   "ultrachat:1212bd5434701884614addcd5cf87e2f3cd0c7e2553eb983b9745013a8d8f5c9": {
+    "category": "reasoning",
+    "accepted": 65,
+    "proposed": 183
+   },
+   "ultrachat:57013254222bc35f6a5b5227fb7f0dc41b7c8c9643368af41de9530a31488821": {
+    "category": "reasoning",
+    "accepted": 68,
+    "proposed": 175
+   },
+   "commitpack:vovanbo/trafaretrecord": {
+    "category": "code",
+    "accepted": 94,
+    "proposed": 98
+   },
+   "commitpack:bartromgens/nsmaps": {
+    "category": "code",
+    "accepted": 92,
+    "proposed": 104
+   },
+   "qasper:1804.11346": {
+    "category": "documents",
+    "accepted": 75,
+    "proposed": 155
+   },
+   "commitpack:cknv/beetle-preview": {
+    "category": "code",
+    "accepted": 89,
+    "proposed": 111
+   },
+   "ultrachat:b84bcc18bec112056fb60df38ab344fb3d71152300ceabe78c4ae245d5eb22c7": {
+    "category": "conversation",
+    "accepted": 66,
+    "proposed": 179
+   },
+   "ultrachat:65a4957646148f0ece4ee25fa3c4a59d08410b8390d7f1f1cc1007276e8a2a7e": {
+    "category": "reasoning",
+    "accepted": 62,
+    "proposed": 194
+   },
+   "ultrachat:1f7035ffeee0edd24fe77767baed545fe0a76ee7055cdea1c5f342123238822d": {
+    "category": "reasoning",
+    "accepted": 64,
+    "proposed": 187
+   },
+   "legacy-gsm8k:group:gsm8k:train-006475": {
+    "category": "reasoning",
+    "accepted": 90,
+    "proposed": 109
+   },
+   "ultrachat:f0af5ccb724991e5097f89f87eb102374240fb12ca7b98143f0caf32e5755fa5": {
+    "category": "reasoning",
+    "accepted": 55,
+    "proposed": 213
+   },
+   "commitpack:EmilStenstrom/nephele": {
+    "category": "code",
+    "accepted": 89,
+    "proposed": 114
+   },
+   "legacy-gsm8k:group:gsm8k:train-006654": {
+    "category": "reasoning",
+    "accepted": 83,
+    "proposed": 131
+   },
+   "legacy-dolly:topic:dolly:context:aa1dd6c38acd62ce2de0426157a86405f37f371b86a0b1cac3364fed87d579cf": {
+    "category": "documents",
+    "accepted": 72,
+    "proposed": 163
+   },
+   "commitpack:bendmorris/retriever": {
+    "category": "code",
+    "accepted": 89,
+    "proposed": 110
+   },
+   "commitpack:incuna/incuna-bookmarks": {
+    "category": "code",
+    "accepted": 91,
+    "proposed": 107
+   },
+   "legacy-dolly:topic:dolly:context:9669cd2b94e821a05655e288b7a7204fd27aeb61bb11097027c90b21494c280d": {
+    "category": "documents",
+    "accepted": 54,
+    "proposed": 171
+   },
+   "legacy-dolly:topic:dolly:context:c3b9c2a999b19a08c1aa9de217c79e5aee78d3727de585b66d4b025efa590e3b": {
+    "category": "documents",
+    "accepted": 79,
+    "proposed": 143
+   },
+   "legacy-dolly:topic:dolly:context:5e149b579b4af932c06d69f202d9fd9e27df002be554ef3b0e12a5c33b4633c0": {
+    "category": "documents",
+    "accepted": 80,
+    "proposed": 140
+   },
+   "legacy-dolly:topic:dolly:context:86314119b290b41e874a5e23b62c7ca7e4db454f4b29d3270b71a825e34b10a0": {
+    "category": "documents",
+    "accepted": 76,
+    "proposed": 151
+   },
+   "qasper:1602.06291": {
+    "category": "documents",
+    "accepted": 75,
+    "proposed": 152
+   },
+   "qasper:1812.10479": {
+    "category": "documents",
+    "accepted": 76,
+    "proposed": 148
+   },
+   "qasper:1707.07048": {
+    "category": "documents",
+    "accepted": 71,
+    "proposed": 168
+   },
+   "project:w1a1_eagle/records.py": {
+    "category": "code",
+    "accepted": 23,
+    "proposed": 27
+   },
+   "project:benchmarks/protection.py": {
+    "category": "code",
+    "accepted": 17,
+    "proposed": 27
+   },
+   "project:benchmarks/coverage.py": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 101
+   },
+   "project:w1a1_eagle/data.py": {
+    "category": "code",
+    "accepted": 39,
+    "proposed": 102
+   },
+   "project:w1a1_eagle/checkpoints/store.py": {
+    "category": "structured",
+    "accepted": 89,
+    "proposed": 112
+   },
+   "project:benchmarks/statistics.py": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 102
+   },
+   "project:WORKFLOW.md": {
+    "category": "documents",
+    "accepted": 71,
+    "proposed": 168
+   },
+   "project:w1a1_eagle/capacity.py": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 100
+   }
+  },
+  "a2-reorder (WSL, saved controls)": {
+   "ultrachat:73ea29124608350f4c9061687e1cdccad7a4c5dc4c83835dfefc827b1c0ec574": {
+    "category": "writing",
+    "accepted": 13,
+    "proposed": 21
+   },
+   "ultrachat:0c6070b6eab22bbf0ff853e5a2c0c6b3d5ab994cd8be630aced31e1b582ea850": {
+    "category": "conversation",
+    "accepted": 78,
+    "proposed": 145
+   },
+   "ultrachat:4dc9863e8f25deb51eb67326b70d4a25a39ba97e4ddcaae730ddf2ee14f83fb7": {
+    "category": "conversation",
+    "accepted": 17,
+    "proposed": 24
+   },
+   "ultrachat:c9040e5cb6dd4622e386df9be726a6855ab4f0f42abd15a2c0573aa91fec5cdb": {
+    "category": "conversation",
+    "accepted": 65,
+    "proposed": 182
+   },
+   "ultrachat:fd9a89927837175325b3da0502d12b55096166b103731c34fa207100bd2ee82e": {
+    "category": "conversation",
+    "accepted": 70,
+    "proposed": 167
+   },
+   "ultrachat:c5dca62d903b83f1763112d361e83a898eb78ec187b9b3bd4c42bc50f8b6bcdc": {
+    "category": "conversation",
+    "accepted": 58,
+    "proposed": 202
+   },
+   "ultrachat:9c3930686910a9e27207d0229d7eae4f2fdf66695ec6b67072a8ab7276d40d17": {
+    "category": "writing",
+    "accepted": 58,
+    "proposed": 205
+   },
+   "glaive:32219": {
+    "category": "structured",
+    "accepted": 14,
+    "proposed": 18
+   },
+   "ultrachat:9de4541bb2024205858b4c6bcefca16bc85d1664b0137caea4df28ba755076ef": {
+    "category": "conversation",
+    "accepted": 63,
+    "proposed": 191
+   },
+   "ultrachat:fe17235e95aa6121f300977212db50fc234d44a58a7e8f0bdc77858ccc452b91": {
+    "category": "conversation",
+    "accepted": 68,
+    "proposed": 171
+   },
+   "legacy-dolly:topic:dolly:context:6e41a981df3dedaf9e2357fd7bff7196164aabfc581076857bb7ad43777a62aa": {
+    "category": "documents",
+    "accepted": 82,
+    "proposed": 133
+   },
+   "ultrachat:3bdcc75bf832910877a28a5ec0cfbb8c9219d9f3980fcf67496502d63e5f0c4f": {
+    "category": "conversation",
+    "accepted": 63,
+    "proposed": 188
+   },
+   "glaive:83618": {
+    "category": "structured",
+    "accepted": 20,
+    "proposed": 21
+   },
+   "ultrachat:ee6e0ca656ff655b5fb58d6cf33298f89d48b8565a00aafb8cf9b453d147af02": {
+    "category": "reasoning",
+    "accepted": 58,
+    "proposed": 203
+   },
+   "ultrachat:1e3d1a74fcc867c5ceb10760934ad935a59a97c9e7374c68cb6805049888ed4c": {
+    "category": "writing",
+    "accepted": 54,
+    "proposed": 216
+   },
+   "qasper:2002.07306": {
+    "category": "documents",
+    "accepted": 77,
+    "proposed": 148
+   },
+   "ultrachat:9f05ab404605f0ea7b957f146d6f5667a8bdb028f6d118e9c964bb45abd485a8": {
+    "category": "writing",
+    "accepted": 50,
+    "proposed": 228
+   },
+   "ultrachat:5411b5238cb1fd8fd508b7d392ce09abce3e889c82adb19c1237810cadb00179": {
+    "category": "reasoning",
+    "accepted": 71,
+    "proposed": 163
+   },
+   "glaive:4542": {
+    "category": "structured",
+    "accepted": 37,
+    "proposed": 39
+   },
+   "commitpack:jni/viridis": {
+    "category": "code",
+    "accepted": 89,
+    "proposed": 113
+   },
+   "ultrachat:fb6969144b30d9dc462b139826da7d10e3b1da612acddebb6c42d5752455a54c": {
+    "category": "writing",
+    "accepted": 66,
+    "proposed": 180
+   },
+   "ultrachat:aa076f5cfa73b48685c37f83b9291499fe7e0016b18633aa684b2848c8181b73": {
+    "category": "conversation",
+    "accepted": 64,
+    "proposed": 185
+   },
+   "glaive:42759": {
+    "category": "structured",
+    "accepted": 11,
+    "proposed": 18
+   },
+   "glaive:72162": {
+    "category": "structured",
+    "accepted": 43,
+    "proposed": 45
+   },
+   "legacy-magicoder:topic:magicoder:oss-seed:0a4a8e4e7be9dd8335259e1793e1b78776fdaaea5dacf3f9cda684be8f18166f": {
+    "category": "code",
+    "accepted": 75,
+    "proposed": 155
+   },
+   "glaive:79116": {
+    "category": "structured",
+    "accepted": 33,
+    "proposed": 33
+   },
+   "glaive:21954": {
+    "category": "structured",
+    "accepted": 36,
+    "proposed": 39
+   },
+   "legacy-magicoder:topic:magicoder:oss-seed:0dbddd56bcc595217aa17e110fd2ee75e0a526d54e9261627d18f1dad81e2735": {
+    "category": "code",
+    "accepted": 85,
+    "proposed": 123
+   },
+   "legacy-gsm8k:group:gsm8k:train-006282": {
+    "category": "reasoning",
+    "accepted": 87,
+    "proposed": 120
+   },
+   "ultrachat:1212bd5434701884614addcd5cf87e2f3cd0c7e2553eb983b9745013a8d8f5c9": {
+    "category": "reasoning",
+    "accepted": 64,
+    "proposed": 186
+   },
+   "ultrachat:57013254222bc35f6a5b5227fb7f0dc41b7c8c9643368af41de9530a31488821": {
+    "category": "reasoning",
+    "accepted": 68,
+    "proposed": 175
+   },
+   "commitpack:vovanbo/trafaretrecord": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 99
+   },
+   "commitpack:bartromgens/nsmaps": {
+    "category": "code",
+    "accepted": 91,
+    "proposed": 107
+   },
+   "qasper:1804.11346": {
+    "category": "documents",
+    "accepted": 74,
+    "proposed": 158
+   },
+   "commitpack:cknv/beetle-preview": {
+    "category": "code",
+    "accepted": 91,
+    "proposed": 105
+   },
+   "ultrachat:b84bcc18bec112056fb60df38ab344fb3d71152300ceabe78c4ae245d5eb22c7": {
+    "category": "conversation",
+    "accepted": 66,
+    "proposed": 179
+   },
+   "ultrachat:65a4957646148f0ece4ee25fa3c4a59d08410b8390d7f1f1cc1007276e8a2a7e": {
+    "category": "reasoning",
+    "accepted": 62,
+    "proposed": 194
+   },
+   "ultrachat:1f7035ffeee0edd24fe77767baed545fe0a76ee7055cdea1c5f342123238822d": {
+    "category": "reasoning",
+    "accepted": 61,
+    "proposed": 195
+   },
+   "legacy-gsm8k:group:gsm8k:train-006475": {
+    "category": "reasoning",
+    "accepted": 90,
+    "proposed": 109
+   },
+   "ultrachat:f0af5ccb724991e5097f89f87eb102374240fb12ca7b98143f0caf32e5755fa5": {
+    "category": "reasoning",
+    "accepted": 55,
+    "proposed": 213
+   },
+   "commitpack:EmilStenstrom/nephele": {
+    "category": "code",
+    "accepted": 87,
+    "proposed": 119
+   },
+   "legacy-gsm8k:group:gsm8k:train-006654": {
+    "category": "reasoning",
+    "accepted": 85,
+    "proposed": 125
+   },
+   "legacy-dolly:topic:dolly:context:aa1dd6c38acd62ce2de0426157a86405f37f371b86a0b1cac3364fed87d579cf": {
+    "category": "documents",
+    "accepted": 71,
+    "proposed": 166
+   },
+   "commitpack:bendmorris/retriever": {
+    "category": "code",
+    "accepted": 89,
+    "proposed": 110
+   },
+   "commitpack:incuna/incuna-bookmarks": {
+    "category": "code",
+    "accepted": 91,
+    "proposed": 107
+   },
+   "legacy-dolly:topic:dolly:context:9669cd2b94e821a05655e288b7a7204fd27aeb61bb11097027c90b21494c280d": {
+    "category": "documents",
+    "accepted": 55,
+    "proposed": 168
+   },
+   "legacy-dolly:topic:dolly:context:c3b9c2a999b19a08c1aa9de217c79e5aee78d3727de585b66d4b025efa590e3b": {
+    "category": "documents",
+    "accepted": 77,
+    "proposed": 149
+   },
+   "legacy-dolly:topic:dolly:context:5e149b579b4af932c06d69f202d9fd9e27df002be554ef3b0e12a5c33b4633c0": {
+    "category": "documents",
+    "accepted": 82,
+    "proposed": 134
+   },
+   "legacy-dolly:topic:dolly:context:86314119b290b41e874a5e23b62c7ca7e4db454f4b29d3270b71a825e34b10a0": {
+    "category": "documents",
+    "accepted": 80,
+    "proposed": 139
+   },
+   "qasper:1602.06291": {
+    "category": "documents",
+    "accepted": 75,
+    "proposed": 152
+   },
+   "qasper:1812.10479": {
+    "category": "documents",
+    "accepted": 76,
+    "proposed": 150
+   },
+   "qasper:1707.07048": {
+    "category": "documents",
+    "accepted": 72,
+    "proposed": 162
+   },
+   "project:w1a1_eagle/records.py": {
+    "category": "code",
+    "accepted": 23,
+    "proposed": 27
+   },
+   "project:benchmarks/protection.py": {
+    "category": "code",
+    "accepted": 18,
+    "proposed": 24
+   },
+   "project:benchmarks/coverage.py": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 100
+   },
+   "project:w1a1_eagle/data.py": {
+    "category": "code",
+    "accepted": 37,
+    "proposed": 108
+   },
+   "project:w1a1_eagle/checkpoints/store.py": {
+    "category": "structured",
+    "accepted": 90,
+    "proposed": 109
+   },
+   "project:benchmarks/statistics.py": {
+    "category": "code",
+    "accepted": 94,
+    "proposed": 99
+   },
+   "project:WORKFLOW.md": {
+    "category": "documents",
+    "accepted": 71,
+    "proposed": 165
+   },
+   "project:w1a1_eagle/capacity.py": {
+    "category": "code",
+    "accepted": 92,
+    "proposed": 103
+   }
+  },
+  "a3-restart (WSL, saved controls)": {
+   "ultrachat:73ea29124608350f4c9061687e1cdccad7a4c5dc4c83835dfefc827b1c0ec574": {
+    "category": "writing",
+    "accepted": 15,
+    "proposed": 18
+   },
+   "ultrachat:0c6070b6eab22bbf0ff853e5a2c0c6b3d5ab994cd8be630aced31e1b582ea850": {
+    "category": "conversation",
+    "accepted": 76,
+    "proposed": 151
+   },
+   "ultrachat:4dc9863e8f25deb51eb67326b70d4a25a39ba97e4ddcaae730ddf2ee14f83fb7": {
+    "category": "conversation",
+    "accepted": 18,
+    "proposed": 21
+   },
+   "ultrachat:c9040e5cb6dd4622e386df9be726a6855ab4f0f42abd15a2c0573aa91fec5cdb": {
+    "category": "conversation",
+    "accepted": 64,
+    "proposed": 186
+   },
+   "ultrachat:fd9a89927837175325b3da0502d12b55096166b103731c34fa207100bd2ee82e": {
+    "category": "conversation",
+    "accepted": 69,
+    "proposed": 170
+   },
+   "ultrachat:c5dca62d903b83f1763112d361e83a898eb78ec187b9b3bd4c42bc50f8b6bcdc": {
+    "category": "conversation",
+    "accepted": 64,
+    "proposed": 186
+   },
+   "ultrachat:9c3930686910a9e27207d0229d7eae4f2fdf66695ec6b67072a8ab7276d40d17": {
+    "category": "writing",
+    "accepted": 63,
+    "proposed": 190
+   },
+   "glaive:32219": {
+    "category": "structured",
+    "accepted": 15,
+    "proposed": 15
+   },
+   "ultrachat:9de4541bb2024205858b4c6bcefca16bc85d1664b0137caea4df28ba755076ef": {
+    "category": "conversation",
+    "accepted": 68,
+    "proposed": 171
+   },
+   "ultrachat:fe17235e95aa6121f300977212db50fc234d44a58a7e8f0bdc77858ccc452b91": {
+    "category": "conversation",
+    "accepted": 70,
+    "proposed": 165
+   },
+   "legacy-dolly:topic:dolly:context:6e41a981df3dedaf9e2357fd7bff7196164aabfc581076857bb7ad43777a62aa": {
+    "category": "documents",
+    "accepted": 84,
+    "proposed": 128
+   },
+   "ultrachat:3bdcc75bf832910877a28a5ec0cfbb8c9219d9f3980fcf67496502d63e5f0c4f": {
+    "category": "conversation",
+    "accepted": 68,
+    "proposed": 173
+   },
+   "glaive:83618": {
+    "category": "structured",
+    "accepted": 21,
+    "proposed": 21
+   },
+   "ultrachat:ee6e0ca656ff655b5fb58d6cf33298f89d48b8565a00aafb8cf9b453d147af02": {
+    "category": "reasoning",
+    "accepted": 67,
+    "proposed": 179
+   },
+   "ultrachat:1e3d1a74fcc867c5ceb10760934ad935a59a97c9e7374c68cb6805049888ed4c": {
+    "category": "writing",
+    "accepted": 66,
+    "proposed": 180
+   },
+   "qasper:2002.07306": {
+    "category": "documents",
+    "accepted": 79,
+    "proposed": 142
+   },
+   "ultrachat:9f05ab404605f0ea7b957f146d6f5667a8bdb028f6d118e9c964bb45abd485a8": {
+    "category": "writing",
+    "accepted": 56,
+    "proposed": 210
+   },
+   "ultrachat:5411b5238cb1fd8fd508b7d392ce09abce3e889c82adb19c1237810cadb00179": {
+    "category": "reasoning",
+    "accepted": 76,
+    "proposed": 151
+   },
+   "glaive:4542": {
+    "category": "structured",
+    "accepted": 37,
+    "proposed": 39
+   },
+   "commitpack:jni/viridis": {
+    "category": "code",
+    "accepted": 94,
+    "proposed": 99
+   },
+   "ultrachat:fb6969144b30d9dc462b139826da7d10e3b1da612acddebb6c42d5752455a54c": {
+    "category": "writing",
+    "accepted": 75,
+    "proposed": 154
+   },
+   "ultrachat:aa076f5cfa73b48685c37f83b9291499fe7e0016b18633aa684b2848c8181b73": {
+    "category": "conversation",
+    "accepted": 68,
+    "proposed": 173
+   },
+   "glaive:42759": {
+    "category": "structured",
+    "accepted": 12,
+    "proposed": 15
+   },
+   "glaive:72162": {
+    "category": "structured",
+    "accepted": 43,
+    "proposed": 45
+   },
+   "legacy-magicoder:topic:magicoder:oss-seed:0a4a8e4e7be9dd8335259e1793e1b78776fdaaea5dacf3f9cda684be8f18166f": {
+    "category": "code",
+    "accepted": 80,
+    "proposed": 138
+   },
+   "glaive:79116": {
+    "category": "structured",
+    "accepted": 33,
+    "proposed": 33
+   },
+   "glaive:21954": {
+    "category": "structured",
+    "accepted": 36,
+    "proposed": 39
+   },
+   "legacy-magicoder:topic:magicoder:oss-seed:0dbddd56bcc595217aa17e110fd2ee75e0a526d54e9261627d18f1dad81e2735": {
+    "category": "code",
+    "accepted": 87,
+    "proposed": 119
+   },
+   "legacy-gsm8k:group:gsm8k:train-006282": {
+    "category": "reasoning",
+    "accepted": 92,
+    "proposed": 105
+   },
+   "ultrachat:1212bd5434701884614addcd5cf87e2f3cd0c7e2553eb983b9745013a8d8f5c9": {
+    "category": "reasoning",
+    "accepted": 65,
+    "proposed": 184
+   },
+   "ultrachat:57013254222bc35f6a5b5227fb7f0dc41b7c8c9643368af41de9530a31488821": {
+    "category": "reasoning",
+    "accepted": 71,
+    "proposed": 165
+   },
+   "commitpack:vovanbo/trafaretrecord": {
+    "category": "code",
+    "accepted": 94,
+    "proposed": 96
+   },
+   "commitpack:bartromgens/nsmaps": {
+    "category": "code",
+    "accepted": 94,
+    "proposed": 98
+   },
+   "qasper:1804.11346": {
+    "category": "documents",
+    "accepted": 80,
+    "proposed": 140
+   },
+   "commitpack:cknv/beetle-preview": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 99
+   },
+   "ultrachat:b84bcc18bec112056fb60df38ab344fb3d71152300ceabe78c4ae245d5eb22c7": {
+    "category": "conversation",
+    "accepted": 72,
+    "proposed": 164
+   },
+   "ultrachat:65a4957646148f0ece4ee25fa3c4a59d08410b8390d7f1f1cc1007276e8a2a7e": {
+    "category": "reasoning",
+    "accepted": 68,
+    "proposed": 176
+   },
+   "ultrachat:1f7035ffeee0edd24fe77767baed545fe0a76ee7055cdea1c5f342123238822d": {
+    "category": "reasoning",
+    "accepted": 66,
+    "proposed": 181
+   },
+   "legacy-gsm8k:group:gsm8k:train-006475": {
+    "category": "reasoning",
+    "accepted": 91,
+    "proposed": 107
+   },
+   "ultrachat:f0af5ccb724991e5097f89f87eb102374240fb12ca7b98143f0caf32e5755fa5": {
+    "category": "reasoning",
+    "accepted": 62,
+    "proposed": 193
+   },
+   "commitpack:EmilStenstrom/nephele": {
+    "category": "code",
+    "accepted": 89,
+    "proposed": 111
+   },
+   "legacy-gsm8k:group:gsm8k:train-006654": {
+    "category": "reasoning",
+    "accepted": 89,
+    "proposed": 113
+   },
+   "legacy-dolly:topic:dolly:context:aa1dd6c38acd62ce2de0426157a86405f37f371b86a0b1cac3364fed87d579cf": {
+    "category": "documents",
+    "accepted": 74,
+    "proposed": 157
+   },
+   "commitpack:bendmorris/retriever": {
+    "category": "code",
+    "accepted": 90,
+    "proposed": 106
+   },
+   "commitpack:incuna/incuna-bookmarks": {
+    "category": "code",
+    "accepted": 95,
+    "proposed": 95
+   },
+   "legacy-dolly:topic:dolly:context:9669cd2b94e821a05655e288b7a7204fd27aeb61bb11097027c90b21494c280d": {
+    "category": "documents",
+    "accepted": 58,
+    "proposed": 159
+   },
+   "legacy-dolly:topic:dolly:context:c3b9c2a999b19a08c1aa9de217c79e5aee78d3727de585b66d4b025efa590e3b": {
+    "category": "documents",
+    "accepted": 78,
+    "proposed": 145
+   },
+   "legacy-dolly:topic:dolly:context:5e149b579b4af932c06d69f202d9fd9e27df002be554ef3b0e12a5c33b4633c0": {
+    "category": "documents",
+    "accepted": 85,
+    "proposed": 123
+   },
+   "legacy-dolly:topic:dolly:context:86314119b290b41e874a5e23b62c7ca7e4db454f4b29d3270b71a825e34b10a0": {
+    "category": "documents",
+    "accepted": 80,
+    "proposed": 139
+   },
+   "qasper:1602.06291": {
+    "category": "documents",
+    "accepted": 75,
+    "proposed": 154
+   },
+   "qasper:1812.10479": {
+    "category": "documents",
+    "accepted": 80,
+    "proposed": 140
+   },
+   "qasper:1707.07048": {
+    "category": "documents",
+    "accepted": 75,
+    "proposed": 153
+   },
+   "project:w1a1_eagle/records.py": {
+    "category": "code",
+    "accepted": 24,
+    "proposed": 27
+   },
+   "project:benchmarks/protection.py": {
+    "category": "code",
+    "accepted": 17,
+    "proposed": 27
+   },
+   "project:benchmarks/coverage.py": {
+    "category": "code",
+    "accepted": 94,
+    "proposed": 96
+   },
+   "project:w1a1_eagle/data.py": {
+    "category": "code",
+    "accepted": 39,
+    "proposed": 102
+   },
+   "project:w1a1_eagle/checkpoints/store.py": {
+    "category": "structured",
+    "accepted": 93,
+    "proposed": 101
+   },
+   "project:benchmarks/statistics.py": {
+    "category": "code",
+    "accepted": 94,
+    "proposed": 99
+   },
+   "project:WORKFLOW.md": {
+    "category": "documents",
+    "accepted": 72,
+    "proposed": 164
+   },
+   "project:w1a1_eagle/capacity.py": {
+    "category": "code",
+    "accepted": 94,
+    "proposed": 98
+   }
+  },
+  "a3-restart-r2 (WSL, saved controls)": {
+   "ultrachat:73ea29124608350f4c9061687e1cdccad7a4c5dc4c83835dfefc827b1c0ec574": {
+    "category": "writing",
+    "accepted": 15,
+    "proposed": 18
+   },
+   "ultrachat:0c6070b6eab22bbf0ff853e5a2c0c6b3d5ab994cd8be630aced31e1b582ea850": {
+    "category": "conversation",
+    "accepted": 80,
+    "proposed": 139
+   },
+   "ultrachat:4dc9863e8f25deb51eb67326b70d4a25a39ba97e4ddcaae730ddf2ee14f83fb7": {
+    "category": "conversation",
+    "accepted": 18,
+    "proposed": 21
+   },
+   "ultrachat:c9040e5cb6dd4622e386df9be726a6855ab4f0f42abd15a2c0573aa91fec5cdb": {
+    "category": "conversation",
+    "accepted": 64,
+    "proposed": 187
+   },
+   "ultrachat:fd9a89927837175325b3da0502d12b55096166b103731c34fa207100bd2ee82e": {
+    "category": "conversation",
+    "accepted": 66,
+    "proposed": 179
+   },
+   "ultrachat:c5dca62d903b83f1763112d361e83a898eb78ec187b9b3bd4c42bc50f8b6bcdc": {
+    "category": "conversation",
+    "accepted": 69,
+    "proposed": 171
+   },
+   "ultrachat:9c3930686910a9e27207d0229d7eae4f2fdf66695ec6b67072a8ab7276d40d17": {
+    "category": "writing",
+    "accepted": 64,
+    "proposed": 187
+   },
+   "glaive:32219": {
+    "category": "structured",
+    "accepted": 15,
+    "proposed": 15
+   },
+   "ultrachat:9de4541bb2024205858b4c6bcefca16bc85d1664b0137caea4df28ba755076ef": {
+    "category": "conversation",
+    "accepted": 68,
+    "proposed": 173
+   },
+   "ultrachat:fe17235e95aa6121f300977212db50fc234d44a58a7e8f0bdc77858ccc452b91": {
+    "category": "conversation",
+    "accepted": 73,
+    "proposed": 156
+   },
+   "legacy-dolly:topic:dolly:context:6e41a981df3dedaf9e2357fd7bff7196164aabfc581076857bb7ad43777a62aa": {
+    "category": "documents",
+    "accepted": 83,
+    "proposed": 131
+   },
+   "ultrachat:3bdcc75bf832910877a28a5ec0cfbb8c9219d9f3980fcf67496502d63e5f0c4f": {
+    "category": "conversation",
+    "accepted": 72,
+    "proposed": 161
+   },
+   "glaive:83618": {
+    "category": "structured",
+    "accepted": 21,
+    "proposed": 21
+   },
+   "ultrachat:ee6e0ca656ff655b5fb58d6cf33298f89d48b8565a00aafb8cf9b453d147af02": {
+    "category": "reasoning",
+    "accepted": 66,
+    "proposed": 182
+   },
+   "ultrachat:1e3d1a74fcc867c5ceb10760934ad935a59a97c9e7374c68cb6805049888ed4c": {
+    "category": "writing",
+    "accepted": 63,
+    "proposed": 189
+   },
+   "qasper:2002.07306": {
+    "category": "documents",
+    "accepted": 80,
+    "proposed": 139
+   },
+   "ultrachat:9f05ab404605f0ea7b957f146d6f5667a8bdb028f6d118e9c964bb45abd485a8": {
+    "category": "writing",
+    "accepted": 55,
+    "proposed": 213
+   },
+   "ultrachat:5411b5238cb1fd8fd508b7d392ce09abce3e889c82adb19c1237810cadb00179": {
+    "category": "reasoning",
+    "accepted": 73,
+    "proposed": 160
+   },
+   "glaive:4542": {
+    "category": "structured",
+    "accepted": 37,
+    "proposed": 39
+   },
+   "commitpack:jni/viridis": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 100
+   },
+   "ultrachat:fb6969144b30d9dc462b139826da7d10e3b1da612acddebb6c42d5752455a54c": {
+    "category": "writing",
+    "accepted": 71,
+    "proposed": 166
+   },
+   "ultrachat:aa076f5cfa73b48685c37f83b9291499fe7e0016b18633aa684b2848c8181b73": {
+    "category": "conversation",
+    "accepted": 68,
+    "proposed": 176
+   },
+   "glaive:42759": {
+    "category": "structured",
+    "accepted": 12,
+    "proposed": 15
+   },
+   "glaive:72162": {
+    "category": "structured",
+    "accepted": 43,
+    "proposed": 45
+   },
+   "legacy-magicoder:topic:magicoder:oss-seed:0a4a8e4e7be9dd8335259e1793e1b78776fdaaea5dacf3f9cda684be8f18166f": {
+    "category": "code",
+    "accepted": 83,
+    "proposed": 129
+   },
+   "glaive:79116": {
+    "category": "structured",
+    "accepted": 33,
+    "proposed": 33
+   },
+   "glaive:21954": {
+    "category": "structured",
+    "accepted": 36,
+    "proposed": 39
+   },
+   "legacy-magicoder:topic:magicoder:oss-seed:0dbddd56bcc595217aa17e110fd2ee75e0a526d54e9261627d18f1dad81e2735": {
+    "category": "code",
+    "accepted": 87,
+    "proposed": 119
+   },
+   "legacy-gsm8k:group:gsm8k:train-006282": {
+    "category": "reasoning",
+    "accepted": 91,
+    "proposed": 108
+   },
+   "ultrachat:1212bd5434701884614addcd5cf87e2f3cd0c7e2553eb983b9745013a8d8f5c9": {
+    "category": "reasoning",
+    "accepted": 69,
+    "proposed": 171
+   },
+   "ultrachat:57013254222bc35f6a5b5227fb7f0dc41b7c8c9643368af41de9530a31488821": {
+    "category": "reasoning",
+    "accepted": 73,
+    "proposed": 159
+   },
+   "commitpack:vovanbo/trafaretrecord": {
+    "category": "code",
+    "accepted": 94,
+    "proposed": 97
+   },
+   "commitpack:bartromgens/nsmaps": {
+    "category": "code",
+    "accepted": 95,
+    "proposed": 96
+   },
+   "qasper:1804.11346": {
+    "category": "documents",
+    "accepted": 82,
+    "proposed": 134
+   },
+   "commitpack:cknv/beetle-preview": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 99
+   },
+   "ultrachat:b84bcc18bec112056fb60df38ab344fb3d71152300ceabe78c4ae245d5eb22c7": {
+    "category": "conversation",
+    "accepted": 71,
+    "proposed": 164
+   },
+   "ultrachat:65a4957646148f0ece4ee25fa3c4a59d08410b8390d7f1f1cc1007276e8a2a7e": {
+    "category": "reasoning",
+    "accepted": 67,
+    "proposed": 179
+   },
+   "ultrachat:1f7035ffeee0edd24fe77767baed545fe0a76ee7055cdea1c5f342123238822d": {
+    "category": "reasoning",
+    "accepted": 64,
+    "proposed": 187
+   },
+   "legacy-gsm8k:group:gsm8k:train-006475": {
+    "category": "reasoning",
+    "accepted": 92,
+    "proposed": 103
+   },
+   "ultrachat:f0af5ccb724991e5097f89f87eb102374240fb12ca7b98143f0caf32e5755fa5": {
+    "category": "reasoning",
+    "accepted": 65,
+    "proposed": 183
+   },
+   "commitpack:EmilStenstrom/nephele": {
+    "category": "code",
+    "accepted": 91,
+    "proposed": 105
+   },
+   "legacy-gsm8k:group:gsm8k:train-006654": {
+    "category": "reasoning",
+    "accepted": 88,
+    "proposed": 116
+   },
+   "legacy-dolly:topic:dolly:context:aa1dd6c38acd62ce2de0426157a86405f37f371b86a0b1cac3364fed87d579cf": {
+    "category": "documents",
+    "accepted": 77,
+    "proposed": 148
+   },
+   "commitpack:bendmorris/retriever": {
+    "category": "code",
+    "accepted": 91,
+    "proposed": 103
+   },
+   "commitpack:incuna/incuna-bookmarks": {
+    "category": "code",
+    "accepted": 95,
+    "proposed": 96
+   },
+   "legacy-dolly:topic:dolly:context:9669cd2b94e821a05655e288b7a7204fd27aeb61bb11097027c90b21494c280d": {
+    "category": "documents",
+    "accepted": 59,
+    "proposed": 156
+   },
+   "legacy-dolly:topic:dolly:context:c3b9c2a999b19a08c1aa9de217c79e5aee78d3727de585b66d4b025efa590e3b": {
+    "category": "documents",
+    "accepted": 79,
+    "proposed": 143
+   },
+   "legacy-dolly:topic:dolly:context:5e149b579b4af932c06d69f202d9fd9e27df002be554ef3b0e12a5c33b4633c0": {
+    "category": "documents",
+    "accepted": 85,
+    "proposed": 124
+   },
+   "legacy-dolly:topic:dolly:context:86314119b290b41e874a5e23b62c7ca7e4db454f4b29d3270b71a825e34b10a0": {
+    "category": "documents",
+    "accepted": 81,
+    "proposed": 136
+   },
+   "qasper:1602.06291": {
+    "category": "documents",
+    "accepted": 78,
+    "proposed": 145
+   },
+   "qasper:1812.10479": {
+    "category": "documents",
+    "accepted": 78,
+    "proposed": 142
+   },
+   "qasper:1707.07048": {
+    "category": "documents",
+    "accepted": 73,
+    "proposed": 159
+   },
+   "project:w1a1_eagle/records.py": {
+    "category": "code",
+    "accepted": 23,
+    "proposed": 27
+   },
+   "project:benchmarks/protection.py": {
+    "category": "code",
+    "accepted": 16,
+    "proposed": 30
+   },
+   "project:benchmarks/coverage.py": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 99
+   },
+   "project:w1a1_eagle/data.py": {
+    "category": "code",
+    "accepted": 37,
+    "proposed": 108
+   },
+   "project:w1a1_eagle/checkpoints/store.py": {
+    "category": "structured",
+    "accepted": 94,
+    "proposed": 99
+   },
+   "project:benchmarks/statistics.py": {
+    "category": "code",
+    "accepted": 94,
+    "proposed": 98
+   },
+   "project:WORKFLOW.md": {
+    "category": "documents",
+    "accepted": 68,
+    "proposed": 176
+   },
+   "project:w1a1_eagle/capacity.py": {
+    "category": "code",
+    "accepted": 92,
+    "proposed": 104
+   }
+  },
+  "c0-control-2g (WSL, saved controls)": {
+   "ultrachat:73ea29124608350f4c9061687e1cdccad7a4c5dc4c83835dfefc827b1c0ec574": {
+    "category": "writing",
+    "accepted": 13,
+    "proposed": 21
+   },
+   "ultrachat:0c6070b6eab22bbf0ff853e5a2c0c6b3d5ab994cd8be630aced31e1b582ea850": {
+    "category": "conversation",
+    "accepted": 74,
+    "proposed": 154
+   },
+   "ultrachat:4dc9863e8f25deb51eb67326b70d4a25a39ba97e4ddcaae730ddf2ee14f83fb7": {
+    "category": "conversation",
+    "accepted": 17,
+    "proposed": 24
+   },
+   "ultrachat:c9040e5cb6dd4622e386df9be726a6855ab4f0f42abd15a2c0573aa91fec5cdb": {
+    "category": "conversation",
+    "accepted": 63,
+    "proposed": 188
+   },
+   "ultrachat:fd9a89927837175325b3da0502d12b55096166b103731c34fa207100bd2ee82e": {
+    "category": "conversation",
+    "accepted": 67,
+    "proposed": 176
+   },
+   "ultrachat:c5dca62d903b83f1763112d361e83a898eb78ec187b9b3bd4c42bc50f8b6bcdc": {
+    "category": "conversation",
+    "accepted": 57,
+    "proposed": 205
+   },
+   "ultrachat:9c3930686910a9e27207d0229d7eae4f2fdf66695ec6b67072a8ab7276d40d17": {
+    "category": "writing",
+    "accepted": 53,
+    "proposed": 220
+   },
+   "glaive:32219": {
+    "category": "structured",
+    "accepted": 14,
+    "proposed": 21
+   },
+   "ultrachat:9de4541bb2024205858b4c6bcefca16bc85d1664b0137caea4df28ba755076ef": {
+    "category": "conversation",
+    "accepted": 65,
+    "proposed": 185
+   },
+   "ultrachat:fe17235e95aa6121f300977212db50fc234d44a58a7e8f0bdc77858ccc452b91": {
+    "category": "conversation",
+    "accepted": 66,
+    "proposed": 177
+   },
+   "legacy-dolly:topic:dolly:context:6e41a981df3dedaf9e2357fd7bff7196164aabfc581076857bb7ad43777a62aa": {
+    "category": "documents",
+    "accepted": 82,
+    "proposed": 134
+   },
+   "ultrachat:3bdcc75bf832910877a28a5ec0cfbb8c9219d9f3980fcf67496502d63e5f0c4f": {
+    "category": "conversation",
+    "accepted": 63,
+    "proposed": 188
+   },
+   "glaive:83618": {
+    "category": "structured",
+    "accepted": 20,
+    "proposed": 21
+   },
+   "ultrachat:ee6e0ca656ff655b5fb58d6cf33298f89d48b8565a00aafb8cf9b453d147af02": {
+    "category": "reasoning",
+    "accepted": 62,
+    "proposed": 191
+   },
+   "ultrachat:1e3d1a74fcc867c5ceb10760934ad935a59a97c9e7374c68cb6805049888ed4c": {
+    "category": "writing",
+    "accepted": 53,
+    "proposed": 219
+   },
+   "qasper:2002.07306": {
+    "category": "documents",
+    "accepted": 75,
+    "proposed": 154
+   },
+   "ultrachat:9f05ab404605f0ea7b957f146d6f5667a8bdb028f6d118e9c964bb45abd485a8": {
+    "category": "writing",
+    "accepted": 47,
+    "proposed": 237
+   },
+   "ultrachat:5411b5238cb1fd8fd508b7d392ce09abce3e889c82adb19c1237810cadb00179": {
+    "category": "reasoning",
+    "accepted": 71,
+    "proposed": 163
+   },
+   "glaive:4542": {
+    "category": "structured",
+    "accepted": 37,
+    "proposed": 39
+   },
+   "commitpack:jni/viridis": {
+    "category": "code",
+    "accepted": 86,
+    "proposed": 119
+   },
+   "ultrachat:fb6969144b30d9dc462b139826da7d10e3b1da612acddebb6c42d5752455a54c": {
+    "category": "writing",
+    "accepted": 64,
+    "proposed": 186
+   },
+   "ultrachat:aa076f5cfa73b48685c37f83b9291499fe7e0016b18633aa684b2848c8181b73": {
+    "category": "conversation",
+    "accepted": 62,
+    "proposed": 191
+   },
+   "glaive:42759": {
+    "category": "structured",
+    "accepted": 11,
+    "proposed": 18
+   },
+   "glaive:72162": {
+    "category": "structured",
+    "accepted": 43,
+    "proposed": 45
+   },
+   "legacy-magicoder:topic:magicoder:oss-seed:0a4a8e4e7be9dd8335259e1793e1b78776fdaaea5dacf3f9cda684be8f18166f": {
+    "category": "code",
+    "accepted": 75,
+    "proposed": 156
+   },
+   "glaive:79116": {
+    "category": "structured",
+    "accepted": 33,
+    "proposed": 33
+   },
+   "glaive:21954": {
+    "category": "structured",
+    "accepted": 36,
+    "proposed": 39
+   },
+   "legacy-magicoder:topic:magicoder:oss-seed:0dbddd56bcc595217aa17e110fd2ee75e0a526d54e9261627d18f1dad81e2735": {
+    "category": "code",
+    "accepted": 87,
+    "proposed": 117
+   },
+   "legacy-gsm8k:group:gsm8k:train-006282": {
+    "category": "reasoning",
+    "accepted": 87,
+    "proposed": 120
+   },
+   "ultrachat:1212bd5434701884614addcd5cf87e2f3cd0c7e2553eb983b9745013a8d8f5c9": {
+    "category": "reasoning",
+    "accepted": 61,
+    "proposed": 195
+   },
+   "ultrachat:57013254222bc35f6a5b5227fb7f0dc41b7c8c9643368af41de9530a31488821": {
+    "category": "reasoning",
+    "accepted": 67,
+    "proposed": 177
+   },
+   "commitpack:vovanbo/trafaretrecord": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 101
+   },
+   "commitpack:bartromgens/nsmaps": {
+    "category": "code",
+    "accepted": 91,
+    "proposed": 107
+   },
+   "qasper:1804.11346": {
+    "category": "documents",
+    "accepted": 75,
+    "proposed": 155
+   },
+   "commitpack:cknv/beetle-preview": {
+    "category": "code",
+    "accepted": 90,
+    "proposed": 108
+   },
+   "ultrachat:b84bcc18bec112056fb60df38ab344fb3d71152300ceabe78c4ae245d5eb22c7": {
+    "category": "conversation",
+    "accepted": 71,
+    "proposed": 164
+   },
+   "ultrachat:65a4957646148f0ece4ee25fa3c4a59d08410b8390d7f1f1cc1007276e8a2a7e": {
+    "category": "reasoning",
+    "accepted": 60,
+    "proposed": 200
+   },
+   "ultrachat:1f7035ffeee0edd24fe77767baed545fe0a76ee7055cdea1c5f342123238822d": {
+    "category": "reasoning",
+    "accepted": 62,
+    "proposed": 195
+   },
+   "legacy-gsm8k:group:gsm8k:train-006475": {
+    "category": "reasoning",
+    "accepted": 90,
+    "proposed": 109
+   },
+   "ultrachat:f0af5ccb724991e5097f89f87eb102374240fb12ca7b98143f0caf32e5755fa5": {
+    "category": "reasoning",
+    "accepted": 56,
+    "proposed": 210
+   },
+   "commitpack:EmilStenstrom/nephele": {
+    "category": "code",
+    "accepted": 87,
+    "proposed": 119
+   },
+   "legacy-gsm8k:group:gsm8k:train-006654": {
+    "category": "reasoning",
+    "accepted": 82,
+    "proposed": 134
+   },
+   "legacy-dolly:topic:dolly:context:aa1dd6c38acd62ce2de0426157a86405f37f371b86a0b1cac3364fed87d579cf": {
+    "category": "documents",
+    "accepted": 70,
+    "proposed": 169
+   },
+   "commitpack:bendmorris/retriever": {
+    "category": "code",
+    "accepted": 89,
+    "proposed": 108
+   },
+   "commitpack:incuna/incuna-bookmarks": {
+    "category": "code",
+    "accepted": 91,
+    "proposed": 107
+   },
+   "legacy-dolly:topic:dolly:context:9669cd2b94e821a05655e288b7a7204fd27aeb61bb11097027c90b21494c280d": {
+    "category": "documents",
+    "accepted": 55,
+    "proposed": 168
+   },
+   "legacy-dolly:topic:dolly:context:c3b9c2a999b19a08c1aa9de217c79e5aee78d3727de585b66d4b025efa590e3b": {
+    "category": "documents",
+    "accepted": 78,
+    "proposed": 146
+   },
+   "legacy-dolly:topic:dolly:context:5e149b579b4af932c06d69f202d9fd9e27df002be554ef3b0e12a5c33b4633c0": {
+    "category": "documents",
+    "accepted": 79,
+    "proposed": 143
+   },
+   "legacy-dolly:topic:dolly:context:86314119b290b41e874a5e23b62c7ca7e4db454f4b29d3270b71a825e34b10a0": {
+    "category": "documents",
+    "accepted": 75,
+    "proposed": 154
+   },
+   "qasper:1602.06291": {
+    "category": "documents",
+    "accepted": 76,
+    "proposed": 150
+   },
+   "qasper:1812.10479": {
+    "category": "documents",
+    "accepted": 75,
+    "proposed": 151
+   },
+   "qasper:1707.07048": {
+    "category": "documents",
+    "accepted": 71,
+    "proposed": 165
+   },
+   "project:w1a1_eagle/records.py": {
+    "category": "code",
+    "accepted": 23,
+    "proposed": 27
+   },
+   "project:benchmarks/protection.py": {
+    "category": "code",
+    "accepted": 18,
+    "proposed": 24
+   },
+   "project:benchmarks/coverage.py": {
+    "category": "code",
+    "accepted": 92,
+    "proposed": 103
+   },
+   "project:w1a1_eagle/data.py": {
+    "category": "code",
+    "accepted": 36,
+    "proposed": 111
+   },
+   "project:w1a1_eagle/checkpoints/store.py": {
+    "category": "structured",
+    "accepted": 89,
+    "proposed": 112
+   },
+   "project:benchmarks/statistics.py": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 102
+   },
+   "project:WORKFLOW.md": {
+    "category": "documents",
+    "accepted": 67,
+    "proposed": 177
+   },
+   "project:w1a1_eagle/capacity.py": {
+    "category": "code",
+    "accepted": 92,
+    "proposed": 102
+   }
+  },
+  "c1-logits-r2 (WSL, saved controls)": {
+   "ultrachat:73ea29124608350f4c9061687e1cdccad7a4c5dc4c83835dfefc827b1c0ec574": {
+    "category": "writing",
+    "accepted": 13,
+    "proposed": 21
+   },
+   "ultrachat:0c6070b6eab22bbf0ff853e5a2c0c6b3d5ab994cd8be630aced31e1b582ea850": {
+    "category": "conversation",
+    "accepted": 75,
+    "proposed": 154
+   },
+   "ultrachat:4dc9863e8f25deb51eb67326b70d4a25a39ba97e4ddcaae730ddf2ee14f83fb7": {
+    "category": "conversation",
+    "accepted": 18,
+    "proposed": 21
+   },
+   "ultrachat:c9040e5cb6dd4622e386df9be726a6855ab4f0f42abd15a2c0573aa91fec5cdb": {
+    "category": "conversation",
+    "accepted": 66,
+    "proposed": 179
+   },
+   "ultrachat:fd9a89927837175325b3da0502d12b55096166b103731c34fa207100bd2ee82e": {
+    "category": "conversation",
+    "accepted": 64,
+    "proposed": 185
+   },
+   "ultrachat:c5dca62d903b83f1763112d361e83a898eb78ec187b9b3bd4c42bc50f8b6bcdc": {
+    "category": "conversation",
+    "accepted": 57,
+    "proposed": 205
+   },
+   "ultrachat:9c3930686910a9e27207d0229d7eae4f2fdf66695ec6b67072a8ab7276d40d17": {
+    "category": "writing",
+    "accepted": 55,
+    "proposed": 214
+   },
+   "glaive:32219": {
+    "category": "structured",
+    "accepted": 14,
+    "proposed": 21
+   },
+   "ultrachat:9de4541bb2024205858b4c6bcefca16bc85d1664b0137caea4df28ba755076ef": {
+    "category": "conversation",
+    "accepted": 68,
+    "proposed": 176
+   },
+   "ultrachat:fe17235e95aa6121f300977212db50fc234d44a58a7e8f0bdc77858ccc452b91": {
+    "category": "conversation",
+    "accepted": 64,
+    "proposed": 183
+   },
+   "legacy-dolly:topic:dolly:context:6e41a981df3dedaf9e2357fd7bff7196164aabfc581076857bb7ad43777a62aa": {
+    "category": "documents",
+    "accepted": 84,
+    "proposed": 128
+   },
+   "ultrachat:3bdcc75bf832910877a28a5ec0cfbb8c9219d9f3980fcf67496502d63e5f0c4f": {
+    "category": "conversation",
+    "accepted": 65,
+    "proposed": 182
+   },
+   "glaive:83618": {
+    "category": "structured",
+    "accepted": 20,
+    "proposed": 21
+   },
+   "ultrachat:ee6e0ca656ff655b5fb58d6cf33298f89d48b8565a00aafb8cf9b453d147af02": {
+    "category": "reasoning",
+    "accepted": 61,
+    "proposed": 194
+   },
+   "ultrachat:1e3d1a74fcc867c5ceb10760934ad935a59a97c9e7374c68cb6805049888ed4c": {
+    "category": "writing",
+    "accepted": 53,
+    "proposed": 219
+   },
+   "qasper:2002.07306": {
+    "category": "documents",
+    "accepted": 77,
+    "proposed": 148
+   },
+   "ultrachat:9f05ab404605f0ea7b957f146d6f5667a8bdb028f6d118e9c964bb45abd485a8": {
+    "category": "writing",
+    "accepted": 51,
+    "proposed": 225
+   },
+   "ultrachat:5411b5238cb1fd8fd508b7d392ce09abce3e889c82adb19c1237810cadb00179": {
+    "category": "reasoning",
+    "accepted": 71,
+    "proposed": 163
+   },
+   "glaive:4542": {
+    "category": "structured",
+    "accepted": 36,
+    "proposed": 42
+   },
+   "commitpack:jni/viridis": {
+    "category": "code",
+    "accepted": 90,
+    "proposed": 107
+   },
+   "ultrachat:fb6969144b30d9dc462b139826da7d10e3b1da612acddebb6c42d5752455a54c": {
+    "category": "writing",
+    "accepted": 64,
+    "proposed": 183
+   },
+   "ultrachat:aa076f5cfa73b48685c37f83b9291499fe7e0016b18633aa684b2848c8181b73": {
+    "category": "conversation",
+    "accepted": 67,
+    "proposed": 176
+   },
+   "glaive:42759": {
+    "category": "structured",
+    "accepted": 11,
+    "proposed": 18
+   },
+   "glaive:72162": {
+    "category": "structured",
+    "accepted": 41,
+    "proposed": 51
+   },
+   "legacy-magicoder:topic:magicoder:oss-seed:0a4a8e4e7be9dd8335259e1793e1b78776fdaaea5dacf3f9cda684be8f18166f": {
+    "category": "code",
+    "accepted": 76,
+    "proposed": 153
+   },
+   "glaive:79116": {
+    "category": "structured",
+    "accepted": 32,
+    "proposed": 33
+   },
+   "glaive:21954": {
+    "category": "structured",
+    "accepted": 36,
+    "proposed": 39
+   },
+   "legacy-magicoder:topic:magicoder:oss-seed:0dbddd56bcc595217aa17e110fd2ee75e0a526d54e9261627d18f1dad81e2735": {
+    "category": "code",
+    "accepted": 85,
+    "proposed": 123
+   },
+   "legacy-gsm8k:group:gsm8k:train-006282": {
+    "category": "reasoning",
+    "accepted": 88,
+    "proposed": 117
+   },
+   "ultrachat:1212bd5434701884614addcd5cf87e2f3cd0c7e2553eb983b9745013a8d8f5c9": {
+    "category": "reasoning",
+    "accepted": 62,
+    "proposed": 192
+   },
+   "ultrachat:57013254222bc35f6a5b5227fb7f0dc41b7c8c9643368af41de9530a31488821": {
+    "category": "reasoning",
+    "accepted": 70,
+    "proposed": 168
+   },
+   "commitpack:vovanbo/trafaretrecord": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 99
+   },
+   "commitpack:bartromgens/nsmaps": {
+    "category": "code",
+    "accepted": 92,
+    "proposed": 104
+   },
+   "qasper:1804.11346": {
+    "category": "documents",
+    "accepted": 76,
+    "proposed": 152
+   },
+   "commitpack:cknv/beetle-preview": {
+    "category": "code",
+    "accepted": 91,
+    "proposed": 105
+   },
+   "ultrachat:b84bcc18bec112056fb60df38ab344fb3d71152300ceabe78c4ae245d5eb22c7": {
+    "category": "conversation",
+    "accepted": 66,
+    "proposed": 179
+   },
+   "ultrachat:65a4957646148f0ece4ee25fa3c4a59d08410b8390d7f1f1cc1007276e8a2a7e": {
+    "category": "reasoning",
+    "accepted": 59,
+    "proposed": 203
+   },
+   "ultrachat:1f7035ffeee0edd24fe77767baed545fe0a76ee7055cdea1c5f342123238822d": {
+    "category": "reasoning",
+    "accepted": 65,
+    "proposed": 186
+   },
+   "legacy-gsm8k:group:gsm8k:train-006475": {
+    "category": "reasoning",
+    "accepted": 90,
+    "proposed": 109
+   },
+   "ultrachat:f0af5ccb724991e5097f89f87eb102374240fb12ca7b98143f0caf32e5755fa5": {
+    "category": "reasoning",
+    "accepted": 53,
+    "proposed": 219
+   },
+   "commitpack:EmilStenstrom/nephele": {
+    "category": "code",
+    "accepted": 88,
+    "proposed": 116
+   },
+   "legacy-gsm8k:group:gsm8k:train-006654": {
+    "category": "reasoning",
+    "accepted": 86,
+    "proposed": 122
+   },
+   "legacy-dolly:topic:dolly:context:aa1dd6c38acd62ce2de0426157a86405f37f371b86a0b1cac3364fed87d579cf": {
+    "category": "documents",
+    "accepted": 72,
+    "proposed": 163
+   },
+   "commitpack:bendmorris/retriever": {
+    "category": "code",
+    "accepted": 89,
+    "proposed": 110
+   },
+   "commitpack:incuna/incuna-bookmarks": {
+    "category": "code",
+    "accepted": 91,
+    "proposed": 107
+   },
+   "legacy-dolly:topic:dolly:context:9669cd2b94e821a05655e288b7a7204fd27aeb61bb11097027c90b21494c280d": {
+    "category": "documents",
+    "accepted": 53,
+    "proposed": 174
+   },
+   "legacy-dolly:topic:dolly:context:c3b9c2a999b19a08c1aa9de217c79e5aee78d3727de585b66d4b025efa590e3b": {
+    "category": "documents",
+    "accepted": 79,
+    "proposed": 143
+   },
+   "legacy-dolly:topic:dolly:context:5e149b579b4af932c06d69f202d9fd9e27df002be554ef3b0e12a5c33b4633c0": {
+    "category": "documents",
+    "accepted": 83,
+    "proposed": 131
+   },
+   "legacy-dolly:topic:dolly:context:86314119b290b41e874a5e23b62c7ca7e4db454f4b29d3270b71a825e34b10a0": {
+    "category": "documents",
+    "accepted": 78,
+    "proposed": 147
+   },
+   "qasper:1602.06291": {
+    "category": "documents",
+    "accepted": 74,
+    "proposed": 154
+   },
+   "qasper:1812.10479": {
+    "category": "documents",
+    "accepted": 73,
+    "proposed": 157
+   },
+   "qasper:1707.07048": {
+    "category": "documents",
+    "accepted": 74,
+    "proposed": 156
+   },
+   "project:w1a1_eagle/records.py": {
+    "category": "code",
+    "accepted": 22,
+    "proposed": 30
+   },
+   "project:benchmarks/protection.py": {
+    "category": "code",
+    "accepted": 16,
+    "proposed": 30
+   },
+   "project:benchmarks/coverage.py": {
+    "category": "code",
+    "accepted": 92,
+    "proposed": 103
+   },
+   "project:w1a1_eagle/data.py": {
+    "category": "code",
+    "accepted": 38,
+    "proposed": 105
+   },
+   "project:w1a1_eagle/checkpoints/store.py": {
+    "category": "structured",
+    "accepted": 91,
+    "proposed": 106
+   },
+   "project:benchmarks/statistics.py": {
+    "category": "code",
+    "accepted": 91,
+    "proposed": 108
+   },
+   "project:WORKFLOW.md": {
+    "category": "documents",
+    "accepted": 68,
+    "proposed": 177
+   },
+   "project:w1a1_eagle/capacity.py": {
+    "category": "code",
+    "accepted": 91,
+    "proposed": 106
+   }
+  },
+  "c2-hidden-r (WSL, saved controls)": {
+   "ultrachat:73ea29124608350f4c9061687e1cdccad7a4c5dc4c83835dfefc827b1c0ec574": {
+    "category": "writing",
+    "accepted": 13,
+    "proposed": 21
+   },
+   "ultrachat:0c6070b6eab22bbf0ff853e5a2c0c6b3d5ab994cd8be630aced31e1b582ea850": {
+    "category": "conversation",
+    "accepted": 76,
+    "proposed": 151
+   },
+   "ultrachat:4dc9863e8f25deb51eb67326b70d4a25a39ba97e4ddcaae730ddf2ee14f83fb7": {
+    "category": "conversation",
+    "accepted": 17,
+    "proposed": 24
+   },
+   "ultrachat:c9040e5cb6dd4622e386df9be726a6855ab4f0f42abd15a2c0573aa91fec5cdb": {
+    "category": "conversation",
+    "accepted": 65,
+    "proposed": 182
+   },
+   "ultrachat:fd9a89927837175325b3da0502d12b55096166b103731c34fa207100bd2ee82e": {
+    "category": "conversation",
+    "accepted": 66,
+    "proposed": 177
+   },
+   "ultrachat:c5dca62d903b83f1763112d361e83a898eb78ec187b9b3bd4c42bc50f8b6bcdc": {
+    "category": "conversation",
+    "accepted": 60,
+    "proposed": 198
+   },
+   "ultrachat:9c3930686910a9e27207d0229d7eae4f2fdf66695ec6b67072a8ab7276d40d17": {
+    "category": "writing",
+    "accepted": 55,
+    "proposed": 214
+   },
+   "glaive:32219": {
+    "category": "structured",
+    "accepted": 13,
+    "proposed": 21
+   },
+   "ultrachat:9de4541bb2024205858b4c6bcefca16bc85d1664b0137caea4df28ba755076ef": {
+    "category": "conversation",
+    "accepted": 64,
+    "proposed": 188
+   },
+   "ultrachat:fe17235e95aa6121f300977212db50fc234d44a58a7e8f0bdc77858ccc452b91": {
+    "category": "conversation",
+    "accepted": 66,
+    "proposed": 177
+   },
+   "legacy-dolly:topic:dolly:context:6e41a981df3dedaf9e2357fd7bff7196164aabfc581076857bb7ad43777a62aa": {
+    "category": "documents",
+    "accepted": 83,
+    "proposed": 131
+   },
+   "ultrachat:3bdcc75bf832910877a28a5ec0cfbb8c9219d9f3980fcf67496502d63e5f0c4f": {
+    "category": "conversation",
+    "accepted": 64,
+    "proposed": 185
+   },
+   "glaive:83618": {
+    "category": "structured",
+    "accepted": 20,
+    "proposed": 21
+   },
+   "ultrachat:ee6e0ca656ff655b5fb58d6cf33298f89d48b8565a00aafb8cf9b453d147af02": {
+    "category": "reasoning",
+    "accepted": 60,
+    "proposed": 197
+   },
+   "ultrachat:1e3d1a74fcc867c5ceb10760934ad935a59a97c9e7374c68cb6805049888ed4c": {
+    "category": "writing",
+    "accepted": 56,
+    "proposed": 210
+   },
+   "qasper:2002.07306": {
+    "category": "documents",
+    "accepted": 77,
+    "proposed": 148
+   },
+   "ultrachat:9f05ab404605f0ea7b957f146d6f5667a8bdb028f6d118e9c964bb45abd485a8": {
+    "category": "writing",
+    "accepted": 51,
+    "proposed": 225
+   },
+   "ultrachat:5411b5238cb1fd8fd508b7d392ce09abce3e889c82adb19c1237810cadb00179": {
+    "category": "reasoning",
+    "accepted": 72,
+    "proposed": 160
+   },
+   "glaive:4542": {
+    "category": "structured",
+    "accepted": 37,
+    "proposed": 39
+   },
+   "commitpack:jni/viridis": {
+    "category": "code",
+    "accepted": 89,
+    "proposed": 110
+   },
+   "ultrachat:fb6969144b30d9dc462b139826da7d10e3b1da612acddebb6c42d5752455a54c": {
+    "category": "writing",
+    "accepted": 68,
+    "proposed": 174
+   },
+   "ultrachat:aa076f5cfa73b48685c37f83b9291499fe7e0016b18633aa684b2848c8181b73": {
+    "category": "conversation",
+    "accepted": 64,
+    "proposed": 185
+   },
+   "glaive:42759": {
+    "category": "structured",
+    "accepted": 10,
+    "proposed": 21
+   },
+   "glaive:72162": {
+    "category": "structured",
+    "accepted": 43,
+    "proposed": 45
+   },
+   "legacy-magicoder:topic:magicoder:oss-seed:0a4a8e4e7be9dd8335259e1793e1b78776fdaaea5dacf3f9cda684be8f18166f": {
+    "category": "code",
+    "accepted": 74,
+    "proposed": 159
+   },
+   "glaive:79116": {
+    "category": "structured",
+    "accepted": 33,
+    "proposed": 33
+   },
+   "glaive:21954": {
+    "category": "structured",
+    "accepted": 36,
+    "proposed": 39
+   },
+   "legacy-magicoder:topic:magicoder:oss-seed:0dbddd56bcc595217aa17e110fd2ee75e0a526d54e9261627d18f1dad81e2735": {
+    "category": "code",
+    "accepted": 85,
+    "proposed": 123
+   },
+   "legacy-gsm8k:group:gsm8k:train-006282": {
+    "category": "reasoning",
+    "accepted": 86,
+    "proposed": 123
+   },
+   "ultrachat:1212bd5434701884614addcd5cf87e2f3cd0c7e2553eb983b9745013a8d8f5c9": {
+    "category": "reasoning",
+    "accepted": 61,
+    "proposed": 195
+   },
+   "ultrachat:57013254222bc35f6a5b5227fb7f0dc41b7c8c9643368af41de9530a31488821": {
+    "category": "reasoning",
+    "accepted": 70,
+    "proposed": 168
+   },
+   "commitpack:vovanbo/trafaretrecord": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 101
+   },
+   "commitpack:bartromgens/nsmaps": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 101
+   },
+   "qasper:1804.11346": {
+    "category": "documents",
+    "accepted": 75,
+    "proposed": 155
+   },
+   "commitpack:cknv/beetle-preview": {
+    "category": "code",
+    "accepted": 86,
+    "proposed": 120
+   },
+   "ultrachat:b84bcc18bec112056fb60df38ab344fb3d71152300ceabe78c4ae245d5eb22c7": {
+    "category": "conversation",
+    "accepted": 67,
+    "proposed": 176
+   },
+   "ultrachat:65a4957646148f0ece4ee25fa3c4a59d08410b8390d7f1f1cc1007276e8a2a7e": {
+    "category": "reasoning",
+    "accepted": 62,
+    "proposed": 194
+   },
+   "ultrachat:1f7035ffeee0edd24fe77767baed545fe0a76ee7055cdea1c5f342123238822d": {
+    "category": "reasoning",
+    "accepted": 62,
+    "proposed": 195
+   },
+   "legacy-gsm8k:group:gsm8k:train-006475": {
+    "category": "reasoning",
+    "accepted": 91,
+    "proposed": 106
+   },
+   "ultrachat:f0af5ccb724991e5097f89f87eb102374240fb12ca7b98143f0caf32e5755fa5": {
+    "category": "reasoning",
+    "accepted": 54,
+    "proposed": 216
+   },
+   "commitpack:EmilStenstrom/nephele": {
+    "category": "code",
+    "accepted": 89,
+    "proposed": 111
+   },
+   "legacy-gsm8k:group:gsm8k:train-006654": {
+    "category": "reasoning",
+    "accepted": 85,
+    "proposed": 125
+   },
+   "legacy-dolly:topic:dolly:context:aa1dd6c38acd62ce2de0426157a86405f37f371b86a0b1cac3364fed87d579cf": {
+    "category": "documents",
+    "accepted": 69,
+    "proposed": 172
+   },
+   "commitpack:bendmorris/retriever": {
+    "category": "code",
+    "accepted": 89,
+    "proposed": 110
+   },
+   "commitpack:incuna/incuna-bookmarks": {
+    "category": "code",
+    "accepted": 91,
+    "proposed": 107
+   },
+   "legacy-dolly:topic:dolly:context:9669cd2b94e821a05655e288b7a7204fd27aeb61bb11097027c90b21494c280d": {
+    "category": "documents",
+    "accepted": 53,
+    "proposed": 174
+   },
+   "legacy-dolly:topic:dolly:context:c3b9c2a999b19a08c1aa9de217c79e5aee78d3727de585b66d4b025efa590e3b": {
+    "category": "documents",
+    "accepted": 80,
+    "proposed": 140
+   },
+   "legacy-dolly:topic:dolly:context:5e149b579b4af932c06d69f202d9fd9e27df002be554ef3b0e12a5c33b4633c0": {
+    "category": "documents",
+    "accepted": 84,
+    "proposed": 128
+   },
+   "legacy-dolly:topic:dolly:context:86314119b290b41e874a5e23b62c7ca7e4db454f4b29d3270b71a825e34b10a0": {
+    "category": "documents",
+    "accepted": 78,
+    "proposed": 145
+   },
+   "qasper:1602.06291": {
+    "category": "documents",
+    "accepted": 76,
+    "proposed": 149
+   },
+   "qasper:1812.10479": {
+    "category": "documents",
+    "accepted": 74,
+    "proposed": 154
+   },
+   "qasper:1707.07048": {
+    "category": "documents",
+    "accepted": 73,
+    "proposed": 162
+   },
+   "project:w1a1_eagle/records.py": {
+    "category": "code",
+    "accepted": 22,
+    "proposed": 30
+   },
+   "project:benchmarks/protection.py": {
+    "category": "code",
+    "accepted": 18,
+    "proposed": 24
+   },
+   "project:benchmarks/coverage.py": {
+    "category": "code",
+    "accepted": 92,
+    "proposed": 103
+   },
+   "project:w1a1_eagle/data.py": {
+    "category": "code",
+    "accepted": 36,
+    "proposed": 111
+   },
+   "project:w1a1_eagle/checkpoints/store.py": {
+    "category": "structured",
+    "accepted": 91,
+    "proposed": 106
+   },
+   "project:benchmarks/statistics.py": {
+    "category": "code",
+    "accepted": 94,
+    "proposed": 99
+   },
+   "project:WORKFLOW.md": {
+    "category": "documents",
+    "accepted": 72,
+    "proposed": 165
+   },
+   "project:w1a1_eagle/capacity.py": {
+    "category": "code",
+    "accepted": 92,
+    "proposed": 102
+   }
+  },
+  "linux-control (native Linux, live target)": {
+   "ultrachat:73ea29124608350f4c9061687e1cdccad7a4c5dc4c83835dfefc827b1c0ec574": {
+    "category": "writing",
+    "accepted": 14,
+    "proposed": 21
+   },
+   "ultrachat:0c6070b6eab22bbf0ff853e5a2c0c6b3d5ab994cd8be630aced31e1b582ea850": {
+    "category": "conversation",
+    "accepted": 77,
+    "proposed": 148
+   },
+   "ultrachat:4dc9863e8f25deb51eb67326b70d4a25a39ba97e4ddcaae730ddf2ee14f83fb7": {
+    "category": "conversation",
+    "accepted": 17,
+    "proposed": 24
+   },
+   "ultrachat:c9040e5cb6dd4622e386df9be726a6855ab4f0f42abd15a2c0573aa91fec5cdb": {
+    "category": "conversation",
+    "accepted": 66,
+    "proposed": 182
+   },
+   "ultrachat:fd9a89927837175325b3da0502d12b55096166b103731c34fa207100bd2ee82e": {
+    "category": "conversation",
+    "accepted": 69,
+    "proposed": 170
+   },
+   "ultrachat:c5dca62d903b83f1763112d361e83a898eb78ec187b9b3bd4c42bc50f8b6bcdc": {
+    "category": "conversation",
+    "accepted": 54,
+    "proposed": 216
+   },
+   "ultrachat:9c3930686910a9e27207d0229d7eae4f2fdf66695ec6b67072a8ab7276d40d17": {
+    "category": "writing",
+    "accepted": 59,
+    "proposed": 202
+   },
+   "glaive:32219": {
+    "category": "structured",
+    "accepted": 14,
+    "proposed": 18
+   },
+   "ultrachat:9de4541bb2024205858b4c6bcefca16bc85d1664b0137caea4df28ba755076ef": {
+    "category": "conversation",
+    "accepted": 64,
+    "proposed": 188
+   },
+   "ultrachat:fe17235e95aa6121f300977212db50fc234d44a58a7e8f0bdc77858ccc452b91": {
+    "category": "conversation",
+    "accepted": 66,
+    "proposed": 177
+   },
+   "legacy-dolly:topic:dolly:context:6e41a981df3dedaf9e2357fd7bff7196164aabfc581076857bb7ad43777a62aa": {
+    "category": "documents",
+    "accepted": 84,
+    "proposed": 128
+   },
+   "ultrachat:3bdcc75bf832910877a28a5ec0cfbb8c9219d9f3980fcf67496502d63e5f0c4f": {
+    "category": "conversation",
+    "accepted": 66,
+    "proposed": 179
+   },
+   "glaive:83618": {
+    "category": "structured",
+    "accepted": 20,
+    "proposed": 21
+   },
+   "ultrachat:ee6e0ca656ff655b5fb58d6cf33298f89d48b8565a00aafb8cf9b453d147af02": {
+    "category": "reasoning",
+    "accepted": 58,
+    "proposed": 203
+   },
+   "ultrachat:1e3d1a74fcc867c5ceb10760934ad935a59a97c9e7374c68cb6805049888ed4c": {
+    "category": "writing",
+    "accepted": 57,
+    "proposed": 207
+   },
+   "qasper:2002.07306": {
+    "category": "documents",
+    "accepted": 76,
+    "proposed": 152
+   },
+   "ultrachat:9f05ab404605f0ea7b957f146d6f5667a8bdb028f6d118e9c964bb45abd485a8": {
+    "category": "writing",
+    "accepted": 47,
+    "proposed": 237
+   },
+   "ultrachat:5411b5238cb1fd8fd508b7d392ce09abce3e889c82adb19c1237810cadb00179": {
+    "category": "reasoning",
+    "accepted": 69,
+    "proposed": 169
+   },
+   "glaive:4542": {
+    "category": "structured",
+    "accepted": 37,
+    "proposed": 39
+   },
+   "commitpack:jni/viridis": {
+    "category": "code",
+    "accepted": 87,
+    "proposed": 116
+   },
+   "ultrachat:fb6969144b30d9dc462b139826da7d10e3b1da612acddebb6c42d5752455a54c": {
+    "category": "writing",
+    "accepted": 69,
+    "proposed": 171
+   },
+   "ultrachat:aa076f5cfa73b48685c37f83b9291499fe7e0016b18633aa684b2848c8181b73": {
+    "category": "conversation",
+    "accepted": 68,
+    "proposed": 173
+   },
+   "glaive:42759": {
+    "category": "structured",
+    "accepted": 12,
+    "proposed": 15
+   },
+   "glaive:72162": {
+    "category": "structured",
+    "accepted": 43,
+    "proposed": 45
+   },
+   "legacy-magicoder:topic:magicoder:oss-seed:0a4a8e4e7be9dd8335259e1793e1b78776fdaaea5dacf3f9cda684be8f18166f": {
+    "category": "code",
+    "accepted": 76,
+    "proposed": 152
+   },
+   "glaive:79116": {
+    "category": "structured",
+    "accepted": 33,
+    "proposed": 33
+   },
+   "glaive:21954": {
+    "category": "structured",
+    "accepted": 36,
+    "proposed": 39
+   },
+   "legacy-magicoder:topic:magicoder:oss-seed:0dbddd56bcc595217aa17e110fd2ee75e0a526d54e9261627d18f1dad81e2735": {
+    "category": "code",
+    "accepted": 83,
+    "proposed": 129
+   },
+   "legacy-gsm8k:group:gsm8k:train-006282": {
+    "category": "reasoning",
+    "accepted": 89,
+    "proposed": 114
+   },
+   "ultrachat:1212bd5434701884614addcd5cf87e2f3cd0c7e2553eb983b9745013a8d8f5c9": {
+    "category": "reasoning",
+    "accepted": 65,
+    "proposed": 183
+   },
+   "ultrachat:57013254222bc35f6a5b5227fb7f0dc41b7c8c9643368af41de9530a31488821": {
+    "category": "reasoning",
+    "accepted": 68,
+    "proposed": 175
+   },
+   "commitpack:vovanbo/trafaretrecord": {
+    "category": "code",
+    "accepted": 94,
+    "proposed": 98
+   },
+   "commitpack:bartromgens/nsmaps": {
+    "category": "code",
+    "accepted": 92,
+    "proposed": 104
+   },
+   "qasper:1804.11346": {
+    "category": "documents",
+    "accepted": 75,
+    "proposed": 155
+   },
+   "commitpack:cknv/beetle-preview": {
+    "category": "code",
+    "accepted": 89,
+    "proposed": 111
+   },
+   "ultrachat:b84bcc18bec112056fb60df38ab344fb3d71152300ceabe78c4ae245d5eb22c7": {
+    "category": "conversation",
+    "accepted": 66,
+    "proposed": 179
+   },
+   "ultrachat:65a4957646148f0ece4ee25fa3c4a59d08410b8390d7f1f1cc1007276e8a2a7e": {
+    "category": "reasoning",
+    "accepted": 62,
+    "proposed": 194
+   },
+   "ultrachat:1f7035ffeee0edd24fe77767baed545fe0a76ee7055cdea1c5f342123238822d": {
+    "category": "reasoning",
+    "accepted": 64,
+    "proposed": 187
+   },
+   "legacy-gsm8k:group:gsm8k:train-006475": {
+    "category": "reasoning",
+    "accepted": 90,
+    "proposed": 109
+   },
+   "ultrachat:f0af5ccb724991e5097f89f87eb102374240fb12ca7b98143f0caf32e5755fa5": {
+    "category": "reasoning",
+    "accepted": 55,
+    "proposed": 213
+   },
+   "commitpack:EmilStenstrom/nephele": {
+    "category": "code",
+    "accepted": 89,
+    "proposed": 114
+   },
+   "legacy-gsm8k:group:gsm8k:train-006654": {
+    "category": "reasoning",
+    "accepted": 83,
+    "proposed": 131
+   },
+   "legacy-dolly:topic:dolly:context:aa1dd6c38acd62ce2de0426157a86405f37f371b86a0b1cac3364fed87d579cf": {
+    "category": "documents",
+    "accepted": 72,
+    "proposed": 163
+   },
+   "commitpack:bendmorris/retriever": {
+    "category": "code",
+    "accepted": 89,
+    "proposed": 110
+   },
+   "commitpack:incuna/incuna-bookmarks": {
+    "category": "code",
+    "accepted": 91,
+    "proposed": 107
+   },
+   "legacy-dolly:topic:dolly:context:9669cd2b94e821a05655e288b7a7204fd27aeb61bb11097027c90b21494c280d": {
+    "category": "documents",
+    "accepted": 54,
+    "proposed": 171
+   },
+   "legacy-dolly:topic:dolly:context:c3b9c2a999b19a08c1aa9de217c79e5aee78d3727de585b66d4b025efa590e3b": {
+    "category": "documents",
+    "accepted": 79,
+    "proposed": 143
+   },
+   "legacy-dolly:topic:dolly:context:5e149b579b4af932c06d69f202d9fd9e27df002be554ef3b0e12a5c33b4633c0": {
+    "category": "documents",
+    "accepted": 80,
+    "proposed": 140
+   },
+   "legacy-dolly:topic:dolly:context:86314119b290b41e874a5e23b62c7ca7e4db454f4b29d3270b71a825e34b10a0": {
+    "category": "documents",
+    "accepted": 76,
+    "proposed": 151
+   },
+   "qasper:1602.06291": {
+    "category": "documents",
+    "accepted": 75,
+    "proposed": 152
+   },
+   "qasper:1812.10479": {
+    "category": "documents",
+    "accepted": 76,
+    "proposed": 148
+   },
+   "qasper:1707.07048": {
+    "category": "documents",
+    "accepted": 71,
+    "proposed": 168
+   },
+   "project:w1a1_eagle/records.py": {
+    "category": "code",
+    "accepted": 23,
+    "proposed": 27
+   },
+   "project:benchmarks/protection.py": {
+    "category": "code",
+    "accepted": 17,
+    "proposed": 27
+   },
+   "project:benchmarks/coverage.py": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 101
+   },
+   "project:w1a1_eagle/data.py": {
+    "category": "code",
+    "accepted": 39,
+    "proposed": 102
+   },
+   "project:w1a1_eagle/checkpoints/store.py": {
+    "category": "structured",
+    "accepted": 89,
+    "proposed": 112
+   },
+   "project:benchmarks/statistics.py": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 102
+   },
+   "project:WORKFLOW.md": {
+    "category": "documents",
+    "accepted": 71,
+    "proposed": 168
+   },
+   "project:w1a1_eagle/capacity.py": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 100
+   }
+  },
+  "linux-teacher (native Linux, live target)": {
+   "ultrachat:73ea29124608350f4c9061687e1cdccad7a4c5dc4c83835dfefc827b1c0ec574": {
+    "category": "writing",
+    "accepted": 13,
+    "proposed": 21
+   },
+   "ultrachat:0c6070b6eab22bbf0ff853e5a2c0c6b3d5ab994cd8be630aced31e1b582ea850": {
+    "category": "conversation",
+    "accepted": 75,
+    "proposed": 154
+   },
+   "ultrachat:4dc9863e8f25deb51eb67326b70d4a25a39ba97e4ddcaae730ddf2ee14f83fb7": {
+    "category": "conversation",
+    "accepted": 18,
+    "proposed": 21
+   },
+   "ultrachat:c9040e5cb6dd4622e386df9be726a6855ab4f0f42abd15a2c0573aa91fec5cdb": {
+    "category": "conversation",
+    "accepted": 64,
+    "proposed": 185
+   },
+   "ultrachat:fd9a89927837175325b3da0502d12b55096166b103731c34fa207100bd2ee82e": {
+    "category": "conversation",
+    "accepted": 67,
+    "proposed": 174
+   },
+   "ultrachat:c5dca62d903b83f1763112d361e83a898eb78ec187b9b3bd4c42bc50f8b6bcdc": {
+    "category": "conversation",
+    "accepted": 54,
+    "proposed": 214
+   },
+   "ultrachat:9c3930686910a9e27207d0229d7eae4f2fdf66695ec6b67072a8ab7276d40d17": {
+    "category": "writing",
+    "accepted": 58,
+    "proposed": 205
+   },
+   "glaive:32219": {
+    "category": "structured",
+    "accepted": 14,
+    "proposed": 18
+   },
+   "ultrachat:9de4541bb2024205858b4c6bcefca16bc85d1664b0137caea4df28ba755076ef": {
+    "category": "conversation",
+    "accepted": 62,
+    "proposed": 194
+   },
+   "ultrachat:fe17235e95aa6121f300977212db50fc234d44a58a7e8f0bdc77858ccc452b91": {
+    "category": "conversation",
+    "accepted": 67,
+    "proposed": 174
+   },
+   "legacy-dolly:topic:dolly:context:6e41a981df3dedaf9e2357fd7bff7196164aabfc581076857bb7ad43777a62aa": {
+    "category": "documents",
+    "accepted": 82,
+    "proposed": 134
+   },
+   "ultrachat:3bdcc75bf832910877a28a5ec0cfbb8c9219d9f3980fcf67496502d63e5f0c4f": {
+    "category": "conversation",
+    "accepted": 67,
+    "proposed": 176
+   },
+   "glaive:83618": {
+    "category": "structured",
+    "accepted": 20,
+    "proposed": 21
+   },
+   "ultrachat:ee6e0ca656ff655b5fb58d6cf33298f89d48b8565a00aafb8cf9b453d147af02": {
+    "category": "reasoning",
+    "accepted": 56,
+    "proposed": 209
+   },
+   "ultrachat:1e3d1a74fcc867c5ceb10760934ad935a59a97c9e7374c68cb6805049888ed4c": {
+    "category": "writing",
+    "accepted": 56,
+    "proposed": 210
+   },
+   "qasper:2002.07306": {
+    "category": "documents",
+    "accepted": 78,
+    "proposed": 145
+   },
+   "ultrachat:9f05ab404605f0ea7b957f146d6f5667a8bdb028f6d118e9c964bb45abd485a8": {
+    "category": "writing",
+    "accepted": 51,
+    "proposed": 225
+   },
+   "ultrachat:5411b5238cb1fd8fd508b7d392ce09abce3e889c82adb19c1237810cadb00179": {
+    "category": "reasoning",
+    "accepted": 68,
+    "proposed": 172
+   },
+   "glaive:4542": {
+    "category": "structured",
+    "accepted": 37,
+    "proposed": 39
+   },
+   "commitpack:jni/viridis": {
+    "category": "code",
+    "accepted": 89,
+    "proposed": 110
+   },
+   "ultrachat:fb6969144b30d9dc462b139826da7d10e3b1da612acddebb6c42d5752455a54c": {
+    "category": "writing",
+    "accepted": 67,
+    "proposed": 177
+   },
+   "ultrachat:aa076f5cfa73b48685c37f83b9291499fe7e0016b18633aa684b2848c8181b73": {
+    "category": "conversation",
+    "accepted": 69,
+    "proposed": 170
+   },
+   "glaive:42759": {
+    "category": "structured",
+    "accepted": 12,
+    "proposed": 15
+   },
+   "glaive:72162": {
+    "category": "structured",
+    "accepted": 43,
+    "proposed": 45
+   },
+   "legacy-magicoder:topic:magicoder:oss-seed:0a4a8e4e7be9dd8335259e1793e1b78776fdaaea5dacf3f9cda684be8f18166f": {
+    "category": "code",
+    "accepted": 76,
+    "proposed": 152
+   },
+   "glaive:79116": {
+    "category": "structured",
+    "accepted": 33,
+    "proposed": 33
+   },
+   "glaive:21954": {
+    "category": "structured",
+    "accepted": 36,
+    "proposed": 39
+   },
+   "legacy-magicoder:topic:magicoder:oss-seed:0dbddd56bcc595217aa17e110fd2ee75e0a526d54e9261627d18f1dad81e2735": {
+    "category": "code",
+    "accepted": 84,
+    "proposed": 126
+   },
+   "legacy-gsm8k:group:gsm8k:train-006282": {
+    "category": "reasoning",
+    "accepted": 88,
+    "proposed": 117
+   },
+   "ultrachat:1212bd5434701884614addcd5cf87e2f3cd0c7e2553eb983b9745013a8d8f5c9": {
+    "category": "reasoning",
+    "accepted": 66,
+    "proposed": 180
+   },
+   "ultrachat:57013254222bc35f6a5b5227fb7f0dc41b7c8c9643368af41de9530a31488821": {
+    "category": "reasoning",
+    "accepted": 70,
+    "proposed": 169
+   },
+   "commitpack:vovanbo/trafaretrecord": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 101
+   },
+   "commitpack:bartromgens/nsmaps": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 101
+   },
+   "qasper:1804.11346": {
+    "category": "documents",
+    "accepted": 77,
+    "proposed": 150
+   },
+   "commitpack:cknv/beetle-preview": {
+    "category": "code",
+    "accepted": 91,
+    "proposed": 105
+   },
+   "ultrachat:b84bcc18bec112056fb60df38ab344fb3d71152300ceabe78c4ae245d5eb22c7": {
+    "category": "conversation",
+    "accepted": 70,
+    "proposed": 167
+   },
+   "ultrachat:65a4957646148f0ece4ee25fa3c4a59d08410b8390d7f1f1cc1007276e8a2a7e": {
+    "category": "reasoning",
+    "accepted": 61,
+    "proposed": 197
+   },
+   "ultrachat:1f7035ffeee0edd24fe77767baed545fe0a76ee7055cdea1c5f342123238822d": {
+    "category": "reasoning",
+    "accepted": 64,
+    "proposed": 187
+   },
+   "legacy-gsm8k:group:gsm8k:train-006475": {
+    "category": "reasoning",
+    "accepted": 91,
+    "proposed": 106
+   },
+   "ultrachat:f0af5ccb724991e5097f89f87eb102374240fb12ca7b98143f0caf32e5755fa5": {
+    "category": "reasoning",
+    "accepted": 54,
+    "proposed": 216
+   },
+   "commitpack:EmilStenstrom/nephele": {
+    "category": "code",
+    "accepted": 89,
+    "proposed": 114
+   },
+   "legacy-gsm8k:group:gsm8k:train-006654": {
+    "category": "reasoning",
+    "accepted": 83,
+    "proposed": 131
+   },
+   "legacy-dolly:topic:dolly:context:aa1dd6c38acd62ce2de0426157a86405f37f371b86a0b1cac3364fed87d579cf": {
+    "category": "documents",
+    "accepted": 74,
+    "proposed": 157
+   },
+   "commitpack:bendmorris/retriever": {
+    "category": "code",
+    "accepted": 89,
+    "proposed": 110
+   },
+   "commitpack:incuna/incuna-bookmarks": {
+    "category": "code",
+    "accepted": 91,
+    "proposed": 107
+   },
+   "legacy-dolly:topic:dolly:context:9669cd2b94e821a05655e288b7a7204fd27aeb61bb11097027c90b21494c280d": {
+    "category": "documents",
+    "accepted": 56,
+    "proposed": 165
+   },
+   "legacy-dolly:topic:dolly:context:c3b9c2a999b19a08c1aa9de217c79e5aee78d3727de585b66d4b025efa590e3b": {
+    "category": "documents",
+    "accepted": 80,
+    "proposed": 140
+   },
+   "legacy-dolly:topic:dolly:context:5e149b579b4af932c06d69f202d9fd9e27df002be554ef3b0e12a5c33b4633c0": {
+    "category": "documents",
+    "accepted": 82,
+    "proposed": 134
+   },
+   "legacy-dolly:topic:dolly:context:86314119b290b41e874a5e23b62c7ca7e4db454f4b29d3270b71a825e34b10a0": {
+    "category": "documents",
+    "accepted": 79,
+    "proposed": 142
+   },
+   "qasper:1602.06291": {
+    "category": "documents",
+    "accepted": 73,
+    "proposed": 158
+   },
+   "qasper:1812.10479": {
+    "category": "documents",
+    "accepted": 76,
+    "proposed": 149
+   },
+   "qasper:1707.07048": {
+    "category": "documents",
+    "accepted": 70,
+    "proposed": 170
+   },
+   "project:w1a1_eagle/records.py": {
+    "category": "code",
+    "accepted": 22,
+    "proposed": 30
+   },
+   "project:benchmarks/protection.py": {
+    "category": "code",
+    "accepted": 16,
+    "proposed": 30
+   },
+   "project:benchmarks/coverage.py": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 99
+   },
+   "project:w1a1_eagle/data.py": {
+    "category": "code",
+    "accepted": 37,
+    "proposed": 108
+   },
+   "project:w1a1_eagle/checkpoints/store.py": {
+    "category": "structured",
+    "accepted": 90,
+    "proposed": 109
+   },
+   "project:benchmarks/statistics.py": {
+    "category": "code",
+    "accepted": 93,
+    "proposed": 102
+   },
+   "project:WORKFLOW.md": {
+    "category": "documents",
+    "accepted": 69,
+    "proposed": 174
+   },
+   "project:w1a1_eagle/capacity.py": {
+    "category": "code",
+    "accepted": 92,
+    "proposed": 103
+   }
+  }
+ }
+}
