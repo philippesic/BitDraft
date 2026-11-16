@@ -1,9 +1,12 @@
 import os
+import platform
 import shutil
 from pathlib import Path
 
 
 def backing_available() -> int:
+    if platform.system() == "Linux" and "microsoft" not in platform.release().lower():
+        return shutil.disk_usage(Path(__file__).resolve().parent.parent).free
     path = Path("/mnt/c")
     if not os.path.ismount(path):
         raise ValueError(
