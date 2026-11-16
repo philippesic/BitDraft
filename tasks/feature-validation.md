@@ -104,7 +104,7 @@ Owner: Philip. Proposal by the lead agent; no check has run.
 | 0c | Training labels by scenario, thinking setting and context length, counted in conversations, labels and sources, beside each scenario's gap | The release agentic tasks start at 11.5–19.9K tokens; our tool sessions are 1.6–6.8K |
 | 0d | Candidate and Baseline on prompts from the training set | Seen against unseen prompts |
 | 0e | Clipping frequency and spike positions; input ranges per layer split by anchor and slot | Whether rare positions set the clipping bound; whether per-slot rounding is worth a run |
-| 0f | Gains set to 1 and midpoints to 0 in the trained candidate; calibrated settings on an untrained drafter; feed-forward inputs unrounded | Dependence only. These do not rule a feature in or out by themselves |
+| 0f | Gains set to 1 and midpoints to 0 in the trained candidate; feed-forward inputs unrounded | Dependence only. These do not rule a feature in or out by themselves. The calibration check on an untrained drafter moves to group 3, after calibration is built |
 | 0g | How the runtime selects tokens (it takes the top ten and keeps the first) and what the CPU-side 0.47 ms is spent on | Whether a plain top-choice path or less waiting is available, for both drafters |
 
 ### Group 1: training speed (about 1.5 GPU hours plus a small build)
@@ -147,10 +147,15 @@ start.
 2. **If blank is worse:** remove learned row scale, then learned clipping bound, from the
    full recipe; as a pair if neither explains the loss.
 3. **Four runs on the base:** base, calibrated start, gradual precision, both. Gradual
-   precision is written out first: the forward and backward rule on our stored sign
-   values, `S·F(W/S, t)` with `F = tanh(t·x) / tanh(t)`
-   ([Tu et al.](https://arxiv.org/abs/2508.06974)), checked to reproduce the public drafter
-   at its soft start, and ending with a period at hard signs.
+   precision is written out first: the forward and backward rule, `S·F(W/S, t)` with
+   `F = tanh(t·x) / tanh(t)` ([Tu et al.](https://arxiv.org/abs/2508.06974)), on the
+   original weights; as `t` goes to zero `F` is the identity, and the schedule starts from
+   a small positive `t`, not zero. Our stored sign values are rescaled and clamped and have lost the
+   weight sizes, so the run keeps the source weights for the soft phase. The start check
+   is per table under matched inputs: each feed-forward table reproduces the public
+   table's output at the soft start. Inputs stay rounded, so whole-drafter equality with
+   the public drafter is not expected. A build that fails this check is rejected. The run
+   ends with a period at hard signs.
 4. **Second seed** for the best alternative and its control.
 
 Add-ons, one at a time, only where group 0 points to them: training weighted toward real
@@ -192,7 +197,7 @@ public releases are separate comparisons.
 | # | Step | Note |
 | --- | --- | --- |
 | 7a | Integration pilot, about 10 minutes: train, interrupt, restore, continue, export, load and serve with the chosen vocabulary path and depths; exact outputs checked; memory at the longest context | Catches shape, memory, resume, export and dispatch failures |
-| 7b | One long run of the assembled recipe from a fresh start, two to three training hours, on everything we hold including the new batch from 2g | Measured against the continued best state (55.2%) as yardstick. Short runs can mislead: the data continuation gained 0.18 points at 30 minutes and 6.1 at three hours |
+| 7b | One long run of the assembled recipe from a fresh start, two to three training hours, on everything we hold including the new batch from 2g, with labels seen and passes over the data recorded beside training hours | Measured against the continued best state (55.2%) as yardstick. Short runs can mislead: the data continuation gained 0.18 points at 30 minutes and 6.1 at three hours |
 | 7c | The learning curve from 7b | The run's own schedule is frozen beforehand; the curve recommends length, schedule and stopping rule for the release run, with its uncertainty, and does not prove an optimum |
 | 7d | The 7b result on all release scenarios with fresh paired timing, both drafters at their best depth per scenario | The selection, against the definition of "faster" above |
 
@@ -202,6 +207,8 @@ new data batch is worth. The long run shows that the assembled recipe works end 
 and where it lands; it does not attribute the gain between features and data.
 
 If the long run clears every scenario, the owner may promote it instead of training again.
+A proposed release recipe that differs from the 7b run in any way is reported separately
+from 7b's measured margin; its predicted gain is an extrapolation.
 
 ### What the screen must hand over: the candidate specification
 
@@ -251,6 +258,78 @@ Three-valued weights are not reopened for now (owner, 2026-11-16).
   check.
 - The research sweep's gap branches and the forecast above are estimates.
 
+### Scenario measurements
+
+Existing entry points in `benchmarks/` ([benchmarks](../docs/benchmarks.md)); all need
+native controls for this runtime before use, and the sampler qualified for it.
+
+| Scenario | Short-run finalists and long-run readouts | Final timing (step 14) |
+| --- | --- | --- |
+| Greedy, short | 60-request screen | Screen and 120-request panel, reported by input-length band |
+| Greedy, long | 120-request panel (18 requests at 2–8K tokens, 6 at 8–16K) | The same; six longest requests cannot resolve a 3% margin, which is stated |
+| Thinking-on | 12-request slice | 40-request suite |
+| Sampled | 12 requests at two seeds | 40 requests at three seeds |
+| Agentic coding | 12 tasks across six projects | 60-task suite, with task rate, completion and exact trajectory |
+
+Steps 8, 13 and 14 also include the maintained prefix18 and legacy live12 cohorts as
+supplementary evidence, retaining their existing definitions and inspecting their
+individual outcomes.
+
+Depth calibration exists for greedy requests only; sampled and agentic deployment depths
+are found by measuring depth 3 and its neighbours directly, on the slices.
+
+For the owner-policy verdict, count exactly five scenarios: `greedy-short` (the ordinary
+requests of the 120-request panel with fewer than 2,048 input tokens), `greedy-long` (the
+remaining requests of that panel), `thinking-on`, `sampled` and `agentic-coding`. Ordinary
+requests include structured and tool requests. Step 2 builds these five aggregates, each
+with a paired 95% speed interval against Baseline computed from that scenario's request or
+task rows under the maintained source-grouping rules, before step 3 uses them. These five
+alone decide the two permitted exceptions. A scenario whose interval is missing or
+insufficient cannot pass: the result is "not demonstrated". The 60-request screen and
+finer length bands remain supplementary. The existing seven-scenario report, its stricter
+verdict and its escalation rules stay unchanged and are reported separately. The hand-over
+states one of three outcomes: policy passed, policy failed, or not demonstrated.
+
+### Operating rules
+
+- **Source.** Every run executes a frozen copy of committed source. Another session has
+  uncommitted edits in the main checkout (`benchmarks/sandbox.py`, `docs/development.md`);
+  they are left alone and are not part of any executed source unless that session commits
+  them.
+- **GPU and CPU.** One GPU job at a time under the lease in
+  [execution](../docs/execution.md). Writing code runs in parallel; large compiles and the
+  full gate count as CPU-heavy and wait while a timing run holds the GPU.
+- **Preflight.** Every step over about one GPU hour gets a preflight with a pilot of ten
+  minutes or less, the result that would change the decision, and kill criteria. Each
+  feature comparison's preflight records its numerical adoption threshold and its tie rule
+  (a tie keeps the control) before the run. The single long run's one-seed exception is
+  recorded there as the owner's choice.
+- **Close calls.** A speed decision inside its uncertainty gets fresh matched timing
+  repeats, with the arm order reversed, before it is used; intervals over prompts do not
+  measure drift between runs. All repeats are pooled, none is dropped, and a decision
+  still unresolved after them is "not demonstrated".
+- **Two different bars.** A short-run feature is adopted on its own predeclared threshold
+  against its matched control. Passing the owner policy against Baseline is decided only
+  for the assembled recipe.
+- **Guards.** Time figures are not budgets, but every intent still carries finite update,
+  wall and attempt limits, set generously, and there is no automatic retry after
+  initialisation.
+- **Interruptions.** The pause for checkpoint, export, screen and restore is requalified
+  for the assembled recipe before the long run. Scenario slices that do not fit the pause
+  are run after training from saved exports.
+- **Serving changes.** Any change to the runtime or scoring path gets fresh controls for
+  both drafters before its numbers are used.
+- **Serving support first.** A feature or format the runtime cannot serve gets its timing
+  prototype and export path before it is trained, not after.
+- **Discarding.** "Discard" in the data loop means rebuilt values whose token streams and
+  rebuild route are verified and kept. States leave only through the store's retirement
+  route; nothing selected, needed for recovery or raw is removed.
+- **Watching.** Long jobs are watched with the job-watch procedure and closed with its
+  done-check; no periodic health-check automations.
+- **Builds to start first,** because they gate the GPU: per-scenario depth and reports;
+  data replay, batched capture and fused storage; the long-project data source; feature
+  controls with training logs.
+
 ### Decision rules for unattended running
 
 Mechanical rules, so the run does not stop for judgement calls. Where a rule cannot be
@@ -266,7 +345,7 @@ applied, the original setting is kept and the gap is reported.
 | Capture agreement | Exact row, request and token identities and valid labels are required. Any path whose values are not bit-identical also needs a matched training and serving check |
 | Batched writing that diverges | Not counted as a faster equivalent. Fall back to lower concurrency or one at a time |
 | 8-bit storage | Only if 16-bit fused storage leaves a measured storage or loading problem |
-| "A representative new batch" | Quotas fixed before writing: long agentic sessions and thinking-on requests both required, with caps per source and project, chosen by origin and coverage, never by DEV results, and with the confirmation and agentic-project exclusions applied |
+| "A representative new batch" | Its size is recorded straight after its small pilot, from the measured writing speed. Quotas fixed before writing: long agentic sessions and thinking-on requests both required, with caps per source and project, chosen by origin and coverage, never by DEV results, and with the confirmation and agentic-project exclusions applied |
 | No qualified long-project source | Keep the admitted data, mark long agentic coverage unresolved, continue |
 | Add-ons "where group 0 points" | Round-state weighting: a paired gap between round-start and random positions. Position weights: a deficit that grows with slot, on enough reached slots. Second training plane: a fixed removal schedule with hard-sign updates after it. Per-slot rounding: repeatable range differences between slots. Input offset: a repeatable one-sided rounding error. Larger clipping step: logged clipping updates that lag while gradients survive the shared limit. None met means skip |
 | Shortlist | Built from TRAIN or calibration inputs only; adopted on whole-round acceptance and clean end-to-end timing with the same change applied to Baseline |
@@ -284,9 +363,11 @@ applied, the original setting is kept and the gap is reported.
 to product defaults: sign step 0.004; scale, midpoint, gain, clip and norm steps 0.00001;
 row latent scale times 3; about 2% warm-up and cosine decay to zero at the declared end;
 fused AdamW with no weight decay, betas 0.9 and 0.999, epsilon 1e-8; one shared gradient
-norm limit of 1.0; blocks `{"4": 1.0}`; grouping of at most 32 windows with a 3 GiB
-activation budget; position weights `decay`; `frozen_format: baseline-k`;
-`trained_tables` off. Normalising weights still train. This supersedes the older note in
+norm limit of 1.0; blocks `{"4": 1.0}`; grouping `max_windows` 32, which at four slots is
+a ceiling of 128 windows per update before the 3 GiB activation budget applies; position
+weights `decay`; `frozen_format: baseline-k`; `trained_tables` off. The optimizer
+constants and the gradient limit are not intent fields: they are pinned through the
+frozen executed source and recorded in the hand-over. Normalising weights still train. This supersedes the older note in
 the [test list](speedup-test-list.md) that acceptance work continues from the best state.
 
 ### Execution order
@@ -305,9 +386,13 @@ the [test list](speedup-test-list.md) that acceptance work continues from the be
    recomputed values separately, against current serving values; fused storage; the cold
    loop on the longest samples; then write the batch and admit the final TRAIN set.
 6. Time the vocabulary scoring shape and settle the table choice before the feature runs.
-7. Witness calibration and gradual precision; run blank, any removals and the four-run
-   square with matched controls; then only the add-ons that meet their rule.
-8. Second seeds; the panel and the three scenario slices for short finalists.
+7. Witness calibration and gradual precision, including calibration's effect on an
+   untrained drafter; run blank, any removals and the four-run square with matched
+   controls; then only the add-ons that meet their rule.
+8. Second seeds; the panel and the three scenario slices for short finalists. Run the
+   Level 2 scenario report for each short finalist; if it returns `level3_required`,
+   complete the Level 3 comparison before adopting that finalist, applying the owner's
+   stated tolerance policy separately from the unchanged stricter verdict.
 9. Requalify trainer arithmetic and storage on the assembled features; one short matched
    pair, assembled against the same recipe without its simplifications, for the combined
    loss.
