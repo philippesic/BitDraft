@@ -210,6 +210,21 @@ None clearly. In 30-minute runs matched to S4's control:
 
 [Result](results/s4-feature-screen/result.md).
 
+### F030: How fast is the candidate against Baseline on native Linux with the recovered kernel?
+
+About even: the leader runs at 0.96–1.00 of Baseline's request speed on every routine panel
+(broader Q4KM 0.965, 0.956–0.974) with acceptance 4.6–7.9 points lower. Native Linux shortens
+every round by about 11% against WSL for both drafters, mostly CPU-side waiting. Target
+verification is about 80% of a round, so the leader's 22% faster drafter saves only 4% per round,
+and its lower acceptance cancels that. [Result](results/native-linux-references/result.md).
+
+### F031: Does training the attention and fusion tables help in one-hour runs?
+
+A little on the screen, not on DEV. Small-step trained tables gained +1.3 screen acceptance
+points (+0.6, +2.0) over a matched frozen run and large-step +0.9 (+0.1, +1.7); DEV top-1 and
+survival stayed within noise. All arms used `Q4_0` tables, whose speed cost is about the size
+of that gain. [Result](results/trained-attention-tables/result.md).
+
 ## Earlier experiments and durable lessons
 
 ### Packed low-bit paths did not beat ordinary EAGLE in the Turing suite

@@ -204,32 +204,33 @@ fresh matched trials. Filesystem/tool tasks retain whole-episode failure denomin
 
 ### Current protocol
 
-Request policy v3 (`native-greedy-request-v3`, `native-live-v3`) serves with runtime-v7
-(`artifacts/native/runtime-v7`), exact verification, depth 3, `--cache-ram 0`, F16 KV and
-32,768 context. Runtime-v7 is runtime-v6 plus the `stop_token_cache_v1` edit, which keeps a
-stopping token out of the slot cache when it was an accepted draft
-([stop-token cache](../results/stop-token-cache-exactness/result.md)). Target and Baseline
-references exist for both targets on all four cohorts, and S4 is the prior leader on all
-four in the original specifications. Additive candidate/leader specifications under
-`specs/scenario-levels-01/` bind final-state references for export `405e326b…`; the
-original campaign screen and S4 records remain valid. Their shared root is
-`artifacts/benchmarks/runtime-v7-depth3/`:
+Request policy v3 (`native-greedy-request-v3`, `native-live-v3`) serves with runtime-v8
+(`artifacts/native/runtime-v8`) on the native Linux host, exact verification, depth 3,
+`--cache-ram 0`, F16 KV and 32,768 context. Runtime-v8 is runtime-v7 plus
+`kernel_recovered_imma_v1`, the recovered tensor-core one-bit kernel
+([kernel benchmark](#recovered-split-reduction-tensor-core-variant)); runtime-v7 is
+runtime-v6 plus `stop_token_cache_v1`, which keeps a stopping token out of the slot cache
+when it was an accepted draft ([stop-token cache](../results/stop-token-cache-exactness/result.md)).
+Target, Baseline and leader references exist for both targets on the four routine cohorts
+([native Linux references](../results/native-linux-references/result.md)); the leader is
+export `5749a05f…`. Thinking, sampled and agentic references have not been re-recorded on
+this host. The shared root is `artifacts/benchmarks/runtime-v8-linux-01/`:
 
-| Folder | Contents |
+| Path | Contents |
 | --- | --- |
-| `establish/` | Three-arm (target, Baseline, S4) specifications, one per precision and cohort, using the lean workloads in `references/runtime-v6-depth3/lean-*` |
+| `establish/` | Three-arm (target, Baseline, leader) specifications, one per precision and cohort, using the lean workloads in `references/runtime-v6-depth3/lean-*` |
 | `runs/` | The source panels the references authenticate; never delete while referenced |
-| `registrations/` | `record-reference` inputs |
-| `specs/` | Candidate-only specifications with target and Baseline references and S4 as a placeholder candidate (`*-candidate.json`; `q4km-screen-candidate.json` is the campaign screen), `*-leader.json` that add the S4 prior leader, and `suite.json` |
+| `registrations/`, `references.json` | `record-reference` inputs and the registry record of each panel and arm |
+| `specs/` | Candidate-only specifications with target and Baseline references and the leader as a placeholder candidate (`*-candidate.json`; `q4km-screen-candidate.json` is the training screen), `*-leader.json` that add the leader as prior leader, and the build and round-profile specifications |
 | `executed-sources/` | The frozen code that ran the panels |
 
-Swap the `candidate` drafter in a copy of a `specs/` file to check a new state. Records
-of earlier protocols (runtime-v6 or v5, depth 2, policies v1/v2) stay valid for their own
-protocol; runtime-v6's are in `artifacts/benchmarks/references/runtime-v6-depth3/`. A
-comparison refuses every reference whose runtime or protocol differs from its own, so
-those controls cannot serve runtime-v7 runs. Runtime-v6 and v7 give identical outputs and
-draft counts, so their acceptance and speed ratios are comparable; depth-2 or runtime-v5
-ratios are not.
+Swap the `candidate` drafter in a copy of a `specs/` file to check a new state. Records of
+earlier protocols stay valid for their own runtime and host: runtime-v7's WSL records are in
+`artifacts/benchmarks/runtime-v7-depth3/` (including the scenario-level specifications), and
+runtime-v6's in `artifacts/benchmarks/references/runtime-v6-depth3/`. A comparison refuses
+every reference whose runtime, protocol or hardware differs from its own, so WSL controls
+cannot serve Linux runs. Runtime-v6, v7 and v8 give identical outputs and draft counts, so
+their acceptance is comparable; speed ratios across hosts or runtimes are not.
 
 ## Prompts and captures
 
@@ -330,7 +331,7 @@ the decoding gain ([standing](../results/he4broad-final-standing/result.md)). Th
 runtime overhead shared by every DFlash-style drafter: host-side feature copies and larger
 context checkpoints, not drafter compute ([prefill overhead](../results/speculative-prefill-overhead/result.md)).
 Runtime-v6 removes most of it with outputs identical to runtime-v5
-([fixes](../results/drafter-prompt-overhead-fixes/result.md)); panels use its successor runtime-v7.
+([fixes](../results/drafter-prompt-overhead-fixes/result.md)); panels use its successor runtime-v8.
 Servers run with `--cache-ram 0`: the RAM prompt cache saved the previous request's state
 before each new one (about 90 ms per request, outside `server_prompt_seconds`) and nothing
 reused it. Live sessions reuse their prefix from the slot's own cache, which stays on.
@@ -516,8 +517,9 @@ DEV `comparison` (runtime, server, libraries, target, workload, context), a `dia
 `source_edits`; any other difference is refused), the Nsight Systems `profiler` binary, named
 `drafters`, `depths`, `lengths` (bands of `minimum`–`maximum` input tokens with a task count)
 and `output_cap` and `exact` as in calibration. The current inputs are in
-`artifacts/benchmarks/round-profile-specs/baseline-s4-v7.json` and the diagnostic runtime is
-`artifacts/native/runtime-v7-round-profile-ready`.
+`artifacts/benchmarks/runtime-v8-linux-01/specs/profile-v8-leader.json` and the diagnostic
+runtime is `artifacts/native/runtime-v8-round-profile`. Nsight Systems 2025.5.2 on the
+native host is unpacked from the Ubuntu package into `~/.local/opt/nsight-root`.
 
 For a future runtime, copy its clean `native-build` specification, append
 `round_profile_nvtx_v1` to `source_edits`, and run `native-build` into a new diagnostic
@@ -918,7 +920,8 @@ build applies `kernel_recovered_imma_v1`; its signed kernel body is checked agai
 the benchmark source by a CPU test. Clean-clock served checks at depths 1/3/7
 retain identical tokens and proposal/acceptance counts across three DEV requests
 and three trials per runtime. Evidence and the recovered-source adaptation diff
-are retained under `artifacts/benchmarks/imma-recovery` in the main checkout.
+are retained under `artifacts/benchmarks/imma-recovery` in the main checkout. The owner
+adopted the kernel on 2026-11-14; runtime-v8 carries it ([current protocol](#current-protocol)).
 
 The relocation receipt at `artifacts/receipts/kernel-benchmark-relocation-01` records
 file identities, preserved original summaries, and 101 successful kernel replay

@@ -52,7 +52,7 @@ in `artifacts/bank`, and comparisons in `artifacts/benchmarks`. `record-referenc
 to the shared `artifacts/benchmarks/references` registry so observations deduplicate.
 Records authenticate their source runs by absolute path, so those runs never move while
 referenced. The current protocol's runs, establishment and candidate-only specifications
-are in `artifacts/benchmarks/runtime-v7-depth3/` ([current protocol](benchmarks.md#current-protocol)).
+are in `artifacts/benchmarks/runtime-v8-linux-01/` ([current protocol](benchmarks.md#current-protocol)).
 The previous protocol's are in the registry's own `runtime-v6-depth3/` subfolder, where
 they were first written; new runs go directly under `artifacts/benchmarks/`.
 Outputs land in the checkout whose code runs: a worktree writes its own `artifacts/`, and

@@ -337,3 +337,8 @@ On full-size geometry the tables hold 209.7 million values (0.78 GiB per F32 cop
 and Adam moments add 2.34 GiB, and backward keeps up to 1.03 GiB of fusion input at the
 longest sequence (13,470 tokens), so the default grouping is refused. The device check under
 [sampling and clocks](#sampling-and-clocks) applies; matched arms should share their grouping.
+On the native Linux host CUDA sees 15.47 GiB with the display attached. Trained tables at
+{32 windows, 1.75 GiB activations, 15 GiB cap} peak at 14.1 GiB allocated and about 0.19 s
+per update; run them with `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`, because without
+it fragmented reserve exhausted the device below the cap
+([trained tables](../results/trained-attention-tables/result.md)).
