@@ -105,6 +105,19 @@ are the only candidates for a longer look, and each needs a serving kernel befor
 measured. The restart test answered the open learning-curve question: the flattening came from the
 data, not from the step size reaching zero.
 
+Lessons from published one-bit methods, noted by the owner on 2026-11-16 for later, not
+listed tests (BiLLM, PB-LLM, ARB-LLM, OneBit, BitNet b1.58, a4.8 and v2, from memory, not
+re-read). Our recipe already matches their row and column scaling (row scale, midpoint and
+input gains), BitNet a4.8's 4-bit/8-bit input split and the straight-through sign gradient.
+It differs in two values instead of three, one-bit feed-forward only, thousands of prompts
+instead of billions of tokens, and no input rotation. Candidate tests:
+1. An online Hadamard rotation before 4-bit input rounding (BitNet v2). It targets the
+   largest measured loss at initialization, input rounding; serving needs a small kernel.
+2. Higher precision for only the most important weights (BiLLM, PB-LLM) instead of a full
+   second plane, aiming at most of the plane's +3.3 survival points at about 1.1 bits.
+3. Three values instead of two, which the literature and our +4.2 survival agree on.
+4. Much more training data, consistent with the data-limited learning curve.
+
 Earlier, untrained evidence is from conversions of the older EAGLE drafter in September
 ([result](../results/scale-and-head-recovery/result.md)).
 
