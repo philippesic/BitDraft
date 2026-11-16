@@ -128,6 +128,9 @@ Retained in `artifacts/training/recipe-test-arm-d-01/` of the main checkout (5.4
 
 - Arm D's final state `53a35c58…` (7,800 updates, 5.1 GB) and its GGUF export `6a07cd5f…`
   (0.54 GB), each in a store folder with its manifest and `latest.json`.
+  Note, 2026-11-16: the state was retired on the owner's instruction through the store's
+  retirement route; the export remains. Summary in
+  `artifacts/receipts/training-state-retirement-20261116/`.
 - Arm D's intent, sealed intent, journal and report, and its frozen executed source.
 - All four arms' journals, intents and launcher logs, and all five screen outputs with
   specifications.

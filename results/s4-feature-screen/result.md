@@ -172,6 +172,13 @@ The final states of the three-valued and second-plane arms are kept as starting 
 kernels. The rest are kept because the disk has room (255 GB free) and they are the only trained
 examples of each format.
 
+Note, 2026-11-16: on the owner's instruction every final state of this screen was retired
+through the store's retirement route (12 states, about 57 GiB), including the three-valued
+and second-plane states. Exact resume from them is no longer available; retraining an arm
+takes about 35 minutes. Exports, journals, screens and records are unchanged. Receipts sit
+beside each state as `retirement-<state>.json`, with a summary in
+`artifacts/receipts/training-state-retirement-20261116/`.
+
 Removed earlier (logged in `logs/cleanup.log`), all created by this screen:
 - update-0 states, regenerable from the initialization in about a minute;
 - the two parity runs' states and exports;

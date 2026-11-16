@@ -64,11 +64,11 @@ to gate and up, 8-bit to down). The November 4 campaign's heldout acceptance was
 8-bit gate/up inputs, 30.0% with 4-bit, 7.3% with 2-bit and 14.5% with 1-bit
 ([result](../results/activation-family-comparison/result.md)); fewer bits buy no time while
 the kernel computes in 8-bit, and feed-forward is about 0.14 ms of a round with the
-recovered kernel. One untested lead, not a listed test: the compiler for this card accepts
+recovered kernel. One lead was closed on 2026-11-16: the compiler for this card accepts
 a 4-bit integer tensor-core instruction that covers 64 inputs where the 8-bit one covers 32
-(`mma.sync.aligned.m16n8k64` with `.s4`, checked by assembling a probe; speed unmeasured).
-Gate and up inputs already fit it without retraining. It matters most if the vocabulary
-table becomes one-bit.
+(`mma.sync.aligned.m16n8k64` with `.s4`), but the machine code for this card's architecture
+(sm_120) runs it as two 8-bit instructions, and the one-bit instruction as eight. Both are
+native only on RTX 30 and 40 cards, so neither can beat the adopted kernel here.
 
 Generic, helps Baseline equally, not counted toward the gap: runtime CPU overhead (the GPU
 idles about 3 ms per round), merging the small attention and handoff kernels, scoring and

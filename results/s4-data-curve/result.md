@@ -172,6 +172,10 @@ Retained in `artifacts/training/s4-data-curve-01/` of the main checkout (22 GB):
   CUDA and was not exercised.
 - The 2.5-hour provisional leader's export `5b01d776…` and its campaign reference; its state
   is retired.
+- Note, 2026-11-16: on the owner's instruction the 1-hour, 2-hour and 3-hour states
+  (`45203729…`, `5c372c1a…`, `98bc20f8…`) were retired through the store's retirement
+  route. Their exports remain; branching from them is no longer possible. The final state
+  `769e184e…` is kept. Summary in `artifacts/receipts/training-state-retirement-20261116/`.
 - All journals, intents, specifications, screens, panels, logs, the refused attempt and the
   campaign reference registry; the frozen source; the mixture folder in
   `artifacts/datasets/s4-data-curve-mixture-01/` (selection, subset index and intent, mixture).

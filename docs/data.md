@@ -50,6 +50,8 @@ The [TRAIN expansion](../results/train-bank-expansion/result.md) adds 2,633 reco
 three capture shards under `artifacts/datasets/train-expansion-01/` (874 session records
 and 1,759 single-turn prompts). Its `mixture.json` combines them with the 6K corpus as a
 `corpus-mixture-v1` manifest; bind it from an intent's `corpus` with `corpus_format`.
+That mixture, 8,633 records, is the full TRAIN set. The 6K corpus alone is a subset: use it
+only to match an earlier run.
 
 The prompt-bank bodies and role/ID selections remain under `bank/v8`. Portable curation
 metadata is under `bank/v8-relocated-01`; its relocation receipt changes only the old
