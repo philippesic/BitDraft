@@ -42,10 +42,14 @@ own input/dependency verification; the archive does not establish GPU or native 
 The initial November 10 archive retains interim records. Final committed history is
 independently preserved under `/home/philip/BitDraft/artifacts/archive/legacy-final-20261111/`
 with its own `preservation.json` and verified bare reader. Final working reports and
-the original run/data now live under
+the original run records and retained final state now live under
 `/home/philip/BitDraft/artifacts/datasets/retained-he4broad-original/`; its
 `closeout-reports-preservation.json` verifies the copied reports. This includes the
 220,095-update, 15,647-capture run, distinct from the November 8 forty-sequence namesake.
+The deprecated corpus's feature tensors and obsolete GGUF exports were subsequently
+retired for the native Linux migration; [storage](storage.md) records the surviving
+metadata, final state/export and exact retirement receipts. The original corpus can
+no longer be replayed for training.
 
 Source history is published to [BitDraft](https://github.com/philippesic/BitDraft).
 The ignored bundles and large artifacts remain local; a Git push does not back them up. The archive lives under ignored `artifacts/archive`; include it when moving the whole
@@ -80,7 +84,7 @@ full optimization stream; it cannot support new per-example or uncertainty claim
 text matches are diagnostic evidence, not newly classified scientific outcomes.
 
 Current model files, reusable benchmark controls and their required request/source
-closure, original 220095, the original teacher corpus and frozen 6K FP16 corpus live under
+closure, original 220095, original corpus metadata and frozen 6K FP16 corpus live under
 `artifacts/` inside the checkout. Historical absolute locators can be resolved through the
 closeout relocation receipts; retained originals are not silently rewritten. The retained
 records keep their original bytes and names. The maintained readers translate old

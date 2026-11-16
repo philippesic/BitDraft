@@ -13,7 +13,7 @@ Shared host tools, drivers, global agent policy and the machine GPU lease are ho
 
 | Location | Contents |
 | --- | --- |
-| `artifacts/datasets/` | Original teacher corpus, supplemental captures, the complete 6K FP16 corpus and the TRAIN expansion |
+| `artifacts/datasets/` | Original corpus metadata and final state, supplemental captures, the complete 6K FP16 corpus and the TRAIN expansion |
 | `artifacts/models/` | Target/drafter inputs, vocabulary and reusable model assets |
 | `artifacts/training/` | Training specifications, campaign runs and health records |
 | `artifacts/benchmarks/` | Comparison definitions, workloads, results and saved reference registry |
@@ -28,9 +28,15 @@ Shared host tools, drivers, global agent policy and the machine GPU lease are ho
 The complete new corpus is `artifacts/datasets/train-bank-v8-fp16-01/corpus.json`.
 Its reused 2K component lives at `artifacts/datasets/he4broad-supplement-01` and its remaining
 Linux/Windows-produced records at `linux-captures/` and `windows-captures/` under the full
-corpus folder. All three are physical project-local storage. The original 15,647-record
-corpus is `artifacts/datasets/retained-he4broad-original`; its original final 220095 archive
-and `artifacts/migration/import-01/states/` parent remain distinct from probe descendants.
+corpus folder. All three are physical project-local storage. The deprecated original
+15,647-record corpus's FP32 captures and obsolete GGUF exports are retired for the native
+Linux migration. Its metadata, original final 220095 archive and final GGUF remain under
+`artifacts/datasets/retained-he4broad-original`; the `artifacts/migration/import-01/states/`
+parent remains distinct from probe descendants. Exact training replay of the retired
+corpus is unavailable. Per-file retirement plans and journals are under
+`artifacts/receipts/native-linux-space-20261115/`. Current FP16 corpora are unaffected.
+Original corpus logs are losslessly preserved in that receipt folder's
+`original-corpus-logs.tar.gz`; members are relative to the old corpus folder.
 The TRAIN expansion lives in one folder, `artifacts/datasets/train-expansion-01/`: read-only
 public `sources/`, runtime-v6 `native-helpers/` with the span-capable capture helper,
 `specs/`, session transcripts, the selected expansion bank, capture shards, the mixture
@@ -108,3 +114,9 @@ relative paths in the main checkout. Its old
 the maintained reader, preserving immutable records and their hashes. The receipt
 under `artifacts/receipts/kernel-benchmark-relocation-01` records per-file copies,
 SHA-256 verification, derived-summary updates and removal of verified duplicates.
+
+The native Linux migration also retires generated arrays from `benchmarks/w1-kernels/`
+and `benchmarks/rsr-kernels/` under `artifacts/`. Measurements, recipes and executed source
+remain; rerunning those probes requires regenerating their arrays. The migration
+receipts above retain verified source/evidence archives from retired host environments
+and scratch checkouts. Include those receipts when transferring the checkout.
