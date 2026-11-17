@@ -14,9 +14,11 @@ from w1a1_eagle.config import native_environment
 from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
 from w1a1_eagle.data import Artifact
 from w1a1_eagle.device import cuda_identity, device_lease
+from w1a1_eagle.numerical.gguf_readback import Reader
 from w1a1_eagle.records import artifact, canonical, read
 
 ROW_BYTES = {12: 144, 14: 210}
+READ_CHUNK = 32 * 1024 * 1024
 FORMATS = {12: "Q4_K", 14: "Q6_K"}
 EXPORTED = (
     "hidden.f32",
@@ -89,6 +91,9 @@ class Table:
     def row_bytes(self) -> int:
         return self.width // 256 * ROW_BYTES[self.kind]
 
+    def shortlist(self, chosen: Variant) -> int:
+        return min(chosen.shortlist, len(self.frequent))
+
 
 def load_table(value: Record, root: Path) -> Table:
     if set(value) != {"name", "scoring"}:
@@ -138,7 +143,7 @@ def weight_bytes(table: Table, chosen: Variant) -> int:
     if chosen.kind in {"topk", "argmax"}:
         return table.rows * table.row_bytes
     if chosen.kind == "shortlist":
-        return chosen.shortlist * table.row_bytes
+        return table.shortlist(chosen) * table.row_bytes
     if chosen.kind == "one-bit":
         return table.rows * (table.width // 8 + 4) + rescoring
     return table.rows * table.rank * 2 + table.rank * table.width * 2 + rescoring
@@ -149,23 +154,38 @@ def multiply_adds(table: Table, chosen: Variant) -> int:
     if chosen.kind in {"topk", "argmax"}:
         return table.rows * table.width
     if chosen.kind == "shortlist":
-        return chosen.shortlist * table.width
+        return table.shortlist(chosen) * table.width
     if chosen.kind == "one-bit":
         return table.rows * table.width + rescoring
     return table.width * table.rank + table.rank * table.rows + rescoring
 
 
+def table_payload(weights: Weights, name: str) -> bytes:
+    tensor = weights.tensors[name]
+    if tensor.kind not in ROW_BYTES or not tensor.size:
+        raise ValueError("unsupported vocabulary table type: " + name)
+    parts: list[bytes] = []
+    with weights.path.open("rb") as stream:
+        stream.seek(weights.beginning + tensor.offset)
+        reader = Reader(stream, weights.path.stat().st_size)
+        remaining = tensor.size
+        while remaining:
+            part = reader.read(min(remaining, READ_CHUNK))
+            parts.append(part)
+            remaining -= len(part)
+    return b"".join(parts)
+
+
 def prepare_table(table: Table, variants: list[Variant], sets: int, output: Path) -> Path:
     directory = output / table.name
     owner = Store(directory)
-    weights = Weights(table.model.path)
-    raw = weights.tensor(table.tensor, set(ROW_BYTES))
+    raw = table_payload(Weights(table.model.path), table.tensor)
     owner.atomic(directory / "table.bin", raw)
     hidden = table.files["hidden.f32"].path.read_bytes()
     owner.atomic(directory / "hidden.f32", hidden[: sets * table.depth * table.width * 4])
     for name in COPIED:
         owner.atomic(directory / name, table.files[name].path.read_bytes())
-    for size in sorted({item.shortlist for item in variants if item.kind == "shortlist"}):
+    for size in sorted({table.shortlist(item) for item in variants if item.kind == "shortlist"}):
         identifiers = table.frequent[:size]
         owner.atomic(
             directory / f"shortlist-{size}.bin",
@@ -202,7 +222,7 @@ def command(
         str(table.depth),
         str(sets),
         str(chosen.keep),
-        str(chosen.shortlist),
+        str(table.shortlist(chosen)),
         str(chosen.rank),
         *(str(value) for value in timing),
         "v1",
@@ -350,8 +370,8 @@ def benchmark_vocabulary(specification: Path, output: Path) -> Record:
         for item in variants:
             if item.kind == "low-rank" and item.rank != table.rank:
                 raise ValueError("low-rank variant rank differs from the exported factor")
-            if item.keep > table.rows or item.shortlist > len(table.frequent):
-                raise ValueError("variant size exceeds the table or the exported ranking")
+            if item.keep > table.rows:
+                raise ValueError("variant size exceeds the table")
     if output.exists():
         raise ValueError("vocabulary measurement output must be new")
     owner = Store(output)
@@ -405,6 +425,7 @@ def benchmark_vocabulary(specification: Path, output: Path) -> Record:
                     "table_format": FORMATS[table.kind],
                     "variant": item.name,
                     "slots": table.depth,
+                    "shortlist_rows": table.shortlist(item) if item.kind == "shortlist" else None,
                     "sets": sets,
                     "mode": mode,
                     "stable_outputs": stable,

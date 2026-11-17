@@ -104,7 +104,12 @@ def test_variant_names_and_costs(tmp_path: Path) -> None:
 @pytest.mark.parametrize("kind", [12, 14])
 def test_prepared_inputs_gather_rows_and_keep_exports(tmp_path: Path, kind: int) -> None:
     table = load_table({"name": "baseline", "scoring": reference(export(tmp_path, kind))}, tmp_path)
-    variants = [variant("argmax"), variant("shortlist-2"), variant("one-bit-2")]
+    variants = [
+        variant("argmax"),
+        variant("shortlist-2"),
+        variant("shortlist-9"),
+        variant("one-bit-2"),
+    ]
     directory = prepare_table(table, variants, 1, tmp_path / "out")
     raw = (directory / "table.bin").read_bytes()
     row = table.row_bytes
@@ -113,6 +118,12 @@ def test_prepared_inputs_gather_rows_and_keep_exports(tmp_path: Path, kind: int)
         row : 2 * row
     ]
     assert integers((directory / "shortlist-2.i32").read_bytes()) == (4, 1)
+    assert integers((directory / "shortlist-4.i32").read_bytes()) == (4, 1, 5, 0)
+    assert not (directory / "shortlist-9.bin").exists()
+    assert (
+        command(Path("/x"), directory, table, variant("shortlist-9"), tmp_path, 1, (1, 1, 3))[11]
+        == "4"
+    )
     assert (directory / "hidden.f32").stat().st_size == DEPTH * WIDTH * 4
     for name in ("signs.u32", "scales.f32", "low-rank-left.f16", "low-rank-right.f16"):
         assert (directory / name).read_bytes() == (tmp_path / name).read_bytes()
@@ -184,3 +195,18 @@ def test_candidate_sets_and_validation(tmp_path: Path) -> None:
     ):
         with pytest.raises(ValueError):
             validate(record({**raw, **change}))
+
+
+def test_table_payload_reads_beyond_one_chunk(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from benchmarks import vocabulary_benchmark
+    from benchmarks.kernel_benchmark import Weights
+
+    table = load_table({"name": "t", "scoring": reference(export(tmp_path, 14))}, tmp_path)
+    whole = vocabulary_benchmark.table_payload(Weights(table.model.path), "token_embd.weight")
+    monkeypatch.setattr(vocabulary_benchmark, "READ_CHUNK", 100)
+    assert (
+        vocabulary_benchmark.table_payload(Weights(table.model.path), "token_embd.weight") == whole
+    )
+    assert whole == Weights(table.model.path).tensor("token_embd.weight", {14})

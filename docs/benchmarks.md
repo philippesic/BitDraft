@@ -1166,7 +1166,7 @@ table), `warmup`, `repeats`, `trials` and `bandwidth_gb_s`, with the conventions
 | --- | --- |
 | `topk` | Full Q4_K/Q6_K scoring and `top_k(10)`, the current backend sampler's selection |
 | `argmax` | Full scoring and `argmax`; required, it is the reference |
-| `shortlist-N` | Scoring of a contiguous copy of the N most frequent rows and `argmax` |
+| `shortlist-N` | Scoring of a contiguous copy of the N most frequent rows (at most the exported ranking's length) and `argmax` |
 | `one-bit-K` | `w1ax_mul_mat` over packed signs and row scales, `top_k(K)`, exact rescoring and `argmax` |
 | `low-rank-r-K` | Two F16 products, `top_k(K)`, exact rescoring and `argmax` |
 
