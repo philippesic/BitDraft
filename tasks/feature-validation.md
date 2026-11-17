@@ -93,10 +93,11 @@ Progress:
   short qualifications of builds A and C, long-session pilot, gradual, calibrated+gradual.
   Group 3 arms run on the control's exact source; trainer changes are requalified in step 9.
 
-Needs the owner (not blocking for hours): under the maintained grouping rule `greedy-long` can
-never get an interval on the 120-request panel (one conversation and one structured request
-among its 24 long requests). Build A adds a supplementary interval that pools strata with fewer
-than two source groups, off by default. Recommendation: let it count, stated in the report.
+Decided by the owner 2026-11-16 19:15: `greedy-long` is judged on the supplementary interval
+that pools category strata with fewer than two source groups (the maintained rule cannot give it
+an interval: one conversation and one structured request among its 24 long requests). Only for
+`greedy-long`; the other four scenarios keep the maintained rule, and the maintained
+`greedy-long` result ("not demonstrated") is still reported beside it.
 
 ### Decisions already made
 
