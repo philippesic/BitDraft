@@ -129,10 +129,14 @@ Progress:
   (40 TRAIN records, 26,736 labels; at 512 values differ); batched writing at 8/16/32 slots is
   2.2–2.5× faster but only 8 of 32 answers match one-at-a-time writing, so new data is written one
   request at a time. Build A's per-arm depth qualified on the GPU (`OVERALL PASS`).
-- A second scripting error of mine (an undefined variable after reordering) stopped the queue at
-  23:55; `scripts/queue3.sh` now runs: gradual, fixed diagnostics, screen capture and rounds, seen
-  prompts, calibrated probe and arm, calibrated+gradual, build E's matched run, long-session
-  pilot.
+- GPU queue now (each a separate script that waits for the previous one, all under a 24 GB RAM
+  cap): `queue3` (build E matched run `s4-c0-fast`, long-session pilot) → `queue4b` (second seeds
+  of control and calibrated, clip step on calibrated, round-state map and run on calibrated) →
+  `queue6` (full TRAIN fused conversion, then the calibrated recipe on fused storage).
+- Builds running: V (group 4 vocabulary scoring measurements: shortlist miss rates, scoring-shape
+  timing, 2/1-bit description; 4c is recorded as no speed case because the target's table is
+  Q6_K and larger to read than ours, about +0.17 ms per round) and H (group 5 public drafters:
+  origins of a Qwen3.5-4B DSpark and the DFlash 2 checkpoint, screen specifications).
 
 Decided by the owner 2026-11-16 19:15: `greedy-long` is judged on the supplementary interval
 that pools category strata with fewer than two source groups (the maintained rule cannot give it
