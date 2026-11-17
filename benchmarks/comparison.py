@@ -159,7 +159,9 @@ class Comparison:
             raise ValueError("unsupported workload schema")
         tasks = tuple(record(v) for v in sequence(panel["tasks"]))
         role, tier = string(raw["role"]), string(raw["tier"])
-        if role not in {"dev", "confirmation"} or tier not in {
+        if role == "train" and (tier != "screen" or references or calibration is not None):
+            raise ValueError("TRAIN prompts run only as a fresh screen-shaped comparison")
+        if role not in {"dev", "confirmation", "train"} or tier not in {
             "pilot",
             "short",
             "full",

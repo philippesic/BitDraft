@@ -35,6 +35,7 @@ explicit paths and the shared saved-reference registry.
 | `calibrate-depth` | Serving draft depth for one target, drafter, runtime and GPU |
 | `build-kernel-benchmark`, `capture-kernel-activations`, `benchmark-kernels` | Exact kernel comparisons on supplied DEV activations |
 | `profile-rounds`, `round-profile-report` | Where a drafter's time goes inside one drafting round |
+| `prepare-round-inputs` | Screen DEV capture specification and the seen-prompt TRAIN screen for [round diagnostics](#round-diagnostics) |
 
 Execution commands freeze source and use [the numerical environment](development.md)
 where needed. Preserve inputs, logs, ownership and failures. Comparison outputs must be
@@ -355,6 +356,9 @@ Training CPU preflight is in [execution](execution.md). Neither grants authority
 arms, workload, repeats/warmups, context/depth, role and tier. References use `path`,
 `sha256`, `bytes`, relative to the specification or absolute. Fresh control runs start with `target`; cached runs execute speculative arms only.
 Keep external baselines and candidates distinct. Server/libs must match their build.
+Role `train` is accepted only for a fresh `screen` tier without saved references or
+calibration: the seen-prompt check of [round diagnostics](#round-diagnostics). Every
+existing `dev` and `confirmation` specification keeps its meaning.
 
 Greedy arms must match target token IDs, text and stopping; actual returned generation
 settings are checked. Native servers set `GGML_CUDA_DECODE_CONSISTENT=32` so verification
@@ -733,6 +737,105 @@ verification from the handoff and sampling.
 The [Baseline/S4 WSL2 result](../results/round-profile-baseline-s4/result.md) records
 the runtime-v6 component split and trace retirement. Its retained summaries cannot
 regenerate the raw trace analysis.
+
+## Round diagnostics
+
+Where the acceptance deficit sits, for a candidate state and for Baseline. Two commands:
+
+```sh
+uv run --locked --no-sync --offline python -m benchmarks prepare-round-inputs SPEC [OUTPUT]
+/absolute/numerical/bin/python -B -m w1a1_eagle.numerical.round_diagnostics SPEC OUTPUT
+```
+
+`prepare-round-inputs` (schema `round-inputs-v1`, CPU only) binds the DEV training-screen
+comparison `screen`, the DEV bank `dev_bank`, a native capture specification `capture`
+used as the template for helpers, libraries and target, the TRAIN bank `train_bank`, the
+TRAIN corpus `train_corpus` whose records count as seen, identity `exclusions`, a fresh
+three-arm `establish` screen specification and a `seed`. It writes:
+
+- `screen-capture.json` and `screen-capture-bank.jsonl`: a `capture` specification for the
+  60 screen requests, role DEV, FP16, `up-to-15`, each request's DEV bank row with its
+  128-token screen cap. Every row must match the screen task's messages and token identity.
+- `seen-workload.json` and `seen-compare.json`: 60 TRAIN prompts and a `compare`
+  specification for the establish arms at depth 3, role `train`, tier `screen`. Selection
+  takes bank rows that are records of `train_corpus`, carry no harness prefix and are
+  outside the exclusions; one row per source group, in seeded SHA256 order within each
+  category and input band. Category and input-band counts equal the screen's exactly; the
+  joint cells follow the screen where the bank has them and are otherwise moved by a
+  maximum-flow repair (the 6K bank has no code or structured requests above 2,047 tokens).
+- `result.json`: the selection, its cells and the rule.
+
+`round_diagnostics` (schema `round-diagnostics-v1`) takes `memory_bytes` and optional
+sections; it runs on CUDA when a model section is present and CUDA is available, under the
+GPU lease, otherwise on CPU. The output is new and inside `artifacts/`; it holds the
+specification, `report.json` (code identity, device, GPU, torch version and every section)
+and `report.txt`, one line per measurement.
+
+| Section | Contents |
+| --- | --- |
+| `candidate` | `source`, `vocabulary`, optional `initialization` and `frozen_baseline`, `state`, `mode` (`branch` as the frozen-table switch made export `5749a05f…`, or `continue`) and optional `arm` naming it in native results |
+| `baseline` | `drafter` (Baseline GGUF) and `target` (the target GGUF whose token table Baseline uses) |
+| `rounds` | DEV capture `corpus`, `exclusions`, `depth` 3, shortlist `top` 16, anchors per batch `chunk`, `seed`, bootstrap `resamples`, optional native `result.json` as `native` |
+| `windows` | `training-diagnostics-v1` with its groups (120 + 20 + 20 fixed DEV windows) |
+| `ranges` | `true` adds clipping and input-range statistics on the unchanged candidate |
+| `ablations` | Any of `unchanged`, `gains-one`, `midpoints-zero`, `gains-one-midpoints-zero`, `inputs-unrounded`, `inputs-unrounded-unclipped` |
+| `exports` | Any of `unchanged`, `gains-one`, `midpoints-zero`, `gains-one-midpoints-zero`, written through the normal export path |
+| `labels` | `mixture`: the TRAIN `corpus-mixture-v1` manifest |
+
+**Rounds.** Under greedy exact verification the served text is the target's greedy text,
+so each drafter's rounds follow from a full-request capture. The first round anchors at
+the first generated token; a round at position p proposes slots 1–3 of a four-slot block,
+accepts the k leading proposals equal to the target's tokens and the next round anchors at
+p + k + 1. Near the cap or end-of-generation a round proposes only the remaining tokens.
+Each request's proposals come from one `HE4.group_hidden` pass over its generated
+positions. The report gives, for round starts and for every generated position of the same
+requests: the first wrong slot (`none` when all three are accepted, `ended` for a shortened
+final round), first-choice and top-16 recall per slot, prefix survival and accepted
+tokens per round, overall, by category and by input band, and per request. The paired
+section gives round starts minus every position, with a 95% bootstrap interval over source
+groups. Every position is the exhaustive form of random positions of the same
+trajectories. With `native`, simulated and native accepted counts are compared per request.
+Session captures follow their recorded history, so their rounds are approximate.
+
+**Baseline model.** An evaluation-only model with HE4's graph: every attention, fusion and
+feed-forward table dequantized from Baseline's Q4_K/Q6_K tensors and applied as a plain
+linear map without input rounding; norms from the same file. Baseline ships no token or
+output table. The runtime takes both from the target (`src/models/dflash.cpp` in
+`artifacts/native/runtime-v8/source`: the decoder uses the target's `tok_embd` for input
+rows and the target's `output` for scoring). The Qwen3.5-4B target has no `output.weight`,
+so its `output` is the duplicated `token_embd.weight` (Q6_K, 248,320 rows); the model uses
+that one dequantized table for both, and refuses a target with a separate output table.
+The native CUDA kernels quantize activations to Q8_1 for quantized matrix products; this
+model does not, so small numerical differences are expected.
+
+**Ranges and ablations.** On the fixed windows at four slots, per layer and per quantized
+input (the shared gate/up input and the down input): bound, clipped fraction, maximum and
+quantiles of |gain · x| relative to the bound for each slot (anchor, mask 1–3), clipped
+values by anchor context band, the shares of clipped values in the anchor slot, the ten
+most-clipped channels and the top 1% of rows, the ten largest spikes with their window and
+channel, and per-slot quantiles for two halves of the requests. `slot_order_repeats` says
+whether the slots rank the same by 99.9th percentile in both halves. Ablations report
+positions 1–3 top-1 and prefix survival through 3, the definitions of the training
+diagnostics, separately for the 120 base windows and each group. The windows are checked
+for DEV role and protected identities here; their TRAIN separation was checked when they
+were bound to training. Ablations substitute wrapper
+modules and restore the original projections; the loaded state is not changed. Exports
+restore the state again for each variant in branch mode, set the gains to one or the
+midpoints to zero, record the variant in the recipe identity and verify the file like any
+export. The unchanged variant keeps the branch recipe identity of the frozen-table switch,
+so exporting the yardstick that way checks the restore path against export `5749a05f…`.
+
+**Labels.** Metadata only, no feature arrays: conversations, supervision windows and
+source groups of every TRAIN record, by scenario, category, thinking setting and context
+band (<512, 512–2K, 2K–8K, 8K–16K, >16K). Scenario is `agentic-sessions` for session
+records, `thinking-on` when the prompt leaves a thinking block open, `long-documents` for
+documents of at least 2,048 prompt tokens, otherwise `ordinary-<category>`. Conversations
+count in the band of their longest supervised context and labels in their anchor's band.
+
+Limits: the diagnostics are teacher-forced and simulated; acceptance is decided natively.
+A Baseline model check on CPU covers tensor loading only; agreement with native rounds
+needs the GPU check: the simulated round-start acceptance of the screen captures against
+the screen's native per-request accepted counts for Baseline and the candidate.
 
 ## Live application and instructions
 

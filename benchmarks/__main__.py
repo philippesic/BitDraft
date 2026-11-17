@@ -68,6 +68,7 @@ def main() -> int:
         "replay-tokens",
         "replay-agreement",
         "write-batched",
+        "prepare-round-inputs",
     ):
         comparison = commands.add_parser(name)
         comparison.add_argument("input", type=Path)
@@ -184,6 +185,10 @@ def main() -> int:
             from benchmarks.owner_policy import report as report_policy
 
             result = report_policy(args.input, args.output)
+        elif args.command == "prepare-round-inputs":
+            from benchmarks.round_inputs import prepare as prepare_round_inputs
+
+            result = prepare_round_inputs(args.input, args.output)
         elif args.command == "calibrate-depth":
             from benchmarks.calibration import calibrate
 

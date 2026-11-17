@@ -31,6 +31,9 @@ slots are hidden). The recipe chooses the training block sizes; the default is s
 slots for every update ([execution](execution.md#block-sizes-and-position-weights)). The
 export keeps a block size of sixteen, the most a server may request.
 
+An evaluation-only Baseline model reuses this graph with plain feed-forward tables
+([round diagnostics](benchmarks.md#round-diagnostics)); training never uses it.
+
 The CPU implementation simulates quantized arithmetic with floating-point tensors.
 It does not demonstrate binary hardware execution or native inference speed.
 
