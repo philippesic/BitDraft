@@ -200,11 +200,18 @@ Progress:
   The first selection was refused because its worst-case forecast (every thinking-on answer at
   its 2,048-token cap) exceeded the 120 GB ceiling; rerun at 126 GB with unchanged quotas:
   138 sessions (58,634 span positions) and 246 thinking-on requests, worst case 124.1 GB.
-- GPU now: batch capture (`queue9b`, from 06:56, about 70 minutes) → `step11.sh` (final mixture
-  `train-final-01`, admission, integration pilot on the long-run recipe: 400 updates against
-  200 + resume to 400, losses and final export compared, export screened) → step 12 long run
-  (`step12/preflight.md`: calibrated start, reference arithmetic, eight-tap storage, about 3
-  training hours).
+- New batch captured (384 records, 112 GB, 70 minutes); final TRAIN mixture `train-final-01`
+  (`f756aea5…`, six components, 9,017 sequences) admitted.
+- Step 11 passed (after two refusals before any training: real disk shortage, then a declared
+  capacity too low in my generator; the unqualified fused corpus, 55.8 GB, was retired through
+  `tools.retention` with receipt `retirement/fused-train-receipt.json`): 400 uninterrupted
+  updates against 200 + resume to 400 gave equal losses before and after the interruption and a
+  byte-identical final export (`73b5b604…`), which served on the screen with exact outputs
+  (48.75%); peak 13.5 GB allocated, 14.2 GB reserved; 0.266 s per update on the final mixture.
+- Step 12 running since 08:32 (`arms/s12-long/`, `step12/preflight.md`): 42,000 updates
+  (about 3 training hours, about 0.67 passes of groups), checkpoint and readout every 7,000.
+  Step 13 (every export on the screen, the 120-request panel and the three slices) starts
+  automatically when it ends; step 14 follows after the checkpoint and depth choice.
 
 Decided by the owner 2026-11-16 19:15: `greedy-long` is judged on the supplementary interval
 that pools category strata with fewer than two source groups (the maintained rule cannot give it
