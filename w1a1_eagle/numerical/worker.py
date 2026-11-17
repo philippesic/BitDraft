@@ -19,6 +19,7 @@ from w1a1_eagle.model import HE4, DeferredChecks, Layer, Projection, bound_laten
 from w1a1_eagle.numerical.accounting import Accounting, Telemetry
 from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.records import canonical
+from w1a1_eagle.round_states import RoundStateWeighting
 from w1a1_eagle.training import (
     MAXIMUM_SLOTS,
     SOFT_FAMILY,
@@ -63,15 +64,25 @@ class Samples(Protocol):
     def sample(self, cursor: int) -> tuple[Capture, tuple[Supervision, ...]]: ...
 
 
-def label_weights(lengths: tuple[int, ...], positions: tuple[float, ...] | None = None) -> Tensor:
+def label_weights(
+    lengths: tuple[int, ...],
+    positions: tuple[float, ...] | None = None,
+    shares: tuple[float, ...] | None = None,
+) -> Tensor:
+    if shares is not None and len(shares) != len(lengths):
+        raise ValueError("one window share per window required")
     parts = []
-    for length in lengths:
+    for index, length in enumerate(lengths):
         weights = (
             torch.exp(-torch.arange(length) / 7)
             if positions is None
             else torch.tensor(positions[:length], dtype=torch.float32)
         )
-        parts.append(weights / weights.sum() / len(lengths))
+        parts.append(
+            weights / weights.sum() / len(lengths)
+            if shares is None
+            else weights / weights.sum() * shares[index]
+        )
     return torch.cat(parts)
 
 
@@ -107,6 +118,7 @@ class TensorWorker:
         precision: GradualPrecision | None = None,
         telemetry: bool = False,
         arithmetic: Arithmetic = "reference",
+        round_states: RoundStateWeighting | None = None,
     ) -> None:
         if not identity or model.geometry.slots != MAXIMUM_SLOTS:
             raise ValueError("explicit HE4 recipe and sixteen slots required")
@@ -203,6 +215,8 @@ class TensorWorker:
         self.frozen_transition: Record | None = None
         self.telemetry = Telemetry(model) if telemetry else None
         self.fusion_sha256: str | None = None
+        self.round_states = round_states
+        self.round_state_counts = [0, 0]
 
     def verify_features(self) -> None:
         for group in self.features.untrained:
@@ -389,6 +403,10 @@ class TensorWorker:
             try:
                 loss = self.update(capture, windows, slots)
                 complete = True
+                if self.round_states is not None:
+                    flags = self.round_states.states.flags(windows)
+                    self.round_state_counts[0] += len(flags)
+                    self.round_state_counts[1] += sum(flags)
                 labels = sum(min(len(window.labels), slots - 1) for window in windows)
                 self.accounting.dataset_labels += labels
                 self.accounting.observed_labels += labels
@@ -422,6 +440,18 @@ class TensorWorker:
         self.position_weights = weights
         return weights
 
+    def round_state_record(self) -> Record | None:
+        if self.round_states is None:
+            return None
+        windows, starts = self.round_state_counts
+        self.round_state_counts = [0, 0]
+        return {
+            "windows": windows,
+            "round_starts": starts,
+            "share": starts / windows if windows else None,
+            "weight": self.round_states.weight,
+        }
+
     def label_tensors(
         self, windows: tuple[Supervision, ...], size: int, positions: tuple[float, ...] | None
     ) -> tuple[Tensor, Tensor, Tensor]:
@@ -439,7 +469,8 @@ class TensorWorker:
         ]
         rows = torch.tensor(indices, device=device)
         labels = torch.tensor(targets, dtype=torch.int64, device=device)
-        return rows, labels, label_weights(lengths, positions).to(device)
+        shares = None if self.round_states is None else self.round_states.shares(windows)
+        return rows, labels, label_weights(lengths, positions, shares).to(device)
 
     def group_loss(
         self,

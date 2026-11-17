@@ -84,7 +84,9 @@ The loss is the mean over the group's windows of each window's position-weighted
 cross-entropy over its first k−1 labels, including shorter terminal `up-to-15` windows.
 Each window's weights are normalized to sum to one; they are either the fixed decay
 exp(−i/7) for zero-based position i or the reach weights described in
-[execution](execution.md#block-sizes-and-position-weights). Vocabulary logits are
+[execution](execution.md#block-sizes-and-position-weights). With
+[round-state weighting](execution.md#round-state-weighting) the mean becomes a weighted mean
+whose window weights still sum to one. Vocabulary logits are
 computed and backpropagated in 128-row chunks, then the accumulated gradient passes
 through the body once. Each window's logits match the single-window path to within the
 model's rounding sensitivity: the activation quantizers turn last-bit differences between
