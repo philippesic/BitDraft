@@ -95,7 +95,7 @@ Owner: Philip. Proposal by the lead agent; no check has run.
 - One-bit weights are evaluated as hard signs at every decision point.
 - heldout24 is never used in this screen.
 
-### Group 0: where the gap is, per scenario (about 2 GPU hours)
+### Group 0: where the gap is, per scenario
 
 | # | Check | Use |
 | --- | --- | --- |
@@ -107,7 +107,7 @@ Owner: Philip. Proposal by the lead agent; no check has run.
 | 0f | Gains set to 1 and midpoints to 0 in the trained candidate; feed-forward inputs unrounded | Dependence only. These do not rule a feature in or out by themselves. The calibration check on an untrained drafter moves to group 3, after calibration is built |
 | 0g | How the runtime selects tokens (it takes the top ten and keeps the first) and what the CPU-side 0.47 ms is spent on | Whether a plain top-choice path or less waiting is available, for both drafters |
 
-### Group 1: training speed (about 1.5 GPU hours plus a small build)
+### Group 1: training speed
 
 | # | Step | Note |
 | --- | --- | --- |
@@ -118,7 +118,7 @@ Owner: Philip. Proposal by the lead agent; no check has run.
 
 New arithmetic enters the recipe identity and branches explicitly.
 
-### Group 2: training data (about 5–6 GPU hours plus the largest build)
+### Group 2: training data
 
 Sizes are counted in conversations, captured tokens, supervised labels and independent
 sources, which are different things. At today's 132 tokens per second, 100,000
@@ -135,7 +135,7 @@ smallest storage, so the bank grows in measured steps.
 | 2f | One loop end to end, cold: load, write, rebuild, train, checkpoint, discard, with the longest contexts and within 16 GB | Cost unmeasured |
 | 2g | One representative new batch: long agentic sessions and thinking-on requests of the release kind. Record usable labels, capture cost and disk per useful label | Its learning value is measured in group 7. A source for long projects must be found; the current one is exhausted |
 
-### Group 3: which features matter (about 6–7 GPU hours)
+### Group 3: which features matter
 
 Purpose, set by the owner: filter impactful features from wasteful ones, all from a fresh
 start.
@@ -164,7 +164,7 @@ plane, per-slot rounding settings, an input-rounding offset, a larger step for t
 clipping bound. Each needs its settings, saved-state and export support built before it
 can be chosen.
 
-### Group 4: vocabulary scoring (about 2–3 GPU hours)
+### Group 4: vocabulary scoring
 
 The vocabulary table also supplies the drafter's input tokens, so a replacement is judged
 by running the whole drafter, on both drafters.
@@ -179,13 +179,13 @@ by running the whole drafter, on both drafters.
 
 A shortlist fitted now is rechecked on the trained body from 7b.
 
-### Group 5: the reference (about 1 GPU hour)
+### Group 5: the reference
 
 Pin Baseline's identity and a cutoff date. Check DSpark, and the public Qwen3.5-4B
 DFlash 2 checkpoint if its origin can be confirmed, each in its intended settings. Later
 public releases are separate comparisons.
 
-### Group 6: serving and integration (about 1 GPU hour plus builds)
+### Group 6: serving and integration
 
 - Bound the serving cost of any new format with a timing prototype before training it.
 - Every chosen piece gets its settings, saved-state, export and runtime support through
@@ -237,10 +237,40 @@ Every line is either "keep" with its reason or a named comparison.
 
 ### Time
 
-Rough expectations, not budgets: about 17–26 GPU hours in total, about a day and a half
-of wall time running back to back with builds overlapping. Groups should finish faster
-than this where they can, and nothing is padded to fill an allowance. A group that needs
-materially more than expected is reported, not silently extended.
+Local card only (owner, 2026-11-16). Expect about 24–29 GPU hours and 28–34 wall hours,
+including likely conditional comparisons, overlapping builds, required gates and closeout;
+these are expectations, not budgets. A step that needs more than 1.5 times its figure is
+reported, not silently extended.
+
+Measured building blocks behind the figures: a short training run with its checks takes
+36 minutes (8,209 updates); a one-hour training run takes 68 minutes; the three-drafter
+60-request screen about 2 minutes and the 120-request panel about 10; the thinking-on and
+sampled suites for three drafters about 41 minutes and the agentic suite about 31; this
+morning's eight reference panels and two round profiles took 38 minutes in all.
+
+| Step | GPU hours | Basis |
+| --- | ---: | --- |
+| 3. Fresh scenario measurements, diagnostics, depth checks | 2.0 | Three suites once (72 minutes), sampler qualification, depth neighbours on the slices, diagnostics |
+| 4. Trainer profile and qualification | 1.4 | A 10-minute profile and two short runs; no speed-up assumed in any figure below |
+| 5. Data tools and the new batch | 3.7 | One matched storage pair (1.2 hours); replay, batching and cold-loop checks (0.8); about 1.5 to 2 hours of writing, sized after its pilot |
+| 6. Vocabulary scoring timing | 0.6 | Timing prototypes and whole-drafter checks |
+| 7. Feature runs | 5.4 expected | Five core short runs, two removal comparisons and two triggered add-ons at 36 minutes each; additional triggered runs are extra |
+| 8. Second seeds and scenario checks | 3.0 | Two short runs, the slices and panels, and one triggered full comparison (72 minutes); each further one adds the same |
+| 9. Combined-loss pair and requalification | 1.4 | Two short runs and numerical checks |
+| 10. Other public drafters | 0.3 | One screen each; unverified ones skipped |
+| 11. Integration pilot | 0.35 | Uninterrupted and interrupted runs, export, serving at the longest context |
+| 12. The long run | 3.2 | Up to three training hours plus checkpoints and diagnostics |
+| 13. Readouts on all scenarios | 1.5 | Five or six readouts at 15 to 18 minutes |
+| 14. Final timing | 2.0 | Three suites, greedy and supplementary panels, a reversed-order repeat where needed |
+| **Total** | **about 25** | Wall time adds about four hours that cannot overlap the GPU: preparation, gates, integration and closeout |
+
+Builds are done by parallel coding agents and gate the GPU: reports and per-scenario depth
+(two to four hours) before step 3's policy figures and step 8; the trainer change and
+feature code (two to five hours) before steps 4 and 7; the data tools, the slowest at four
+to eight hours, before step 5. Steps 6 to 8 run ahead of step 5 if the data tools are
+late. A trainer gain would shorten the training steps but is not counted. Most likely to
+stretch the total: more triggered feature runs or full comparisons than assumed, and a
+second round of work on the data tools or on writing long-context data.
 
 ### Decisions still with the owner
 
