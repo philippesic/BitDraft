@@ -282,11 +282,15 @@ with its frozen tables, hard signs and training rounding, in the recipe's block 
 at a time, so later layers see earlier calibrated outputs. For each layer, gate/up (one shared
 bound), then down:
 
-- the clipping bound minimizing the squared error between gained inputs and their rounded
-  values, chosen from 241 bounds spaced geometrically from 10⁻³ times the largest input to it;
+- the clipping bound minimizing the error that input rounding causes in the source tables'
+  output (gate and up together for their shared bound), ‖(rounded − gained) Wᵀ‖², chosen from
+  241 bounds spaced geometrically from 10⁻³ times the largest input to it. Plain input error is
+  not used: two massive-activation channels near 35 carry about 97% of the gate/up input energy,
+  so it chose bounds near 35 that round 99.9% of inputs to zero;
 - each row's scale and midpoint by least squares, so that the one-bit table with the initial
   signs best matches the source table's output on the same rounded inputs. A row whose fitted
-  scale is not positive keeps its initial scale and refits its midpoint. Gains stay at 1.
+  scale is not positive or exceeds 16 times its initial scale keeps its initial scale and refits
+  its midpoint; a midpoint beyond 16 times the initial scale is set to 0. Gains stay at 1.
 
 Fixed parameters keep their calibrated value; off parameters are not calibrated. With
 gradual precision only bounds are calibrated, because the soft start must reproduce the source
