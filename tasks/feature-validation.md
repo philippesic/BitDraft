@@ -125,7 +125,13 @@ Progress:
     slice 77.2% vs 61.8%; descriptive speed vs saved Baseline timing 0.962 (120 requests), 1.011
     (prefix), 0.952 (thinking), 0.983 (sampled). The Level 2 report returns `level3_required`
     (acceptance below Baseline beyond the interval in five scenarios; direction disagreement in
-    three), so Level 3 (thinking, sampled and agentic suites) runs before step 9 (`queueL3`). Calibration becomes the base for the remaining
+    three). Level 3 completed (candidate-only, saved references; outputs exact; agentic
+    completion 37/60 for both): thinking-on suite 57.1% vs 66.6% (yardstick 53.4%), descriptive
+    speed 0.944; sampled suite 44.2% vs 50.0%, 0.982; agentic suite 79.4% vs 63.4%, task rate
+    1.104 (descriptive). The Level 3 report says `not-established` (no paired Baseline timing in
+    candidate-only runs, as expected); the plan's precondition for adoption is met and calibrated
+    start stays adopted on its two-seed result against the control. Step 14 measures paired
+    timing on the long run's checkpoint. Calibration becomes the base for the remaining
     add-ons: clip step and round-state weighting are rerun on top of it (`scripts/queue4b.sh`).
   - Calibrated + gradual vs calibrated alone: 56.17% vs 56.56%, −0.39 (−1.16, +0.38): not adopted.
     The four-run square ends with calibration alone.
@@ -191,7 +197,7 @@ Progress:
   138 sessions (58,634 span positions) and 246 thinking-on requests, worst case 124.1 GB.
 - GPU queue (chained scripts, 24 GB RAM cap): `queue10` (Level 2 of the calibrated finalist,
   running from 05:15) → `queue11` (calibrated rounding ceiling) → `queue12` (group 5) →
-  `queueL3` (Level 3 of the calibrated finalist) → `queue13` (step 9: fused pair, then
+  `queue13` (step 9: fused pair, then
   calibrated + fast arithmetic on eight-tap storage) →
   `queue9b` (batch capture) → `step11.sh` (final mixture `train-final-01`, admission, integration
   pilot: 400 updates against 200 + resume to 400, losses and final export compared, export
