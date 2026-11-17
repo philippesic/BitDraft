@@ -974,6 +974,8 @@ text with `stable-compiler-paths-v1`; raw test logs retain the original text.
 The `no-python-bytecode-v1` fixture environment suppresses bytecode in child Python
 processes. New agentic workspace signatures hash every regular file's raw bytes,
 including any binary outputs; legacy live signatures retain their text encoding.
+The sandbox process limit counts every process and thread of the user, including the
+desktop and concurrent jobs; it is 4096, because 1024 was reachable on the native Linux host.
 
 Task and live-result records carry plain `scenario: "agentic-coding"`, `project`
 (the `owner/repository` identity), `style` (`minimal`, `coding`, `tools`) and
