@@ -58,7 +58,22 @@ and open limits go under `results/` before this file is deleted.
 
 ## State
 
-Owner: Philip. Proposal by the lead agent; no check has run.
+Owner: Philip. Executing since 2026-11-16 17:00 (lead agent; plan text below unchanged from
+`7f621ed9`). Campaign folder: `/home/philip/BitDraft/artifacts/feature-validation-01/`.
+
+Progress:
+- Step 1 done: references pinned in `pins/references.json` (target Q4KM `38742092…`, Baseline
+  `83586a63…`, initializer `18cefa06…`/`2f852a41…`, vocabulary `a68f55d9…`, yardstick
+  `769e184e…`/`5749a05f…`, runtime-v8 `d613abbe…`). Release target for this screen is Q4KM only.
+  Control intent generator `scripts/intents.py` writes every kept value explicitly; the full
+  TRAIN set (`mixture.json`, 8,633 records) is the default data, the 6K corpus only to match
+  earlier runs. Warm-up is `round(0.02 × updates)`. The control admits on CPU.
+- Step 2 running: five Opus builds (briefs in `briefs/`): A policy report and per-drafter
+  depth, B round-state and clipping diagnostics, C data replay/batching/fused storage,
+  D feature switches/calibration/gradual precision/telemetry, G long-project source and batch.
+- Step 3 running: sampler qualification and three-arm thinking, sampled and agentic suites on
+  runtime-v8. The agentic sandbox's process limit was raised to 4096 on this branch (1024 was
+  reachable on this desktop).
 
 ### Decisions already made
 
@@ -441,4 +456,5 @@ the [test list](speedup-test-list.md) that acceptance work continues from the be
 
 ## Next
 
-The final hole review is folded in above. Follow the execution order from step 1.
+Finish step 3 (register suite and slice references, group 0 at depth 3), then step 4's trainer
+profile on the GPU while the builds finish; merge each build after review and its gate.
