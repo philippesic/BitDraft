@@ -94,9 +94,14 @@ Progress:
   fixes also sped up the reference path. Matched run `s4-c0-fast` (`fast-exact-tf32ff`) against
   `s4-c0-current`: screen 48.72% vs 48.95%, −0.23 (−0.91, +0.42), inside the loss budget; update
   time 1,520 vs 1,767 s for the same 8,209 updates and 2,493,623 labels (1.16×; 1.14× with data
-  loading). Adopted for the release recipe (largest measured gain passing value, gradient and
-  resume checks). Remaining group 3 arms keep `reference` arithmetic to stay matched; step 9's
-  combined pair checks the assembled changes together.
+  loading). Step 9 then requalified it on the assembled recipe: calibrated + fast arithmetic vs
+  calibrated: 56.15% vs 56.56%, −0.41 (−1.45, +0.58). The lower end passes −1.0, so under the
+  step 4 preflight's rule (counted against the one-point budget) it is not adopted: the long run
+  and the recommended recipe keep `reference` arithmetic (likely noise; the arithmetic passed
+  exact value, gradient and resume checks; cost: about 14% fewer updates per training hour).
+- Fused storage (step 9, rerun after the fix): calibrated on fused vs eight-tap storage: 56.36%
+  vs 56.56%, −0.20 (−1.11, +0.72): lower end below −1.0, inconclusive, original storage kept;
+  fused storage is not qualified, also not for the release run.
 - Control `s4-c0-current`: screen 48.95% (Baseline 60.6%), all outputs exact, 35 training minutes.
 - Step 7 (`group3/preflight.md`, thresholds fixed): gradual start checks passed for both intents.
   Update-0 probes: calibration moves the untrained drafter little (DEV first-slot top-1 5.8% vs
@@ -173,7 +178,7 @@ Progress:
   V (vocabulary scoring measurements) and C's fused-calibration fix (calibration's sample loader
   ignored the corpus's fusion identity and refused fused records).
 - Fused storage: full TRAIN converted (8,633 arrays, max relative L2 2.1e-4, 55.2 GB, 18 min);
-  the first matched run failed at initialisation on that bug; rerun queued (`queue13`).
+  the first matched run failed at initialisation on that bug; the rerun's verdict is above.
 - Group 5 (`logs/group5.log`, 60-request screen, runtime-v8, the authors' stated settings, BF16
   GGUF converted without loss, outputs exact for both): DSpark at depth 8: 1.71 accepted tokens per
   round, 0.71× target-only and 0.50× Baseline (saved timing, descriptive); DFlash 2 at depth 15:
@@ -195,14 +200,11 @@ Progress:
   The first selection was refused because its worst-case forecast (every thinking-on answer at
   its 2,048-token cap) exceeded the 120 GB ceiling; rerun at 126 GB with unchanged quotas:
   138 sessions (58,634 span positions) and 246 thinking-on requests, worst case 124.1 GB.
-- GPU queue (chained scripts, 24 GB RAM cap): `queue10` (Level 2 of the calibrated finalist,
-  running from 05:15) → `queue11` (calibrated rounding ceiling) → `queue12` (group 5) →
-  `queue13` (step 9: fused pair, then
-  calibrated + fast arithmetic on eight-tap storage) →
-  `queue9b` (batch capture) → `step11.sh` (final mixture `train-final-01`, admission, integration
-  pilot: 400 updates against 200 + resume to 400, losses and final export compared, export
-  screened). The long run (`step12/preflight.md`) trains on eight-tap storage whatever the fused
-  pair shows; fused storage is qualified for the release run only.
+- GPU now: batch capture (`queue9b`, from 06:56, about 70 minutes) → `step11.sh` (final mixture
+  `train-final-01`, admission, integration pilot on the long-run recipe: 400 updates against
+  200 + resume to 400, losses and final export compared, export screened) → step 12 long run
+  (`step12/preflight.md`: calibrated start, reference arithmetic, eight-tap storage, about 3
+  training hours).
 
 Decided by the owner 2026-11-16 19:15: `greedy-long` is judged on the supplementary interval
 that pools category strata with fewer than two source groups (the maintained rule cannot give it
