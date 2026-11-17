@@ -116,8 +116,10 @@ Progress:
     after one update 52.5% / 21.7% vs 9% / 4.7%.
   - Calibrated start (`g3v2-calibrated`, source `4bb8231d…`): 56.56% vs 48.95%, +7.61 points
     (+6.65, +8.60); DEV prefix survival 57.5% vs 55.8%, thinking-on windows 60% vs 50%, training
-    loss 1.78 vs 2.31 at update 8,000. Clears the +1.0 bar: adopted pending its second seed (8102,
-    with the control's second seed, queued first). Calibration becomes the base for the remaining
+    loss 1.78 vs 2.31 at update 8,000. Second seed 8102: 56.42% vs 49.20%, +7.21 (+6.10, +8.41);
+    pooled over both seeds (paired bootstrap over both screens' rows): +7.41 (+6.53, +8.30).
+    Adopted. Its Level 2 check (120-request panel, prefix, live, thinking, sampled and agentic
+    slices against the runtime-v8 references) is queued (`scripts/queue10.sh`). Calibration becomes the base for the remaining
     add-ons: clip step and round-state weighting are rerun on top of it (`scripts/queue4b.sh`).
   - Calibrated + gradual vs calibrated alone: 56.17% vs 56.56%, −0.39 (−1.16, +0.38): not adopted.
     The four-run square ends with calibration alone.
