@@ -71,9 +71,22 @@ Progress:
 - Step 2 running: five Opus builds (briefs in `briefs/`): A policy report and per-drafter
   depth, B round-state and clipping diagnostics, C data replay/batching/fused storage,
   D feature switches/calibration/gradual precision/telemetry, G long-project source and batch.
-- Step 3 running: sampler qualification and three-arm thinking, sampled and agentic suites on
-  runtime-v8. The agentic sandbox's process limit was raised to 4096 on this branch (1024 was
-  reachable on this desktop).
+- Step 3 done at depth 3 (notes `group0/0a-0g-notes.md`): sampler qualified for runtime-v8;
+  target, Baseline and yardstick references registered for the thinking, sampled and agentic
+  suites and slices (`step3/`). Yardstick against Baseline: thinking-on 0.915 (0.906, 0.924),
+  acceptance 53.4% vs 66.6%; sampled 0.974, 43.5% vs 50.0%; agentic task rate 1.027 (1.019,
+  1.037), 65.5% vs 63.4%, completion 37/60 for every arm; greedy panel 0.965 (item 9). Greedy depth
+  calibration: both drafters best at 3. The deficit sits in thinking-on and ordinary greedy.
+  0g answered from the runtime source and round profile: drafts come from a top-10 sampler whose
+  first entry is the argmax; a plain argmax and fewer per-slot synchronisations are generic gains.
+  The agentic sandbox's process limit was raised to 4096 on this branch (1024 was reachable).
+  Group 0b–0f wait for build B; the greedy short/long split for build A.
+- Step 4 running: trainer profile (`step4/`).
+
+Needs the owner (not blocking for hours): under the maintained grouping rule `greedy-long` can
+never get an interval on the 120-request panel (one conversation and one structured request
+among its 24 long requests). Build A adds a supplementary interval that pools strata with fewer
+than two source groups, off by default. Recommendation: let it count, stated in the report.
 
 ### Decisions already made
 
