@@ -13,6 +13,7 @@ from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, record, sequence, string
 from w1a1_eagle.data import Artifact
 from w1a1_eagle.model import HE4, Geometry
+from w1a1_eagle.numerical.captures import FloatArray
 from w1a1_eagle.records import canonical, reference
 
 
@@ -125,6 +126,15 @@ def frozen_fingerprint(tensors: dict[str, Tensor], head: Tensor, geometry: Geome
         operand = value.detach().float().cpu().contiguous()
         digest.update(canonical([name, str(operand.dtype), list(operand.shape)]))
         digest.update(cast(Array, operand.numpy()).tobytes())
+    return digest.hexdigest()
+
+
+def fusion_identity(operand: Tensor) -> str:
+    value = operand.detach().to("cpu", torch.float32).contiguous()
+    digest = hashlib.sha256(canonical(["fusion.operand", "float32", list(value.shape)]))
+    data = cast(FloatArray, value.numpy()).data.cast("B")
+    for offset in range(0, len(data), 16 * 1024 * 1024):
+        digest.update(data[offset : offset + 16 * 1024 * 1024])
     return digest.hexdigest()
 
 

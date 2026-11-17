@@ -18,6 +18,8 @@ IntArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.int32]]"
 
 TAPS = (2, 6, 10, 14, 18, 22, 26, 30)
 READERS = 4
+TAP_SEMANTICS = "zero_based_pre_block_input_all_tokens"
+FUSED_SEMANTICS = "fused_pre_encoder_norm_v1"
 
 
 @dataclass(frozen=True)
@@ -25,6 +27,7 @@ class Capture:
     tokens: tuple[int, ...]
     features: Tensor
     windows: tuple[Supervision, ...]
+    fusion: str | None = None
 
     @property
     def bytes(self) -> int:
@@ -44,6 +47,7 @@ def load_capture(
     byte_budget: int,
     hidden: int = 2560,
     readers: ThreadPoolExecutor | None = None,
+    fusion: str | None = None,
 ) -> Capture:
     if type(byte_budget) is not int or byte_budget < 1 or hidden < 1:
         raise ValueError("explicit capture byte budget required")
@@ -51,10 +55,9 @@ def load_capture(
         raise ValueError("metadata exceeds capture budget")
     spec.metadata.verify()
     metadata = record(cast(object, json.loads(spec.metadata.path.read_text())))
-    if (
-        metadata.get("taps") != list(TAPS)
-        or metadata.get("feature_semantics") != "zero_based_pre_block_input_all_tokens"
-    ):
+    if fusion is not None:
+        return load_fused(spec, metadata, byte_budget, hidden, fusion)
+    if metadata.get("taps") != list(TAPS) or metadata.get("feature_semantics") != TAP_SEMANTICS:
         raise ValueError("capture tap or feature semantics mismatch")
     tokens = tuple(integer(v) for v in sequence(metadata["input_tokens"]))
     positions = tuple(integer(v) for v in sequence(metadata["logit_positions"]))
@@ -125,6 +128,43 @@ def load_capture(
     return Capture(tokens, features, selected)
 
 
+def load_fused(
+    spec: CaptureSpec, metadata: Record, byte_budget: int, hidden: int, fusion: str
+) -> Capture:
+    if (
+        metadata.get("taps") != list(TAPS)
+        or metadata.get("feature_semantics") != FUSED_SEMANTICS
+        or metadata.get("fusion_sha256") != fusion
+    ):
+        raise ValueError("fused capture semantics or fusion table identity mismatch")
+    tokens = tuple(integer(v) for v in sequence(metadata["input_tokens"]))
+    selected = capture_supervision(spec.identity, metadata)
+    feature_dtype = metadata.get("feature_dtype")
+    if feature_dtype not in ("float32", "float16"):
+        raise ValueError("unsupported fused storage dtype")
+    half = feature_dtype == "float16"
+    n = len(tokens)
+    if n * hidden * 4 * 3 + spec.metadata.size * 32 > byte_budget:
+        raise ValueError("capture materialization exceeds byte budget")
+    name = "fused.f16" if half else "fused.f32"
+    files = {ref.path.name: ref for ref in spec.files}
+    if len(files) != len(spec.files):
+        raise ValueError("duplicate capture filenames")
+    stored = files.get(name)
+    if stored is None or stored.size != n * hidden * (2 if half else 4):
+        raise ValueError("fused feature geometry mismatch")
+    for ref in spec.files:
+        if ref.path.name != name:
+            ref.verify()
+    values: HalfArray | FloatArray = (
+        np.empty((n, hidden), dtype=np.float16) if half else np.empty((n, hidden), dtype=np.float32)
+    )
+    stored.read_verified(values.data.cast("B"))
+    if not finite(values):
+        raise ValueError("nonfinite fused features")
+    return Capture(tokens, torch.from_numpy(values), selected, fusion)
+
+
 def validate_capture(spec: CaptureSpec, byte_budget: int) -> Record:
     torch.set_num_threads(2)
     checked = load_capture(spec, byte_budget)
@@ -137,11 +177,12 @@ def validate_capture(spec: CaptureSpec, byte_budget: int) -> Record:
 
 
 class CaptureCache:
-    def __init__(self, byte_budget: int, hidden: int = 2560) -> None:
+    def __init__(self, byte_budget: int, hidden: int = 2560, fusion: str | None = None) -> None:
         if type(byte_budget) is not int or byte_budget < 1:
             raise ValueError("positive cache budget required")
         self.byte_budget = byte_budget
         self.hidden = hidden
+        self.fusion = fusion
         self.entries: OrderedDict[str, Capture] = OrderedDict()
         self.loader: ThreadPoolExecutor | None = None
         self.readers: ThreadPoolExecutor | None = None
@@ -171,7 +212,7 @@ class CaptureCache:
     def load(self, spec: CaptureSpec) -> Capture:
         if self.readers is None:
             self.readers = ThreadPoolExecutor(READERS, "capture-read")
-        return load_capture(spec, self.byte_budget, self.hidden, self.readers)
+        return load_capture(spec, self.byte_budget, self.hidden, self.readers, self.fusion)
 
     def get(self, spec: CaptureSpec) -> Capture:
         key = self.key(spec)

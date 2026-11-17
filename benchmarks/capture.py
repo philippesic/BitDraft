@@ -9,6 +9,7 @@ from typing import IO, cast
 from benchmarks.measurement import now
 from benchmarks.native import file_reference
 from benchmarks.protection import source_names
+from benchmarks.token_streams import replay_spans, token_stream
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.config import native_environment
 from w1a1_eagle.contracts import Record, integer, record, sequence, string
@@ -47,7 +48,7 @@ def capture(specification: Path, output: Path) -> Record:
 
     raw = read(specification)
     if (
-        set(raw) - {"role", "heldout_exclusions"}
+        set(raw) - {"role", "heldout_exclusions", "token_streams"}
         != {
             "schema",
             "source",
@@ -77,6 +78,9 @@ def capture(specification: Path, output: Path) -> Record:
     names = {ref.path.name.split(".so")[0]: ref for ref in libraries}
     if not {"libggml-cpu", "libggml-cuda"} <= set(names):
         raise ValueError("explicit CPU/CUDA backend identities required")
+    streams = raw.get("token_streams", False)
+    if type(streams) is not bool:
+        raise ValueError("token_streams must be true or false")
     selected_role = string(raw.get("role", "train"))
     if selected_role not in {"train", "dev"}:
         raise ValueError("capture role must explicitly remain train or dev")
@@ -241,6 +245,22 @@ def capture(specification: Path, output: Path) -> Record:
                     ):
                         raise ValueError("capture prefix or storage precision mismatch")
                     cell.atomic(cell.root / "source.json", canonical(row))
+                    if streams:
+                        stream_tokens, stream_spans = replay_spans(metadata)
+                        cell.atomic(
+                            cell.root / "token-stream.json",
+                            canonical(
+                                token_stream(
+                                    key,
+                                    stream_tokens,
+                                    stream_spans,
+                                    stream_spans[0][0] + 1,
+                                    refs["target"].sha256,
+                                    row | {"template_sha256": tokenizer.template_sha256},
+                                    {"route": "native-hard-capture-v1", "code_sha256": code},
+                                )
+                            ),
+                        )
                     derived = metadata | {
                         "window_policy": policy,
                         "raw_capture": file_reference(cell.root / "capture.json"),

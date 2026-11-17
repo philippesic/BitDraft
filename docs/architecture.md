@@ -61,6 +61,7 @@ by `benchmarks/measurement.py`.
 | cli | active | w1a1_eagle/__main__.py | main | `python -m w1a1_eagle` |
 | benchmark | active | benchmarks/__main__.py | main | `python -m benchmarks` |
 | conversion | active | w1a1_eagle/numerical/conversion.py | main | Explicit bounded feature conversion |
+| fusing | active | w1a1_eagle/numerical/fusing.py | main | Explicit fused feature conversion |
 | precision | active | w1a1_eagle/numerical/precision.py | main | Explicit CPU/CUDA screen |
 | retirement | active | tools/retention.py | execute | Explicit authorized closeout |
 | snapshot | active | tools/snapshot_metadata.py | pack | `python -m tools.snapshot_metadata` |

@@ -42,7 +42,8 @@ static void write_features(std::ofstream & file, const float * values, size_t si
 }
 int main(int argc, char ** argv) {
     try {
-        require(argc == 5, "capture TARGET CPU_LIBRARY CUDA_LIBRARY CONTEXT; requests on stdin");
+        const bool replay_mode = argc == 6 && std::string(argv[5]) == "replay";
+        require(argc == 5 || replay_mode, "capture TARGET CPU_LIBRARY CUDA_LIBRARY CONTEXT [replay]; requests on stdin");
         const char * consistent = std::getenv("GGML_CUDA_DECODE_CONSISTENT");
         require(consistent && std::string(consistent) == "32", "decode consistency must be 32");
         auto cpu = backend(argv[2], "ggml_backend_cpu_reg");
@@ -66,7 +67,8 @@ int main(int argc, char ** argv) {
         require(context >= 1024 && context <= 32768, "context outside qualified bounds");
         auto cp = llama_context_default_params();
         cp.n_ctx = context; cp.n_batch = 512; cp.n_ubatch = 512; cp.n_seq_max = 1;
-        cp.n_outputs_max = 1; cp.n_outputs_max_per_seq = 1; cp.n_threads = 4; cp.n_threads_batch = 4;
+        const int outputs = replay_mode ? 512 : 1;
+        cp.n_outputs_max = outputs; cp.n_outputs_max_per_seq = outputs; cp.n_threads = 4; cp.n_threads_batch = 4;
         cp.type_k = GGML_TYPE_F16; cp.type_v = GGML_TYPE_F16;
         cp.flash_attn_type = LLAMA_FLASH_ATTN_TYPE_ENABLED;
         cp.pooling_type = LLAMA_POOLING_TYPE_NONE; cp.attention_type = LLAMA_ATTENTION_TYPE_CAUSAL;
@@ -93,9 +95,14 @@ int main(int argc, char ** argv) {
             require(half || dtype == "float32", "unsupported feature dtype");
             std::vector<std::pair<int,int>> spans;
             if (request.contains("spans")) spans = request.at("spans").get<std::vector<std::pair<int,int>>>();
+            const bool replay = request.contains("replay");
+            const int chunk = replay ? request.at("replay").at("chunk").get<int>() : 1;
+            require(!replay || (replay_mode && !spans.empty() && chunk >= 1 && chunk <= outputs),
+                    "token replay requires replay mode, spans and a chunk of 1 to 512");
             int previous = -1;
             for (auto [first, last] : spans) {
-                require(previous < first && first <= last && last + 1 < prompt, "invalid supervised span");
+                require(previous < first && first <= last && (replay ? last < prompt : last + 1 < prompt),
+                        "invalid supervised span");
                 previous = last;
             }
             require(prompt > 0 && (spans.empty() ? cap > 0 : cap == 0) && cap <= 2048 && prompt + cap <= context,
@@ -136,6 +143,28 @@ int main(int argc, char ** argv) {
                     positions.push_back(start+count-1); labels.push_back(next);
                 }
             };
+            auto replay_chunk = [&](int start, int count) {
+                auto batch = llama_batch_init(count, 0, 1);
+                require(batch.token && batch.pos && batch.logits && batch.seq_id && batch.n_seq_id, "batch allocation failed");
+                batch.n_tokens = count;
+                for (int i = 0; i < count; ++i) {
+                    batch.token[i] = inputs.at(start+i); batch.pos[i] = start+i;
+                    batch.n_seq_id[i] = 1; batch.seq_id[i][0] = 0; batch.logits[i] = true;
+                }
+                const int status = llama_decode(ctx.get(), batch);
+                llama_batch_free(batch);
+                require(status == 0, "native decode failed");
+                llama_synchronize(ctx.get());
+                for (size_t t = 0; t < taps.size(); ++t)
+                    write_features(files[t], llama_get_embeddings_layer_inp(ctx.get(), taps[t]), size_t(count)*2560, half);
+                for (int i = 0; i < count; ++i) {
+                    const float * logits = llama_get_logits_ith(ctx.get(), i);
+                    require(logits != nullptr, "missing prediction logits");
+                    for (int v = 0; v < vocabulary; ++v) require(std::isfinite(logits[v]), "nonfinite target logits");
+                    next = std::max_element(logits, logits+vocabulary)-logits;
+                    positions.push_back(start+i); labels.push_back(next);
+                }
+            };
             auto prefill = [&](int from, int to, bool prediction) {
                 for (int start = from; start < to; start += 512)
                     consume(start, std::min(512, to-start), prediction && start+512 >= to);
@@ -144,7 +173,10 @@ int main(int argc, char ** argv) {
             int position = 0;
             for (auto [first, last] : spans) {
                 prefill(position, first+1, true);
-                for (int token = first+1; token <= last; ++token) consume(token, 1, true);
+                if (replay)
+                    for (int token = first+1; token <= last; token += chunk) replay_chunk(token, std::min(chunk, last+1-token));
+                else
+                    for (int token = first+1; token <= last; ++token) consume(token, 1, true);
                 position = last+1;
             }
             if (!spans.empty()) prefill(position, prompt, false);
@@ -162,6 +194,7 @@ int main(int argc, char ** argv) {
                 {"settings",{{"context",context},{"batch",512},{"ubatch",512},{"kv","F16"},
                     {"flash_attention","on"},{"consistent",32},{"sampling","raw_argmax_lowest_id_tie"}}}};
             if (!spans.empty()) metadata["supervised_spans"] = spans;
+            if (replay) metadata["replay"] = {{"route","token-replay-v1"},{"chunk",chunk},{"outputs",outputs}};
             std::ofstream meta(output/"capture.json"); meta << metadata.dump(2) << '\n';
             meta.close(); require(bool(meta), "capture metadata write failed");
             std::ifstream maps("/proc/self/maps"); std::ofstream mapped(output/"loaded-library-maps.txt");

@@ -22,6 +22,7 @@ explicit paths and the shared saved-reference registry.
 | `plan-long-projects`, `prepare-long-projects` | Long-context TRAIN session tasks from full repository snapshots (CPU) |
 | `prepare-project-workflows`, `prepare-replays`, `prepare-panels` | Project controls, measured histories, live/harness inputs |
 | `capture`, `evaluate` | Teacher features; matched teacher-forced DEV loss |
+| `replay-tokens`, `replay-agreement`, `write-batched` | Rebuild captures from stored token IDs, compare them, measure parallel writing ([data](data.md#token-streams-and-replay)) |
 | `compare`, `live` | Isolated native requests; executing tool episodes |
 | `campaign-preflight`, `campaign`, `campaign-report` | CPU admission; training; read-only health |
 | `prepare-checks`, `record-reference` | Frozen lean cohorts; authenticated reusable references |
@@ -327,6 +328,22 @@ bounded product loader before publication: hashes, geometry, finite values, toke
 arrays and EOG. Validation receipts and partial attempts stay with ignored raw data under `artifacts/`.
 [FP16 adoption](../results/fp16-storage-adoption/result.md) qualifies HE4/Q4KM storage;
 training converts it to FP32 on the device. It does not establish lifetime/other-family equivalence.
+
+### Replay and batched writing
+
+The capture helper's optional fifth argument `replay` raises its output buffer to 512
+positions and accepts requests with `replay: {"chunk": N}` and spans; without it the helper
+behaves exactly as before. `replay-tokens` (schema `token-replay-v1`) binds `source`, the
+replay-capable `binary`, `libraries`, `target`, `corpora` and/or `streams`, `ids`,
+`feature_dtype`, `context`, `chunk` (1–512) and `capture_limit_bytes`, holds the GPU lease,
+resumes completed records like `capture` and refuses a target that differs from the records'.
+`replay-agreement` (schema `replay-agreement-v1`, CPU) binds `reference` and `replay`
+corpora and optional `ids`, `bands` and `rows`. `write-batched` (schema
+`batched-writing-v1`) binds the server `binary`, `target`, reference `corpora`, `ids`,
+`concurrency` (1–64 slots per level), `slot_context` and `seed`; each level starts its own
+server with `-np` slots and `slots × slot_context` context, warms it with one short request,
+then sends every prompt through that many concurrent requests. Server launches outside this
+command keep one slot.
 
 `plan COMPARISON.json` reports native units/warmups; `verify-inputs` hashes models/runtime.
 The older schema 1 [metadata example](../tests/fixtures/benchmark-plan.json) remains supported.

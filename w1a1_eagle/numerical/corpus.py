@@ -17,7 +17,14 @@ from w1a1_eagle.data import (
     supervision_positions,
 )
 from w1a1_eagle.model import Geometry
-from w1a1_eagle.numerical.captures import TAPS, Capture, CaptureCache, CaptureSpec
+from w1a1_eagle.numerical.captures import (
+    FUSED_SEMANTICS,
+    TAP_SEMANTICS,
+    TAPS,
+    Capture,
+    CaptureCache,
+    CaptureSpec,
+)
 from w1a1_eagle.records import artifact, read
 from w1a1_eagle.sampling import TaskSampler
 from w1a1_eagle.training import Blocks, Grouping, Shape
@@ -34,6 +41,7 @@ class Corpus:
         grouping: Grouping = Grouping(),
         shape: Shape | None = None,
         blocks: Blocks = Blocks(),
+        fused: bool = False,
     ) -> None:
         if type(byte_budget) is not int or byte_budget < 1 or type(seed) is not int or seed < 0:
             raise ValueError("positive memory budget and nonnegative seed required")
@@ -48,7 +56,11 @@ class Corpus:
             raise ValueError("random block sizes require plain shuffled groups")
         self.sampling = sampling
         self.task_sampler: TaskSampler | None = None
+        self.fusion: str | None = None
         if isinstance(manifest, Dataset):
+            if (manifest.fusion is not None) != fused:
+                raise ValueError("declared fused input and dataset feature format differ")
+            self.fusion = manifest.fusion
             Ledger(tuple(row.prompt for row in manifest.rows), manifest.protected).admit_training(
                 len(manifest.rows)
             )
@@ -58,9 +70,25 @@ class Corpus:
             return
         manifest.verify()
         raw = read(manifest.path, min(byte_budget // 8, 64 * 1024 * 1024))
-        if set(raw) != {"schema", "target_sha256", "protected", "expected_train", "records"}:
+        if fused:
+            if (
+                set(raw)
+                != {
+                    "schema",
+                    "target_sha256",
+                    "protected",
+                    "expected_train",
+                    "fusion",
+                    "source",
+                    "records",
+                }
+                or raw["schema"] != "fused-corpus-v1"
+            ):
+                raise ValueError("fused input requires a fused-corpus-v1 manifest")
+            self.fusion = fusion_sha256(record(raw["fusion"]))
+        elif set(raw) != {"schema", "target_sha256", "protected", "expected_train", "records"}:
             raise ValueError("unsupported corpus fields")
-        if type(raw["schema"]) is not int or raw["schema"] != 1:
+        elif type(raw["schema"]) is not int or raw["schema"] != 1:
             raise ValueError("supported corpus schema is 1; preserve originals on migration")
         self.target = string(raw["target_sha256"])
         if len(self.target) != 64 or any(c not in "0123456789abcdef" for c in self.target):
@@ -124,11 +152,12 @@ class Corpus:
                 raise ValueError("corpus metadata exceeds memory budget")
             spec.metadata.verify()
             metadata = read(spec.metadata.path, min(byte_budget // 32, 16 * 1024 * 1024))
-            if (
-                metadata.get("taps") != list(TAPS)
-                or metadata.get("feature_semantics") != "zero_based_pre_block_input_all_tokens"
+            if metadata.get("taps") != list(TAPS) or metadata.get("feature_semantics") != (
+                TAP_SEMANTICS if self.fusion is None else FUSED_SEMANTICS
             ):
                 raise ValueError("capture semantics mismatch")
+            if metadata.get("fusion_sha256") != self.fusion:
+                raise ValueError("record and corpus fusion table identities differ")
             if metadata.get("target_sha256", self.target) != self.target:
                 raise ValueError("individual capture and corpus target identities differ")
             selected = capture_supervision(prompt.identity, metadata)
@@ -167,7 +196,7 @@ class Corpus:
         metadata_bytes += self.count * 40
         if metadata_bytes >= byte_budget // 2:
             raise ValueError("sampler metadata exceeds memory budget")
-        self.cache = CaptureCache(byte_budget - metadata_bytes, hidden)
+        self.cache = CaptureCache(byte_budget - metadata_bytes, hidden, self.fusion)
         self.seed = seed
         self.block_limits = {
             size: tuple(
@@ -338,3 +367,10 @@ class Corpus:
             else math.ceil(updates / self.groups_per_pass) * 15,
             "sampling_with_replacement": int(self.task_sampler is not None),
         }
+
+
+def fusion_sha256(fusion: Record) -> str:
+    value = string(fusion.get("sha256"))
+    if len(value) != 64 or any(c not in "0123456789abcdef" for c in value):
+        raise ValueError("fused corpus requires its fusion table identity")
+    return value

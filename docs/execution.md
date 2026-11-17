@@ -27,7 +27,10 @@ Schema 2 (`w1a1_eagle/intent.py`) binds objective/hypothesis/decision/risk/scope
 initializer/vocabulary/corpus/parent, mode, geometry/seed/device, budgets, checkpoints,
 grouping, optimization and data/reuse policy. Unknown fields are refused. Artifact references contain `path`,
 `sha256`, `bytes`; relative paths resolve from their document. See [data](data.md) for
-corpus/index/mixture formats. Editable manifests establish neither provenance nor authority.
+corpus/index/mixture formats. Optional `corpus_format` is `corpus-mixture-v1`,
+`fused-corpus-v1` or `fused-mixture-v1`; the fused formats enter the recipe identity, refuse
+`trained_tables` and require the model's fusion operand ([fused storage](data.md#fused-storage)).
+Editable manifests establish neither provenance nor authority.
 
 ## Owners
 
@@ -365,7 +368,7 @@ after owner checks; no complete event is dropped. Corrupt complete records are r
 
 ## Supported formats
 
-Intent 2, corpus 1, tensor payload 5/4/3, store 1, event envelope 1, W1Ax metadata 2/GGUF 3. Other tensor/intent
+Intent 2, corpus 1 and fused-corpus-v1, tensor payload 5/4/3, store 1, event envelope 1, W1Ax metadata 2/GGUF 3. Other tensor/intent
 schemas need explicit migration with verified lineage; preserve originals.
 
 ## Limits

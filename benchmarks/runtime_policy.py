@@ -8,7 +8,13 @@ LIVE_SECONDS = 900
 
 
 def arguments(
-    binary: Path, target: Path, drafter: Path | None, context: int, depth: int, port: int
+    binary: Path,
+    target: Path,
+    drafter: Path | None,
+    context: int,
+    depth: int,
+    port: int,
+    parallel: int = 1,
 ) -> list[str]:
     argv = [
         str(binary),
@@ -19,7 +25,7 @@ def arguments(
         "-c",
         str(context),
         "-np",
-        "1",
+        str(parallel),
         "-b",
         "512",
         "-ub",

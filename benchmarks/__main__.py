@@ -65,6 +65,9 @@ def main() -> int:
         "round-profile-report",
         "scenario-report",
         "policy-report",
+        "replay-tokens",
+        "replay-agreement",
+        "write-batched",
     ):
         comparison = commands.add_parser(name)
         comparison.add_argument("input", type=Path)
@@ -75,6 +78,8 @@ def main() -> int:
         if hasattr(args, "requested_output"):
             categories = {
                 "capture": "datasets",
+                "replay-tokens": "datasets",
+                "write-batched": "datasets",
                 "curate": "bank",
                 "admit-bank": "bank",
                 "select-supplement": "bank",
@@ -132,6 +137,8 @@ def main() -> int:
                     "prepare-long-projects",
                     "prepare-replays",
                     "capture",
+                    "replay-tokens",
+                    "replay-agreement",
                     "evaluate",
                     "campaign",
                     "prepare-initialization",
@@ -157,6 +164,18 @@ def main() -> int:
             from benchmarks.campaign import preflight
 
             result = preflight(args.input)
+        elif args.command == "replay-tokens":
+            from benchmarks.replay import replay
+
+            result = replay(args.input, args.output)
+        elif args.command == "replay-agreement":
+            from w1a1_eagle.numerical.agreement import agreement
+
+            result = agreement(args.input, args.output)
+        elif args.command == "write-batched":
+            from benchmarks.batched import write_batched
+
+            result = write_batched(args.input, args.output)
         elif args.command == "scenario-report":
             from benchmarks.scenario_report import report as report_scenarios
 

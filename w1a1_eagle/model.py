@@ -391,20 +391,36 @@ class HE4(nn.Module):
             [Layer(tensors, f"blk.{i}.", geometry, trained_tables) for i in range(geometry.layers)]
         )
 
-    def check(self, features: Tensor, tokens: tuple[int, ...], anchors: tuple[int, ...]) -> None:
+    def check(
+        self,
+        features: Tensor,
+        tokens: tuple[int, ...],
+        anchors: tuple[int, ...],
+        fused: bool = False,
+    ) -> None:
         cfg = self.geometry
+        if fused and self.trained_tables:
+            raise ValueError("fused inputs require a frozen fusion table")
         if (
             not anchors
             or any(type(anchor) is not int or not 0 <= anchor < len(tokens) for anchor in anchors)
             or features.ndim != 2
             or features.dtype not in (torch.float16, torch.float32)
-            or features.shape != (len(tokens), cfg.taps * cfg.hidden)
+            or features.shape != (len(tokens), cfg.hidden if fused else cfg.taps * cfg.hidden)
             or any(
                 type(token) is not int or not 0 <= token < self.vocabulary.shape[0]
                 for token in tokens
             )
         ):
             raise ValueError("invalid model inputs")
+
+    def encode(self, features: Tensor, count: int, fused: bool) -> Tensor:
+        values = features[:count].to(self.vocabulary.device).float()
+        return rms(
+            values if fused else self.fusion.forward(values),
+            self.encoder_norm,
+            self.geometry.epsilon,
+        )
 
     def block(self, slots: int | None) -> int:
         size = self.geometry.slots if slots is None else slots
@@ -418,8 +434,9 @@ class HE4(nn.Module):
         tokens: tuple[int, ...],
         anchors: tuple[int, ...],
         slots: int | None = None,
+        fused: bool = False,
     ) -> Tensor:
-        self.check(features, tokens, anchors)
+        self.check(features, tokens, anchors, fused)
         cfg = self.geometry
         size = self.block(slots)
         device = self.vocabulary.device
@@ -432,9 +449,7 @@ class HE4(nn.Module):
         first: list[int] = [tokens[anchor] for anchor in anchors]
         identifiers[:, 0] = torch.tensor(first, device=device)
         state = functional.embedding(identifiers.reshape(-1), self.vocabulary)
-        encoded = rms(
-            self.fusion.forward(features[:last].to(device).float()), self.encoder_norm, cfg.epsilon
-        )
+        encoded = self.encode(features, last, fused)
         visible = context_positions[None, None, :] < starts[:, None, None]
         local = visible & (
             (positions[:, :, None] - context_positions[None, None, :]).abs() < cfg.window
@@ -453,23 +468,24 @@ class HE4(nn.Module):
         return rms(state, self.output_norm, cfg.epsilon).view(len(anchors), size, cfg.hidden)
 
     def forward(
-        self, features: Tensor, tokens: tuple[int, ...], anchor: int, slots: int | None = None
+        self,
+        features: Tensor,
+        tokens: tuple[int, ...],
+        anchor: int,
+        slots: int | None = None,
+        fused: bool = False,
     ) -> Tensor:
         cfg = self.geometry
         if type(anchor) is not int:
             raise ValueError("invalid model inputs")
-        self.check(features, tokens, (anchor,))
+        self.check(features, tokens, (anchor,), fused)
         size = self.block(slots)
         device = self.vocabulary.device
         positions = torch.arange(anchor, anchor + size, device=device)
         context_positions = torch.arange(anchor, device=device)
         identifiers = torch.tensor((tokens[anchor],) + (self.mask,) * (size - 1), device=device)
         state = functional.embedding(identifiers, self.vocabulary)
-        encoded = rms(
-            self.fusion.forward(features[:anchor].to(device).float()),
-            self.encoder_norm,
-            cfg.epsilon,
-        )
+        encoded = self.encode(features, anchor, fused)
         keys = torch.cat((context_positions, positions))
         for index, module in enumerate(self.blocks):
             block = cast(Layer, module)
