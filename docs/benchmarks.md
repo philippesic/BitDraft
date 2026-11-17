@@ -794,7 +794,7 @@ per step are recorded beside the plan.
 | --- | --- |
 | `candidate` | `source`, `vocabulary`, optional `initialization` and `frozen_baseline`, `state`, `mode` (`branch` as the frozen-table switch made export `5749a05f…`, or `continue`) and optional `arm` naming it in native results |
 | `baseline` | `drafter` (Baseline GGUF) and `target` (the target GGUF whose token table Baseline uses) |
-| `rounds` | DEV capture `corpus`, `exclusions`, `depth` 3, shortlist `top` 16, anchors per batch `chunk`, `seed`, bootstrap `resamples`, optional native `result.json` as `native` |
+| `rounds` | DEV capture `corpus`, `exclusions`, `depth` 3, shortlist `top` 16, anchors per batch `chunk`, `seed`, bootstrap `resamples`, optional native `result.json` as `native`, optional vocabulary `scoring` |
 | `windows` | `training-diagnostics-v1` with its groups (120 + 20 + 20 fixed DEV windows) |
 | `ranges` | `true` adds clipping and input-range statistics on the unchanged candidate |
 | `ablations` | Any of `unchanged`, `gains-one`, `midpoints-zero`, `gains-one-midpoints-zero`, `inputs-unrounded`, `inputs-unrounded-unclipped` |
@@ -850,6 +850,34 @@ band (<512, 512–2K, 2K–8K, 8K–16K, >16K). Scenario is `agentic-sessions` f
 records, `thinking-on` when the prompt leaves a thinking block open, `long-documents` for
 documents of at least 2,048 prompt tokens, otherwise `ordinary-<category>`. Conversations
 count in the band of their longest supervised context and labels in their anchor's band.
+
+**Vocabulary scoring.** The optional `rounds.scoring` section replays each drafter's rounds
+with restricted or cheaper vocabulary scoring; without it the rounds and the report are
+unchanged. [vocabulary_scoring.py](../w1a1_eagle/numerical/vocabulary_scoring.py) receives every
+chunk's final states, exact logits and ranking through `propose`'s hook. Keys, all optional
+but at least one variant:
+
+| Key | Variants |
+| --- | --- |
+| `mixture` + `frequent` | `frequent-N`: only the N most frequent target tokens at distinct supervised positions of the TRAIN `corpus-mixture-v1` manifest (never DEV), ties by token ID |
+| `request_tokens` | `frequent-N+request`: the same plus every token of the request up to the round's anchor |
+| `one_bit` | `one-bit-K`: the runtime W1A8 pass (8-bit per-token absmax codes, row signs with w ≥ 0 as +1, mean \|w\| per row), top K rescored with the exact table |
+| `low_rank` | `{"rank": r, "keep": [K, …]}`: `low-rank-r-K`, the best rank-r factor (Gram eigenvectors), both factors rounded to F16, top K rescored exactly |
+| `tables` | `2-bit`, `1-bit`: the table converted per row without training (levels ±0.5/±1.5 with a least-squares scale; sign × mean \|w\|); `table-*-scoring` scores the unchanged states, `table-*-drafter` also converts the anchor and mask input rows |
+| `export` | `{"rounds_per_request": n}`: writes the timing inputs below; needs the frequent, one-bit and low-rank settings |
+
+A restricted choice equals the full choice whenever that choice is inside its candidate
+set, so ties cannot count as misses. Per variant, overall and by category, at the round starts
+of the unchanged trajectory and per slot: `first_choice_changed`,
+`correct_first_choice_lost` (full scoring matched the target's token, the variant does not)
+and, for candidate sets, `label_outside_candidates`. `rounds` re-simulates with the variant's
+choices; `accepted_per_round_difference` and `paired_accepted_per_round` (95% bootstrap over
+source groups) compare it with the unchanged drafter. `train_labels` gives the share of TRAIN
+labels each shortlist covers. The export goes to `scoring-<drafter>/` with `manifest.json`
+(schema `vocabulary-scoring-export-v1`): the first n round-start states per request as
+scored, packed signs, one-bit scales, low-rank factors and the TRAIN ranking, plus the
+table's model and tensor. The memory plan adds the scoring working set to both round steps.
+The variants use exact F32 logits; the runtime scores with Q8_1-quantized states.
 
 Limits: the diagnostics are teacher-forced and simulated; acceptance is decided natively.
 A Baseline model check on CPU covers tensor loading only; agreement with native rounds
@@ -1130,6 +1158,39 @@ and served experiment are retained under `artifacts/benchmarks/w1-kernels/`.
 explains its scope and artifact disposition. A separate activation trace verifies
 that the experimental runtime executes twelve gate/up MMA launches and six down
 DP4A launches per full six-layer round; trace times are excluded from clean timing.
+
+### Vocabulary scoring timing
+
+`benchmark-vocabulary SPEC OUTPUT` times one drafting round's vocabulary scoring and token
+selection for each named table with the linked runtime's own ggml operations, on the round
+states exported by the round diagnostics. The `vocabulary-benchmark-v1` specification holds
+the `build` (a kernel build whose sources include `kernel-vocabulary.cuh`), `tables` (each a
+`name` and its `scoring` export manifest), `variants`, `sets` (exported rounds checked per
+table), `warmup`, `repeats`, `trials` and `bandwidth_gb_s`, with the conventions above.
+
+| Variant | Graph |
+| --- | --- |
+| `topk` | Full Q4_K/Q6_K scoring and `top_k(10)`, the current backend sampler's selection |
+| `argmax` | Full scoring and `argmax`; required, it is the reference |
+| `shortlist-N` | Scoring of a contiguous copy of the N most frequent rows (at most the exported ranking's length) and `argmax` |
+| `one-bit-K` | `w1ax_mul_mat` over packed signs and row scales, `top_k(K)`, exact rescoring and `argmax` |
+| `low-rank-r-K` | Two F16 products, `top_k(K)`, exact rescoring and `argmax` |
+
+Exact rescoring gathers the K candidate rows with `get_rows` (dequantized to F32) and
+scores them with a batched F32 product, so it is an unfused upper bound. The shortlist rows
+are gathered once at preparation; request tokens would need a per-round gather, which is
+not timed. Each variant runs as its own process: four computes, then replay of the single
+captured CUDA graph (`mode` `graph`), or repeated graph computes when ggml captured none
+(`mode` `compute`, which includes launch overhead). Every exported round is scored once
+before timing. Checks: `topk` must give the merged argmax's winning score bit for bit
+(`exact`; equal tokens unless tied); the shortlist and coarse variants report how often the
+full choice is reachable and the agreement when it is; `exported_first_choice_agreement`
+compares with the F32 diagnostic choice. `stable_outputs` requires identical tokens after
+every trial. Rows report microseconds per round, spread, bytes read, the read floor at the
+assumed bandwidth and `saving_vs_topk_microseconds`.
+
+The runtime-v8 kernel slice already defines the recovered IMMA kernel; the builder then
+compiles the harness copy under other names (`RUNTIME_RECOVERED_IMMA`).
 
 ### RSR-core binary variant
 

@@ -65,7 +65,10 @@ does not make missing hardware evidence available.
 `tests/test_kernel_probe.py` checks bounded tensor extraction and runtime-source
 slicing. `tests/test_kernel_benchmark.py` checks timing-record validation, failure
 retention and rate/floor arithmetic. `tests/test_kernel_capture.py` checks capture
-configuration isolation and schema refusal. The full gate does not qualify CUDA kernels.
+configuration isolation and schema refusal. `tests/test_vocabulary_benchmark.py` checks the
+vocabulary timing inputs, choice records and agreement checks;
+`tests/numerical/test_vocabulary_scoring.py` checks the round simulation's scoring hook and
+its arithmetic. The full gate does not qualify CUDA kernels.
 Use the [kernel benchmark](benchmarks.md#kernel-benchmark) for per-variant full-output
 byte equality and repeated GPU times at each requested geometry. A failed equality
 check must remain visible in the result.
