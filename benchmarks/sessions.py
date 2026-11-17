@@ -15,7 +15,7 @@ from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, record, sequence, string
 from w1a1_eagle.device import cuda_identity, device_lease
 from w1a1_eagle.identity import freeze_source, source_identity
-from w1a1_eagle.records import artifact, canonical, identity, read
+from w1a1_eagle.records import artifact, canonical, identity, read, reference
 
 TRAILER = re.compile(r"\s*[A-Za-z-]+-by:|\s*(?:Change-Id|Cc|Fixes|Closes|Refs):", re.IGNORECASE)
 PERMISSIVE = frozenset({"mit", "apache-2.0", "bsd-3-clause", "bsd-2-clause", "isc"})
@@ -75,6 +75,26 @@ def components(rows: list[Record]) -> dict[str, list[Record]]:
     return grouped
 
 
+def clean_message(text: str) -> str:
+    return "\n".join(
+        line for line in text.splitlines() if not TRAILER.match(line) and "@" not in line
+    ).strip()
+
+
+def change_checks(name: str, old: str) -> str:
+    return (
+        "import hashlib, pathlib\n"
+        "for path in sorted(pathlib.Path('/work').rglob('*.py')):\n"
+        "    compile(path.read_text(), str(path.relative_to('/work')), 'exec')\n"
+        "changed = pathlib.Path('/work/" + name + "').read_text()\n"
+        "assert hashlib.sha256(changed.encode()).hexdigest() != '"
+        + hashlib.sha256(old.encode()).hexdigest()
+        + "', 'the requested change is not present in "
+        + name
+        + "'\n"
+    )
+
+
 def commit_order(row: Record) -> tuple[str, str]:
     return string(row["commit"]), text_value(row, "old_file")
 
@@ -97,11 +117,7 @@ def project_task(root: str, rows: list[Record], system: str, cap: int) -> Record
         name, old, new = (
             text_value(row, key) for key in ("old_file", "old_contents", "new_contents")
         )
-        message = "\n".join(
-            line
-            for line in text_value(row, "message").splitlines()
-            if not TRAILER.match(line) and "@" not in line
-        ).strip()
+        message = clean_message(text_value(row, "message"))
         if not (
             name in snapshot
             and text_value(row, "new_file") == name
@@ -118,17 +134,7 @@ def project_task(root: str, rows: list[Record], system: str, cap: int) -> Record
         if len(files) < 2 or sum(len(text.encode()) for text in files.values()) > PROJECT_BYTES:
             continue
         digest = identity({"text": old})
-        checks = (
-            "import hashlib, pathlib\n"
-            "for path in sorted(pathlib.Path('/work').rglob('*.py')):\n"
-            "    compile(path.read_text(), str(path.relative_to('/work')), 'exec')\n"
-            "changed = pathlib.Path('/work/" + name + "').read_text()\n"
-            "assert hashlib.sha256(changed.encode()).hexdigest() != '"
-            + hashlib.sha256(old.encode()).hexdigest()
-            + "', 'the requested change is not present in "
-            + name
-            + "'\n"
-        )
+        checks = change_checks(name, old)
         prompt = (
             message
             + "\n\nThe change belongs in "
@@ -207,10 +213,55 @@ def build_tasks(raw: Record, root: Path) -> tuple[list[Record], Record]:
     return tasks, summary
 
 
+def prepared_tasks(raw: Record, root: Path) -> tuple[list[Record], Record]:
+    ref = artifact(raw["prepared"], root)
+    ref.verify()
+    result = read(ref.path)
+    if result.get("status") != "prepared" or result.get("role") != "train":
+        raise ValueError("generated sessions need prepared TRAIN long-project tasks")
+    harnesses = artifact(raw["harnesses"], root)
+    harnesses.verify()
+    if (
+        record(result["harnesses"])["sha256"] != harnesses.sha256
+        or integer(result["output_cap"]) != integer(raw["output_cap"])
+        or result["target_sha256"] != artifact(raw["target"], root).sha256
+    ):
+        raise ValueError("prepared tasks use a different harness, output cap or target")
+    tasks_ref = artifact(result["tasks"], ref.path.parent)
+    tasks_ref.verify()
+    tasks = [record(value) for value in sequence(read(tasks_ref.path, 1024 * 1024 * 1024)["tasks"])]
+    protected: set[str] = {"heldout24"}
+    for key in ("exclusions", "heldout_exclusions"):
+        exclusion = artifact(raw[key], root)
+        exclusion.verify()
+        protected.update(string(value) for value in sequence(read(exclusion.path)["identities"]))
+    skip = integer(raw.get("skip", 0))
+    wanted = integer(raw["tasks"])
+    if skip < 0 or wanted < 1 or skip + wanted > len(tasks):
+        raise ValueError("prepared tasks cannot supply the requested TRAIN session slice")
+    selected = tasks[skip : skip + wanted]
+    if any(task["role"] != "train" or source_names(task) & protected for task in selected):
+        raise ValueError("prepared tasks include protected or non-training sources")
+    summary: Record = {
+        "prepared": reference(ref),
+        "source": result["source"],
+        "skip": skip,
+        "selected": len(selected),
+        "prepared_tasks": len(tasks),
+    }
+    return selected, summary
+
+
+def session_tasks(raw: Record, root: Path) -> tuple[list[Record], Record]:
+    if "prepared" not in raw:
+        return build_tasks(raw, root)
+    return prepared_tasks(raw, root)
+
+
 def generate(specification: Path, output: Path) -> Record:
     raw = read(specification)
     if (
-        set(raw) - {"skip"}
+        set(raw) - {"skip", "prepared"}
         != {
             "schema",
             "role",
@@ -245,7 +296,7 @@ def generate(specification: Path, output: Path) -> Record:
     context = integer(raw["context"])
     if not 4096 <= context <= 32768 or not 1 <= integer(raw["output_cap"]) <= 2048:
         raise ValueError("invalid session context or output cap")
-    tasks, summary = build_tasks(raw, root)
+    tasks, summary = session_tasks(raw, root)
     store = Store(output)
     definitions = canonical({"schema": 1, "tasks": tasks})
     if (store.root / "specification.json").exists():
@@ -321,7 +372,9 @@ def generate(specification: Path, output: Path) -> Record:
             "runtime": file_reference(runtime.path),
             "target_sha256": target.sha256,
             "code_sha256": code,
-            "scope": "target-only greedy TRAIN tool sessions in isolated CommitPackFT project copies; task success is not required for supervision",
+            "scope": "target-only greedy TRAIN tool sessions in isolated CommitPackFT project copies; task success is not required for supervision"
+            if "prepared" not in raw
+            else "target-only greedy TRAIN tool sessions in prepared full repository snapshots with relevant source in the initial context; task success is not required for supervision",
         }
         store.atomic(store.root / "result.json", canonical(result))
         return result
