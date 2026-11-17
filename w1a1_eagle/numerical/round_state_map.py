@@ -7,9 +7,10 @@ from concurrent.futures import Future, ThreadPoolExecutor
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterator, cast
+from typing import Callable, Iterator, cast
 
 import torch
+from torch import Tensor
 from torch.nn import functional
 
 from w1a1_eagle.checkpoints.store import Store
@@ -70,7 +71,9 @@ SPEC_FIELDS = {
     "rows",
     "depth",
     "chunk",
+    "scoring",
 }
+SCORINGS = ("batched", "folded")
 FATAL_MEMORY_EXIT = 3
 
 
@@ -224,6 +227,36 @@ def propose_first(
     return result
 
 
+def propose_folded(
+    model: HE4, capture: Capture, anchors: tuple[int, ...], depth: int, chunk: int
+) -> dict[int, Ranked]:
+    result: dict[int, Ranked] = {}
+    if not anchors:
+        return result
+    fused = capture.fusion is not None
+    chosen: list[Tensor] = []
+    with torch.inference_mode(), single_products(model):
+        contexts = model.group_contexts(capture.features, capture.tokens, max(anchors), fused)
+        for start in range(0, len(anchors), chunk):
+            part = anchors[start : start + chunk]
+            hidden = model.group_hidden(
+                capture.features, capture.tokens, part, depth + 1, fused, contexts
+            )
+            rows = hidden[:, 1:].reshape(len(part) * depth, hidden.shape[-1])
+            scores = functional.linear(rows, model.vocabulary)
+            chosen.append(scores.argmax(-1).view(len(part), depth))
+            del hidden, rows, scores
+        del contexts
+        values = cast(list[list[int]], torch.cat(chosen).cpu().tolist())
+    for anchor, slots in zip(anchors, values, strict=True):
+        result[anchor] = tuple((int(token),) for token in slots)
+    return result
+
+
+Proposer = Callable[[HE4, Capture, tuple[int, ...], int, int], dict[int, Ranked]]
+PROPOSERS: dict[str, Proposer] = {"batched": propose_first, "folded": propose_folded}
+
+
 def drafter_record(section: Record, root: Path, config: str, updates: int) -> Record:
     def sha(key: str) -> str | None:
         return artifact(section[key], root).sha256 if key in section else None
@@ -263,6 +296,10 @@ def build(specification: Path, output: Path, cfg: Geometry = Geometry()) -> Reco
     depth = integer(raw.get("depth", 3))
     chunk = integer(raw.get("chunk", 128))
     limit = None if raw.get("rows") is None else integer(raw["rows"])
+    scoring = string(raw.get("scoring", "batched"))
+    if scoring not in SCORINGS:
+        raise ValueError("round-state map scoring must be one of " + ", ".join(SCORINGS))
+    proposer = PROPOSERS[scoring]
     if depth < 1 or chunk < 1 or activation < 1 or (limit is not None and limit < 1):
         raise ValueError("positive depth, chunk, activation bytes and row limit required")
     if limit is not None and "restrict" in raw:
@@ -349,7 +386,7 @@ def build(specification: Path, output: Path, cfg: Geometry = Geometry()) -> Reco
                     {window.anchor: window.labels for window in capture.windows}, item.spans
                 )
                 anchors = generated_anchors(windows)
-                ranked = propose_first(model, capture, anchors, depth, sizes[item.identity])
+                ranked = proposer(model, capture, anchors, depth, sizes[item.identity])
                 found = round_starts(windows, ranked, depth)
                 computed += clock.now() - started
                 covered += len(windows)
@@ -397,6 +434,7 @@ def build(specification: Path, output: Path, cfg: Geometry = Geometry()) -> Reco
         "map": reference(written),
         "code_sha256": code,
         "device": device,
+        "scoring": scoring,
         "gpu": cuda_identity() if cuda else None,
         "torch": str(torch.__version__),
         "specification": identity(raw),
@@ -415,6 +453,7 @@ def build(specification: Path, output: Path, cfg: Geometry = Geometry()) -> Reco
             "waiting_for_captures": waited,
         },
         "proposals_per_compute_second": rate,
+        "windows_per_compute_second": covered / computed if computed > 0 else None,
         "forecast_full_compute_seconds": every / rate if rate else None,
         "memory": {**summary, "measured": run.guard.measured},
     }
@@ -437,6 +476,7 @@ def run_build(specification: Path, output: Path, cfg: Geometry = Geometry()) -> 
         "covered_windows": report["covered_windows"],
         "seconds": report["seconds"],
         "proposals_per_compute_second": report["proposals_per_compute_second"],
+        "windows_per_compute_second": report["windows_per_compute_second"],
         "forecast_full_compute_seconds": report["forecast_full_compute_seconds"],
     }
     print(json.dumps(summary), flush=True)

@@ -26,7 +26,12 @@ from w1a1_eagle.lifecycle import Journal
 from w1a1_eagle.numerical.captures import Capture, load_capture
 from w1a1_eagle.numerical.entry import admission, read_corpus, round_state_weighting
 from w1a1_eagle.numerical.round_diagnostics import propose
-from w1a1_eagle.numerical.round_state_map import SPEC_SCHEMA, build, propose_first
+from w1a1_eagle.numerical.round_state_map import (
+    SPEC_SCHEMA,
+    build,
+    propose_first,
+    propose_folded,
+)
 from w1a1_eagle.numerical.worker import TensorWorker, label_weights
 from w1a1_eagle.records import artifact, canonical, reference
 from w1a1_eagle.round_states import (
@@ -159,6 +164,13 @@ class TestRoundStartMap(unittest.TestCase):
         first = propose_first(model, capture, anchors, 3, 2)
         ranked = propose(model, capture, anchors, 3, 1, 2)
         self.assertEqual(first, ranked)
+        for chunk in (1, 2, 5):
+            self.assertEqual(propose_folded(model, capture, anchors, 3, chunk), first)
+        self.assertEqual(propose_folded(model, capture, (), 3, 2), {})
+        with torch.no_grad():
+            for anchor in anchors:
+                single = model.forward(features, tokens, anchor, 4)[1:].argmax(-1).tolist()
+                self.assertEqual(first[anchor], tuple((token,) for token in single))
 
 
 class TestWeighting(unittest.TestCase):
@@ -326,6 +338,56 @@ def _plain(root: Path, intent: Record) -> Path:
 
 
 class TestMapBuild(unittest.TestCase):
+    def test_folded_scoring_writes_the_same_map(self) -> None:
+        torch.set_num_threads(1)
+        with tempfile.TemporaryDirectory(prefix="binary-round-folded-") as directory:
+            root = Path(directory)
+            corpus, model, base = seeded(root)
+            state = TensorWorker(model, corpus, "parent").checkpoint(
+                Store(root / "states"), 1 << 26
+            )
+            spec: Record = {
+                "schema": SPEC_SCHEMA,
+                "memory_bytes": 4 << 30,
+                "activation_bytes": 64 << 20,
+                "drafter": {
+                    "source": base["source"],
+                    "vocabulary": base["vocabulary"],
+                    "state": reference(state.artifact),
+                    "mode": "continue",
+                },
+                "corpus": base["corpus"],
+                "chunk": 3,
+            }
+            reports: dict[str, Record] = {}
+            for name, changes in (
+                ("default", {}),
+                ("batched", {"scoring": "batched"}),
+                ("folded", {"scoring": "folded"}),
+            ):
+                path = root / (name + ".json")
+                path.write_bytes(canonical({**spec, **changes}))
+                with contextlib.redirect_stdout(io.StringIO()):
+                    reports[name] = build(path, root / name, LOADER_GEOMETRY)
+            maps = {
+                name: load_map(artifact(report["map"], root)) for name, report in reports.items()
+            }
+            self.assertEqual(reports["default"]["scoring"], "batched")
+            self.assertEqual(reports["folded"]["scoring"], "folded")
+            self.assertEqual(maps["default"].sha256, maps["batched"].sha256)
+            self.assertEqual(maps["folded"].sha256, maps["default"].sha256)
+            self.assertTrue(any(maps["folded"].starts.values()))
+            self.assertEqual(reports["folded"]["proposals"], reports["default"]["proposals"])
+            covered = integer(reports["folded"]["covered_windows"])
+            compute = number(record(reports["folded"]["seconds"])["compute"])
+            self.assertAlmostEqual(
+                number(reports["folded"]["windows_per_compute_second"]), covered / compute
+            )
+            bad = root / "bad.json"
+            bad.write_bytes(canonical({**spec, "scoring": "fast"}))
+            with self.assertRaisesRegex(ValueError, "scoring must be one of"):
+                build(bad, root / "bad", LOADER_GEOMETRY)
+
     def test_full_and_restricted_maps_match_an_independent_simulation_and_train(self) -> None:
         torch.set_num_threads(1)
         with tempfile.TemporaryDirectory(prefix="binary-round-map-") as directory:
