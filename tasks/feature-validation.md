@@ -219,6 +219,10 @@ comparison); every claim about it must separate what is native to our drafter fr
 Baseline would also gain. (2) Measure quantized vocabulary tables (Q3_K, Q2_K) on the real
 runtime (build W). (3) A second seed each for fast arithmetic and fused storage on the calibrated
 recipe, judged on the pooled two-seed bound (`group3/retest-preflight.md`), after step 14.
+(4) Run round-state weighting (build F2: a fast map from grouped forward passes, target under 75
+GPU minutes) and per-slot rounding (build P: anchor and mask clip bounds in training, export and
+runtime, with a timing prototype first), each as one calibrated arm against `g3v2-calibrated`
+with the group 3 thresholds, after the retests.
 
 Decided by the owner 2026-11-16 19:15: `greedy-long` is judged on the supplementary interval
 that pools category strata with fewer than two source groups (the maintained rule cannot give it
