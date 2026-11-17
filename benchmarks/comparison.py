@@ -3,7 +3,15 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from benchmarks.coverage import FULL, SHORT, length_band
-from benchmarks.runtime_policy import LIVE_SECONDS, LIVE_TIERS, LIVE_TURNS, arguments, payload
+from benchmarks.runtime_policy import (
+    DEFAULT_SPECULATION,
+    LIVE_SECONDS,
+    LIVE_TIERS,
+    LIVE_TURNS,
+    SPECULATION_TYPES,
+    arguments,
+    payload,
+)
 from benchmarks.sandbox import TOOLS
 from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
 from w1a1_eagle.data import Artifact
@@ -46,13 +54,22 @@ class Comparison:
     sampling: Sampling = Sampling()
     references: tuple[tuple[str, Artifact], ...] = ()
     depths: tuple[tuple[str, int], ...] = ()
+    speculation: tuple[tuple[str, str], ...] = ()
 
     @classmethod
     def load(cls, path: Path) -> "Comparison":
         raw = read(path)
         if (
             set(raw)
-            - {"exclusions", "diagnostic", "sampling", "references", "calibration", "depths"}
+            - {
+                "exclusions",
+                "diagnostic",
+                "sampling",
+                "references",
+                "calibration",
+                "depths",
+                "speculation",
+            }
             != {
                 "schema",
                 "source",
@@ -299,6 +316,19 @@ class Comparison:
         )
         if any(name not in drafting or not 1 <= value <= 15 for name, value in depths):
             raise ValueError("per-arm depth requires a drafting arm and a depth from 1 to 15")
+        if "speculation" in raw and not record(raw["speculation"]):
+            raise ValueError("declared per-arm speculation must name at least one arm")
+        speculation = tuple(
+            sorted(
+                (name, string(value)) for name, value in record(raw.get("speculation", {})).items()
+            )
+        )
+        if any(
+            name not in drafting or value not in SPECULATION_TYPES for name, value in speculation
+        ):
+            raise ValueError(
+                "per-arm speculation requires a drafting arm and a supported speculative type"
+            )
         return cls(
             artifact(raw["source"], root),
             artifact(raw["binary"], root),
@@ -318,10 +348,14 @@ class Comparison:
             sampling,
             references,
             depths,
+            speculation,
         )
 
     def depth_of(self, name: str) -> int:
         return dict(self.depths).get(name, self.depth)
+
+    def speculation_of(self, name: str) -> str:
+        return dict(self.speculation).get(name, DEFAULT_SPECULATION)
 
     def arm_depths(self) -> Record:
         return {
@@ -381,12 +415,12 @@ class Comparison:
             self.cached()
 
     def reference_protocol(self) -> Record:
-        if not self.depths:
-            return self.arm_protocol("target")
-        return {
-            **self.arm_protocol("target"),
-            "arm_depths": {name: value for name, value in self.depths},
-        }
+        protocol = self.arm_protocol("target")
+        if self.depths:
+            protocol["arm_depths"] = {name: value for name, value in self.depths}
+        if self.speculation:
+            protocol["arm_speculation"] = {name: value for name, value in self.speculation}
+        return protocol
 
     def arm_protocol(self, name: str) -> Record:
         depth = self.depth_of(name)
@@ -400,7 +434,13 @@ class Comparison:
                 Path("server"), Path("target"), None, self.context, depth, 0
             ),
             "draft_arguments": arguments(
-                Path("server"), Path("target"), Path("drafter"), self.context, depth, 0
+                Path("server"),
+                Path("target"),
+                Path("drafter"),
+                self.context,
+                depth,
+                0,
+                speculation=self.speculation_of(name),
             ),
             "request": payload(
                 [],

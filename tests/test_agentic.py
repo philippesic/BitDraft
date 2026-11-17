@@ -145,7 +145,9 @@ def test_live_stops_first_repeated_turn_without_counting_its_tokens(
             return {"tokens": [5, 6]}
         return dict(response)
 
-    def verify(response: Record, query: Record, speculative: bool) -> None:
+    def verify(
+        response: Record, query: Record, speculative: bool, speculation: str = "draft-dflash"
+    ) -> None:
         return None
 
     def valid(response: Record, cap: int) -> bool:

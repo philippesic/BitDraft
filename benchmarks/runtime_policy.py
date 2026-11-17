@@ -5,6 +5,8 @@ from w1a1_eagle.contracts import Record
 LIVE_TIERS = frozenset({"live", "agentic-slice", "agentic-suite", "agentic-confirmation"})
 LIVE_TURNS = 16
 LIVE_SECONDS = 900
+DEFAULT_SPECULATION = "draft-dflash"
+SPECULATION_TYPES = frozenset({DEFAULT_SPECULATION, "draft-dspark"})
 
 
 def arguments(
@@ -15,6 +17,7 @@ def arguments(
     depth: int,
     port: int,
     parallel: int = 1,
+    speculation: str = DEFAULT_SPECULATION,
 ) -> list[str]:
     argv = [
         str(binary),
@@ -51,7 +54,7 @@ def arguments(
         "--cache-ram",
         "0",
         "--spec-type",
-        "draft-dflash" if drafter else "none",
+        speculation if drafter else "none",
         "-lv",
         "3",
     ]

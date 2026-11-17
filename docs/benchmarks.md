@@ -389,7 +389,13 @@ never a target-only arm. Omitting it keeps the previous behaviour and protocol i
 When present, the panel protocol gains `arm_depths`, each arm's server runs with its own
 `--spec-draft-n-max`, and results record `arm_depths` plus a `depth` beside each summary's
 counters and `derived_rounds` (null for target-only). `live` and agentic specifications
-accept the same field. Summaries therefore add `derived_rounds` (emitted − accepted − requests: each round emits
+accept the same field. Drafting arms run with `--spec-type draft-dflash`, which also serves
+DFlash2 files (the runtime detects their selector). An optional `speculation` mapping, with
+the same naming rules as `depths`, serves an arm with another native type; the only other
+supported value is `"draft-dspark"`, for example `"speculation": {"dspark": "draft-dspark"}`,
+so a DSpark file runs with its Markov head. When present, the panel protocol gains
+`arm_speculation` and each response's reported mode must match its arm. Omitting it keeps
+the previous behaviour and protocol identity. Summaries therefore add `derived_rounds` (emitted − accepted − requests: each round emits
 its accepted drafts plus one target token, and the first token comes from prompt processing)
 with proposed, accepted and emitted tokens per round. On the 1,200-request Q4KM panel this
 matched the native round counters within 0.1%. Requests ending at EOS match exactly; a

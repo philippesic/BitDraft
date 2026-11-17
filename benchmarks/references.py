@@ -89,6 +89,7 @@ def register(specification: Path, output: Path) -> Record:
             prior.context,
             prior.depth_of(name),
             port,
+            speculation=prior.speculation_of(name),
         ):
             raise ValueError("executed server policy differs from requested reference protocol")
         receipts.append(file_reference(path))
@@ -159,6 +160,7 @@ def register(specification: Path, output: Path) -> Record:
                         response,
                         read(cell / (str(index) + "-request.json")),
                         arm.drafter is not None,
+                        prior.speculation_of(name),
                     )
                     row = next(
                         row
