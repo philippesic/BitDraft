@@ -27,6 +27,7 @@ class SampledSequence:
     features: Tensor
     tokens: tuple[int, ...]
     anchors: tuple[int, ...]
+    fused: bool
 
 
 @dataclass(frozen=True)
@@ -39,7 +40,7 @@ def select(corpus: Corpus, sample: Sample, byte_budget: int) -> Selection:
     generator = random.Random(sample.seed)
     eligible = [index for index, row in enumerate(corpus.rows) if row.anchors]
     chosen = sorted(generator.sample(eligible, min(sample.sequences, len(eligible))))
-    cache = CaptureCache(byte_budget, corpus.shape.hidden)
+    cache = CaptureCache(byte_budget, corpus.shape.hidden, corpus.fusion)
     sequences: list[SampledSequence] = []
     rows: list[Record] = []
     loaded = 0
@@ -57,7 +58,11 @@ def select(corpus: Corpus, sample: Sample, byte_budget: int) -> Selection:
         loaded += features.numel() * features.element_size()
         if loaded > byte_budget // 4:
             raise ValueError("calibration sample features exceed a quarter of the memory budget")
-        sequences.append(SampledSequence(row.prompt.identity, features, tokens, anchors))
+        sequences.append(
+            SampledSequence(
+                row.prompt.identity, features, tokens, anchors, corpus.fusion is not None
+            )
+        )
         rows.append(
             {
                 "id": row.prompt.identity,
@@ -98,7 +103,7 @@ def recorded_inputs(
     try:
         with torch.no_grad():
             for item in selection.sequences:
-                model.group_hidden(item.features, item.tokens, item.anchors, slots)
+                model.group_hidden(item.features, item.tokens, item.anchors, slots, item.fused)
         return [list(cast(list[Tensor], module.recorded)) for module in targets]
     finally:
         for module in targets:
