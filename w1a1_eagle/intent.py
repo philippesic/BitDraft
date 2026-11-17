@@ -9,7 +9,18 @@ from w1a1_eagle.data import Artifact
 from w1a1_eagle.index import IndexSpec, Mount
 from w1a1_eagle.records import artifact, canonical, identity, read
 from w1a1_eagle.storage import relocated
-from w1a1_eagle.training import TABLE_GROUP, Blocks, Budget, Grouping, Optimization, Schedule
+from w1a1_eagle.training import (
+    TABLE_GROUP,
+    Blocks,
+    Budget,
+    Features,
+    GradualPrecision,
+    Grouping,
+    Optimization,
+    Sample,
+    Schedule,
+    StartCheck,
+)
 
 
 def optimization(value: object) -> Optimization:
@@ -46,6 +57,71 @@ def grouping(value: object) -> Grouping:
         raise ValueError("grouping requires max_windows, activation_bytes and device_bytes")
     return Grouping(
         integer(raw["max_windows"]), integer(raw["activation_bytes"]), integer(raw["device_bytes"])
+    )
+
+
+def features(value: object) -> Features:
+    raw = record(value)
+    if set(raw) != {"scale", "clip", "gain", "midpoint"}:
+        raise ValueError("features require scale, clip, gain and midpoint")
+    scale, clip, gain, midpoint = (raw[key] for key in ("scale", "clip", "gain", "midpoint"))
+    if scale not in ("learned", "fixed") or clip not in ("learned", "fixed"):
+        raise ValueError("feature scale and clip are learned or fixed")
+    if gain not in ("learned", "off") or midpoint not in ("learned", "off"):
+        raise ValueError("feature gain and midpoint are learned or off")
+    return Features(
+        "fixed" if scale == "fixed" else "learned",
+        "fixed" if clip == "fixed" else "learned",
+        "off" if gain == "off" else "learned",
+        "off" if midpoint == "off" else "learned",
+    )
+
+
+def sample(value: object) -> Sample:
+    raw = record(value)
+    if set(raw) != {"sequences", "windows", "seed"}:
+        raise ValueError("a TRAIN sample requires sequences, windows and seed")
+    return Sample(integer(raw["sequences"]), integer(raw["windows"]), integer(raw["seed"]))
+
+
+def calibration(value: object) -> Sample:
+    raw = record(value)
+    if set(raw) != {"sample"}:
+        raise ValueError("calibration requires exactly a TRAIN sample")
+    return sample(raw["sample"])
+
+
+def gradual_precision(value: object) -> GradualPrecision:
+    raw = record(value)
+    if set(raw) != {
+        "start_temperature",
+        "end_temperature",
+        "shape",
+        "soft_updates",
+        "step_size",
+        "start_check",
+    }:
+        raise ValueError(
+            "gradual_precision requires start_temperature, end_temperature, shape,"
+            " soft_updates, step_size and start_check"
+        )
+    check = record(raw["start_check"])
+    if set(check) != {"sample", "max_relative_error", "mean_relative_error"}:
+        raise ValueError("start_check requires sample, max_relative_error and mean_relative_error")
+    shape = raw["shape"]
+    if shape not in ("linear", "exponential"):
+        raise ValueError("gradual precision shape is linear or exponential")
+    return GradualPrecision(
+        number(raw["start_temperature"]),
+        number(raw["end_temperature"]),
+        "linear" if shape == "linear" else "exponential",
+        integer(raw["soft_updates"]),
+        number(raw["step_size"]),
+        StartCheck(
+            sample(check["sample"]),
+            number(check["max_relative_error"]),
+            number(check["mean_relative_error"]),
+        ),
     )
 
 
@@ -174,6 +250,11 @@ class Intent:
                 "grouping",
                 "optimization",
                 "blocks",
+                "features",
+                "calibration",
+                "gradual_precision",
+                "telemetry",
+                "initial_export",
             }
             != required
             or type(raw["schema"]) is not int
@@ -259,6 +340,27 @@ class Intent:
             blocks(raw["blocks"]).position_weights == "reach" and "development" not in raw
         ):
             raise ValueError("reach position weights require a DEV specification")
+        if "features" in raw:
+            features(raw["features"])
+        for key in ("telemetry", "initial_export"):
+            if type(raw.get(key, False)) is not bool:
+                raise ValueError(key + " must be true or false")
+        if raw.get("initial_export", False) and mode != "fresh":
+            raise ValueError("initial_export publishes a fresh initialization only")
+        if "calibration" in raw:
+            calibration(raw["calibration"])
+            if mode not in ("fresh", "resume"):
+                raise ValueError(
+                    "calibration sets a fresh start; a branch or continuation keeps its parent's values"
+                )
+        if "gradual_precision" in raw:
+            soft = gradual_precision(raw["gradual_precision"])
+            if mode == "continue":
+                raise ValueError("gradual precision supports fresh, resume and branch only")
+            if integer(record(raw["budget"])["updates"]) <= soft.soft_updates:
+                raise ValueError(
+                    "gradual precision requires hard-sign updates after its soft phase"
+                )
         if "model_update_seconds" in raw and number(raw["model_update_seconds"]) <= 0:
             raise ValueError("positive cumulative model-update time limit required")
         budget = record(raw["budget"])
@@ -382,6 +484,30 @@ class Intent:
         return blocks(self.raw["blocks"]) if "blocks" in self.raw else Blocks()
 
     @property
+    def features(self) -> Features:
+        return features(self.raw["features"]) if "features" in self.raw else Features()
+
+    @property
+    def calibration(self) -> Sample | None:
+        return calibration(self.raw["calibration"]) if "calibration" in self.raw else None
+
+    @property
+    def gradual_precision(self) -> GradualPrecision | None:
+        return (
+            gradual_precision(self.raw["gradual_precision"])
+            if "gradual_precision" in self.raw
+            else None
+        )
+
+    @property
+    def telemetry(self) -> bool:
+        return self.raw.get("telemetry", False) is True
+
+    @property
+    def initial_export(self) -> bool:
+        return self.raw.get("initial_export", False) is True
+
+    @property
     def frozen_format(self) -> Literal["Q4_0", "baseline-k"]:
         return cast(Literal["Q4_0", "baseline-k"], self.raw.get("frozen_format", "Q4_0"))
 
@@ -448,6 +574,17 @@ class Intent:
                     else {}
                 ),
                 **({"trained_tables": True} if self.trained_tables else {}),
+                **({} if self.features.default else {"features": self.features.encode()}),
+                **(
+                    {"calibration": {"sample": self.calibration.encode()}}
+                    if self.calibration is not None
+                    else {}
+                ),
+                **(
+                    {"gradual_precision": self.gradual_precision.encode()}
+                    if self.gradual_precision is not None
+                    else {}
+                ),
                 "sampling": None
                 if self.sampling is None
                 else {"sha256": self.sampling.sha256, "bytes": self.sampling.size},

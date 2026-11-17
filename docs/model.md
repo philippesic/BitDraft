@@ -40,6 +40,9 @@ the down projection has its own gain and clipping. Normalization weights also tr
 Attention and fusion operands and the vocabulary matrix remain frozen, unless the recipe
 sets `trained_tables`; then the attention and fusion tables train in full precision and only
 the vocabulary stays frozen ([trained tables](execution.md#trained-tables)).
+The recipe can fix row scales or clipping bounds at their starting values and switch gains
+(fixed at 1) or midpoints (fixed at 0) off; such parameters leave the optimizer
+([feature switches](execution.md#feature-switches)).
 
 The forward path uses hard binary signs and quantized activations. Backward uses a
 surrogate derivative so the continuous latent parameters can receive gradients.
@@ -53,6 +56,15 @@ must travel before it flips changes. Latents outside [-1, 1] receive no gradient
 without the clamp a latent that drifts past either end stops learning.
 A custom autograd function computes the sign and saves only the latent itself, so the
 surrogate mask is not stored for backward.
+
+With [gradual precision](execution.md#gradual-precision) the first updates use soft weights
+instead of hard signs: the latent holds the source weight W and a row's table is
+S·tanh(t·W/S)/tanh(t) (Tu et al., arXiv 2508.06974), with S the row scale and t rising with the
+update count. At small t the table equals the source table; as t grows it approaches S·sign(W).
+Forward and backward follow this function exactly (no straight-through for the weights); inputs
+stay rounded. A custom autograd function recomputes tanh in backward, so it stores no more than
+the hard path. At the declared switch the latents take the hard recipe's form, signs preserved,
+and train as above.
 
 ## One optimizer update
 

@@ -5,7 +5,7 @@ import signal
 import sys
 from dataclasses import asdict
 from pathlib import Path
-from typing import Protocol, cast
+from typing import Callable, Protocol, cast
 
 import torch
 
@@ -20,6 +20,7 @@ from w1a1_eagle.index import IndexReader
 from w1a1_eagle.intent import Intent
 from w1a1_eagle.lifecycle import Journal, control
 from w1a1_eagle.model import HE4, Geometry, bound_latents
+from w1a1_eagle.numerical.calibration import calibrate, start_check
 from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.diagnostics import Diagnostics
@@ -29,6 +30,7 @@ from w1a1_eagle.numerical.weights import exported_tables, load_he4
 from w1a1_eagle.numerical.worker import TensorWorker, checkpoint_accounting
 from w1a1_eagle.processes import ProcessIdentity
 from w1a1_eagle.records import artifact
+from w1a1_eagle.training import MAXIMUM_SLOTS
 
 
 class Boundary(Protocol):
@@ -106,6 +108,18 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
         "optimization": cast(Record, asdict(intent.optimization)),
         "blocks": intent.blocks.encode(),
         **({"trained_tables": True} if intent.trained_tables else {}),
+        **({} if intent.features.default else {"features": intent.features.encode()}),
+        **(
+            {"calibration": {"sample": intent.calibration.encode()}}
+            if intent.calibration is not None
+            else {}
+        ),
+        **(
+            {"gradual_precision": intent.gradual_precision.encode()}
+            if intent.gradual_precision is not None
+            else {}
+        ),
+        **({"telemetry": True} if intent.telemetry else {}),
         "exposure": exposure,
         "prior_use_warning": "Prior training is marked for "
         + str(exposure["historical_training_sequences"])
@@ -167,6 +181,100 @@ def read_corpus(intent: Intent) -> Corpus:
         cfg,
         intent.blocks,
     )
+
+
+def calibration_slots(intent: Intent) -> int:
+    fixed = intent.blocks.fixed
+    return MAXIMUM_SLOTS if fixed is None else fixed
+
+
+def initialize(
+    intent: Intent, corpus: Corpus, model: HE4, publish: Callable[[Record], None]
+) -> None:
+    gradual = intent.gradual_precision
+    if intent.calibration is not None:
+        publish(
+            {
+                "kind": "calibration",
+                **calibrate(
+                    model,
+                    corpus,
+                    intent.calibration,
+                    intent.features,
+                    calibration_slots(intent),
+                    intent.memory_bytes,
+                    gradual is not None,
+                ),
+            }
+        )
+    if gradual is not None:
+        check = start_check(
+            model,
+            corpus,
+            gradual.start_check,
+            gradual.start_temperature,
+            calibration_slots(intent),
+            intent.memory_bytes,
+        )
+        publish(check)
+        if check["passed"] is not True:
+            raise ValueError(
+                "gradual precision start check exceeds its tolerance: max "
+                + str(check["max_relative_error"])
+                + ", worst table mean "
+                + str(check["worst_mean_relative_error"])
+            )
+    elif intent.optimization.latent_multiple is not None:
+        bound_latents(model, intent.optimization.latent_multiple)
+
+
+def start_check_command(path: Path) -> Record:
+    intent = Intent.load(path)
+    gradual = intent.gradual_precision
+    if gradual is None or intent.parent is not None:
+        raise ValueError("the start check measures a fresh gradual precision intent")
+    device = str(intent.raw["device"])
+    with device_lease(device):
+        torch.set_num_threads(intent.cpu_threads)
+        torch.manual_seed(intent.seed)
+        corpus = read_corpus(intent)
+        model = load_he4(
+            intent.source,
+            intent.vocabulary,
+            intent.memory_bytes,
+            geometry(intent),
+            intent.initialization,
+            intent.frozen_format,
+            intent.frozen_baseline,
+            intent.trained_tables,
+        )
+        model.to(device)
+        calibrated = None
+        if intent.calibration is not None:
+            calibrated = calibrate(
+                model,
+                corpus,
+                intent.calibration,
+                intent.features,
+                calibration_slots(intent),
+                intent.memory_bytes,
+                True,
+            )
+        check = start_check(
+            model,
+            corpus,
+            gradual.start_check,
+            gradual.start_temperature,
+            calibration_slots(intent),
+            intent.memory_bytes,
+        )
+        return {
+            **check,
+            "intent": intent.sha256,
+            "recipe": intent.recipe,
+            "device": device,
+            **({"calibration_values_sha256": calibrated["values_sha256"]} if calibrated else {}),
+        }
 
 
 def device_admission(intent: Intent, corpus: Corpus, model: HE4) -> int:
@@ -259,8 +367,12 @@ def run_leased(
     loaded_cache: dict[tuple[int, int, int, int, int], str] = {}
     initial_loaded = loaded_identity(loaded_cache)
     journal.append({"kind": "loaded", "attempt": attempt, "identity": initial_loaded})
-    if intent.parent is None and intent.optimization.latent_multiple is not None:
-        bound_latents(model, intent.optimization.latent_multiple)
+    if intent.parent is None:
+        phase("initialization-began")
+        initialize(
+            intent, corpus, model, lambda event: journal.append({**event, "attempt": attempt})
+        )
+        phase("initialization-complete")
     worker = TensorWorker(
         model,
         corpus,
@@ -269,6 +381,9 @@ def run_leased(
         optimization=intent.optimization,
         blocks=intent.blocks,
         block_slots=corpus.slots,
+        features=intent.features,
+        precision=intent.gradual_precision,
+        telemetry=intent.telemetry,
     )
     diagnostics = (
         Diagnostics(artifact(intent.raw["development"], intent.base), corpus, intent.memory_bytes)
@@ -337,6 +452,7 @@ def run_leased(
         nonlocal last_diagnostic_updates
         worker.verify_frozen()
         began = clock.now()
+        precision = worker.precision_record()
         result = diagnostics.measure(model)
         exported = (
             diagnostics.measure(model, tables=exported_tables(model))
@@ -358,6 +474,7 @@ def run_leased(
                 "result": result,
                 **({"exported_tables": exported} if exported is not None else {}),
                 **({"position_weights": weights} if weights is not None else {}),
+                **({"precision": precision} if precision is not None else {}),
             }
         )
         last_diagnostic_updates = worker.updates
@@ -374,6 +491,7 @@ def run_leased(
             losses.append(worker.progress.last_loss)
             last_loss_updates = worker.updates
         if worker.updates != last_progress_updates and worker.cursor % 100 == 0:
+            telemetry = worker.telemetry_record()
             journal.append(
                 {
                     "kind": "training-progress",
@@ -384,6 +502,7 @@ def run_leased(
                     "losses": list(losses),
                     "gradient_norm": worker.last_gradient_norm,
                     "accounting": worker.accounting.encode(),
+                    **({"telemetry": telemetry} if telemetry is not None else {}),
                 }
             )
             losses.clear()
@@ -495,7 +614,35 @@ def run_leased(
 
     worker.samples = RecordedSamples()
     if intent.parent is None:
-        worker.checkpoint(states, intent.state_bytes)
+        initial = worker.checkpoint(states, intent.state_bytes)
+        if intent.initial_export:
+            initial_export = export_he4(
+                worker,
+                intent.source,
+                intent.vocabulary,
+                Store(root / "exports", intent.disk_reserve_bytes),
+                intent.state_bytes,
+                intent.memory_bytes,
+            )
+            journal.append(
+                {
+                    "kind": "initial-export",
+                    "attempt": attempt,
+                    "updates": worker.updates,
+                    "state": initial.artifact.sha256,
+                    "drafter": {
+                        "path": str(initial_export.artifact.path),
+                        "sha256": initial_export.artifact.sha256,
+                        "bytes": initial_export.artifact.size,
+                    },
+                    **(
+                        {"precision": precision_record}
+                        if (precision_record := worker.precision_record()) is not None
+                        else {}
+                    ),
+                    "scope": "untrained initialization; GGUF producer/reader conformance only",
+                }
+            )
     if boundary is not None:
         boundary.start(worker)
     while True:
@@ -564,6 +711,11 @@ def run_leased(
                 "source": intent.source.sha256,
                 "vocabulary": intent.vocabulary.sha256,
                 "scope": "GGUF producer/reader conformance; native loading unqualified",
+                **(
+                    {"precision": exported_precision}
+                    if (exported_precision := worker.precision_record()) is not None
+                    else {}
+                ),
             }
         )
         journal.append(
@@ -631,6 +783,19 @@ def run_leased(
 
 
 def main() -> int:
+    if len(sys.argv) == 3 and sys.argv[1] == "--start-check":
+        try:
+            measured = start_check_command(Path(sys.argv[2]))
+        except (ValueError, OSError, KeyError) as error:
+            refused: Record = {
+                "outcome": "refused",
+                "cause": type(error).__name__,
+                "detail": str(error),
+            }
+            print(json.dumps(refused))
+            return 2
+        print(json.dumps(measured, sort_keys=True))
+        return 0 if measured["passed"] is True else 3
     if len(sys.argv) == 3 and sys.argv[1] in {"--preflight", "--sealed-preflight"}:
         try:
             print(

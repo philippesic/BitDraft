@@ -15,15 +15,18 @@ from w1a1_eagle.clock import Clock, Monotonic
 from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
 from w1a1_eagle.data import Supervision
 from w1a1_eagle.device import DeviceClock
-from w1a1_eagle.model import HE4, Projection, clamp_latents
-from w1a1_eagle.numerical.accounting import Accounting
+from w1a1_eagle.model import HE4, Projection, bound_latents, clamp_latents
+from w1a1_eagle.numerical.accounting import Accounting, Telemetry
 from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.records import canonical
 from w1a1_eagle.training import (
     MAXIMUM_SLOTS,
+    SOFT_FAMILY,
     TABLE_GROUP,
     Blocks,
     Budget,
+    Features,
+    GradualPrecision,
     Optimization,
     Progress,
     reach_weights,
@@ -32,6 +35,26 @@ from w1a1_eagle.training import (
 
 HEAD_ROWS = 128
 FINITE_SCAN_UPDATES = 32
+FEATURE_PARAMETERS = {
+    "scale": "scale",
+    "clip": "log_clip",
+    "gain": "log_gain",
+    "midpoint": "midpoint",
+}
+
+
+def feature_parameters(model: HE4, group: str) -> list[torch.nn.Parameter]:
+    attribute = FEATURE_PARAMETERS[group]
+    found: dict[int, torch.nn.Parameter] = {}
+    for module in model.modules():
+        if isinstance(module, Projection):
+            parameter = cast(torch.nn.Parameter, getattr(module, attribute))
+            found[id(parameter)] = parameter
+    return list(found.values())
+
+
+def latent_parameters(model: HE4) -> list[torch.nn.Parameter]:
+    return [module.latent_sign for module in model.modules() if isinstance(module, Projection)]
 
 
 class Samples(Protocol):
@@ -78,6 +101,9 @@ class TensorWorker:
         optimization: Optimization | None = None,
         blocks: Blocks | None = None,
         block_slots: Callable[[int], int] | None = None,
+        features: Features | None = None,
+        precision: GradualPrecision | None = None,
+        telemetry: bool = False,
     ) -> None:
         if not identity or model.geometry.slots != MAXIMUM_SLOTS:
             raise ValueError("explicit HE4 recipe and sixteen slots required")
@@ -107,6 +133,14 @@ class TensorWorker:
         self.last_publication: StateRef | None = None
         self.lock = threading.RLock()
         self.optimization = optimization or Optimization()
+        self.features = features or Features()
+        self.precision = precision
+        self.phase: Literal["soft", "hard"] = "hard" if precision is None else "soft"
+        self.latent_step_offset = 0
+        for group in self.features.untrained:
+            for parameter in feature_parameters(model, group):
+                parameter.requires_grad_(False)
+        self.verify_features()
         rates = self.optimization.step_sizes
         suffixes = {
             "latent_sign": "sign",
@@ -163,6 +197,51 @@ class TensorWorker:
             model.parent_frozen_sha256,
         )
         self.frozen_transition: Record | None = None
+        self.telemetry = Telemetry(model) if telemetry else None
+
+    def verify_features(self) -> None:
+        for group in self.features.untrained:
+            for parameter in feature_parameters(self.model, group):
+                if parameter.requires_grad:
+                    raise ValueError("an untrained feature parameter requires gradients")
+                if group in self.features.off and bool((parameter != 0).any()):
+                    raise ValueError(group + " is off but its parameters are not at identity")
+
+    def temperature(self) -> float | None:
+        if self.precision is None or self.phase == "hard":
+            return None
+        return self.precision.temperature(self.updates)
+
+    def precision_record(self) -> Record | None:
+        if self.precision is None:
+            return None
+        temperature = self.temperature()
+        return {
+            "phase": self.phase,
+            "temperature": temperature,
+            "switch_update": self.precision.soft_updates,
+            "evaluated": "hard signs of the current weights"
+            if self.phase == "soft"
+            else "hard signs",
+        }
+
+    def harden(self) -> None:
+        with torch.no_grad():
+            if self.optimization.latent_multiple is not None:
+                bound_latents(self.model, self.optimization.latent_multiple)
+            states = cast(dict[Tensor, dict[str, Tensor]], self.optimizer.state)
+            for parameter in latent_parameters(self.model):
+                for value in states.get(parameter, {}).values():
+                    value.zero_()
+        self.latent_step_offset = self.optimizer_updates
+        self.phase = "hard"
+
+    def telemetry_record(self) -> Record | None:
+        if self.telemetry is None or self.telemetry.signs is None:
+            return None
+        return self.telemetry.record(
+            self.updates, self.accounting, self.precision_record(), self.phase == "soft"
+        )
 
     def verify_frozen(self) -> None:
         current = dict(self.model.named_buffers())
@@ -393,18 +472,56 @@ class TensorWorker:
     ) -> float:
         feature_version = capture.features._version
         multiplier = self.optimization.schedule.multiplier(self.updates)
+        if (
+            self.precision is not None
+            and self.phase == "soft"
+            and self.updates >= self.precision.soft_updates
+        ):
+            self.harden()
+        temperature = self.temperature()
+        telemetry = self.telemetry
+        if telemetry is not None:
+            telemetry.begin(self.updates, self.accounting)
+            telemetry.attach()
+        projections = [module for module in self.model.modules() if isinstance(module, Projection)]
+        for module in projections:
+            module.temperature = temperature
         self.optimizer.zero_grad(set_to_none=True)
-        loss = self.group_loss(capture, windows, slots)
+        try:
+            loss = self.group_loss(capture, windows, slots)
+        finally:
+            for module in projections:
+                module.temperature = None
+            if telemetry is not None:
+                telemetry.detach()
+        groups = cast(list[dict[str, object]], self.optimizer.param_groups)
+        families = {
+            SOFT_FAMILY
+            if str(group["name"]) == "sign" and self.phase == "soft"
+            else str(group["name"]): [
+                value.grad
+                for value in cast(list[Tensor], group["params"])
+                if value.grad is not None
+            ]
+            for group in groups
+        }
+        if telemetry is not None:
+            telemetry.gradients(families)
         norm = torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0, error_if_nonfinite=True)
+        if telemetry is not None:
+            telemetry.clipping(norm)
         self.last_gradient_norm = float(norm)
-        for group in cast(list[dict[str, object]], self.optimizer.param_groups):
-            group["lr"] = self.optimization.step_sizes[str(group["name"])] * multiplier
+        for group in groups:
+            name = str(group["name"])
+            rate = self.optimization.step_sizes[name]
+            if name == "sign" and self.phase == "soft" and self.precision is not None:
+                rate = self.precision.step_size
+            group["lr"] = rate * multiplier
         self.optimizer.step()
         with torch.no_grad():
-            for module in self.model.modules():
-                if isinstance(module, Projection):
-                    module.scale.clamp_(min=0)
-        if self.optimization.latent_multiple is not None:
+            for module in projections:
+                module.scale.clamp_(min=0)
+        if self.optimization.latent_multiple is not None and self.phase == "hard":
             clamp_latents(self.model)
         if (self.updates + 1) % FINITE_SCAN_UPDATES == 0:
             self.verify_finite()
@@ -463,6 +580,16 @@ class TensorWorker:
                 **(
                     {"frozen_transition": self.frozen_transition}
                     if self.frozen_transition is not None
+                    else {}
+                ),
+                **(
+                    {
+                        "precision": {
+                            "phase": self.phase,
+                            "latent_step_offset": self.latent_step_offset,
+                        }
+                    }
+                    if self.precision is not None or self.latent_step_offset
                     else {}
                 ),
                 "optimizer": cast(dict[str, object], self.optimizer.state_dict()),
@@ -525,6 +652,7 @@ class TensorWorker:
             if schema not in {3, 4, 5} or set(state) != (
                 required
                 | ({"frozen_transition"} if "frozen_transition" in state else set())
+                | ({"precision"} if "precision" in state else set())
                 | ({"accounting"} if schema >= 4 else set())
                 | ({"position_weights"} if schema == 5 else set())
             ):
@@ -561,6 +689,27 @@ class TensorWorker:
             updates, cursor = integer(state["updates"]), integer(state["cursor"])
             if updates != reference.updates or updates < 0 or cursor < 0:
                 raise ValueError("state accounting mismatch")
+            saved_precision = record(state["precision"]) if "precision" in state else None
+            if saved_precision is not None and (
+                set(saved_precision) != {"phase", "latent_step_offset"}
+                or saved_precision["phase"] not in ("soft", "hard")
+            ):
+                raise ValueError("invalid gradual precision state")
+            phase: Literal["soft", "hard"] = (
+                "soft"
+                if saved_precision is not None and saved_precision["phase"] == "soft"
+                else "hard"
+            )
+            offset = (
+                0 if saved_precision is None else integer(saved_precision["latent_step_offset"])
+            )
+            if phase == "soft" and self.precision is None:
+                raise ValueError("a soft-phase state requires its gradual precision recipe")
+            if self.precision is not None and (
+                (phase == "hard" and updates <= self.precision.soft_updates)
+                or (phase == "soft" and mode == "resume" and updates > self.precision.soft_updates)
+            ):
+                raise ValueError("state phase disagrees with the gradual precision schedule")
             self.verify_frozen()
             transition = (
                 record(state["frozen_transition"]) if "frozen_transition" in state else None
@@ -607,12 +756,15 @@ class TensorWorker:
                     raise ValueError("shared tensor alias conflict")
             optimizer_updates = integer(state["optimizer_updates"])
             optimizer_state = record(state["optimizer"])
-            if not 0 <= optimizer_updates <= updates:
+            if not 0 <= optimizer_updates <= updates or not 0 <= offset <= optimizer_updates:
                 raise ValueError("optimizer update accounting mismatch")
             saved_groups = sequence(optimizer_state["param_groups"])
             current_optimizer = cast(dict[str, object], self.optimizer.state_dict())
             fresh_groups = sequence(current_optimizer["param_groups"])
-            if unfreezing:
+            regrouped = mode == "branch" and [
+                optimizer_options(group) for group in saved_groups
+            ] != [optimizer_options(group) for group in fresh_groups]
+            if unfreezing or regrouped:
                 saved_groups = fresh_groups
                 optimizer_updates = 0
                 optimizer_state = {"state": {}, "param_groups": fresh_groups}
@@ -640,6 +792,7 @@ class TensorWorker:
                 set(identifiers) if optimizer_updates else set()
             ):
                 raise ValueError("optimizer parameter identity mismatch")
+            latents = {id(parameter) for parameter in latent_parameters(self.model)}
             for identifier, optimizer_parameter in zip(identifiers, parameters, strict=True):
                 if not optimizer_updates:
                     continue
@@ -648,7 +801,10 @@ class TensorWorker:
                 if set(fields) != {"step", "exp_avg", "exp_avg_sq"}:
                     raise ValueError("optimizer field coverage mismatch")
                 step = fields["step"]
-                if not torch.is_tensor(step) or step.ndim != 0 or float(step) != optimizer_updates:
+                expected_step = optimizer_updates - (
+                    offset if id(optimizer_parameter) in latents else 0
+                )
+                if not torch.is_tensor(step) or step.ndim != 0 or float(step) != expected_step:
                     raise ValueError("optimizer step mismatch")
                 for key in ("exp_avg", "exp_avg_sq"):
                     field = fields[key]
@@ -758,12 +914,16 @@ class TensorWorker:
                 self.lineage = (
                     lineage if mode == "resume" else (*lineage, reference.artifact.sha256)
                 )
+                self.latent_step_offset = offset
             else:
                 if bool(cast(object, self.optimizer.state)):
                     raise ValueError("branch requires a fresh optimizer")
                 self.cursor = 0
                 self.optimizer_updates = 0
+                self.latent_step_offset = 0
                 self.lineage = (*lineage, reference.artifact.sha256)
+            self.phase = phase
+            self.verify_features()
             progress.cursor = self.cursor
             self.progress = progress
             self.last_gradient_norm = number(state["gradient_norm"])

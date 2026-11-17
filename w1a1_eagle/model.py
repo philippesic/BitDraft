@@ -89,6 +89,58 @@ def autograd_function(
 SIGN = autograd_function("Sign", sign_forward, sign_backward)
 
 
+def soft_ratio(latent: Tensor, scale: Tensor) -> tuple[Tensor, Tensor]:
+    positive = (scale > 0)[:, None]
+    return latent / torch.where(positive, scale[:, None], 1.0), positive
+
+
+def soft_forward(context: FunctionCtx, latent: Tensor, scale: Tensor, temperature: float) -> Tensor:
+    context.save_for_backward(latent, scale)
+    setattr(context, "temperature", temperature)
+    ratio, positive = soft_ratio(latent, scale)
+    soft = scale[:, None] * torch.tanh(temperature * ratio) / math.tanh(temperature)
+    return torch.where(positive, soft, 0.0)
+
+
+def soft_backward(context: FunctionCtx, gradient: Tensor) -> tuple[Tensor, Tensor, None]:
+    latent, scale = cast(tuple[Tensor, Tensor], getattr(context, "saved_tensors"))
+    temperature = cast(float, getattr(context, "temperature"))
+    ratio, positive = soft_ratio(latent, scale)
+    argument = temperature * ratio
+    hyperbolic = torch.tanh(argument)
+    slope = 1 - hyperbolic.square()
+    normalizer = math.tanh(temperature)
+    latent_gradient = torch.where(positive, gradient * (temperature * slope / normalizer), 0.0)
+    scale_gradient = torch.where(
+        positive, gradient * ((hyperbolic - argument * slope) / normalizer), 0.0
+    ).sum(-1)
+    return latent_gradient, scale_gradient, None
+
+
+SOFT_NAMESPACE: dict[str, object] = {
+    "forward": staticmethod(soft_forward),
+    "backward": staticmethod(soft_backward),
+}
+SOFT = cast(
+    Callable[[Tensor, Tensor, float], Tensor],
+    getattr(
+        type("SoftSign", (cast(type, getattr(torch.autograd, "Function")),), SOFT_NAMESPACE),
+        "apply",
+    ),
+)
+
+
+def soft_weight(latent: Tensor, scale: Tensor, temperature: float) -> Tensor:
+    if (
+        latent.ndim != 2
+        or scale.shape != latent.shape[:1]
+        or not math.isfinite(temperature)
+        or temperature <= 0
+    ):
+        raise ValueError("soft weights need a matrix, one scale per row and a positive temperature")
+    return SOFT(latent, scale, temperature)
+
+
 def hard_sign(value: Tensor) -> Tensor:
     if value.dtype != torch.float32:
         raise ValueError("latent signs must be F32")
@@ -128,22 +180,44 @@ class Projection(nn.Module):
         self.midpoint = nn.Parameter(torch.zeros(weight.shape[0]))
         self.log_gain = gain
         self.log_clip = clip
+        self.temperature: float | None = None
+        self.statistics: Tensor | None = None
+        self.observed = 0
+        self.recorded: list[Tensor] | None = None
 
-    def forward(self, value: Tensor) -> Tensor:
+    @property
+    def maximum(self) -> int:
+        return (1 << (self.bits - 1)) - 1
+
+    def quantize(self, value: Tensor) -> tuple[Tensor, Tensor]:
         gained = value.float() * self.log_gain.exp()
         if not bool(torch.isfinite(gained).all()):
             raise ValueError("nonfinite quantizer input")
         bound = self.log_clip.exp()
         if not bool(torch.isfinite(bound).all()) or not bool((bound > 0).all()):
             raise ValueError("invalid learned clipping bound")
-        maximum = (1 << (self.bits - 1)) - 1
+        maximum = self.maximum
         clipped = torch.maximum(torch.minimum(gained, bound), -bound)
         normalized = clipped * (maximum / bound)
         rounded = normalized.round().clamp(-maximum, maximum)
+        if self.statistics is not None:
+            with torch.no_grad():
+                counts = torch.stack(((gained.abs() > bound).sum(), (rounded == 0).sum()))
+                self.statistics.add_(counts.to(self.statistics.dtype))
+                self.observed += gained.numel()
         codes = normalized + (rounded - normalized).detach()
-        step = bound / maximum
-        signs = hard_sign(self.latent_sign)
+        return codes, bound / maximum
+
+    def forward(self, value: Tensor) -> Tensor:
+        if self.recorded is not None:
+            self.recorded.append(value.detach())
+        codes, step = self.quantize(value)
         scale = self.scale.clamp_min(0)
+        if self.temperature is not None:
+            values = codes * step
+            weight = soft_weight(self.latent_sign, scale, self.temperature)
+            return functional.linear(values, weight) + values.sum(-1, keepdim=True) * self.midpoint
+        signs = hard_sign(self.latent_sign)
         native = (functional.linear(codes, signs) * scale) * step + (
             codes.sum(-1, keepdim=True) * step
         ) * self.midpoint
@@ -406,3 +480,12 @@ class HE4(nn.Module):
                 state, block.context(encoded, context_positions), positions, allowed
             )
         return functional.linear(rms(state, self.output_norm, cfg.epsilon), self.vocabulary)
+
+
+def named_projections(model: HE4) -> list[tuple[str, Projection]]:
+    result: list[tuple[str, Projection]] = []
+    for index, module in enumerate(model.blocks):
+        block = cast(Layer, module)
+        for part, projection in (("gate", block.gate), ("up", block.up), ("down", block.down)):
+            result.append((f"blocks.{index}.{part}", projection))
+    return result
