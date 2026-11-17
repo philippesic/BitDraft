@@ -88,10 +88,22 @@ Progress:
   under CPU load; global TF32 1.44–1.58× but inexact). Build E implements the exact part. Screening
   runs frozen at 8,209 updates, warm-up 164, cosine to zero, full TRAIN, seed 8101 (8102 for second
   seeds). Current-trainer control `arms/s4-c0-current` (source `3cd2db82…`) is training.
-- Step 7 queued (`scripts/queue_g3.sh`, preflight `group3/preflight.md` with thresholds fixed):
-  start checks, update-0 probes, build B diagnostics (0b, 0d, 0e, 0f), blank, calibrated,
-  short qualifications of builds A and C, long-session pilot, gradual, calibrated+gradual.
-  Group 3 arms run on the control's exact source; trainer changes are requalified in step 9.
+- Step 4 qualification of build E passed (`builds/trainer-speed/run-01`): forward values
+  bit-identical, every gradient family within 1e-5, resume exact, TF32 feed-forward products
+  bit-identical. Against this morning's trainer about 1.18–1.40× per update; build E's exact
+  fixes also sped up the reference path. Its matched screen run is still to come.
+- Control `s4-c0-current`: screen 48.95% (Baseline 60.6%), all outputs exact, 35 training minutes.
+- Step 7 (`group3/preflight.md`, thresholds fixed): gradual start checks passed for both intents.
+  Update-0 probes: calibration moves the untrained drafter little (DEV first-slot top-1 5.8% vs
+  5.0%, screen 2.7% vs 2.1%), but one warm-up update then collapses the calibrated drafter (DEV
+  loss 7.4 → 12.9, screen 0%) while the uncalibrated one improves (7.1, 4.7%): a calibration bug,
+  returned to build D. Both calibrated arms are skipped until it is fixed.
+- Incident: the host froze hard at 19:15, 30 s after build B's first diagnostics step hit a GPU
+  out-of-memory; no kernel message; the owner power-cycled it at 23:05 (about four GPU hours
+  lost). Every queued job now runs in a systemd scope capped at 24 GB RAM; the diagnostics are
+  held behind skip markers and returned to build B for an explicit memory budget.
+- Running (from 23:06): `g3-blank`, then builds A and C short qualifications, the long-session
+  pilot and `g3-gradual`.
 
 Decided by the owner 2026-11-16 19:15: `greedy-long` is judged on the supplementary interval
 that pools category strata with fewer than two source groups (the maintained rule cannot give it
