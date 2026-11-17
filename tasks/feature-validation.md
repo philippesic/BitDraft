@@ -118,8 +118,14 @@ Progress:
     (+6.65, +8.60); DEV prefix survival 57.5% vs 55.8%, thinking-on windows 60% vs 50%, training
     loss 1.78 vs 2.31 at update 8,000. Second seed 8102: 56.42% vs 49.20%, +7.21 (+6.10, +8.41);
     pooled over both seeds (paired bootstrap over both screens' rows): +7.41 (+6.53, +8.30).
-    Adopted. Its Level 2 check (120-request panel, prefix, live, thinking, sampled and agentic
-    slices against the runtime-v8 references) is queued (`scripts/queue10.sh`). Calibration becomes the base for the remaining
+    Adopted against its control. Level 2 (`level2/g3v2-calibrated/`, candidate-only against
+    the saved runtime-v8 references, all outputs exact, agentic completion 5/12 on both):
+    acceptance vs Baseline 47.7% vs 53.4% (120 requests; yardstick 46.2%), prefix 70.6% vs 74.1%,
+    live 81.6% vs 70.1%, thinking-on slice 56.3% vs 66.2%, sampled slice 45.7% vs 51.5%, agentic
+    slice 77.2% vs 61.8%; descriptive speed vs saved Baseline timing 0.962 (120 requests), 1.011
+    (prefix), 0.952 (thinking), 0.983 (sampled). The Level 2 report returns `level3_required`
+    (acceptance below Baseline beyond the interval in five scenarios; direction disagreement in
+    three), so Level 3 (thinking, sampled and agentic suites) runs before step 9 (`queueL3`). Calibration becomes the base for the remaining
     add-ons: clip step and round-state weighting are rerun on top of it (`scripts/queue4b.sh`).
   - Calibrated + gradual vs calibrated alone: 56.17% vs 56.56%, −0.39 (−1.16, +0.38): not adopted.
     The four-run square ends with calibration alone.
@@ -178,7 +184,8 @@ Progress:
   138 sessions (58,634 span positions) and 246 thinking-on requests, worst case 124.1 GB.
 - GPU queue (chained scripts, 24 GB RAM cap): `queue10` (Level 2 of the calibrated finalist,
   running from 05:15) → `queue11` (calibrated rounding ceiling) → `queue12` (group 5) →
-  `queue13` (step 9: fused pair, then calibrated + fast arithmetic on eight-tap storage) →
+  `queueL3` (Level 3 of the calibrated finalist) → `queue13` (step 9: fused pair, then
+  calibrated + fast arithmetic on eight-tap storage) →
   `queue9b` (batch capture) → `step11.sh` (final mixture `train-final-01`, admission, integration
   pilot: 400 updates against 200 + resume to 400, losses and final export compared, export
   screened). The long run (`step12/preflight.md`) trains on eight-tap storage whatever the fused
