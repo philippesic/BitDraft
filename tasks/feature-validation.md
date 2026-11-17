@@ -230,6 +230,11 @@ Progress:
   five earlier checkpoints were re-exported (all verified) and read out (`step13b`); the
   7K, 21K and 35K states were then retired through the store (exports kept;
   `logs/state-retirement-long-run.json`).
+- Step 14a (`step14/depths.json`): depth 3 for both drafters in every scenario. Greedy calibration
+  of the final drafter: best 3, only 3 within 2%, speculation gain 1.34 (Baseline 1.40). Slices,
+  three-arm, same session: sampled tokens/s at depths 2 / 3 / 4: ours 213.2 / 223.7 / 181.9,
+  Baseline 214.5 / 224.6 / 187.3; agentic tasks/s: ours 0.111 / 0.122 / 0.116, Baseline 0.103 /
+  0.110 / 0.102.
 - Queue: `step13b` (curve) → `step14a` (depth calibration and neighbours) → `step14` (three-arm
   release panels at the chosen depths) → `queue15` (second seeds of fast arithmetic and fused
   storage) → `queue16` (build W: native shortlist and lower-bit tables on the final drafter) →
