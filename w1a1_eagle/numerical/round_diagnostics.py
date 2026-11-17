@@ -1,6 +1,8 @@
 import argparse
 import gc
 import json
+import os
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from random import Random
@@ -27,10 +29,19 @@ from w1a1_eagle.drafting import (
 )
 from w1a1_eagle.identity import source_identity
 from w1a1_eagle.model import HE4, Geometry
-from w1a1_eagle.numerical.baseline import load_baseline
+from w1a1_eagle.numerical.baseline import load_baseline, table_rows
 from w1a1_eagle.numerical.captures import Capture, load_capture
 from w1a1_eagle.numerical.export import export_he4
 from w1a1_eagle.numerical.labels import label_report
+from w1a1_eagle.numerical.memory_plan import (
+    DEVICE_MARGIN,
+    FatalMemory,
+    Guard,
+    Shapes,
+    host_available,
+    plan,
+    refusal,
+)
 from w1a1_eagle.numerical.probes import (
     ABLATIONS,
     EXPORTABLE,
@@ -153,8 +164,15 @@ def window_sets(specification: Artifact) -> tuple[WindowSet, ...]:
     return tuple(sets)
 
 
+@dataclass(frozen=True)
+class Run:
+    memory: int
+    geometry: Geometry
+    guard: Guard
+
+
 def captures(
-    windows: tuple[tuple[str, int], ...], specs: dict[str, CaptureSpec], memory: int
+    windows: tuple[tuple[str, int], ...], specs: dict[str, CaptureSpec], run: Run
 ) -> Iterator[tuple[int, str, int, Capture, Supervision]]:
     order = {name: index for index, name in enumerate(sorted({name for name, _ in windows}))}
     current: tuple[str, Capture] | None = None
@@ -162,7 +180,8 @@ def captures(
         if current is None or current[0] != name:
             current = None
             gc.collect()
-            current = (name, load_capture(specs[name], memory))
+            current = (name, load_capture(specs[name], run.memory, run.geometry.hidden))
+        run.guard.check()
         selected = [window for window in current[1].windows if window.anchor == anchor]
         if len(selected) != 1:
             raise ValueError("diagnostic anchor is not eligible in authenticated capture")
@@ -172,7 +191,7 @@ def captures(
 def evaluate_windows(
     model: HE4,
     sets: tuple[WindowSet, ...],
-    memory: int,
+    run: Run,
     depth: int,
     probe: RangeProbe | None = None,
 ) -> Record:
@@ -183,7 +202,7 @@ def evaluate_windows(
             survivors = [0] * depth
             reached = [0] * depth
             categories: dict[str, list[int]] = {}
-            for order, name, anchor, capture, window in captures(item.windows, item.specs, memory):
+            for order, name, anchor, capture, window in captures(item.windows, item.specs, run):
                 length = min(len(window.labels), depth)
                 if probe is not None:
                     probe.window = Window(name, anchor, order % 2)
@@ -244,12 +263,13 @@ class Request:
 
 
 def drafter_rounds(
-    model: HE4, rows: list[Record], root: Path, settings: Record, memory: int
+    model: HE4, rows: list[Record], root: Path, settings: Record, run: Run
 ) -> list[Request]:
     depth, top, chunk = (integer(settings[key]) for key in ("depth", "top", "chunk"))
     requests: list[Request] = []
     for row in rows:
-        capture = load_capture(capture_spec(row, root), memory)
+        run.guard.check()
+        capture = load_capture(capture_spec(row, root), run.memory, run.geometry.hidden)
         windows = {window.anchor: window.labels for window in capture.windows}
         anchors = generated_anchors(windows)
         if not anchors:
@@ -352,11 +372,11 @@ def native_agreement(requests: list[Request], result: Record, arm: str) -> Recor
     }
 
 
-def rounds_report(model: HE4, drafter: str, settings: Record, root: Path, memory: int) -> Record:
+def rounds_report(model: HE4, drafter: str, settings: Record, root: Path, run: Run) -> Record:
     corpus = artifact(settings["corpus"], root)
     rows = dev_rows(corpus, protected_names(artifact(settings["exclusions"], root)))
     depth, top = integer(settings["depth"]), integer(settings["top"])
-    requests = drafter_rounds(model, rows, corpus.path.parent, settings, memory)
+    requests = drafter_rounds(model, rows, corpus.path.parent, settings, run)
     by_category: dict[str, list[Request]] = {}
     by_band: dict[str, list[Request]] = {}
     for request in requests:
@@ -398,7 +418,7 @@ def rounds_report(model: HE4, drafter: str, settings: Record, root: Path, memory
 
 
 def candidate_model(
-    section: Record, root: Path, memory: int, device: str
+    section: Record, root: Path, run: Run, device: str
 ) -> tuple[HE4, StateRef, dict[str, object], str, Artifact, Artifact]:
     allowed = {"source", "vocabulary", "initialization", "frozen_baseline", "state", "mode", "arm"}
     if not {"source", "vocabulary", "state", "mode"} <= set(section) <= allowed:
@@ -416,14 +436,15 @@ def candidate_model(
     model = load_he4(
         source,
         vocabulary,
-        memory,
-        Geometry(),
+        run.memory,
+        run.geometry,
         initialization,
         "Q4_0" if frozen is None else "baseline-k",
         frozen,
     )
     if device == "cuda":
         model = model.cuda()
+        gc.collect()
     parent = Store(state.path.parent).describe(state)
     if mode == "continue":
         recipe: dict[str, object] = {}
@@ -483,7 +504,151 @@ def text_table(report: Record) -> str:
     return "\n".join(lines) + "\n"
 
 
-def diagnose(specification: Path, output: Path) -> Record:
+def capture_length(spec: CaptureSpec) -> int:
+    return len(sequence(read(spec.metadata.path, 64 * 1024 * 1024)["input_tokens"]))
+
+
+def rounds_rows(rounds: Record, root: Path) -> tuple[list[Record], Path]:
+    corpus = artifact(rounds["corpus"], root)
+    return dev_rows(
+        corpus, protected_names(artifact(rounds["exclusions"], root))
+    ), corpus.path.parent
+
+
+def candidate_sections(
+    raw: Record,
+    root: Path,
+    run: Run,
+    device: str,
+    sets: tuple[WindowSet, ...],
+    store: Store,
+) -> Record:
+    rounds = record(raw.get("rounds", {}))
+    ablations = tuple(string(v) for v in sequence(raw.get("ablations", [])))
+    exports = tuple(string(v) for v in sequence(raw.get("exports", [])))
+    section = record(raw["candidate"])
+    result: Record = {}
+    run.guard.begin()
+    model, parent, recipe, config, source, vocabulary = candidate_model(section, root, run, device)
+    run.guard.end("candidate load")
+    run.guard.begin()
+    mode = string(section["mode"])
+    worker = restored(model, parent, config, run.memory, mode)
+    run.guard.end("candidate restore")
+    arm = string(section.get("arm", "candidate"))
+    result["candidate"] = {
+        "state": parent.artifact.sha256,
+        "mode": mode,
+        "config": config,
+        "recipe": recipe,
+        "updates": worker.updates,
+        "frozen_transition": worker.frozen_transition,
+    }
+    if rounds:
+        run.guard.begin()
+        result["rounds"] = {arm: rounds_report(model, arm, rounds, root, run)}
+        run.guard.end("candidate rounds")
+    if sets:
+        run.guard.begin()
+        measured: Record = {}
+        probe = RangeProbe(model, 4) if raw.get("ranges", False) else None
+        names = ablations if "unchanged" in ablations else ("unchanged", *ablations)
+        for name in names:
+            with ablated(model, name):
+                if probe is not None and name == "unchanged":
+                    with probe.attached():
+                        measured[name] = evaluate_windows(model, sets, run, 3, probe)
+                else:
+                    measured[name] = evaluate_windows(model, sets, run, 3)
+        if ablations:
+            result["ablations"] = measured
+        if probe is not None:
+            result["ranges"] = probe.record()
+        del probe
+        run.guard.end("candidate windows")
+    if exports:
+        run.guard.begin()
+        exported: Record = {}
+        base = recipe if mode == "branch" else {"parent_recipe": config}
+        for name in exports:
+            variant = config if name == "unchanged" else identity({**base, "ablation": name})
+            del worker
+            gc.collect()
+            worker = restored(
+                model, parent, variant, run.memory, mode if name == "unchanged" else "branch"
+            )
+            apply_ablation(model, name)
+            state = export_he4(
+                worker,
+                source,
+                vocabulary,
+                Store(store.root / ("export-" + name)),
+                EXPORT_BYTES,
+                run.memory,
+            )
+            exported[name] = {**reference(state.artifact), "config": variant}
+            run.guard.check()
+        result["exports"] = exported
+        run.guard.end("candidate exports")
+    return result
+
+
+def baseline_rounds(raw: Record, root: Path, run: Run, device: str) -> Record:
+    section = record(raw["baseline"])
+    run.guard.begin()
+    model = load_baseline(
+        artifact(section["drafter"], root),
+        artifact(section["target"], root),
+        run.memory,
+        run.geometry,
+        device,
+    )
+    run.guard.end("baseline load")
+    run.guard.begin()
+    report = rounds_report(model, "baseline", record(raw["rounds"]), root, run)
+    run.guard.end("baseline rounds")
+    return report
+
+
+def memory_shapes(
+    raw: Record, root: Path, geometry: Geometry, sets: tuple[WindowSet, ...]
+) -> Shapes:
+    rounds = record(raw.get("rounds", {}))
+    rounds_context = 0
+    if rounds:
+        rows, corpus_root = rounds_rows(rounds, root)
+        rounds_context = max(capture_length(capture_spec(row, corpus_root)) for row in rows)
+    windows_context = max(
+        (
+            capture_length(item.specs[name])
+            for item in sets
+            for name in {name for name, _ in item.windows}
+        ),
+        default=0,
+    )
+    candidate_rows = None
+    if "candidate" in raw:
+        vocabulary = artifact(record(raw["candidate"])["vocabulary"], root)
+        candidate_rows = table_rows(vocabulary.path, ("output.weight", "token_embd.weight"))
+    baseline_rows = None
+    if "baseline" in raw:
+        target = artifact(record(raw["baseline"])["target"], root)
+        baseline_rows = table_rows(target.path, ("token_embd.weight",))
+    return Shapes(
+        geometry,
+        candidate_rows,
+        baseline_rows,
+        rounds_context,
+        windows_context,
+        integer(rounds.get("chunk", 1)),
+        integer(rounds.get("depth", 3)),
+        len(sequence(raw.get("exports", []))),
+        bool(raw.get("ranges", False)),
+        artifact(record(raw["candidate"])["state"], root).size if "candidate" in raw else 0,
+    )
+
+
+def diagnose(specification: Path, output: Path, geometry: Geometry = Geometry()) -> Record:
     raw = read(specification)
     if raw.get("schema") != "round-diagnostics-v1" or not set(raw) <= SECTIONS:
         raise ValueError("unsupported round diagnostics specification")
@@ -510,18 +675,37 @@ def diagnose(specification: Path, output: Path) -> Record:
     ):
         raise ValueError("rounds need corpus, exclusions, depth, top, chunk, seed and resamples")
     uses_model = "candidate" in raw or "baseline" in raw
-    device = "cuda" if uses_model and torch.cuda.is_available() else "cpu"
+    cuda = uses_model and torch.cuda.is_available()
+    device = "cuda" if cuda else "cpu"
+    sets = window_sets(artifact(raw["windows"], root)) if needs_windows else ()
+    shapes_ = memory_shapes(raw, root, geometry, sets)
+    steps = plan(shapes_, cuda)
+    free, total = torch.cuda.mem_get_info() if cuda else (0, 0)
+    host_limit = min(memory, host_available())
+    summary: Record = {
+        "memory_plan": [step.record() for step in steps],
+        "device_free_gib": round(free / 1024**3, 2) if cuda else None,
+        "host_limit_gib": round(host_limit / 1024**3, 2),
+    }
+    print(json.dumps(summary), flush=True)
+    refused = refusal(steps, free if cuda else None, host_limit)
+    if refused is not None:
+        raise ValueError("memory plan refused: " + refused)
+    if cuda:
+        torch.cuda.set_per_process_memory_fraction(max(0.05, (free - DEVICE_MARGIN) / total))
+    run = Run(memory, geometry, Guard(cuda, host_limit))
     code_root = Path(__file__).resolve().parents[2]
     code = source_identity(code_root)
     clock = Monotonic()
     began = clock.now()
     store = Store(output)
     store.atomic(store.root / "specification.json", canonical(raw))
+    store.atomic(store.root / "memory-plan.json", canonical(summary))
     report: Record = {
         "schema": "round-diagnostics-report-v1",
         "code_sha256": code,
         "device": device,
-        "gpu": cuda_identity() if device == "cuda" else None,
+        "gpu": cuda_identity() if cuda else None,
         "torch": str(torch.__version__),
         "specification": identity(raw),
     }
@@ -530,81 +714,45 @@ def diagnose(specification: Path, output: Path) -> Record:
             labels = record(raw["labels"])
             report["labels"] = label_report(artifact(labels["mixture"], root))
         if "candidate" in raw:
-            section = record(raw["candidate"])
-            model, parent, recipe, config, source, vocabulary = candidate_model(
-                section, root, memory, device
-            )
-            mode = string(section["mode"])
-            worker = restored(model, parent, config, memory, mode)
-            arm = string(section.get("arm", "candidate"))
-            report["candidate"] = {
-                "state": parent.artifact.sha256,
-                "mode": mode,
-                "config": config,
-                "recipe": recipe,
-                "updates": worker.updates,
-                "frozen_transition": worker.frozen_transition,
-            }
-            if rounds:
-                report["rounds"] = {arm: rounds_report(model, arm, rounds, root, memory)}
-            if needs_windows:
-                sets = window_sets(artifact(raw["windows"], root))
-                measured: Record = {}
-                probe = RangeProbe(model, 4) if raw.get("ranges", False) else None
-                names = ablations if "unchanged" in ablations else ("unchanged", *ablations)
-                for name in names:
-                    with ablated(model, name):
-                        if probe is not None and name == "unchanged":
-                            with probe.attached():
-                                measured[name] = evaluate_windows(model, sets, memory, 3, probe)
-                        else:
-                            measured[name] = evaluate_windows(model, sets, memory, 3)
-                if ablations:
-                    report["ablations"] = measured
-                if probe is not None:
-                    report["ranges"] = probe.record()
-            exported: Record = {}
-            base = recipe if mode == "branch" else {"parent_recipe": config}
-            for name in exports:
-                variant = config if name == "unchanged" else identity({**base, "ablation": name})
-                del worker
-                gc.collect()
-                worker = restored(
-                    model, parent, variant, memory, mode if name == "unchanged" else "branch"
-                )
-                apply_ablation(model, name)
-                state = export_he4(
-                    worker,
-                    source,
-                    vocabulary,
-                    Store(store.root / ("export-" + name)),
-                    EXPORT_BYTES,
-                    memory,
-                )
-                exported[name] = {**reference(state.artifact), "config": variant}
-            if exports:
-                report["exports"] = exported
-            del worker, model
+            report.update(candidate_sections(raw, root, run, device, sets, store))
             gc.collect()
-            if device == "cuda":
-                torch.cuda.empty_cache()
+            run.guard.release("the candidate")
         if "baseline" in raw:
-            section = record(raw["baseline"])
-            baseline = load_baseline(
-                artifact(section["drafter"], root), artifact(section["target"], root), memory
-            )
-            if device == "cuda":
-                baseline = baseline.cuda()
-            rounds_section = record(report.setdefault("rounds", {}))
-            rounds_section["baseline"] = rounds_report(baseline, "baseline", rounds, root, memory)
-            del baseline
+            measured = baseline_rounds(raw, root, run, device)
+            record(report.setdefault("rounds", {}))["baseline"] = measured
             gc.collect()
+            run.guard.release("the Baseline")
     if source_identity(code_root) != code:
         raise ValueError("round diagnostics source changed during execution")
+    report["memory"] = {**summary, "measured": run.guard.measured}
     report["seconds"] = clock.now() - began
     store.atomic(store.root / "report.json", canonical(report))
     store.atomic(store.root / "report.txt", text_table(report).encode())
     return report
+
+
+FATAL_MEMORY_EXIT = 3
+
+
+def fatal(error: BaseException) -> bool:
+    if isinstance(error, (torch.cuda.OutOfMemoryError, FatalMemory)):
+        return True
+    text = str(error)
+    return isinstance(error, RuntimeError) and ("out of memory" in text or "ALLOC_FAILED" in text)
+
+
+def run_diagnostics(specification: Path, output: Path, geometry: Geometry = Geometry()) -> int:
+    try:
+        report = diagnose(specification, output, geometry)
+    except RuntimeError as error:
+        if not fatal(error):
+            raise
+        message: Record = {"outcome": "fatal-memory", "detail": str(error)}
+        print(json.dumps(message), file=sys.stderr, flush=True)
+        return FATAL_MEMORY_EXIT
+    summary: Record = {"output": str(output), "seconds": report["seconds"]}
+    print(json.dumps(summary), flush=True)
+    return 0
 
 
 class Arguments(argparse.Namespace):
@@ -618,9 +766,9 @@ def main() -> None:
     parser.add_argument("output", type=Path)
     args = parser.parse_args(namespace=Arguments())
     output = output_path(args.output, "benchmarks", "round-diagnostics")
-    report = diagnose(args.specification.resolve(), output)
-    summary: Record = {"output": str(output), "seconds": report["seconds"]}
-    print(json.dumps(summary))
+    code = run_diagnostics(args.specification.resolve(), output)
+    if code:
+        os._exit(code)
 
 
 if __name__ == "__main__":
