@@ -217,6 +217,8 @@ class Projection(nn.Module):
         self.midpoint = nn.Parameter(torch.zeros(weight.shape[0]))
         self.log_gain = gain
         self.log_clip = clip
+        self.log_anchor_clip: nn.Parameter | None
+        self.register_parameter("log_anchor_clip", None)
         self.temperature: float | None = None
         self.statistics: Tensor | None = None
         self.observed = 0
@@ -229,10 +231,20 @@ class Projection(nn.Module):
     def maximum(self) -> int:
         return (1 << (self.bits - 1)) - 1
 
-    def quantize(self, value: Tensor) -> tuple[Tensor, Tensor]:
+    def bound(self, rows: int, block: int | None) -> Tensor:
+        bound = self.log_clip.exp()
+        anchor = self.log_anchor_clip
+        if anchor is None:
+            return bound
+        if type(block) is not int or block < 1 or rows % block:
+            raise ValueError("per-slot rounding needs whole blocks of slots")
+        first = torch.arange(rows, device=bound.device) % block == 0
+        return torch.where(first[:, None], anchor.exp(), bound)
+
+    def quantize(self, value: Tensor, block: int | None = None) -> tuple[Tensor, Tensor]:
         gained = value.float() * self.log_gain.exp()
         require(torch.isfinite(gained).all(), "nonfinite quantizer input", self.checks)
-        bound = self.log_clip.exp()
+        bound = self.bound(value.shape[0], block)
         require(
             torch.isfinite(bound).all() & (bound > 0).all(),
             "invalid learned clipping bound",
@@ -250,10 +262,10 @@ class Projection(nn.Module):
         codes = normalized + (rounded - normalized).detach()
         return codes, bound / maximum
 
-    def forward(self, value: Tensor) -> Tensor:
+    def forward(self, value: Tensor, block: int | None = None) -> Tensor:
         if self.recorded is not None:
             self.recorded.append(value.detach())
-        codes, step = self.quantize(value)
+        codes, step = self.quantize(value, block)
         scale = self.scale.clamp_min(0)
         if self.temperature is not None:
             values = codes * step
@@ -284,6 +296,27 @@ def bound_latents(model: nn.Module, multiple: float) -> None:
                 if not torch.equal(bounded >= 0, latent >= 0):
                     raise ValueError("bounded latent scale changed a sign")
                 latent.copy_(bounded)
+
+
+def anchor_bounds(model: nn.Module) -> None:
+    created: dict[int, nn.Parameter] = {}
+    for module in model.modules():
+        if isinstance(module, Projection):
+            if module.log_anchor_clip is not None:
+                raise ValueError("per-slot rounding is already enabled")
+            shared = created.get(id(module.log_clip))
+            if shared is None:
+                shared = nn.Parameter(module.log_clip.detach().clone())
+                shared.requires_grad_(module.log_clip.requires_grad)
+                created[id(module.log_clip)] = shared
+            module.log_anchor_clip = shared
+
+
+def slot_rounding(model: nn.Module) -> bool:
+    return any(
+        isinstance(module, Projection) and module.log_anchor_clip is not None
+        for module in model.modules()
+    )
 
 
 def clamp_latents(model: nn.Module) -> None:
@@ -345,8 +378,9 @@ class Layer(nn.Module):
         attended = torch.einsum("hgqk,khd->qhgd", functional.softmax(scores, -1), value)
         residual = state + self.output.forward(attended.reshape(slots, -1))
         norm = rms(residual, self.ffn_norm, cfg.epsilon)
+        size = state.shape[0]
         return residual + self.down.forward(
-            functional.silu(self.gate.forward(norm)) * self.up.forward(norm)
+            functional.silu(self.gate.forward(norm, size)) * self.up.forward(norm, size), size
         )
 
     def group(
@@ -397,7 +431,7 @@ class Layer(nn.Module):
         residual = state + self.output.forward(attended)
         norm = rms(residual, self.ffn_norm, cfg.epsilon)
         return residual + self.down.forward(
-            functional.silu(self.gate.forward(norm)) * self.up.forward(norm)
+            functional.silu(self.gate.forward(norm, slots)) * self.up.forward(norm, slots), slots
         )
 
 

@@ -1900,4 +1900,81 @@ struct bitdraft_range {
 """,
         ),
     ),
+    "slot_rounding_v1": (
+        (
+            "src/models/dflash.cpp",
+            r"""            memcpy(packed.scales->op_params,&abits,4); memcpy((char*)packed.scales->op_params+4,&mode,4); memcpy((char*)packed.scales->op_params+8,&clip,4);
+""",
+            r"""            memcpy(packed.scales->op_params,&abits,4); memcpy((char*)packed.scales->op_params+4,&mode,4); memcpy((char*)packed.scales->op_params+8,&clip,4);
+            float clip_anchor=0; const int anchor_key=gguf_find_key(ml->metadata,(base+".w1ax.clip_anchor").c_str());
+            if(anchor_key>=0) {
+                if(gguf_get_kv_type(ml->metadata,anchor_key)!=GGUF_TYPE_FLOAT32) throw std::runtime_error("invalid anchor quantizer metadata type");
+                clip_anchor=gguf_get_val_f32(ml->metadata,anchor_key);
+                if(!mode || !std::isfinite(clip_anchor) || clip_anchor<=0) throw std::runtime_error("invalid anchor quantizer metadata");
+            }
+            memcpy((char*)packed.scales->op_params+12,&clip_anchor,4);
+""",
+        ),
+        (
+            "src/models/dflash.cpp",
+            r"""                if(p.scales->op_params[0]) memcpy((char*)result->op_params+4,(char*)p.scales->op_params+4,8);
+""",
+            r"""                if(p.scales->op_params[0]) memcpy((char*)result->op_params+4,(char*)p.scales->op_params+4,8);
+                if(p.scales->op_params[3]) {
+                    const int64_t rows=input->ne[1], blocks=ubatch.n_seqs_unq;
+                    int32_t period=0;
+                    if(!exec_cropped) {
+                        if(blocks<=0 || rows%blocks) throw std::runtime_error("per-slot rounding needs equal blocks of slots");
+                        period=(int32_t)(rows/blocks);
+                    } else if(rows!=n_tokens-blocks) throw std::runtime_error("per-slot rounding needs the anchors outside the cropped rows");
+                    memcpy((char*)result->op_params+12,(char*)p.scales->op_params+12,4);
+                    memcpy((char*)result->op_params+16,&period,4);
+                }
+""",
+        ),
+        (
+            "src/models/dflash.cpp",
+            r"""            if(memcmp(layer.ffn_gate_w1a8.scales->op_params,layer.ffn_up_w1a8.scales->op_params,12)) throw std::runtime_error("gate/up quantizers must match");""",
+            r"""            if(memcmp(layer.ffn_gate_w1a8.scales->op_params,layer.ffn_up_w1a8.scales->op_params,16)) throw std::runtime_error("gate/up quantizers must match");""",
+        ),
+        (
+            "ggml/src/ggml-cuda/w1a1.cu",
+            r"""void ggml_cuda_w1ax_pack(ggml_backend_cuda_context & ctx, ggml_tensor * dst) {
+""",
+            r"""template<int B> static __global__ void exec_slot_codes(const float*x,const float*g,int64_t k,int bits,float clip,float anchor,int period,int8_t*q,int*partial,int tiles){
+ int token=blockIdx.y,j=blockIdx.x*256+threadIdx.x,qm=B?((B<=2)?1:(1<<(B-1))-1):((bits<=2)?1:(1<<(bits-1))-1),c=0;
+ const float bound=(period>0&&token%period==0)?anchor:clip;
+ if(!isfinite(bound)||bound<=0)__trap();
+ if(j<k){float v=gained_value(x+token*k,g,j);if(!isfinite(v))__trap();
+  if((B?B:bits)==1)c=v>=0?1:-1;else{float inv=__fdiv_rn(float(qm),bound);float z=isfinite(inv)?__fmul_rn(v,inv):__double2float_rn(double(v)/double(bound)*qm);c=max(-qm,min(qm,__float2int_rn(fminf(float(qm),fmaxf(-float(qm),z)))));}q[token*k+j]=int8_t(c);
+ }
+ for(int d=16;d;d/=2)c+=__shfl_down_sync(0xffffffff,c,d);__shared__ int ws[8];if((threadIdx.x&31)==0)ws[threadIdx.x/32]=c;__syncthreads();if(threadIdx.x==0){int total=0;for(int i=0;i<8;++i)total+=ws[i];partial[token*tiles+blockIdx.x]=total;}
+}
+static __global__ void exec_slot_finish(const int*p,int tiles,int bits,float clip,float anchor,int period,float*b,float*s){int token=blockIdx.x,sum=0;const float bound=(period>0&&token%period==0)?anchor:clip;for(int i=threadIdx.x;i<tiles;i+=32)sum+=p[token*tiles+i];for(int d=16;d;d/=2)sum+=__shfl_down_sync(0xffffffff,sum,d);if(threadIdx.x==0){int qm=bits<=2?1:(1<<(bits-1))-1;float beta=__fdiv_rn(bound,float(qm));b[token]=beta;s[token]=__fmul_rn(float(sum),beta);}}
+
+void ggml_cuda_w1ax_pack(ggml_backend_cuda_context & ctx, ggml_tensor * dst) {
+""",
+        ),
+        (
+            "ggml/src/ggml-cuda/w1a1.cu",
+            r"""        #define TILED(B) exec_tiled_codes<B><<<dim3(tiles,n),256,0,ctx.stream()>>>((const float*)acts->data,g,k,bits,clip,codes,partial.get(),tiles)
+        switch(bits){case 1:TILED(1);break;case 2:TILED(2);break;case 4:TILED(4);break;case 8:TILED(8);break;default:GGML_ABORT("unsupported width");}
+        #undef TILED
+        exec_tiled_finish<<<n,32,0,ctx.stream()>>>(partial.get(),tiles,bits,clip,scales,scales+n);
+""",
+            r"""        const float anchor=ggml_get_op_params_f32(dst,3);const int period=ggml_get_op_params_i32(dst,4);
+        if(anchor>0) {
+        #define SLOT(B) exec_slot_codes<B><<<dim3(tiles,n),256,0,ctx.stream()>>>((const float*)acts->data,g,k,bits,clip,anchor,period,codes,partial.get(),tiles)
+        switch(bits){case 1:SLOT(1);break;case 2:SLOT(2);break;case 4:SLOT(4);break;case 8:SLOT(8);break;default:GGML_ABORT("unsupported width");}
+        #undef SLOT
+        exec_slot_finish<<<n,32,0,ctx.stream()>>>(partial.get(),tiles,bits,clip,anchor,period,scales,scales+n);
+        } else {
+        #define TILED(B) exec_tiled_codes<B><<<dim3(tiles,n),256,0,ctx.stream()>>>((const float*)acts->data,g,k,bits,clip,codes,partial.get(),tiles)
+        switch(bits){case 1:TILED(1);break;case 2:TILED(2);break;case 4:TILED(4);break;case 8:TILED(8);break;default:GGML_ABORT("unsupported width");}
+        #undef TILED
+        exec_tiled_finish<<<n,32,0,ctx.stream()>>>(partial.get(),tiles,bits,clip,scales,scales+n);
+        }
+""",
+        ),
+    ),
 }

@@ -67,6 +67,11 @@ def module_name(tensor: str) -> str:
     return f"blocks.{index}.{MODULES[part]}"
 
 
+class FeedForwardTable(Table):
+    def forward(self, value: Tensor, block: int | None = None) -> Tensor:
+        return super().forward(value)
+
+
 def load_baseline(
     drafter: Artifact,
     target: Artifact,
@@ -119,7 +124,7 @@ def load_baseline(
     model.mask = mask
     for module in model.blocks:
         for name in FEED_FORWARD:
-            setattr(cast(Layer, module), name, Table(placeholder))
+            setattr(cast(Layer, module), name, FeedForwardTable(placeholder))
     model.requires_grad_(False)
     model = model.to(device)
     for name, shape in expected.items():

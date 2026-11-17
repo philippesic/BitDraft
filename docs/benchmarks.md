@@ -792,7 +792,7 @@ per step are recorded beside the plan.
 
 | Section | Contents |
 | --- | --- |
-| `candidate` | `source`, `vocabulary`, optional `initialization` and `frozen_baseline`, `state`, `mode` (`branch` as the frozen-table switch made export `5749a05f…`, or `continue`) and optional `arm` naming it in native results |
+| `candidate` | `source`, `vocabulary`, optional `initialization` and `frozen_baseline`, `state`, `mode` (`branch` as the frozen-table switch made export `5749a05f…`, or `continue`), optional `arm` naming it in native results and `slot_rounding: "anchor-mask"` for a state trained with [per-slot rounding](execution.md#per-slot-rounding) |
 | `baseline` | `drafter` (Baseline GGUF) and `target` (the target GGUF whose token table Baseline uses) |
 | `rounds` | DEV capture `corpus`, `exclusions`, `depth` 3, shortlist `top` 16, anchors per batch `chunk`, `seed`, bootstrap `resamples`, optional native `result.json` as `native`, optional vocabulary `scoring` |
 | `windows` | `training-diagnostics-v1` with its groups (120 + 20 + 20 fixed DEV windows) |
@@ -1034,6 +1034,22 @@ dependency closure. An ignored path or finished run does not establish disposal 
 [Measured qualification](../results/reusable-acceptance-checks/result.md) covers complete
 training pauses, exact recovery, both target precisions and reused-reference comparisons.
 
+
+## Per-slot rounding runtime
+
+The `slot_rounding_v1` source edit serves exports that carry `.w1ax.clip_anchor`
+([per-slot rounding](execution.md#per-slot-rounding)). The DFlash loader reads the optional F32
+key per projection, refuses a nonpositive, nonfinite or non-F32 value or one on a
+dynamic-bound projection, and keeps it beside the shared bound; gate and up must still match.
+For each feed-forward input the graph passes the anchor bound and the block length
+(tokens / sequences in the ubatch; every drafting sequence decodes one contiguous block whose
+first row is the anchor). When the last layer keeps only output rows, the anchors are not
+among them, and every kept row uses the mask bound. The fixed-bound activation quantizer then
+uses the anchor bound on each block's first row and the mask bound elsewhere, with the same
+F32 arithmetic. Without the key the original kernels launch unchanged, so drafters without it,
+Baseline and the target serve as on the unedited runtime. The edit applies after the
+runtime-v8 edits; its runtime must be qualified for identical outputs and draft counts before
+its screens are compared with runtime-v8 records.
 
 ## Kernel benchmark
 

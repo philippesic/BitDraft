@@ -28,6 +28,7 @@ one successful path does not qualify arbitrary inputs or configurations.
 | Context | Real 13,974/14,651-token inputs passed bounded CUDA updates; grouped updates were measured up to 13,470 tokens under the memory rule. Protocol limits are not proof of every length or workload. |
 | Selection | Short DEV leader, full-request experimental incumbent and latest recovery are separate. Workflow/harness regressions cannot be hidden by a request score. No automatic deployment promotion. |
 | Generalization | Public source exposure is unknown. Fixed DEV mixtures and one-project workflows do not prove real-traffic prevalence or unseen application transfer. Independent confirmation needs new curation and access receipts. |
+| Per-slot rounding | Training, calibration, export and the `slot_rounding_v1` runtime edit pass CPU tests and the edited files compile; GPU serving parity, timing and any acceptance effect are unqualified. |
 | Exposure | Dataset-local counters and lineage survive; per-position lifetime history across changed recipes/corpora is incomplete. |
 | Historical data | The eight-prompt discrepancy remains unresolved; see [deduplication](../results/null-topic-deduplication/result.md). |
 

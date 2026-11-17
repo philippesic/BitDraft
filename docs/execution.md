@@ -273,6 +273,28 @@ Omission and the all-`learned` value keep today's recipe identity; any other val
 Branch accepts a parent with other switches (the optimizer is reset); continue and resume
 require the same trained families. Off parameters must be at identity in the parent.
 
+## Per-slot rounding
+
+Optional `slot_rounding: "anchor-mask"` gives every quantized feed-forward input two learned
+clipping bounds: one for the anchor slot (the first slot of each block) and one for the mask
+slots. Gate and up still share their bounds and the down projection keeps its own; gains stay
+shared by every slot. Both bounds start at the shared bound's value, so the model is unchanged
+at the start, and both train in the `clip` group (a fixed `clip` feature fixes both). Grouped
+updates, the single-window path and diagnostics assign slots per block of k slots, whatever k
+is. With `calibration`, the anchor bound is fitted on slot-0 inputs and the mask bound on the
+other slots' inputs, by the rule below, and the `calibration` event records both.
+
+The setting enters the recipe identity; omission keeps today's recipe, state tensors and
+export bytes. States hold the anchor bounds as `*.log_anchor_clip`. Resume and continue need a
+parent with them; branch also accepts a parent without them and starts both bounds at the
+parent's shared bound (the optimizer is reset). With `telemetry`, each projection's record
+adds `clip_bound` and `anchor_clip_bound`. Export writes the anchor bound as
+`blk.N.ffn_{gate,up,down}.w1ax.clip_anchor` (F32) beside `.w1ax.clip`; only a runtime built
+with the `slot_rounding_v1` source edit applies it
+([benchmarks](benchmarks.md#per-slot-rounding-runtime)). A runtime without the edit ignores
+the key and would serve the mask bound on every slot, so such an export is screened only on an
+edited runtime.
+
 ## Calibrated start
 
 Optional `calibration` (`{"sample": {"sequences": n, "windows": w, "seed": s}}`, fresh or

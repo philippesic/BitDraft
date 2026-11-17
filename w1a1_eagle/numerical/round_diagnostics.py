@@ -28,7 +28,7 @@ from w1a1_eagle.drafting import (
     tally,
 )
 from w1a1_eagle.identity import source_identity
-from w1a1_eagle.model import HE4, Geometry
+from w1a1_eagle.model import HE4, Geometry, anchor_bounds
 from w1a1_eagle.numerical.baseline import load_baseline, table_rows, table_tensor
 from w1a1_eagle.numerical.captures import Capture, load_capture
 from w1a1_eagle.numerical.export import export_he4
@@ -488,12 +488,23 @@ def rounds_report(
 def candidate_model(
     section: Record, root: Path, run: Run, device: str
 ) -> tuple[HE4, StateRef, dict[str, object], str, Artifact, Artifact]:
-    allowed = {"source", "vocabulary", "initialization", "frozen_baseline", "state", "mode", "arm"}
+    allowed = {
+        "source",
+        "vocabulary",
+        "initialization",
+        "frozen_baseline",
+        "state",
+        "mode",
+        "arm",
+        "slot_rounding",
+    }
     if not {"source", "vocabulary", "state", "mode"} <= set(section) <= allowed:
         raise ValueError("candidate needs source, vocabulary, state and mode")
     mode = string(section["mode"])
     if mode not in {"branch", "continue"}:
         raise ValueError("candidate mode must be branch or continue")
+    if section.get("slot_rounding", "anchor-mask") != "anchor-mask":
+        raise ValueError("candidate slot_rounding is anchor-mask when set")
     source, vocabulary, state = (
         artifact(section[key], root) for key in ("source", "vocabulary", "state")
     )
@@ -510,6 +521,8 @@ def candidate_model(
         "Q4_0" if frozen is None else "baseline-k",
         frozen,
     )
+    if "slot_rounding" in section:
+        anchor_bounds(model)
     if device == "cuda":
         model = model.cuda()
         gc.collect()
@@ -522,6 +535,7 @@ def candidate_model(
             "parent_recipe": parent.config,
             "frozen_format": model.frozen_format,
             **({} if frozen is None else {"baseline": reference(frozen)}),
+            **({"slot_rounding": section["slot_rounding"]} if "slot_rounding" in section else {}),
         }
         config = identity(recipe)
     return model, parent, recipe, config, source, vocabulary

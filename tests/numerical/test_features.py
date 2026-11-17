@@ -340,7 +340,7 @@ class TestCalibration(unittest.TestCase):
             weight, 8, nn.Parameter(torch.zeros(12)), nn.Parameter(torch.tensor(0.5))
         )
         inputs = [torch.randn((7, 12), generator=generator) + 0.3 for _ in range(3)]
-        report = fit_rows(projection, inputs, weight, True)
+        report = fit_rows(projection, inputs, weight, True, 1)
         values = (
             torch.cat(
                 [projection.quantize(value)[0] * projection.quantize(value)[1] for value in inputs]
@@ -361,7 +361,7 @@ class TestCalibration(unittest.TestCase):
         scale_only = Projection(
             weight, 8, nn.Parameter(torch.zeros(12)), nn.Parameter(torch.tensor(0.5))
         )
-        fit_rows(scale_only, inputs, weight, False)
+        fit_rows(scale_only, inputs, weight, False, 1)
         self.assertFalse(bool(scale_only.midpoint.any()))
         product = values @ signs.T
         direct = ((product * target).sum(0) / product.square().sum(0)).clamp_min(0)
@@ -404,7 +404,7 @@ class TestCalibration(unittest.TestCase):
         inputs[0][:, :2] = 0.06
         source = weight.clone()
         source[:, 0] = 5.0
-        report = fit_rows(projection, inputs, source, True)
+        report = fit_rows(projection, inputs, source, True, 1)
         scale = projection.scale.detach()
         self.assertTrue(bool(torch.isfinite(scale).all()))
         self.assertTrue(bool((scale <= 16 * initial).all()))

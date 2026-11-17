@@ -7,6 +7,7 @@ from w1a1_eagle.clock import Clock
 
 PARAMETER_GROUPS = ("sign", "scale", "midpoint", "gain", "clip", "norm")
 TABLE_GROUP = "table"
+SLOT_ROUNDING = ("anchor-mask",)
 SOFT_FAMILY = "soft"
 ARITHMETIC = ("reference", "fast-exact", "fast-exact-tf32ff")
 Arithmetic = Literal["reference", "fast-exact", "fast-exact-tf32ff"]
