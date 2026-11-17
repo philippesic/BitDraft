@@ -172,13 +172,17 @@ Progress:
   (description): 2-bit / 1-bit scoring tables cost 0.022 / 0.056 accepted tokens per round, a 1-bit
   table for the whole drafter 0.20. Decision: keep the current Q4_K table and selection; 4d not
   built.
-- GPU queue (chained scripts, 24 GB RAM cap): `queue9` (new TRAIN batch, running from 04:59) →
-  `queue10` (Level 2 of the calibrated finalist) → `queue11` (calibrated rounding ceiling) →
-  `queue12` (group 5) → `queue13` (step 9: fused pair, then the assembled recipe with fast
-  arithmetic on eight-tap storage) → `step11.sh` (final TRAIN mixture `train-final-01`, admission,
-  integration pilot: 400 uninterrupted updates against 200 + resume to 400, losses and final
-  export compared, export screened). The long run (`step12/preflight.md`) trains on eight-tap
-  storage whatever the fused pair shows; fused storage is qualified for the release run only.
+- New batch: 159 long-project sessions generated (157 completed tasks, 688 turns) in 15 minutes.
+  The first selection was refused because its worst-case forecast (every thinking-on answer at
+  its 2,048-token cap) exceeded the 120 GB ceiling; rerun at 126 GB with unchanged quotas:
+  138 sessions (58,634 span positions) and 246 thinking-on requests, worst case 124.1 GB.
+- GPU queue (chained scripts, 24 GB RAM cap): `queue10` (Level 2 of the calibrated finalist,
+  running from 05:15) → `queue11` (calibrated rounding ceiling) → `queue12` (group 5) →
+  `queue13` (step 9: fused pair, then calibrated + fast arithmetic on eight-tap storage) →
+  `queue9b` (batch capture) → `step11.sh` (final mixture `train-final-01`, admission, integration
+  pilot: 400 updates against 200 + resume to 400, losses and final export compared, export
+  screened). The long run (`step12/preflight.md`) trains on eight-tap storage whatever the fused
+  pair shows; fused storage is qualified for the release run only.
 
 Decided by the owner 2026-11-16 19:15: `greedy-long` is judged on the supplementary interval
 that pools category strata with fewer than two source groups (the maintained rule cannot give it
