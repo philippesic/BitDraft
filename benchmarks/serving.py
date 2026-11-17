@@ -24,7 +24,7 @@ def server_arguments(spec: Comparison, arm: Arm, port: int) -> list[str]:
         spec.target.path,
         arm.drafter.path if arm.drafter else None,
         spec.context,
-        spec.depth,
+        spec.depth_of(arm.name),
         port,
     )
 
@@ -34,7 +34,14 @@ def session(
     spec: Comparison, arm: Arm, cell: Store, managed_group: bool = False, consistent: bool = True
 ) -> Iterator[int]:
     with native_server(
-        spec.binary, spec.target, arm, spec.context, spec.depth, cell, managed_group, consistent
+        spec.binary,
+        spec.target,
+        arm,
+        spec.context,
+        spec.depth_of(arm.name),
+        cell,
+        managed_group,
+        consistent,
     ) as port:
         yield port
 

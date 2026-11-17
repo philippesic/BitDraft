@@ -25,6 +25,7 @@ explicit paths and the shared saved-reference registry.
 | `campaign-preflight`, `campaign`, `campaign-report` | CPU admission; training; read-only health |
 | `prepare-checks`, `record-reference` | Frozen lean cohorts; authenticated reusable references |
 | `scenario-report` | Per-scenario paired comparisons and Level 2/3 decisions |
+| `policy-report` | Owner tolerance policy on five release scenarios, beside the stricter verdict |
 | `prepare-initialization` | Reusable authenticated model basis; no training or capture |
 | `suite` | Broader panels and optional state selection |
 | `verify-greedy`, `verify-sampler`, `profile-native` | Independent decisions, distributions, kernel activation |
@@ -191,8 +192,16 @@ specification and response/transcript receipts remain attached. Model identities
 even if obsolete weights are later retired with receipts; executing weights still requires
 full authentication.
 
+Each record binds the depth its arm actually ran at: its protocol is the panel protocol at
+that arm's depth (the arm's `depths` entry, otherwise the top-level `depth`), so a Baseline
+recorded at depth 4 has a different registry key and cannot stand in for depth 3. A
+reference from a per-arm panel is interchangeable with one from a uniform panel at the same
+depth. Records made before per-arm depths authenticate unchanged.
+
 Candidate-only comparison specs contain one `candidate` arm and `references` mapping
 `target`, `baseline` and optionally `prior-leader` to authenticated registry records.
+A saved reference is checked against the depth its name is declared at in `depths`
+(default the top-level `depth`); a mismatch is refused.
 Preflight refuses missing, damaged, incomplete or incompatible evidence before training.
 Protocol binds runtime/server/libraries, target precision, context/depth, role, exact
 messages/tools/caps and generation policy. Cached target signatures validate fresh greedy
@@ -317,7 +326,17 @@ harness breakdowns. Panels draft at depth 3 for both targets (`--spec-draft-n-ma
 so a round proposes at most three tokens; 53% acceptance means about 1.6 accepted per round.
 Depth 3 is Baseline's best exact depth and within about 1% of each measured drafter's own
 best ([depth fairness](../results/draft-depth-fairness/result.md)); the earlier depth 2
-overstated HE4/Baseline speed ratios by about 8%. Summaries therefore add `derived_rounds` (emitted − accepted − requests: each round emits
+overstated HE4/Baseline speed ratios by about 8%. Fixed depth 3 remains the track for
+acceptance diagnostics and comparisons.
+
+For deployment speed, an optional `depths` mapping serves named drafting arms at their own
+depth, for example `"depths": {"baseline": 4, "candidate": 3}`; other drafting arms keep
+the top-level `depth`. It may name measured drafting arms and saved non-target references,
+never a target-only arm. Omitting it keeps the previous behaviour and protocol identity.
+When present, the panel protocol gains `arm_depths`, each arm's server runs with its own
+`--spec-draft-n-max`, and results record `arm_depths` plus a `depth` beside each summary's
+counters and `derived_rounds` (null for target-only). `live` and agentic specifications
+accept the same field. Summaries therefore add `derived_rounds` (emitted − accepted − requests: each round emits
 its accepted drafts plus one target token, and the first token comes from prompt processing)
 with proposed, accepted and emitted tokens per round. On the 1,200-request Q4KM panel this
 matched the native round counters within 0.1%. Requests ending at EOS match exactly; a
@@ -411,7 +430,8 @@ added 4.5–4.6 seconds per resident pass; startup and standalone timings remain
 `scenario-report SPEC OUTPUT` accepts `schema: scenario-report-v1`, `level: 2|3`,
 `candidate`, authenticated evidence in `panels`, and `confirmation: null` (or
 an authenticated successful fresh Level 3 report). Panels share the target/runtime/context/
-depth/role and candidate content. Each panel retains its own scenarios; primary panels
+role and candidate content; their arms may run at different declared depths, and each
+panel's `arm_depths` is reported. Each panel retains its own scenarios; primary panels
 cannot duplicate a scenario. The names `screen`, `prefix`, and `live` are supplementary
 and do not replace the dedicated agentic suite. Level 3 requires the full thinking,
 sampled and agentic suite tiers; a pilot or slice cannot supply its primary coverage.
@@ -448,6 +468,93 @@ include every primary scenario for both levels and formats. Thinking/sampled reg
 prevent a faster claim on both formats; Q4KM agentic also fails the interval rule, while
 NVFP4 agentic alone narrowly passes it. Neither outcome supplies missing fresh timing
 intervals for the ordinary request scenarios or replaces fresh confirmation.
+
+### Owner-policy report
+
+`policy-report SPEC OUTPUT` reports the owner's tolerance policy (working rule 2026-11-16)
+beside the `scenario-report` verdict, which is unchanged. It is a separate command because
+its five release scenarios split greedy requests by input length instead of by the seven
+primary scenarios, and because it pools repeated runs. The specification has
+`schema: owner-policy-report-v1`, the `candidate` arm name (Baseline is the arm named
+`baseline`) and `panels`, mapping any of `greedy`, `thinking-on`, `sampled`,
+`agentic-coding` and `screen` to a list of one or more runs. Each run is evidence in the
+scenario-report form: a result reference, or `result`, `comparison` and `references` for a
+slice projected from a complete suite. Tiers are `comparison` (broader120) for greedy,
+`thinking-suite`/`thinking-slice`, `sampled-suite`/`sampled-slice`,
+`agentic-suite`/`agentic-slice` and `screen`. The candidate must be measured in every run.
+All panels share runtime, target, context, role, candidate and Baseline content; depths
+may differ between panels and arms.
+
+| Scenario | Rows | Speed |
+| --- | --- | --- |
+| `greedy-short` | broader120 requests with frozen `ancestry.input_tokens` below 2,048, every category including structured/tool | Emitted tokens / summed request seconds |
+| `greedy-long` | The remaining broader120 requests | Same |
+| `thinking-on` | Thinking suite (40) or slice (12) | Same |
+| `sampled` | Sampled suite (40 × 3 seeds) or slice (12 × 2); seeds stay in their source group | Same |
+| `agentic-coding` | Agentic suite (60) or slice (12); project groups | Assigned tasks / total primary task time including tools and failures |
+
+Each scenario reports per-arm summaries with acceptance and depth, and the
+candidate/Baseline comparison from the maintained paired source-group bootstrap
+(`statistics.paired`, category-composition strata) over that scenario's own rows, with
+its 95% lower bound, output correctness and agentic completion. Greedy input bands
+(<512, 512–2047, 2048–8191, 8192–16384) and the 60-request screen are supplementary and
+never decide.
+
+Verdicts: `passed` when at most two scenarios have a lower bound below 1.00, each at 0.97
+or better, every other lower bound is at least 1.00, every candidate output is correct
+(greedy exact against target-only, sampled valid) and agentic completion is not below
+Baseline's. `failed` when all five intervals exist and the rule is violated, or on any
+correctness or completion loss. `not-demonstrated` when a scenario is missing or its
+interval is unavailable: a sparse stratum, fewer than two source groups in a stratum, a
+Baseline available only as a saved reference (no paired timing), or a slice where Level 3
+needs a suite. `level3` is the release result; `development` accepts slices and is
+labelled development-only for short-run finalists.
+
+Several runs for one panel are pooled when they repeat the same panel protocol (workload,
+sampling, runtime and depths) with the same arm models; arm order may differ, as in a
+reversed-order repeat. Run *k*'s rows become repeats `k × repeats + rep` inside their source
+groups, and none is dropped. Pooling narrows prompt-sampling noise only as far as matched
+repeats agree; source-group intervals still do not measure drift between sessions.
+
+Current limit: broader120's 24 long requests are 19 documents, 3 code, 1 conversation and
+1 structured, so the conversation and structured strata have one source group each and
+`greedy-long` has no interval under the maintained grouping. The policy therefore returns
+`not-demonstrated` on this panel until its long coverage or the grouping rule changes; that
+is a protocol decision, and pooled repeats do not add source groups.
+
+Every scenario also carries `supplementary_merged_strata`: the same bootstrap with every
+category stratum of fewer than two source groups merged into one pooled stratum
+(`paired(..., merge_sparse=True)`), listing the merged strata. It never enters `level3` or
+`development`. Whether it may count is the owner's decision; setting the optional
+`"count_merged_strata": true` adds `merged_strata_verdicts`, the policy recomputed from these
+figures, beside the unchanged maintained verdicts. It defaults to false.
+
+To build a five-scenario report on runtime-v8, use fresh three-arm runs (target, Baseline,
+candidate) so Baseline timing is paired. Candidate-only `*-candidate.json` specifications
+compare against a saved Baseline and leave the interval unavailable. For greedy, copy
+`artifacts/benchmarks/runtime-v8-linux-01/establish/q4km-requests.json`, replace the
+`candidate` drafter, add `depths` for the deployment depths and run `compare`. Thinking,
+sampled and agentic panels follow the runtime-v7 scenario-level layout: three-arm suite
+specifications executed with `compare` (or `live` for agentic) into `runs/`, with slice
+specifications and registrations projected from them. A Level 3 entry is the suite's
+`result.json`; a development entry is `{"result": suite result, "comparison": slice
+specification, "references": the slice's registry record for every measured arm}`.
+
+```json
+{
+  "schema": "owner-policy-report-v1",
+  "candidate": "candidate",
+  "panels": {
+    "greedy": [{"path": "runs/q4km-requests/result.json", "sha256": "...", "bytes": 1}],
+    "thinking-on": [{"path": "runs/q4km-thinking-suite/result.json", "sha256": "...", "bytes": 1}],
+    "sampled": [{"path": "runs/q4km-sampled-suite/result.json", "sha256": "...", "bytes": 1}],
+    "agentic-coding": [{"path": "runs/q4km-agentic-suite/result.json", "sha256": "...", "bytes": 1}]
+  }
+}
+```
+
+Add a second entry to a list to pool a matched repeat. Use separate reports for Q4KM and
+NVFP4.
 
 ### Frozen request confirmation reserve
 

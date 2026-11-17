@@ -4,6 +4,8 @@ from typing import Callable
 
 from w1a1_eagle.contracts import Record, integer, number, record, string
 
+MERGED = "merged-sparse-strata"
+
 
 def measures(rows: list[Record]) -> tuple[float, float | None]:
     tokens = sum(integer(row["tokens"]) for row in rows)
@@ -28,7 +30,12 @@ def interval(values: list[float], alpha: float = 0.05) -> Record:
 
 
 def paired(
-    rows: list[Record], candidate: str, baseline: str, draws: int = 2000, family: int = 1
+    rows: list[Record],
+    candidate: str,
+    baseline: str,
+    draws: int = 2000,
+    family: int = 1,
+    merge_sparse: bool = False,
 ) -> Record:
     if draws < 100 or type(family) is not int or family < 1:
         raise ValueError("at least 100 bootstrap draws required")
@@ -68,6 +75,12 @@ def paired(
             string(row.get("category", "unclassified")) for row in grouped[name][baseline]
         )
         strata[str(sorted(composition.items()))].append(name)
+    merged: Record = {}
+    if merge_sparse:
+        sparse = sorted(key for key, members in strata.items() if len(members) < 2)
+        if sparse:
+            strata[MERGED] = [name for key in sparse for name in strata.pop(key)]
+        merged = {"merged_strata": sparse}
     if any(len(members) < 2 for members in strata.values()):
         return {
             "groups": len(names),
@@ -76,6 +89,7 @@ def paired(
             "interval_available": False,
             "reason": "insufficient independent groups within a category-composition stratum",
             "strata": {key: len(value) for key, value in strata.items()},
+            **merged,
         }
     generator = random.Random(8101)
     ratios: list[float] = []
@@ -103,6 +117,7 @@ def paired(
         "bootstrap_draws": draws,
         "interval_available": True,
         "scope": "paired source-group bootstrap within fixed category-composition strata; repeats/variants stay together; small cohorts do not establish deployment transfer",
+        **merged,
     }
 
 

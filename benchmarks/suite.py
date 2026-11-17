@@ -55,8 +55,10 @@ def suite(specification: Path, output: Path) -> Record:
             ref.verify()
             comparison = Comparison.load(ref.path)
             comparison.verify()
+            depths = comparison.arm_depths()
             current_arms = [
-                (arm.name, arm.drafter.sha256 if arm.drafter else None) for arm in comparison.arms
+                (arm.name, arm.drafter.sha256 if arm.drafter else None, depths[arm.name])
+                for arm in comparison.arms
             ]
             current_arms += [
                 (
@@ -64,6 +66,7 @@ def suite(specification: Path, output: Path) -> Record:
                     artifact(value["drafter"], ref.path.parent).sha256
                     if value["drafter"] is not None
                     else None,
+                    depths[key],
                 )
                 for key, value in comparison.cached().items()
             ]

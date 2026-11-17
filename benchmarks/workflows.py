@@ -185,9 +185,11 @@ def live_leased(
             record(row) for value in cached.values() for row in sequence(value["rows"])
         ]
         names = [arm.name for arm in spec.arms] + list(cached)
+        depths = spec.arm_depths()
         result: Record = {
             "status": "complete",
             "protocol": spec.reference_protocol(),
+            "arm_depths": depths,
             "role": spec.role,
             "tier": spec.tier,
             "rows": rows,
@@ -197,6 +199,7 @@ def live_leased(
             "summary": {
                 arm.name: {
                     **summarize([row for row in rows if row["arm"] == arm.name]),
+                    "depth": depths[arm.name],
                     "execution": "measured",
                 }
                 for arm in spec.arms
@@ -204,6 +207,7 @@ def live_leased(
             | {
                 name: {
                     **summarize([record(row) for row in sequence(value["rows"])]),
+                    "depth": depths[name],
                     "execution": "historical",
                 }
                 for name, value in cached.items()

@@ -125,7 +125,7 @@ def measure(
     serve: Serve = served,
 ) -> Record:
     began = now()
-    spec = replace(spec, depth=max(depth, 1))
+    spec = replace(spec, depth=max(depth, 1), depths=())
     speculative = arm.drafter is not None
     responses: list[Record] = []
     rows: list[Record] = []
