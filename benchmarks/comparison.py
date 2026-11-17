@@ -55,6 +55,7 @@ class Comparison:
     references: tuple[tuple[str, Artifact], ...] = ()
     depths: tuple[tuple[str, int], ...] = ()
     speculation: tuple[tuple[str, str], ...] = ()
+    shortlists: tuple[tuple[str, Artifact], ...] = ()
 
     @classmethod
     def load(cls, path: Path) -> "Comparison":
@@ -69,6 +70,7 @@ class Comparison:
                 "calibration",
                 "depths",
                 "speculation",
+                "shortlists",
             }
             != {
                 "schema",
@@ -329,6 +331,21 @@ class Comparison:
             raise ValueError(
                 "per-arm speculation requires a drafting arm and a supported speculative type"
             )
+        if "shortlists" in raw and not record(raw["shortlists"]):
+            raise ValueError("declared per-arm shortlists must name at least one arm")
+        shortlists = tuple(
+            sorted(
+                (name, artifact(value, root))
+                for name, value in record(raw.get("shortlists", {})).items()
+            )
+        )
+        measured = {a.name for a in arms if a.drafter is not None}
+        if any(
+            name not in measured
+            or dict(speculation).get(name, DEFAULT_SPECULATION) != DEFAULT_SPECULATION
+            for name, _ in shortlists
+        ):
+            raise ValueError("a per-arm shortlist requires a measured draft-dflash arm")
         return cls(
             artifact(raw["source"], root),
             artifact(raw["binary"], root),
@@ -349,6 +366,7 @@ class Comparison:
             references,
             depths,
             speculation,
+            shortlists,
         )
 
     def depth_of(self, name: str) -> int:
@@ -356,6 +374,13 @@ class Comparison:
 
     def speculation_of(self, name: str) -> str:
         return dict(self.speculation).get(name, DEFAULT_SPECULATION)
+
+    def shortlist_of(self, name: str) -> Artifact | None:
+        return dict(self.shortlists).get(name)
+
+    def shortlist_path(self, name: str) -> Path | None:
+        shortlist = self.shortlist_of(name)
+        return shortlist.path if shortlist is not None else None
 
     def arm_depths(self) -> Record:
         return {
@@ -377,6 +402,7 @@ class Comparison:
             self.workload,
             *self.libraries,
             *(arm.drafter for arm in self.arms if arm.drafter is not None),
+            *(shortlist for _, shortlist in self.shortlists),
         ):
             ref.verify()
         if not self.libraries:
@@ -420,6 +446,8 @@ class Comparison:
             protocol["arm_depths"] = {name: value for name, value in self.depths}
         if self.speculation:
             protocol["arm_speculation"] = {name: value for name, value in self.speculation}
+        if self.shortlists:
+            protocol["arm_shortlists"] = {name: value.sha256 for name, value in self.shortlists}
         return protocol
 
     def arm_protocol(self, name: str) -> Record:
@@ -441,6 +469,7 @@ class Comparison:
                 depth,
                 0,
                 speculation=self.speculation_of(name),
+                shortlist=Path("shortlist") if self.shortlist_of(name) is not None else None,
             ),
             "request": payload(
                 [],
@@ -477,6 +506,11 @@ class Comparison:
             }
             if self.tier in LIVE_TIERS
             else None,
+            **(
+                {"shortlist": shortlist.sha256}
+                if (shortlist := self.shortlist_of(name)) is not None
+                else {}
+            ),
         }
 
     def cached(self) -> dict[str, Record]:

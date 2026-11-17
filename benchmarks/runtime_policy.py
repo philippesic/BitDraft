@@ -18,6 +18,7 @@ def arguments(
     port: int,
     parallel: int = 1,
     speculation: str = DEFAULT_SPECULATION,
+    shortlist: Path | None = None,
 ) -> list[str]:
     argv = [
         str(binary),
@@ -77,6 +78,10 @@ def arguments(
             "--spec-draft-sampling",
             "greedy",
         ]
+        if shortlist is not None:
+            argv += ["--spec-draft-shortlist", str(shortlist)]
+    elif shortlist is not None:
+        raise ValueError("a vocabulary shortlist needs a drafter")
     return argv
 
 

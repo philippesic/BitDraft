@@ -14,7 +14,7 @@
 | `results/` | Durable conclusions and small supporting data |
 | `evidence/` | Existing immutable execution and provenance receipts |
 | `skills/close-results/` | Reusable investigation closeout procedure |
-| `native/` | Authored tokenizer and capture helpers for the pinned runtime |
+| `native/` | Authored tokenizer, capture, kernel-harness and table-quantizer helpers for the pinned runtime |
 | `benchmarks/` | Frozen-source native comparisons, live tools, harness panels and campaign coordination |
 | `typings/` | Minimal typed interfaces for untyped external APIs |
 | `artifacts/` | Ignored project inputs, outputs, archives and caches; [storage map](storage.md) |

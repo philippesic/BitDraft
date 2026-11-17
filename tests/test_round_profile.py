@@ -388,3 +388,16 @@ def test_table_reports_every_clock_under_its_own_name() -> None:
     )
     assert "clean clock: round 9.000 ms" in text and "phases clock (instrumented)" in text
     assert "final norm + vocabulary scoring" in text and "1.0" in text
+
+
+def test_shortlist_scoring_nodes_count_as_vocabulary() -> None:
+    labels = [
+        "node|0|MUL_MAT|result_output_shortlist|62056,3,1,1"
+        "|0:output_shortlist.weight:q4_K:2560,62056,1,1:89360640:1|1:x:f32:2560,3,1,1:1:0",
+        "node|1|FILL|node_1|1,248320,3,1|0:t:f32:1,248320,3,1:1:0",
+        "node|2|SET_ROWS|node_2|1,248320,3,1|0:a:f32:1,62056,3,1:1:0"
+        "|1:output_shortlist.ids:i64:62056,1,1,1:496448:1",
+        "node|3|MUL_MAT|result_output_request|512,3,1,1"
+        "|0:output_request.weight:q4_K:2560,512,1,1:737280:1|1:x:f32:2560,3,1,1:1:0",
+    ]
+    assert roles([parse_node(label) for label in labels]) == ["vocabulary"] * 4

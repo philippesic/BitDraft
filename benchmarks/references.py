@@ -90,6 +90,7 @@ def register(specification: Path, output: Path) -> Record:
             prior.depth_of(name),
             port,
             speculation=prior.speculation_of(name),
+            shortlist=prior.shortlist_path(name),
         ):
             raise ValueError("executed server policy differs from requested reference protocol")
         receipts.append(file_reference(path))

@@ -151,6 +151,7 @@ def build(specification: Path, output: Path) -> Record:
         "-DLLAMA_CURL=OFF",
         "-DLLAMA_BUILD_TESTS=OFF",
         "-DLLAMA_BUILD_EXAMPLES=ON",
+        "-DLLAMA_USE_PREBUILT_UI=OFF",
         "-DGGML_CUDA_FA_ALL_QUANTS=OFF",
         "-DGGML_CUDA_FA_QUANTS=q4_0-q4_0;q8_0-q8_0;f16-f16;bf16-bf16",
     ]
@@ -286,6 +287,78 @@ def helpers(specification: Path, output: Path) -> Record:
         "verification_trace": previous.get("verification_trace", False),
         "runtime_repairs": previous.get("runtime_repairs", []),
         "qualification": "helper build only; template/capture matching requires execution",
+    }
+    store.atomic(store.root / "result.json", canonical(result))
+    return result
+
+
+def table_quantizer(specification: Path, output: Path) -> Record:
+    raw = read(specification)
+    if set(raw) != {"schema", "runtime"} or raw["schema"] != "table-quantizer-build-v1":
+        raise ValueError("unsupported table quantizer build specification")
+    runtime = artifact(raw["runtime"], specification.resolve().parent)
+    runtime.verify()
+    previous = read(runtime.path)
+    bundle = artifact(previous["source_bundle"], runtime.path.parent)
+    bundle.verify()
+    files = [artifact(value, runtime.path.parent) for value in sequence(previous["artifacts"])]
+    libraries = [value for value in files if value.path.name.startswith("libggml-base.so")]
+    if len(libraries) != 1 or output.exists():
+        raise ValueError("one authenticated ggml base library and a new output required")
+    library = libraries[0]
+    library.verify()
+    compiler = shutil.which("c++")
+    if compiler is None:
+        raise ValueError("a C++ compiler is required")
+    store = Store(output)
+    code_root = Path(__file__).resolve().parents[1]
+    code = source_identity(code_root)
+    snapshot = freeze_source(code_root, store.root / "sources", code, 0)
+    store.atomic(store.root / "specification.json", canonical(raw))
+    unpack_bundle(bundle.path, store.root, 1024**3)
+    binaries = Store(store.root / "bin").root
+    directory = library.path.parent
+    command = [
+        "c++",
+        "-O2",
+        "-std=c++17",
+        str(snapshot / "native" / "quantize-table.cpp"),
+        "-I",
+        str(store.root / "source" / "ggml" / "include"),
+        "-L",
+        str(directory),
+        "-lggml-base",
+        "-Wl,-rpath," + str(directory),
+        "-o",
+        str(binaries / "binary-quantize-table"),
+    ]
+    store.atomic(store.root / "commands.json", canonical({"commands": [command]}))
+    with (store.root / "0-build.log").open("wb") as log:
+        subprocess.run(
+            command,
+            stdout=log,
+            stderr=subprocess.STDOUT,
+            env=native_environment(directory),
+            timeout=300,
+            check=True,
+        )
+    version = subprocess.run(
+        ["c++", "--version"], capture_output=True, check=True, timeout=30
+    ).stdout.decode()
+    shutil.rmtree(store.root / "source")
+    result: Record = {
+        "status": "built",
+        "runtime": reference(runtime),
+        "source_bundle": reference(bundle),
+        "code_sha256": code,
+        "binary": file_reference(binaries / "binary-quantize-table"),
+        "library": reference(library),
+        "compiler": {
+            "path": str(Path(compiler).resolve()),
+            "version": version.splitlines()[0] if version else "",
+        },
+        "importance_matrix": None,
+        "qualification": "build only; the variant command checks that it reproduces the export's Q4_K table",
     }
     store.atomic(store.root / "result.json", canonical(result))
     return result

@@ -27,6 +27,7 @@ def server_arguments(spec: Comparison, arm: Arm, port: int) -> list[str]:
         spec.depth_of(arm.name),
         port,
         speculation=spec.speculation_of(arm.name),
+        shortlist=spec.shortlist_path(arm.name),
     )
 
 
@@ -44,6 +45,7 @@ def session(
         managed_group,
         consistent,
         speculation=spec.speculation_of(arm.name),
+        shortlist=spec.shortlist_of(arm.name),
     ) as port:
         yield port
 
@@ -60,6 +62,7 @@ def native_server(
     consistent: bool = True,
     parallel: int = 1,
     speculation: str = DEFAULT_SPECULATION,
+    shortlist: Artifact | None = None,
 ) -> Iterator[int]:
     port = port_number()
     drafter = arm.drafter if arm else None
@@ -72,6 +75,7 @@ def native_server(
         port,
         parallel,
         speculation,
+        shortlist.path if shortlist is not None else None,
     )
     environment = native_environment(binary.path.parent)
     if not consistent:
@@ -83,6 +87,7 @@ def native_server(
                 "argv": argv,
                 "binary": reference(binary),
                 "target": reference(target),
+                **({"shortlist": reference(shortlist)} if shortlist is not None else {}),
                 "decode_consistent": environment["GGML_CUDA_DECODE_CONSISTENT"],
             }
         ),
