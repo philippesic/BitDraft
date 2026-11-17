@@ -102,8 +102,21 @@ Progress:
   out-of-memory; no kernel message; the owner power-cycled it at 23:05 (about four GPU hours
   lost). Every queued job now runs in a systemd scope capped at 24 GB RAM; the diagnostics are
   held behind skip markers and returned to build B for an explicit memory budget.
-- Running (from 23:06): `g3-blank`, then builds A and C short qualifications, the long-session
-  pilot and `g3-gradual`.
+- Group 3 results so far (screen, paired against the control, 60 requests):
+  - Blank: 48.38% vs 48.95%, −0.57 points (−1.24, +0.09). Its interval's lower end is below −1.0,
+    so blank is not admitted; the full recipe stays the base. Removals (fixed scale, fixed clip)
+    would change no implementation decision (the extras cost almost nothing at serving): skipped.
+  - Calibration bug fixed by build D (clip bounds now minimise the tables' output error; row-fit
+    trust limit); the calibrated probe and arms rerun on source `4bb8231d…`, whose default path is
+    pinned bit-identical to the control's.
+- Step 5 checks: token replay at 32 tokens per batch is bit-identical to the stored captures
+  (40 TRAIN records, 26,736 labels; at 512 values differ); batched writing at 8/16/32 slots is
+  2.2–2.5× faster but only 8 of 32 answers match one-at-a-time writing, so new data is written one
+  request at a time. Build A's per-arm depth qualified on the GPU (`OVERALL PASS`).
+- A second scripting error of mine (an undefined variable after reordering) stopped the queue at
+  23:55; `scripts/queue3.sh` now runs: gradual, fixed diagnostics, screen capture and rounds, seen
+  prompts, calibrated probe and arm, calibrated+gradual, build E's matched run, long-session
+  pilot.
 
 Decided by the owner 2026-11-16 19:15: `greedy-long` is judged on the supplementary interval
 that pools category strata with fewer than two source groups (the maintained rule cannot give it
