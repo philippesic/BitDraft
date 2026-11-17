@@ -424,7 +424,7 @@ The reference drafter is an authenticated HE4 state; the map records its identit
 The specification (`round-state-map-spec-v1`) takes `memory_bytes`, `drafter` (the
 [round diagnostics](benchmarks.md#round-diagnostics) `candidate` section without `arm`),
 the TRAIN `corpus` with its optional `corpus_format`, optional `depth` (3), `chunk`
-(anchors per pass, 128) and `activation_bytes` (3 GiB), and at most one of:
+(anchors per pass, 128), `activation_bytes` (3 GiB) and `scoring`, and at most one of:
 
 - `restrict`: an authenticated training intent with the same corpus and geometry; the map
   covers each sequence only up to the last window that intent's sampler plans for its
@@ -437,11 +437,25 @@ Only admitted TRAIN rows are read, so DEV, calibration and protected data never 
 sequence's context keys and values are computed once (`HE4.group_contexts`); the drafter then
 proposes at every needed anchor in batches whose estimated memory fits `activation_bytes`,
 using the bit-identical single feed-forward product (TF32 on CUDA), and takes the first
-choice per slot. The next sequence loads while the current one computes. The memory plan,
-fatal out-of-memory handling and GPU lease follow round diagnostics. OUTPUT (inside
-`artifacts/`, new) receives `specification.json`, `map.json` and `report.json`: map identity,
-counts, compute and capture-wait seconds, proposals per compute second and the forecast
-compute time for the whole corpus at that rate.
+choice per slot. A sequence none of whose anchors fits `activation_bytes` is refused before
+the drafter loads; the longest full-TRAIN sequence (16,850 tokens) needs about 6 GiB.
+`scoring` selects how the vocabulary scores each batch:
+
+- `batched` (default, and the meaning of omission): one product per anchor, as PyTorch
+  evaluates a three-slot view of the batch. Each product rereads the whole F32 vocabulary
+  table, which dominates the cost.
+- `folded`: the batch's slots are copied into one contiguous matrix and scored by a single
+  product, under `torch.inference_mode`, with one transfer to the host per sequence. This is
+  how training scores its windows. Logits can differ from `batched` in the last float bits,
+  so a first choice can change only at an exact or near tie; the map follows this grouped
+  path, not the single-window `HE4.forward`.
+
+The next sequence loads while the current one computes. The memory plan, fatal
+out-of-memory handling (exit 3, nothing written) and GPU lease follow round diagnostics.
+OUTPUT (inside `artifacts/`, new) receives `specification.json`, `map.json` and
+`report.json`: map identity, scoring, counts, compute and capture-wait seconds, proposals
+and covered windows per compute second, and the forecast compute time for the whole corpus
+at that rate.
 
 ## Arithmetic
 
