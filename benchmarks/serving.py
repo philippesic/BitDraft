@@ -49,11 +49,12 @@ def native_server(
     cell: Store,
     managed_group: bool = False,
     consistent: bool = True,
+    parallel: int = 1,
 ) -> Iterator[int]:
     port = port_number()
     drafter = arm.drafter if arm else None
     argv = arguments(
-        binary.path, target.path, drafter.path if drafter else None, context, depth, port
+        binary.path, target.path, drafter.path if drafter else None, context, depth, port, parallel
     )
     environment = native_environment(binary.path.parent)
     if not consistent:

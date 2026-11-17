@@ -189,6 +189,7 @@ class Dataset:
     rows: tuple[CaptureRow, ...]
     protected: frozenset[str]
     metadata_bytes: int
+    fusion: str | None = None
 
     def __post_init__(self) -> None:
         if type(self.metadata_bytes) is not int or self.metadata_bytes < 0:
@@ -410,6 +411,7 @@ def span_supervision(
     labels: tuple[int, ...],
     eog: frozenset[int],
     policy: str,
+    open_end: bool = False,
 ) -> tuple[Supervision, ...]:
     if policy not in ("full15", "up-to-15"):
         raise ValueError("explicit supported supervision policy required")
@@ -417,7 +419,7 @@ def span_supervision(
         raise ValueError("supervised spans required")
     previous = -1
     for first, last in spans:
-        if not previous < first <= last or last + 1 >= len(tokens):
+        if not previous < first <= last or last + (0 if open_end else 1) >= len(tokens):
             raise ValueError("supervised spans must be ordered inside the sequence")
         previous = last
     if len(labels) != len(positions) or positions != tuple(
@@ -456,7 +458,9 @@ def capture_supervision(trajectory: str, metadata: Record) -> tuple[Supervision,
         for value in sequence(metadata["supervised_spans"]):
             first, last = (integer(item) for item in sequence(value))
             spans.append((first, last))
-        return span_supervision(trajectory, tokens, tuple(spans), positions, labels, eog, policy)
+        return span_supervision(
+            trajectory, tokens, tuple(spans), positions, labels, eog, policy, "replay" in metadata
+        )
     if any(value in eog for value in labels[:-1]):
         raise ValueError("post-EOG label exposure")
     return supervision(

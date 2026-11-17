@@ -163,6 +163,7 @@ class TensorWorker:
             model.parent_frozen_sha256,
         )
         self.frozen_transition: Record | None = None
+        self.fusion_sha256: str | None = None
 
     def verify_frozen(self) -> None:
         current = dict(self.model.named_buffers())
@@ -353,8 +354,14 @@ class TensorWorker:
             if self.position_weights is None:
                 raise ValueError("reach weights require a development refresh before updating")
             positions = self.position_weights
+        if capture.fusion is not None and capture.fusion != self.fusion_sha256:
+            raise ValueError("fused capture and model fusion table identities differ")
         hidden = model.group_hidden(
-            capture.features, capture.tokens, tuple(window.anchor for window in windows), size
+            capture.features,
+            capture.tokens,
+            tuple(window.anchor for window in windows),
+            size,
+            capture.fusion is not None,
         )
         lengths = tuple(min(len(window.labels), size - 1) for window in windows)
         indices: list[int] = [

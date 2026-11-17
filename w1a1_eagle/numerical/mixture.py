@@ -2,14 +2,24 @@ from w1a1_eagle.contracts import record, sequence, string
 from w1a1_eagle.data import Artifact, CaptureRow, Dataset
 from w1a1_eagle.index import IndexReader
 from w1a1_eagle.intent import Intent
-from w1a1_eagle.numerical.corpus import Corpus
+from w1a1_eagle.numerical.corpus import Corpus, fusion_sha256
 from w1a1_eagle.records import artifact, identity, read
 
 
-def mixture(manifest: Artifact, seed: int, byte_budget: int, hidden: int) -> Dataset:
+def mixture(
+    manifest: Artifact, seed: int, byte_budget: int, hidden: int, fused: bool = False
+) -> Dataset:
     manifest.verify()
     raw = read(manifest.path)
-    if (
+    fusion: str | None = None
+    if fused:
+        if (
+            set(raw) != {"schema", "target_sha256", "fusion", "source", "components"}
+            or raw["schema"] != "fused-mixture-v1"
+        ):
+            raise ValueError("fused input requires a fused-mixture-v1 manifest")
+        fusion = fusion_sha256(record(raw["fusion"]))
+    elif (
         set(raw) != {"schema", "target_sha256", "components"}
         or raw["schema"] != "corpus-mixture-v1"
     ):
@@ -29,7 +39,20 @@ def mixture(manifest: Artifact, seed: int, byte_budget: int, hidden: int) -> Dat
             raise ValueError("unsupported corpus mixture component")
         ref = artifact(component["source"], manifest.path.parent)
         ref.verify()
-        if component["kind"] == "index-intent":
+        if (component["kind"] == "fused-corpus-v1") != fused:
+            raise ValueError("fused mixtures contain only fused-corpus-v1 components")
+        if component["kind"] == "fused-corpus-v1":
+            corpus_raw = read(ref.path, 64 * 1024 * 1024)
+            if any(record(row)["role"] != "train" for row in sequence(corpus_raw["records"])):
+                raise ValueError("mixture components must contain TRAIN records only")
+            corpus = Corpus(ref, seed, byte_budget, hidden, fused=True)
+            if corpus.fusion != fusion:
+                raise ValueError("mixture component fusion table identities differ")
+            selected = corpus.rows
+            protected.update(string(v) for v in sequence(corpus_raw["protected"]))
+            metadata_bytes += ref.size * 16 + corpus.count * 40
+            observed_target = corpus.target
+        elif component["kind"] == "index-intent":
             intent = Intent.load(ref.path)
             if intent.index_spec is None or "corpus_format" in intent.raw:
                 raise ValueError("index component requires a direct retained-index intent")
@@ -69,4 +92,4 @@ def mixture(manifest: Artifact, seed: int, byte_budget: int, hidden: int) -> Dat
         prior_names.update(current_names)
         prefixes.update(current_prefixes)
         rows.extend(selected)
-    return Dataset(manifest, target, tuple(rows), frozenset(protected), metadata_bytes)
+    return Dataset(manifest, target, tuple(rows), frozenset(protected), metadata_bytes, fusion)

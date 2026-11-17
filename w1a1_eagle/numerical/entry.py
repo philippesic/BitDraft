@@ -25,7 +25,7 @@ from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.diagnostics import Diagnostics
 from w1a1_eagle.numerical.export import export_he4
 from w1a1_eagle.numerical.mixture import mixture
-from w1a1_eagle.numerical.weights import exported_tables, load_he4
+from w1a1_eagle.numerical.weights import exported_tables, fusion_identity, load_he4
 from w1a1_eagle.numerical.worker import TensorWorker, checkpoint_accounting
 from w1a1_eagle.processes import ProcessIdentity
 from w1a1_eagle.records import artifact
@@ -151,8 +151,8 @@ def geometry(intent: Intent) -> Geometry:
 def read_corpus(intent: Intent) -> Corpus:
     cfg = geometry(intent)
     source = (
-        mixture(intent.corpus, intent.seed, intent.memory_bytes, cfg.hidden)
-        if intent.raw.get("corpus_format") == "corpus-mixture-v1"
+        mixture(intent.corpus, intent.seed, intent.memory_bytes, cfg.hidden, intent.fused_input)
+        if intent.mixture_input
         else IndexReader(intent.corpus, intent.index_spec, intent.memory_bytes).load()
         if intent.index_spec is not None
         else intent.corpus
@@ -166,6 +166,7 @@ def read_corpus(intent: Intent) -> Corpus:
         intent.grouping,
         cfg,
         intent.blocks,
+        intent.fused_input,
     )
 
 
@@ -248,6 +249,10 @@ def run_leased(
         intent.frozen_baseline,
         intent.trained_tables,
     )
+    if corpus.fusion is not None and (
+        model.trained_tables or fusion_identity(model.fusion.operand) != corpus.fusion
+    ):
+        raise ValueError("fused corpus and model fusion table identities differ")
     model.to(str(intent.raw["device"]))
     if model.vocabulary.device.type == "cuda":
         device_admission(intent, corpus, model)
@@ -270,6 +275,7 @@ def run_leased(
         blocks=intent.blocks,
         block_slots=corpus.slots,
     )
+    worker.fusion_sha256 = corpus.fusion
     diagnostics = (
         Diagnostics(artifact(intent.raw["development"], intent.base), corpus, intent.memory_bytes)
         if "development" in intent.raw

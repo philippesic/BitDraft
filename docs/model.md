@@ -12,7 +12,9 @@ eight target-feature taps and at most sixteen draft slots. Geometry can be reduc
 CPU tests; a passing tiny test does not establish full-size behavior.
 
 1. Captured target features are fused into the drafter's context. The feature
-   contract and anchor determine which preceding positions may be attended to.
+   contract and anchor determine which preceding positions may be attended to. Inputs
+   declared fused already hold the fusion table's output and skip that product
+   ([fused storage](data.md#fused-storage)).
 2. One anchor token and k−1 mask tokens initialize a block of k draft slots (2 ≤ k ≤ 16).
 3. Each layer applies grouped attention, rotary position encoding and a gated
    feed-forward block. Cached keys and values explicitly round through F16. Slots attend

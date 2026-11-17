@@ -11,6 +11,9 @@ from w1a1_eagle.records import artifact, canonical, identity, read
 from w1a1_eagle.storage import relocated
 from w1a1_eagle.training import TABLE_GROUP, Blocks, Budget, Grouping, Optimization, Schedule
 
+FUSED_FORMATS = frozenset({"fused-corpus-v1", "fused-mixture-v1"})
+CORPUS_FORMATS = frozenset({"corpus-mixture-v1", *FUSED_FORMATS})
+
 
 def optimization(value: object) -> Optimization:
     raw = record(value)
@@ -290,9 +293,11 @@ class Intent:
             raise ValueError("explicit positive scientific admission policy required")
         adapter: IndexSpec | None = None
         if "corpus_format" in raw and (
-            raw["corpus_format"] != "corpus-mixture-v1" or raw.get("input_adapter") is not None
+            raw["corpus_format"] not in CORPUS_FORMATS or raw.get("input_adapter") is not None
         ):
             raise ValueError("explicit mixture format cannot use a direct input adapter")
+        if raw.get("corpus_format") in FUSED_FORMATS and trained_tables:
+            raise ValueError("fused corpora require a frozen fusion table; trained_tables is set")
         if raw.get("input_adapter") is not None:
             values = record(raw["input_adapter"])
             fields = {
@@ -380,6 +385,14 @@ class Intent:
     @property
     def blocks(self) -> Blocks:
         return blocks(self.raw["blocks"]) if "blocks" in self.raw else Blocks()
+
+    @property
+    def fused_input(self) -> bool:
+        return self.raw.get("corpus_format") in FUSED_FORMATS
+
+    @property
+    def mixture_input(self) -> bool:
+        return self.raw.get("corpus_format") in {"corpus-mixture-v1", "fused-mixture-v1"}
 
     @property
     def frozen_format(self) -> Literal["Q4_0", "baseline-k"]:
