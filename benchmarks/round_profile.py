@@ -50,6 +50,7 @@ WEIGHT_ROLES: tuple[tuple[str, str], ...] = (
     (r"\.ffn_[a-z_]*norm\.", "ffn.norms"),
     (r"^output_norm\.", "final_norm"),
     (r"^output\.", "vocabulary"),
+    (r"^output_(shortlist|request)\.", "vocabulary"),
 )
 OP_ROLES = {
     "FLASH_ATTN_EXT": "attention.context",
@@ -58,6 +59,7 @@ OP_ROLES = {
     "ARGMAX": "token_selection",
     "ARGSORT": "token_selection",
     "TOP_K": "token_selection",
+    "FILL": "vocabulary",
 }
 GROUPS: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("feature handoff + context K/V update", ("handoff.",)),

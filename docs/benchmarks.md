@@ -35,6 +35,7 @@ explicit paths and the shared saved-reference registry.
 | `calibrate-depth` | Serving draft depth for one target, drafter, runtime and GPU |
 | `build-kernel-benchmark`, `capture-kernel-activations`, `benchmark-kernels` | Exact kernel comparisons on supplied DEV activations |
 | `profile-rounds`, `round-profile-report` | Where a drafter's time goes inside one drafting round |
+| `build-table-quantizer`, `vocabulary-variants` | The runtime's own table quantizer; shortlist and lower-bit vocabulary variants of an HE4 export ([native vocabulary](#native-vocabulary-shortlist)) |
 | `prepare-round-inputs` | Screen DEV capture specification and the seen-prompt TRAIN screen for [round diagnostics](#round-diagnostics) |
 
 Execution commands freeze source and use [the numerical environment](development.md)
@@ -395,7 +396,14 @@ the same naming rules as `depths`, serves an arm with another native type; the o
 supported value is `"draft-dspark"`, for example `"speculation": {"dspark": "draft-dspark"}`,
 so a DSpark file runs with its Markov head. When present, the panel protocol gains
 `arm_speculation` and each response's reported mode must match its arm. Omitting it keeps
-the previous behaviour and protocol identity. Summaries therefore add `derived_rounds` (emitted − accepted − requests: each round emits
+the previous behaviour and protocol identity. An optional `shortlists` mapping, with the
+same naming rules but only for measured `draft-dflash` arms (not saved references), attaches
+an authenticated [vocabulary shortlist](#native-vocabulary-shortlist) sidecar to that arm's
+server (`--spec-draft-shortlist`), for example `"shortlists": {"baseline": {"path": …,
+"sha256": …, "bytes": …}}`; it needs a runtime built with `vocabulary_shortlist_v1`. When
+present, the panel protocol gains `arm_shortlists` (name to sidecar SHA256) and that arm's
+protocol gains `shortlist`. Omitting it keeps the previous behaviour and protocol identity.
+Summaries therefore add `derived_rounds` (emitted − accepted − requests: each round emits
 its accepted drafts plus one target token, and the first token comes from prompt processing)
 with proposed, accepted and emitted tokens per round. On the 1,200-request Q4KM panel this
 matched the native round counters within 0.1%. Requests ending at EOS match exactly; a
@@ -1014,7 +1022,9 @@ with receipts after two later segments.
 ## Qualification and closeout
 
 `native-build` uses pinned source/headers/compiler, without old objects; helpers rebuild
-rendering/tokenization/capture/verifier tools. Source includes the measured sampled-EOG
+rendering/tokenization/capture/verifier tools. It configures `LLAMA_USE_PREBUILT_UI=OFF`:
+the pinned source downloads its web UI at build time, the published assets no longer pass
+its own check, and servers run with `--no-webui`, so builds embed no UI. Source includes the measured sampled-EOG
 repair. An optional `source_edits` list names edit sets in `benchmarks/runtime_edits.py`;
 each edit must match the pinned source exactly once, and `runtime_repairs` records them. Trace builds are diagnostic, excluded from timing. `verify-greedy` independently
 checks target argmax, prefixes, correction/bonus/EOG and counters. `verify-sampler` tests
@@ -1191,6 +1201,74 @@ assumed bandwidth and `saving_vs_topk_microseconds`.
 
 The runtime-v8 kernel slice already defines the recovered IMMA kernel; the builder then
 compiles the harness copy under other names (`RUNTIME_RECOVERED_IMMA`).
+
+### Native vocabulary shortlist
+
+The runtime edit `vocabulary_shortlist_v1` lets a plain DFlash drafter score only a fixed
+shortlist of vocabulary rows plus every token of the current request (prompt, generated
+tokens and the round's anchor), instead of the whole 248,320-row table. The current build
+appends it to runtime-v8's edits (runtime-v9: `checkpoint_warm_buffers_v1`,
+`device_feature_handoff_v1`, `stop_token_cache_v1`, `kernel_recovered_imma_v1`,
+`vocabulary_shortlist_v1`). The target still verifies every draft, so outputs stay exact;
+only acceptance and drafting time can change.
+
+The shortlist comes from one of two places, never both (the server refuses the pair):
+
+- the drafter GGUF's `dflash.vocab_shortlist` int32 array (with `.size`, `.mixture` and
+  `.rule` provenance keys), written by `vocabulary-variants`;
+- `--spec-draft-shortlist FILE`, a sidecar of little-endian int32 token IDs, which lets the
+  same shortlist run with Baseline (it scores the target's table). Comparisons declare it
+  per arm with `shortlists` ([native comparison](#native-comparison)).
+
+A drafter without the key and a server without the flag run the unchanged v8 code path:
+the context holds no shortlist and the graph keeps its original `output` product. With a
+shortlist, the server copies the shortlisted rows of the table actually used for scoring
+(the drafter's own `output`, or the target's for Baseline) into a contiguous table of the
+same type at start-up, plus `--spec-draft-shortlist-request-rows` rows per sequence (default
+512) for request tokens outside it, filled as they appear. Each round multiplies only those
+rows, writes their logits into a −∞ vector over the whole vocabulary and leaves token
+selection unchanged (`top_k(10)` sampler, first candidate). Row products use the same
+quantized arithmetic as the full table. A request with more out-of-shortlist tokens than its
+rows logs one warning and scores the later ones as absent. On the 60-request screen and
+the 120-request panel the most such tokens in one request was 56 against all TRAIN labels.
+DFlash2, LiliCorr, DSpark, reduced-vocabulary (`d2t`) and scaled heads are refused.
+
+Selection rule: `vocabulary-variants` builds the shortlist from TRAIN labels only (the
+`label_frequencies` reader refuses any non-TRAIN record); `size` takes the N most frequent
+labels (ties by token ID) or, with `null`, every distinct TRAIN label, which the plan's
+group 4 measured as costing no accepted tokens per round when request tokens are added.
+The written `shortlist.json` records the mixture, size, coverage and token hash.
+
+Claims must keep two effects apart. The scoring time saved comes from scoring fewer rows,
+which Baseline gains the same way (its table is the larger Q6_K one), so compare ours with
+the shortlist against Baseline with the same sidecar and Baseline as released, in one panel.
+
+### Lower-bit vocabulary tables
+
+`build-table-quantizer SPEC OUTPUT` compiles `native/quantize-table.cpp` against a runtime
+build's ggml headers and `libggml-base` (`table-quantizer-build-v1`: `runtime`, the build's
+`result.json`). It converts one K-quantized table into another with the runtime's
+`ggml_quantize_chunk`, without an importance matrix, and checks the result with
+`ggml_validate_row_data`.
+
+`vocabulary-variants SPEC OUTPUT` (`vocabulary-variants-v1`) takes an authenticated HE4
+`export` and writes, under OUTPUT, any of:
+
+- `shortlist`: `{"mixture": TRAIN mixture, "size": N or null}`. Produces `shortlist.i32`
+  (the sidecar), `shortlist.json` and `drafter-shortlist.gguf` (the export plus the
+  shortlist keys; every tensor unchanged).
+- `tables`: `source` (a GGUF), `tensor` (for example `token_embd.weight`), `quantizer` (the
+  quantizer build's `result.json`) and `variants`, each a `type` (`Q2_K` or `Q3_K`) and a
+  `layout`: `shared` replaces the one tied table used for input rows and scoring;
+  `scoring` writes `token_embd.weight` with the export's Q4_K rows, `output.weight` at the
+  lower type and `dflash.component.tied` false, which the runtime loads as two tables.
+
+Before writing any table it requires the quantizer to reproduce the export's Q4_K table
+byte for byte from the source. Our Q4_K table is exactly the runtime's Q4_K quantization of
+the target's Q6_K `token_embd.weight` (verified 2026-11-17), so that tensor is the source
+of lower-bit variants. Every output is read back (metadata, tensor types, shapes and payload
+hashes), and `result.json` records each table's relative RMS error against the source values.
+A variant is a serving change only; whole-drafter acceptance decides it.
 
 ### RSR-core binary variant
 

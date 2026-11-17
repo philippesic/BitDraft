@@ -10,6 +10,10 @@ measure = "benchmark-kernels"
 measure_vocabulary = "benchmark-vocabulary"
 prepare_indexes = "prepare-rsr"
 
+[benchmark_vocabulary]
+build_quantizer = "build-table-quantizer"
+variants = "vocabulary-variants"
+
 [benchmark_reports]
 scenarios = "scenario-report"
 owner_policy = "policy-report"

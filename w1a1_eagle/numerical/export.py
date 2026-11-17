@@ -16,6 +16,7 @@ from w1a1_eagle.numerical.weights import GGUF, q4_0_codes
 from w1a1_eagle.numerical.worker import TensorWorker
 
 NativeArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.uint8 | np.int32 | np.float32]]"
+PayloadBytes: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.uint8]]"
 
 
 class Writer(Protocol):
@@ -70,6 +71,19 @@ class ExportTensor:
     data: NativeArray
     kind: object
     kind_name: str
+
+
+def write_gguf(writer: Writer, output: BinaryIO, payloads: Sequence[PayloadBytes]) -> None:
+    writer.fout = [output]
+    writer.state = cast(ExportAPI, gguf).WriterState.EMPTY
+    writer.write_header_to_file()
+    writer.write_kv_data_to_file()
+    writer.write_ti_data_to_file()
+    writer.write_padding(output, output.tell())
+    for view in payloads:
+        for offset in range(0, view.nbytes, 1024 * 1024):
+            output.write(view[offset : offset + 1024 * 1024].tobytes())
+        writer.write_padding(output, view.nbytes)
 
 
 def f32(value: Tensor) -> NativeArray:
@@ -328,20 +342,11 @@ def export_he4(
             writer.add_tensor(tensor.name, tensor.data, raw_dtype=tensor.kind)
 
         def write(output: BinaryIO) -> None:
-            writer.fout = [output]
-            writer.state = cast(ExportAPI, gguf).WriterState.EMPTY
-            writer.write_header_to_file()
-            writer.write_kv_data_to_file()
-            writer.write_ti_data_to_file()
-            writer.write_padding(output, output.tell())
-            for tensor in tensors:
-                view = cast(
-                    "np.ndarray[tuple[int, ...], np.dtype[np.uint8]]",
-                    tensor.data.view(np.uint8).reshape(-1),
-                )
-                for offset in range(0, view.nbytes, 1024 * 1024):
-                    output.write(view[offset : offset + 1024 * 1024].tobytes())
-                writer.write_padding(output, view.nbytes)
+            write_gguf(
+                writer,
+                output,
+                [cast(PayloadBytes, tensor.data.view(np.uint8).reshape(-1)) for tensor in tensors],
+            )
 
         def verify(artifact: Artifact) -> None:
             verify_gguf(artifact.path, expected, worker.identity)

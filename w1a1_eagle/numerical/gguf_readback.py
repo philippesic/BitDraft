@@ -140,12 +140,21 @@ def verify(path: Path, expected: Expected, recipe: str) -> None:
             kind_name, wanted_shape, size, digest = expected[name]
             if (
                 shape != wanted_shape
-                or kind != {"F32": 0, "Q4_0": 2, "Q4_K": 12, "Q6_K": 14, "I32": 26}[kind_name]
+                or kind
+                != {"F32": 0, "Q4_0": 2, "Q2_K": 10, "Q3_K": 11, "Q4_K": 12, "Q6_K": 14, "I32": 26}[
+                    kind_name
+                ]
             ):
                 raise ValueError("GGUF tensor type or geometry differs")
             if not all(shape) or offset % alignment or beginning + offset + size > reader.size:
                 raise ValueError("GGUF tensor offset exceeds bounds or alignment")
-            block, width = {2: (32, 18), 12: (256, 144), 14: (256, 210)}.get(kind, (1, 4))
+            block, width = {
+                2: (32, 18),
+                10: (256, 84),
+                11: (256, 110),
+                12: (256, 144),
+                14: (256, 210),
+            }.get(kind, (1, 4))
             if math.prod(shape) % block or math.prod(shape) // block * width != size:
                 raise ValueError("GGUF tensor size differs")
             intervals.append((beginning + offset, beginning + offset + size))

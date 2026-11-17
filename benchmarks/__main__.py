@@ -61,6 +61,8 @@ def main() -> int:
         "build-kernel-benchmark",
         "benchmark-kernels",
         "benchmark-vocabulary",
+        "build-table-quantizer",
+        "vocabulary-variants",
         "prepare-rsr",
         "profile-rounds",
         "round-profile-report",
@@ -92,6 +94,8 @@ def main() -> int:
                 "native-build": "native",
                 "build-kernel-benchmark": "native",
                 "native-helpers": "native",
+                "build-table-quantizer": "native",
+                "vocabulary-variants": "models",
                 "campaign": "training",
                 "record-reference": "benchmarks",
                 "prepare-initialization": "models",
@@ -144,6 +148,7 @@ def main() -> int:
                     "evaluate",
                     "campaign",
                     "prepare-initialization",
+                    "vocabulary-variants",
                 }
                 else sys.executable
             )
@@ -210,6 +215,14 @@ def main() -> int:
             from benchmarks.kernel_benchmark import benchmark_kernels
 
             result = benchmark_kernels(args.input, args.output)
+        elif args.command == "build-table-quantizer":
+            from benchmarks.native import table_quantizer
+
+            result = table_quantizer(args.input, args.output)
+        elif args.command == "vocabulary-variants":
+            from w1a1_eagle.numerical.vocabulary_variants import write_variants
+
+            result = write_variants(args.input, args.output)
         elif args.command == "benchmark-vocabulary":
             from benchmarks.vocabulary_benchmark import benchmark_vocabulary
 

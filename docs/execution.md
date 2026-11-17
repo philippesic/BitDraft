@@ -453,6 +453,9 @@ to match original arithmetic. Sign words are little-endian 32-bit, nonnegative z
 unused bits 0. Bounded readback checks metadata, tensor names/types/shapes, nonoverlapping
 aligned offsets and every payload hash. Independent SDK and native checks qualify it;
 format conformance alone does not establish useful serving performance.
+A vocabulary shortlist or a lower-bit vocabulary table is added to a finished export by
+[`vocabulary-variants`](benchmarks.md#native-vocabulary-shortlist), which keeps every other
+tensor and the recipe hash and reads each output back the same way.
 
 ## Journal
 
