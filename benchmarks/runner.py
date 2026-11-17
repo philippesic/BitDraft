@@ -219,10 +219,12 @@ def compare_leased(
         ]
         all_rows = rows + historical_rows
         names = [arm.name for arm in spec.arms] + list(cached)
+        depths = spec.arm_depths()
         aggregate: Record = relative_speed(
             {
                 name: {
                     **totals([row for row in all_rows if row["arm"] == name]),
+                    "depth": depths[name],
                     "execution": "historical" if name in cached else "measured",
                 }
                 for name in names
@@ -238,6 +240,7 @@ def compare_leased(
         result: Record = {
             "status": "complete",
             "protocol": spec.reference_protocol(),
+            "arm_depths": depths,
             "diagnostic": spec.diagnostic,
             "sampled": spec.sampling.temperature > 0,
             "distribution_qualified": spec.sampling.qualification is not None,

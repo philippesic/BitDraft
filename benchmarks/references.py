@@ -25,7 +25,8 @@ def register(specification: Path, output: Path) -> Record:
     result = read(result_ref.path, 64 * 1024 * 1024)
     if "protocol" in result and result["protocol"] != prior.reference_protocol():
         raise ValueError("source result executed a different runtime/request policy")
-    current_protocol, old_protocol = spec.reference_protocol(), prior.reference_protocol()
+    name, rep = string(raw["arm"]), integer(raw["rep"])
+    current_protocol, old_protocol = spec.arm_protocol(name), prior.arm_protocol(name)
     old_tasks = {string(task["id"]): task for task in prior.tasks}
     if (
         not protocol_covers(old_protocol, current_protocol)
@@ -63,7 +64,6 @@ def register(specification: Path, output: Path) -> Record:
         or any(row["correct"] is not True for row in rows)
     ):
         raise ValueError("incomplete or duplicated source panel cannot become a reference")
-    name, rep = string(raw["arm"]), integer(raw["rep"])
     arm = next((arm for arm in prior.arms if arm.name == name), None)
     if arm is None or not 0 <= rep < prior.repeats:
         raise ValueError("reference arm/repeat not present in source panel")
@@ -87,7 +87,7 @@ def register(specification: Path, output: Path) -> Record:
             prior.target.path,
             arm.drafter.path if arm.drafter else None,
             prior.context,
-            prior.depth,
+            prior.depth_of(name),
             port,
         ):
             raise ValueError("executed server policy differs from requested reference protocol")
@@ -180,7 +180,7 @@ def register(specification: Path, output: Path) -> Record:
     value: Record = {
         "schema": "benchmark-reference-v1",
         "status": "complete",
-        "protocol": spec.reference_protocol(),
+        "protocol": current_protocol,
         "drafter": reference(arm.drafter) if arm.drafter is not None else None,
         "result": reference(result_ref),
         "specification": file_reference(prior_path),
@@ -193,7 +193,7 @@ def register(specification: Path, output: Path) -> Record:
     }
     key = identity(
         {
-            "protocol": spec.reference_protocol(),
+            "protocol": current_protocol,
             "model": arm.drafter.sha256 if arm.drafter else "target",
         }
     )

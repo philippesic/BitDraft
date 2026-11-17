@@ -30,7 +30,7 @@ def report(specification: Path, output: Path) -> Record:
     main_comparisons: Record = {}
     for name, value in record(raw["panels"]).items():
         spec, result, cached = load_panel(value, root)
-        identities.add(spec.serving_identity())
+        identities.add(spec.runtime_identity())
         selected_arm = next((arm for arm in spec.arms if arm.name == candidate), None)
         if selected_arm is None or selected_arm.drafter is None:
             raise ValueError("candidate must be freshly measured in each report panel")
@@ -57,6 +57,7 @@ def report(specification: Path, output: Path) -> Record:
             "resident_gpu_mib": result.get("resident_gpu_mib"),
             "memory_scope": result.get("memory_scope", "not recorded"),
             "projection": result.get("projection", False),
+            "arm_depths": spec.arm_depths(),
             "selected_tasks": len(spec.tasks),
             "selected_seeds": list(spec.sampling.seeds),
             "source_elapsed_seconds": result.get("source_elapsed_seconds"),
@@ -75,7 +76,7 @@ def report(specification: Path, output: Path) -> Record:
                 }
             )
     if len(identities) != 1 or len(model_identities) != 1:
-        raise ValueError("report panels must share target, runtime, context, depth and role")
+        raise ValueError("report panels must share target, runtime, context, role and candidate")
     verdict = faster_verdict(scenarios, candidate)
     if raw["confirmation"] is not None:
         confirmation = artifact(raw["confirmation"], root)
@@ -97,7 +98,7 @@ def report(specification: Path, output: Path) -> Record:
             if (
                 confirmed_spec.role != "confirmation"
                 or confirmed_cached
-                or confirmed_spec.serving_identity()[:-1] != next(iter(identities))[:-1]
+                or confirmed_spec.runtime_identity()[:-1] != next(iter(identities))[:-1]
             ):
                 raise ValueError("confirmation requires fresh arms and matching serving conditions")
             model = next(

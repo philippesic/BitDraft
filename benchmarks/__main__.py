@@ -62,6 +62,7 @@ def main() -> int:
         "profile-rounds",
         "round-profile-report",
         "scenario-report",
+        "policy-report",
     ):
         comparison = commands.add_parser(name)
         comparison.add_argument("input", type=Path)
@@ -155,6 +156,10 @@ def main() -> int:
             from benchmarks.scenario_report import report as report_scenarios
 
             result = report_scenarios(args.input, args.output)
+        elif args.command == "policy-report":
+            from benchmarks.owner_policy import report as report_policy
+
+            result = report_policy(args.input, args.output)
         elif args.command == "calibrate-depth":
             from benchmarks.calibration import calibrate
 

@@ -45,12 +45,14 @@ class Comparison:
     diagnostic: bool = False
     sampling: Sampling = Sampling()
     references: tuple[tuple[str, Artifact], ...] = ()
+    depths: tuple[tuple[str, int], ...] = ()
 
     @classmethod
     def load(cls, path: Path) -> "Comparison":
         raw = read(path)
         if (
-            set(raw) - {"exclusions", "diagnostic", "sampling", "references", "calibration"}
+            set(raw)
+            - {"exclusions", "diagnostic", "sampling", "references", "calibration", "depths"}
             != {
                 "schema",
                 "source",
@@ -285,6 +287,16 @@ class Comparison:
             tier == "screen" and (repeats != 1 or sampling.temperature)
         ):
             raise ValueError("lean/cached panels require one greedy pass")
+        drafting = {a.name for a in arms if a.drafter is not None} | {
+            name for name, _ in references if name != "target"
+        }
+        if "depths" in raw and not record(raw["depths"]):
+            raise ValueError("declared per-arm depths must name at least one arm")
+        depths = tuple(
+            sorted((name, integer(value)) for name, value in record(raw.get("depths", {})).items())
+        )
+        if any(name not in drafting or not 1 <= value <= 15 for name, value in depths):
+            raise ValueError("per-arm depth requires a drafting arm and a depth from 1 to 15")
         return cls(
             artifact(raw["source"], root),
             artifact(raw["binary"], root),
@@ -303,7 +315,23 @@ class Comparison:
             raw.get("diagnostic", False) is True,
             sampling,
             references,
+            depths,
         )
+
+    def depth_of(self, name: str) -> int:
+        return dict(self.depths).get(name, self.depth)
+
+    def arm_depths(self) -> Record:
+        return {
+            **{
+                arm.name: self.depth_of(arm.name) if arm.drafter is not None else None
+                for arm in self.arms
+            },
+            **{
+                name: self.depth_of(name) if name != "target" else None
+                for name, _ in self.references
+            },
+        }
 
     def verify(self) -> None:
         for ref in (
@@ -351,6 +379,15 @@ class Comparison:
             self.cached()
 
     def reference_protocol(self) -> Record:
+        if not self.depths:
+            return self.arm_protocol("target")
+        return {
+            **self.arm_protocol("target"),
+            "arm_depths": {name: value for name, value in self.depths},
+        }
+
+    def arm_protocol(self, name: str) -> Record:
+        depth = self.depth_of(name)
         return {
             "policy": "native-sampled-request-v3"
             if self.sampling.temperature
@@ -358,10 +395,10 @@ class Comparison:
             if self.tier not in LIVE_TIERS
             else "native-live-v3",
             "target_arguments": arguments(
-                Path("server"), Path("target"), None, self.context, self.depth, 0
+                Path("server"), Path("target"), None, self.context, depth, 0
             ),
             "draft_arguments": arguments(
-                Path("server"), Path("target"), Path("drafter"), self.context, self.depth, 0
+                Path("server"), Path("target"), Path("drafter"), self.context, depth, 0
             ),
             "request": payload(
                 [],
@@ -372,7 +409,7 @@ class Comparison:
                 self.sampling.min_p,
                 8101,
             ),
-            "serving": list(self.serving_identity()),
+            "serving": list(self.serving_identity(depth)),
             "tasks": list(self.tasks),
             "sampling": [
                 self.sampling.temperature,
@@ -407,7 +444,7 @@ class Comparison:
             value = read(ref.path, 16 * 1024 * 1024)
             if (
                 value.get("schema") != "benchmark-reference-v1"
-                or value.get("protocol") != self.reference_protocol()
+                or value.get("protocol") != self.arm_protocol(name)
                 or value.get("status") != "complete"
             ):
                 raise ValueError(
@@ -419,8 +456,8 @@ class Comparison:
             result_source = artifact(value["result"], ref.path.parent)
             result = read(result_source.path, 64 * 1024 * 1024)
             source_spec = Comparison.load(artifact(value["specification"], ref.path.parent).path)
-            source_protocol = source_spec.reference_protocol()
-            desired_protocol = self.reference_protocol()
+            source_protocol = source_spec.arm_protocol(string(value["source_arm"]))
+            desired_protocol = self.arm_protocol(name)
             original_tasks = {string(task["id"]): task for task in source_spec.tasks}
             source_arm = next(
                 (arm for arm in source_spec.arms if arm.name == value["source_arm"]), None
@@ -506,16 +543,20 @@ class Comparison:
             raise ValueError("cached references come from different hardware/driver conditions")
         return found
 
-    def serving_identity(self) -> tuple[str, ...]:
+    def serving_identity(self, depth: int | None = None) -> tuple[str, ...]:
         return (
             self.source.sha256,
             self.binary.sha256,
             self.target.sha256,
             *sorted(ref.sha256 for ref in self.libraries),
             str(self.context),
-            str(self.depth),
+            str(self.depth if depth is None else depth),
             self.role,
         )
+
+    def runtime_identity(self) -> tuple[str, ...]:
+        identity = self.serving_identity()
+        return identity[:-2] + identity[-1:]
 
     def block_count(self) -> int:
         return (
