@@ -213,6 +213,13 @@ Progress:
   Step 13 (every export on the screen, the 120-request panel and the three slices) starts
   automatically when it ends; step 14 follows after the checkpoint and depth choice.
 
+Decided by the owner 2026-11-17 10:55: (1) add the vocabulary shortlist as a native feature
+(build W: runtime edit, shortlist stored with the drafter, applicable to Baseline for the fair
+comparison); every claim about it must separate what is native to our drafter from what
+Baseline would also gain. (2) Measure quantized vocabulary tables (Q3_K, Q2_K) on the real
+runtime (build W). (3) A second seed each for fast arithmetic and fused storage on the calibrated
+recipe, judged on the pooled two-seed bound (`group3/retest-preflight.md`), after step 14.
+
 Decided by the owner 2026-11-16 19:15: `greedy-long` is judged on the supplementary interval
 that pools category strata with fewer than two source groups (the maintained rule cannot give it
 an interval: one conversation and one structured request among its 24 long requests). Only for
