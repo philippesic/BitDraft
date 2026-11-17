@@ -91,7 +91,12 @@ Progress:
 - Step 4 qualification of build E passed (`builds/trainer-speed/run-01`): forward values
   bit-identical, every gradient family within 1e-5, resume exact, TF32 feed-forward products
   bit-identical. Against this morning's trainer about 1.18–1.40× per update; build E's exact
-  fixes also sped up the reference path. Its matched screen run is still to come.
+  fixes also sped up the reference path. Matched run `s4-c0-fast` (`fast-exact-tf32ff`) against
+  `s4-c0-current`: screen 48.72% vs 48.95%, −0.23 (−0.91, +0.42), inside the loss budget; update
+  time 1,520 vs 1,767 s for the same 8,209 updates and 2,493,623 labels (1.16×; 1.14× with data
+  loading). Adopted for the release recipe (largest measured gain passing value, gradient and
+  resume checks). Remaining group 3 arms keep `reference` arithmetic to stay matched; step 9's
+  combined pair checks the assembled changes together.
 - Control `s4-c0-current`: screen 48.95% (Baseline 60.6%), all outputs exact, 35 training minutes.
 - Step 7 (`group3/preflight.md`, thresholds fixed): gradual start checks passed for both intents.
   Update-0 probes: calibration moves the untrained drafter little (DEV first-slot top-1 5.8% vs
