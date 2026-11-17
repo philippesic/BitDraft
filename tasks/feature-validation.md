@@ -156,12 +156,26 @@ Progress:
   Closed, unselected short-run states of this screen retired through the store (receipts beside
   each; `logs/state-retirement-20261117.json`), freeing 49 GB; exports, journals and screens kept.
 - Builds merged: H (per-arm speculation mode; public drafters verified: DSpark
-  `shanjiaz/qwen3_5_4b_perfectblend_regen_dspark@3842177e`, DFlash2 `nchapman/Qwen3.5-4B-DFlash2@8d8bb628`)
-  and V (vocabulary scoring measurements). Their GPU runs are queued.
-- GPU queue (chained scripts, 24 GB RAM cap): `queue4b` (second seeds of control and calibrated,
-  clip step on calibrated, round-state map and run on calibrated) → `queue6` (fused TRAIN
-  conversion, calibrated recipe on fused storage) → `queue7` (group 5) → `queue8` (group 4) →
-  `queue9` (new TRAIN batch). Then steps 9, 11–14.
+  `shanjiaz/qwen3_5_4b_perfectblend_regen_dspark@3842177e`, DFlash2 `nchapman/Qwen3.5-4B-DFlash2@8d8bb628`),
+  V (vocabulary scoring measurements) and C's fused-calibration fix (calibration's sample loader
+  ignored the corpus's fusion identity and refused fused records).
+- Fused storage: full TRAIN converted (8,633 arrays, max relative L2 2.1e-4, 55.2 GB, 18 min);
+  the first matched run failed at initialisation on that bug; rerun queued (`queue13`).
+- Group 5: first attempt failed only on a missing output folder; rerun queued (`queue12`).
+- Group 4 (`logs/group4.log`, build V; screen round states, candidate = yardstick): scoring +
+  top-10 selection 451 µs per round (ours) and 621 µs (Baseline's table); merged argmax is slower
+  (483 / 658), correcting the 0g note. Frequent-TRAIN-token shortlists with the request's tokens
+  lose almost nothing (64K: 0 accepted tokens per round; 32K: −0.006) and save 0.33–0.40 ms for us
+  but 0.46–0.55 ms for Baseline: applied to both, as the rule requires, our ratio falls by about
+  1.5%. One-bit or low-rank first passes with exact rescoring are slower than full scoring for our
+  table. 4c: the target's Q6_K table reads 497 instead of 341 MiB (+0.17 ms per round). 4e
+  (description): 2-bit / 1-bit scoring tables cost 0.022 / 0.056 accepted tokens per round, a 1-bit
+  table for the whole drafter 0.20. Decision: keep the current Q4_K table and selection; 4d not
+  built.
+- GPU queue (chained scripts, 24 GB RAM cap): `queue9` (new TRAIN batch, running from 04:59) →
+  `queue10` (Level 2 of the calibrated finalist) → `queue11` (calibrated rounding ceiling) →
+  `queue12` (group 5) → `queue13` (step 9: fused pair, then the assembled recipe with fast
+  arithmetic, with fused storage only if it stays inside the loss budget). Then steps 11–14.
 
 Decided by the owner 2026-11-16 19:15: `greedy-long` is judged on the supplementary interval
 that pools category strata with fewer than two source groups (the maintained rule cannot give it
