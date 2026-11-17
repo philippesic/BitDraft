@@ -1,4 +1,5 @@
 import json
+import math
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Literal, cast
@@ -128,6 +129,25 @@ def gradual_precision(value: object) -> GradualPrecision:
             number(check["mean_relative_error"]),
         ),
     )
+
+
+@dataclass(frozen=True)
+class RoundStates:
+    map: Artifact
+    weight: float
+
+    def encode(self) -> Record:
+        return {"map": {"sha256": self.map.sha256, "bytes": self.map.size}, "weight": self.weight}
+
+
+def round_states(value: object, root: Path) -> RoundStates:
+    raw = record(value)
+    if set(raw) != {"map", "weight"}:
+        raise ValueError("round_states requires map and weight")
+    weight = number(raw["weight"])
+    if not math.isfinite(weight) or weight <= 0:
+        raise ValueError("round_states weight must be a positive finite number")
+    return RoundStates(artifact(raw["map"], root), float(weight))
 
 
 def blocks(value: object) -> Blocks:
@@ -261,6 +281,7 @@ class Intent:
                 "telemetry",
                 "initial_export",
                 "arithmetic",
+                "round_states",
             }
             != required
             or type(raw["schema"]) is not int
@@ -369,6 +390,8 @@ class Intent:
                 raise ValueError(
                     "gradual precision requires hard-sign updates after its soft phase"
                 )
+        if "round_states" in raw:
+            round_states(raw["round_states"], root)
         if "model_update_seconds" in raw and number(raw["model_update_seconds"]) <= 0:
             raise ValueError("positive cumulative model-update time limit required")
         budget = record(raw["budget"])
@@ -518,6 +541,14 @@ class Intent:
         return cast(Arithmetic, self.raw.get("arithmetic", "reference"))
 
     @property
+    def round_states(self) -> RoundStates | None:
+        return (
+            round_states(self.raw["round_states"], self.base)
+            if "round_states" in self.raw
+            else None
+        )
+
+    @property
     def initial_export(self) -> bool:
         return self.raw.get("initial_export", False) is True
 
@@ -599,6 +630,11 @@ class Intent:
                 **({} if self.features.default else {"features": self.features.encode()}),
                 **({"arithmetic": self.arithmetic} if self.arithmetic != "reference" else {}),
                 **(
+                    {"round_states": self.round_states.encode()}
+                    if self.round_states is not None
+                    else {}
+                ),
+                **(
                     {"calibration": {"sample": self.calibration.encode()}}
                     if self.calibration is not None
                     else {}
@@ -629,8 +665,6 @@ class Intent:
 
     @property
     def peak_new_bytes(self) -> int:
-        import math
-
         if "retention" in self.raw:
             retention = record(self.raw["retention"])
             return (

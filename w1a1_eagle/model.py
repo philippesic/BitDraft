@@ -482,6 +482,7 @@ class HE4(nn.Module):
         anchors: tuple[int, ...],
         slots: int | None = None,
         fused: bool = False,
+        contexts: tuple[tuple[Tensor, Tensor], ...] | None = None,
     ) -> Tensor:
         self.check(features, tokens, anchors, fused)
         cfg = self.geometry
@@ -496,7 +497,12 @@ class HE4(nn.Module):
         first: list[int] = [tokens[anchor] for anchor in anchors]
         identifiers[:, 0] = torch.tensor(first, device=device)
         state = functional.embedding(identifiers.reshape(-1), self.vocabulary)
-        encoded = self.encode(features, last, fused)
+        if contexts is not None and (
+            len(contexts) != cfg.layers or any(part[0].shape[0] < last for part in contexts)
+        ):
+            raise ValueError("precomputed contexts do not cover the anchors")
+        given = () if contexts is None else contexts
+        encoded = self.encode(features, last, fused) if contexts is None else None
         visible = context_positions[None, None, :] < starts[:, None, None]
         local = visible & (
             (positions[:, :, None] - context_positions[None, None, :]).abs() < cfg.window
@@ -507,12 +513,22 @@ class HE4(nn.Module):
             final = index == cfg.layers - 1
             state = block.group(
                 state,
-                block.context(encoded, context_positions),
+                block.context(encoded, context_positions)
+                if encoded is not None
+                else (given[index][0][:last], given[index][1][:last]),
                 positions,
                 visible if final else local,
                 None if final else slot_local,
             )
         return rms(state, self.output_norm, cfg.epsilon).view(len(anchors), size, cfg.hidden)
+
+    def group_contexts(
+        self, features: Tensor, tokens: tuple[int, ...], count: int, fused: bool = False
+    ) -> tuple[tuple[Tensor, Tensor], ...]:
+        self.check(features, tokens, (count - 1,), fused)
+        encoded = self.encode(features, count, fused)
+        positions = torch.arange(count, device=self.vocabulary.device)
+        return tuple(cast(Layer, module).context(encoded, positions) for module in self.blocks)
 
     def forward(
         self,

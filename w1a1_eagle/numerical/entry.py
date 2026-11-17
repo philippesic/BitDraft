@@ -30,6 +30,7 @@ from w1a1_eagle.numerical.weights import exported_tables, fusion_identity, load_
 from w1a1_eagle.numerical.worker import TensorWorker, checkpoint_accounting
 from w1a1_eagle.processes import ProcessIdentity
 from w1a1_eagle.records import artifact
+from w1a1_eagle.round_states import RoundStateWeighting, load_map
 from w1a1_eagle.training import MAXIMUM_SLOTS
 
 
@@ -41,6 +42,46 @@ class Boundary(Protocol):
         self, worker: TensorWorker, state: StateRef, exported: StateRef, outcome: str
     ) -> None: ...
     def resumed(self) -> None: ...
+
+
+def round_state_weighting(intent: Intent, corpus: Corpus) -> RoundStateWeighting | None:
+    setting = intent.round_states
+    if setting is None:
+        return None
+    states = load_map(setting.map)
+    if (states.corpus_sha256, states.corpus_bytes) != (intent.corpus.sha256, intent.corpus.size):
+        raise ValueError("round-state map was built for another corpus than the intent's")
+    if states.target != corpus.target:
+        raise ValueError("round-state map and corpus target identities differ")
+    return RoundStateWeighting(states, setting.weight)
+
+
+def round_state_admission(weighting: RoundStateWeighting, corpus: Corpus, updates: int) -> Record:
+    windows = starts = 0
+    for cursor in range(updates):
+        row, anchors = corpus.locate(cursor)
+        for anchor in anchors:
+            if not weighting.states.covers(row.capture.identity, anchor):
+                raise ValueError(
+                    "round-state map does not cover the window "
+                    + row.capture.identity
+                    + "@"
+                    + str(anchor)
+                    + " planned at cursor "
+                    + str(cursor)
+                )
+            windows += 1
+            starts += anchor in weighting.states.starts.get(row.capture.identity, frozenset())
+    return {
+        **weighting.states.summary(),
+        "weight": weighting.weight,
+        "planned_cursors": updates,
+        "planned_windows": windows,
+        "planned_round_starts": starts,
+        "planned_share": starts / windows if windows else None,
+        "normalization": "per update, window weights sum to one; a round-start window has"
+        " weight times the weight of any other window in its update",
+    }
 
 
 def admission(intent: Intent, corpus: Corpus) -> Record:
@@ -91,6 +132,7 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
     exposure["maximum_attempt_mean_visits"] = worst_mean
     if worst_mean > number(policy["max_mean_visits"]):
         raise ValueError("supplied maximum data-reuse policy refuses launch")
+    weighting = round_state_weighting(intent, corpus)
     return {
         "kind": "admission",
         "intent": intent.sha256,
@@ -121,6 +163,11 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
             else {}
         ),
         **({"telemetry": True} if intent.telemetry else {}),
+        **(
+            {"round_states": round_state_admission(weighting, corpus, intent.budget.updates)}
+            if weighting is not None
+            else {}
+        ),
         "exposure": exposure,
         "prior_use_warning": "Prior training is marked for "
         + str(exposure["historical_training_sequences"])
@@ -391,6 +438,7 @@ def run_leased(
         precision=intent.gradual_precision,
         telemetry=intent.telemetry,
         arithmetic=intent.arithmetic,
+        round_states=round_state_weighting(intent, corpus),
     )
     worker.fusion_sha256 = corpus.fusion
     diagnostics = (
@@ -500,6 +548,7 @@ def run_leased(
             last_loss_updates = worker.updates
         if worker.updates != last_progress_updates and worker.cursor % 100 == 0:
             telemetry = worker.telemetry_record()
+            round_states = worker.round_state_record()
             journal.append(
                 {
                     "kind": "training-progress",
@@ -511,6 +560,7 @@ def run_leased(
                     "gradient_norm": worker.last_gradient_norm,
                     "accounting": worker.accounting.encode(),
                     **({"telemetry": telemetry} if telemetry is not None else {}),
+                    **({"round_states": round_states} if round_states is not None else {}),
                 }
             )
             losses.clear()

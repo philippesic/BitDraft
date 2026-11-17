@@ -355,6 +355,72 @@ updates; the precision phase and t; peak CUDA memory; labels per second. Values 
 the device and are read only at the record. Telemetry does not change trained values; flips
 after a restart count from the attempt's first update.
 
+## Round-state weighting
+
+Serving drafts only from round starts: under greedy verification a depth-3 round anchors at
+the first generated token and the next round at p + k + 1 after k accepted drafts. Round starts
+follow a rejection and are harder than the average position, while training samples every
+window equally. Optional `round_states` trains more on them:
+
+```json
+"round_states": {"map": {"path": "...", "sha256": "...", "bytes": 0}, "weight": 2.0}
+```
+
+- `map` is an authenticated `round-state-map-v1` file built by the command below. Admission
+  refuses a map whose corpus identity (`sha256`, `bytes`) differs from the intent's `corpus`
+  or whose target differs, and a map that does not cover every window the intent's sampler
+  plans for cursors 0 to `budget.updates` − 1 (the cursors any resume, continuation or branch
+  of this budget can reach). The worker refuses an uncovered window again before it trains.
+- `weight` W > 0. In each update, a window whose anchor the map lists as a round start has W
+  times the weight of every other window, and the window weights sum to one, as without the
+  setting: window i gets aᵢ / Σ a with aᵢ = W for round starts and 1 otherwise. Position
+  weights within a window are unchanged. An update with no round starts, or only round
+  starts, trains exactly as the plain mean (up to float rounding).
+- Sampling order, grouping, block sizes and update count do not change, so a run with the
+  setting is matched to the same intent without it. Omission keeps today's loss and recipe
+  identity; the map identity and W enter it. States store nothing new: resume, continue and
+  branch take the setting from their intent, and exact resume requires the same recipe.
+- Admission reports the map identity, scope and reference drafter, the normalization and the
+  planned windows, round starts and share. Each `training-progress` event adds
+  `round_states`: windows trained since the previous record, how many were round starts,
+  their share and W.
+
+The map records, per TRAIN sequence, the covered window anchors (inclusive spans) and the
+round starts among them. It follows build B's simulator
+([round diagnostics](benchmarks.md#round-diagnostics)) on the captured greedy trajectory:
+each contiguous run of windows is one generation (a single answer or one session turn); its
+first anchor is the prompt's last token, the first round anchors one later, and a round at
+p accepts the k leading first-choice drafts equal to the window's labels. Session records
+follow their recorded history, which retokenizes the model's output, so their windows stop
+at the first disagreement and their rounds are approximate, exactly as in the diagnostics.
+The reference drafter is an authenticated HE4 state; the map records its identity.
+
+```sh
+/absolute/numerical/bin/python -B -m w1a1_eagle.numerical.round_state_map SPEC OUTPUT
+```
+
+The specification (`round-state-map-spec-v1`) takes `memory_bytes`, `drafter` (the
+[round diagnostics](benchmarks.md#round-diagnostics) `candidate` section without `arm`),
+the TRAIN `corpus` with its optional `corpus_format`, optional `depth` (3), `chunk`
+(anchors per pass, 128) and `activation_bytes` (3 GiB), and at most one of:
+
+- `restrict`: an authenticated training intent with the same corpus and geometry; the map
+  covers each sequence only up to the last window that intent's sampler plans for its
+  update budget, since a round start depends only on the rounds before it. Sequences the run
+  never visits are skipped.
+- `rows`: a rate sample over the first rows of the corpus; its scope is `sample` and it
+  covers only those rows.
+
+Only admitted TRAIN rows are read, so DEV, calibration and protected data never enter. Each
+sequence's context keys and values are computed once (`HE4.group_contexts`); the drafter then
+proposes at every needed anchor in batches whose estimated memory fits `activation_bytes`,
+using the bit-identical single feed-forward product (TF32 on CUDA), and takes the first
+choice per slot. The next sequence loads while the current one computes. The memory plan,
+fatal out-of-memory handling and GPU lease follow round diagnostics. OUTPUT (inside
+`artifacts/`, new) receives `specification.json`, `map.json` and `report.json`: map identity,
+counts, compute and capture-wait seconds, proposals per compute second and the forecast
+compute time for the whole corpus at that rate.
+
 ## Arithmetic
 
 Optional `arithmetic` selects how a hard-sign update is computed. Omission and `reference`
@@ -396,7 +462,7 @@ after owner checks; no complete event is dropped. Corrupt complete records are r
 
 ## Supported formats
 
-Intent 2, corpus 1 and fused-corpus-v1, tensor payload 5/4/3, store 1, event envelope 1, W1Ax metadata 2/GGUF 3. Other tensor/intent
+Intent 2, corpus 1 and fused-corpus-v1, round-state-map-v1, tensor payload 5/4/3, store 1, event envelope 1, W1Ax metadata 2/GGUF 3. Other tensor/intent
 schemas need explicit migration with verified lineage; preserve originals.
 
 ## Limits
