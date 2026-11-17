@@ -123,6 +123,13 @@ Progress:
     add-ons: clip step and round-state weighting are rerun on top of it (`scripts/queue4b.sh`).
   - Calibrated + gradual vs calibrated alone: 56.17% vs 56.56%, −0.39 (−1.16, +0.38): not adopted.
     The four-run square ends with calibration alone.
+  - Clip step 1e-3 on calibrated vs calibrated: 56.35% vs 56.56%, −0.21 (−1.25, +0.77): not
+    adopted. Calibration already removes clipping (final clipped input shares 0.0–0.1% in every
+    projection, against up to 57.5% in the uncalibrated control's last down projection).
+  - Per-slot rounding (triggered on the uncalibrated yardstick, needs runtime support first):
+    decided by a ceiling check on the calibrated drafter (`queue11`): if removing input rounding
+    entirely leaves DEV unchanged, as it did on the yardstick, finer per-slot rounding cannot help
+    and it is skipped.
   - Group 0 (`group0/0a-0g-notes.md`): the candidate's deficit is concentrated at real round starts
     (4.9 points there vs 2.3 over all positions); on TRAIN prompts it beats Baseline by 10.7 points
     (generalisation, not capacity, limits it); learned clip bounds stay near 1.0 while late-layer
