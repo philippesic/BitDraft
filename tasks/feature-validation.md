@@ -68,9 +68,11 @@ Progress:
   Control intent generator `scripts/intents.py` writes every kept value explicitly; the full
   TRAIN set (`mixture.json`, 8,633 records) is the default data, the 6K corpus only to match
   earlier runs. Warm-up is `round(0.02 × updates)`. The control admits on CPU.
-- Step 2 running: five Opus builds (briefs in `briefs/`): A policy report and per-drafter
-  depth, B round-state and clipping diagnostics, C data replay/batching/fused storage,
-  D feature switches/calibration/gradual precision/telemetry, G long-project source and batch.
+- Step 2 done: builds A (owner-policy report, per-arm depth), B (round-state, label, clipping and
+  dependence diagnostics, Baseline evaluation model), C (token replay, replay agreement, batched
+  writing, fused storage), D (feature switches, calibrated start, gradual precision, telemetry)
+  and G (long-project TRAIN source, thinking-on selection) are merged into this branch with the
+  full gate (213 tests). Build E (exact faster trainer arithmetic) is running. Briefs in `briefs/`.
 - Step 3 done at depth 3 (notes `group0/0a-0g-notes.md`): sampler qualified for runtime-v8;
   target, Baseline and yardstick references registered for the thinking, sampled and agentic
   suites and slices (`step3/`). Yardstick against Baseline: thinking-on 0.915 (0.906, 0.924),
@@ -81,7 +83,15 @@ Progress:
   first entry is the argmax; a plain argmax and fewer per-slot synchronisations are generic gains.
   The agentic sandbox's process limit was raised to 4096 on this branch (1024 was reachable).
   Group 0b–0f wait for build B; the greedy short/long split for build A.
-- Step 4 running: trainer profile (`step4/`).
+- Step 4: profile in `step4/` (matmuls 55% of training GPU time as FP32 SIMT; one product per
+  feed-forward table and no in-update synchronisation estimated 1.13–1.31× per update, measured
+  under CPU load; global TF32 1.44–1.58× but inexact). Build E implements the exact part. Screening
+  runs frozen at 8,209 updates, warm-up 164, cosine to zero, full TRAIN, seed 8101 (8102 for second
+  seeds). Current-trainer control `arms/s4-c0-current` (source `3cd2db82…`) is training.
+- Step 7 queued (`scripts/queue_g3.sh`, preflight `group3/preflight.md` with thresholds fixed):
+  start checks, update-0 probes, build B diagnostics (0b, 0d, 0e, 0f), blank, calibrated,
+  short qualifications of builds A and C, long-session pilot, gradual, calibrated+gradual.
+  Group 3 arms run on the control's exact source; trainer changes are requalified in step 9.
 
 Needs the owner (not blocking for hours): under the maintained grouping rule `greedy-long` can
 never get an interval on the 120-request panel (one conversation and one structured request
