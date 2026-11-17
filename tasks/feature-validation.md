@@ -134,14 +134,19 @@ Progress:
   (40 TRAIN records, 26,736 labels; at 512 values differ); batched writing at 8/16/32 slots is
   2.2–2.5× faster but only 8 of 32 answers match one-at-a-time writing, so new data is written one
   request at a time. Build A's per-arm depth qualified on the GPU (`OVERALL PASS`).
-- GPU queue now (each a separate script that waits for the previous one, all under a 24 GB RAM
-  cap): `queue3` (build E matched run `s4-c0-fast`, long-session pilot) → `queue4b` (second seeds
-  of control and calibrated, clip step on calibrated, round-state map and run on calibrated) →
-  `queue6` (full TRAIN fused conversion, then the calibrated recipe on fused storage).
-- Builds running: V (group 4 vocabulary scoring measurements: shortlist miss rates, scoring-shape
-  timing, 2/1-bit description; 4c is recorded as no speed case because the target's table is
-  Q6_K and larger to read than ours, about +0.17 ms per round) and H (group 5 public drafters:
-  origins of a Qwen3.5-4B DSpark and the DFlash 2 checkpoint, screen specifications).
+- Step 5: long-session pilot passed (11/12 sessions completed, initial contexts 12–20K tokens, all
+  30 records validate; session 446 labels and 0.74 GB per record, thinking-on 1,502 labels and
+  69 MB). Batch sized by the pilot rule at a 120 GB ceiling (disk: 182 GB free before retirement):
+  138 long sessions and 246 thinking-on requests, about 1.5 GPU hours and 430K labels.
+  Closed, unselected short-run states of this screen retired through the store (receipts beside
+  each; `logs/state-retirement-20261117.json`), freeing 49 GB; exports, journals and screens kept.
+- Builds merged: H (per-arm speculation mode; public drafters verified: DSpark
+  `shanjiaz/qwen3_5_4b_perfectblend_regen_dspark@3842177e`, DFlash2 `nchapman/Qwen3.5-4B-DFlash2@8d8bb628`)
+  and V (vocabulary scoring measurements). Their GPU runs are queued.
+- GPU queue (chained scripts, 24 GB RAM cap): `queue4b` (second seeds of control and calibrated,
+  clip step on calibrated, round-state map and run on calibrated) → `queue6` (fused TRAIN
+  conversion, calibrated recipe on fused storage) → `queue7` (group 5) → `queue8` (group 4) →
+  `queue9` (new TRAIN batch). Then steps 9, 11–14.
 
 Decided by the owner 2026-11-16 19:15: `greedy-long` is judged on the supplementary interval
 that pools category strata with fewer than two source groups (the maintained rule cannot give it
