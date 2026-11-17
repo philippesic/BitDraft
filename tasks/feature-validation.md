@@ -168,7 +168,13 @@ Progress:
   ignored the corpus's fusion identity and refused fused records).
 - Fused storage: full TRAIN converted (8,633 arrays, max relative L2 2.1e-4, 55.2 GB, 18 min);
   the first matched run failed at initialisation on that bug; rerun queued (`queue13`).
-- Group 5: first attempt failed only on a missing output folder; rerun queued (`queue12`).
+- Group 5 (`logs/group5.log`, 60-request screen, runtime-v8, the authors' stated settings, BF16
+  GGUF converted without loss, outputs exact for both): DSpark at depth 8: 1.71 accepted tokens per
+  round, 0.71× target-only and 0.50× Baseline (saved timing, descriptive); DFlash 2 at depth 15:
+  2.07 per round, 0.63× target-only, 0.45× Baseline. The runner's "acceptance below 15%" kill flag
+  fired on DFlash 2 only because per-proposal acceptance is low at depth 15; the screen completed.
+  Reported separately; neither moves the finish line. A Q4 conversion was not tried: the authors
+  publish none (decision rule: stated settings only).
 - Group 4 (`logs/group4.log`, build V; screen round states, candidate = yardstick): scoring +
   top-10 selection 451 µs per round (ours) and 621 µs (Baseline's table); merged argmax is slower
   (483 / 658), correcting the 0g note. Frequent-TRAIN-token shortlists with the request's tokens
