@@ -2,6 +2,7 @@ import math
 import tempfile
 import unittest
 from pathlib import Path
+from typing import cast
 
 import gguf
 import numpy as np
@@ -23,7 +24,14 @@ from w1a1_eagle.contracts import Record, integer, number, record
 from w1a1_eagle.data import Supervision, TailWindow, Window
 from w1a1_eagle.intent import Intent
 from w1a1_eagle.lifecycle import Journal
-from w1a1_eagle.model import HE4, Projection, bound_latents, named_projections, soft_weight
+from w1a1_eagle.model import (
+    HE4,
+    Layer,
+    Projection,
+    bound_latents,
+    named_projections,
+    soft_weight,
+)
 from w1a1_eagle.numerical.calibration import (
     calibrate,
     choose_bound,
@@ -250,7 +258,81 @@ class TestFeatureSwitches(unittest.TestCase):
                 self.assertEqual(float(projection.log_clip.detach().exp()), clip)
 
 
+def outlier_model(root: Path) -> tuple[Corpus, HE4]:
+    corpus, model, _ = seeded(root)
+    with torch.no_grad():
+        block = cast(Layer, model.blocks[0])
+        block.ffn_norm[:2] = 35.0
+        block.gate.latent_sign[:, :2] *= 0.01
+        block.up.latent_sign[:, :2] *= 0.01
+    return corpus, model
+
+
+def one_update(
+    model: HE4, corpus: Corpus, soft: GradualPrecision | None = None
+) -> tuple[float, float, float]:
+    rates = {key: value / 16 for key, value in {**default_step_sizes(), "sign": 0.004}.items()}
+    if soft is None:
+        bound_latents(model, 3.0)
+    target = TensorWorker(
+        model,
+        corpus,
+        "one-update",
+        optimization=Optimization(rates, Schedule(), 3.0),
+        precision=soft,
+        telemetry=True,
+    )
+    held = [parameter for group in target.optimizer.param_groups for parameter in group["params"]]
+    trainable = [parameter for parameter in model.parameters() if parameter.requires_grad]
+    assert {id(value) for value in held} == {id(value) for value in trainable}
+    assert len(held) == len(trainable)
+    capture, windows = corpus.sample(0)
+
+    def loss() -> float:
+        target.optimizer.zero_grad(set_to_none=True)
+        return float(target.group_loss(capture, windows, 16))
+
+    before = loss()
+    target.run(Monotonic(), Budget(1, 60, 1), lambda: False)
+    after = loss()
+    for parameter in held:
+        assert any(parameter is value for value in model.parameters())
+    report = target.telemetry_record()
+    assert report is not None
+    zero = number(record(record(report["inputs"])["blocks.0.gate"])["zero_code_share"])
+    return before, after, zero
+
+
 class TestCalibration(unittest.TestCase):
+    def test_calibrated_start_trains_like_a_start_on_massive_activation_inputs(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="binary-outliers-") as directory:
+            root = Path(directory)
+            corpus, plain = outlier_model(root / "plain")
+            plain_before, plain_after, plain_zero = one_update(plain, corpus)
+            self.assertLess(plain_zero, 0.5)
+            _, calibrated = outlier_model(root / "calibrated")
+            initial = [p.scale.detach().clone() for _, p in named_projections(calibrated)]
+            calibrate(calibrated, corpus, Sample(1, 2, 3), Features(), 4, 64 * 1024 * 1024, False)
+            for (name, projection), start in zip(
+                named_projections(calibrated), initial, strict=True
+            ):
+                self.assertTrue(bool((projection.scale <= 16 * start).all()), name)
+                self.assertTrue(bool((projection.midpoint.abs() <= 16 * start).all()), name)
+            before, after, zero = one_update(calibrated, corpus)
+            self.assertLess(zero, 0.5)
+            self.assertLess(before, plain_before)
+            self.assertLess(after, before)
+            self.assertLess(plain_after, plain_before)
+            _, soft = outlier_model(root / "soft")
+            calibrate(soft, corpus, Sample(1, 2, 3), Features(), 4, 64 * 1024 * 1024, True)
+            gate = named_projections(soft)[0][1]
+            self.assertLess(float(gate.log_clip.detach().exp()), 8.0)
+            checked = start_check(soft, corpus, StartCheck(SAMPLE, 0.01, 0.002), 0.01, 4, 1 << 26)
+            self.assertIs(checked["passed"], True)
+            soft_before, soft_after, soft_zero = one_update(soft, corpus, precision(2))
+            self.assertLess(soft_zero, 0.5)
+            self.assertLess(soft_after, soft_before)
+
     def test_least_squares_rows_match_a_direct_solution(self) -> None:
         generator = torch.Generator().manual_seed(4)
         weight = torch.randn((5, 12), generator=generator)
@@ -285,25 +367,49 @@ class TestCalibration(unittest.TestCase):
         direct = ((product * target).sum(0) / product.square().sum(0)).clamp_min(0)
         self.assertTrue(torch.allclose(scale_only.scale.double(), direct, rtol=1e-5))
 
-    def test_bound_minimizes_rounding_error_over_its_grid(self) -> None:
+    def test_bound_minimizes_table_output_error_not_input_error(self) -> None:
         generator = torch.Generator().manual_seed(9)
+        weight = torch.randn((6, 16), generator=generator) * 0.1
+        weight[:, :2] *= 0.01
         projection = Projection(
-            torch.randn((3, 16), generator=generator),
-            4,
-            nn.Parameter(torch.zeros(16)),
-            nn.Parameter(torch.tensor(0.0)),
+            weight, 4, nn.Parameter(torch.zeros(16)), nn.Parameter(torch.tensor(0.0))
         )
-        inputs = [torch.randn((20, 16), generator=generator) * 2 for _ in range(2)]
-        chosen = choose_bound(projection, inputs)
+        inputs = [torch.randn((20, 16), generator=generator) for _ in range(2)]
+        for value in inputs:
+            value[:, :2] = 35.0 * torch.sign(value[:, :2])
+        chosen = choose_bound(projection, inputs, weight)
 
-        def error(bound: float) -> float:
+        def error(bound: float, tables: torch.Tensor) -> float:
             value = torch.tensor(bound, dtype=torch.float32)
-            return sum(float(rounding_error(item, value, 7)) for item in inputs)
+            return sum(float(rounding_error(item, value, 7, tables)) for item in inputs)
 
-        peak = max(float(item.abs().max()) for item in inputs)
-        self.assertLessEqual(error(chosen), error(peak) + 1e-9)
-        self.assertLessEqual(error(chosen), error(1.0) + 1e-6 * error(1.0) + 1e-9)
-        self.assertLess(chosen, peak)
+        identity = torch.eye(16)
+        for candidate in (1.0, 4.0, 35.0):
+            self.assertLessEqual(error(chosen, weight), error(candidate, weight) * (1 + 1e-6))
+        self.assertLess(chosen, 8.0)
+        self.assertLess(error(35.0, identity), error(chosen, identity))
+        with torch.no_grad():
+            projection.log_clip.fill_(math.log(chosen))
+        codes, _ = projection.quantize(torch.cat(inputs))
+        self.assertLess(float((codes == 0).double().mean()), 0.5)
+
+    def test_row_fit_keeps_degenerate_rows_inside_the_trust_limit(self) -> None:
+        generator = torch.Generator().manual_seed(6)
+        weight = torch.randn((4, 8), generator=generator) * 0.1
+        projection = Projection(
+            weight, 8, nn.Parameter(torch.zeros(8)), nn.Parameter(torch.tensor(2.0))
+        )
+        initial = projection.scale.detach().clone()
+        inputs = [torch.zeros((5, 8))]
+        inputs[0][:, :2] = 0.06
+        source = weight.clone()
+        source[:, 0] = 5.0
+        report = fit_rows(projection, inputs, source, True)
+        scale = projection.scale.detach()
+        self.assertTrue(bool(torch.isfinite(scale).all()))
+        self.assertTrue(bool((scale <= 16 * initial).all()))
+        self.assertTrue(bool((projection.midpoint.detach().abs() <= 16 * initial).all()))
+        self.assertGreater(integer(report["kept_initial_scale_rows"]), 0)
 
     def test_calibration_is_deterministic_and_respects_switches(self) -> None:
         with tempfile.TemporaryDirectory(prefix="binary-calibration-") as directory:

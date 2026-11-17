@@ -18,6 +18,7 @@ from w1a1_eagle.training import Features, Sample, StartCheck
 
 BOUND_CANDIDATES = 240
 BOUND_DECADES = 3.0
+TRUST_MULTIPLE = 16.0
 
 
 @dataclass(frozen=True)
@@ -109,13 +110,14 @@ def rounded_values(projection: Projection, value: Tensor) -> Tensor:
     return codes * step
 
 
-def rounding_error(gained: Tensor, bound: Tensor, maximum: int) -> Tensor:
+def rounding_error(gained: Tensor, bound: Tensor, maximum: int, tables: Tensor) -> Tensor:
     clipped = torch.maximum(torch.minimum(gained, bound), -bound)
     rounded = (clipped * (maximum / bound)).round().clamp(-maximum, maximum)
-    return (gained - rounded * (bound / maximum)).double().square().sum()
+    difference = (rounded * (bound / maximum) - gained).reshape(-1, gained.shape[-1])
+    return functional.linear(difference, tables).double().square().sum()
 
 
-def choose_bound(projection: Projection, inputs: list[Tensor]) -> float:
+def choose_bound(projection: Projection, inputs: list[Tensor], tables: Tensor) -> float:
     gain = projection.log_gain.detach().exp()
     gained = [value.float() * gain for value in inputs]
     peak = max(float(value.abs().max()) for value in gained)
@@ -130,7 +132,7 @@ def choose_bound(projection: Projection, inputs: list[Tensor]) -> float:
     for candidate in candidates:
         bound = torch.tensor(candidate, dtype=torch.float32, device=device)
         errors.append(
-            float(sum(rounding_error(value, bound, projection.maximum) for value in gained))
+            float(sum(rounding_error(value, bound, projection.maximum, tables) for value in gained))
         )
     return candidates[errors.index(min(errors))]
 
@@ -165,11 +167,14 @@ def fit_rows(
         safe = torch.where(solvable, determinant, 1.0)
         scale = torch.where(solvable, (ay * cc - ac * cy) / safe, scale)
         midpoint = torch.where(solvable, (aa * cy - ac * ay) / safe, midpoint)
-    kept = scale <= 0
+    limit = TRUST_MULTIPLE * initial
+    kept = ~torch.isfinite(scale) | (scale <= 0) | (scale > limit)
     scale = torch.where(kept, initial, scale)
     if fit_midpoint:
         refit = (cy - scale * ac) / torch.where(cc > 0, cc, 1.0)
         midpoint = torch.where(kept & (cc > 0), refit, midpoint)
+    zeroed = ~torch.isfinite(midpoint) | (midpoint.abs() > limit)
+    midpoint = torch.where(zeroed, 0.0, midpoint)
     residual = (
         target
         - 2 * (scale * ay + midpoint * cy).sum()
@@ -183,6 +188,7 @@ def fit_rows(
         "mean_scale": float(scale.mean()),
         "mean_abs_midpoint": float(midpoint.abs().mean()),
         "kept_initial_scale_rows": int(kept.sum()),
+        "zeroed_midpoint_rows": int(zeroed.sum()),
     }
 
 
@@ -207,7 +213,9 @@ def calibrate(
         for stage in (((prefix + "gate", gate), (prefix + "up", up)), ((prefix + "down", down),)):
             first = stage[0][1]
             (inputs,) = recorded_inputs(model, selection, slots, [first])
-            set_bound(first, choose_bound(first, inputs))
+            sources = torch.cat([projection.latent_sign.detach() for _, projection in stage])
+            set_bound(first, choose_bound(first, inputs, sources))
+            del sources
             for name, projection in stage:
                 source = projection.latent_sign.detach()
                 fitted: Record = {} if soft else fit_rows(projection, inputs, source, fit_midpoint)
