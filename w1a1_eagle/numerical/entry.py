@@ -19,7 +19,7 @@ from w1a1_eagle.identity import loaded_identity, source_identity
 from w1a1_eagle.index import IndexReader
 from w1a1_eagle.intent import Intent
 from w1a1_eagle.lifecycle import Journal, control
-from w1a1_eagle.model import HE4, Geometry, bound_latents
+from w1a1_eagle.model import HE4, Geometry, anchor_bounds, bound_latents
 from w1a1_eagle.numerical.calibration import calibrate, start_check
 from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.numerical.corpus import Corpus
@@ -152,6 +152,7 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
         **({"trained_tables": True} if intent.trained_tables else {}),
         **({} if intent.features.default else {"features": intent.features.encode()}),
         **({"arithmetic": intent.arithmetic} if intent.arithmetic != "reference" else {}),
+        **({"slot_rounding": intent.slot_rounding} if intent.slot_rounding is not None else {}),
         **(
             {"calibration": {"sample": intent.calibration.encode()}}
             if intent.calibration is not None
@@ -297,6 +298,8 @@ def start_check_command(path: Path) -> Record:
             intent.frozen_baseline,
             intent.trained_tables,
         )
+        if intent.slot_rounding is not None:
+            anchor_bounds(model)
         model.to(device)
         calibrated = None
         if intent.calibration is not None:
@@ -405,6 +408,8 @@ def run_leased(
         intent.frozen_baseline,
         intent.trained_tables,
     )
+    if intent.slot_rounding is not None:
+        anchor_bounds(model)
     if corpus.fusion is not None and (
         model.trained_tables or fusion_identity(model.fusion.operand) != corpus.fusion
     ):

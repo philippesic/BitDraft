@@ -244,9 +244,9 @@ class TestProbesAndAblations(unittest.TestCase):
                 self.original = original
                 self.key = key
 
-            def forward(self, value: torch.Tensor) -> torch.Tensor:
+            def forward(self, value: torch.Tensor, block: int | None = None) -> torch.Tensor:
                 seen[self.key] = value.detach().clone()
-                return self.original.forward(value)
+                return self.original.forward(value, block)
 
         tokens = tuple(range(20))
         with torch.no_grad():

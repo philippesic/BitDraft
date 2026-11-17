@@ -170,10 +170,19 @@ class Telemetry:
                 current[name] = packed_signs(latent)
                 clipped, zero = float(self.counts[name][0]), float(self.counts[name][1])
                 observed = module.observed
+                anchor = module.log_anchor_clip
                 inputs[name] = {
                     "inputs": observed,
                     "clipped_share": clipped / observed if observed else None,
                     "zero_code_share": zero / observed if observed else None,
+                    **(
+                        {}
+                        if anchor is None
+                        else {
+                            "clip_bound": float(module.log_clip.detach().exp()),
+                            "anchor_clip_bound": float(anchor.detach().exp()),
+                        }
+                    ),
                 }
         seconds = accounting.successful_update_seconds - self.seconds
         labels = accounting.observed_labels - self.labels

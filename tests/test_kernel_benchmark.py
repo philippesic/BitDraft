@@ -111,6 +111,41 @@ def test_recovered_runtime_uses_qualified_kernel() -> None:
         assert "recovered_imma<4,false>" in replacement
 
 
+def test_slot_rounding_edit_keeps_the_shared_bound_path_and_applies_once(
+    tmp_path: Path,
+) -> None:
+    from benchmarks.native import apply_source_edits
+    from benchmarks.runtime_edits import SOURCE_EDITS
+
+    edits = SOURCE_EDITS["slot_rounding_v1"]
+    assert {relative for relative, _, _ in edits} == {
+        "src/models/dflash.cpp",
+        "ggml/src/ggml-cuda/w1a1.cu",
+    }
+    loader, pack, match, kernels, launch = edits
+    assert loader[2].startswith(loader[1]) and ".w1ax.clip_anchor" in loader[2]
+    assert "GGUF_TYPE_FLOAT32" in loader[2] and "!mode" in loader[2]
+    assert pack[2].startswith(pack[1]) and "ubatch.n_seqs_unq" in pack[2]
+    assert "op_params[3]" in pack[2] and "n_tokens-blocks" in pack[2]
+    assert match[1].replace(",12)", ",16)") == match[2]
+    assert kernels[2].endswith(kernels[1])
+    assert "token%period==0)?anchor:clip" in kernels[2]
+    assert launch[2].endswith("} else {\n" + launch[1] + "        }\n")
+    assert "if(anchor>0) {" in launch[2]
+    source = tmp_path / "source"
+    for relative in ("src/models/dflash.cpp", "ggml/src/ggml-cuda/w1a1.cu"):
+        path = source / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            "head\n" + "".join(old + "\n" for name, old, _ in edits if name == relative)
+        )
+    apply_source_edits(source, "slot_rounding_v1")
+    edited = (source / "ggml/src/ggml-cuda/w1a1.cu").read_text()
+    assert edited.count("exec_tiled_finish<<<") == 1 and edited.count("exec_slot_finish<<<") == 1
+    with pytest.raises(ValueError, match="does not match"):
+        apply_source_edits(source, "slot_rounding_v1")
+
+
 def write_kernel_weights(
     path: Path,
     metadata: dict[str, int | float],

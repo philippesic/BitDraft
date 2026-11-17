@@ -44,13 +44,13 @@ class AblatedProjection(nn.Module):
         self.original = original
         self.ablation = ablation
 
-    def forward(self, value: Tensor) -> Tensor:
+    def forward(self, value: Tensor, block: int | None = None) -> Tensor:
         projection, ablation = self.original, self.ablation
         gain = torch.zeros_like(projection.log_gain) if ablation.gains_one else projection.log_gain
         gained = value.float() * gain.exp()
         if not bool(torch.isfinite(gained).all()):
             raise ValueError("nonfinite quantizer input")
-        bound = projection.log_clip.exp()
+        bound = projection.bound(value.shape[0], block)
         maximum = (1 << (projection.bits - 1)) - 1
         clipped = (
             gained if ablation.unclipped else torch.maximum(torch.minimum(gained, bound), -bound)
@@ -138,6 +138,7 @@ class InputRange:
         self.slots = slots
         self.width = width
         self.bound = 0.0
+        self.anchor_bound: float | None = None
         self.count = torch.zeros(slots, dtype=torch.int64, device=device)
         self.clipped = torch.zeros(slots, dtype=torch.int64, device=device)
         self.maximum = torch.zeros(slots, dtype=torch.float32, device=device)
@@ -148,11 +149,14 @@ class InputRange:
         self.spikes: list[tuple[float, int, str, int, int, int]] = []
         self.order = 0
 
-    def observe(self, ratio: Tensor, bound: float, window: Window) -> None:
+    def observe(
+        self, ratio: Tensor, bound: float, window: Window, anchor_bound: float | None = None
+    ) -> None:
         slots = ratio.shape[0]
         if slots > self.slots or ratio.shape[1] != self.width:
             raise ValueError("probe geometry differs from the block")
         self.bound = bound
+        self.anchor_bound = anchor_bound
         edges = torch.tensor(EDGES, dtype=torch.float32, device=ratio.device)
         over = ratio > 1
         per_row = over.sum(-1)
@@ -189,6 +193,9 @@ class InputRange:
         top_rows = max(1, len(rows) // 100)
         slot_names = ["anchor"] + [f"mask-{slot}" for slot in range(1, self.slots)]
 
+        def slot_bound(slot: int) -> float:
+            return self.anchor_bound if slot == 0 and self.anchor_bound is not None else self.bound
+
         def quantiles(counts: Tensor) -> list[float | None]:
             cumulative = counts.cumsum(0)
             size = int(cumulative[-1]) if cumulative.numel() else 0
@@ -211,7 +218,7 @@ class InputRange:
                     "slot": slot_names[slot],
                     "values": count,
                     "clipped_fraction": int(self.clipped[slot]) / count if count else None,
-                    "max_abs": float(self.maximum[slot]) * self.bound,
+                    "max_abs": float(self.maximum[slot]) * slot_bound(slot),
                     "max_over_bound": float(self.maximum[slot]),
                     "quantiles_over_bound": dict(
                         zip((str(q) for q in QUANTILES), quantiles(merged), strict=True)
@@ -242,6 +249,7 @@ class InputRange:
         ]
         return {
             "bound": self.bound,
+            **({} if self.anchor_bound is None else {"anchor_bound": self.anchor_bound}),
             "values": total,
             "clipped": total_clipped,
             "clipped_fraction": total_clipped / total if total else None,
@@ -268,7 +276,7 @@ class InputRange:
             "largest_spikes": [
                 {
                     "over_bound": peak,
-                    "abs": peak * self.bound,
+                    "abs": peak * slot_bound(slot),
                     "window": name,
                     "anchor": anchor,
                     "slot": slot_names[slot],
@@ -292,9 +300,9 @@ class ProbedProjection(nn.Module):
         self.probe = probe
         self.key = key
 
-    def forward(self, value: Tensor) -> Tensor:
-        self.probe.observe(self.key, self.original, value)
-        return self.original.forward(value)
+    def forward(self, value: Tensor, block: int | None = None) -> Tensor:
+        self.probe.observe(self.key, self.original, value, block)
+        return self.original.forward(value, block)
 
 
 class RangeProbe:
@@ -310,13 +318,21 @@ class RangeProbe:
                     slots, projection.latent_sign.shape[1], device
                 )
 
-    def observe(self, key: tuple[int, str], projection: Projection, value: Tensor) -> None:
+    def observe(
+        self, key: tuple[int, str], projection: Projection, value: Tensor, block: int | None
+    ) -> None:
         if self.window is None:
             raise ValueError("range probe requires a declared window")
         with torch.no_grad():
-            bound = projection.log_clip.exp()
+            bound = projection.bound(value.shape[0], block)
             ratio = (value.float() * projection.log_gain.exp()).abs() / bound
-            self.ranges[key].observe(ratio, float(bound), self.window)
+            anchor = projection.log_anchor_clip
+            self.ranges[key].observe(
+                ratio,
+                float(projection.log_clip.exp()),
+                self.window,
+                None if anchor is None else float(anchor.exp()),
+            )
 
     @contextmanager
     def attached(self) -> Iterator[None]:

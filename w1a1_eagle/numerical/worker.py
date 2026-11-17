@@ -39,20 +39,22 @@ HEAD_ROWS = 128
 FINITE_SCAN_UPDATES = 32
 NONFINITE_NORM = "nonfinite gradient norm; the update cannot be clipped"
 FEATURE_PARAMETERS = {
-    "scale": "scale",
-    "clip": "log_clip",
-    "gain": "log_gain",
-    "midpoint": "midpoint",
+    "scale": ("scale",),
+    "clip": ("log_clip", "log_anchor_clip"),
+    "gain": ("log_gain",),
+    "midpoint": ("midpoint",),
 }
+ANCHOR_CLIP = "log_anchor_clip"
 
 
 def feature_parameters(model: HE4, group: str) -> list[torch.nn.Parameter]:
-    attribute = FEATURE_PARAMETERS[group]
     found: dict[int, torch.nn.Parameter] = {}
     for module in model.modules():
         if isinstance(module, Projection):
-            parameter = cast(torch.nn.Parameter, getattr(module, attribute))
-            found[id(parameter)] = parameter
+            for attribute in FEATURE_PARAMETERS[group]:
+                parameter = cast(torch.nn.Parameter | None, getattr(module, attribute))
+                if parameter is not None:
+                    found[id(parameter)] = parameter
     return list(found.values())
 
 
@@ -164,6 +166,7 @@ class TensorWorker:
             "midpoint": "midpoint",
             "log_gain": "gain",
             "log_clip": "clip",
+            ANCHOR_CLIP: "clip",
             "operand": TABLE_GROUP,
         }
         groups: dict[str, list[Tensor]] = {key: [] for key in self.optimization.groups}
@@ -822,9 +825,19 @@ class TensorWorker:
             saved = record(state["model"])
             expected = dict(self.model.named_parameters(remove_duplicate=False))
             initial = {name for name in expected if unfreezing and name.endswith(".operand")}
-            if set(saved) != set(expected) - initial:
+            anchored = {
+                name
+                for name in expected
+                if mode == "branch" and name.endswith("." + ANCHOR_CLIP) and name not in saved
+            }
+            if set(saved) != set(expected) - initial - anchored:
                 raise ValueError("state tensor coverage mismatch")
             tensors: dict[str, Tensor] = {}
+            for name in anchored:
+                shared = saved[name.removesuffix(ANCHOR_CLIP) + "log_clip"]
+                if not torch.is_tensor(shared):
+                    raise ValueError("state tensor shape, dtype or finiteness mismatch")
+                tensors[name] = shared
             for name, value in saved.items():
                 if (
                     not torch.is_tensor(value)

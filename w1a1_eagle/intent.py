@@ -12,6 +12,7 @@ from w1a1_eagle.records import artifact, canonical, identity, read
 from w1a1_eagle.storage import relocated
 from w1a1_eagle.training import (
     ARITHMETIC,
+    SLOT_ROUNDING,
     TABLE_GROUP,
     Arithmetic,
     Blocks,
@@ -282,6 +283,7 @@ class Intent:
                 "initial_export",
                 "arithmetic",
                 "round_states",
+                "slot_rounding",
             }
             != required
             or type(raw["schema"]) is not int
@@ -392,6 +394,8 @@ class Intent:
                 )
         if "round_states" in raw:
             round_states(raw["round_states"], root)
+        if "slot_rounding" in raw and raw["slot_rounding"] not in SLOT_ROUNDING:
+            raise ValueError("slot_rounding is anchor-mask when set")
         if "model_update_seconds" in raw and number(raw["model_update_seconds"]) <= 0:
             raise ValueError("positive cumulative model-update time limit required")
         budget = record(raw["budget"])
@@ -549,6 +553,10 @@ class Intent:
         )
 
     @property
+    def slot_rounding(self) -> str | None:
+        return string(self.raw["slot_rounding"]) if "slot_rounding" in self.raw else None
+
+    @property
     def initial_export(self) -> bool:
         return self.raw.get("initial_export", False) is True
 
@@ -634,6 +642,7 @@ class Intent:
                     if self.round_states is not None
                     else {}
                 ),
+                **({"slot_rounding": self.slot_rounding} if self.slot_rounding is not None else {}),
                 **(
                     {"calibration": {"sample": self.calibration.encode()}}
                     if self.calibration is not None

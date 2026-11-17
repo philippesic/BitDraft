@@ -48,6 +48,9 @@ the vocabulary stays frozen ([trained tables](execution.md#trained-tables)).
 The recipe can fix row scales or clipping bounds at their starting values and switch gains
 (fixed at 1) or midpoints (fixed at 0) off; such parameters leave the optimizer
 ([feature switches](execution.md#feature-switches)).
+With [per-slot rounding](execution.md#per-slot-rounding) each quantized input has a second
+learned clipping bound used only by the anchor slot (the first row of every block); the
+mask slots keep the original bound.
 
 The forward path uses hard binary signs and quantized activations. Backward uses a
 surrogate derivative so the continuous latent parameters can receive gradients.

@@ -15,6 +15,7 @@ from w1a1_eagle.numerical.gguf_readback import verify as verify_gguf
 from w1a1_eagle.numerical.weights import GGUF, q4_0_codes
 from w1a1_eagle.numerical.worker import TensorWorker
 
+ANCHOR_CLIP_KEY = ".w1ax.clip_anchor"
 NativeArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.uint8 | np.int32 | np.float32]]"
 
 
@@ -195,6 +196,11 @@ def prepare(
             writer.add_uint32(base + ".w1ax.bits", projection.bits)
             writer.add_uint32(base + ".w1ax.mode", 2)
             writer.add_float32(base + ".w1ax.clip", float(bound.detach()))
+            if projection.log_anchor_clip is not None:
+                anchor = projection.log_anchor_clip.detach().float().cpu().exp()
+                if not bool(torch.isfinite(anchor)) or float(anchor) <= 0:
+                    raise ValueError("invalid export anchor clipping bound")
+                writer.add_float32(base + ANCHOR_CLIP_KEY, float(anchor))
             tensors.append(
                 ExportTensor(
                     base + ".w1a1_packed", packed_signs(projection.latent_sign), kinds.I32, "I32"
