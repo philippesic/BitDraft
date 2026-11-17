@@ -95,7 +95,7 @@ Progress:
   `s4-c0-current`: screen 48.72% vs 48.95%, −0.23 (−0.91, +0.42), inside the loss budget; update
   time 1,520 vs 1,767 s for the same 8,209 updates and 2,493,623 labels (1.16×; 1.14× with data
   loading). Step 9 then requalified it on the assembled recipe: calibrated + fast arithmetic vs
-  calibrated: 56.15% vs 56.56%, −0.41 (−1.45, +0.58). The lower end passes −1.0, so under the
+  calibrated: 56.15% vs 56.56%, −0.41 (−1.45, +0.58). The lower end is below −1.0, so under the
   step 4 preflight's rule (counted against the one-point budget) it is not adopted: the long run
   and the recommended recipe keep `reference` arithmetic (likely noise; the arithmetic passed
   exact value, gradient and resume checks; cost: about 14% fewer updates per training hour).
