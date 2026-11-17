@@ -169,7 +169,7 @@ def planned_rows(corpus: Corpus, scope: Record, rows: int | None) -> list[Planne
         if spans:
             result.append(Planned(row, spans))
     if rows is not None:
-        result = result[:rows]
+        result = result[:: max(1, len(result) // rows)][:rows]
     return result
 
 
@@ -266,7 +266,7 @@ def build(specification: Path, output: Path, cfg: Geometry = Geometry()) -> Reco
     if depth < 1 or chunk < 1 or activation < 1 or (limit is not None and limit < 1):
         raise ValueError("positive depth, chunk, activation bytes and row limit required")
     if limit is not None and "restrict" in raw:
-        raise ValueError("a rate sample covers the first rows of the whole corpus")
+        raise ValueError("a rate sample spans the whole corpus")
     corpus, corpus_ref, corpus_format, scope = spec_corpus(raw, root, memory, cfg)
     if limit is not None:
         scope = {"kind": "sample", "rows": limit}

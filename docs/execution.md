@@ -408,8 +408,8 @@ the TRAIN `corpus` with its optional `corpus_format`, optional `depth` (3), `chu
   covers each sequence only up to the last window that intent's sampler plans for its
   update budget, since a round start depends only on the rounds before it. Sequences the run
   never visits are skipped.
-- `rows`: a rate sample over the first rows of the corpus; its scope is `sample` and it
-  covers only those rows.
+- `rows`: a rate sample of that many evenly spaced rows of the corpus; its scope is
+  `sample` and it covers only those rows.
 
 Only admitted TRAIN rows are read, so DEV, calibration and protected data never enter. Each
 sequence's context keys and values are computed once (`HE4.group_contexts`); the drafter then
