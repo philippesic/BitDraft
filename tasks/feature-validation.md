@@ -175,7 +175,10 @@ Progress:
 - GPU queue (chained scripts, 24 GB RAM cap): `queue9` (new TRAIN batch, running from 04:59) →
   `queue10` (Level 2 of the calibrated finalist) → `queue11` (calibrated rounding ceiling) →
   `queue12` (group 5) → `queue13` (step 9: fused pair, then the assembled recipe with fast
-  arithmetic, with fused storage only if it stays inside the loss budget). Then steps 11–14.
+  arithmetic on eight-tap storage) → `step11.sh` (final TRAIN mixture `train-final-01`, admission,
+  integration pilot: 400 uninterrupted updates against 200 + resume to 400, losses and final
+  export compared, export screened). The long run (`step12/preflight.md`) trains on eight-tap
+  storage whatever the fused pair shows; fused storage is qualified for the release run only.
 
 Decided by the owner 2026-11-16 19:15: `greedy-long` is judged on the supplementary interval
 that pools category strata with fewer than two source groups (the maintained rule cannot give it
