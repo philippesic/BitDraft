@@ -129,3 +129,52 @@ def label_report(mixture: Artifact) -> Record:
         **report.record(),
         "scope": "metadata only; feature arrays are not read",
     }
+
+
+@dataclass(frozen=True)
+class LabelFrequencies:
+    mixture: str
+    ranked: tuple[int, ...]
+    counts: tuple[int, ...]
+    labels: int
+
+    def coverage(self, size: int) -> float | None:
+        return sum(self.counts[:size]) / self.labels if self.labels else None
+
+
+def label_frequencies(mixture: Artifact) -> LabelFrequencies:
+    mixture.verify()
+    raw = read(mixture.path)
+    if raw.get("schema") != "corpus-mixture-v1":
+        raise ValueError("label frequencies require a corpus-mixture-v1 manifest")
+    root = mixture.path.parent
+    counts: dict[int, int] = {}
+    for value in sequence(raw["components"]):
+        component = record(value)
+        if component["kind"] != "corpus-v1":
+            raise ValueError("label frequencies read direct corpus-v1 components only")
+        source = artifact(component["source"], root)
+        source.verify()
+        corpus = read(source.path, 64 * 1024 * 1024)
+        if corpus["target_sha256"] != raw["target_sha256"]:
+            raise ValueError("mixture component target differs")
+        for item in sequence(corpus["records"]):
+            row = record(item)
+            if row["role"] != "train":
+                raise ValueError("label frequencies read TRAIN records only")
+            reference = artifact(row["metadata"], source.path.parent)
+            reference.verify()
+            metadata = read(reference.path, 64 * 1024 * 1024)
+            positions: dict[int, int] = {}
+            for window in capture_supervision(string(row["id"]), metadata):
+                for offset, token in enumerate(window.labels):
+                    positions[window.anchor + 1 + offset] = token
+            for token in positions.values():
+                counts[token] = counts.get(token, 0) + 1
+    ranked = [token for _, token in sorted((-count, token) for token, count in counts.items())]
+    return LabelFrequencies(
+        mixture.sha256,
+        tuple(ranked),
+        tuple(counts[token] for token in ranked),
+        sum(counts.values()),
+    )

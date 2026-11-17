@@ -152,7 +152,8 @@ def build_kernel_benchmark(specification: Path, output: Path) -> Record:
     source = runtime_root / "source"
     cuda_source = source / "ggml/src/ggml-cuda"
     kernel_source = cuda_source / "w1a1.cu"
-    owner.atomic(output / "runtime-kernels.cuh", runtime_kernels(kernel_source).encode())
+    sliced = runtime_kernels(kernel_source)
+    owner.atomic(output / "runtime-kernels.cuh", sliced.encode())
     project = Path(__file__).resolve().parents[1]
     authored = [
         project / "native" / name
@@ -163,6 +164,7 @@ def build_kernel_benchmark(specification: Path, output: Path) -> Record:
             "kernel-capture.cpp",
             "kernel-rsr.cuh",
             "kernel-rsr-prep.cpp",
+            "kernel-vocabulary.cuh",
         )
     ]
     for path in authored:
@@ -195,6 +197,8 @@ def build_kernel_benchmark(specification: Path, output: Path) -> Record:
         "--ftz=false",
         "-DGGML_CUDA_USE_GRAPHS",
     ]
+    if "recovered_imma" in sliced:
+        command.append("-DRUNTIME_RECOVERED_IMMA")
     rsr_build: Record | None = None
     if "rsr" in raw:
         rsr_build = install_rsr(record(raw["rsr"]), root, output)
@@ -258,7 +262,7 @@ def build_kernel_benchmark(specification: Path, output: Path) -> Record:
         "capture_library": file_reference(output / "kernel-capture.so"),
         "runtime": raw["runtime"],
         "runtime_kernel": file_reference(kernel_source),
-        "kernel_slice_sha256": hashlib.sha256(runtime_kernels(kernel_source).encode()).hexdigest(),
+        "kernel_slice_sha256": hashlib.sha256(sliced.encode()).hexdigest(),
         "compiler": raw["compiler"],
         "sources": [file_reference(path) for path in authored],
         "executable": file_reference(output / "kernel-benchmark"),

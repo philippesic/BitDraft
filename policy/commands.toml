@@ -7,6 +7,7 @@ deferred = []
 build = "build-kernel-benchmark"
 capture = "capture-kernel-activations"
 measure = "benchmark-kernels"
+measure_vocabulary = "benchmark-vocabulary"
 prepare_indexes = "prepare-rsr"
 
 [benchmark_reports]

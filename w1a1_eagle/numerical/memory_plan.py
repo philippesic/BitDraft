@@ -89,6 +89,8 @@ class Shapes:
     exports: int
     ranges: bool
     state_bytes: int = 0
+    scoring: int = 0
+    scoring_host: int = 0
 
 
 def plan(shape: Shapes, cuda: bool) -> tuple[Step, ...]:
@@ -111,33 +113,26 @@ def plan(shape: Shapes, cuda: bool) -> tuple[Step, ...]:
             )
         )
         if shape.rounds_context:
+            rounds = (
+                resident
+                + working(
+                    cfg,
+                    shape.rounds_context,
+                    shape.chunk,
+                    shape.depth + 1,
+                    shape.candidate_rows,
+                    shape.depth,
+                )
+                + shape.scoring
+            )
             steps.append(
                 Step(
                     "candidate rounds",
-                    on_device(
-                        resident
-                        + working(
-                            cfg,
-                            shape.rounds_context,
-                            shape.chunk,
-                            shape.depth + 1,
-                            shape.candidate_rows,
-                            shape.depth,
-                        )
-                    ),
+                    on_device(rounds),
                     PROCESS_HOST
                     + capture_host(cfg, shape.rounds_context)
-                    + on_host(
-                        resident
-                        + working(
-                            cfg,
-                            shape.rounds_context,
-                            shape.chunk,
-                            shape.depth + 1,
-                            shape.candidate_rows,
-                            shape.depth,
-                        )
-                    ),
+                    + shape.scoring_host
+                    + on_host(rounds),
                 )
             )
         if shape.windows_context:
@@ -178,13 +173,16 @@ def plan(shape: Shapes, cuda: bool) -> tuple[Step, ...]:
             )
         )
         if shape.rounds_context:
-            extra = working(
-                cfg,
-                shape.rounds_context,
-                shape.chunk,
-                shape.depth + 1,
-                shape.baseline_rows,
-                shape.depth,
+            extra = (
+                working(
+                    cfg,
+                    shape.rounds_context,
+                    shape.chunk,
+                    shape.depth + 1,
+                    shape.baseline_rows,
+                    shape.depth,
+                )
+                + shape.scoring
             )
             steps.append(
                 Step(
@@ -192,6 +190,7 @@ def plan(shape: Shapes, cuda: bool) -> tuple[Step, ...]:
                     on_device(resident + extra),
                     PROCESS_HOST
                     + capture_host(cfg, shape.rounds_context)
+                    + shape.scoring_host
                     + on_host(resident + extra),
                 )
             )

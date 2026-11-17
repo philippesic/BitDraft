@@ -6,7 +6,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 from random import Random
-from typing import Iterator, Sequence, cast
+from typing import Callable, Iterator, Sequence, cast
 
 import torch
 from torch import Tensor
@@ -29,10 +29,10 @@ from w1a1_eagle.drafting import (
 )
 from w1a1_eagle.identity import source_identity
 from w1a1_eagle.model import HE4, Geometry
-from w1a1_eagle.numerical.baseline import load_baseline, table_rows
+from w1a1_eagle.numerical.baseline import load_baseline, table_rows, table_tensor
 from w1a1_eagle.numerical.captures import Capture, load_capture
 from w1a1_eagle.numerical.export import export_he4
-from w1a1_eagle.numerical.labels import label_report
+from w1a1_eagle.numerical.labels import LabelFrequencies, label_frequencies, label_report
 from w1a1_eagle.numerical.memory_plan import (
     DEVICE_MARGIN,
     FatalMemory,
@@ -49,6 +49,13 @@ from w1a1_eagle.numerical.probes import (
     Window,
     ablated,
     apply_ablation,
+)
+from w1a1_eagle.numerical.vocabulary_scoring import (
+    Scoring,
+    ScoringSettings,
+    export_host_bytes,
+    scoring_bytes,
+    scoring_settings,
 )
 from w1a1_eagle.numerical.weights import load_he4
 from w1a1_eagle.numerical.worker import TensorWorker
@@ -68,6 +75,8 @@ SECTIONS = {
     "labels",
 }
 EXPORT_BYTES = 6 * 1024**3
+CANDIDATE_TABLE = ("output.weight", "token_embd.weight")
+BASELINE_TABLE = ("token_embd.weight",)
 
 
 class NoSamples:
@@ -236,15 +245,28 @@ def evaluate_windows(
     }
 
 
+ScoringHook = Callable[[tuple[int, ...], Tensor, Tensor, Tensor], None]
+
+
 def propose(
-    model: HE4, capture: Capture, anchors: Sequence[int], depth: int, top: int, chunk: int
+    model: HE4,
+    capture: Capture,
+    anchors: Sequence[int],
+    depth: int,
+    top: int,
+    chunk: int,
+    hook: ScoringHook | None = None,
 ) -> dict[int, Ranked]:
     result: dict[int, Ranked] = {}
     with torch.no_grad():
         for start in range(0, len(anchors), chunk):
             part = tuple(anchors[start : start + chunk])
             hidden = model.group_hidden(capture.features, capture.tokens, part, depth + 1)[:, 1:]
-            ranked = functional.linear(hidden, model.vocabulary).topk(top, dim=-1).indices
+            logits = functional.linear(hidden, model.vocabulary)
+            ranked = logits.topk(top, dim=-1).indices
+            if hook is not None:
+                hook(part, hidden, logits, ranked)
+            del logits
             values = cast(list[list[list[int]]], ranked.cpu().tolist())
             for anchor, slots in zip(part, values, strict=True):
                 result[anchor] = tuple(tuple(int(token) for token in slot) for slot in slots)
@@ -263,7 +285,12 @@ class Request:
 
 
 def drafter_rounds(
-    model: HE4, rows: list[Record], root: Path, settings: Record, run: Run
+    model: HE4,
+    rows: list[Record],
+    root: Path,
+    settings: Record,
+    run: Run,
+    scoring: Scoring | None = None,
 ) -> list[Request]:
     depth, top, chunk = (integer(settings[key]) for key in ("depth", "top", "chunk"))
     requests: list[Request] = []
@@ -274,20 +301,31 @@ def drafter_rounds(
         anchors = generated_anchors(windows)
         if not anchors:
             continue
-        proposals = propose(model, capture, anchors, depth, top, chunk)
+        hook = None if scoring is None else scoring.request(capture, windows)
+        proposals = propose(model, capture, anchors, depth, top, chunk, hook)
         rounds = simulate(windows, proposals, depth)
-        requests.append(
-            Request(
-                string(row["id"]),
-                string(row["group"]),
-                string(row.get("topic") or "unclassified"),
-                context_band(min(windows) + 1),
-                len(rounds),
-                tally([item.anchor for item in rounds], windows, proposals, depth, top),
-                tally(anchors, windows, proposals, depth, top),
-            )
+        request = Request(
+            string(row["id"]),
+            string(row["group"]),
+            string(row.get("topic") or "unclassified"),
+            context_band(min(windows) + 1),
+            len(rounds),
+            tally([item.anchor for item in rounds], windows, proposals, depth, top),
+            tally(anchors, windows, proposals, depth, top),
         )
-        del capture
+        requests.append(request)
+        if scoring is not None and hook is not None:
+            scoring.add(
+                request.identity,
+                request.group,
+                request.category,
+                hook,
+                windows,
+                proposals,
+                tuple(item.anchor for item in rounds),
+                request.starts,
+            )
+        del capture, hook
         gc.collect()
     return requests
 
@@ -372,11 +410,31 @@ def native_agreement(requests: list[Request], result: Record, arm: str) -> Recor
     }
 
 
-def rounds_report(model: HE4, drafter: str, settings: Record, root: Path, run: Run) -> Record:
+@dataclass(frozen=True)
+class ScoringRun:
+    settings: ScoringSettings
+    frequencies: LabelFrequencies | None
+    store: Store
+    table: Record
+
+
+def rounds_report(
+    model: HE4,
+    drafter: str,
+    settings: Record,
+    root: Path,
+    run: Run,
+    scoring_run: ScoringRun | None = None,
+) -> Record:
     corpus = artifact(settings["corpus"], root)
     rows = dev_rows(corpus, protected_names(artifact(settings["exclusions"], root)))
     depth, top = integer(settings["depth"]), integer(settings["top"])
-    requests = drafter_rounds(model, rows, corpus.path.parent, settings, run)
+    scoring = (
+        None
+        if scoring_run is None
+        else Scoring(scoring_run.settings, scoring_run.frequencies, model, depth)
+    )
+    requests = drafter_rounds(model, rows, corpus.path.parent, settings, run, scoring)
     by_category: dict[str, list[Request]] = {}
     by_band: dict[str, list[Request]] = {}
     for request in requests:
@@ -408,6 +466,16 @@ def rounds_report(model: HE4, drafter: str, settings: Record, root: Path, run: R
             for request in requests
         ],
     }
+    if scoring is not None and scoring_run is not None:
+        resamples, seed = integer(settings["resamples"]), integer(settings["seed"])
+        report["scoring"] = scoring.report(resamples, seed)
+        if scoring_run.settings.export_rounds:
+            record(report["scoring"])["export"] = scoring.export(
+                Store(scoring_run.store.root / ("scoring-" + drafter)),
+                drafter,
+                scoring_run.table,
+            )
+        del scoring
     if "native" in settings:
         native = artifact(settings["native"], root)
         native.verify()
@@ -480,6 +548,15 @@ def text_table(report: Record) -> str:
             )
         if "native_agreement" in section:
             lines.append(f"rounds {drafter} native: {json.dumps(section['native_agreement'])}")
+        if "scoring" in section:
+            for name, value in record(record(section["scoring"])["variants"]).items():
+                row = record(value)
+                lines.append(
+                    f"scoring {drafter} {name}: changed {row['first_choice_changed']} "
+                    f"lost {row['correct_first_choice_lost']} "
+                    f"outside {row['label_outside_candidates']} "
+                    f"accepted/round difference {row['accepted_per_round_difference']}"
+                )
     for name, value in record(report.get("ablations", {})).items():
         for group, measured in record(value).items():
             if isinstance(measured, dict) and "top1" in measured:
@@ -515,6 +592,33 @@ def rounds_rows(rounds: Record, root: Path) -> tuple[list[Record], Path]:
     ), corpus.path.parent
 
 
+def scoring_run(
+    raw: Record,
+    root: Path,
+    store: Store,
+    frequencies: LabelFrequencies | None,
+    drafter: str,
+    geometry: Geometry,
+) -> ScoringRun | None:
+    rounds = record(raw.get("rounds", {}))
+    if "scoring" not in rounds:
+        return None
+    names: tuple[str, ...]
+    if drafter == "baseline":
+        model = artifact(record(raw["baseline"])["target"], root)
+        names = BASELINE_TABLE
+    else:
+        model = artifact(record(raw["candidate"])["vocabulary"], root)
+        names = CANDIDATE_TABLE
+    tensor, _ = table_tensor(model.path, names)
+    return ScoringRun(
+        scoring_settings(record(rounds["scoring"]), root, geometry.hidden),
+        frequencies,
+        store,
+        {"model": reference(model), "tensor": tensor},
+    )
+
+
 def candidate_sections(
     raw: Record,
     root: Path,
@@ -522,6 +626,7 @@ def candidate_sections(
     device: str,
     sets: tuple[WindowSet, ...],
     store: Store,
+    frequencies: LabelFrequencies | None = None,
 ) -> Record:
     rounds = record(raw.get("rounds", {}))
     ablations = tuple(string(v) for v in sequence(raw.get("ablations", [])))
@@ -546,7 +651,16 @@ def candidate_sections(
     }
     if rounds:
         run.guard.begin()
-        result["rounds"] = {arm: rounds_report(model, arm, rounds, root, run)}
+        result["rounds"] = {
+            arm: rounds_report(
+                model,
+                arm,
+                rounds,
+                root,
+                run,
+                scoring_run(raw, root, store, frequencies, arm, run.geometry),
+            )
+        }
         run.guard.end("candidate rounds")
     if sets:
         run.guard.begin()
@@ -593,7 +707,14 @@ def candidate_sections(
     return result
 
 
-def baseline_rounds(raw: Record, root: Path, run: Run, device: str) -> Record:
+def baseline_rounds(
+    raw: Record,
+    root: Path,
+    run: Run,
+    device: str,
+    store: Store | None = None,
+    frequencies: LabelFrequencies | None = None,
+) -> Record:
     section = record(raw["baseline"])
     run.guard.begin()
     model = load_baseline(
@@ -605,7 +726,16 @@ def baseline_rounds(raw: Record, root: Path, run: Run, device: str) -> Record:
     )
     run.guard.end("baseline load")
     run.guard.begin()
-    report = rounds_report(model, "baseline", record(raw["rounds"]), root, run)
+    report = rounds_report(
+        model,
+        "baseline",
+        record(raw["rounds"]),
+        root,
+        run,
+        None
+        if store is None
+        else scoring_run(raw, root, store, frequencies, "baseline", run.geometry),
+    )
     run.guard.end("baseline rounds")
     return report
 
@@ -629,11 +759,19 @@ def memory_shapes(
     candidate_rows = None
     if "candidate" in raw:
         vocabulary = artifact(record(raw["candidate"])["vocabulary"], root)
-        candidate_rows = table_rows(vocabulary.path, ("output.weight", "token_embd.weight"))
+        candidate_rows = table_rows(vocabulary.path, CANDIDATE_TABLE)
     baseline_rows = None
     if "baseline" in raw:
         target = artifact(record(raw["baseline"])["target"], root)
-        baseline_rows = table_rows(target.path, ("token_embd.weight",))
+        baseline_rows = table_rows(target.path, BASELINE_TABLE)
+    scoring = scoring_host = 0
+    if "scoring" in rounds:
+        settings = scoring_settings(record(rounds["scoring"]), root, geometry.hidden)
+        rows_ = max(candidate_rows or 0, baseline_rows or 0)
+        scoring = scoring_bytes(
+            settings, rows_, geometry.hidden, integer(rounds["chunk"]) * integer(rounds["depth"])
+        )
+        scoring_host = export_host_bytes(settings, rows_, geometry.hidden)
     return Shapes(
         geometry,
         candidate_rows,
@@ -645,6 +783,8 @@ def memory_shapes(
         len(sequence(raw.get("exports", []))),
         bool(raw.get("ranges", False)),
         artifact(record(raw["candidate"])["state"], root).size if "candidate" in raw else 0,
+        scoring,
+        scoring_host,
     )
 
 
@@ -709,16 +849,21 @@ def diagnose(specification: Path, output: Path, geometry: Geometry = Geometry())
         "torch": str(torch.__version__),
         "specification": identity(raw),
     }
+    frequencies = None
+    if "scoring" in rounds:
+        settings = scoring_settings(record(rounds["scoring"]), root, geometry.hidden)
+        if settings.mixture is not None:
+            frequencies = label_frequencies(settings.mixture)
     with device_lease(device):
         if "labels" in raw:
             labels = record(raw["labels"])
             report["labels"] = label_report(artifact(labels["mixture"], root))
         if "candidate" in raw:
-            report.update(candidate_sections(raw, root, run, device, sets, store))
+            report.update(candidate_sections(raw, root, run, device, sets, store, frequencies))
             gc.collect()
             run.guard.release("the candidate")
         if "baseline" in raw:
-            measured = baseline_rounds(raw, root, run, device)
+            measured = baseline_rounds(raw, root, run, device, store, frequencies)
             record(report.setdefault("rounds", {}))["baseline"] = measured
             gc.collect()
             run.guard.release("the Baseline")

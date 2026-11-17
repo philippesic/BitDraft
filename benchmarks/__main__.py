@@ -60,6 +60,7 @@ def main() -> int:
         "capture-kernel-activations",
         "build-kernel-benchmark",
         "benchmark-kernels",
+        "benchmark-vocabulary",
         "prepare-rsr",
         "profile-rounds",
         "round-profile-report",
@@ -209,6 +210,10 @@ def main() -> int:
             from benchmarks.kernel_benchmark import benchmark_kernels
 
             result = benchmark_kernels(args.input, args.output)
+        elif args.command == "benchmark-vocabulary":
+            from benchmarks.vocabulary_benchmark import benchmark_vocabulary
+
+            result = benchmark_vocabulary(args.input, args.output)
         elif args.command == "profile-rounds":
             from benchmarks.round_profile import profile_rounds
 

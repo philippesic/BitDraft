@@ -47,13 +47,17 @@ def dequantized(item: TensorRecord, shape: tuple[int, ...], device: str = "cpu")
     return result
 
 
-def table_rows(path: Path, names: tuple[str, ...]) -> int:
+def table_tensor(path: Path, names: tuple[str, ...]) -> tuple[str, int]:
     api = cast(GGUF, gguf)
     lookup = {item.name: item for item in api.GGUFReader(str(path)).tensors}
     for name in names:
         if name in lookup:
-            return int(lookup[name].shape[-1])
+            return name, int(lookup[name].shape[-1])
     raise ValueError("vocabulary table unavailable: " + str(path))
+
+
+def table_rows(path: Path, names: tuple[str, ...]) -> int:
+    return table_tensor(path, names)[1]
 
 
 def module_name(tensor: str) -> str:

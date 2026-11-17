@@ -8,6 +8,11 @@
 #include <stdexcept>
 #include "runtime-kernels.cuh"
 #include "kernel-variants.cuh"
+#ifdef RUNTIME_RECOVERED_IMMA
+#define spread_u8 harness_spread_u8
+#define spread_s8 harness_spread_s8
+#define recovered_imma harness_recovered_imma
+#endif
 #include "kernel-imma.cuh"
 
 static void checked(cudaError_t status) {
@@ -91,6 +96,7 @@ static Matrix matrix(Memory & memory, const std::string & prefix, int m, int k) 
 }
 
 #include "kernel-rsr.cuh"
+#include "kernel-vocabulary.cuh"
 
 static void launch_one(const std::string & variant, Matrix weight, const int8_t * q,
                        const float * b, const float * sums, float * output, int m, int k, int n,
@@ -232,6 +238,7 @@ static void baseline(const std::string & prefix, int m, int k, int n, int kind, 
 
 int main(int argc,char ** argv) {
     try {
+        if(argc>1 && std::string(argv[1])=="vocabulary") return vocabulary_main(argc,argv);
         if(argc!=14) throw std::runtime_error("prefix variant m k slots bits mode clip warmup repeats trials joint required");
         const std::string prefix=argv[1],variant=argv[2];
         const int m=std::stoi(argv[3]),k=std::stoi(argv[4]),n=std::stoi(argv[5]);
