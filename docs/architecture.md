@@ -62,6 +62,7 @@ by `benchmarks/measurement.py`.
 | benchmark | active | benchmarks/__main__.py | main | `python -m benchmarks` |
 | conversion | active | w1a1_eagle/numerical/conversion.py | main | Explicit bounded feature conversion |
 | precision | active | w1a1_eagle/numerical/precision.py | main | Explicit CPU/CUDA screen |
+| round diagnostics | active | w1a1_eagle/numerical/round_diagnostics.py | main | Explicit drafter diagnostic run |
 | retirement | active | tools/retention.py | execute | Explicit authorized closeout |
 | snapshot | active | tools/snapshot_metadata.py | pack | `python -m tools.snapshot_metadata` |
 | admission | active | w1a1_eagle/index.py | IndexReader | Preflight and run |
