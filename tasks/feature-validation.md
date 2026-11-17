@@ -106,6 +106,15 @@ Progress:
   - Blank: 48.38% vs 48.95%, −0.57 points (−1.24, +0.09). Its interval's lower end is below −1.0,
     so blank is not admitted; the full recipe stays the base. Removals (fixed scale, fixed clip)
     would change no implementation decision (the extras cost almost nothing at serving): skipped.
+  - Gradual precision: 49.11% vs 48.95%, +0.16 (−0.46, +0.83): not adopted (tie keeps control).
+  - Calibrated probe (fixed): untrained DEV first-slot top-1 17.5% vs 5%, screen 9.0% vs 2.1%;
+    after one update 52.5% / 21.7% vs 9% / 4.7%. The full calibrated arm is training.
+  - Group 0 (`group0/0a-0g-notes.md`): the candidate's deficit is concentrated at real round starts
+    (4.9 points there vs 2.3 over all positions); on TRAIN prompts it beats Baseline by 10.7 points
+    (generalisation, not capacity, limits it); learned clip bounds stay near 1.0 while late-layer
+    down inputs reach 5–27× the bound; gains and midpoints barely matter. Add-ons triggered:
+    round-state weighting (build F running), larger clipping step (`g3-clipstep` queued), per-slot
+    rounding (deferred: needs runtime support; decided after the clipping arms).
   - Calibration bug fixed by build D (clip bounds now minimise the tables' output error; row-fit
     trust limit); the calibrated probe and arms rerun on source `4bb8231d…`, whose default path is
     pinned bit-identical to the control's.
