@@ -130,6 +130,12 @@ Progress:
     decided by a ceiling check on the calibrated drafter (`queue11`): if removing input rounding
     entirely leaves DEV unchanged, as it did on the yardstick, finer per-slot rounding cannot help
     and it is skipped.
+  - Round-state weighting (triggered by 0b; build F merged): the map pilot measured 323 simulated
+    proposals per second (120 rows, 55,306 proposals; round starts 36.7% of windows), so the full
+    TRAIN map would take 3.4 GPU hours and one run's restricted map about 2.6; the build's
+    13–25-minute forecast was 8–15× too low. Over the preflight's 60-minute kill limit, and the
+    measured excess round-start penalty is 0.07 accepted tokens per round: skipped; recorded as
+    triggered but not demonstrated.
   - Group 0 (`group0/0a-0g-notes.md`): the candidate's deficit is concentrated at real round starts
     (4.9 points there vs 2.3 over all positions); on TRAIN prompts it beats Baseline by 10.7 points
     (generalisation, not capacity, limits it); learned clip bounds stay near 1.0 while late-layer
