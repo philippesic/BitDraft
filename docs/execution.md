@@ -84,7 +84,8 @@ initial state in every segment. Fresh initialization still publishes its first s
 
 Tensor payload 5 fingerprints frozen buffers and stores trainable/Adam/RNG state,
 accounting, dataset exposure origin and the reach position weights in force (null for
-decay). Reader also accepts 4 without position weights and 3 with unknown new accounting;
+decay). Gradual precision states add `precision`
+([gradual precision](#gradual-precision)). Reader also accepts 4 without position weights and 3 with unknown new accounting;
 1/2 are refused. Frozen buffers rebuild from authenticated initializer/vocabulary and
 must match. Mutation guards are not a sandbox. No mode silently imports trained weights.
 
@@ -252,6 +253,100 @@ new recipe whose schedule is restated in absolute updates, and from its first up
 multiplier follows that new schedule (for example, restating a finished 7,800-update cosine
 as ending at 15,600 resumes at the multiplier of update 7,800 on the longer curve, about 0.5).
 Continue and branch accept changed step sizes; continue keeps the Adam moments.
+
+## Feature switches
+
+Optional `features` requires exactly `scale` and `clip` (`learned` or `fixed`) and `gain` and
+`midpoint` (`learned` or `off`). A fixed parameter keeps its starting value; an off gain stays
+at 1 (log-gain 0) and an off midpoint at 0. Untrained parameters are excluded from the
+optimizer, keep exactly their values, and export as those values, so the served model equals
+the trained one. "Blank" is signs only:
+
+```json
+"features": {"scale": "fixed", "clip": "fixed", "gain": "off", "midpoint": "off"}
+```
+
+Omission and the all-`learned` value keep today's recipe identity; any other value enters it.
+Branch accepts a parent with other switches (the optimizer is reset); continue and resume
+require the same trained families. Off parameters must be at identity in the parent.
+
+## Calibrated start
+
+Optional `calibration` (`{"sample": {"sequences": n, "windows": w, "seed": s}}`, fresh or
+resume only) sets starting values before the first update from a seeded TRAIN sample: `n`
+admitted training sequences, `w` windows each, never DEV or protected data. The model runs
+with its frozen tables, hard signs and training rounding, in the recipe's block size, one layer
+at a time, so later layers see earlier calibrated outputs. For each layer, gate/up (one shared
+bound), then down:
+
+- the clipping bound minimizing the squared error between gained inputs and their rounded
+  values, chosen from 241 bounds spaced geometrically from 10⁻³ times the largest input to it;
+- each row's scale and midpoint by least squares, so that the one-bit table with the initial
+  signs best matches the source table's output on the same rounded inputs. A row whose fitted
+  scale is not positive keeps its initial scale and refits its midpoint. Gains stay at 1.
+
+Fixed parameters keep their calibrated value; off parameters are not calibrated. With
+gradual precision only bounds are calibrated, because the soft start must reproduce the source
+table. Calibration is deterministic. The journal's `calibration` event records the sample
+(identity, windows, SHA-256), per-table bounds, residuals and a digest of the calibrated
+values; the setting enters the recipe identity, and the update-0 state holds the values.
+Optional `initial_export: true` (fresh only, outside recipe identity) also exports the
+update-0 state as `initial-export`; with `development` the cadence already measures DEV at
+update 0. Export retention can retire it later.
+
+## Gradual precision
+
+Optional `gradual_precision` (fresh, resume or branch) replaces hard signs during the first
+`soft_updates` updates ([model](model.md#what-changes-during-training)):
+
+```json
+"gradual_precision": {
+  "start_temperature": 0.01, "end_temperature": 30.0, "shape": "exponential",
+  "soft_updates": 2000, "step_size": 2e-4,
+  "start_check": {"sample": {"sequences": 8, "windows": 8, "seed": 1},
+                  "max_relative_error": 0.01, "mean_relative_error": 0.002}
+}
+```
+
+- t at update u < `soft_updates` rises from the start to the end temperature, linearly or
+  geometrically in u / (`soft_updates` − 1). It is a pure function of the update count, so
+  resume is exact.
+- In the soft phase the sign group trains the source weights at `step_size` (in weight units),
+  under the shared schedule, and latents are not clamped.
+- At the first update at or after `soft_updates` the latents are converted to the recipe's
+  latent form (row scale clamp, or raw), signs preserved, and their Adam moments and step reset.
+  The rest of the budget trains hard signs; the intent refuses an empty hard period.
+- DEV diagnostics, exports and screens always use hard signs of the current weights; their
+  journal events carry `precision` (phase, t, switch update).
+- States carry `precision` (`phase`, `latent_step_offset`, the optimizer updates by which
+  latent Adam steps trail). Resume needs the matching phase. Branch may cross the switch and
+  restarts the offset; a soft-phase state never restores into a recipe without this setting.
+
+The start check runs before a fresh run's first update, under matched inputs: on a seeded TRAIN
+sample each feed-forward table at the start temperature must reproduce the source table on the
+same rounded input codes. Per input row the error is ‖soft − source‖ / ‖source‖; a table fails
+if its maximum or mean exceeds the intent's tolerance, and the run is then refused. Whole-drafter
+equality is not expected. Measure it without training:
+
+```sh
+python -m w1a1_eagle.numerical.entry --start-check INTENT
+```
+
+It prints per-table errors as JSON and exits 0 (passed), 3 (failed) or 2 (refused); CUDA intents
+take the GPU lease. The setting adds no resident memory: the soft weights live in the latent
+tensors, and backward recomputes tanh.
+
+## Telemetry
+
+Optional `telemetry: true` (outside recipe identity) adds a `telemetry` record to each
+`training-progress` event after the first update of an attempt: per parameter family (sign, or
+soft in the soft phase, scale, midpoint, gain, clip, norm, table) the last and mean gradient
+norm before clipping; the shared clipping factor min(1, 1/total) (last, mean, how often it
+acted); sign flips per projection since the previous record and the share of latents at ±1
+(null in the soft phase); each projection's share of clipped inputs and zero codes during
+updates; the precision phase and t; peak CUDA memory; labels per second. Values accumulate on
+the device and are read only at the record. Telemetry does not change trained values; flips
+after a restart count from the attempt's first update.
 
 ## Export
 

@@ -7,6 +7,7 @@ from w1a1_eagle.clock import Clock
 
 PARAMETER_GROUPS = ("sign", "scale", "midpoint", "gain", "clip", "norm")
 TABLE_GROUP = "table"
+SOFT_FAMILY = "soft"
 MAXIMUM_SLOTS = 16
 ROW_COPIES = 15.0
 ROW_TOKEN_COPIES = 1.25
@@ -189,6 +190,151 @@ class Optimization:
     @property
     def groups(self) -> tuple[str, ...]:
         return PARAMETER_GROUPS + ((TABLE_GROUP,) if TABLE_GROUP in self.step_sizes else ())
+
+
+@dataclass(frozen=True)
+class Features:
+    scale: Literal["learned", "fixed"] = "learned"
+    clip: Literal["learned", "fixed"] = "learned"
+    gain: Literal["learned", "off"] = "learned"
+    midpoint: Literal["learned", "off"] = "learned"
+
+    def __post_init__(self) -> None:
+        if (
+            self.scale not in ("learned", "fixed")
+            or self.clip not in ("learned", "fixed")
+            or self.gain not in ("learned", "off")
+            or self.midpoint not in ("learned", "off")
+        ):
+            raise ValueError(
+                "features: scale/clip are learned or fixed; gain/midpoint learned or off"
+            )
+
+    @property
+    def default(self) -> bool:
+        return self == Features()
+
+    @property
+    def untrained(self) -> frozenset[str]:
+        return frozenset(
+            name
+            for name, value in (
+                ("scale", self.scale),
+                ("clip", self.clip),
+                ("gain", self.gain),
+                ("midpoint", self.midpoint),
+            )
+            if value != "learned"
+        )
+
+    @property
+    def off(self) -> frozenset[str]:
+        return frozenset(
+            name
+            for name, value in (("gain", self.gain), ("midpoint", self.midpoint))
+            if value == "off"
+        )
+
+    def encode(self) -> dict[str, str]:
+        return {
+            "scale": self.scale,
+            "clip": self.clip,
+            "gain": self.gain,
+            "midpoint": self.midpoint,
+        }
+
+
+@dataclass(frozen=True)
+class Sample:
+    sequences: int
+    windows: int
+    seed: int
+
+    def __post_init__(self) -> None:
+        if (
+            type(self.sequences) is not int
+            or not 1 <= self.sequences <= 64
+            or type(self.windows) is not int
+            or not 1 <= self.windows <= 32
+            or type(self.seed) is not int
+            or self.seed < 0
+        ):
+            raise ValueError("a sample needs 1-64 sequences, 1-32 windows each and a seed >= 0")
+
+    def encode(self) -> dict[str, int]:
+        return {"sequences": self.sequences, "windows": self.windows, "seed": self.seed}
+
+
+@dataclass(frozen=True)
+class StartCheck:
+    sample: Sample
+    max_relative_error: float
+    mean_relative_error: float
+
+    def __post_init__(self) -> None:
+        if any(
+            type(value) is not float or not math.isfinite(value) or value <= 0
+            for value in (self.max_relative_error, self.mean_relative_error)
+        ):
+            raise ValueError("start check tolerances must be positive finite numbers")
+
+
+@dataclass(frozen=True)
+class GradualPrecision:
+    start_temperature: float
+    end_temperature: float
+    shape: Literal["linear", "exponential"]
+    soft_updates: int
+    step_size: float
+    start_check: StartCheck
+
+    def __post_init__(self) -> None:
+        if (
+            type(self.start_temperature) is not float
+            or type(self.end_temperature) is not float
+            or not math.isfinite(self.start_temperature)
+            or not math.isfinite(self.end_temperature)
+            or not 0 < self.start_temperature < self.end_temperature
+        ):
+            raise ValueError("gradual precision needs 0 < start temperature < end temperature")
+        if self.shape not in ("linear", "exponential"):
+            raise ValueError("gradual precision shape is linear or exponential")
+        if type(self.soft_updates) is not int or self.soft_updates < 1:
+            raise ValueError("gradual precision needs at least one soft update")
+        if (
+            type(self.step_size) is not float
+            or not math.isfinite(self.step_size)
+            or self.step_size <= 0
+        ):
+            raise ValueError("gradual precision needs a positive finite soft step size")
+
+    def encode(self) -> dict[str, object]:
+        return {
+            "start_temperature": self.start_temperature,
+            "end_temperature": self.end_temperature,
+            "shape": self.shape,
+            "soft_updates": self.soft_updates,
+            "step_size": self.step_size,
+            "start_check": {
+                "sample": self.start_check.sample.encode(),
+                "max_relative_error": self.start_check.max_relative_error,
+                "mean_relative_error": self.start_check.mean_relative_error,
+            },
+        }
+
+    def temperature(self, updates: int) -> float | None:
+        if type(updates) is not int or updates < 0:
+            raise ValueError("nonnegative update count required")
+        if updates >= self.soft_updates:
+            return None
+        fraction = updates / (self.soft_updates - 1) if self.soft_updates > 1 else 0.0
+        if self.shape == "linear":
+            return (
+                self.start_temperature + (self.end_temperature - self.start_temperature) * fraction
+            )
+        return self.start_temperature * math.pow(
+            self.end_temperature / self.start_temperature, fraction
+        )
 
 
 @dataclass(frozen=True)
