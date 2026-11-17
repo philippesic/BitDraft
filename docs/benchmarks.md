@@ -768,8 +768,21 @@ three-arm `establish` screen specification and a `seed`. It writes:
 `round_diagnostics` (schema `round-diagnostics-v1`) takes `memory_bytes` and optional
 sections; it runs on CUDA when a model section is present and CUDA is available, under the
 GPU lease, otherwise on CPU. The output is new and inside `artifacts/`; it holds the
-specification, `report.json` (code identity, device, GPU, torch version and every section)
-and `report.txt`, one line per measurement.
+specification, `memory-plan.json`, `report.json` (code identity, device, GPU, torch version,
+every section and the memory plan with measured peaks) and `report.txt`, one line per
+measurement.
+
+**Memory.** Before loading anything, the command estimates the peak GPU and host memory of
+each step (candidate load, restore, rounds, windows, exports; Baseline load, rounds) from
+the geometry, the vocabulary rows in the GGUF headers and the longest capture, prints the
+plan and refuses when a step exceeds the free GPU memory less 512 MiB, or the smaller of
+`memory_bytes` and the host's available memory. On CUDA it then caps the process at that
+free memory. The candidate's steps run in one function whose model, worker and probes are
+released before the Baseline loads; the Baseline loads one tensor at a time straight onto
+the device. Any CUDA out-of-memory error, an out-of-memory failure the allocator recorded,
+model memory left on the GPU between drafters or host memory above the limit stops the run
+at once with exit code 3 and no report; nothing retries or falls back to CPU. Measured peaks
+per step are recorded beside the plan.
 
 | Section | Contents |
 | --- | --- |
