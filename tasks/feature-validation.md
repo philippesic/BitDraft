@@ -208,10 +208,17 @@ Progress:
   updates against 200 + resume to 400 gave equal losses before and after the interruption and a
   byte-identical final export (`73b5b604…`), which served on the screen with exact outputs
   (48.75%); peak 13.5 GB allocated, 14.2 GB reserved; 0.266 s per update on the final mixture.
-- Step 12 running since 08:32 (`arms/s12-long/`, `step12/preflight.md`): 42,000 updates
-  (about 3 training hours, about 0.67 passes of groups), checkpoint and readout every 7,000.
-  Step 13 (every export on the screen, the 120-request panel and the three slices) starts
-  automatically when it ends; step 14 follows after the checkpoint and depth choice.
+- Step 12 done (08:32–12:56; 42,000 updates, 15,856 s update clock including checkpoints; recipe
+  `5d5c7d0e…`; no failures). Final export `ae6569f6…` screens **57.64%** (exact outputs), against
+  the yardstick's 55.2%, the 35-minute calibrated run's 56.56% and Baseline's 60.6%. Checkpoints
+  kept every 7,000 updates as full states; the run wrote only the final export, so the five
+  earlier states are re-exported through the store's export path (the final state re-exports
+  byte-identically to `ae6569f6…`). A build agent's full-size CPU check evicted the run's data
+  from the page cache around 11:40 (data wait 0.10 → 0.29 s per update) and was stopped.
+- Step 13 running: every checkpoint on the screen, the 120-request panel and the three slices
+  (`step13/`); then step 14a (greedy depth calibration of the final drafter; sampled and agentic
+  slices at depths 2, 3, 4 for both drafters), then step 14 (fresh three-arm suites at the chosen
+  depths), then the owner's additions (retests, build W, round-state, per-slot).
 
 Decided by the owner 2026-11-17 10:55: (1) add the vocabulary shortlist as a native feature
 (build W: runtime edit, shortlist stored with the drafter, applicable to Baseline for the fair
