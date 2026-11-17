@@ -15,7 +15,7 @@ from w1a1_eagle.clock import Clock, Monotonic
 from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
 from w1a1_eagle.data import Supervision
 from w1a1_eagle.device import DeviceClock
-from w1a1_eagle.model import HE4, Projection, bound_latents, clamp_latents
+from w1a1_eagle.model import HE4, DeferredChecks, Layer, Projection, bound_latents, clamp_latents
 from w1a1_eagle.numerical.accounting import Accounting, Telemetry
 from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.records import canonical
@@ -23,6 +23,7 @@ from w1a1_eagle.training import (
     MAXIMUM_SLOTS,
     SOFT_FAMILY,
     TABLE_GROUP,
+    Arithmetic,
     Blocks,
     Budget,
     Features,
@@ -35,6 +36,7 @@ from w1a1_eagle.training import (
 
 HEAD_ROWS = 128
 FINITE_SCAN_UPDATES = 32
+NONFINITE_NORM = "nonfinite gradient norm; the update cannot be clipped"
 FEATURE_PARAMETERS = {
     "scale": "scale",
     "clip": "log_clip",
@@ -104,6 +106,7 @@ class TensorWorker:
         features: Features | None = None,
         precision: GradualPrecision | None = None,
         telemetry: bool = False,
+        arithmetic: Arithmetic = "reference",
     ) -> None:
         if not identity or model.geometry.slots != MAXIMUM_SLOTS:
             raise ValueError("explicit HE4 recipe and sixteen slots required")
@@ -135,6 +138,7 @@ class TensorWorker:
         self.optimization = optimization or Optimization()
         self.features = features or Features()
         self.precision = precision
+        self.arithmetic: Arithmetic = arithmetic
         self.phase: Literal["soft", "hard"] = "hard" if precision is None else "soft"
         self.latent_step_offset = 0
         for group in self.features.untrained:
@@ -418,30 +422,10 @@ class TensorWorker:
         self.position_weights = weights
         return weights
 
-    def group_loss(
-        self, capture: Capture, windows: tuple[Supervision, ...], slots: int | None = None
-    ) -> Tensor:
-        if not windows or any(not window.labels for window in windows):
-            raise ValueError("an update requires supervised windows")
-        model = self.model
-        device = model.vocabulary.device
-        size = model.block(slots)
-        if size < 2:
-            raise ValueError("an update requires at least one drafted position")
-        positions: tuple[float, ...] | None = None
-        if self.blocks.position_weights == "reach":
-            if self.position_weights is None:
-                raise ValueError("reach weights require a development refresh before updating")
-            positions = self.position_weights
-        if capture.fusion is not None and capture.fusion != self.fusion_sha256:
-            raise ValueError("fused capture and model fusion table identities differ")
-        hidden = model.group_hidden(
-            capture.features,
-            capture.tokens,
-            tuple(window.anchor for window in windows),
-            size,
-            capture.fusion is not None,
-        )
+    def label_tensors(
+        self, windows: tuple[Supervision, ...], size: int, positions: tuple[float, ...] | None
+    ) -> tuple[Tensor, Tensor, Tensor]:
+        device = self.model.vocabulary.device
         lengths = tuple(min(len(window.labels), size - 1) for window in windows)
         indices: list[int] = [
             index * size + 1 + offset
@@ -455,11 +439,44 @@ class TensorWorker:
         ]
         rows = torch.tensor(indices, device=device)
         labels = torch.tensor(targets, dtype=torch.int64, device=device)
-        weights = label_weights(lengths, positions).to(device)
+        return rows, labels, label_weights(lengths, positions).to(device)
+
+    def group_loss(
+        self,
+        capture: Capture,
+        windows: tuple[Supervision, ...],
+        slots: int | None = None,
+        checks: DeferredChecks | None = None,
+    ) -> Tensor:
+        if not windows or any(not window.labels for window in windows):
+            raise ValueError("an update requires supervised windows")
+        model = self.model
+        size = model.block(slots)
+        if size < 2:
+            raise ValueError("an update requires at least one drafted position")
+        positions: tuple[float, ...] | None = None
+        if self.blocks.position_weights == "reach":
+            if self.position_weights is None:
+                raise ValueError("reach weights require a development refresh before updating")
+            positions = self.position_weights
+        if capture.fusion is not None and capture.fusion != self.fusion_sha256:
+            raise ValueError("fused capture and model fusion table identities differ")
+        prepared = None if checks is None else self.label_tensors(windows, size, positions)
+        hidden = model.group_hidden(
+            capture.features,
+            capture.tokens,
+            tuple(window.anchor for window in windows),
+            size,
+            capture.fusion is not None,
+        )
+        rows, labels, weights = (
+            self.label_tensors(windows, size, positions) if prepared is None else prepared
+        )
+        targets = labels.shape[0]
         selected = hidden.view(-1, hidden.shape[-1]).index_select(0, rows)
         head = selected.detach().requires_grad_()
-        total = torch.zeros((), device=device)
-        for start in range(0, len(targets), HEAD_ROWS):
+        total = torch.zeros((), device=hidden.device)
+        for start in range(0, targets, HEAD_ROWS):
             end = start + HEAD_ROWS
             losses = torch.nn.functional.cross_entropy(
                 torch.nn.functional.linear(head[start:end], model.vocabulary),
@@ -469,8 +486,14 @@ class TensorWorker:
             loss = (losses * weights[start:end]).sum()
             torch.autograd.backward(loss)
             total = total + loss.detach()
-        if not bool(torch.isfinite(total)) or head.grad is None:
-            raise ValueError("nonfinite loss")
+        if checks is None:
+            if not bool(torch.isfinite(total)) or head.grad is None:
+                raise ValueError("nonfinite loss")
+        else:
+            checks.require(torch.isfinite(total), "nonfinite loss")
+            if head.grad is None:
+                checks.read()
+                raise ValueError("nonfinite loss")
         torch.autograd.backward(selected, head.grad)
         return total
 
@@ -491,14 +514,26 @@ class TensorWorker:
             telemetry.begin(self.updates, self.accounting)
             telemetry.attach()
         projections = [module for module in self.model.modules() if isinstance(module, Projection)]
+        layers = [module for module in self.model.modules() if isinstance(module, Layer)]
+        checks = None if self.arithmetic == "reference" else DeferredChecks()
         for module in projections:
             module.temperature = temperature
+            module.checks = checks
+            module.single_product = checks is not None
+            module.tensor_cores = self.arithmetic == "fast-exact-tf32ff"
+        for layer in layers:
+            layer.checks = checks
         self.optimizer.zero_grad(set_to_none=True)
         try:
-            loss = self.group_loss(capture, windows, slots)
+            loss = self.group_loss(capture, windows, slots, checks)
         finally:
             for module in projections:
                 module.temperature = None
+                module.checks = None
+                module.single_product = False
+                module.tensor_cores = False
+            for layer in layers:
+                layer.checks = None
             if telemetry is not None:
                 telemetry.detach()
         groups = cast(list[dict[str, object]], self.optimizer.param_groups)
@@ -512,12 +547,26 @@ class TensorWorker:
             ]
             for group in groups
         }
-        if telemetry is not None:
-            telemetry.gradients(families)
-        norm = torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0, error_if_nonfinite=True)
+        measured_loss: float | None = None
+        if checks is None:
+            if telemetry is not None:
+                telemetry.gradients(families)
+            norm = torch.nn.utils.clip_grad_norm_(
+                self.model.parameters(), 1.0, error_if_nonfinite=True
+            )
+            norm_value = float(norm)
+        else:
+            gradients = [p.grad for p in self.model.parameters() if p.grad is not None]
+            norm = torch.nn.utils.get_total_norm(gradients, 2.0, False)
+            measured_loss, norm_value = checks.read(loss, norm)
+            if not math.isfinite(norm_value):
+                raise RuntimeError(NONFINITE_NORM)
+            if telemetry is not None:
+                telemetry.gradients(families)
+            torch.nn.utils.clip_grads_with_norm_(self.model.parameters(), 1.0, norm)
         if telemetry is not None:
             telemetry.clipping(norm)
-        self.last_gradient_norm = float(norm)
+        self.last_gradient_norm = norm_value
         for group in groups:
             name = str(group["name"])
             rate = self.optimization.step_sizes[name]
@@ -539,7 +588,7 @@ class TensorWorker:
         self.updates += 1
         self.cursor += 1
         self.ready = True
-        return float(loss.detach())
+        return float(loss.detach()) if measured_loss is None else measured_loss
 
     def run(self, clock: Clock, budget: Budget, stop: Callable[[], bool]) -> str:
         with self.lock:

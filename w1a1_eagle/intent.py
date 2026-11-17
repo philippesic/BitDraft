@@ -10,7 +10,9 @@ from w1a1_eagle.index import IndexSpec, Mount
 from w1a1_eagle.records import artifact, canonical, identity, read
 from w1a1_eagle.storage import relocated
 from w1a1_eagle.training import (
+    ARITHMETIC,
     TABLE_GROUP,
+    Arithmetic,
     Blocks,
     Budget,
     Features,
@@ -258,6 +260,7 @@ class Intent:
                 "gradual_precision",
                 "telemetry",
                 "initial_export",
+                "arithmetic",
             }
             != required
             or type(raw["schema"]) is not int
@@ -350,6 +353,8 @@ class Intent:
                 raise ValueError(key + " must be true or false")
         if raw.get("initial_export", False) and mode != "fresh":
             raise ValueError("initial_export publishes a fresh initialization only")
+        if raw.get("arithmetic", "reference") not in ARITHMETIC:
+            raise ValueError("arithmetic is reference, fast-exact or fast-exact-tf32ff")
         if "calibration" in raw:
             calibration(raw["calibration"])
             if mode not in ("fresh", "resume"):
@@ -509,6 +514,10 @@ class Intent:
         return self.raw.get("telemetry", False) is True
 
     @property
+    def arithmetic(self) -> Arithmetic:
+        return cast(Arithmetic, self.raw.get("arithmetic", "reference"))
+
+    @property
     def initial_export(self) -> bool:
         return self.raw.get("initial_export", False) is True
 
@@ -588,6 +597,7 @@ class Intent:
                 ),
                 **({"trained_tables": True} if self.trained_tables else {}),
                 **({} if self.features.default else {"features": self.features.encode()}),
+                **({"arithmetic": self.arithmetic} if self.arithmetic != "reference" else {}),
                 **(
                     {"calibration": {"sample": self.calibration.encode()}}
                     if self.calibration is not None

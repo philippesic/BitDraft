@@ -351,6 +351,30 @@ updates; the precision phase and t; peak CUDA memory; labels per second. Values 
 the device and are read only at the record. Telemetry does not change trained values; flips
 after a restart count from the attempt's first update.
 
+## Arithmetic
+
+Optional `arithmetic` selects how a hard-sign update is computed. Omission and `reference`
+keep today's arithmetic and recipe identity; the other values enter it, so switching is a
+recipe change (continue keeps the Adam moments, branch resets them):
+
+- `fast-exact`: each feed-forward table multiplies its rounded input codes by the signs
+  once, and gradients flow from that product instead of a second surrogate product. Forward
+  values are bit-identical; gradients agree up to float rounding. The finiteness and validity
+  checks (quantizer input, clipping bound, F16 cache, loss, gradient norm) accumulate on the
+  device and are read once per update, before clipping and the optimizer step, so a failing
+  update raises the same error as `reference`, with parameters and optimizer state unchanged.
+  A nonfinite gradient norm raises `RuntimeError` in both settings, with this project's message
+  instead of PyTorch's.
+- `fast-exact-tf32ff`: as `fast-exact`, and the forward product of each feed-forward table
+  runs with TF32 tensor cores. Codes are integers of at most 127 and signs ±1, so TF32 holds
+  them exactly and every F32 partial sum over at most 9,216 inputs is an exact integer below
+  2^24: the product is bit-identical to the F32 one. The global TF32 flag is set only around
+  that call and restored; backward and every other matmul stay F32. On CPU this equals
+  `fast-exact`.
+
+The soft phase of gradual precision is computed as in `reference` under every setting;
+diagnostics, calibration and evaluation always use `reference`.
+
 ## Export
 
 Final complete states export through the store to W1Ax metadata 2 in GGUF 3, with original Q4K vocabulary

@@ -109,6 +109,7 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
         "blocks": intent.blocks.encode(),
         **({"trained_tables": True} if intent.trained_tables else {}),
         **({} if intent.features.default else {"features": intent.features.encode()}),
+        **({"arithmetic": intent.arithmetic} if intent.arithmetic != "reference" else {}),
         **(
             {"calibration": {"sample": intent.calibration.encode()}}
             if intent.calibration is not None
@@ -389,6 +390,7 @@ def run_leased(
         features=intent.features,
         precision=intent.gradual_precision,
         telemetry=intent.telemetry,
+        arithmetic=intent.arithmetic,
     )
     worker.fusion_sha256 = corpus.fusion
     diagnostics = (
