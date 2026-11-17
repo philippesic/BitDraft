@@ -156,7 +156,7 @@ class Sandbox:
             "/usr/bin/prlimit",
             "--as=1073741824",
             "--cpu=20",
-            "--nproc=1024",
+            "--nproc=4096",
             "--fsize=4194304",
             "--nofile=128",
             "--",
