@@ -1,6 +1,7 @@
 import math
+from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Callable, cast
+from typing import Callable, Iterator, cast
 
 import torch
 from torch import Tensor, nn
@@ -53,7 +54,7 @@ def rms(value: Tensor, weight: Tensor, epsilon: float) -> Tensor:
 
 def rope(value: Tensor, positions: Tensor, theta: float) -> Tensor:
     width = value.shape[-1]
-    frequency = torch.tensor(theta, dtype=torch.float32, device=value.device).pow(
+    frequency = torch.full((), theta, dtype=torch.float32, device=value.device).pow(
         -torch.arange(0, width, 2, dtype=torch.float32, device=value.device) / width
     )
     angle = positions.float()[:, None] * frequency
@@ -70,7 +71,7 @@ def sign_forward(context: FunctionCtx, value: Tensor) -> Tensor:
 
 def sign_backward(context: FunctionCtx, gradient: Tensor) -> Tensor:
     (value,) = cast(tuple[Tensor], getattr(context, "saved_tensors"))
-    return gradient * (value.abs() <= 1).to(gradient.dtype)
+    return gradient * (value.abs() <= 1)
 
 
 def autograd_function(
@@ -147,10 +148,46 @@ def hard_sign(value: Tensor) -> Tensor:
     return SIGN(value)
 
 
-def cache_storage(value: Tensor) -> Tensor:
+class DeferredChecks:
+    def __init__(self) -> None:
+        self.failed: list[Tensor] = []
+        self.messages: list[str] = []
+
+    def require(self, valid: Tensor, message: str) -> None:
+        self.failed.append(valid.detach().logical_not().reshape(1))
+        self.messages.append(message)
+
+    def read(self, *values: Tensor) -> tuple[float, ...]:
+        parts = [torch.cat(self.failed).double()] if self.failed else []
+        parts.extend(value.detach().double().reshape(1) for value in values)
+        measured = cast(list[float], torch.cat(parts).tolist())
+        for failed, message in zip(measured, self.messages):
+            if failed:
+                raise ValueError(message)
+        return tuple(measured[len(self.failed) :])
+
+
+def require(valid: Tensor, message: str, checks: DeferredChecks | None) -> None:
+    if checks is not None:
+        checks.require(valid, message)
+    elif not bool(valid):
+        raise ValueError(message)
+
+
+@contextmanager
+def tensor_cores(enabled: bool) -> Iterator[None]:
+    matmul = cast(object, torch.backends.cuda.matmul)
+    previous = cast(bool, getattr(matmul, "allow_tf32"))
+    setattr(matmul, "allow_tf32", enabled or previous)
+    try:
+        yield
+    finally:
+        setattr(matmul, "allow_tf32", previous)
+
+
+def cache_storage(value: Tensor, checks: DeferredChecks | None = None) -> Tensor:
     rounded = value.half().float()
-    if not bool(torch.isfinite(rounded).all()):
-        raise ValueError("F16 cache storage overflow")
+    require(torch.isfinite(rounded).all(), "F16 cache storage overflow", checks)
     return value + (rounded - value).detach()
 
 
@@ -184,6 +221,9 @@ class Projection(nn.Module):
         self.statistics: Tensor | None = None
         self.observed = 0
         self.recorded: list[Tensor] | None = None
+        self.checks: DeferredChecks | None = None
+        self.single_product = False
+        self.tensor_cores = False
 
     @property
     def maximum(self) -> int:
@@ -191,11 +231,13 @@ class Projection(nn.Module):
 
     def quantize(self, value: Tensor) -> tuple[Tensor, Tensor]:
         gained = value.float() * self.log_gain.exp()
-        if not bool(torch.isfinite(gained).all()):
-            raise ValueError("nonfinite quantizer input")
+        require(torch.isfinite(gained).all(), "nonfinite quantizer input", self.checks)
         bound = self.log_clip.exp()
-        if not bool(torch.isfinite(bound).all()) or not bool((bound > 0).all()):
-            raise ValueError("invalid learned clipping bound")
+        require(
+            torch.isfinite(bound).all() & (bound > 0).all(),
+            "invalid learned clipping bound",
+            self.checks,
+        )
         maximum = self.maximum
         clipped = torch.maximum(torch.minimum(gained, bound), -bound)
         normalized = clipped * (maximum / bound)
@@ -218,6 +260,10 @@ class Projection(nn.Module):
             weight = soft_weight(self.latent_sign, scale, self.temperature)
             return functional.linear(values, weight) + values.sum(-1, keepdim=True) * self.midpoint
         signs = hard_sign(self.latent_sign)
+        if self.single_product:
+            with tensor_cores(self.tensor_cores):
+                product = functional.linear(codes, signs)
+            return (product * scale) * step + (codes.sum(-1, keepdim=True) * step) * self.midpoint
         native = (functional.linear(codes, signs) * scale) * step + (
             codes.sum(-1, keepdim=True) * step
         ) * self.midpoint
@@ -253,6 +299,7 @@ class Layer(nn.Module):
     ) -> None:
         super().__init__()
         self.geometry = geometry
+        self.checks: DeferredChecks | None = None
         self.attn_norm = nn.Parameter(tensors[prefix + "attn_norm.weight"].clone())
         self.q_norm = nn.Parameter(tensors[prefix + "attn_q_norm.weight"].clone())
         self.k_norm = nn.Parameter(tensors[prefix + "attn_k_norm.weight"].clone())
@@ -277,7 +324,7 @@ class Layer(nn.Module):
         key = self.key.forward(encoded).view(-1, cfg.kv_heads, cfg.head_dim)
         value = self.value.forward(encoded).view(-1, cfg.kv_heads, cfg.head_dim)
         key = rope(rms(key, self.k_norm, cfg.epsilon), positions, cfg.theta)
-        return cache_storage(key), cache_storage(value)
+        return cache_storage(key, self.checks), cache_storage(value, self.checks)
 
     def forward(
         self, state: Tensor, context: tuple[Tensor, Tensor], positions: Tensor, allowed: Tensor
@@ -289,8 +336,8 @@ class Layer(nn.Module):
         value = self.value.forward(norm).view(-1, cfg.kv_heads, cfg.head_dim)
         query = rope(rms(query, self.q_norm, cfg.epsilon), positions, cfg.theta)
         key = rope(rms(key, self.k_norm, cfg.epsilon), positions, cfg.theta)
-        key = torch.cat((context[0], cache_storage(key)), 0)
-        value = torch.cat((context[1], cache_storage(value)), 0)
+        key = torch.cat((context[0], cache_storage(key, self.checks)), 0)
+        value = torch.cat((context[1], cache_storage(value, self.checks)), 0)
         slots = positions.shape[0]
         query = query.view(slots, cfg.kv_heads, cfg.heads // cfg.kv_heads, cfg.head_dim)
         scores = torch.einsum("qhgd,khd->hgqk", query, key) / math.sqrt(cfg.head_dim)
@@ -319,8 +366,8 @@ class Layer(nn.Module):
         key = self.key.forward(norm).view(-1, heads, cfg.head_dim)
         value = self.value.forward(norm).view(-1, heads, cfg.head_dim)
         query = rope(rms(query, self.q_norm, cfg.epsilon), flat, cfg.theta)
-        key = cache_storage(rope(rms(key, self.k_norm, cfg.epsilon), flat, cfg.theta))
-        value = cache_storage(value)
+        key = cache_storage(rope(rms(key, self.k_norm, cfg.epsilon), flat, cfg.theta), self.checks)
+        value = cache_storage(value, self.checks)
         query = (
             query.view(count, slots, heads, groups, cfg.head_dim)
             .permute(2, 0, 3, 1, 4)

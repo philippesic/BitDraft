@@ -39,6 +39,7 @@ from w1a1_eagle.numerical.weights import load_he4
 from w1a1_eagle.numerical.worker import TensorWorker, feature_parameters, latent_parameters
 from w1a1_eagle.records import canonical, reference
 from w1a1_eagle.training import (
+    Arithmetic,
     Budget,
     Features,
     GradualPrecision,
@@ -80,6 +81,7 @@ def worker(
     soft: GradualPrecision | None = None,
     telemetry: bool = False,
     optimization: Optimization | None = None,
+    arithmetic: Arithmetic = "reference",
 ) -> TensorWorker:
     model, inputs = tiny_model()
     windows: tuple[Supervision, ...] = (
@@ -107,6 +109,7 @@ def worker(
         features=features,
         precision=soft,
         telemetry=telemetry,
+        arithmetic=arithmetic,
     )
 
 

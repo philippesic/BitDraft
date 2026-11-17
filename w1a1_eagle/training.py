@@ -8,6 +8,8 @@ from w1a1_eagle.clock import Clock
 PARAMETER_GROUPS = ("sign", "scale", "midpoint", "gain", "clip", "norm")
 TABLE_GROUP = "table"
 SOFT_FAMILY = "soft"
+ARITHMETIC = ("reference", "fast-exact", "fast-exact-tf32ff")
+Arithmetic = Literal["reference", "fast-exact", "fast-exact-tf32ff"]
 MAXIMUM_SLOTS = 16
 ROW_COPIES = 15.0
 ROW_TOKEN_COPIES = 1.25

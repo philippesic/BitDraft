@@ -95,9 +95,11 @@ one window per update. A [four-arm test](../results/step-size-schedule-latent-sc
 favours cosine decay, and a 4e-3 sign step with the bounded latent scale. A
 [block-size test](../results/block-size-and-reach-weights/result.md) favours 4-slot blocks
 for depths 2–4 over sixteen slots and over random 3–16-slot blocks with reach weights. A nonfinite loss or
-gradient fails the update immediately. The all-parameters-finite scan runs every 32
+gradient fails the update before the optimizer step. The all-parameters-finite scan runs every 32
 updates and before every checkpoint and export. Frozen operands are fingerprinted and
-checked before publication. Trained tables are exported as Q4_0, so the DEV diagnostic
+checked before publication. The recipe's [arithmetic](execution.md#arithmetic) can compute
+each table's forward product once and defer these checks to one device read per update.
+Trained tables are exported as Q4_0, so the DEV diagnostic
 also measures the model with the exported table values.
 
 ## What has been established
