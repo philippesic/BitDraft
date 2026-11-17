@@ -215,10 +215,19 @@ Progress:
   earlier states are re-exported through the store's export path (the final state re-exports
   byte-identically to `ae6569f6…`). A build agent's full-size CPU check evicted the run's data
   from the page cache around 11:40 (data wait 0.10 → 0.29 s per update) and was stopped.
-- Step 13 running: every checkpoint on the screen, the 120-request panel and the three slices
-  (`step13/`); then step 14a (greedy depth calibration of the final drafter; sampled and agentic
-  slices at depths 2, 3, 4 for both drafters), then step 14 (fresh three-arm suites at the chosen
-  depths), then the owner's additions (retests, build W, round-state, per-slot).
+- Step 13, final export `ae6569f6…` (candidate-only against the runtime-v8 references, all outputs
+  exact): screen 57.64% vs 60.64%; 120-request panel 48.73% vs 53.35% (yardstick 46.2%, 35-minute
+  calibrated 47.7%); thinking-on slice 59.43% vs 66.21% (35-minute calibrated 56.3%); sampled
+  slice 47.28% vs 51.49%; agentic slice 79.29% vs 61.78%, completion 5/12 for both. Speed against
+  saved Baseline timing is descriptive and inconsistent across sessions (0.935 on the panel here
+  against 0.962 for a lower-acceptance drafter earlier), so only step 14 decides speed. The five
+  earlier checkpoints were re-exported (all verified) and are being read out (`step13b`); the
+  7K, 21K and 35K states were then retired through the store (exports kept;
+  `logs/state-retirement-long-run.json`).
+- Queue: `step13b` (curve) → `step14a` (depth calibration and neighbours) → `step14` (three-arm
+  release panels at the chosen depths) → `queue15` (second seeds of fast arithmetic and fused
+  storage) → `queue16` (build W: native shortlist and lower-bit tables on the final drafter).
+  Builds W and P are merged; F2 is running.
 
 Decided by the owner 2026-11-17 10:55: (1) add the vocabulary shortlist as a native feature
 (build W: runtime edit, shortlist stored with the drafter, applicable to Baseline for the fair
