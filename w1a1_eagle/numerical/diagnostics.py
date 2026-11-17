@@ -90,7 +90,7 @@ class Diagnostics:
             )
         self.windows = tuple(sorted(windows))
         self.specs = specs
-        self.cache = CaptureCache(byte_budget)
+        self.cache = CaptureCache(byte_budget, training.shape.hidden)
         self.groups = {
             name: Diagnostics(artifact(value, root), training, byte_budget, supplementary=True)
             for name, value in record(raw.get("groups", {})).items()

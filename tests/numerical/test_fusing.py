@@ -1,4 +1,5 @@
 import hashlib
+import math
 import tempfile
 import unittest
 from pathlib import Path
@@ -8,12 +9,14 @@ from unittest import mock
 import numpy as np
 import torch
 
+from tests.numerical.test_features import SAMPLE, gradual_record
 from tests.numerical.test_model import (
     LOADER_GEOMETRY,
     OMITTED_RECIPE,
     execute_leased,
     gguf_fixture,
     loader_fixture,
+    row_optimization,
     scenario_intent,
     table_optimization,
 )
@@ -23,7 +26,8 @@ from w1a1_eagle.contracts import Record, record, sequence
 from w1a1_eagle.data import Artifact
 from w1a1_eagle.intent import Intent
 from w1a1_eagle.lifecycle import Journal
-from w1a1_eagle.model import HE4
+from w1a1_eagle.model import HE4, named_projections
+from w1a1_eagle.numerical.calibration import BOUND_CANDIDATES, BOUND_DECADES, calibrate
 from w1a1_eagle.numerical.captures import load_capture
 from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.fusing import fuse
@@ -31,7 +35,7 @@ from w1a1_eagle.numerical.mixture import mixture
 from w1a1_eagle.numerical.weights import fusion_identity, load_he4
 from w1a1_eagle.numerical.worker import TensorWorker
 from w1a1_eagle.records import artifact, canonical, read, reference
-from w1a1_eagle.training import Budget, Grouping
+from w1a1_eagle.training import Budget, Features, Grouping, Sample
 
 BUDGET = 64 * 1024 * 1024
 HIDDEN = LOADER_GEOMETRY.hidden
@@ -42,7 +46,9 @@ def authenticated(path: Path) -> Artifact:
     return Artifact(path, hashlib.sha256(path.read_bytes()).hexdigest(), path.stat().st_size)
 
 
-def eight_tap_corpus(root: Path, prefix: str, lengths: tuple[int, ...], seed: int) -> Artifact:
+def eight_tap_corpus(
+    root: Path, prefix: str, lengths: tuple[int, ...], seed: int, role: str = "train"
+) -> Artifact:
     root.mkdir(parents=True)
     generator = np.random.default_rng(seed)
     records: list[Record] = []
@@ -81,7 +87,7 @@ def eight_tap_corpus(root: Path, prefix: str, lengths: tuple[int, ...], seed: in
                 "group": f"{prefix}-group-{index}",
                 "topic": None,
                 "aliases": [],
-                "role": "train",
+                "role": role,
                 "ancestry": "verified",
                 "prior_use": "unobserved",
                 "metadata": reference(authenticated(metadata)),
@@ -95,7 +101,7 @@ def eight_tap_corpus(root: Path, prefix: str, lengths: tuple[int, ...], seed: in
                 "schema": 1,
                 "target_sha256": "a" * 64,
                 "protected": ["heldout24"],
-                "expected_train": len(lengths),
+                "expected_train": len(lengths) if role == "train" else 0,
                 "records": records,
             }
         )
@@ -440,3 +446,139 @@ class TestFusedRun(unittest.TestCase):
             path.write_bytes(canonical(intent))
             with self.assertRaisesRegex(ValueError, "fusion table identities differ"):
                 execute_leased(path, root / "refused")
+
+
+def calibrated_values(model: HE4) -> dict[str, torch.Tensor]:
+    return {
+        f"{name}.{part}": getattr(projection, part).detach().clone()
+        for name, projection in named_projections(model)
+        for part in ("scale", "midpoint", "log_clip")
+    }
+
+
+def largest_relative(left: dict[str, torch.Tensor], right: dict[str, torch.Tensor]) -> float:
+    return max(
+        float((left[key] - right[key]).abs().max() / right[key].abs().max().clamp_min(1e-30))
+        for key in right
+    )
+
+
+def development(root: Path) -> Artifact:
+    dev = eight_tap_corpus(root / "dev", "dev", (48, 48, 48), 40, "dev")
+    exclusions = root / "exclusions.json"
+    exclusions.write_bytes(canonical({"identities": []}))
+    windows = [
+        {"id": f"dev-{index}", "anchor": anchor} for index in range(3) for anchor in range(7, 47)
+    ]
+    path = root / "diagnostics.json"
+    path.write_bytes(
+        canonical(
+            {
+                "schema": "training-diagnostics-v1",
+                "corpus": reference(dev),
+                "exclusions": reference(authenticated(exclusions)),
+                "windows": windows,
+            }
+        )
+    )
+    return authenticated(path)
+
+
+class TestFusedCalibration(unittest.TestCase):
+    def test_calibration_on_fused_input_matches_eight_tap_input(self) -> None:
+        torch.set_num_threads(1)
+        with tempfile.TemporaryDirectory(prefix="binary-fused-calibration-") as directory:
+            root = Path(directory)
+            source, vocabulary = gguf_fixture(root, LOADER_GEOMETRY, 5)
+            original = eight_tap_corpus(root / "original", "row", (24, 40, 32), 2)
+            manifests = {
+                dtype: artifact(
+                    fuse(
+                        specification(root, dtype, original, source, vocabulary, fused_dtype=dtype),
+                        root / dtype,
+                    )["corpus"],
+                    root,
+                )
+                for dtype in ("float32", "float16")
+            }
+            sample = Sample(3, 6, 5)
+
+            def run(manifest: Artifact, fused: bool) -> tuple[Record, dict[str, torch.Tensor]]:
+                target = model(source, vocabulary)
+                result = calibrate(
+                    target, corpus(manifest, fused), sample, Features(), 4, BUDGET, False
+                )
+                return result, calibrated_values(target)
+
+            plain, expected = run(original, False)
+            exact, exact_values = run(manifests["float32"], True)
+            rounded, rounded_values = run(manifests["float16"], True)
+            for result in (exact, rounded):
+                self.assertEqual(
+                    [record(row)["anchors"] for row in sequence(record(result["sample"])["rows"])],
+                    [record(row)["anchors"] for row in sequence(record(plain["sample"])["rows"])],
+                )
+            self.assertLess(largest_relative(exact_values, expected), 1e-5)
+            step = math.pow(10.0, BOUND_DECADES / BOUND_CANDIDATES)
+            for key, value in expected.items():
+                if not key.endswith("log_clip"):
+                    continue
+                ratio = float((rounded_values[key] - value).exp())
+                self.assertLess(abs(math.log(ratio)), math.log(step) * 1.05, key)
+                prefix = key.removesuffix("log_clip")
+                gap = largest_relative(
+                    {part: rounded_values[prefix + part] for part in ("scale", "midpoint")},
+                    {part: expected[prefix + part] for part in ("scale", "midpoint")},
+                )
+                self.assertLess(gap, 1e-2 if abs(ratio - 1.0) < 1e-3 else 5e-2, key)
+
+    def test_calibrated_fresh_intent_trains_on_a_fused_corpus(self) -> None:
+        torch.set_num_threads(1)
+        with tempfile.TemporaryDirectory(prefix="binary-fused-entry-") as directory:
+            root = Path(directory)
+            (root / "fixture").mkdir()
+            loaded = loader_fixture(root / "fixture")
+            source, vocabulary = gguf_fixture(root, LOADER_GEOMETRY, 5)
+            original = eight_tap_corpus(root / "original", "row", (24, 40, 32), 2)
+            fused = artifact(
+                fuse(specification(root, "fuse", original, source, vocabulary), root / "fused")[
+                    "corpus"
+                ],
+                root,
+            )
+            base = {key: value for key, value in loaded.intent.items() if key != "initialization"}
+            intent: Record = {
+                **base,
+                "source": reference(source),
+                "vocabulary": reference(vocabulary),
+                "corpus": reference(fused),
+                "corpus_format": "fused-corpus-v1",
+                "development": reference(development(root)),
+                "development_cadence_updates": 1,
+                "optimization": row_optimization(),
+                "budget": {"updates": 2, "wall_seconds": 120, "attempts": 3, "retries": 0},
+                "science_policy": {
+                    "id": "synthetic-fixture-only",
+                    "min_unique_positions": 16,
+                    "max_mean_visits": 100,
+                },
+                "calibration": {"sample": SAMPLE.encode()},
+                "gradual_precision": gradual_record(1, maximum=0.5),
+                "initial_export": True,
+                "features": Features(clip="fixed").encode(),
+            }
+            path = root / "intent.json"
+            path.write_bytes(canonical(intent))
+            admitted = execute_leased(path, root / "run")
+            events = list(Journal(root / "run").events())
+            kinds = [row.get("kind") for row in events]
+            for kind in (
+                "calibration",
+                "gradual-precision-start-check",
+                "initial-export",
+                "development-diagnostic",
+            ):
+                self.assertIn(kind, kinds)
+            states = Store(root / "run" / "states").latest(admitted.recipe)
+            assert states is not None
+            self.assertEqual(states.updates, 2)

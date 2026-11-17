@@ -192,7 +192,8 @@ binds a `fused-corpus-v1` manifest and `fused-mixture-v1` a mixture of them, so 
 differ from eight-tap corpora. The run refuses `trained_tables`, and refuses before the first
 update when the corpus fusion identity differs from the model's operand. Every record must
 carry the corpus's identity. Fused input skips only the fusion product; the rest of the
-update is unchanged. DEV diagnostics keep reading eight-tap captures. Storage is eight times
+update is unchanged. The calibrated start and the gradual-precision start check sample the
+same fused records and skip the same product. DEV diagnostics keep reading eight-tap captures. Storage is eight times
 smaller (the full TRAIN set: 441.6 GB of eight-tap FP16 against 55.2 GB fused). Fused
 storage adds one F16 rounding, so production use needs a matched training check.
 
