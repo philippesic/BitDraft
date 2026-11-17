@@ -226,8 +226,11 @@ Progress:
   `logs/state-retirement-long-run.json`).
 - Queue: `step13b` (curve) → `step14a` (depth calibration and neighbours) → `step14` (three-arm
   release panels at the chosen depths) → `queue15` (second seeds of fast arithmetic and fused
-  storage) → `queue16` (build W: native shortlist and lower-bit tables on the final drafter).
-  Builds W and P are merged; F2 is running.
+  storage) → `queue16` (build W: native shortlist and lower-bit tables on the final drafter) →
+  `queue17` (build F2: round-state map pilots, full map if forecast ≤ 75 min, calibrated arm with
+  round-state weighting) → `queue18` (build P: per-slot runtimes, default parity, timing
+  prototype, calibrated arm with per-slot rounding). Builds W, P and F2 are merged; P's two
+  runtimes are compiling on the CPU at low priority.
 
 Decided by the owner 2026-11-17 10:55: (1) add the vocabulary shortlist as a native feature
 (build W: runtime edit, shortlist stored with the drafter, applicable to Baseline for the fair
