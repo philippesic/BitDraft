@@ -114,6 +114,8 @@ Progress:
     loss 1.78 vs 2.31 at update 8,000. Clears the +1.0 bar: adopted pending its second seed (8102,
     with the control's second seed, queued first). Calibration becomes the base for the remaining
     add-ons: clip step and round-state weighting are rerun on top of it (`scripts/queue4b.sh`).
+  - Calibrated + gradual vs calibrated alone: 56.17% vs 56.56%, −0.39 (−1.16, +0.38): not adopted.
+    The four-run square ends with calibration alone.
   - Group 0 (`group0/0a-0g-notes.md`): the candidate's deficit is concentrated at real round starts
     (4.9 points there vs 2.3 over all positions); on TRAIN prompts it beats Baseline by 10.7 points
     (generalisation, not capacity, limits it); learned clip bounds stay near 1.0 while late-layer
