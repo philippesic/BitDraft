@@ -220,8 +220,14 @@ Progress:
   calibrated 47.7%); thinking-on slice 59.43% vs 66.21% (35-minute calibrated 56.3%); sampled
   slice 47.28% vs 51.49%; agentic slice 79.29% vs 61.78%, completion 5/12 for both. Speed against
   saved Baseline timing is descriptive and inconsistent across sessions (0.935 on the panel here
-  against 0.962 for a lower-acceptance drafter earlier), so only step 14 decides speed. The five
-  earlier checkpoints were re-exported (all verified) and are being read out (`step13b`); the
+  against 0.962 for a lower-acceptance drafter earlier), so only step 14 decides speed.
+  Learning curve (`closeout/learning-curve.json`; screen / 120-request panel / thinking / sampled /
+  agentic slice, %): 7K 49.8 / 41.8 / 52.5 / 40.4 / 70.9; 14K 52.2 / 43.6 / 54.1 / 42.9 / 73.7;
+  21K 54.0 / 45.7 / 56.3 / 44.4 / 76.0; 28K 55.8 / 47.2 / 57.2 / 46.0 / 77.9; 35K 57.3 / 48.4 /
+  59.1 / 46.9 / 79.3; 42K 57.6 / 48.7 / 59.4 / 47.3 / 79.3; all outputs exact. It rises about 1.5–2
+  points per 7,000 updates and flattens only where the cosine step reaches its tail, at about
+  0.67 passes of groups; mid-run points are not annealed and understate a run stopped there. The
+  five earlier checkpoints were re-exported (all verified) and read out (`step13b`); the
   7K, 21K and 35K states were then retired through the store (exports kept;
   `logs/state-retirement-long-run.json`).
 - Queue: `step13b` (curve) → `step14a` (depth calibration and neighbours) → `step14` (three-arm
