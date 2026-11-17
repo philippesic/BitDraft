@@ -108,7 +108,12 @@ Progress:
     would change no implementation decision (the extras cost almost nothing at serving): skipped.
   - Gradual precision: 49.11% vs 48.95%, +0.16 (−0.46, +0.83): not adopted (tie keeps control).
   - Calibrated probe (fixed): untrained DEV first-slot top-1 17.5% vs 5%, screen 9.0% vs 2.1%;
-    after one update 52.5% / 21.7% vs 9% / 4.7%. The full calibrated arm is training.
+    after one update 52.5% / 21.7% vs 9% / 4.7%.
+  - Calibrated start (`g3v2-calibrated`, source `4bb8231d…`): 56.56% vs 48.95%, +7.61 points
+    (+6.65, +8.60); DEV prefix survival 57.5% vs 55.8%, thinking-on windows 60% vs 50%, training
+    loss 1.78 vs 2.31 at update 8,000. Clears the +1.0 bar: adopted pending its second seed (8102,
+    with the control's second seed, queued first). Calibration becomes the base for the remaining
+    add-ons: clip step and round-state weighting are rerun on top of it (`scripts/queue4b.sh`).
   - Group 0 (`group0/0a-0g-notes.md`): the candidate's deficit is concentrated at real round starts
     (4.9 points there vs 2.3 over all positions); on TRAIN prompts it beats Baseline by 10.7 points
     (generalisation, not capacity, limits it); learned clip bounds stay near 1.0 while late-layer
