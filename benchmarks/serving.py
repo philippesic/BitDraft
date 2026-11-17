@@ -8,7 +8,7 @@ from typing import Iterator, cast
 
 from benchmarks.comparison import Arm, Comparison
 from benchmarks.measurement import now, pause, port_number, ready
-from benchmarks.runtime_policy import arguments
+from benchmarks.runtime_policy import DEFAULT_SPECULATION, arguments
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.config import native_environment
 from w1a1_eagle.contracts import Record
@@ -26,6 +26,7 @@ def server_arguments(spec: Comparison, arm: Arm, port: int) -> list[str]:
         spec.context,
         spec.depth_of(arm.name),
         port,
+        speculation=spec.speculation_of(arm.name),
     )
 
 
@@ -42,6 +43,7 @@ def session(
         cell,
         managed_group,
         consistent,
+        speculation=spec.speculation_of(arm.name),
     ) as port:
         yield port
 
@@ -57,11 +59,19 @@ def native_server(
     managed_group: bool = False,
     consistent: bool = True,
     parallel: int = 1,
+    speculation: str = DEFAULT_SPECULATION,
 ) -> Iterator[int]:
     port = port_number()
     drafter = arm.drafter if arm else None
     argv = arguments(
-        binary.path, target.path, drafter.path if drafter else None, context, depth, port, parallel
+        binary.path,
+        target.path,
+        drafter.path if drafter else None,
+        context,
+        depth,
+        port,
+        parallel,
+        speculation,
     )
     environment = native_environment(binary.path.parent)
     if not consistent:

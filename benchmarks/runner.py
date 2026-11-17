@@ -134,7 +134,12 @@ def compare_leased(
                         response = request(port, "completion", query)
                         elapsed = now() - began
                         cell.atomic(cell.root / f"{index}-response.json", canonical(response))
-                        verify_generation(response, query, arm.drafter is not None)
+                        verify_generation(
+                            response,
+                            query,
+                            arm.drafter is not None,
+                            spec.speculation_of(arm.name),
+                        )
                         if not valid_sample(response, integer(task["output_cap"])):
                             raise ValueError("invalid native tokens or stopping")
                         responses.append(response)

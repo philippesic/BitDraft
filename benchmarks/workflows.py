@@ -7,7 +7,13 @@ from benchmarks.comparison import Comparison
 from benchmarks.measurement import now, request
 from benchmarks.metrics import server_seconds, totals
 from benchmarks.runner import native_counts, reconcile, signature, valid_sample, verify_generation
-from benchmarks.runtime_policy import LIVE_SECONDS, LIVE_TIERS, LIVE_TURNS, payload
+from benchmarks.runtime_policy import (
+    DEFAULT_SPECULATION,
+    LIVE_SECONDS,
+    LIVE_TIERS,
+    LIVE_TURNS,
+    payload,
+)
 from benchmarks.sandbox import TOOLS, Sandbox
 from benchmarks.serving import session
 from benchmarks.statistics import paired, partitions
@@ -116,7 +122,12 @@ def live_leased(
                         task = spec.tasks[0]
                         sandbox = Sandbox(warm.root / "sandbox", fixtures[string(task["id"])])
                         row, transcript, generated = execute(
-                            port, task, sandbox, spec.context, arm.drafter is not None
+                            port,
+                            task,
+                            sandbox,
+                            spec.context,
+                            arm.drafter is not None,
+                            spec.speculation_of(arm.name),
                         )
                         responses.extend(generated)
                         warm.atomic(
@@ -135,7 +146,12 @@ def live_leased(
                         task_store = Store(cell.root / name)
                         sandbox = Sandbox(task_store.root / "sandbox", fixtures[name])
                         row, transcript, generated = execute(
-                            port, task, sandbox, spec.context, arm.drafter is not None
+                            port,
+                            task,
+                            sandbox,
+                            spec.context,
+                            arm.drafter is not None,
+                            spec.speculation_of(arm.name),
                         )
                         responses.extend(generated)
                         task_store.atomic(
@@ -269,7 +285,12 @@ def live_leased(
 
 
 def execute(
-    port: int, task: Record, sandbox: Sandbox, context: int, speculative: bool
+    port: int,
+    task: Record,
+    sandbox: Sandbox,
+    context: int,
+    speculative: bool,
+    speculation: str = DEFAULT_SPECULATION,
 ) -> tuple[Record, list[Record], list[Record]]:
     messages = [dict(record(value)) for value in sequence(task["messages"])]
     responses: list[Record] = []
@@ -308,7 +329,7 @@ def execute(
         request_seconds = now() - start
         model_seconds += request_seconds
         responses.append(response)
-        verify_generation(response, query, speculative)
+        verify_generation(response, query, speculative, speculation)
         if not valid_sample(response, integer(task["output_cap"])):
             raise ValueError("live native response has invalid tokens or stopping")
         content = response["content"]

@@ -1,6 +1,7 @@
 import re
 from typing import cast
 
+from benchmarks.runtime_policy import DEFAULT_SPECULATION
 from w1a1_eagle.contracts import Record, integer, number, record, sequence, string
 
 
@@ -23,7 +24,9 @@ def valid_sample(response: Record, cap: int) -> bool:
     )
 
 
-def verify_generation(response: Record, payload: Record, speculative: bool) -> None:
+def verify_generation(
+    response: Record, payload: Record, speculative: bool, speculation: str = DEFAULT_SPECULATION
+) -> None:
     settings = record(response["generation_settings"])
     for key in ("seed", "top_k", "n_predict"):
         if integer(settings[key]) != integer(payload[key]):
@@ -46,7 +49,7 @@ def verify_generation(response: Record, payload: Record, speculative: bool) -> N
     ):
         raise ValueError("unrequested native penalty or dynamic temperature")
     modes = string(settings["speculative.types"])
-    if ("draft-dflash" in modes) != speculative:
+    if (speculation in modes) != speculative:
         raise ValueError("actual native speculative mode differs from the selected arm")
 
 
