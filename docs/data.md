@@ -108,6 +108,9 @@ under the capture's arithmetic, and windows may start at any turn position, incl
 after a disagreement. Turns whose context the final rendering changes (for example a
 later user message removes the empty thinking block) are not spans. Session records set
 `prompt_tokens` to the first span's prompt length and have no generated tokens.
+Long-project session records may reach 32,768 tokens when the selection raises its
+session limit; at eight FP16 taps that is about 41 KB per context token, so one 25K-token
+record holds about 1 GB of features for a few hundred labels.
 
 The reader handles modern eight-tap F32 and explicitly declared FP16 storage and optional pinned int32 NPY copies.
 It authenticates files before use, keeps features in their stored precision, bounds how many

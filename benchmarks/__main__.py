@@ -47,6 +47,8 @@ def main() -> int:
         "verify-greedy",
         "select-supplement",
         "generate-sessions",
+        "plan-long-projects",
+        "prepare-long-projects",
         "select-expansion",
         "profile-native",
         "prepare-project-workflows",
@@ -76,6 +78,8 @@ def main() -> int:
                 "admit-bank": "bank",
                 "select-supplement": "bank",
                 "generate-sessions": "datasets",
+                "plan-long-projects": "datasets",
+                "prepare-long-projects": "datasets",
                 "select-expansion": "bank",
                 "native-build": "native",
                 "build-kernel-benchmark": "native",
@@ -124,6 +128,7 @@ def main() -> int:
                     "curate",
                     "admit-bank",
                     "select-expansion",
+                    "prepare-long-projects",
                     "prepare-replays",
                     "capture",
                     "evaluate",
@@ -227,6 +232,14 @@ def main() -> int:
             from benchmarks.sessions import generate
 
             result = generate(args.input, args.output)
+        elif args.command == "plan-long-projects":
+            from benchmarks.long_projects import plan as plan_long_projects
+
+            result = plan_long_projects(args.input, args.output)
+        elif args.command == "prepare-long-projects":
+            from benchmarks.long_projects import prepare as prepare_long_projects
+
+            result = prepare_long_projects(args.input, args.output)
         elif args.command == "select-expansion":
             from benchmarks.expansion import expand
 

@@ -1,3 +1,4 @@
+import hashlib
 import heapq
 from collections import Counter
 from pathlib import Path
@@ -19,6 +20,17 @@ ADAPTERS: dict[str, Callable[[Path], Iterator[Record]]] = {
     "oasst2": oasst2,
 }
 MAXIMUM_INPUT = 16384
+LONG_SESSION_INPUT = 32768
+OPTIONAL = frozenset(
+    {
+        "session_input_limit",
+        "thinking_quotas",
+        "thinking_output_cap",
+        "excluded_mixtures",
+        "excluded_workloads",
+        "additional_exclusions",
+    }
+)
 
 
 def quota_key(row: Record) -> str:
@@ -50,8 +62,45 @@ def calls(message: Record) -> list[object]:
     ]
 
 
+def session_band(tokens: int) -> int:
+    return length_band(tokens) if tokens <= MAXIMUM_INPUT else 4
+
+
+def mixture_names(mixture: Path) -> set[str]:
+    values: set[str] = set()
+    for value in sequence(read(mixture)["components"]):
+        component = record(value)
+        if component["kind"] != "corpus-v1":
+            raise ValueError("excluded mixtures support corpus-v1 components only")
+        corpus = artifact(component["source"], mixture.parent)
+        corpus.verify()
+        for entry in sequence(read(corpus.path, 256 * 1024 * 1024)["records"]):
+            row = record(entry)
+            values.update((string(row["id"]), string(row["group"])))
+            values.update(string(alias) for alias in sequence(row.get("aliases", [])))
+    return values
+
+
+def workload_names(workload: Path) -> set[str]:
+    values: set[str] = set()
+    for value in sequence(read(workload, 64 * 1024 * 1024)["tasks"]):
+        task = record(value)
+        values.update((string(task["id"]), string(task["group"])))
+        ancestry = record(task.get("ancestry", {}))
+        if "source_key" in ancestry:
+            values.add(string(ancestry["source_key"]))
+        values.update(string(alias) for alias in sequence(ancestry.get("aliases", [])))
+        if "messages" in task:
+            values.add(hashlib.sha256(canonical(task["messages"])).hexdigest())
+    return values
+
+
 def session_row(
-    task: Record, transcript: Record, tokenizer: Tokenizer, end_token: int
+    task: Record,
+    transcript: Record,
+    tokenizer: Tokenizer,
+    end_token: int,
+    limit: int = MAXIMUM_INPUT,
 ) -> tuple[Record | None, Counter[str], str]:
     stats: Counter[str] = Counter()
     messages = [record(value) for value in sequence(transcript["messages"])]
@@ -86,7 +135,7 @@ def session_row(
             stats["skipped_unterminated"] += 1
             continue
         end = tokens.index(end_token, len(prompt))
-        if end + 1 > MAXIMUM_INPUT:
+        if end + 1 > limit:
             stats["skipped_context_limit"] += 1
             break
         if end == len(prompt):
@@ -124,7 +173,7 @@ def session_row(
         "messages": messages,
         "tools": TOOLS,
         "input_tokens": length,
-        "length_band": length_band(length),
+        "length_band": session_band(length),
         "token_sha256": identity({"tokens": list(kept)}),
         "rendered_sha256": identity({"text": rendered}),
         "prompt_prefix_sha256": identity({"tokens": list(kept[: spans[0][0] + 1])}),
@@ -138,7 +187,7 @@ def session_row(
 def expand(specification: Path, output: Path) -> Record:
     raw = read(specification)
     if (
-        set(raw)
+        set(raw) - OPTIONAL
         != {
             "schema",
             "pool",
@@ -180,19 +229,46 @@ def expand(specification: Path, output: Path) -> Record:
         ref.verify()
         for row in json_rows(ref.path):
             excluded |= names(row)
+    for value in sequence(raw.get("additional_exclusions", [])):
+        ref = artifact(value, root)
+        ref.verify()
+        protected.update(string(name) for name in sequence(read(ref.path)["identities"]))
+    for value in sequence(raw.get("excluded_workloads", [])):
+        ref = artifact(value, root)
+        ref.verify()
+        protected |= workload_names(ref.path)
+    for value in sequence(raw.get("excluded_mixtures", [])):
+        ref = artifact(value, root)
+        ref.verify()
+        excluded |= mixture_names(ref.path)
     quotas = {string(key): integer(value) for key, value in record(raw["quotas"]).items()}
-    if not quotas or any(value < 1 for value in quotas.values()):
+    thinking = {
+        string(key): integer(value) for key, value in record(raw.get("thinking_quotas", {})).items()
+    }
+    if (
+        not quotas
+        or any(value < 1 for value in quotas.values())
+        or any(value < 1 for value in thinking.values())
+        or ("thinking_quotas" in raw) != ("thinking_output_cap" in raw)
+        or "thinking_quotas" in raw
+        and not thinking
+    ):
         raise ValueError("positive explicit expansion quotas required")
     seed = integer(raw["seed"])
     cap = integer(raw["output_cap"])
-    if not 1 <= cap <= 2048:
+    thinking_cap = integer(raw.get("thinking_output_cap", cap))
+    session_limit = integer(raw.get("session_input_limit", MAXIMUM_INPUT))
+    if not 1 <= cap <= 2048 or not 1 <= thinking_cap <= 2048:
         raise ValueError("capture output cap must stay within the native bound")
+    if not MAXIMUM_INPUT <= session_limit <= LONG_SESSION_INPUT:
+        raise ValueError("session input limit must stay between 16384 and 32768 tokens")
     store = Store(output)
     code_root = Path(__file__).resolve().parents[1]
     code = source_identity(code_root)
     freeze_source(code_root, store.root / "sources", code, 0)
     store.atomic(store.root / "specification.json", canonical(raw))
     heaps: dict[str, list[tuple[str, int, Record]]] = {key: [] for key in quotas}
+    thinking_heaps: dict[str, list[tuple[str, int, Record]]] = {key: [] for key in thinking}
     rejected: Counter[str] = Counter()
     order = 0
 
@@ -207,21 +283,28 @@ def expand(specification: Path, output: Path) -> Record:
         if names(row) & excluded:
             rejected["base_bank_identity"] += 1
             return
-        key = matching(quota_key(row), quotas)
-        if key is None:
-            return
-        rank = identity({"seed": seed, "id": row["id"]})
-        heap = heaps[key]
-        order += 1
-        if len(heap) < 2 * quotas[key] + 64:
-            heapq.heappush(heap, (rank_inverse(rank), -order, row))
-        elif rank_inverse(rank) > heap[0][0]:
-            heapq.heapreplace(heap, (rank_inverse(rank), -order, row))
+        rank = rank_inverse(identity({"seed": seed, "id": row["id"]}))
+        for selected_quotas, selected_heaps in (
+            (quotas, heaps),
+            ({} if "supervised_spans" in row else thinking, thinking_heaps),
+        ):
+            key = matching(quota_key(row), selected_quotas)
+            if key is None:
+                continue
+            heap = selected_heaps[key]
+            order += 1
+            if len(heap) < 2 * selected_quotas[key] + 64:
+                heapq.heappush(heap, (rank, -order, row))
+            elif rank > heap[0][0]:
+                heapq.heapreplace(heap, (rank, -order, row))
 
     tokenizer = Tokenizer(binary.path, target.path, store.root / "tokenizer.log")
     try:
         if tokenizer.template_sha256 != previous["template_sha256"]:
             raise ValueError("expansion tokenizer template differs from the curated pool")
+        probe: list[Record] = [{"role": "user", "content": "probe"}]
+        if thinking and tokenizer.render(probe, [], thinking=True) == tokenizer.render(probe, []):
+            raise ValueError("tokenizer helper ignores thinking; use a thinking-capable helper")
         for row in json_rows(pool.path):
             offer(row)
         source_records: list[Record] = []
@@ -297,7 +380,7 @@ def expand(specification: Path, output: Path) -> Record:
                 transcript = read(transcript_ref.path, 64 * 1024 * 1024)
                 task = tasks[string(transcript["id"])]
                 converted_row, stats, rendered = session_row(
-                    task, transcript, tokenizer, end_token[0]
+                    task, transcript, tokenizer, end_token[0], session_limit
                 )
                 session_stats.update(stats)
                 if converted_row is None:
@@ -313,18 +396,47 @@ def expand(specification: Path, output: Path) -> Record:
         groups: set[str] = set()
         fingerprints: set[str] = set()
         shortfall: dict[str, int] = {}
-        for key in sorted(quotas):
-            ranked = sorted(heaps[key], reverse=True)
+        for key, enabled in [(key, False) for key in sorted(quotas)] + [
+            (key, True) for key in sorted(thinking)
+        ]:
+            limit = thinking[key] if enabled else quotas[key]
+            ranked = sorted((thinking_heaps if enabled else heaps)[key], reverse=True)
             chosen = 0
             for _, _, row in ranked:
-                if chosen == quotas[key]:
+                if chosen == limit:
                     break
                 group = string(row["group"])
                 fingerprint = string(row.get("prompt_prefix_sha256", row["token_sha256"]))
                 if group in groups or fingerprint in fingerprints:
                     rejected["duplicate_group_or_prompt"] += 1
                     continue
-                if "supervised_spans" not in row:
+                if enabled:
+                    rendered = tokenizer.render(
+                        [record(v) for v in sequence(row["messages"])],
+                        [record(v) for v in sequence(row["tools"])],
+                        thinking=True,
+                    )
+                    tokens = tokenizer.tokenize(rendered)
+                    if not 1 <= len(tokens) <= MAXIMUM_INPUT:
+                        rejected["thinking_length"] += 1
+                        continue
+                    if source_names(row, rendered) & protected:
+                        rejected["protected_content_identity"] += 1
+                        continue
+                    fingerprint = identity({"tokens": list(tokens)})
+                    if fingerprint in fingerprints:
+                        rejected["duplicate_group_or_prompt"] += 1
+                        continue
+                    row = dict(row) | {
+                        "thinking": True,
+                        "input_tokens": len(tokens),
+                        "length_band": length_band(len(tokens)),
+                        "token_sha256": fingerprint,
+                        "rendered_sha256": identity({"text": rendered}),
+                        "template_sha256": tokenizer.template_sha256,
+                        "output_cap": thinking_cap,
+                    }
+                elif "supervised_spans" not in row:
                     rendered = tokenizer.render(
                         [record(v) for v in sequence(row["messages"])],
                         [record(v) for v in sequence(row["tools"])],
@@ -339,13 +451,14 @@ def expand(specification: Path, output: Path) -> Record:
                         rejected["protected_content_identity"] += 1
                         continue
                 row = dict(row)
-                row["output_cap"] = 0 if "supervised_spans" in row else cap
+                if not enabled:
+                    row["output_cap"] = 0 if "supervised_spans" in row else cap
                 groups.add(group)
                 fingerprints.add(fingerprint)
                 selected.append(row)
                 chosen += 1
-            if chosen < quotas[key]:
-                shortfall[key] = quotas[key] - chosen
+            if chosen < limit:
+                shortfall[("thinking:" if enabled else "") + key] = limit - chosen
         if shortfall:
             raise ValueError(
                 "expansion candidates cannot fill quotas: " + canonical(shortfall).decode()
@@ -396,6 +509,25 @@ def expand(specification: Path, output: Path) -> Record:
         "code_sha256": code,
         "scope": "TRAIN-only expansion; exact base-bank, protected and heldout identities and token prefixes excluded; semantic review remains required",
     }
+    if thinking:
+        result_record["thinking"] = {
+            "prompts": sum(row.get("thinking") is True for row in selected),
+            "output_cap": thinking_cap,
+            "strata": dict(
+                sorted(
+                    Counter(
+                        quota_key(row) for row in selected if row.get("thinking") is True
+                    ).items()
+                )
+            ),
+        }
+    if any(key in raw for key in OPTIONAL - {"thinking_quotas", "thinking_output_cap"}):
+        result_record["exclusion_inputs"] = {
+            key: raw[key]
+            for key in ("excluded_mixtures", "excluded_workloads", "additional_exclusions")
+            if key in raw
+        }
+        result_record["session_input_limit"] = session_limit
     store.atomic(store.root / "result.json", canonical(result_record))
     return result_record
 

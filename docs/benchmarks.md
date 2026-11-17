@@ -19,6 +19,7 @@ explicit paths and the shared saved-reference registry.
 | `native-build`, `native-helpers` | Authenticated runtime/helper builds |
 | `curate`, `admit-bank`, `select-supplement`, `select-expansion` | Role-safe prompt preparation/selection |
 | `generate-sessions` | Target-only greedy TRAIN tool sessions for session captures |
+| `plan-long-projects`, `prepare-long-projects` | Long-context TRAIN session tasks from full repository snapshots (CPU) |
 | `prepare-project-workflows`, `prepare-replays`, `prepare-panels` | Project controls, measured histories, live/harness inputs |
 | `capture`, `evaluate` | Teacher features; matched teacher-forced DEV loss |
 | `compare`, `live` | Isolated native requests; executing tool episodes |
@@ -263,6 +264,37 @@ curated pool, new public sources (`math`, `oasst2`) and session transcripts, con
 session into one [session record](data.md#session-records). It excludes base-bank, protected
 and heldout identities and token prefixes, fills `source|subtype|band` quotas in seeded
 order, rechecks tokenization and forecasts maximum FP16 features against a declared ceiling.
+
+Long-project sessions start at 11–20K tokens of context, as the agentic suite does, and
+come from CommitPackFT single-file commits placed inside their full GitHub snapshot.
+`plan-long-projects` ranks the source's repository families in seeded order and keeps one
+permissive, parseable change per family. It excludes the DEV agentic projects and the
+Boltons confirmation project by repository family, renamed or prefixed names and upstream
+commits from the agentic definition and its lineage audit, plus curated-pool repositories,
+existing TRAIN session projects and DEV-marked groups. Snapshots at the pinned commit are
+fetched outside product code into a manifest of URL, commit and archive SHA256.
+`prepare-long-projects` (CPU tokenizer only) reads each authenticated archive and refuses
+it unless every root licence file is MIT, BSD, Apache-2.0 or ISC text, the snapshot holds
+the commit's new file exactly, no workspace path names a protected project and no file
+matches protected upstream code (13-token shingles, at least twelve shared and 35%
+containment, or a whitespace-insensitive exact copy). The workspace keeps up to the declared
+number of parseable Python files nearest the changed file, with the changed file at its
+pre-commit contents. The user message gives whole relevant files (direct imports, then
+importers, then nearest files, the changed file last) followed by the commit message,
+trimmed to the declared token band. The check compiles every file and requires the changed
+file to differ. `generate-sessions` then runs these tasks when its specification names the
+preparation result in the optional `prepared` field; a specification without it builds
+the original CommitPackFT projects unchanged.
+
+`select-expansion` takes these optional fields; omitting all of them keeps the original
+selection. `thinking_quotas` (with `thinking_output_cap`) selects pool or source prompts
+under the same quota keys and renders them with thinking enabled: the row carries
+`thinking: true` and the enabled template's token identity, so `capture` writes it as a
+thinking-on record. `session_input_limit` (16,384 to 32,768) keeps session turns beyond
+16K tokens; such records use length band 4. `excluded_mixtures` excludes every record
+identity, group and alias of corpus-v1 mixture components, `excluded_workloads` the
+task identities of comparison workloads, and `additional_exclusions` further protected
+identity lists such as the confirmation reserve's protection file.
 
 Capture resumes the exact specification in its existing output: authenticate completed
 `progress.json` records and skip their IDs. Keep incomplete attempt directories and
