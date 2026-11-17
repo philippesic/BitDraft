@@ -133,9 +133,10 @@ Progress:
     adopted. Calibration already removes clipping (final clipped input shares 0.0–0.1% in every
     projection, against up to 57.5% in the uncalibrated control's last down projection).
   - Per-slot rounding (triggered on the uncalibrated yardstick, needs runtime support first):
-    decided by a ceiling check on the calibrated drafter (`queue11`): if removing input rounding
-    entirely leaves DEV unchanged, as it did on the yardstick, finer per-slot rounding cannot help
-    and it is skipped.
+    ceiling check on the calibrated drafter (`runs/round-diagnostics/calibrated-dev/`): removing
+    input rounding entirely leaves DEV unchanged (prefix survival through 3: 60.0% both ways;
+    first-slot top-1 88.3% vs 89.2%, one window), as on the yardstick, so finer per-slot rounding
+    cannot help: skipped. Gains 1 / midpoints 0 also stay within one window there.
   - Round-state weighting (triggered by 0b; build F merged): the map pilot measured 323 simulated
     proposals per second (120 rows, 55,306 proposals; round starts 36.7% of windows), so the full
     TRAIN map would take 3.4 GPU hours and one run's restricted map about 2.6; the build's
