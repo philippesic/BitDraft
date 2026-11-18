@@ -289,7 +289,13 @@ Progress:
   the default candidate completed on the new runtime. Build P2 (Opus, `05b97ef7`, merged, gate
   passed) admits a finite positive anchor bound (with a rounding mode set) and a period that
   divides the rows, and makes the CPU reference refuse anchor nodes. Runtimes rebuild as
-  `runtime-v8-slotround-3` from source `bf59bf3a…`; `queue18c` reruns parity, timing and the arm.
+  `runtime-v8-slotround-3` from source `bf59bf3a…`; `queue18c` reran parity, timing and the arm.
+  Parity PASS (target, Baseline and the calibrated control identical to runtime-v8; an anchor
+  bound equal to the shared bound identical to the control; a halved anchor bound changes drafts).
+  Timing: the per-slot path costs 0.002 ms per short round and 0.046 ms per long round.
+  Calibrated + per-slot rounding: 55.62% vs 56.56%, −0.94 (−2.14, +0.12): not adopted
+  (`group3/slotround-vs-calibrated.json`); its states were retired (receipt
+  `logs/state-retirement-20261117g.json`).
 
 Decided by the owner 2026-11-17 10:55: (1) add the vocabulary shortlist as a native feature
 (build W: runtime edit, shortlist stored with the drafter, applicable to Baseline for the fair
@@ -689,7 +695,6 @@ the [test list](speedup-test-list.md) that acceptance work continues from the be
 
 ## Next
 
-`queue18c` (per-slot parity, timing, calibrated arm; verdict about 21:15) runs now, then
-`queue19c` (fused retry: conversion, seed-8102 arm, pooled verdict; about 22:45). A second fused
+`queue19c` (fused retry: conversion, seed-8102 arm, pooled verdict; about 21:30) runs now. A second fused
 crash ends the retest as not demonstrated. Then record both verdicts, finish the closeout
 (`results/release-candidate-screen/`, FINDINGS, docs, artifact disposition) and delete this file.
