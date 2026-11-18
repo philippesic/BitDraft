@@ -1976,6 +1976,38 @@ void ggml_cuda_w1ax_pack(ggml_backend_cuda_context & ctx, ggml_tensor * dst) {
         }
 """,
         ),
+        (
+            "ggml/src/ggml-impl.h",
+            r"""        for (int i = 2; i < GGML_MAX_SRC; ++i) {
+            if (op->src[i] != NULL) return false;
+        }
+        for (uint32_t i = 3; i < GGML_MAX_OP_PARAMS/sizeof(int32_t); ++i) {
+            if (ggml_get_op_params_i32(op, i) != 0) return false;
+        }
+""",
+            r"""        for (int i = 2; i < GGML_MAX_SRC; ++i) {
+            if (op->src[i] != NULL) return false;
+        }
+        float anchor;
+        memcpy(&anchor, (const char *) op->op_params + 12, sizeof(anchor));
+        const int32_t period = ggml_get_op_params_i32(op, 4);
+        if (ggml_get_op_params_i32(op, 3) != 0 && (ggml_get_op_params_i32(op, 1) == 0 || !isfinite(anchor) || !(anchor > 0.0f))) return false;
+        if (period != 0 && (ggml_get_op_params_i32(op, 3) == 0 || period < 0 || a->ne[1] % period != 0)) return false;
+        for (uint32_t i = 5; i < GGML_MAX_OP_PARAMS/sizeof(int32_t); ++i) {
+            if (ggml_get_op_params_i32(op, i) != 0) return false;
+        }
+""",
+        ),
+        (
+            "ggml/src/ggml-cpu/ggml-cpu.c",
+            r"""    GGML_ASSERT(ggml_w1ax_is_supported(dst));
+    GGML_ASSERT(fegetround() == FE_TONEAREST);
+""",
+            r"""    GGML_ASSERT(ggml_w1ax_is_supported(dst));
+    GGML_ASSERT(ggml_get_op_params_i32(dst, 3) == 0);
+    GGML_ASSERT(fegetround() == FE_TONEAREST);
+""",
+        ),
     ),
     "vocabulary_shortlist_v1": (
         (

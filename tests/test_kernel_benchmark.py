@@ -121,8 +121,10 @@ def test_slot_rounding_edit_keeps_the_shared_bound_path_and_applies_once(
     assert {relative for relative, _, _ in edits} == {
         "src/models/dflash.cpp",
         "ggml/src/ggml-cuda/w1a1.cu",
+        "ggml/src/ggml-impl.h",
+        "ggml/src/ggml-cpu/ggml-cpu.c",
     }
-    loader, pack, match, kernels, launch = edits
+    loader, pack, match, kernels, launch, admission, reference = edits
     assert loader[2].startswith(loader[1]) and ".w1ax.clip_anchor" in loader[2]
     assert "GGUF_TYPE_FLOAT32" in loader[2] and "!mode" in loader[2]
     assert pack[2].startswith(pack[1]) and "ubatch.n_seqs_unq" in pack[2]
@@ -132,8 +134,12 @@ def test_slot_rounding_edit_keeps_the_shared_bound_path_and_applies_once(
     assert "token%period==0)?anchor:clip" in kernels[2]
     assert launch[2].endswith("} else {\n" + launch[1] + "        }\n")
     assert "if(anchor>0) {" in launch[2]
+    assert "uint32_t i = 3;" in admission[1] and "uint32_t i = 5;" in admission[2]
+    assert reference[2] == reference[1].replace(
+        "(dst));\n", "(dst));\n    GGML_ASSERT(ggml_get_op_params_i32(dst, 3) == 0);\n"
+    )
     source = tmp_path / "source"
-    for relative in ("src/models/dflash.cpp", "ggml/src/ggml-cuda/w1a1.cu"):
+    for relative in {relative for relative, _, _ in edits}:
         path = source / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(
@@ -144,6 +150,91 @@ def test_slot_rounding_edit_keeps_the_shared_bound_path_and_applies_once(
     assert edited.count("exec_tiled_finish<<<") == 1 and edited.count("exec_slot_finish<<<") == 1
     with pytest.raises(ValueError, match="does not match"):
         apply_source_edits(source, "slot_rounding_v1")
+
+
+SLOT_ADMISSION_HARNESS = """#include <math.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+#define GGML_MAX_SRC 10
+#define GGML_MAX_OP_PARAMS 64
+struct ggml_tensor {
+    int32_t op_params[GGML_MAX_OP_PARAMS / sizeof(int32_t)];
+    int64_t ne[4];
+    struct ggml_tensor * src[GGML_MAX_SRC];
+};
+static int32_t ggml_get_op_params_i32(const struct ggml_tensor * tensor, uint32_t i) {
+    return tensor->op_params[i];
+}
+static bool admits(const struct ggml_tensor * op) {
+    const struct ggml_tensor * a = op->src[0];
+ADMISSION
+    return true;
+}
+int main(void) {
+    long long rows;
+    int mode, anchor, period, extra;
+    while (scanf("%lld %d %d %d %d", &rows, &mode, &anchor, &period, &extra) == 5) {
+        struct ggml_tensor a, op;
+        memset(&a, 0, sizeof(a));
+        memset(&op, 0, sizeof(op));
+        a.ne[1] = rows;
+        op.src[0] = &a;
+        op.op_params[0] = 4;
+        op.op_params[1] = mode;
+        op.op_params[2] = 0x3f800000;
+        op.op_params[3] = anchor;
+        op.op_params[4] = period;
+        op.op_params[5] = extra;
+        printf("%d\\n", admits(&op) ? 1 : 0);
+    }
+    return 0;
+}
+"""
+
+
+def float_bits(value: float) -> int:
+    return int.from_bytes(struct.pack("<f", value), "little", signed=True)
+
+
+def test_slot_rounding_admission_accepts_only_the_anchor_layout(tmp_path: Path) -> None:
+    import subprocess
+
+    from benchmarks.runtime_edits import SOURCE_EDITS
+
+    admission = SOURCE_EDITS["slot_rounding_v1"][5]
+    assert admission[0] == "ggml/src/ggml-impl.h"
+    program = tmp_path / "admission.c"
+    program.write_text(SLOT_ADMISSION_HARNESS.replace("ADMISSION\n", admission[2]))
+    binary = tmp_path / "admission"
+    subprocess.run(
+        ["cc", "-std=c11", "-Wall", "-Werror", str(program), "-o", str(binary)], check=True
+    )
+    anchor = float_bits(0.75)
+    cases = [
+        ((8, 0, 0, 0, 0), 1),
+        ((8, 1, 0, 0, 0), 1),
+        ((8, 1, anchor, 4, 0), 1),
+        ((8, 2, anchor, 8, 0), 1),
+        ((8, 1, anchor, 1, 0), 1),
+        ((7, 1, anchor, 0, 0), 1),
+        ((8, 0, anchor, 4, 0), 0),
+        ((8, 0, anchor, 0, 0), 0),
+        ((8, 1, 0, 4, 0), 0),
+        ((8, 1, anchor, -4, 0), 0),
+        ((8, 1, anchor, 3, 0), 0),
+        ((8, 1, anchor, 16, 0), 0),
+        ((8, 1, float_bits(-0.75), 4, 0), 0),
+        ((8, 1, float_bits(-0.0), 0, 0), 0),
+        ((8, 1, float_bits(math.inf), 4, 0), 0),
+        ((8, 1, float_bits(math.nan), 4, 0), 0),
+        ((8, 1, anchor, 4, 1), 0),
+        ((8, 0, 0, 0, 1), 0),
+    ]
+    stdin = "".join(" ".join(str(value) for value in case) + "\n" for case, _ in cases)
+    result = subprocess.run([str(binary)], input=stdin, capture_output=True, text=True, check=True)
+    assert result.stdout.split() == [str(expected) for _, expected in cases]
 
 
 def write_kernel_weights(
