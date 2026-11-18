@@ -257,6 +257,16 @@ Progress:
   tolerated shortfalls plus thinking-on 0.1 point below tolerance; no correctness or completion
   loss). The run trained 3.1 GPU hours on about two-thirds of one pass over the 9,047-record
   final TRAIN set, and its curve was still rising until the schedule's tail.
+- Build W on the final drafter (`builds/native-vocabulary/final/`, `logs/build-w-run.log`; runtime-v9 =
+  runtime-v8 + `vocabulary_shortlist_v1`, default parity with v8 PASS on target, Baseline and ours):
+  shortlist of all 62,844 TRAIN label tokens plus the request's own tokens, exact outputs.
+  120-request panel: ours with / without 1.033 (1.031, 1.035), acceptance unchanged; Baseline with
+  the same shortlist / without 1.044 (1.041, 1.046). Ours-with-shortlist vs Baseline as released
+  1.022 (1.013, 1.032); vs Baseline with the same shortlist 0.980 (0.970, 0.989). Screen: ours +2.3%,
+  Baseline +3.3%. Native gain recorded per the owner's rule with the Baseline-applicable share.
+  Lower-bit vocabulary tables (no retraining): Q3_K and Q2_K, shared or scoring-only, keep
+  acceptance within 0.6 point but drafting takes 1.53–1.76 ms per round against 1.24 for Q4_K (the
+  runtime's Q2_K/Q3_K kernels are slower), so speed falls 2.1–5.7%: not adopted.
 - Queue: `step13b` (curve) → `step14a` (depth calibration and neighbours) → `step14` (three-arm
   release panels at the chosen depths) → `queue15` (second seeds of fast arithmetic and fused
   storage) → `queueR` (reversed-order repeats, done) → `queue16` (build W: native shortlist and lower-bit tables on the final drafter) →
