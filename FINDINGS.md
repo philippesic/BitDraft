@@ -236,6 +236,8 @@ arithmetic, fused F16 storage, round-state weighting and per-slot rounding all t
 outputs: the owner's speed policy fails narrowly on thinking-on (lower bound 0.969). A native
 vocabulary shortlist adds 3.3% speed with no acceptance change, but Baseline gains 4.4% from the
 same change. Proposed release recipe: this one sized to about two passes, an extrapolation.
+Its final export `ae6569f6…` is the provisional acceptance leader since 2026-11-18 (+2.41 points
+over `5749a05f…`).
 [Result](results/release-candidate-screen/result.md).
 
 ## Earlier experiments and durable lessons

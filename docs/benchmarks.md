@@ -225,9 +225,12 @@ Request policy v3 (`native-greedy-request-v3`, `native-live-v3`) serves with run
 runtime-v6 plus `stop_token_cache_v1`, which keeps a stopping token out of the slot cache
 when it was an accepted draft ([stop-token cache](../results/stop-token-cache-exactness/result.md)).
 Target, Baseline and leader references exist for both targets on the four routine cohorts
-([native Linux references](../results/native-linux-references/result.md)); the leader is
-export `5749a05f…`. Thinking, sampled and agentic references have not been re-recorded on
-this host. The shared root is `artifacts/benchmarks/runtime-v8-linux-01/`:
+([native Linux references](../results/native-linux-references/result.md)) for the earlier
+leader, export `5749a05f…`. The provisional acceptance leader is export `ae6569f6…` (owner
+decision 2026-11-18, [release candidate screen](../results/release-candidate-screen/result.md));
+only its Q4KM 60-request screen is a saved reference (`285434a8…`), used by
+`specs/q4km-screen-leader-ae6569f6.json`. The other `*-leader.json` specifications still name
+`5749a05f…`. Thinking, sampled and agentic references have not been re-recorded on this host. The shared root is `artifacts/benchmarks/runtime-v8-linux-01/`:
 
 | Path | Contents |
 | --- | --- |

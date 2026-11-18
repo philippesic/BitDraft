@@ -77,6 +77,10 @@ shortlist ships natively with the candidate (runtime-v9, +3.3% on the panel); ev
 that Baseline gains +4.4% from the same change
 ([result](../results/release-candidate-screen/result.md)).
 
+Owner decision 2026-11-18: the screen's final export `ae6569f6…` is the provisional acceptance
+leader (+2.41 points (+0.98, +3.78) over `5749a05f…` on the 60-request screen); new states are
+screened against `specs/q4km-screen-leader-ae6569f6.json`.
+
 Starting point for acceptance work, decided by the owner on 2026-11-14: the final state of
 the [learning-curve run](../results/s4-data-curve/result.md) (state `769e184e…`), the best
 measured candidate, not the 8,209-update S4 state, with its frozen tables in Baseline's

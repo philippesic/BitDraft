@@ -194,7 +194,9 @@ Thinking-on is the hardest scenario (−6.7 acceptance points, 0.978 speed).
 The final export `ae6569f6…` beats the recorded acceptance leader `5749a05f…` on the 60-request
 screen by +2.41 points (+0.98, +3.78) (57.64% vs 55.23%), which meets the
 [selection rule](../../docs/domain.md#selection). Recording it as the new provisional acceptance
-leader is proposed, not done: promotion was outside this screen's authorization.
+leader was proposed here; the owner approved it on 2026-11-18. Its screen is the saved reference
+`285434a8…` and `runtime-v8-linux-01/specs/q4km-screen-leader-ae6569f6.json` checks new states
+against it. The export stays under `arms/s12-long/output/exports/` while it leads.
 
 ## Evidence and reproduction
 
