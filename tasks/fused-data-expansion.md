@@ -8,8 +8,18 @@ longer. If not, run the two-pass release recipe on the existing FP16 data.
 
 ## Authorized
 
-Nothing yet. Proposed 2026-11-18; waiting for the owner's go. Deleting the FP16
-originals of `train-final-01` needs its own explicit OK.
+Owner go 2026-11-18 for the whole chain in this file:
+- the retest;
+- on fail, the two-pass FP16 run;
+- on pass, fusing, the expansion captures and the long fused run.
+
+The narrow deletion is authorized too: the FP16 tap files of the 6K bank and
+`train-expansion-01` may go through authenticated retirement plans if fused passes.
+`long-sessions-01` taps, manifests, tokens, labels, sources, helpers and DEV captures stay.
+
+Owner decision 2026-11-18: the pass bar is a pooled lower bound of −1.1 points or better.
+The earlier result (−0.36, −1.07 to +0.32) counts as a pass; "I just don't want it to get
+worse."
 
 ## Done when
 
@@ -20,7 +30,7 @@ originals of `train-final-01` needs its own explicit OK.
 
 ## State
 
-### Fused retest (proposal)
+### Fused retest (running)
 
 Question: does training on fused F16 storage cost at most 1 acceptance point against
 FP16 storage? One point of acceptance is about 1.1% request speed at depth 3. The
@@ -38,12 +48,30 @@ exported drafter and runtime are identical either way; only training inputs chan
   references. The 60-request screen is 59/60 inside this panel.
 - Rule, fixed before running: pooled paired source-group bootstrap of fused minus FP16
   acceptance over three seeds on the 120-request panel (`compare_screens.py` with matched
-  `--control` lists); pass if the 95% lower bound is ≥ −1.0 point. A fail means "not
+  `--control` lists); pass if the 95% lower bound is ≥ −1.10 points (owner, 2026-11-18). A fail means "not
   demonstrated", and the two-pass FP16 run follows. Each seed is reported. Fresh 60-request
   screens of the two new arms give the supplementary screen result; it does not decide.
 - Detectability: two seeds on 60 requests gave ±0.70. About ±0.45 on the panel is a scaling
   guess, not measured: the bootstrap resamples requests, not training seeds.
-- Cost: about 2.5–3 GPU hours (two training runs, six panels, one fusion).
+- Cost: about 1.5–2 GPU hours (one fusion, two 35-minute runs, six panels).
+- Preflight: the mechanism shows as `corpus_format: fused-mixture-v1` with the fused-4
+  identity in the fused arm's intent. The control differs only in storage: same intent
+  apart from corpus and format, same executed source. CPU admission passed for the control.
+  The early gate is the verdict itself, reached within 2 GPU hours.
+
+### Fail branch: two-pass FP16 run (`s15-twopass`, queued)
+
+- Recipe: the 3-hour run's settings on `train-final-01`, cosine over 126,000 updates (2 ×
+  63,011 groups per pass), warm-up 2,520, data-reuse cap 12 (mean-visit bound 10.8).
+  CPU admission passed; peak new disk 41 GB.
+- Execution: nine 14,000-update segments resumed exactly from each previous state (the
+  route the step 11 pilot qualified). Each segment's export is screened; the previous
+  segment's states are retired through `Store.retire_closed`. Fused-4 is retired first
+  through its authenticated plan.
+- Expectations: about 1.1 hours per segment, about 10.5 hours in all. Mid-run screens
+  are not annealed and sit below a run stopped there.
+- Kill criteria: the screen at 28,000 updates below 52.0% (the 3-hour run's 14,000-update
+  point), two consecutive falling screens, or any failed segment or screen.
 
 ### Expansion if fused passes (proposal)
 
@@ -96,6 +124,14 @@ Limits: a gap can reflect one-bit capacity rather than missing data. Every learn
 slice rose through 42,000 updates, but gains per category are not predicted. Only
 the long-project pipeline yields new agentic sessions; more needs a re-plan beyond 1,850 families.
 
+Live run: `scripts/queue20.sh` in `artifacts/feature-validation-01/`, user unit
+`fv-queue20`, started 2026-11-18 00:52; log `logs/queue.log`; jobwatch `fv-queue20`; retest
+outputs in `fused-retest/` (verdict in `verdict.json`).
+
 ## Next
 
-Owner: go or changes for the retest, the expansion, and deleting the FP16 originals.
+- Retest verdict, about 02:30 on 2026-11-18.
+- Fail: the queue continues into the two-pass run with no agent step.
+- Pass: the agent retires fused-4, fuses `train-final-01`, retires the authorized FP16
+  taps, then runs selection and captures. Selection specs are prepared while the retest
+  runs.
