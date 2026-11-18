@@ -283,8 +283,10 @@ Progress:
   runtime edit writes the anchor bound and slot period into op parameters 3 and 4 of the packing
   node, but the shared admission check `ggml_w1ax_is_supported` still requires those to be zero
   (`runs/parity/0-0-anchor-equal/server.log`); CPU checks could not see it. Target, Baseline and
-  the default candidate completed on the new runtime. Build P2 (Opus) is fixing the edit; then the
-  two runtimes are rebuilt and `queue18` reruns.
+  the default candidate completed on the new runtime. Build P2 (Opus, `05b97ef7`, merged, gate
+  passed) admits a finite positive anchor bound (with a rounding mode set) and a period that
+  divides the rows, and makes the CPU reference refuse anchor nodes. Runtimes rebuild as
+  `runtime-v8-slotround-3` from source `bf59bf3a…`; `queue18c` reruns parity, timing and the arm.
 
 Decided by the owner 2026-11-17 10:55: (1) add the vocabulary shortlist as a native feature
 (build W: runtime edit, shortlist stored with the drafter, applicable to Baseline for the fair
@@ -684,7 +686,7 @@ the [test list](speedup-test-list.md) that acceptance work continues from the be
 
 ## Next
 
-`queue19b` (fused retest: reconversion, seed-8102 arm, pooled verdict, about 1.5 hours) runs now.
-When build P2 returns: review, gate, merge, rebuild both per-slot runtimes on the CPU, rerun
-`queue18` (parity, timing, calibrated arm). Then record both verdicts and finish the closeout
-(`results/release-candidate-screen/`, FINDINGS, docs, artifact disposition) and delete this file.
+`queue19b` (fused retest, verdict about 20:45) runs on the GPU while the per-slot runtimes rebuild
+on the CPU; `queue18c` (per-slot parity, timing, calibrated arm; verdict about 22:30) follows.
+Then record both verdicts, finish the closeout (`results/release-candidate-screen/`, FINDINGS,
+docs, artifact disposition) and delete this file.
