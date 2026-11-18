@@ -30,7 +30,23 @@ worse."
 
 ## State
 
-### Fused retest (running)
+### Fused retest (passed 2026-11-18 02:35)
+
+Verdict: fused minus FP16, pooled over three seeds on the 120-request panel, −0.18 points
+(−0.39, +0.03): **pass**, clearing both the owner's −1.1 bar and the original −1.0.
+
+| Seed | Difference (95%) |
+| --- | --- |
+| 8101 | −0.14 (−0.50, +0.20) |
+| 8102 | −0.24 (−0.57, +0.06) |
+| 8103 | −0.17 (−0.52, +0.18) |
+
+- Panel acceptance: 47.43% fused against 47.62% FP16.
+- Supplementary 60-request screen: −0.43 (−1.02, +0.14).
+- Evidence: `fused-retest/verdict.json`.
+- The panel interval came out much narrower than the ±0.45 guess.
+
+### Retest design
 
 Question: does training on fused F16 storage cost at most 1 acceptance point against
 FP16 storage? One point of acceptance is about 1.1% request speed at depth 3. The
