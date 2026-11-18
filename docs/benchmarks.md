@@ -1056,8 +1056,12 @@ For each feed-forward input the graph passes the anchor bound and the block leng
 first row is the anchor). When the last layer keeps only output rows, the anchors are not
 among them, and every kept row uses the mask bound. The fixed-bound activation quantizer then
 uses the anchor bound on each block's first row and the mask bound elsewhere, with the same
-F32 arithmetic. Without the key the original kernels launch unchanged, so drafters without it,
-Baseline and the target serve as on the unedited runtime. The edit applies after the
+F32 arithmetic. The shared W1AX admission check accepts the two parameters only on a packing
+node: the anchor is zero or a finite positive F32 on a fixed-bound node, the block length is zero
+or a positive divisor of the row count and is nonzero only with an anchor (zero is the cropped
+case), and later parameters stay zero. The CPU reference refuses any node with an anchor rather
+than computing it without one. Without the key the original kernels launch unchanged, so drafters
+without it, Baseline and the target serve as on the unedited runtime. The edit applies after the
 runtime-v8 edits; its runtime must be qualified for identical outputs and draft counts before
 its screens are compared with runtime-v8 records.
 
