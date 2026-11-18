@@ -73,7 +73,7 @@ exported drafter and runtime are identical either way; only training inputs chan
 - Kill criteria: the screen at 28,000 updates below 52.0% (the 3-hour run's 14,000-update
   point), two consecutive falling screens, or any failed segment or screen.
 
-### Expansion if fused passes (proposal)
+### Expansion if fused passes (queued as `queue21.sh`)
 
 Current gaps, ours minus Baseline acceptance, final export, step 14 runs: writing −7.0 to
 −7.5, thinking-on −6.7 (maths −7.1, code −5.8), conversation −5.5 to −5.9, reasoning
@@ -96,6 +96,22 @@ single-turn code 18%, sessions 7%, documents 5%, structured 1%.
 | Structured | 0 | 0 | already +27 over Baseline |
 | **Total** | **about 4,600** | **about 4.0M** | |
 
+Selection A (CPU, done 2026-11-18, `datasets/expansion-03/bank-a5`) found the pools
+smaller than planned:
+- Commit-edit prompts are nearly used up. 400 plain ones fill, and none are left for
+  thinking-on code; thinking-on is 640 maths and 360 general reasoning.
+- OpenAssistant writing gave 24 of 60.
+- QASPER has no 8K+ papers left, so all 300 papers come from the 2–8K band.
+
+Selection A holds 3,564 prompts: 2.68M input tokens, at most 409 GB of FP16 features
+(about 260 GB expected). QASPER is 63% of its input tokens.
+
+Selection B follows the session generation: about 412 long-project sessions (389 from
+`skip=171` of the 560 prepared tasks plus 23 generated leftovers) and 381 short sessions.
+
+Refused selection attempts `bank-a`–`bank-a4` are small leftovers, to be retired at
+closeout.
+
 All selection goes through the existing exclusion checks: heldout24, confirmation-v2
 protection, DEV banks and workloads, DEV identities and token prefixes, agentic project
 families and code content. Pools are ample historically; their exclusion counts are checked
@@ -103,7 +119,8 @@ fresh at selection. Sampling stays proportional to positions. Data and training 
 change, so gains are not attributed to the targeting itself.
 
 Sequence and cost:
-- Fuse `train-final-01` (about 70 GB).
+- Retire fused-4, the seed-8103 states and the long run's 14K/28K branch states (fresh run
+  chosen), then fuse `train-final-01` (about 71 GB).
 - On the owner's OK, retire FP16 tap files only where token replay is qualified: the 6K
   bank and `train-expansion-01` (replay bit-identical on 40 records, including 22 from the
   6K bank and 9 Windows captures). That frees about 440 GB.
@@ -114,8 +131,8 @@ Sequence and cost:
 - Capture in FP16 chunks, fusing and retiring each chunk: about 12–14 GPU hours, about
   77 GB fused. Budget the peak (chunk plus fused output plus checkpoints plus reserve) per
   chunk.
-- Consolidate chunk manifests into one fused corpus before admission: a mixture takes at
-  most eight direct components and six are used.
+- Two capture components (A: prompts, B: sessions), each fused and its taps retired. The
+  combined `train-final-02-fused` mixture has exactly eight components, the limit.
 - Two passes, with updates derived from the admitted `groups_per_pass` (about 240,000,
   18–20 GPU hours). Screen every 14,000 updates.
 - Stop early on any inexact output, nonfinite loss, or two consecutive screens that fall.
@@ -132,6 +149,5 @@ outputs in `fused-retest/` (verdict in `verdict.json`).
 
 - Retest verdict, about 02:30 on 2026-11-18.
 - Fail: the queue continues into the two-pass run with no agent step.
-- Pass: the agent retires fused-4, fuses `train-final-01`, retires the authorized FP16
-  taps, then runs selection and captures. Selection specs are prepared while the retest
-  runs.
+- Pass: `queue21.sh` (unit `fv-queue21`, jobwatch `fv-queue21`) runs the whole
+  expansion and the segmented long fused run. Its kill criteria match the two-pass run.
