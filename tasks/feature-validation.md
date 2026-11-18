@@ -102,8 +102,10 @@ Progress:
 - Fast arithmetic retest (owner request, seed 8102, `group3/retest-preflight.md`): second seed against the
   calibrated seed-8102 control: 55.73% vs 56.42%, per seed −0.69 (−1.79, +0.37); pooled over both seeds
   −0.55 (−1.37, +0.27). Not admitted again; two seeds now point the same small way, so a real
-  small loss is possible. The fused retest's reconversion was refused because the retired root's
-  empty folders remain; it reruns into a fresh root at the end of the queue (`queue19`).
+  small loss is possible. The fused retest's reconversion was refused twice: first because the
+  retired root's empty folders remain, then (fresh root) because 55 GB of files plus the 40 GB
+  disk reserve exceed the 85 GB free. It runs as `queue19b` with the reserve lowered to 25 GB
+  (`fuse-full-train-r25.json`), which leaves about 30 GB free during the arm.
 - Fused storage (step 9, rerun after the fix): calibrated on fused vs eight-tap storage: 56.36%
   vs 56.56%, −0.20 (−1.11, +0.72): lower end below −1.0, inconclusive, original storage kept;
   fused storage is not qualified, also not for the release run.
@@ -275,8 +277,14 @@ Progress:
   storage) → `queueR` (reversed-order repeats, done) → `queue16` (build W: native shortlist and lower-bit tables on the final drafter) →
   `queue17` (build F2: round-state map pilots, full map if forecast ≤ 75 min, calibrated arm with
   round-state weighting) → `queue18` (build P: per-slot runtimes, default parity, timing
-  prototype, calibrated arm with per-slot rounding). Builds W, P and F2 are merged; P's two
-  runtimes are compiling on the CPU at low priority.
+  prototype, calibrated arm with per-slot rounding) → `queue19b` (fused retest). Builds W, P and
+  F2 are merged.
+- Per-slot rounding (build P): the default-parity run crashed loading the anchor drafter. Build P's
+  runtime edit writes the anchor bound and slot period into op parameters 3 and 4 of the packing
+  node, but the shared admission check `ggml_w1ax_is_supported` still requires those to be zero
+  (`runs/parity/0-0-anchor-equal/server.log`); CPU checks could not see it. Target, Baseline and
+  the default candidate completed on the new runtime. Build P2 (Opus) is fixing the edit; then the
+  two runtimes are rebuilt and `queue18` reruns.
 
 Decided by the owner 2026-11-17 10:55: (1) add the vocabulary shortlist as a native feature
 (build W: runtime edit, shortlist stored with the drafter, applicable to Baseline for the fair
@@ -676,5 +684,7 @@ the [test list](speedup-test-list.md) that acceptance work continues from the be
 
 ## Next
 
-Finish step 3 (register suite and slice references, group 0 at depth 3), then step 4's trainer
-profile on the GPU while the builds finish; merge each build after review and its gate.
+`queue19b` (fused retest: reconversion, seed-8102 arm, pooled verdict, about 1.5 hours) runs now.
+When build P2 returns: review, gate, merge, rebuild both per-slot runtimes on the CPU, rerun
+`queue18` (parity, timing, calibrated arm). Then record both verdicts and finish the closeout
+(`results/release-candidate-screen/`, FINDINGS, docs, artifact disposition) and delete this file.
