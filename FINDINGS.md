@@ -225,6 +225,19 @@ points (+0.6, +2.0) over a matched frozen run and large-step +0.9 (+0.1, +1.7); 
 survival stayed within noise. All arms used `Q4_0` tables, whose speed cost is about the size
 of that gain. [Result](results/trained-attention-tables/result.md).
 
+### F032: Which recipe should the release candidate use, and how close is it to Baseline?
+
+A calibrated start is the one feature that mattered: +7.4 screen acceptance points over two
+seeds in 35-minute runs (+6.5, +8.3). Gradual precision, a larger clip step, fast trainer
+arithmetic, fused F16 storage, round-state weighting and per-slot rounding all tied or lost
+(fused storage pooled over two seeds −0.36, lower bound −1.07, just short of admission). One 3.1-hour run of the assembled recipe on the new 9,047-record TRAIN set
+(about two-thirds of a pass, still rising) runs at 1.105× Baseline on agentic coding
+(1.089, 1.120) and 0.978–1.003× on greedy, long, sampled and thinking-on requests, with exact
+outputs: the owner's speed policy fails narrowly on thinking-on (lower bound 0.969). A native
+vocabulary shortlist adds 3.3% speed with no acceptance change, but Baseline gains 4.4% from the
+same change. Proposed release recipe: this one sized to about two passes, an extrapolation.
+[Result](results/release-candidate-screen/result.md).
+
 ## Earlier experiments and durable lessons
 
 ### Packed low-bit paths did not beat ordinary EAGLE in the Turing suite

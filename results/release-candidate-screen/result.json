@@ -1,0 +1,4213 @@
+{
+ "schema": "release-candidate-screen-v1",
+ "target": "Qwen3.5-4B Q4KM 38742092",
+ "baseline": "83586a63eab58b4ef9dd1d72de667738fcedb289e97d98d01d8df66f23df610f",
+ "hardware": "RTX 5080, native Linux",
+ "group3": {
+  "arms": {
+   "s4-c0-current": {
+    "intent_sha256": "14101404099104226c298592a71101ee69c450c440323fc17320cc52da7d03cd",
+    "code_sha256": "3cd2db829baf805d38cbedd15571e12ee91dc20e1f77fa5cbdb1341d0fa897ab",
+    "seed": 8101,
+    "updates": 8209,
+    "corpus": "3ba546d5c92d939572f54b7147917f1d19d8d85192134413b95bb58da2cbe3aa",
+    "features": null,
+    "calibration": null,
+    "gradual_precision": null,
+    "arithmetic": "reference",
+    "step_sizes": {
+     "sign": 0.004,
+     "scale": 1e-05,
+     "midpoint": 1e-05,
+     "gain": 1e-05,
+     "clip": 1e-05,
+     "norm": 1e-05
+    },
+    "final_export": "ccc9a6b653b5c5560dcac11aded78482c8175401df6d91a761231df30b4cfe7f",
+    "update_seconds": 1766.5605746394285,
+    "data_seconds": 164.21036538720364,
+    "labels": 2493623,
+    "dev": [
+     {
+      "updates": 0,
+      "top1": [
+       0.05,
+       0.05,
+       0.016666666666666666
+      ],
+      "survival": [
+       0.05,
+       0.0,
+       0.0
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.05,
+        0.0,
+        0.0
+       ],
+       "thinking-on": [
+        0.0,
+        0.0,
+        0.0
+       ]
+      }
+     },
+     {
+      "updates": 2052,
+      "top1": [
+       0.8,
+       0.6916666666666667,
+       0.6
+      ],
+      "survival": [
+       0.8,
+       0.5916666666666667,
+       0.4583333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.75,
+        0.5,
+        0.4
+       ]
+      }
+     },
+     {
+      "updates": 4104,
+      "top1": [
+       0.825,
+       0.7333333333333333,
+       0.6083333333333333
+      ],
+      "survival": [
+       0.825,
+       0.6583333333333333,
+       0.49166666666666664
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.75,
+        0.55,
+        0.4
+       ]
+      }
+     },
+     {
+      "updates": 6156,
+      "top1": [
+       0.8666666666666667,
+       0.7333333333333333,
+       0.6833333333333333
+      ],
+      "survival": [
+       0.8666666666666667,
+       0.6833333333333333,
+       0.5583333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.85,
+        0.8,
+        0.45
+       ]
+      }
+     },
+     {
+      "updates": 8208,
+      "top1": [
+       0.875,
+       0.7583333333333333,
+       0.6833333333333333
+      ],
+      "survival": [
+       0.875,
+       0.7166666666666667,
+       0.5583333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.7894736842105263,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.85,
+        0.75,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 8209,
+      "top1": [
+       0.875,
+       0.7583333333333333,
+       0.6833333333333333
+      ],
+      "survival": [
+       0.875,
+       0.7166666666666667,
+       0.5583333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.7894736842105263,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.85,
+        0.75,
+        0.5
+       ]
+      }
+     }
+    ],
+    "screen": {
+     "result": "/home/philip/BitDraft/artifacts/feature-validation-01/arms/s4-c0-current/screen/result.json",
+     "result_sha256": "c1173f94a2a8cd5181d3ad8a58741b74173950e56410c9d2aadd277c7f36f3cf",
+     "acceptance": 0.489461655662773,
+     "accepted": 3855,
+     "proposed": 7876,
+     "requests": 60,
+     "correct": true
+    }
+   },
+   "s4-c0-current-s8102": {
+    "intent_sha256": "dc91a9136c05943ecb053aeef9aa938597af231da4c0555ebf74a41e11f0e653",
+    "code_sha256": "3cd2db829baf805d38cbedd15571e12ee91dc20e1f77fa5cbdb1341d0fa897ab",
+    "seed": 8102,
+    "updates": 8209,
+    "corpus": "3ba546d5c92d939572f54b7147917f1d19d8d85192134413b95bb58da2cbe3aa",
+    "features": null,
+    "calibration": null,
+    "gradual_precision": null,
+    "arithmetic": "reference",
+    "step_sizes": {
+     "sign": 0.004,
+     "scale": 1e-05,
+     "midpoint": 1e-05,
+     "gain": 1e-05,
+     "clip": 1e-05,
+     "norm": 1e-05
+    },
+    "final_export": "805342c227cefe0fb79530df63011ecd8fec85febb1c5cdf6f3d6961b0ff3168",
+    "update_seconds": 1763.1182594540242,
+    "data_seconds": 169.61278476097687,
+    "labels": 2490639,
+    "dev": [
+     {
+      "updates": 0,
+      "top1": [
+       0.05,
+       0.05,
+       0.016666666666666666
+      ],
+      "survival": [
+       0.05,
+       0.0,
+       0.0
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.05,
+        0.0,
+        0.0
+       ],
+       "thinking-on": [
+        0.0,
+        0.0,
+        0.0
+       ]
+      }
+     },
+     {
+      "updates": 2052,
+      "top1": [
+       0.8,
+       0.7083333333333334,
+       0.6083333333333333
+      ],
+      "survival": [
+       0.8,
+       0.6166666666666667,
+       0.4666666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.8,
+        0.55,
+        0.35
+       ]
+      }
+     },
+     {
+      "updates": 4104,
+      "top1": [
+       0.8416666666666667,
+       0.7333333333333333,
+       0.6333333333333333
+      ],
+      "survival": [
+       0.8416666666666667,
+       0.675,
+       0.5166666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.45,
+        0.35
+       ]
+      }
+     },
+     {
+      "updates": 6156,
+      "top1": [
+       0.8583333333333333,
+       0.7416666666666667,
+       0.65
+      ],
+      "survival": [
+       0.8583333333333333,
+       0.7,
+       0.55
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.95,
+        0.8947368421052632,
+        0.8947368421052632
+       ],
+       "thinking-on": [
+        0.75,
+        0.65,
+        0.4
+       ]
+      }
+     },
+     {
+      "updates": 8208,
+      "top1": [
+       0.85,
+       0.7333333333333333,
+       0.6833333333333333
+      ],
+      "survival": [
+       0.85,
+       0.6833333333333333,
+       0.575
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.4
+       ]
+      }
+     },
+     {
+      "updates": 8209,
+      "top1": [
+       0.85,
+       0.7333333333333333,
+       0.6833333333333333
+      ],
+      "survival": [
+       0.85,
+       0.6833333333333333,
+       0.575
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.4
+       ]
+      }
+     }
+    ],
+    "screen": {
+     "result": "/home/philip/BitDraft/artifacts/feature-validation-01/arms/s4-c0-current-s8102/screen/result.json",
+     "result_sha256": "b1ad1e6cc9f4152bf312e21e67804481b7b81f6e75e5d1acefc446dbc3c416c5",
+     "acceptance": 0.49204328453214513,
+     "accepted": 3865,
+     "proposed": 7855,
+     "requests": 60,
+     "correct": true
+    }
+   },
+   "g3-blank": {
+    "intent_sha256": "b71e3d7287b7904d308a88c2d6818152d9d01d00f560fef95763dce721c60697",
+    "code_sha256": "3cd2db829baf805d38cbedd15571e12ee91dc20e1f77fa5cbdb1341d0fa897ab",
+    "seed": 8101,
+    "updates": 8209,
+    "corpus": "3ba546d5c92d939572f54b7147917f1d19d8d85192134413b95bb58da2cbe3aa",
+    "features": {
+     "scale": "fixed",
+     "clip": "fixed",
+     "gain": "off",
+     "midpoint": "off"
+    },
+    "calibration": null,
+    "gradual_precision": null,
+    "arithmetic": "reference",
+    "step_sizes": {
+     "sign": 0.004,
+     "scale": 1e-05,
+     "midpoint": 1e-05,
+     "gain": 1e-05,
+     "clip": 1e-05,
+     "norm": 1e-05
+    },
+    "final_export": "bd0f5292ad807b47a63b985c01cfef63e4fcd6ce05c5b474d61f5fc3c2f2ca9d",
+    "update_seconds": 1752.3543460570074,
+    "data_seconds": 159.14735152999538,
+    "labels": 2493623,
+    "dev": [
+     {
+      "updates": 0,
+      "top1": [
+       0.05,
+       0.05,
+       0.016666666666666666
+      ],
+      "survival": [
+       0.05,
+       0.0,
+       0.0
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.05,
+        0.0,
+        0.0
+       ],
+       "thinking-on": [
+        0.0,
+        0.0,
+        0.0
+       ]
+      }
+     },
+     {
+      "updates": 2052,
+      "top1": [
+       0.8,
+       0.65,
+       0.6416666666666667
+      ],
+      "survival": [
+       0.8,
+       0.55,
+       0.43333333333333335
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.7894736842105263,
+        0.7368421052631579
+       ],
+       "thinking-on": [
+        0.75,
+        0.5,
+        0.4
+       ]
+      }
+     },
+     {
+      "updates": 4104,
+      "top1": [
+       0.8,
+       0.7083333333333334,
+       0.5833333333333334
+      ],
+      "survival": [
+       0.8,
+       0.6083333333333333,
+       0.44166666666666665
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.7894736842105263,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.75,
+        0.7,
+        0.4
+       ]
+      }
+     },
+     {
+      "updates": 6156,
+      "top1": [
+       0.8416666666666667,
+       0.7333333333333333,
+       0.6666666666666666
+      ],
+      "survival": [
+       0.8416666666666667,
+       0.6666666666666666,
+       0.55
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.85,
+        0.75,
+        0.4
+       ]
+      }
+     },
+     {
+      "updates": 8208,
+      "top1": [
+       0.8583333333333333,
+       0.7416666666666667,
+       0.6583333333333333
+      ],
+      "survival": [
+       0.8583333333333333,
+       0.6916666666666667,
+       0.5666666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.4
+       ]
+      }
+     },
+     {
+      "updates": 8209,
+      "top1": [
+       0.8583333333333333,
+       0.7416666666666667,
+       0.6583333333333333
+      ],
+      "survival": [
+       0.8583333333333333,
+       0.6916666666666667,
+       0.5666666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.4
+       ]
+      }
+     }
+    ],
+    "screen": {
+     "result": "/home/philip/BitDraft/artifacts/feature-validation-01/arms/g3-blank/screen/result.json",
+     "result_sha256": "5bd0f2a9fb8dc95b8dfb9b2965e604c18cf6094b6b12144850fcd57ae954ab56",
+     "acceptance": 0.48380184041346275,
+     "accepted": 3838,
+     "proposed": 7933,
+     "requests": 60,
+     "correct": true
+    }
+   },
+   "g3-gradual": {
+    "intent_sha256": "ced67e5096b44caee622b0e566722127fab57deda223137810c7a8faf326deb2",
+    "code_sha256": "3cd2db829baf805d38cbedd15571e12ee91dc20e1f77fa5cbdb1341d0fa897ab",
+    "seed": 8101,
+    "updates": 8209,
+    "corpus": "3ba546d5c92d939572f54b7147917f1d19d8d85192134413b95bb58da2cbe3aa",
+    "features": {
+     "scale": "learned",
+     "clip": "learned",
+     "gain": "learned",
+     "midpoint": "learned"
+    },
+    "calibration": null,
+    "gradual_precision": {
+     "start_temperature": 0.01,
+     "end_temperature": 30.0,
+     "shape": "exponential",
+     "soft_updates": 2052,
+     "step_size": 0.00078,
+     "start_check": {
+      "sample": {
+       "sequences": 8,
+       "windows": 8,
+       "seed": 20261117
+      },
+      "max_relative_error": 0.01,
+      "mean_relative_error": 0.002
+     }
+    },
+    "arithmetic": "reference",
+    "step_sizes": {
+     "sign": 0.004,
+     "scale": 1e-05,
+     "midpoint": 1e-05,
+     "gain": 1e-05,
+     "clip": 1e-05,
+     "norm": 1e-05
+    },
+    "final_export": "c9e2ded6ad2a4b2622cade4916d59a5bb16badf11fea08fe61cf59193b613b0b",
+    "update_seconds": 1866.695758232955,
+    "data_seconds": 155.6048543969473,
+    "labels": 2493623,
+    "dev": [
+     {
+      "updates": 0,
+      "top1": [
+       0.05,
+       0.05,
+       0.016666666666666666
+      ],
+      "survival": [
+       0.05,
+       0.0,
+       0.0
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.05,
+        0.0,
+        0.0
+       ],
+       "thinking-on": [
+        0.0,
+        0.0,
+        0.0
+       ]
+      }
+     },
+     {
+      "updates": 2052,
+      "top1": [
+       0.8166666666666667,
+       0.7333333333333333,
+       0.5916666666666667
+      ],
+      "survival": [
+       0.8166666666666667,
+       0.6583333333333333,
+       0.4666666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.7894736842105263,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.75,
+        0.45,
+        0.35
+       ]
+      }
+     },
+     {
+      "updates": 4104,
+      "top1": [
+       0.8416666666666667,
+       0.7333333333333333,
+       0.6166666666666667
+      ],
+      "survival": [
+       0.8416666666666667,
+       0.6666666666666666,
+       0.5083333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.8,
+        0.6,
+        0.45
+       ]
+      }
+     },
+     {
+      "updates": 6156,
+      "top1": [
+       0.8583333333333333,
+       0.7333333333333333,
+       0.675
+      ],
+      "survival": [
+       0.8583333333333333,
+       0.675,
+       0.55
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.45
+       ]
+      }
+     },
+     {
+      "updates": 8208,
+      "top1": [
+       0.8666666666666667,
+       0.7416666666666667,
+       0.6833333333333333
+      ],
+      "survival": [
+       0.8666666666666667,
+       0.7,
+       0.5916666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.45
+       ]
+      }
+     },
+     {
+      "updates": 8209,
+      "top1": [
+       0.8666666666666667,
+       0.7416666666666667,
+       0.6833333333333333
+      ],
+      "survival": [
+       0.8666666666666667,
+       0.7,
+       0.5916666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.45
+       ]
+      }
+     }
+    ],
+    "screen": {
+     "result": "/home/philip/BitDraft/artifacts/feature-validation-01/arms/g3-gradual/screen/result.json",
+     "result_sha256": "e0f9cec7c5b7c63c4abbbc00746756073fb8b519fb0186a531a2de8c193d8873",
+     "acceptance": 0.49110094075769134,
+     "accepted": 3863,
+     "proposed": 7866,
+     "requests": 60,
+     "correct": true
+    }
+   },
+   "g3v2-calibrated": {
+    "intent_sha256": "b7de6893f0f356d8a3628897f4919abd0b2f799b2ce37da98305d1c63bcea3bf",
+    "code_sha256": "4bb8231d7b136facf2a7a720619a1657e1f9e7bc9f49e020a14f12ba4b183ce0",
+    "seed": 8101,
+    "updates": 8209,
+    "corpus": "3ba546d5c92d939572f54b7147917f1d19d8d85192134413b95bb58da2cbe3aa",
+    "features": {
+     "scale": "learned",
+     "clip": "learned",
+     "gain": "learned",
+     "midpoint": "learned"
+    },
+    "calibration": {
+     "sample": {
+      "sequences": 16,
+      "windows": 16,
+      "seed": 20261116
+     }
+    },
+    "gradual_precision": null,
+    "arithmetic": "reference",
+    "step_sizes": {
+     "sign": 0.004,
+     "scale": 1e-05,
+     "midpoint": 1e-05,
+     "gain": 1e-05,
+     "clip": 1e-05,
+     "norm": 1e-05
+    },
+    "final_export": "7e0450832c329f530dc9e9461b0a744facf73bd802b7288ab8de604a665c72fe",
+    "update_seconds": 1718.849499951004,
+    "data_seconds": 157.57377530704798,
+    "labels": 2493623,
+    "dev": [
+     {
+      "updates": 0,
+      "top1": [
+       0.175,
+       0.21666666666666667,
+       0.2
+      ],
+      "survival": [
+       0.175,
+       0.05,
+       0.008333333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.15,
+        0.05263157894736842,
+        0.0
+       ],
+       "thinking-on": [
+        0.25,
+        0.05,
+        0.05
+       ]
+      }
+     },
+     {
+      "updates": 2052,
+      "top1": [
+       0.85,
+       0.7,
+       0.65
+      ],
+      "survival": [
+       0.85,
+       0.65,
+       0.5416666666666666
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.75,
+        0.55
+       ]
+      }
+     },
+     {
+      "updates": 4104,
+      "top1": [
+       0.85,
+       0.725,
+       0.675
+      ],
+      "survival": [
+       0.85,
+       0.6583333333333333,
+       0.575
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.85,
+        0.6,
+        0.45
+       ]
+      }
+     },
+     {
+      "updates": 6156,
+      "top1": [
+       0.8833333333333333,
+       0.725,
+       0.6833333333333333
+      ],
+      "survival": [
+       0.8833333333333333,
+       0.6666666666666666,
+       0.5666666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8947368421052632,
+        0.8947368421052632
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.6
+       ]
+      }
+     },
+     {
+      "updates": 8208,
+      "top1": [
+       0.8833333333333333,
+       0.7583333333333333,
+       0.7
+      ],
+      "survival": [
+       0.8833333333333333,
+       0.7,
+       0.575
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.6
+       ]
+      }
+     },
+     {
+      "updates": 8209,
+      "top1": [
+       0.8833333333333333,
+       0.7583333333333333,
+       0.7
+      ],
+      "survival": [
+       0.8833333333333333,
+       0.7,
+       0.575
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.6
+       ]
+      }
+     }
+    ],
+    "screen": {
+     "result": "/home/philip/BitDraft/artifacts/feature-validation-01/arms/g3v2-calibrated/screen/result.json",
+     "result_sha256": "8fb90916a382664eed838f11dd869f55821dce48ee120e5ad16080bdae176b60",
+     "acceptance": 0.5655908020501454,
+     "accepted": 4083,
+     "proposed": 7219,
+     "requests": 60,
+     "correct": true
+    }
+   },
+   "g3v2-calibrated-s8102": {
+    "intent_sha256": "c5cd40bbef720f394b5914b39080b97138311bbd8c0b812e0020ee8ba8301053",
+    "code_sha256": "4bb8231d7b136facf2a7a720619a1657e1f9e7bc9f49e020a14f12ba4b183ce0",
+    "seed": 8102,
+    "updates": 8209,
+    "corpus": "3ba546d5c92d939572f54b7147917f1d19d8d85192134413b95bb58da2cbe3aa",
+    "features": {
+     "scale": "learned",
+     "clip": "learned",
+     "gain": "learned",
+     "midpoint": "learned"
+    },
+    "calibration": {
+     "sample": {
+      "sequences": 16,
+      "windows": 16,
+      "seed": 20261116
+     }
+    },
+    "gradual_precision": null,
+    "arithmetic": "reference",
+    "step_sizes": {
+     "sign": 0.004,
+     "scale": 1e-05,
+     "midpoint": 1e-05,
+     "gain": 1e-05,
+     "clip": 1e-05,
+     "norm": 1e-05
+    },
+    "final_export": "42f28ca83e8bf48b813df9b5fdc8bf151ae5643a2359e3ab2bbbb5cf49301985",
+    "update_seconds": 1716.441311754299,
+    "data_seconds": 165.70666524695298,
+    "labels": 2490639,
+    "dev": [
+     {
+      "updates": 0,
+      "top1": [
+       0.175,
+       0.21666666666666667,
+       0.2
+      ],
+      "survival": [
+       0.175,
+       0.05,
+       0.008333333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.15,
+        0.05263157894736842,
+        0.0
+       ],
+       "thinking-on": [
+        0.25,
+        0.05,
+        0.05
+       ]
+      }
+     },
+     {
+      "updates": 2052,
+      "top1": [
+       0.8583333333333333,
+       0.7416666666666667,
+       0.6416666666666667
+      ],
+      "survival": [
+       0.8583333333333333,
+       0.7166666666666667,
+       0.5416666666666666
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.95,
+        0.8947368421052632,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.7,
+        0.55,
+        0.45
+       ]
+      }
+     },
+     {
+      "updates": 4104,
+      "top1": [
+       0.8416666666666667,
+       0.7583333333333333,
+       0.7
+      ],
+      "survival": [
+       0.8416666666666667,
+       0.6833333333333333,
+       0.6
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.95,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.85,
+        0.6,
+        0.45
+       ]
+      }
+     },
+     {
+      "updates": 6156,
+      "top1": [
+       0.8583333333333333,
+       0.775,
+       0.7083333333333334
+      ],
+      "survival": [
+       0.8583333333333333,
+       0.7166666666666667,
+       0.6
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.95,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.75,
+        0.6,
+        0.45
+       ]
+      }
+     },
+     {
+      "updates": 8208,
+      "top1": [
+       0.8583333333333333,
+       0.7833333333333333,
+       0.7333333333333333
+      ],
+      "survival": [
+       0.8583333333333333,
+       0.725,
+       0.625
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.75,
+        0.6,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 8209,
+      "top1": [
+       0.8583333333333333,
+       0.7833333333333333,
+       0.7333333333333333
+      ],
+      "survival": [
+       0.8583333333333333,
+       0.725,
+       0.625
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.75,
+        0.6,
+        0.5
+       ]
+      }
+     }
+    ],
+    "screen": {
+     "result": "/home/philip/BitDraft/artifacts/feature-validation-01/arms/g3v2-calibrated-s8102/screen/result.json",
+     "result_sha256": "05aa287b91345d9000520806a5dd93b40696a23e593c68591bbf82162b7d9f49",
+     "acceptance": 0.5641770401106501,
+     "accepted": 4079,
+     "proposed": 7230,
+     "requests": 60,
+     "correct": true
+    }
+   },
+   "g3v2-calibrated-gradual": {
+    "intent_sha256": "83ec2302a98f5697256c9f97e45ef7f932db4552bb2659fba6f8469fa2b069fe",
+    "code_sha256": "4bb8231d7b136facf2a7a720619a1657e1f9e7bc9f49e020a14f12ba4b183ce0",
+    "seed": 8101,
+    "updates": 8209,
+    "corpus": "3ba546d5c92d939572f54b7147917f1d19d8d85192134413b95bb58da2cbe3aa",
+    "features": {
+     "scale": "learned",
+     "clip": "learned",
+     "gain": "learned",
+     "midpoint": "learned"
+    },
+    "calibration": {
+     "sample": {
+      "sequences": 16,
+      "windows": 16,
+      "seed": 20261116
+     }
+    },
+    "gradual_precision": {
+     "start_temperature": 0.01,
+     "end_temperature": 30.0,
+     "shape": "exponential",
+     "soft_updates": 2052,
+     "step_size": 0.00078,
+     "start_check": {
+      "sample": {
+       "sequences": 8,
+       "windows": 8,
+       "seed": 20261117
+      },
+      "max_relative_error": 0.01,
+      "mean_relative_error": 0.002
+     }
+    },
+    "arithmetic": "reference",
+    "step_sizes": {
+     "sign": 0.004,
+     "scale": 1e-05,
+     "midpoint": 1e-05,
+     "gain": 1e-05,
+     "clip": 1e-05,
+     "norm": 1e-05
+    },
+    "final_export": "2dc9fba6dc758b429e055dbcbcd797bc3070a7e94a8a750a8d5b15dd4ba3be99",
+    "update_seconds": 1830.5474333550192,
+    "data_seconds": 160.06097157505974,
+    "labels": 2493623,
+    "dev": [
+     {
+      "updates": 0,
+      "top1": [
+       0.1,
+       0.125,
+       0.15
+      ],
+      "survival": [
+       0.1,
+       0.03333333333333333,
+       0.0
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.15,
+        0.0,
+        0.0
+       ],
+       "thinking-on": [
+        0.05,
+        0.0,
+        0.0
+       ]
+      }
+     },
+     {
+      "updates": 2052,
+      "top1": [
+       0.875,
+       0.7416666666666667,
+       0.7083333333333334
+      ],
+      "survival": [
+       0.875,
+       0.6833333333333333,
+       0.575
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.7894736842105263,
+        0.7368421052631579
+       ],
+       "thinking-on": [
+        0.9,
+        0.6,
+        0.55
+       ]
+      }
+     },
+     {
+      "updates": 4104,
+      "top1": [
+       0.8666666666666667,
+       0.7333333333333333,
+       0.6666666666666666
+      ],
+      "survival": [
+       0.8666666666666667,
+       0.6833333333333333,
+       0.5666666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.9,
+        0.7,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 6156,
+      "top1": [
+       0.9083333333333333,
+       0.775,
+       0.6583333333333333
+      ],
+      "survival": [
+       0.9083333333333333,
+       0.725,
+       0.5666666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8947368421052632,
+        0.8947368421052632
+       ],
+       "thinking-on": [
+        0.85,
+        0.7,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 8208,
+      "top1": [
+       0.925,
+       0.7583333333333333,
+       0.7
+      ],
+      "survival": [
+       0.925,
+       0.7416666666666667,
+       0.6
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.7,
+        0.55
+       ]
+      }
+     },
+     {
+      "updates": 8209,
+      "top1": [
+       0.925,
+       0.7583333333333333,
+       0.7
+      ],
+      "survival": [
+       0.925,
+       0.7416666666666667,
+       0.6
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.7,
+        0.55
+       ]
+      }
+     }
+    ],
+    "screen": {
+     "result": "/home/philip/BitDraft/artifacts/feature-validation-01/arms/g3v2-calibrated-gradual/screen/result.json",
+     "result_sha256": "0a617679c062dda4fa2fe518b579c16c26d3417103667d084b06f54f313d9aa7",
+     "acceptance": 0.5616986074727699,
+     "accepted": 4074,
+     "proposed": 7253,
+     "requests": 60,
+     "correct": true
+    }
+   },
+   "g3v2-clipstep": {
+    "intent_sha256": "c202b664c2b5125d23a702b63b28cf4155d92e1f40415d618c26d8218e6eac0c",
+    "code_sha256": "4bb8231d7b136facf2a7a720619a1657e1f9e7bc9f49e020a14f12ba4b183ce0",
+    "seed": 8101,
+    "updates": 8209,
+    "corpus": "3ba546d5c92d939572f54b7147917f1d19d8d85192134413b95bb58da2cbe3aa",
+    "features": {
+     "scale": "learned",
+     "clip": "learned",
+     "gain": "learned",
+     "midpoint": "learned"
+    },
+    "calibration": {
+     "sample": {
+      "sequences": 16,
+      "windows": 16,
+      "seed": 20261116
+     }
+    },
+    "gradual_precision": null,
+    "arithmetic": "reference",
+    "step_sizes": {
+     "sign": 0.004,
+     "scale": 1e-05,
+     "midpoint": 1e-05,
+     "gain": 1e-05,
+     "clip": 0.001,
+     "norm": 1e-05
+    },
+    "final_export": "14f2ba72f1dd8cdfeac42fe3f049431c326ea498ac537022f245027a83b00dec",
+    "update_seconds": 1713.5273475892063,
+    "data_seconds": 162.2664994241568,
+    "labels": 2493623,
+    "dev": [
+     {
+      "updates": 0,
+      "top1": [
+       0.175,
+       0.21666666666666667,
+       0.2
+      ],
+      "survival": [
+       0.175,
+       0.05,
+       0.008333333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.15,
+        0.05263157894736842,
+        0.0
+       ],
+       "thinking-on": [
+        0.25,
+        0.05,
+        0.05
+       ]
+      }
+     },
+     {
+      "updates": 2052,
+      "top1": [
+       0.85,
+       0.7083333333333334,
+       0.6416666666666667
+      ],
+      "survival": [
+       0.85,
+       0.6583333333333333,
+       0.5416666666666666
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.7368421052631579,
+        0.7368421052631579
+       ],
+       "thinking-on": [
+        0.8,
+        0.7,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 4104,
+      "top1": [
+       0.85,
+       0.7416666666666667,
+       0.6833333333333333
+      ],
+      "survival": [
+       0.85,
+       0.675,
+       0.575
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.85,
+        0.7,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 6156,
+      "top1": [
+       0.8833333333333333,
+       0.7416666666666667,
+       0.6666666666666666
+      ],
+      "survival": [
+       0.8833333333333333,
+       0.6833333333333333,
+       0.5583333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.7894736842105263,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 8208,
+      "top1": [
+       0.8666666666666667,
+       0.7583333333333333,
+       0.6583333333333333
+      ],
+      "survival": [
+       0.8666666666666667,
+       0.6916666666666667,
+       0.5583333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.7894736842105263,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.8,
+        0.7,
+        0.55
+       ]
+      }
+     },
+     {
+      "updates": 8209,
+      "top1": [
+       0.8666666666666667,
+       0.7583333333333333,
+       0.6583333333333333
+      ],
+      "survival": [
+       0.8666666666666667,
+       0.6916666666666667,
+       0.5583333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.7894736842105263,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.8,
+        0.7,
+        0.55
+       ]
+      }
+     }
+    ],
+    "screen": {
+     "result": "/home/philip/BitDraft/artifacts/feature-validation-01/arms/g3v2-clipstep/screen/result.json",
+     "result_sha256": "8e40cb53d73f66fcde7ea2850e146850c72f0baa18b9979a2174c4a8e7d2d320",
+     "acceptance": 0.5634503732374896,
+     "accepted": 4076,
+     "proposed": 7234,
+     "requests": 60,
+     "correct": true
+    }
+   },
+   "s4-c0-fast": {
+    "intent_sha256": "08d74bf634a62c7030e9a20879de4ae314053ccfa9ecb2bc05cb802a86b864b6",
+    "code_sha256": "5ab79507dcaaaf6135e804419a063e34ea48461e7c54b2c9af80539b93755317",
+    "seed": 8101,
+    "updates": 8209,
+    "corpus": "3ba546d5c92d939572f54b7147917f1d19d8d85192134413b95bb58da2cbe3aa",
+    "features": null,
+    "calibration": null,
+    "gradual_precision": null,
+    "arithmetic": "fast-exact-tf32ff",
+    "step_sizes": {
+     "sign": 0.004,
+     "scale": 1e-05,
+     "midpoint": 1e-05,
+     "gain": 1e-05,
+     "clip": 1e-05,
+     "norm": 1e-05
+    },
+    "final_export": "0b1dd5f7995c7de829eda0b148da920bf8fd5cb235ebadd7ceec0b3794c68701",
+    "update_seconds": 1520.2179814569718,
+    "data_seconds": 166.85076456217757,
+    "labels": 2493623,
+    "dev": [
+     {
+      "updates": 0,
+      "top1": [
+       0.05,
+       0.05,
+       0.016666666666666666
+      ],
+      "survival": [
+       0.05,
+       0.0,
+       0.0
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.05,
+        0.0,
+        0.0
+       ],
+       "thinking-on": [
+        0.0,
+        0.0,
+        0.0
+       ]
+      }
+     },
+     {
+      "updates": 2052,
+      "top1": [
+       0.8083333333333333,
+       0.675,
+       0.6083333333333333
+      ],
+      "survival": [
+       0.8083333333333333,
+       0.575,
+       0.4666666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.75,
+        0.55,
+        0.4
+       ]
+      }
+     },
+     {
+      "updates": 4104,
+      "top1": [
+       0.8083333333333333,
+       0.7166666666666667,
+       0.625
+      ],
+      "survival": [
+       0.8083333333333333,
+       0.6166666666666667,
+       0.475
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.75,
+        0.6,
+        0.45
+       ]
+      }
+     },
+     {
+      "updates": 6156,
+      "top1": [
+       0.85,
+       0.725,
+       0.6916666666666667
+      ],
+      "survival": [
+       0.85,
+       0.6666666666666666,
+       0.5583333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.75,
+        0.55,
+        0.4
+       ]
+      }
+     },
+     {
+      "updates": 8208,
+      "top1": [
+       0.85,
+       0.7333333333333333,
+       0.7
+      ],
+      "survival": [
+       0.85,
+       0.6833333333333333,
+       0.5583333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.8,
+        0.6,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 8209,
+      "top1": [
+       0.85,
+       0.7333333333333333,
+       0.7
+      ],
+      "survival": [
+       0.85,
+       0.6833333333333333,
+       0.5583333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.8,
+        0.6,
+        0.5
+       ]
+      }
+     }
+    ],
+    "screen": {
+     "result": "/home/philip/BitDraft/artifacts/feature-validation-01/arms/s4-c0-fast/screen/result.json",
+     "result_sha256": "30a5bb65f6550e9e57922d6415b66c6134dbe8716204e6764fd37a788cea8723",
+     "acceptance": 0.4871567759078831,
+     "accepted": 3850,
+     "proposed": 7903,
+     "requests": 60,
+     "correct": true
+    }
+   },
+   "s9-assembled-fast": {
+    "intent_sha256": "4ae1b3c36ae7db310d5f6d346927f79f3390da807fbd26d472d2554715dec9f7",
+    "code_sha256": "8c3d9db551d78293b5e9ec5fc928d49042a74bcd80086c4d53393d86c595b53b",
+    "seed": 8101,
+    "updates": 8209,
+    "corpus": "3ba546d5c92d939572f54b7147917f1d19d8d85192134413b95bb58da2cbe3aa",
+    "features": {
+     "scale": "learned",
+     "clip": "learned",
+     "gain": "learned",
+     "midpoint": "learned"
+    },
+    "calibration": {
+     "sample": {
+      "sequences": 16,
+      "windows": 16,
+      "seed": 20261116
+     }
+    },
+    "gradual_precision": null,
+    "arithmetic": "fast-exact-tf32ff",
+    "step_sizes": {
+     "sign": 0.004,
+     "scale": 1e-05,
+     "midpoint": 1e-05,
+     "gain": 1e-05,
+     "clip": 1e-05,
+     "norm": 1e-05
+    },
+    "final_export": "2fcc8b1d9a9b26a5d59487c0581a93701868f94eab71a1052ae66e7c8ceb8d81",
+    "update_seconds": 1511.3548271560321,
+    "data_seconds": 174.68509913951857,
+    "labels": 2493623,
+    "dev": [
+     {
+      "updates": 0,
+      "top1": [
+       0.175,
+       0.21666666666666667,
+       0.2
+      ],
+      "survival": [
+       0.175,
+       0.05,
+       0.008333333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.15,
+        0.05263157894736842,
+        0.0
+       ],
+       "thinking-on": [
+        0.25,
+        0.05,
+        0.05
+       ]
+      }
+     },
+     {
+      "updates": 2052,
+      "top1": [
+       0.8416666666666667,
+       0.7,
+       0.65
+      ],
+      "survival": [
+       0.8416666666666667,
+       0.6583333333333333,
+       0.55
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.7368421052631579,
+        0.7368421052631579
+       ],
+       "thinking-on": [
+        0.7,
+        0.6,
+        0.45
+       ]
+      }
+     },
+     {
+      "updates": 4104,
+      "top1": [
+       0.85,
+       0.7583333333333333,
+       0.675
+      ],
+      "survival": [
+       0.85,
+       0.7,
+       0.575
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.85,
+        0.65,
+        0.45
+       ]
+      }
+     },
+     {
+      "updates": 6156,
+      "top1": [
+       0.875,
+       0.7333333333333333,
+       0.675
+      ],
+      "survival": [
+       0.875,
+       0.7,
+       0.575
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8947368421052632,
+        0.8947368421052632
+       ],
+       "thinking-on": [
+        0.85,
+        0.7,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 8208,
+      "top1": [
+       0.85,
+       0.7416666666666667,
+       0.6833333333333333
+      ],
+      "survival": [
+       0.85,
+       0.6666666666666666,
+       0.5583333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.55
+       ]
+      }
+     },
+     {
+      "updates": 8209,
+      "top1": [
+       0.85,
+       0.7416666666666667,
+       0.6833333333333333
+      ],
+      "survival": [
+       0.85,
+       0.6666666666666666,
+       0.5583333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.55
+       ]
+      }
+     }
+    ],
+    "screen": {
+     "result": "/home/philip/BitDraft/artifacts/feature-validation-01/arms/s9-assembled-fast/screen/result.json",
+     "result_sha256": "99c306bba21b39c12c13e8cc865eedc170e87c0bda6988d94224aac3d79c0c03",
+     "acceptance": 0.56150027578599,
+     "accepted": 4072,
+     "proposed": 7252,
+     "requests": 60,
+     "correct": true
+    }
+   },
+   "s9-assembled-fast-s8102": {
+    "intent_sha256": "6ef28bf1bd7c1c2e0d686a3067f86a5959e0c0d75ce2e02fce4eddaa5865db39",
+    "code_sha256": "8c3d9db551d78293b5e9ec5fc928d49042a74bcd80086c4d53393d86c595b53b",
+    "seed": 8102,
+    "updates": 8209,
+    "corpus": "3ba546d5c92d939572f54b7147917f1d19d8d85192134413b95bb58da2cbe3aa",
+    "features": {
+     "scale": "learned",
+     "clip": "learned",
+     "gain": "learned",
+     "midpoint": "learned"
+    },
+    "calibration": {
+     "sample": {
+      "sequences": 16,
+      "windows": 16,
+      "seed": 20261116
+     }
+    },
+    "gradual_precision": null,
+    "arithmetic": "fast-exact-tf32ff",
+    "step_sizes": {
+     "sign": 0.004,
+     "scale": 1e-05,
+     "midpoint": 1e-05,
+     "gain": 1e-05,
+     "clip": 1e-05,
+     "norm": 1e-05
+    },
+    "final_export": "ebfeac36805e62097758e0a76fa0a2072608b69c79a472955d8798ccbfaf88d1",
+    "update_seconds": 1517.9336650686892,
+    "data_seconds": 185.4533707509836,
+    "labels": 2490639,
+    "dev": [
+     {
+      "updates": 0,
+      "top1": [
+       0.175,
+       0.21666666666666667,
+       0.2
+      ],
+      "survival": [
+       0.175,
+       0.05,
+       0.008333333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.15,
+        0.05263157894736842,
+        0.0
+       ],
+       "thinking-on": [
+        0.25,
+        0.05,
+        0.05
+       ]
+      }
+     },
+     {
+      "updates": 2052,
+      "top1": [
+       0.875,
+       0.7583333333333333,
+       0.6666666666666666
+      ],
+      "survival": [
+       0.875,
+       0.75,
+       0.575
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.75,
+        0.55,
+        0.4
+       ]
+      }
+     },
+     {
+      "updates": 4104,
+      "top1": [
+       0.875,
+       0.725,
+       0.7
+      ],
+      "survival": [
+       0.875,
+       0.6916666666666667,
+       0.6
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.95,
+        0.8421052631578947,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 6156,
+      "top1": [
+       0.9,
+       0.725,
+       0.7
+      ],
+      "survival": [
+       0.9,
+       0.6916666666666667,
+       0.6083333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.75,
+        0.65,
+        0.45
+       ]
+      }
+     },
+     {
+      "updates": 8208,
+      "top1": [
+       0.9083333333333333,
+       0.7333333333333333,
+       0.6916666666666667
+      ],
+      "survival": [
+       0.9083333333333333,
+       0.7,
+       0.625
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8947368421052632,
+        0.8947368421052632
+       ],
+       "thinking-on": [
+        0.8,
+        0.6,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 8209,
+      "top1": [
+       0.9083333333333333,
+       0.7333333333333333,
+       0.6916666666666667
+      ],
+      "survival": [
+       0.9083333333333333,
+       0.7,
+       0.625
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8947368421052632,
+        0.8947368421052632
+       ],
+       "thinking-on": [
+        0.8,
+        0.6,
+        0.5
+       ]
+      }
+     }
+    ],
+    "screen": {
+     "result": "/home/philip/BitDraft/artifacts/feature-validation-01/arms/s9-assembled-fast-s8102/screen/result.json",
+     "result_sha256": "c787e1f59644d0a52c81cc28ed7893f5ec0a6ae8c5f9fb69ce37ce0604d737c2",
+     "acceptance": 0.5573095401509952,
+     "accepted": 4060,
+     "proposed": 7285,
+     "requests": 60,
+     "correct": true
+    }
+   },
+   "g3v2-calibrated-fused-r2": {
+    "intent_sha256": "9613903f2b09b09e782d40144d110c3d362879b18229c8ec4a4c24e019739d09",
+    "code_sha256": "8c3d9db551d78293b5e9ec5fc928d49042a74bcd80086c4d53393d86c595b53b",
+    "seed": 8101,
+    "updates": 8209,
+    "corpus": "cedad26bfbabd40413218a6ebe2b2498d5bb782893946c89b1fa0622afe7d72b",
+    "features": {
+     "scale": "learned",
+     "clip": "learned",
+     "gain": "learned",
+     "midpoint": "learned"
+    },
+    "calibration": {
+     "sample": {
+      "sequences": 16,
+      "windows": 16,
+      "seed": 20261116
+     }
+    },
+    "gradual_precision": null,
+    "arithmetic": "reference",
+    "step_sizes": {
+     "sign": 0.004,
+     "scale": 1e-05,
+     "midpoint": 1e-05,
+     "gain": 1e-05,
+     "clip": 1e-05,
+     "norm": 1e-05
+    },
+    "final_export": "c1b0e434e3783d97ac9fd09ab4ad1c0cc0ce96b84f568815453329c2ac13482a",
+    "update_seconds": 1615.584104079022,
+    "data_seconds": 128.2197745920057,
+    "labels": 2493623,
+    "dev": [
+     {
+      "updates": 0,
+      "top1": [
+       0.19166666666666668,
+       0.18333333333333332,
+       0.19166666666666668
+      ],
+      "survival": [
+       0.19166666666666668,
+       0.05,
+       0.016666666666666666
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.15,
+        0.05263157894736842,
+        0.0
+       ],
+       "thinking-on": [
+        0.2,
+        0.0,
+        0.0
+       ]
+      }
+     },
+     {
+      "updates": 2052,
+      "top1": [
+       0.8583333333333333,
+       0.7083333333333334,
+       0.65
+      ],
+      "survival": [
+       0.8583333333333333,
+       0.6666666666666666,
+       0.55
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.7368421052631579,
+        0.7368421052631579
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 4104,
+      "top1": [
+       0.8583333333333333,
+       0.75,
+       0.675
+      ],
+      "survival": [
+       0.8583333333333333,
+       0.7,
+       0.5833333333333334
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 6156,
+      "top1": [
+       0.9,
+       0.775,
+       0.6916666666666667
+      ],
+      "survival": [
+       0.9,
+       0.725,
+       0.6083333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.55
+       ]
+      }
+     },
+     {
+      "updates": 8208,
+      "top1": [
+       0.8833333333333333,
+       0.7833333333333333,
+       0.7
+      ],
+      "survival": [
+       0.8833333333333333,
+       0.7166666666666667,
+       0.6083333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.6,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 8209,
+      "top1": [
+       0.8833333333333333,
+       0.7833333333333333,
+       0.7
+      ],
+      "survival": [
+       0.8833333333333333,
+       0.7166666666666667,
+       0.6083333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.6,
+        0.5
+       ]
+      }
+     }
+    ],
+    "screen": {
+     "result": "/home/philip/BitDraft/artifacts/feature-validation-01/arms/g3v2-calibrated-fused-r2/screen/result.json",
+     "result_sha256": "f08908e53485367a5970ea60db4b11d4aaf6d85eb754bf74519f71e103a117a8",
+     "acceptance": 0.5636313389526046,
+     "accepted": 4079,
+     "proposed": 7237,
+     "requests": 60,
+     "correct": true
+    }
+   },
+   "g3v2-calibrated-fused-s8102": {
+    "intent_sha256": "6c1751479a4438288e891eb5ca522ffe36de1d1721494ad2c0e7186ff40bee4b",
+    "code_sha256": "8c3d9db551d78293b5e9ec5fc928d49042a74bcd80086c4d53393d86c595b53b",
+    "seed": 8102,
+    "updates": 8209,
+    "corpus": "9d71b2989fc3aa5f36ea7992d505e5c8a0cdee3d6e5d109dd074d37a6d3d768e",
+    "features": {
+     "scale": "learned",
+     "clip": "learned",
+     "gain": "learned",
+     "midpoint": "learned"
+    },
+    "calibration": {
+     "sample": {
+      "sequences": 16,
+      "windows": 16,
+      "seed": 20261116
+     }
+    },
+    "gradual_precision": null,
+    "arithmetic": "reference",
+    "step_sizes": {
+     "sign": 0.004,
+     "scale": 1e-05,
+     "midpoint": 1e-05,
+     "gain": 1e-05,
+     "clip": 1e-05,
+     "norm": 1e-05
+    },
+    "final_export": "a3ba6087bc4c7ba3813b3233cf551a7060fd84197888a98e3839fe4eeb038d6e",
+    "update_seconds": 1618.9217690294317,
+    "data_seconds": 122.86678472945641,
+    "labels": 2490639,
+    "dev": [
+     {
+      "updates": 0,
+      "top1": [
+       0.19166666666666668,
+       0.18333333333333332,
+       0.19166666666666668
+      ],
+      "survival": [
+       0.19166666666666668,
+       0.05,
+       0.016666666666666666
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.15,
+        0.05263157894736842,
+        0.0
+       ],
+       "thinking-on": [
+        0.2,
+        0.0,
+        0.0
+       ]
+      }
+     },
+     {
+      "updates": 2052,
+      "top1": [
+       0.8666666666666667,
+       0.7416666666666667,
+       0.6166666666666667
+      ],
+      "survival": [
+       0.8666666666666667,
+       0.7166666666666667,
+       0.5583333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.95,
+        0.8421052631578947,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.75,
+        0.5,
+        0.45
+       ]
+      }
+     },
+     {
+      "updates": 4104,
+      "top1": [
+       0.875,
+       0.7416666666666667,
+       0.7
+      ],
+      "survival": [
+       0.875,
+       0.7083333333333334,
+       0.6166666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.8,
+        0.6,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 6156,
+      "top1": [
+       0.875,
+       0.7666666666666667,
+       0.7083333333333334
+      ],
+      "survival": [
+       0.875,
+       0.7166666666666667,
+       0.6333333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.6,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 8208,
+      "top1": [
+       0.875,
+       0.7583333333333333,
+       0.7
+      ],
+      "survival": [
+       0.875,
+       0.7083333333333334,
+       0.6166666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.55,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 8209,
+      "top1": [
+       0.875,
+       0.7583333333333333,
+       0.7
+      ],
+      "survival": [
+       0.875,
+       0.7083333333333334,
+       0.6166666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.55,
+        0.5
+       ]
+      }
+     }
+    ],
+    "screen": {
+     "result": "/home/philip/BitDraft/artifacts/feature-validation-01/arms/g3v2-calibrated-fused-s8102/screen/result.json",
+     "result_sha256": "32f1f4d659de2e1b796e2ba737efb10b0e92ee10d07d98c35d38ee23dfd08c93",
+     "acceptance": 0.5588558855885588,
+     "accepted": 4064,
+     "proposed": 7272,
+     "requests": 60,
+     "correct": true
+    }
+   },
+   "g3v2-roundstate": {
+    "intent_sha256": "692198611d315bfa64930fc1714e79752896c848752c4bbd768d1643d5fa1a24",
+    "code_sha256": "088b73c49b48e0e441e94f7dc2040b77fa7ecae9f68fbaf2a68d3f93ff88a0a5",
+    "seed": 8101,
+    "updates": 8209,
+    "corpus": "3ba546d5c92d939572f54b7147917f1d19d8d85192134413b95bb58da2cbe3aa",
+    "features": {
+     "scale": "learned",
+     "clip": "learned",
+     "gain": "learned",
+     "midpoint": "learned"
+    },
+    "calibration": {
+     "sample": {
+      "sequences": 16,
+      "windows": 16,
+      "seed": 20261116
+     }
+    },
+    "gradual_precision": null,
+    "arithmetic": "reference",
+    "step_sizes": {
+     "sign": 0.004,
+     "scale": 1e-05,
+     "midpoint": 1e-05,
+     "gain": 1e-05,
+     "clip": 1e-05,
+     "norm": 1e-05
+    },
+    "final_export": "e4aa40f0bfe4d91776a9c3f9fbcf80ac02693f3b8c6a3dccb7fd3c27539d4b94",
+    "update_seconds": 1714.6763279769657,
+    "data_seconds": 162.22655475634383,
+    "labels": 2493623,
+    "dev": [
+     {
+      "updates": 0,
+      "top1": [
+       0.175,
+       0.21666666666666667,
+       0.2
+      ],
+      "survival": [
+       0.175,
+       0.05,
+       0.008333333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.15,
+        0.05263157894736842,
+        0.0
+       ],
+       "thinking-on": [
+        0.25,
+        0.05,
+        0.05
+       ]
+      }
+     },
+     {
+      "updates": 2052,
+      "top1": [
+       0.8583333333333333,
+       0.675,
+       0.6583333333333333
+      ],
+      "survival": [
+       0.8583333333333333,
+       0.6333333333333333,
+       0.525
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.85,
+        0.65,
+        0.55
+       ]
+      }
+     },
+     {
+      "updates": 4104,
+      "top1": [
+       0.8333333333333334,
+       0.7333333333333333,
+       0.6416666666666667
+      ],
+      "survival": [
+       0.8333333333333334,
+       0.6666666666666666,
+       0.5416666666666666
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.7,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 6156,
+      "top1": [
+       0.8833333333333333,
+       0.7583333333333333,
+       0.6416666666666667
+      ],
+      "survival": [
+       0.8833333333333333,
+       0.7,
+       0.5666666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8947368421052632,
+        0.8947368421052632
+       ],
+       "thinking-on": [
+        0.85,
+        0.75,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 8208,
+      "top1": [
+       0.8916666666666667,
+       0.775,
+       0.65
+      ],
+      "survival": [
+       0.8916666666666667,
+       0.7166666666666667,
+       0.5666666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.7,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 8209,
+      "top1": [
+       0.8916666666666667,
+       0.775,
+       0.65
+      ],
+      "survival": [
+       0.8916666666666667,
+       0.7166666666666667,
+       0.5666666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.7,
+        0.5
+       ]
+      }
+     }
+    ],
+    "screen": {
+     "result": "/home/philip/BitDraft/artifacts/feature-validation-01/arms/g3v2-roundstate/screen/result.json",
+     "result_sha256": "ef859637da9bf0d5456eb2f113360779cd5256272f9bf8f83473b0069f8b4a3e",
+     "acceptance": 0.5621636539257624,
+     "accepted": 4074,
+     "proposed": 7247,
+     "requests": 60,
+     "correct": true
+    }
+   },
+   "g3v2-slotround": {
+    "intent_sha256": "6770775e051ff1e00d3e47385ad86bcd06a52fcffc258fdfdcbe353067d7991e",
+    "code_sha256": "bf59bf3abb42201a703224a5146bf98e00323740850e73dee8fa6a14bd4f6b34",
+    "seed": 8101,
+    "updates": 8209,
+    "corpus": "3ba546d5c92d939572f54b7147917f1d19d8d85192134413b95bb58da2cbe3aa",
+    "features": {
+     "scale": "learned",
+     "clip": "learned",
+     "gain": "learned",
+     "midpoint": "learned"
+    },
+    "calibration": {
+     "sample": {
+      "sequences": 16,
+      "windows": 16,
+      "seed": 20261116
+     }
+    },
+    "gradual_precision": null,
+    "arithmetic": "reference",
+    "step_sizes": {
+     "sign": 0.004,
+     "scale": 1e-05,
+     "midpoint": 1e-05,
+     "gain": 1e-05,
+     "clip": 1e-05,
+     "norm": 1e-05
+    },
+    "final_export": "0bcee9c6eafae38cc84c259b13f53969f73203c081504b1742970bbabfb7b501",
+    "update_seconds": 1723.3381249814847,
+    "data_seconds": 185.81087158284208,
+    "labels": 2493623,
+    "dev": [
+     {
+      "updates": 0,
+      "top1": [
+       0.18333333333333332,
+       0.21666666666666667,
+       0.25
+      ],
+      "survival": [
+       0.18333333333333332,
+       0.06666666666666667,
+       0.041666666666666664
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.2,
+        0.10526315789473684,
+        0.0
+       ],
+       "thinking-on": [
+        0.3,
+        0.0,
+        0.0
+       ]
+      }
+     },
+     {
+      "updates": 2052,
+      "top1": [
+       0.85,
+       0.7,
+       0.6666666666666666
+      ],
+      "survival": [
+       0.85,
+       0.65,
+       0.525
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.7894736842105263,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.8,
+        0.6,
+        0.45
+       ]
+      }
+     },
+     {
+      "updates": 4104,
+      "top1": [
+       0.8416666666666667,
+       0.75,
+       0.6666666666666666
+      ],
+      "survival": [
+       0.8416666666666667,
+       0.6833333333333333,
+       0.5833333333333334
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.85,
+        0.6,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 6156,
+      "top1": [
+       0.8916666666666667,
+       0.7416666666666667,
+       0.6666666666666666
+      ],
+      "survival": [
+       0.8916666666666667,
+       0.7,
+       0.575
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.8947368421052632,
+        0.8947368421052632
+       ],
+       "thinking-on": [
+        0.85,
+        0.6,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 8208,
+      "top1": [
+       0.8916666666666667,
+       0.7583333333333333,
+       0.7
+      ],
+      "survival": [
+       0.8916666666666667,
+       0.7166666666666667,
+       0.6
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 8209,
+      "top1": [
+       0.8916666666666667,
+       0.7583333333333333,
+       0.7
+      ],
+      "survival": [
+       0.8916666666666667,
+       0.7166666666666667,
+       0.6
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.85,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.5
+       ]
+      }
+     }
+    ],
+    "screen": {
+     "result": "/home/philip/BitDraft/artifacts/feature-validation-01/arms/g3v2-slotround/screen/result.json",
+     "result_sha256": "e5ceb0ca318a1450e2304c519e62f5898b3b7b3a50dccfd6968449a8252da866",
+     "acceptance": 0.5561951754385965,
+     "accepted": 4058,
+     "proposed": 7296,
+     "requests": 60,
+     "correct": true
+    }
+   },
+   "s12-long": {
+    "intent_sha256": "ea8883481113e0c26578c2fa7396568b3419d30cc7b734094c73d78b58d4e35e",
+    "code_sha256": "8c3d9db551d78293b5e9ec5fc928d49042a74bcd80086c4d53393d86c595b53b",
+    "seed": 8101,
+    "updates": 42000,
+    "corpus": "f756aea51f5e2fbff407739b1a220c68c484a71d34c7796ceb340096b06f81b4",
+    "features": {
+     "scale": "learned",
+     "clip": "learned",
+     "gain": "learned",
+     "midpoint": "learned"
+    },
+    "calibration": {
+     "sample": {
+      "sequences": 16,
+      "windows": 16,
+      "seed": 20261116
+     }
+    },
+    "gradual_precision": null,
+    "arithmetic": "reference",
+    "step_sizes": {
+     "sign": 0.004,
+     "scale": 1e-05,
+     "midpoint": 1e-05,
+     "gain": 1e-05,
+     "clip": 1e-05,
+     "norm": 1e-05
+    },
+    "final_export": "ae6569f6b56007fec52b66c535b2930029219325f072628595ca99faef68af63",
+    "update_seconds": 11033.944954429811,
+    "data_seconds": 4498.653435365399,
+    "labels": 8926903,
+    "dev": [
+     {
+      "updates": 0,
+      "top1": [
+       0.175,
+       0.21666666666666667,
+       0.2
+      ],
+      "survival": [
+       0.175,
+       0.05,
+       0.008333333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.15,
+        0.05263157894736842,
+        0.0
+       ],
+       "thinking-on": [
+        0.25,
+        0.05,
+        0.05
+       ]
+      }
+     },
+     {
+      "updates": 7000,
+      "top1": [
+       0.8083333333333333,
+       0.7166666666666667,
+       0.675
+      ],
+      "survival": [
+       0.8083333333333333,
+       0.675,
+       0.5666666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.95,
+        0.8947368421052632,
+        0.8947368421052632
+       ],
+       "thinking-on": [
+        0.8,
+        0.65,
+        0.45
+       ]
+      }
+     },
+     {
+      "updates": 14000,
+      "top1": [
+       0.8416666666666667,
+       0.7166666666666667,
+       0.6416666666666667
+      ],
+      "survival": [
+       0.8416666666666667,
+       0.6666666666666666,
+       0.5666666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.7894736842105263,
+        0.6842105263157895
+       ],
+       "thinking-on": [
+        0.85,
+        0.65,
+        0.55
+       ]
+      }
+     },
+     {
+      "updates": 21000,
+      "top1": [
+       0.8833333333333333,
+       0.675,
+       0.6583333333333333
+      ],
+      "survival": [
+       0.8833333333333333,
+       0.6583333333333333,
+       0.5583333333333333
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.95,
+        0.8421052631578947,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.9,
+        0.65,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 28000,
+      "top1": [
+       0.8916666666666667,
+       0.7333333333333333,
+       0.6583333333333333
+      ],
+      "survival": [
+       0.8916666666666667,
+       0.6916666666666667,
+       0.5666666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.9,
+        0.7894736842105263,
+        0.7894736842105263
+       ],
+       "thinking-on": [
+        0.75,
+        0.65,
+        0.5
+       ]
+      }
+     },
+     {
+      "updates": 35000,
+      "top1": [
+       0.9166666666666666,
+       0.7583333333333333,
+       0.675
+      ],
+      "survival": [
+       0.9166666666666666,
+       0.7166666666666667,
+       0.5916666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.95,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.85,
+        0.75,
+        0.55
+       ]
+      }
+     },
+     {
+      "updates": 42000,
+      "top1": [
+       0.9083333333333333,
+       0.7583333333333333,
+       0.6916666666666667
+      ],
+      "survival": [
+       0.9083333333333333,
+       0.7083333333333334,
+       0.5916666666666667
+      ],
+      "groups": {
+       "agentic-coding": [
+        0.95,
+        0.8421052631578947,
+        0.8421052631578947
+       ],
+       "thinking-on": [
+        0.85,
+        0.75,
+        0.6
+       ]
+      }
+     }
+    ],
+    "screen": {
+     "result": "/home/philip/BitDraft/artifacts/feature-validation-01/arms/s12-long/screen/result.json",
+     "result_sha256": "a8fae6faa33e3a855b6c2abae839ee1789996e9eb7f76ee7f8f1f3c9a09916e8",
+     "acceptance": 0.5763898613639546,
+     "accepted": 4116,
+     "proposed": 7141,
+     "requests": 60,
+     "correct": true
+    }
+   }
+  },
+  "comparisons": {
+   "blank-vs-control": {
+    "arm": [
+     "g3-blank"
+    ],
+    "control": [
+     "s4-c0-current"
+    ],
+    "arm_acceptance": 0.48380184041346275,
+    "control_acceptance": 0.489461655662773,
+    "difference_points": -0.5659815249310252,
+    "interval_points": {
+     "lower": -1.2359274343122562,
+     "upper": 0.09111113177123209
+    },
+    "groups": 60
+   },
+   "calgradual-vs-calibrated": {
+    "arm": [
+     "g3v2-calibrated-gradual"
+    ],
+    "control": [
+     "g3v2-calibrated"
+    ],
+    "arm_acceptance": 0.5616986074727699,
+    "control_acceptance": 0.5655908020501454,
+    "difference_points": -0.3892194577375552,
+    "interval_points": {
+     "lower": -1.1618251510827293,
+     "upper": 0.37787226186836165
+    },
+    "groups": 60
+   },
+   "calibrated-pooled": {
+    "arm": [
+     "g3v2-calibrated",
+     "g3v2-calibrated-s8102"
+    ],
+    "control": [
+     "s4-c0-current",
+     "s4-c0-current-s8102"
+    ],
+    "arm_acceptance": 0.5648833829330749,
+    "control_acceptance": 0.49075074693280785,
+    "difference_points": 7.41326360002671,
+    "interval_points": {
+     "lower": 6.532210157755225,
+     "upper": 8.298253166465347
+    },
+    "groups": 60
+   },
+   "calibrated-vs-control": {
+    "arm": [
+     "g3v2-calibrated"
+    ],
+    "control": [
+     "s4-c0-current"
+    ],
+    "arm_acceptance": 0.5655908020501454,
+    "control_acceptance": 0.489461655662773,
+    "difference_points": 7.612914638737244,
+    "interval_points": {
+     "lower": 6.649981466174182,
+     "upper": 8.598906402388696
+    },
+    "groups": 60
+   },
+   "clipstep-vs-calibrated": {
+    "arm": [
+     "g3v2-clipstep"
+    ],
+    "control": [
+     "g3v2-calibrated"
+    ],
+    "arm_acceptance": 0.5634503732374896,
+    "control_acceptance": 0.5655908020501454,
+    "difference_points": -0.2140428812655859,
+    "interval_points": {
+     "lower": -1.2472339231156426,
+     "upper": 0.7669049622002988
+    },
+    "groups": 60
+   },
+   "fast-pooled-vs-calibrated": {
+    "arm": [
+     "s9-assembled-fast",
+     "s9-assembled-fast-s8102"
+    ],
+    "control": [
+     "g3v2-calibrated",
+     "g3v2-calibrated-s8102"
+    ],
+    "arm_acceptance": 0.5594001513379652,
+    "control_acceptance": 0.5648833829330749,
+    "difference_points": -0.5483231595109772,
+    "interval_points": {
+     "lower": -1.3737954606456437,
+     "upper": 0.2663018686385077
+    },
+    "groups": 60
+   },
+   "fast-s8102-vs-calibrated-s8102": {
+    "arm": [
+     "s9-assembled-fast-s8102"
+    ],
+    "control": [
+     "g3v2-calibrated-s8102"
+    ],
+    "arm_acceptance": 0.5573095401509952,
+    "control_acceptance": 0.5641770401106501,
+    "difference_points": -0.6867499959654855,
+    "interval_points": {
+     "lower": -1.7915073732153508,
+     "upper": 0.37316251914372156
+    },
+    "groups": 60
+   },
+   "fast-vs-current": {
+    "arm": [
+     "s4-c0-fast"
+    ],
+    "control": [
+     "s4-c0-current"
+    ],
+    "arm_acceptance": 0.4871567759078831,
+    "control_acceptance": 0.489461655662773,
+    "difference_points": -0.23048797548899103,
+    "interval_points": {
+     "lower": -0.909619513058807,
+     "upper": 0.41790869623192783
+    },
+    "groups": 60
+   },
+   "fused-pooled-vs-calibrated": {
+    "arm": [
+     "g3v2-calibrated-fused-r2",
+     "g3v2-calibrated-fused-s8102"
+    ],
+    "control": [
+     "g3v2-calibrated",
+     "g3v2-calibrated-s8102"
+    ],
+    "arm_acceptance": 0.561237852367496,
+    "control_acceptance": 0.5648833829330749,
+    "difference_points": -0.3645530565578925,
+    "interval_points": {
+     "lower": -1.0671748396326897,
+     "upper": 0.31974231926585883
+    },
+    "groups": 60
+   },
+   "fused-r2-vs-calibrated": {
+    "arm": [
+     "g3v2-calibrated-fused-r2"
+    ],
+    "control": [
+     "g3v2-calibrated"
+    ],
+    "arm_acceptance": 0.5636313389526046,
+    "control_acceptance": 0.5655908020501454,
+    "difference_points": -0.19594630975408034,
+    "interval_points": {
+     "lower": -1.1060400333288811,
+     "upper": 0.7224777151593753
+    },
+    "groups": 60
+   },
+   "fused-s8102-vs-calibrated-s8102": {
+    "arm": [
+     "g3v2-calibrated-fused-s8102"
+    ],
+    "control": [
+     "g3v2-calibrated-s8102"
+    ],
+    "arm_acceptance": 0.5588558855885588,
+    "control_acceptance": 0.5641770401106501,
+    "difference_points": -0.5321154522091254,
+    "interval_points": {
+     "lower": -1.5707265356675548,
+     "upper": 0.5320316167878314
+    },
+    "groups": 60
+   },
+   "gradual-vs-control": {
+    "arm": [
+     "g3-gradual"
+    ],
+    "control": [
+     "s4-c0-current"
+    ],
+    "arm_acceptance": 0.49110094075769134,
+    "control_acceptance": 0.489461655662773,
+    "difference_points": 0.16392850949183413,
+    "interval_points": {
+     "lower": -0.45991934768026543,
+     "upper": 0.8264793809005966
+    },
+    "groups": 60
+   },
+   "roundstate-vs-calibrated": {
+    "arm": [
+     "g3v2-roundstate"
+    ],
+    "control": [
+     "g3v2-calibrated"
+    ],
+    "arm_acceptance": 0.5621636539257624,
+    "control_acceptance": 0.5655908020501454,
+    "difference_points": -0.34271481243830504,
+    "interval_points": {
+     "lower": -1.2244740753512673,
+     "upper": 0.5355628072543306
+    },
+    "groups": 60
+   },
+   "s9-assembled-vs-calibrated": {
+    "arm": [
+     "s9-assembled-fast"
+    ],
+    "control": [
+     "g3v2-calibrated"
+    ],
+    "arm_acceptance": 0.56150027578599,
+    "control_acceptance": 0.5655908020501454,
+    "difference_points": -0.4090526264155403,
+    "interval_points": {
+     "lower": -1.4533145036095485,
+     "upper": 0.5833272043223703
+    },
+    "groups": 60
+   },
+   "slotround-vs-calibrated": {
+    "arm": [
+     "g3v2-slotround"
+    ],
+    "control": [
+     "/home/philip/BitDraft/artifacts/feature-validation-01/builds/per-slot-rounding/runs/parity"
+    ],
+    "arm_acceptance": 0.5561951754385965,
+    "control_acceptance": 0.5655908020501454,
+    "difference_points": -0.9395626611548913,
+    "interval_points": {
+     "lower": -2.136927872570804,
+     "upper": 0.11856785974971862
+    },
+    "groups": 60
+   }
+  }
+ },
+ "learning_curve": [
+  {
+   "updates": 7000,
+   "export": "6f7e3bb321ce",
+   "screen": 49.81,
+   "screen-correct": true,
+   "requests": 41.77,
+   "requests-correct": true,
+   "thinking-slice": 52.52,
+   "thinking-slice-correct": true,
+   "sampled-slice": 40.39,
+   "sampled-slice-correct": true,
+   "agentic-slice": 70.89,
+   "agentic-slice-correct": true
+  },
+  {
+   "updates": 14000,
+   "export": "87619be85167",
+   "screen": 52.19,
+   "screen-correct": true,
+   "requests": 43.55,
+   "requests-correct": true,
+   "thinking-slice": 54.11,
+   "thinking-slice-correct": true,
+   "sampled-slice": 42.86,
+   "sampled-slice-correct": true,
+   "agentic-slice": 73.67,
+   "agentic-slice-correct": true
+  },
+  {
+   "updates": 21000,
+   "export": "4c1627a4d2af",
+   "screen": 53.97,
+   "screen-correct": true,
+   "requests": 45.72,
+   "requests-correct": true,
+   "thinking-slice": 56.28,
+   "thinking-slice-correct": true,
+   "sampled-slice": 44.42,
+   "sampled-slice-correct": true,
+   "agentic-slice": 76.03,
+   "agentic-slice-correct": true
+  },
+  {
+   "updates": 28000,
+   "export": "d9e00070cd4b",
+   "screen": 55.82,
+   "screen-correct": true,
+   "requests": 47.18,
+   "requests-correct": true,
+   "thinking-slice": 57.24,
+   "thinking-slice-correct": true,
+   "sampled-slice": 45.97,
+   "sampled-slice-correct": true,
+   "agentic-slice": 77.93,
+   "agentic-slice-correct": true
+  },
+  {
+   "updates": 35000,
+   "export": "fe4f8098b147",
+   "screen": 57.32,
+   "screen-correct": true,
+   "requests": 48.4,
+   "requests-correct": true,
+   "thinking-slice": 59.07,
+   "thinking-slice-correct": true,
+   "sampled-slice": 46.93,
+   "sampled-slice-correct": true,
+   "agentic-slice": 79.27,
+   "agentic-slice-correct": true
+  },
+  {
+   "updates": 42000,
+   "export": "ae6569f6b560",
+   "screen": 57.64,
+   "screen-correct": true,
+   "requests": 48.73,
+   "requests-correct": true,
+   "thinking-slice": 59.43,
+   "thinking-slice-correct": true,
+   "sampled-slice": 47.28,
+   "sampled-slice-correct": true,
+   "agentic-slice": 79.29,
+   "agentic-slice-correct": true
+  }
+ ],
+ "final_vs_recorded_leader": {
+  "arm": [
+   "s12-long"
+  ],
+  "control": [
+   "/home/philip/BitDraft/artifacts/benchmarks/runtime-v8-linux-01/runs/q4km-screen"
+  ],
+  "arm_acceptance": 0.5763898613639546,
+  "control_acceptance": 0.5522652838427947,
+  "difference_points": 2.412457752115993,
+  "interval_points": {
+   "lower": 0.9796947854291194,
+   "upper": 3.7814886111311896
+  },
+  "groups": 60
+ },
+ "release_panels": {
+  "candidate": "ae6569f6b56007fec52b66c535b2930029219325f072628595ca99faef68af63",
+  "code_sha256": "088b73c49b48e0e441e94f7dc2040b77fa7ecae9f68fbaf2a68d3f93ff88a0a5",
+  "rule": "passed: at most two scenarios with a 95% speed-ratio lower bound below 1.00, each at 0.97 or better, every other lower bound at 1.00 or better, exact greedy outputs, no invalid outputs and agentic completion not below Baseline",
+  "scenarios": {
+   "agentic-coding": {
+    "comparison": {
+     "speed_ratio": 1.1047507484888348,
+     "speed_ratio_95_interval": {
+      "lower": 1.0890655537056417,
+      "upper": 1.1197014190540557
+     },
+     "acceptance_difference": 0.1744616653273685,
+     "acceptance_difference_95_interval": {
+      "lower": 0.13789485299493387,
+      "upper": 0.21962100818488273
+     },
+     "groups": 6,
+     "interval_available": true
+    },
+    "correct": true,
+    "completion": "held",
+    "summary": {
+     "baseline": {
+      "acceptance": 0.6340029624143677,
+      "accepted": 41091,
+      "assigned_tasks_per_second": 0.12389540370805079,
+      "completed_tasks": 37,
+      "correct": true,
+      "depth": 3,
+      "execution": "measured",
+      "proposed": 64812,
+      "raw_wall_seconds": 493.7540214910114,
+      "seconds_per_assigned_task": 8.071324440383735,
+      "server_prediction_seconds": 272.990489,
+      "server_prompt_seconds": 147.877767,
+      "speed_vs_baseline": 1.0,
+      "speed_vs_target": 1.3613813954442149,
+      "tasks": 60,
+      "tokens": 63335,
+      "tokens_per_second": 130.78192323082328,
+      "wall_seconds": 484.27946642302413
+     },
+     "candidate": {
+      "acceptance": 0.8084646277417362,
+      "accepted": 44489,
+      "assigned_tasks_per_second": 0.13687353998079546,
+      "completed_tasks": 37,
+      "correct": true,
+      "depth": 3,
+      "execution": "measured",
+      "proposed": 55029,
+      "raw_wall_seconds": 447.1882716990294,
+      "seconds_per_assigned_task": 7.306014004900499,
+      "server_prediction_seconds": 226.789503,
+      "server_prompt_seconds": 148.0060689999999,
+      "speed_vs_baseline": 1.1047507484888348,
+      "speed_vs_target": 1.5039871155957707,
+      "tasks": 60,
+      "tokens": 63335,
+      "tokens_per_second": 144.48142757806136,
+      "wall_seconds": 438.3608402940299
+     },
+     "target": {
+      "acceptance": null,
+      "accepted": 0,
+      "assigned_tasks_per_second": 0.09100712270834586,
+      "completed_tasks": 37,
+      "correct": true,
+      "depth": null,
+      "execution": "measured",
+      "proposed": 0,
+      "raw_wall_seconds": 677.6967888569561,
+      "seconds_per_assigned_task": 10.988150929732607,
+      "server_prediction_seconds": 465.92217800000003,
+      "server_prompt_seconds": 130.731287,
+      "speed_vs_baseline": 0.7345480137648737,
+      "speed_vs_target": 1.0,
+      "tasks": 60,
+      "tokens": 63335,
+      "tokens_per_second": 96.06560194555142,
+      "wall_seconds": 659.2890557839564
+     }
+    },
+    "speed_ratio_95_lower": 1.0890655537056417,
+    "coverage": "full",
+    "pooled_runs": 1
+   },
+   "greedy-long": {
+    "comparison": {
+     "speed_ratio": 1.0024882414526775,
+     "acceptance_difference": -0.02955462158351807,
+     "groups": 24,
+     "interval_available": false,
+     "reason": "insufficient independent groups within a category-composition stratum"
+    },
+    "correct": true,
+    "completion": null,
+    "summary": {
+     "baseline": {
+      "acceptance": 0.6114553676101155,
+      "accepted": 7302,
+      "accepted_per_round": 1.8355957767722473,
+      "cap_hits": 8,
+      "correct": true,
+      "depth": 3,
+      "derived_rounds": 3978,
+      "emitted_per_round": 2.8355957767722475,
+      "eos_stops": 40,
+      "execution": "measured",
+      "proposed": 11942,
+      "proposed_per_round": 3.0020110608345902,
+      "requests": 48,
+      "server_prediction_seconds": 38.42891800000001,
+      "server_prompt_seconds": 26.712585,
+      "speed_vs_baseline": 1.0,
+      "speed_vs_target": 1.3534756414257034,
+      "tokens": 11328,
+      "tokens_per_second": 173.68572875033718,
+      "wall_seconds": 65.22124806398642
+     },
+     "candidate": {
+      "acceptance": 0.5819007460265975,
+      "accepted": 7176,
+      "accepted_per_round": 1.7485380116959064,
+      "cap_hits": 8,
+      "correct": true,
+      "depth": 3,
+      "derived_rounds": 4104,
+      "emitted_per_round": 2.7485380116959064,
+      "eos_stops": 40,
+      "execution": "measured",
+      "proposed": 12332,
+      "proposed_per_round": 3.0048732943469787,
+      "requests": 48,
+      "server_prediction_seconds": 38.262097000000004,
+      "server_prompt_seconds": 26.717581000000006,
+      "speed_vs_baseline": 1.0024882414526775,
+      "speed_vs_target": 1.3568434156218878,
+      "tokens": 11328,
+      "tokens_per_second": 174.11790078035224,
+      "wall_seconds": 65.0593646559646
+     },
+     "target": {
+      "acceptance": null,
+      "accepted": 0,
+      "accepted_per_round": null,
+      "cap_hits": 8,
+      "correct": true,
+      "depth": null,
+      "derived_rounds": null,
+      "emitted_per_round": null,
+      "eos_stops": 40,
+      "execution": "measured",
+      "proposed": 0,
+      "proposed_per_round": null,
+      "requests": 48,
+      "server_prediction_seconds": 63.351819,
+      "server_prompt_seconds": 24.844127999999994,
+      "speed_vs_baseline": 0.7388385645024504,
+      "speed_vs_target": 1.0,
+      "tokens": 11328,
+      "tokens_per_second": 128.3257145044611,
+      "wall_seconds": 88.27537055798894
+     }
+    },
+    "speed_ratio_95_lower": null,
+    "coverage": "full",
+    "pooled_runs": 2
+   },
+   "greedy-short": {
+    "comparison": {
+     "speed_ratio": 0.9886067249033261,
+     "speed_ratio_95_interval": {
+      "lower": 0.9785707673616902,
+      "upper": 0.9985821826549206
+     },
+     "acceptance_difference": -0.047991969450988714,
+     "acceptance_difference_95_interval": {
+      "lower": -0.05666586399287571,
+      "upper": -0.03921999212155741
+     },
+     "groups": 96,
+     "interval_available": true
+    },
+    "correct": true,
+    "completion": null,
+    "summary": {
+     "baseline": {
+      "acceptance": 0.5234231707053923,
+      "accepted": 48514,
+      "accepted_per_round": 1.568103949835154,
+      "cap_hits": 64,
+      "correct": true,
+      "depth": 3,
+      "derived_rounds": 30938,
+      "emitted_per_round": 2.5681039498351543,
+      "eos_stops": 128,
+      "execution": "measured",
+      "proposed": 92686,
+      "proposed_per_round": 2.995862693128192,
+      "requests": 192,
+      "server_prediction_seconds": 251.91725399999999,
+      "server_prompt_seconds": 10.135197999999997,
+      "speed_vs_baseline": 1.0,
+      "speed_vs_target": 1.5011487861525543,
+      "tokens": 79644,
+      "tokens_per_second": 303.78729959626196,
+      "wall_seconds": 262.17027540600975
+     },
+     "candidate": {
+      "acceptance": 0.47543120125440363,
+      "accepted": 46694,
+      "accepted_per_round": 1.425422797484584,
+      "cap_hits": 64,
+      "correct": true,
+      "depth": 3,
+      "derived_rounds": 32758,
+      "emitted_per_round": 2.425422797484584,
+      "eos_stops": 128,
+      "execution": "measured",
+      "proposed": 98214,
+      "proposed_per_round": 2.998168386348373,
+      "requests": 192,
+      "server_prediction_seconds": 254.934762,
+      "server_prompt_seconds": 10.139616000000006,
+      "speed_vs_baseline": 0.9886067249033261,
+      "speed_vs_target": 1.4840457850708801,
+      "tokens": 79644,
+      "tokens_per_second": 300.3261673210861,
+      "wall_seconds": 265.1916771369797
+     },
+     "target": {
+      "acceptance": null,
+      "accepted": 0,
+      "accepted_per_round": null,
+      "cap_hits": 64,
+      "correct": true,
+      "depth": null,
+      "derived_rounds": null,
+      "emitted_per_round": null,
+      "eos_stops": 128,
+      "execution": "measured",
+      "proposed": 0,
+      "proposed_per_round": null,
+      "requests": 192,
+      "server_prediction_seconds": 383.788033,
+      "server_prompt_seconds": 9.615328000000002,
+      "speed_vs_baseline": 0.6661564857691428,
+      "speed_vs_target": 1.0,
+      "tokens": 79644,
+      "tokens_per_second": 202.3698799203436,
+      "wall_seconds": 393.5565906910124
+     }
+    },
+    "speed_ratio_95_lower": 0.9785707673616902,
+    "coverage": "full",
+    "pooled_runs": 2
+   },
+   "sampled": {
+    "comparison": {
+     "speed_ratio": 0.9940049908522336,
+     "speed_ratio_95_interval": {
+      "lower": 0.9878339642225112,
+      "upper": 1.0003758311887836
+     },
+     "acceptance_difference": -0.043397216309594366,
+     "acceptance_difference_95_interval": {
+      "lower": -0.05051591896537544,
+      "upper": -0.036395859159178146
+     },
+     "groups": 40,
+     "interval_available": true
+    },
+    "correct": true,
+    "completion": null,
+    "summary": {
+     "baseline": {
+      "acceptance": 0.4999528621260038,
+      "accepted": 116668,
+      "accepted_per_round": 1.5000514297469656,
+      "cap_hits": 14,
+      "correct": true,
+      "depth": 3,
+      "derived_rounds": 77776,
+      "emitted_per_round": 2.5000514297469656,
+      "eos_stops": 226,
+      "execution": "measured",
+      "proposed": 233358,
+      "proposed_per_round": 3.000385723102242,
+      "requests": 240,
+      "server_prediction_seconds": 868.095198,
+      "server_prompt_seconds": 10.309494000000004,
+      "speed_vs_baseline": 1.0,
+      "speed_vs_target": 1.3382369623818953,
+      "tokens": 194684,
+      "tokens_per_second": 221.5916124895973,
+      "wall_seconds": 878.5711598589478
+     },
+     "candidate": {
+      "acceptance": 0.45655564581640945,
+      "accepted": 112404,
+      "accepted_per_round": 1.3701121404193077,
+      "cap_hits": 14,
+      "correct": true,
+      "depth": 3,
+      "derived_rounds": 82040,
+      "emitted_per_round": 2.3701121404193075,
+      "eos_stops": 226,
+      "execution": "measured",
+      "proposed": 246200,
+      "proposed_per_round": 3.000975134080936,
+      "requests": 240,
+      "server_prediction_seconds": 873.4016560000002,
+      "server_prompt_seconds": 10.304458,
+      "speed_vs_baseline": 0.9940049908522336,
+      "speed_vs_target": 1.3302142195505366,
+      "tokens": 194684,
+      "tokens_per_second": 220.26316874565387,
+      "wall_seconds": 883.8699684049716
+     },
+     "target": {
+      "acceptance": null,
+      "accepted": 0,
+      "accepted_per_round": null,
+      "cap_hits": 14,
+      "correct": true,
+      "depth": null,
+      "derived_rounds": null,
+      "emitted_per_round": null,
+      "eos_stops": 226,
+      "execution": "measured",
+      "proposed": 0,
+      "proposed_per_round": null,
+      "requests": 240,
+      "server_prediction_seconds": 1165.8966250000003,
+      "server_prompt_seconds": 9.68195700000001,
+      "speed_vs_baseline": 0.7472518157173932,
+      "speed_vs_target": 1.0,
+      "tokens": 194684,
+      "tokens_per_second": 165.58473478059656,
+      "wall_seconds": 1175.7364002059767
+     }
+    },
+    "speed_ratio_95_lower": 0.9878339642225112,
+    "coverage": "full",
+    "pooled_runs": 2
+   },
+   "thinking-on": {
+    "comparison": {
+     "speed_ratio": 0.9778303579087356,
+     "speed_ratio_95_interval": {
+      "lower": 0.9689312947193168,
+      "upper": 0.9862304021938862
+     },
+     "acceptance_difference": -0.06705274418183149,
+     "acceptance_difference_95_interval": {
+      "lower": -0.07631721973410655,
+      "upper": -0.05891911665128524
+     },
+     "groups": 40,
+     "interval_available": true
+    },
+    "correct": true,
+    "completion": null,
+    "summary": {
+     "baseline": {
+      "acceptance": 0.6663743342794273,
+      "accepted": 83582,
+      "accepted_per_round": 1.9979442558684324,
+      "cap_hits": 50,
+      "correct": true,
+      "depth": 3,
+      "derived_rounds": 41834,
+      "emitted_per_round": 2.997944255868432,
+      "eos_stops": 30,
+      "execution": "measured",
+      "proposed": 125428,
+      "proposed_per_round": 2.998231103886791,
+      "requests": 80,
+      "server_prediction_seconds": 347.69563599999987,
+      "server_prompt_seconds": 3.334065999999999,
+      "speed_vs_baseline": 1.0,
+      "speed_vs_target": 1.74099916562635,
+      "tokens": 125496,
+      "tokens_per_second": 357.44163066181346,
+      "wall_seconds": 351.09508584000287
+     },
+     "candidate": {
+      "acceptance": 0.5993215900975958,
+      "accepted": 80568,
+      "accepted_per_round": 1.7964680699250803,
+      "cap_hits": 50,
+      "correct": true,
+      "depth": 3,
+      "derived_rounds": 44848,
+      "emitted_per_round": 2.7964680699250803,
+      "eos_stops": 30,
+      "execution": "measured",
+      "proposed": 134432,
+      "proposed_per_round": 2.9975026757046024,
+      "requests": 80,
+      "server_prediction_seconds": 355.65762799999993,
+      "server_prompt_seconds": 3.3328469999999997,
+      "speed_vs_baseline": 0.9778303579087356,
+      "speed_vs_target": 1.702401837243224,
+      "tokens": 125496,
+      "tokens_per_second": 349.51727764152315,
+      "wall_seconds": 359.0552113670128
+     },
+     "target": {
+      "acceptance": null,
+      "accepted": 0,
+      "accepted_per_round": null,
+      "cap_hits": 50,
+      "correct": true,
+      "depth": null,
+      "derived_rounds": null,
+      "emitted_per_round": null,
+      "eos_stops": 30,
+      "execution": "measured",
+      "proposed": 0,
+      "proposed_per_round": null,
+      "requests": 80,
+      "server_prediction_seconds": 608.0720839999998,
+      "server_prompt_seconds": 3.1199320000000013,
+      "speed_vs_baseline": 0.574382814043587,
+      "speed_vs_target": 1.0,
+      "tokens": 125496,
+      "tokens_per_second": 205.30832967586093,
+      "wall_seconds": 611.2562515029567
+     }
+    },
+    "speed_ratio_95_lower": 0.9689312947193168,
+    "coverage": "full",
+    "pooled_runs": 2
+   }
+  },
+  "level3_maintained": {
+   "allowed_shortfalls": 2,
+   "scenarios": {
+    "agentic-coding": "at-least-baseline",
+    "greedy-long": "insufficient",
+    "greedy-short": "tolerated-shortfall",
+    "sampled": "tolerated-shortfall",
+    "thinking-on": "below-tolerance"
+   },
+   "shortfalls": [
+    "greedy-short",
+    "sampled"
+   ],
+   "tolerance_lower_bound": 0.97,
+   "verdict": "not-demonstrated"
+  },
+  "merged_strata": {
+   "development": {
+    "allowed_shortfalls": 2,
+    "scenarios": {
+     "agentic-coding": "at-least-baseline",
+     "greedy-long": "tolerated-shortfall",
+     "greedy-short": "tolerated-shortfall",
+     "sampled": "tolerated-shortfall",
+     "thinking-on": "below-tolerance"
+    },
+    "shortfalls": [
+     "greedy-short",
+     "greedy-long",
+     "sampled"
+    ],
+    "tolerance_lower_bound": 0.97,
+    "verdict": "failed"
+   },
+   "label": "supplementary: same paired source-group bootstrap with every category stratum of fewer than two source groups merged into one pooled stratum; not the maintained rule and never used by the maintained verdict; recomputed only because count_merged_strata was set",
+   "level3": {
+    "allowed_shortfalls": 2,
+    "scenarios": {
+     "agentic-coding": "at-least-baseline",
+     "greedy-long": "tolerated-shortfall",
+     "greedy-short": "tolerated-shortfall",
+     "sampled": "tolerated-shortfall",
+     "thinking-on": "below-tolerance"
+    },
+    "shortfalls": [
+     "greedy-short",
+     "greedy-long",
+     "sampled"
+    ],
+    "tolerance_lower_bound": 0.97,
+    "verdict": "failed"
+   }
+  },
+  "evidence": {
+   "path": "/home/philip/BitDraft/artifacts/feature-validation-01/step14/policy-pooled-output/result.json",
+   "sha256": "59c71164bf4c057c0517bbe0540426182259f9e6a717d187bdb537901ef00245"
+  }
+ },
+ "vocabulary": {
+  "shortlist-screen": {
+   "ours-shortlist/ours": {
+    "speed": 1.0228,
+    "speed_95": [
+     1.019,
+     1.0272
+    ],
+    "acceptance_points": 0.01,
+    "acceptance_points_95": [
+     0.0,
+     0.05
+    ]
+   },
+   "baseline-shortlist/baseline": {
+    "speed": 1.033,
+    "speed_95": [
+     1.0275,
+     1.0391
+    ],
+    "acceptance_points": -0.08,
+    "acceptance_points_95": [
+     -0.21,
+     0.0
+    ]
+   },
+   "ours/baseline": {
+    "speed": 1.0095,
+    "speed_95": [
+     0.9956,
+     1.0242
+    ],
+    "acceptance_points": -3.0,
+    "acceptance_points_95": [
+     -4.98,
+     -0.72
+    ]
+   },
+   "ours-shortlist/baseline-shortlist": {
+    "speed": 0.9996,
+    "speed_95": [
+     0.9849,
+     1.0148
+    ],
+    "acceptance_points": -2.9,
+    "acceptance_points_95": [
+     -4.89,
+     -0.64
+    ]
+   },
+   "ours-shortlist/baseline": {
+    "speed": 1.0325,
+    "speed_95": [
+     1.0184,
+     1.048
+    ],
+    "acceptance_points": -2.98,
+    "acceptance_points_95": [
+     -4.97,
+     -0.7
+    ]
+   }
+  },
+  "shortlist-panel": {
+   "ours-shortlist/ours": {
+    "speed": 1.033,
+    "speed_95": [
+     1.0309,
+     1.0348
+    ],
+    "acceptance_points": -0.0,
+    "acceptance_points_95": [
+     -0.02,
+     0.01
+    ]
+   },
+   "baseline-shortlist/baseline": {
+    "speed": 1.0438,
+    "speed_95": [
+     1.0411,
+     1.0461
+    ],
+    "acceptance_points": -0.03,
+    "acceptance_points_95": [
+     -0.06,
+     0.0
+    ]
+   },
+   "ours/baseline": {
+    "speed": 0.9898,
+    "speed_95": [
+     0.9795,
+     1.0
+    ],
+    "acceptance_points": -4.62,
+    "acceptance_points_95": [
+     -5.53,
+     -3.65
+    ]
+   },
+   "ours-shortlist/baseline-shortlist": {
+    "speed": 0.9795,
+    "speed_95": [
+     0.9696,
+     0.9893
+    ],
+    "acceptance_points": -4.59,
+    "acceptance_points_95": [
+     -5.5,
+     -3.62
+    ]
+   },
+   "ours-shortlist/baseline": {
+    "speed": 1.0224,
+    "speed_95": [
+     1.0128,
+     1.0324
+    ],
+    "acceptance_points": -4.62,
+    "acceptance_points_95": [
+     -5.53,
+     -3.65
+    ]
+   }
+  },
+  "tables-screen": {
+   "ours-q3k-shared/ours": {
+    "speed": 0.9593,
+    "speed_95": [
+     0.951,
+     0.967
+    ],
+    "acceptance_points": -0.05,
+    "acceptance_points_95": [
+     -0.83,
+     0.78
+    ]
+   },
+   "ours-q3k-scoring/ours": {
+    "speed": 0.958,
+    "speed_95": [
+     0.9505,
+     0.9645
+    ],
+    "acceptance_points": -0.25,
+    "acceptance_points_95": [
+     -0.82,
+     0.36
+    ]
+   },
+   "ours-q2k-shared/ours": {
+    "speed": 0.9788,
+    "speed_95": [
+     0.973,
+     0.985
+    ],
+    "acceptance_points": 0.09,
+    "acceptance_points_95": [
+     -0.68,
+     0.88
+    ]
+   },
+   "ours-q2k-scoring/ours": {
+    "speed": 0.9759,
+    "speed_95": [
+     0.9701,
+     0.9812
+    ],
+    "acceptance_points": -0.18,
+    "acceptance_points_95": [
+     -0.69,
+     0.34
+    ]
+   }
+  },
+  "tables-panel": {
+   "ours-q3k-shared/ours": {
+    "speed": 0.9457,
+    "speed_95": [
+     0.9425,
+     0.9494
+    ],
+    "acceptance_points": -0.11,
+    "acceptance_points_95": [
+     -0.32,
+     0.13
+    ]
+   },
+   "ours-q3k-scoring/ours": {
+    "speed": 0.9435,
+    "speed_95": [
+     0.9403,
+     0.9469
+    ],
+    "acceptance_points": -0.16,
+    "acceptance_points_95": [
+     -0.31,
+     0.02
+    ]
+   },
+   "ours-q2k-shared/ours": {
+    "speed": 0.9635,
+    "speed_95": [
+     0.9604,
+     0.9665
+    ],
+    "acceptance_points": -0.59,
+    "acceptance_points_95": [
+     -0.83,
+     -0.34
+    ]
+   },
+   "ours-q2k-scoring/ours": {
+    "speed": 0.9658,
+    "speed_95": [
+     0.9632,
+     0.9686
+    ],
+    "acceptance_points": -0.19,
+    "acceptance_points_95": [
+     -0.37,
+     -0.01
+    ]
+   }
+  }
+ },
+ "per_slot_parity": "PASS"
+}
