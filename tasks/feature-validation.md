@@ -249,12 +249,17 @@ Progress:
   `not-established` (agentic and coding requests pass; chat/writing, long documents, reasoning,
   sampled and thinking-on have lower bounds below 1). Acceptance ours / Baseline: greedy-short
   47.5 / 52.3, greedy-long 58.2 / 61.2, thinking 59.9 / 66.6, sampled 45.7 / 50.0, agentic 80.9 /
-  63.4. Reversed-order repeats (our drafter before Baseline) for greedy, thinking and sampled are
-  queued (`queueR`) and will be pooled with these runs; three scenarios have point estimates
-  below 1.00, so a pass after pooling is not expected.
+  63.4. Reversed-order repeats (our drafter before Baseline; `step14/reversed/`) reproduced the
+  ratios (greedy 0.991, thinking 0.976, sampled 0.994): no order effect. Pooled over both orders
+  (`step14/policy-pooled-output/`): agentic 1.105 (1.089); greedy-long 1.003 (merged-strata 0.990);
+  sampled 0.994 (0.988); greedy-short 0.989 (0.979); thinking-on 0.978 (0.969, now just below the
+  0.97 tolerance). Final owner-policy result for the 7b run: **failed, narrowly** (three
+  tolerated shortfalls plus thinking-on 0.1 point below tolerance; no correctness or completion
+  loss). The run trained 3.1 GPU hours on about two-thirds of one pass over the 9,047-record
+  final TRAIN set, and its curve was still rising until the schedule's tail.
 - Queue: `step13b` (curve) → `step14a` (depth calibration and neighbours) → `step14` (three-arm
   release panels at the chosen depths) → `queue15` (second seeds of fast arithmetic and fused
-  storage) → `queueR` (reversed-order repeats) → `queue16` (build W: native shortlist and lower-bit tables on the final drafter) →
+  storage) → `queueR` (reversed-order repeats, done) → `queue16` (build W: native shortlist and lower-bit tables on the final drafter) →
   `queue17` (build F2: round-state map pilots, full map if forecast ≤ 75 min, calibrated arm with
   round-state weighting) → `queue18` (build P: per-slot runtimes, default parity, timing
   prototype, calibrated arm with per-slot rounding). Builds W, P and F2 are merged; P's two
