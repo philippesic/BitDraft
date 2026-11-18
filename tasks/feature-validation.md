@@ -99,6 +99,11 @@ Progress:
   step 4 preflight's rule (counted against the one-point budget) it is not adopted: the long run
   and the recommended recipe keep `reference` arithmetic (likely noise; the arithmetic passed
   exact value, gradient and resume checks; cost: about 14% fewer updates per training hour).
+- Fast arithmetic retest (owner request, seed 8102, `group3/retest-preflight.md`): second seed against the
+  calibrated seed-8102 control: 55.73% vs 56.42%, per seed −0.69 (−1.79, +0.37); pooled over both seeds
+  −0.55 (−1.37, +0.27). Not admitted again; two seeds now point the same small way, so a real
+  small loss is possible. The fused retest's reconversion was refused because the retired root's
+  empty folders remain; it reruns into a fresh root at the end of the queue (`queue19`).
 - Fused storage (step 9, rerun after the fix): calibrated on fused vs eight-tap storage: 56.36%
   vs 56.56%, −0.20 (−1.11, +0.72): lower end below −1.0, inconclusive, original storage kept;
   fused storage is not qualified, also not for the release run.
