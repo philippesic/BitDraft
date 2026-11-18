@@ -27,16 +27,22 @@ FP16 storage? One point of acceptance is about 1.1% request speed at depth 3. Th
 exported drafter and runtime are identical either way; only training inputs change.
 
 - Arms: a third seed (8103) of the earlier pair, each a fresh 8,209-update calibrated run
-  on the full TRAIN set: fused (`fuse-full-train-r20.json`, corpus rebuilt about 15 GPU
-  minutes) and FP16 control. Recipe and source as the seed 8101/8102 arms.
+  on the 8,633-record `train-expansion-01` mixture the earlier arms used (not
+  `train-final-01`): fused (`fuse-full-train-r20.json`, corpus rebuilt in about 15 GPU
+  minutes, 56 GB) and FP16 control. Both new arms run one frozen source, executed source
+  `8c3d9db5…`; the earlier controls ran `4bb823…`, which differs by fused calibration and
+  disabled optional paths (Astra review 2026-11-18). Transfer to `train-final-01` is
+  extrapolated.
 - Evaluation: all six exports (three seeds × two storages; the four earlier exports are
   retained) on the 120-request Q4KM panel, candidate-only against saved runtime-v8
   references. The 60-request screen is 59/60 inside this panel.
 - Rule, fixed before running: pooled paired source-group bootstrap of fused minus FP16
-  acceptance over three seeds on the 120-request panel; pass if the 95% lower bound is
-  ≥ −1.0 point. The screen-only pooled result is reported, not used to decide.
-- Detectability: two seeds on 60 requests gave ±0.70; 120 requests and three seeds should
-  give about ±0.45, so a true cost near −0.36 passes and one near −1 fails.
+  acceptance over three seeds on the 120-request panel (`compare_screens.py` with matched
+  `--control` lists); pass if the 95% lower bound is ≥ −1.0 point. A fail means "not
+  demonstrated", and the two-pass FP16 run follows. Each seed is reported. Fresh 60-request
+  screens of the two new arms give the supplementary screen result; it does not decide.
+- Detectability: two seeds on 60 requests gave ±0.70. About ±0.45 on the panel is a scaling
+  guess, not measured: the bootstrap resamples requests, not training seeds.
 - Cost: about 2.5–3 GPU hours (two training runs, six panels, one fusion).
 
 ### Expansion if fused passes (proposal)
@@ -56,20 +62,35 @@ single-turn code 18%, sessions 7%, documents 5%, structured 1%.
 | Conversation | 700 | about 0.6M | UltraChat multi-turn and oasst2 (97K pool) |
 | Reasoning, thinking off | 300 | about 0.33M | MATH |
 | Long documents | 300 | about 0.07M | QASPER (350 left) |
-| Agentic long projects (11–20K start) | about 400 | about 0.17M | `plan-long-projects` pool: 162 prepared and unused, about 250 more from the 848 planned families not yet examined (30% yield) |
+| Agentic long projects (11–20K start) | 152 sure, up to about 400 | 0.06–0.17M | `plan-long-projects` pool: 152 prepared and uncaptured (23 generated, 129 not), about 250 more if the 848 unexamined planned families keep the 30% preparation yield |
 | Agentic short sessions | 381 | 0.12M | `train-expansion-01/sessions-2`, already generated |
 | Single-turn code and tool calls | 600 | about 0.17M | CommitPack edits |
 | Structured | 0 | 0 | already +27 over Baseline |
 | **Total** | **about 4,600** | **about 4.0M** | |
 
-All selection goes through the existing exclusion checks (heldout24, confirmation
-sets, DEV identities and token prefixes, agentic project families). Sampling stays
-proportional to positions, so one change is tested at a time.
+All selection goes through the existing exclusion checks: heldout24, confirmation-v2
+protection, DEV banks and workloads, DEV identities and token prefixes, agentic project
+families and code content. Pools are ample historically; their exclusion counts are checked
+fresh at selection. Sampling stays proportional to positions. Data and training length both
+change, so gains are not attributed to the targeting itself.
 
-Sequence and cost: fuse `train-final-01` (about 70 GB); retire the FP16 originals on the
-owner's OK (rebuildable by token replay); capture in FP16 chunks, fusing and retiring each
-chunk (about 12–14 GPU hours, about 50 GB fused); admit the new mixture; two passes over
-about 8.5M positions (about 240,000 updates, 18–20 GPU hours).
+Sequence and cost:
+- Fuse `train-final-01` (about 70 GB).
+- On the owner's OK, retire FP16 tap files only where token replay is qualified: the 6K
+  bank and `train-expansion-01` (replay bit-identical on 40 records, including 22 from the
+  6K bank and 9 Windows captures). That frees about 440 GB.
+  - Keep `long-sessions-01` taps (120 GB) until replay is qualified on its records.
+  - Keep every manifest, token stream, label, source record and helper, and all eight-tap
+    DEV captures (DEV diagnostics read them).
+  - Use authenticated retirement plans.
+- Capture in FP16 chunks, fusing and retiring each chunk: about 12–14 GPU hours, about
+  77 GB fused. Budget the peak (chunk plus fused output plus checkpoints plus reserve) per
+  chunk.
+- Consolidate chunk manifests into one fused corpus before admission: a mixture takes at
+  most eight direct components and six are used.
+- Two passes, with updates derived from the admitted `groups_per_pass` (about 240,000,
+  18–20 GPU hours). Screen every 14,000 updates.
+- Stop early on any inexact output, nonfinite loss, or two consecutive screens that fall.
 
 Limits: a gap can reflect one-bit capacity rather than missing data. Every learning-curve
 slice rose through 42,000 updates, but gains per category are not predicted. Only
