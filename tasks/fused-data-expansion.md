@@ -157,6 +157,22 @@ Limits: a gap can reflect one-bit capacity rather than missing data. Every learn
 slice rose through 42,000 updates, but gains per category are not predicted. Only
 the long-project pipeline yields new agentic sessions; more needs a re-plan beyond 1,850 families.
 
+Expansion progress (2026-11-18):
+- Done:
+  - fused-4, the seed-8103 states and the long run's 14K/28K states are retired;
+  - `train-final-01-fused` is built (9,047 records, 71 GB, within its bound);
+  - FP16 taps are retired for he4broad (110 GB), bank-v8 (137 GB) and
+    train-expansion-01 (195 GB);
+  - 389 new long-project sessions are generated.
+- Incident: two bugs of mine let capture A fill the disk to about 1 GB free at 07:48. It
+  stopped cleanly after 1,901 of 3,564 records ("insufficient capture space").
+  - The bank-v8 and expansion-01 plans listed manifests inside their own roots as retained
+    evidence, so the retirement tool refused them.
+  - The queue logged that refusal and continued.
+  - Fix: manifests are now protected rather than retained, and a failed retirement stops
+    the queue. Both plans were reapplied (311 GB free), and capture A resumed its verified
+    records at 08:04.
+
 Live run: `scripts/queue20.sh` in `artifacts/feature-validation-01/`, user unit
 `fv-queue20`, started 2026-11-18 00:52; log `logs/queue.log`; jobwatch `fv-queue20`; retest
 outputs in `fused-retest/` (verdict in `verdict.json`).
