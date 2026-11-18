@@ -105,7 +105,10 @@ Progress:
   small loss is possible. The fused retest's reconversion was refused twice: first because the
   retired root's empty folders remain, then (fresh root) because 55 GB of files plus the 40 GB
   disk reserve exceed the 85 GB free. It runs as `queue19b` with the reserve lowered to 25 GB
-  (`fuse-full-train-r25.json`), which leaves about 30 GB free during the arm.
+  (`fuse-full-train-r25.json`), which leaves about 30 GB free during the arm. That conversion
+  crashed at 45 GB with a segmentation fault inside PyTorch's CPU library (no memory or disk
+  error; the same conversion succeeded before). The partial output was deleted and it retries
+  once as `queue19c` (reserve 20 GB, root `train-expansion-01-fused-3`) after the per-slot arm.
 - Fused storage (step 9, rerun after the fix): calibrated on fused vs eight-tap storage: 56.36%
   vs 56.56%, −0.20 (−1.11, +0.72): lower end below −1.0, inconclusive, original storage kept;
   fused storage is not qualified, also not for the release run.
@@ -686,7 +689,7 @@ the [test list](speedup-test-list.md) that acceptance work continues from the be
 
 ## Next
 
-`queue19b` (fused retest, verdict about 20:45) runs on the GPU while the per-slot runtimes rebuild
-on the CPU; `queue18c` (per-slot parity, timing, calibrated arm; verdict about 22:30) follows.
-Then record both verdicts, finish the closeout (`results/release-candidate-screen/`, FINDINGS,
-docs, artifact disposition) and delete this file.
+`queue18c` (per-slot parity, timing, calibrated arm; verdict about 21:15) runs now, then
+`queue19c` (fused retry: conversion, seed-8102 arm, pooled verdict; about 22:45). A second fused
+crash ends the retest as not demonstrated. Then record both verdicts, finish the closeout
+(`results/release-candidate-screen/`, FINDINGS, docs, artifact disposition) and delete this file.
