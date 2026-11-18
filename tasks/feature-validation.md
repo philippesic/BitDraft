@@ -267,6 +267,9 @@ Progress:
   Lower-bit vocabulary tables (no retraining): Q3_K and Q2_K, shared or scoring-only, keep
   acceptance within 0.6 point but drafting takes 1.53–1.76 ms per round against 1.24 for Q4_K (the
   runtime's Q2_K/Q3_K kernels are slower), so speed falls 2.1–5.7%: not adopted.
+- Round-state weighting (owner request; build F2's folded map: pilot identical to build F's map,
+  2,318 proposals per second, full TRAIN map in 31 minutes; weight 2.0, round starts 38.8% of
+  trained windows): 56.22% vs calibrated 56.56%, −0.34 (−1.22, +0.54). Not adopted (tie).
 - Queue: `step13b` (curve) → `step14a` (depth calibration and neighbours) → `step14` (three-arm
   release panels at the chosen depths) → `queue15` (second seeds of fast arithmetic and fused
   storage) → `queueR` (reversed-order repeats, done) → `queue16` (build W: native shortlist and lower-bit tables on the final drafter) →
