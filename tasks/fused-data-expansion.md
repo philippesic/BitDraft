@@ -179,13 +179,13 @@ Paused 2026-11-18 16:12 for an owner system shutdown:
   `s16-fused-long`, segment 1 (14,000 updates, screen 48.72%).
 - Segment 2 was stopped with SIGTERM. It published a recoverable state at 17,311 updates
   (`seg-2/output/states/76c89905…`, `latest.json`).
-- Resume: segment 2 continues from that state (a resume intent with this parent and the
-  same 28,000 budget), then `queue21.sh` carries on from segment 3. Watch `fv-queue21e`
-  was stopped; start a new watch and background wait on resume.
+- Resumed 2026-11-18 17:31 after the reboot. The interrupted output moved to
+  `seg-2/interrupted-17311/` (its states are retired once segment 2 completes). Segment 2
+  now resumes from that state with the same 28,000 budget.
 
-Live run: `scripts/queue20.sh` in `artifacts/feature-validation-01/`, user unit
-`fv-queue20`, started 2026-11-18 00:52; log `logs/queue.log`; jobwatch `fv-queue20`; retest
-outputs in `fused-retest/` (verdict in `verdict.json`).
+Live run: `scripts/queue21.sh` in `artifacts/feature-validation-01/`, jobwatch
+`fv-queue21f` (user unit `jobwatch-fv-queue21f`), log `logs/queue.log`. The run is
+335,812 updates in 24 segments of about 1 hour each, finishing around 2026-11-19 17:00.
 
 ## Next
 
