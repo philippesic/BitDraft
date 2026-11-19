@@ -226,7 +226,19 @@ The `screen-v2` tier is merged (`38311841`). It is frozen as source `060915bf…
 Restarted, the queue re-measures the 14K, 28K and 42K exports on the new screen, then
 measures every new segment.
 
-Panel so far: 42.73% at 28,000 updates. The leader reads 48.7%.
+Done 19:53. The three-arm establish took about 2 minutes. Queue v3 runs under jobwatch
+`fv-queue21h`. The "state retirement after segment 2 failed" line on the re-run is expected:
+segment 1's states were already retired.
+
+Acceptance in %:
+
+| Updates | Old screen | Panel | New screen (screen-v2) |
+| ---: | ---: | ---: | ---: |
+| 14,000 | 48.72 | 40.98 | 49.13 |
+| 28,000 | 50.59 | 42.73 | 51.70 |
+| 42,000 | 51.40 | 43.83 | 52.06 |
+| Leader `ae6569f6…` | 57.6 | 48.7 | 57.38 |
+| Baseline | 60.6 | 53.4 | 62.70 |
 
 ## Next
 
