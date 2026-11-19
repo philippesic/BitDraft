@@ -2,9 +2,9 @@ from pathlib import Path
 
 import pytest
 
-from benchmarks.comparison import Comparison
+from benchmarks.comparison import Comparison, task_scenario
 from benchmarks.runner import prompt_tokens
-from benchmarks.scenarios import PRIMARY, faster_verdict, level2_decision, task_scenario
+from benchmarks.scenarios import PRIMARY, faster_verdict, level2_decision
 from benchmarks.statistics import paired
 from tests.test_references import evidence
 from w1a1_eagle.contracts import Record, record, sequence

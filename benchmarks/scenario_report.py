@@ -1,8 +1,8 @@
 from dataclasses import replace
 from pathlib import Path
 
-from benchmarks.comparison import Comparison, protocol_covers, routine_sampled
-from benchmarks.scenarios import faster_verdict, level2_decision, scenario_report, task_scenario
+from benchmarks.comparison import Comparison, protocol_covers, routine_sampled, task_scenario
+from benchmarks.scenarios import faster_verdict, level2_decision, scenario_report
 from benchmarks.statistics import paired
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, record, sequence, string

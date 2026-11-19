@@ -3,7 +3,7 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import cast
 
-from benchmarks.comparison import Arm, Comparison
+from benchmarks.comparison import SCREENS, Arm, Comparison, task_scenario
 from benchmarks.coverage import length_band, selection_order
 from benchmarks.measurement import deadline, now, request
 from benchmarks.metrics import (
@@ -31,7 +31,7 @@ from benchmarks.metrics import (
     verify_generation as verify_generation,
 )
 from benchmarks.runtime_policy import payload
-from benchmarks.scenarios import scenario_report, task_scenario
+from benchmarks.scenarios import scenario_report
 from benchmarks.serving import session
 from benchmarks.statistics import paired, partitions
 from w1a1_eagle.checkpoints.store import Store
@@ -47,7 +47,7 @@ def compare(specification: Path, output: Path) -> Record:
     spec.verify()
     if output.exists():
         raise ValueError("comparison output must be new; preserve prior attempts")
-    with deadline(120 if spec.tier == "screen" and spec.references else None), device_lease("cuda"):
+    with deadline(120 if spec.tier in SCREENS and spec.references else None), device_lease("cuda"):
         return compare_leased(specification, output, spec)
 
 

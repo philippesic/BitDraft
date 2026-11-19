@@ -296,6 +296,113 @@ def test_screen_enforces_categories_lengths_caps_and_independent_groups() -> Non
             require_cohort("screen", (first, *tasks[1:]))
 
 
+def screen_v2_tasks() -> tuple[Record, ...]:
+    shape = (
+        ("thinking-on", "code", 8),
+        ("thinking-on", "reasoning", 6),
+        ("agentic-coding", "code", 6),
+        ("agentic-coding", "structured", 6),
+        ("chat-writing", "writing", 8),
+        ("chat-writing", "conversation", 8),
+        ("reasoning", "reasoning", 6),
+        ("coding-requests", "code", 6),
+        ("long-documents", "documents", 6),
+    )
+    tasks: list[Record] = []
+    for scenario, category, count in shape:
+        for _ in range(count):
+            index = len(tasks)
+            task: Record = {
+                "id": "t" + str(index),
+                "group": "g" + str(index),
+                "role": "dev",
+                "category": category,
+                "scenario": scenario,
+                "messages": [{"role": "user", "content": "task"}],
+                "output_cap": 256 if scenario == "thinking-on" else 128,
+                "ancestry": {"input_tokens": 100},
+            }
+            if scenario == "thinking-on":
+                task["thinking"] = True
+            if category == "structured":
+                task["harness"] = "tools"
+                task["messages"] = [
+                    {"role": "system", "content": "tools harness"},
+                    {"role": "user", "content": "task"},
+                ]
+            tasks.append(task)
+    return tuple(tasks)
+
+
+def test_screen_v2_requires_release_scenarios_caps_thinking_and_independent_groups() -> None:
+    from benchmarks.comparison import require_cohort
+
+    tasks = screen_v2_tasks()
+    require_cohort("screen-v2", tasks)
+    with pytest.raises(ValueError):
+        require_cohort("screen", tasks)
+    last = len(tasks) - 1
+    for index, change in (
+        (last, {"scenario": "reasoning"}),
+        (last, {"scenario": "structured-tools"}),
+        (last, {"output_cap": 256}),
+        (0, {"output_cap": 128}),
+        (0, {"output_cap": 2048}),
+        (last, {"group": "g0"}),
+        (last, {"thinking": True, "output_cap": 256}),
+        (0, {"thinking": False, "output_cap": 128}),
+    ):
+        broken = tasks[:index] + ({**tasks[index], **change},) + tasks[index + 1 :]
+        with pytest.raises(ValueError, match="screen-v2"):
+            require_cohort("screen-v2", broken)
+    with pytest.raises(ValueError, match="screen-v2"):
+        require_cohort("screen-v2", tasks[:-1])
+
+
+def test_screen_v2_loads_fresh_and_candidate_only_with_harness_requests(tmp_path: Path) -> None:
+    path = evidence(tmp_path)
+    (tmp_path / "workload.json").write_bytes(
+        canonical({"schema": 1, "tasks": list(screen_v2_tasks())})
+    )
+    raw = read(path) | {"tier": "screen-v2", "workload": file_reference(tmp_path / "workload.json")}
+    path.write_bytes(canonical(raw))
+    spec = Comparison.load(path)
+    assert spec.tier == "screen-v2" and len(spec.tasks) == 60
+    harness = [
+        task
+        for task in sequence(spec.arm_protocol("baseline")["tasks"])
+        if "harness" in record(task)
+    ]
+    assert len(harness) == 6
+    path.write_bytes(canonical(raw | {"repeats": 2}))
+    with pytest.raises(ValueError, match="one greedy pass"):
+        Comparison.load(path)
+    path.write_bytes(canonical(raw | {"role": "train"}))
+    with pytest.raises(ValueError):
+        Comparison.load(path)
+    candidate_only = raw | {
+        "arms": [{"name": "candidate", "drafter": file_reference(tmp_path / "drafter")}],
+        "references": {
+            name: file_reference(tmp_path / "result.json") for name in ("target", "baseline")
+        },
+    }
+    path.write_bytes(canonical(candidate_only))
+    assert {name for name, _ in Comparison.load(path).references} == {"target", "baseline"}
+
+
+def test_screen_v2_reports_plain_agentic_requests_as_tokens(tmp_path: Path) -> None:
+    from dataclasses import replace
+
+    from benchmarks.scenarios import scenario_report
+
+    spec = Comparison.load(evidence(tmp_path))
+    spec = replace(spec, tasks=tuple(task | {"scenario": "agentic-coding"} for task in spec.tasks))
+    rows = [record(row) for row in sequence(read(tmp_path / "result.json")["rows"])]
+    result = record(scenario_report(rows, spec, {})["agentic-coding"])
+    assert result["speed_measure"] == "emitted tokens per second"
+    assert "tokens_per_second" in record(record(result["summary"])["baseline"])
+
+
 def test_sampled_reference_preserves_seed_paths_and_projects_complete_source(
     tmp_path: Path,
 ) -> None:
