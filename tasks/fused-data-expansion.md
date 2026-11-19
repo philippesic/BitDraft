@@ -252,6 +252,18 @@ Acceptance in %:
 | 224,000 | 58.63 | 49.69 | 58.94 |
 | 238,000 | 58.83 | 49.98 | 59.35 |
 | 252,000 | 57.91 | 50.04 | 59.07 |
+| 266,000 | 59.19 | 50.40 | 60.03 |
+| 280,000 | 58.23 | 50.39 | 59.60 |
+
+Owner decision 2026-11-19 (14:30): only panel falls of more than 0.3 points count toward the
+stop rule. The 0.01 fall at 280,000 updates would otherwise have let noise end the run
+before its wind-down. `screen2/swap-v4.sh` (jobwatch `fv-swap-v4`) installs it at the
+boundary after segment 21 and restarts as v4 (`fv-queue21i`). The release queue is
+re-armed as `fv-queue22d`.
+
+Earlier false alarm: queue22's first trigger matched the old "queue21 failed" line from the
+disk incident, and the fix was off by one. Two stale failure wakes followed; training was
+not affected.
 | Leader `ae6569f6…` | 57.6 | 48.7 | 57.38 |
 | Baseline | 60.6 | 53.4 | 62.70 |
 
