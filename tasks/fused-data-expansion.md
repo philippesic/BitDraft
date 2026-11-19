@@ -183,9 +183,16 @@ Paused 2026-11-18 16:12 for an owner system shutdown:
   `seg-2/interrupted-17311/` (its states are retired once segment 2 completes). Segment 2
   now resumes from that state with the same 28,000 budget.
 
-Live run: `scripts/queue21.sh` in `artifacts/feature-validation-01/`, jobwatch
-`fv-queue21f` (user unit `jobwatch-fv-queue21f`), log `logs/queue.log`. The run is
-335,812 updates in 24 segments of about 1 hour each, finishing around 2026-11-19 17:00.
+Kill criterion fired 2026-11-18 18:17: the screen read 50.59% at 28,000 updates, below 52.0%
+(48.72% at 14,000). The run stopped, and its 28,000-update state is kept
+(`seg-2/output/states/ada84a02…`), so it can resume exactly.
+- The bar was miscalibrated. It came from the 3-hour run at 14,000 of 42,000 updates, where
+  the cosine step was down to about 77%. This run is still at about 99%, and mid-run screens
+  at full step understate the result.
+- Not only schedule: at a matched step size, the 3-hour run read 49.8% after 7,000 updates,
+  while this one needed 28,000 updates to reach 50.6%. The new data is 2.7× larger and has
+  less screen-like data per update; the 60-request screen is noisy (about ±0.7).
+- Owner decision pending: continue, probe or replan.
 
 ## Next
 
