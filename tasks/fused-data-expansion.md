@@ -247,8 +247,23 @@ Acceptance in %:
 | 154,000 | 55.02 | 47.50 | 56.08 |
 | 168,000 | 56.07 | 47.85 | 57.53 |
 | 182,000 | 56.98 | 48.70 | 57.77 |
+| 196,000 | 57.69 | 49.14 | 58.08 |
+| 210,000 | 58.26 | 49.12 | 58.17 |
+| 224,000 | 58.63 | 49.69 | 58.94 |
+| 238,000 | 58.83 | 49.98 | 59.35 |
+| 252,000 | 57.91 | 50.04 | 59.07 |
 | Leader `ae6569f6…` | 57.6 | 48.7 | 57.38 |
 | Baseline | 60.6 | 53.4 | 62.70 |
+
+Queued behind the run is `scripts/queue22.sh` (jobwatch `fv-queue22`). It starts on
+"queue21 done" or "stopped" and repeats the step 14 release comparison on the last export:
+- fresh three-arm timing against Baseline on all seven panels at depth 3, under the step 14
+  source `8180f208…`;
+- reversed-order repeats of requests, thinking and sampled.
+
+Outputs go to `step16/`, taking about 2.2 GPU hours. Selection against the leader then uses
+candidate-only screens (screen, screen-v2, panel) with `compare_screens.py`, followed by
+the policy and scenario reports.
 
 ## Next
 
