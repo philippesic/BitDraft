@@ -215,13 +215,18 @@ known ancestry, 60 distinct groups.
 | Coding requests | 6 | 128 |
 | Long documents (3 at 8K+, 3 at 2–8K) | 6 | 128 |
 
-The runner fixes the old screen's mix, so a `screen-v2` tier is being built by an Opus
-builder. After it lands:
-1. Freeze the source.
-2. Run the three-arm establish (target, Baseline, leader `ae6569f6…`) between segments under `HOLD`.
-3. Record the references.
-4. Add `screen2_spec.py`.
-5. Re-measure the 14K and 28K exports.
+The `screen-v2` tier is merged (`38311841`). It is frozen as source `060915bf…`, and
+`verify-inputs` passes.
+
+`screen2/setup.sh` (jobwatch `fv-screen2-setup`) does the rest:
+1. Set `HOLD`, wait for the boundary after segment 3, and stop the queue.
+2. Establish target, Baseline and leader on screen-v2 and record the three references.
+3. Install `screen2_spec.py` and restart the queue as v3 (jobwatch `fv-queue21h`).
+
+Restarted, the queue re-measures the 14K, 28K and 42K exports on the new screen, then
+measures every new segment.
+
+Panel so far: 42.73% at 28,000 updates. The leader reads 48.7%.
 
 ## Next
 
