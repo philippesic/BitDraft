@@ -1,4 +1,4 @@
-from benchmarks.comparison import Comparison
+from benchmarks.comparison import Comparison, task_scenario
 from benchmarks.metrics import relative_speed, totals
 from benchmarks.statistics import paired
 from w1a1_eagle.contracts import Record, number, record, string
@@ -12,23 +12,6 @@ PRIMARY = (
     "thinking-on",
     "sampled",
 )
-
-
-def task_scenario(task: Record, sampled: bool = False) -> str:
-    if sampled:
-        return "sampled"
-    if task.get("thinking") is True:
-        return "thinking-on"
-    if "scenario" in task:
-        return string(task["scenario"])
-    return {
-        "code": "coding-requests",
-        "conversation": "chat-writing",
-        "writing": "chat-writing",
-        "reasoning": "reasoning",
-        "documents": "long-documents",
-        "structured": "structured-tools",
-    }.get(string(task["category"]), "unclassified")
 
 
 def scenario_report(
@@ -52,15 +35,14 @@ def scenario_report(
     output: Record = {}
     for scenario in sorted({string(row["scenario"]) for row in normalized}):
         selected = [row for row in normalized if row["scenario"] == scenario]
+        assigned = scenario == "agentic-coding" and all("completed" in row for row in selected)
         comparisons: Record = {}
         for name in names:
             for control in ("target", "baseline", "prior-leader"):
                 if name == control or control not in names:
                     continue
                 comparison = paired(
-                    [{**row, "tokens": 1} for row in selected]
-                    if scenario == "agentic-coding"
-                    else selected,
+                    [{**row, "tokens": 1} for row in selected] if assigned else selected,
                     name,
                     control,
                 )
@@ -94,13 +76,11 @@ def scenario_report(
                     }
                     for name in names
                 },
-                "assigned_tasks_per_second"
-                if scenario == "agentic-coding"
-                else "tokens_per_second",
+                "assigned_tasks_per_second" if assigned else "tokens_per_second",
             ),
             "comparisons": comparisons,
             "speed_measure": "assigned tasks per second, including failed tasks and tools"
-            if scenario == "agentic-coding"
+            if assigned
             else "emitted tokens per second",
             "by_outcome": {
                 outcome: {

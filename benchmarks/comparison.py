@@ -188,6 +188,7 @@ class Comparison:
             "live",
             "sampled",
             "screen",
+            "screen-v2",
             "comparison",
             "prefix",
             "agentic-slice",
@@ -225,6 +226,7 @@ class Comparison:
             "live": 12 if role == "dev" else 24,
             "sampled": 120,
             "screen": 60,
+            "screen-v2": 60,
             "comparison": 120,
             "prefix": 18,
             "agentic-slice": 12,
@@ -305,7 +307,7 @@ class Comparison:
         ):
             raise ValueError("comparison execution bounds invalid")
         if (references and repeats != 1) or (
-            tier == "screen" and (repeats != 1 or sampling.temperature)
+            tier in SCREENS and (repeats != 1 or sampling.temperature)
         ):
             raise ValueError("lean/cached panels require one greedy pass")
         drafting = {a.name for a in arms if a.drafter is not None} | {
@@ -642,7 +644,57 @@ class Comparison:
         )
 
 
+def task_scenario(task: Record, sampled: bool = False) -> str:
+    if sampled:
+        return "sampled"
+    if task.get("thinking") is True:
+        return "thinking-on"
+    if "scenario" in task:
+        return string(task["scenario"])
+    return {
+        "code": "coding-requests",
+        "conversation": "chat-writing",
+        "writing": "chat-writing",
+        "reasoning": "reasoning",
+        "documents": "long-documents",
+        "structured": "structured-tools",
+    }.get(string(task["category"]), "unclassified")
+
+
+SCREENS = frozenset({"screen", "screen-v2"})
+SCREEN_V2 = {
+    "thinking-on": 14,
+    "agentic-coding": 12,
+    "chat-writing": 16,
+    "reasoning": 6,
+    "coding-requests": 6,
+    "long-documents": 6,
+}
+
+
 def require_cohort(tier: str, tasks: tuple[Record, ...]) -> None:
+    if tier == "screen-v2":
+        observed = Counter(task_scenario(task) for task in tasks)
+        if observed != SCREEN_V2:
+            raise ValueError(
+                "screen-v2 requires scenarios "
+                + ", ".join(f"{name} {count}" for name, count in SCREEN_V2.items())
+                + "; found "
+                + ", ".join(f"{name} {count}" for name, count in sorted(observed.items()))
+            )
+        if len({string(task["group"]) for task in tasks}) != len(tasks):
+            raise ValueError("screen-v2 requires one independent group per request")
+        if any(
+            task.get("output_cap") != (256 if task.get("thinking") is True else 128)
+            for task in tasks
+        ):
+            raise ValueError("screen-v2 requires 256-token thinking caps and 128-token other caps")
+        if any(
+            (task.get("thinking") is True)
+            != (task.get("scenario", task_scenario(task)) == "thinking-on")
+            for task in tasks
+        ):
+            raise ValueError("screen-v2 requires thinking exactly in thinking-on requests")
     if tier in {"thinking-slice", "thinking-suite", "sampled-slice", "sampled-suite"}:
         count = 6 if tier.endswith("slice") else 20
         thinking = tier.startswith("thinking-")

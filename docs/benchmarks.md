@@ -87,6 +87,7 @@ uncertainty. Scenario tags do not manufacture independent observations.
 | --- | --- | ---: | --- |
 | 1 | Teacher-forced diagnostics | Original 120 DEV windows + 20 agentic-history + 20 thinking | Separate metrics; no native speed claim |
 | 1, 2, 3 | Training screen | 60 requests, 128-token caps | Candidate pass; saved controls |
+| 1 | Training screen v2 (`screen-v2`) | 60 requests across the six request-visible release scenarios; 256-token thinking caps, 128 otherwise | Candidate pass; saved controls; supplementary |
 | 2, 3 | Broader requests | 120 requests, existing longer caps | One pass; four ordinary primary scenarios plus structured/tools |
 | 2, 3 | Prefix sensitivity | 6 groups × 3 prefixes = 18 requests | Supplementary sensitivity check |
 | 2, 3 | Legacy live | 12 tasks, two per family | Supplementary application check; failures stay denominated |
@@ -116,11 +117,21 @@ answers. Category estimates are noisy. Broader categories 30/25/20/20/15/10 and 
 bands 60/36/18/6 preserve breadth. Prefix groups split 3 code/3 structured, each under
 minimal/coding/tools. Eight measured application histories remain in request coverage.
 
+Tier `screen-v2` is a broader training-progress screen keyed by scenario: 14
+`thinking-on` with thinking enabled and 256-token caps; 128-token caps for 12
+`agentic-coding` (project-replay histories and tools-harness requests, run as plain
+requests), 16 `chat-writing`, 6 `reasoning`, 6 `coding-requests` and 6 `long-documents`.
+Every request is its own group and thinking appears only in `thinking-on`. It has no
+length-band rule and never qualifies a primary scenario; its `agentic-coding` rows report
+emitted tokens per second, not assigned tasks. Training campaigns and role `train` still
+bind `screen`, whose rules are unchanged.
+
 `prepare-checks` accepts schema 1 with authenticated `requests`, `harness`, `live`
 comparison specifications, producing workloads and multi-arm `*-establish.json` specs.
 Use them to establish missing controls, then bind references for candidate-only execution.
-One-time multi-arm control establishment is timed separately; the 120-second screen
-deadline applies to routine candidate-only execution and complete training interruptions.
+One-time multi-arm control establishment is timed separately; the 120-second deadline of
+`screen` and `screen-v2` applies to routine candidate-only execution and complete training
+interruptions.
 The [bank definition](../benchmarks/definitions/prompt-bank-v1.json) owns source identities
 and the 6K TRAIN bank; smaller evals do not change training data. Targets remain Qwen3.5
 4B Q4KM/NVFP4, with separate reference records.
@@ -551,7 +562,7 @@ primary scenarios, and because it pools repeated runs. The specification has
 scenario-report form: a result reference, or `result`, `comparison` and `references` for a
 slice projected from a complete suite. Tiers are `comparison` (broader120) for greedy,
 `thinking-suite`/`thinking-slice`, `sampled-suite`/`sampled-slice`,
-`agentic-suite`/`agentic-slice` and `screen`. The candidate must be measured in every run.
+`agentic-suite`/`agentic-slice` and `screen` or `screen-v2`. The candidate must be measured in every run.
 All panels share runtime, target, context, role, candidate and Baseline content; depths
 may differ between panels and arms.
 

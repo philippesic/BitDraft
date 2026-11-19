@@ -17,7 +17,7 @@ SOURCES = {
     "thinking-on": frozenset({"thinking-slice", "thinking-suite"}),
     "sampled": frozenset({"sampled-slice", "sampled-suite"}),
     "agentic-coding": frozenset({"agentic-slice", "agentic-suite"}),
-    "screen": frozenset({"screen"}),
+    "screen": frozenset({"screen", "screen-v2"}),
 }
 FULL_TIERS = frozenset({"comparison", "thinking-suite", "sampled-suite", "agentic-suite"})
 LONG_INPUT = 2048
