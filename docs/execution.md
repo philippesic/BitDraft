@@ -47,6 +47,26 @@ The [store](../w1a1_eagle/checkpoints/store.py) owns states/manifests; the
 [data](../w1a1_eagle/data.py) owns roles/consumption. Output roots admit one controller.
 CUDA also takes a host-wide lease after checking existing compute processes.
 
+## GPU job queue
+
+GPU jobs on the RTX 5080 host go through pueue (`~/.local/bin/pueue`, user service
+`pueued.service`). Group `gpu` runs one job at a time. Do not write per-campaign queue
+scripts, HOLD files or log-matching triggers.
+
+| Step | Command |
+| --- | --- |
+| Submit | `id=$(pueue add --group gpu --print-task-id --label NAME -- CMD)` |
+| Chain | `pueue add --group gpu --after ID ...`: runs only after ID succeeds |
+| Pause between jobs | `pueue pause --group gpu` (waits for the running job); `pueue start --group gpu` resumes |
+| Wait | `pueue wait ID`, in the background |
+| Logs and status | `pueue log ID`, `pueue status --group gpu` |
+| Clean up | `pueue clean` after the results are recorded |
+
+`pueue add` captures the working directory and environment, so submit from the frozen
+source with the variables the command needs. A chain stops at its first failure. Watch
+jobs longer than about 20 minutes with jobwatch on pueue's task status, not on log text.
+Record outcomes in the task record.
+
 ## Attempts and cost
 
 Each attempt freezes source/intent and records loaded Python/native identities, checked

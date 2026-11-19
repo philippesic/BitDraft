@@ -261,6 +261,15 @@ before its wind-down. `screen2/swap-v4.sh` (jobwatch `fv-swap-v4`) installs it a
 boundary after segment 21 and restarts as v4 (`fv-queue21i`). The release queue is
 re-armed as `fv-queue22d`.
 
+Owner decision 2026-11-19: replace the per-campaign queue scripts with pueue
+([GPU job queue](../docs/execution.md#gpu-job-queue)).
+- queue21 v4 and queue22 finish as they are; then run `pueue start --group gpu`. The group
+  is paused until then.
+- Every later GPU job is submitted through pueue.
+- Afterwards, retire the 33 `scripts/queue*.sh` and `swap-*.sh` scripts, the HOLD
+  mechanism and their logs through the retirement command, once nothing running depends on
+  them. Their outcomes stay in this record.
+
 Earlier false alarm: queue22's first trigger matched the old "queue21 failed" line from the
 disk incident, and the fix was off by one. Two stale failure wakes followed; training was
 not affected.
