@@ -173,6 +173,16 @@ Expansion progress (2026-11-18):
     the queue. Both plans were reapplied (311 GB free), and capture A resumed its verified
     records at 08:04.
 
+Paused 2026-11-18 16:12 for an owner system shutdown:
+- Done: capture A (3,564 records, 35 GB fused); selection B (405 long-project and 378
+  short sessions); capture B; the combined `train-final-02-fused` set; the long fused run
+  `s16-fused-long`, segment 1 (14,000 updates, screen 48.72%).
+- Segment 2 was stopped with SIGTERM. It published a recoverable state at 17,311 updates
+  (`seg-2/output/states/76c89905…`, `latest.json`).
+- Resume: segment 2 continues from that state (a resume intent with this parent and the
+  same 28,000 budget), then `queue21.sh` carries on from segment 3. Watch `fv-queue21e`
+  was stopped; start a new watch and background wait on resume.
+
 Live run: `scripts/queue20.sh` in `artifacts/feature-validation-01/`, user unit
 `fv-queue20`, started 2026-11-18 00:52; log `logs/queue.log`; jobwatch `fv-queue20`; retest
 outputs in `fused-retest/` (verdict in `verdict.json`).
