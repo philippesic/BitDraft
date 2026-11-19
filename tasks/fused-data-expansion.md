@@ -192,7 +192,36 @@ Kill criterion fired 2026-11-18 18:17: the screen read 50.59% at 28,000 updates,
 - Not only schedule: at a matched step size, the 3-hour run read 49.8% after 7,000 updates,
   while this one needed 28,000 updates to reach 50.6%. The new data is 2.7× larger and has
   less screen-like data per update; the 60-request screen is noisy (about ±0.7).
-- Owner decision pending: continue, probe or replan.
+Owner go 2026-11-18 (evening):
+- Resume the long run from 28,000 updates, without the 52% bar.
+- Rebuild the 60-request training screen to cover every release scenario, re-measure the
+  leader and the 14K and 28K exports on it, and keep training.
+
+Resumed 18:38 (`queue21.sh`, jobwatch `fv-queue21g`; `queue21-v1.sh` is the earlier copy):
+- Each segment now runs the old screen plus the 120-request panel.
+- The stop rule is two consecutive falling panels; any failure still stops the run.
+- A `HOLD` file in the campaign folder pauses the queue between segments.
+- Once `scripts/screen2_spec.py` exists, the queue also runs the new screen.
+
+New screen (`artifacts/benchmarks/screen-v2/`): 60 requests reused from the DEV panels with
+known ancestry, 60 distinct groups.
+
+| Scenario | Requests | Cap |
+| --- | ---: | ---: |
+| Thinking-on (8 code, 6 reasoning, from the thinking suite) | 14 | 256 |
+| Agentic coding (6 project histories, 6 tools-harness requests) | 12 | 128 |
+| Chat and writing (8 writing, 8 conversation) | 16 | 128 |
+| Reasoning | 6 | 128 |
+| Coding requests | 6 | 128 |
+| Long documents (3 at 8K+, 3 at 2–8K) | 6 | 128 |
+
+The runner fixes the old screen's mix, so a `screen-v2` tier is being built by an Opus
+builder. After it lands:
+1. Freeze the source.
+2. Run the three-arm establish (target, Baseline, leader `ae6569f6…`) between segments under `HOLD`.
+3. Record the references.
+4. Add `screen2_spec.py`.
+5. Re-measure the 14K and 28K exports.
 
 ## Next
 
