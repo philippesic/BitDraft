@@ -52,7 +52,10 @@ Timed chain: preflight in `logs/chain-preflight.md`; pilot slices passed (agenti
 Baseline, exact outputs, shortlist attached, no request-row overflow). The sampled runs needed a
 sampler check bound to runtime-v10 (`release-final/verifier-v10/`, passed). The four-arm chain
 (target, Baseline, Baseline with the sidecar, small file) started 11:31 PST in both arm orders,
-watched as jobwatch job `item11-chain`, about 2 h 45 min.
+watched as jobwatch job `item11-chain2`.
+
+Owner decision 2026-11-20 (12:53 PST): skip the reversed pass and report after agentic. The
+chain runs one arm order only; `SKIP-reversed` in the campaign folder makes the chain skip it.
 
 ## Next
 
