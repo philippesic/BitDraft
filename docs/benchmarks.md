@@ -1317,7 +1317,8 @@ The edit `vocabulary_shortlist_derived_rows_v1`, applied after runtime-v10's six
 `token_embd.shortlist`, marked by `dflash.vocab_shortlist.derived_type` (the ggml type of the
 rows, Q4_K's 12). At start-up the server converts each shortlisted row from the target's Q6_K
 `token_embd` with the on-demand conversion above, one thread, and logs the row count, the
-seconds and an FNV-1a 64 hash of the converted rows. Everything after that is runtime-v10's
+seconds and an FNV-1a 64 hash of the converted rows at warning level, so the line appears at
+the comparisons' server verbosity. Everything after that is runtime-v10's
 path, and a file that ships its rows runs runtime-v10's code unchanged. A file with the key
 and a rows tensor is refused by the loader.
 

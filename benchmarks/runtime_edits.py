@@ -3009,7 +3009,7 @@ void llama_context::vocab_shortlist_reset(llama_seq_id seq_id) {
         for (const uint8_t byte : derived) {
             hash = (hash ^ byte) * 1099511628211ULL;
         }
-        LLAMA_LOG_INFO("%s: derived %" PRId64 " %s shortlist rows from the target's %s %s in %.3f s, FNV-1a 64 %016" PRIx64 "\n",
+        LLAMA_LOG_WARN("%s: derived %" PRId64 " %s shortlist rows from the target's %s %s in %.3f s, FNV-1a 64 %016" PRIx64 "\n",
                 __func__, n_fixed, ggml_type_name(type), ggml_type_name(convert_source->type), convert_source->name, seconds, hash);
     }
 """,

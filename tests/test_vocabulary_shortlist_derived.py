@@ -35,6 +35,7 @@ def test_derived_rows_use_the_on_demand_conversion_and_log_time_and_hash() -> No
     ) in context
     assert "ggml_backend_tensor_set(shortlist->rows, derived.data(), 0, derived.size());" in context
     assert "in %.3f s, FNV-1a 64 %016" in context
+    assert 'LLAMA_LOG_WARN("%s: derived %" PRId64' in context
     assert "std::thread" not in context
     assert "ggml_type dflash_shortlist_derived = GGML_TYPE_COUNT;" in added("src/llama-model.h")
 
