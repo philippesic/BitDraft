@@ -10,6 +10,18 @@ See [closeout specification](docs/results.md).
 
 ## Current candidate and retained controls
 
+### F035: Can the leader's file be smaller than Baseline's with nothing else changed?
+
+Yes. Carrying only the 68,728 shortlisted rows of its vocabulary table, the leader's file is
+284 MB against Baseline's 381 MB (25.5% smaller) and the server uses 340 MiB less GPU memory:
+- drafts are identical to the full-table file's on all 180 screen and panel requests;
+- it passes the owner policy with no shortfall at 1.05–1.13× Baseline as released;
+- against Baseline with the same shortlist it is about 1.03× on ordinary requests and 1.12×
+  on agentic coding.
+
+One arm order, reused DEV data; the small file needs runtime-v10.
+[Result](results/shortlist-only-table/result.md).
+
 ### F034: Does the leader's result come from one bit or from our training data?
 
 From the data. Baseline's own 4-bit architecture, fine-tuned on `train-final-02-fused` for
