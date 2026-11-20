@@ -92,11 +92,25 @@ leader on length and the control on starting point. One seed.
 | --- | --- | --- |
 | 0 | One-bit arm `w1-21000`, release recipe, source `8c3d9db5…`, recipe `9dc9621b…` | Running since 00:05 |
 | 1 | Its screen, panel and screen-v2, candidate-only | Queued |
-| 2 | Leader `ef068eba…` on the NVFP4 screen and panel, candidate-only | Queued |
-| 3, 4 | One-bit arm `w1-8209` and its checks: fallback match if the control must be short | Queued |
+| 2–4 | Control pilots `plain-2000-{3e-5,1e-5,1e-4}`: 2,000 annealed updates each, then screen and panel | Queued |
+| 5 | One-bit arm `w1-2000` with screen and panel: the matched short point | Queued |
+| next | Control `plain-21000` at the pilot's best step size, its checks, then the timed release chain | Not queued |
+| later | Leader `ef068eba…` on the NVFP4 screen and panel, if time remains | Not queued |
 
-Build: [Build 4-bit feed-forward control] (Opus, delegated 00:07), brief
-`artifacts/one-bit-attribution-01/briefs/build-plain.md`.
+Jobwatch job `oba-chain2` watches tasks 0–5.
+
+Build (Opus, delivered 00:37, merged as `1bd92b47`, full gate passed): intent setting
+`"feed_forward": "plain"` trains the 18 feed-forward tables as full-precision tables in
+Baseline's graph and exports Baseline's layout with Q4_K/Q6_K tables. Executed source
+`94852e01…` in `artifacts/one-bit-attribution-01/executed-sources/`. Its update-0 export is
+byte-identical to the Baseline file, so the control starts exactly at Baseline and the
+update-0 screen is Baseline's saved reference. The control scores against the target's own
+vocabulary table, as Baseline is served; the one-bit arm uses our Q4_K table. Fresh runs
+only; campaign checks and round diagnostics are not wired for it.
+
+Step sizes: the three pilots span movement budgets of about 0.01, 0.03 and 0.1 per weight
+(Q4_K rounding error is about 0.005; weights have RMS 0.08). The 21,000-update control at
+1e-5 has a budget of about 0.1.
 
 ### Artifacts
 
