@@ -2922,4 +2922,108 @@ void llama_context::vocab_shortlist_reset(llama_seq_id seq_id) {
 """,
         ),
     ),
+    "vocabulary_shortlist_derived_rows_v1": (
+        (
+            "src/llama-model.h",
+            r"""    struct ggml_tensor * dflash_shortlist_rows = nullptr;
+""",
+            r"""    struct ggml_tensor * dflash_shortlist_rows = nullptr;
+    ggml_type dflash_shortlist_derived = GGML_TYPE_COUNT;
+""",
+        ),
+        (
+            "src/models/dflash.cpp",
+            r"""        dflash_shortlist_rows = create_tensor(tn(LLM_TENSOR_TOKEN_EMBD, "shortlist"), { n_embd, (int64_t) dflash_vocab_shortlist.size() }, 0);
+        if (!ggml_is_quantized(dflash_shortlist_rows->type) || ggml_quantize_requires_imatrix(dflash_shortlist_rows->type)) {
+            throw std::runtime_error("shortlist-only DFlash vocabulary rows need a quantized type without an importance matrix");
+        }
+        LLAMA_LOG_INFO("DFlash shortlist-only vocabulary: %zu %s rows, no full table\n", dflash_vocab_shortlist.size(), ggml_type_name(dflash_shortlist_rows->type));
+""",
+            r"""        const auto shortlist_derived_it = gguf_kv.find("dflash.vocab_shortlist.derived_type");
+        if (shortlist_derived_it != gguf_kv.end()) {
+            const int derived = std::stoi(shortlist_derived_it->second);
+            if (derived < 0 || derived >= GGML_TYPE_COUNT || !ggml_is_quantized((ggml_type) derived) ||
+                    ggml_quantize_requires_imatrix((ggml_type) derived)) {
+                throw std::runtime_error("shortlist-only DFlash vocabulary rows need a quantized type without an importance matrix");
+            }
+            dflash_shortlist_derived = (ggml_type) derived;
+            LLAMA_LOG_INFO("DFlash shortlist-only vocabulary: %zu %s rows derived from the target's table at start-up, no full table\n", dflash_vocab_shortlist.size(), ggml_type_name(dflash_shortlist_derived));
+        } else {
+        dflash_shortlist_rows = create_tensor(tn(LLM_TENSOR_TOKEN_EMBD, "shortlist"), { n_embd, (int64_t) dflash_vocab_shortlist.size() }, 0);
+        if (!ggml_is_quantized(dflash_shortlist_rows->type) || ggml_quantize_requires_imatrix(dflash_shortlist_rows->type)) {
+            throw std::runtime_error("shortlist-only DFlash vocabulary rows need a quantized type without an importance matrix");
+        }
+        LLAMA_LOG_INFO("DFlash shortlist-only vocabulary: %zu %s rows, no full table\n", dflash_vocab_shortlist.size(), ggml_type_name(dflash_shortlist_rows->type));
+        }
+""",
+        ),
+        (
+            "src/llama-context.cpp",
+            r"""    if (model.dflash_shortlist_rows) {
+        return vocab_shortlist_init_rows(ids, n, rows_per_seq);
+""",
+            r"""    if (model.dflash_shortlist_rows || model.dflash_shortlist_derived != GGML_TYPE_COUNT) {
+        return vocab_shortlist_init_rows(ids, n, rows_per_seq);
+""",
+        ),
+        (
+            "src/llama-context.cpp",
+            r"""    const int64_t columns = rows_source->ne[0];
+""",
+            r"""    const int64_t columns = rows_source ? rows_source->ne[0] : (int64_t) model.hparams.n_embd;
+""",
+        ),
+        (
+            "src/llama-context.cpp",
+            r"""    if (n != model.dflash_vocab_shortlist.size() || rows_source->ne[1] != (int64_t) n ||
+""",
+            r"""    if (n != model.dflash_vocab_shortlist.size() || (rows_source && rows_source->ne[1] != (int64_t) n) ||
+""",
+        ),
+        (
+            "src/llama-context.cpp",
+            r"""    const ggml_type type = rows_source->type;
+    const size_t row_bytes = ggml_row_size(type, columns);
+    if (!ggml_is_contiguous(rows_source) || rows_source->nb[1] != row_bytes || rows_source->ne[2] != 1 || rows_source->ne[3] != 1) {
+""",
+            r"""    const ggml_type type = rows_source ? rows_source->type : model.dflash_shortlist_derived;
+    const size_t row_bytes = ggml_row_size(type, columns);
+    if (rows_source && (!ggml_is_contiguous(rows_source) || rows_source->nb[1] != row_bytes || rows_source->ne[2] != 1 || rows_source->ne[3] != 1)) {
+""",
+        ),
+        (
+            "src/llama-context.cpp",
+            r"""    ggml_backend_tensor_copy(rows_source, shortlist->rows);
+""",
+            r"""    if (rows_source) {
+        ggml_backend_tensor_copy(rows_source, shortlist->rows);
+    } else {
+        const int64_t t_start_us = ggml_time_us();
+        std::vector<uint8_t> derived((size_t) n_fixed * row_bytes);
+        for (int64_t i = 0; i < n_fixed; ++i) {
+            vocab_shortlist_convert_row(convert_source, type, (llama_token) ids[i], shortlist->source_row, shortlist->values, derived.data() + (size_t) i * row_bytes);
+        }
+        ggml_backend_tensor_set(shortlist->rows, derived.data(), 0, derived.size());
+        const double seconds = (double) (ggml_time_us() - t_start_us) / 1e6;
+        uint64_t hash = 14695981039346656037ULL;
+        for (const uint8_t byte : derived) {
+            hash = (hash ^ byte) * 1099511628211ULL;
+        }
+        LLAMA_LOG_INFO("%s: derived %" PRId64 " %s shortlist rows from the target's %s %s in %.3f s, FNV-1a 64 %016" PRIx64 "\n",
+                __func__, n_fixed, ggml_type_name(type), ggml_type_name(convert_source->type), convert_source->name, seconds, hash);
+    }
+""",
+        ),
+        (
+            "src/llama-context.cpp",
+            r"""    if (model.dflash_shortlist_rows == nullptr) {
+        return true;
+    }
+""",
+            r"""    if (model.dflash_shortlist_rows == nullptr && model.dflash_shortlist_derived == GGML_TYPE_COUNT) {
+        return true;
+    }
+""",
+        ),
+    ),
 }

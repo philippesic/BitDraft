@@ -1312,6 +1312,15 @@ attached and refuses the sidecar flag, DFlash2, LiliCorr, DSpark, reduced vocabu
 scaled heads as runtime-v9 does. The design depends on every row converting independently of
 the others; `vocabulary-variants` proves it for each export (below).
 
+The edit `vocabulary_shortlist_derived_rows_v1`, applied after runtime-v10's six edits
+(runtime-v11), also serves `drafter-shortlist-derived.gguf`: the same file without
+`token_embd.shortlist`, marked by `dflash.vocab_shortlist.derived_type` (the ggml type of the
+rows, Q4_K's 12). At start-up the server converts each shortlisted row from the target's Q6_K
+`token_embd` with the on-demand conversion above, one thread, and logs the row count, the
+seconds and an FNV-1a 64 hash of the converted rows. Everything after that is runtime-v10's
+path, and a file that ships its rows runs runtime-v10's code unchanged. A file with the key
+and a rows tensor is refused by the loader.
+
 ### Lower-bit vocabulary tables
 
 `build-table-quantizer SPEC OUTPUT` compiles `native/quantize-table.cpp` against a runtime
@@ -1332,8 +1341,10 @@ build's ggml headers and `libggml-base` (`table-quantizer-build-v1`: `runtime`, 
   in 4,096-row calls and one row per call for every row (`row-independence.json`); any
   difference refuses the output. Then it writes `drafter-shortlist-only.gguf` from the same
   shortlist as `drafter-shortlist.gguf` ([shortlist-only table](#shortlist-only-vocabulary-table))
-  and reads back its metadata and every row against the export's table. `result.json`
-  records the export, both shortlist files and the row and table sizes.
+  and reads back its metadata and every row against the export's table. With
+  `"derived": true` it also writes `drafter-shortlist-derived.gguf`, the same file without the
+  rows tensor plus `dflash.vocab_shortlist.derived_type`, admitted by the same all-rows proof.
+  `result.json` records the export, the shortlist files and the row and table sizes.
 - `tables`: `source` (a GGUF), `tensor` (for example `token_embd.weight`), `quantizer` (the
   quantizer build's `result.json`) and `variants`, each a `type` (`Q2_K` or `Q3_K`) and a
   `layout`: `shared` replaces the one tied table used for input rows and scoring;

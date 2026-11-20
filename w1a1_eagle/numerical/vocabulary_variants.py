@@ -29,6 +29,7 @@ SHORTLIST_RULE = (
 TIED_KEY = "dflash.component.tied"
 ROWS_ONLY_KEY = SHORTLIST_KEY + ".rows_only"
 ROWS_TENSOR = "token_embd.shortlist"
+DERIVED_KEY = SHORTLIST_KEY + ".derived_type"
 LAYOUTS = ("shared", "scoring")
 PACKED = {"Q4_0": (32, 18), **{name: (256, width) for name, width in BLOCKS.items()}}
 VARIANT_TYPES = ("Q2_K", "Q3_K")
@@ -132,6 +133,7 @@ class RowsOnlySettings:
     source: Artifact
     tensor: str
     quantizer: Artifact
+    derived: bool
 
 
 @dataclass(frozen=True)
@@ -204,12 +206,16 @@ def settings(path: Path) -> Settings:
     rows_only: RowsOnlySettings | None = None
     if "rows_only" in raw:
         section = record(raw["rows_only"])
-        if set(section) != {"source", "tensor", "quantizer"}:
+        if set(section) - {"derived"} != {"source", "tensor", "quantizer"}:
             raise ValueError("a shortlist-only table needs source, tensor and quantizer")
+        derived = section.get("derived", False)
+        if type(derived) is not bool:
+            raise ValueError("a shortlist-only table's derived option is true or false")
         rows_only = RowsOnlySettings(
             artifact(section["source"], root),
             string(section["tensor"]),
             artifact(section["quantizer"], root),
+            derived,
         )
     return Settings(artifact(raw["export"], root), mixture, size, tables, rows_only)
 
@@ -623,24 +629,30 @@ def rows_only_variant(
     finally:
         shutil.rmtree(scratch.root, ignore_errors=True)
     selected = cast(Bytes, np.ascontiguousarray(head_rows[np.asarray(tokens, dtype=np.int64)]))
+    marked: list[tuple[str, object]] = [
+        *keys,
+        (ROWS_ONLY_KEY, True),
+        (SHORTLIST_KEY + ".source", settings.tensor + " " + settings.source.sha256),
+        (SHORTLIST_KEY + ".quantizer", binary.sha256),
+    ]
     produced = write_variant(
         store,
         "drafter-shortlist-only.gguf",
         source,
         config,
-        [
-            *keys,
-            (ROWS_ONLY_KEY, True),
-            (SHORTLIST_KEY + ".source", settings.tensor + " " + settings.source.sha256),
-            (SHORTLIST_KEY + ".quantizer", binary.sha256),
-        ],
+        marked,
         {},
         {"output.weight": (ROWS_TENSOR, selected, "Q4_K")},
         budget,
         frozenset({"output.weight"}),
     )
     readback = rows_only_readback(produced.path, tokens, head_rows)
-    return {
+    file_bytes = {
+        "export": sizes["export"],
+        "drafter_shortlist": sizes["shortlist"],
+        "drafter_shortlist_only": produced.size,
+    }
+    report: Record = {
         "drafter": reference(produced),
         "row_independence": reference(Artifact.capture(store.root / "row-independence.json")),
         "rows": len(tokens),
@@ -649,12 +661,37 @@ def rows_only_variant(
         "rows_bytes": int(selected.size),
         "full_table_bytes": int(head_rows.size),
         "readback": readback,
-        "file_bytes": {
-            "export": sizes["export"],
-            "drafter_shortlist": sizes["shortlist"],
-            "drafter_shortlist_only": produced.size,
-        },
+        "file_bytes": file_bytes,
     }
+    if settings.derived:
+        derived = write_variant(
+            store,
+            "drafter-shortlist-derived.gguf",
+            source,
+            config,
+            [*marked, (DERIVED_KEY, int(cast(int, table_kind("Q4_K"))))],
+            {},
+            {},
+            budget,
+            frozenset({"output.weight"}),
+        )
+        derived_readback(derived.path, tokens)
+        file_bytes["drafter_shortlist_derived"] = derived.size
+        report["derived"] = {"drafter": reference(derived), "derived_type": "Q4_K"}
+    return report
+
+
+def derived_readback(path: Path, tokens: tuple[int, ...]) -> None:
+    produced = reader(path)
+    values = {key: field.contents() for key, field in produced.fields.items()}
+    if (
+        values.get(ROWS_ONLY_KEY) is not True
+        or values.get(DERIVED_KEY) != int(cast(int, table_kind("Q4_K")))
+        or values.get(SHORTLIST_KEY) != list(tokens)
+        or values.get(TIED_KEY) is not True
+        or any(tensor.name in {"output.weight", ROWS_TENSOR} for tensor in produced.tensors)
+    ):
+        raise ValueError("the derived-rows file metadata or tensors differ")
 
 
 def rows_only_readback(path: Path, tokens: tuple[int, ...], head_rows: Bytes) -> Record:
