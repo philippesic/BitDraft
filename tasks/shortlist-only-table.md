@@ -34,13 +34,27 @@ branch `t3/shortlist-only-table` from main `f219d446`. Campaign folder
 `train-final-02-fused` labels, runtime-v9; disposal at closeout, keeping the small file, the
 runtime and compact results). Timing marker: `artifacts/shortlist-only-table-01/TIMING-ACTIVE`.
 
-2026-11-20 09:55 PST: Opus build delegated (shortlist-only file from `vocabulary-variants`,
-runtime edit after runtime-v9's five, a CPU proof that single-row conversion of the target's
-Q6_K rows reproduces our Q4_K rows, runtime-v10). The child may run short functional GPU
-checks through the queue. No measurement yet.
+2026-11-20: the Opus build is in (branch `t3/shortlist-only-vocabulary-table`, head
+`dc296a41`, not yet merged; frozen source `29115117…` in `builds/executed-sources/`). The small
+file `156b4f72…` is 284.0 MB (270.9 MiB) against Baseline's 381.5 MB: 68,728 Q4_K rows, one per
+distinct TRAIN label. All 248,320 rows convert alone to the export's bytes.
+
+Qualification passed on the screen and the panel: runtime-v10 reproduces runtime-v9 per request
+for the five full-table arms, and the small file reproduces the full-table shortlist file. The
+build's `summary.py parity` reported a panel failure because it compares the first block by file
+name and the two runs have different block layouts; `scripts/parity_by_request.py` matches on
+the request and passes all 120. Panel: small file / full-table shortlist file 1.032
+(1.030, 1.034), / Baseline with the same shortlist 1.030 (1.021, 1.040), / Baseline as released
+1.076; GPU memory 340 MiB lower. The 3% over the full-table shortlist file is unexplained
+(drafting time fell only 0.05 ms per round).
+
+Timed chain: preflight in `logs/chain-preflight.md`; pilot slices passed (agentic 1.135 against
+Baseline, exact outputs, shortlist attached, no request-row overflow). The sampled runs needed a
+sampler check bound to runtime-v10 (`release-final/verifier-v10/`, passed). The four-arm chain
+(target, Baseline, Baseline with the sidecar, small file) started 11:31 PST in both arm orders,
+watched as jobwatch job `item11-chain`, about 2 h 45 min.
 
 ## Next
 
-Wait for the build report. Then freeze its source, run parity (runtime-v9 against
-runtime-v10) and the five-arm screen and panel, and decide from those whether the
-five-scenario timed chain is worth running on the small file.
+When the chain ends: policy report against Baseline as released and against Baseline with the
+shortlist, merge the build through the gate, then close with a result entry.
