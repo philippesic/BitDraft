@@ -1,0 +1,818 @@
+{
+ "arms": {
+  "plain-2000-1e-4": {
+   "acceptance_percent": {
+    "panel": 53.28,
+    "screen": 61.86
+   },
+   "dev": [
+    {
+     "mean_loss": 2.4898,
+     "top1": 0.4676,
+     "updates": 0
+    },
+    {
+     "mean_loss": 2.44,
+     "top1": 0.4659,
+     "updates": 2000
+    }
+   ],
+   "export": "977511563c2bd12969f652fb7059df2191ce9e3552670948f18e15ea22082501",
+   "feed_forward_step_size": 0.0001,
+   "kind": "4-bit control",
+   "peak_cuda_allocated_gib": 12.03,
+   "recipe": "fceb624a3b58aa62d12e6ce14927cb783f2aa81da813a4589d06e26e98eaf65a",
+   "state": "ae8191238bc7e80c0232f479943fad206ba98ebfc74dcfc23c91a956e7dfa14d",
+   "update_seconds": 378,
+   "updates": 2000
+  },
+  "plain-2000-1e-5": {
+   "acceptance_percent": {
+    "panel": 54.43,
+    "screen": 63.12
+   },
+   "dev": [
+    {
+     "mean_loss": 2.4898,
+     "top1": 0.4676,
+     "updates": 0
+    },
+    {
+     "mean_loss": 2.4638,
+     "top1": 0.4688,
+     "updates": 2000
+    }
+   ],
+   "export": "c70356170c878cadfb41bc041da6264218cc018d6672b8d1b70f7b99f9ba1c51",
+   "feed_forward_step_size": 1e-05,
+   "kind": "4-bit control",
+   "peak_cuda_allocated_gib": 12.03,
+   "recipe": "b7ac0b194986c4681c9a3f73f3296993e6568e43ba1730a8000ffbaf0959102c",
+   "state": "280c3c4d68e7b67493d13b9d8c479b9e15d4ae966fd99c96c6b6c753fc2b53ec",
+   "update_seconds": 378,
+   "updates": 2000
+  },
+  "plain-2000-3e-5": {
+   "acceptance_percent": {
+    "panel": 54.55,
+    "screen": 63.27
+   },
+   "dev": [
+    {
+     "mean_loss": 2.4898,
+     "top1": 0.4676,
+     "updates": 0
+    },
+    {
+     "mean_loss": 2.4277,
+     "top1": 0.4734,
+     "updates": 2000
+    }
+   ],
+   "export": "77907db8593401d258bb812b70a437bfc7108205d5ad2c3caeed6f16183e0f0e",
+   "feed_forward_step_size": 3e-05,
+   "kind": "4-bit control",
+   "peak_cuda_allocated_gib": 12.03,
+   "recipe": "e7cb60aee5adac30d49ade65f9668c9ec15bd6f39312743cefcd5d14ed1ba5ee",
+   "state": "f2ba38a366d405861d904df06b72e229df2e1edd803bb86806b0328080da2241",
+   "update_seconds": 379,
+   "updates": 2000
+  },
+  "plain-21000-3e-5": {
+   "acceptance_percent": {
+    "panel": 54.58,
+    "screen": 62.94,
+    "screen2": 64.73
+   },
+   "dev": [
+    {
+     "mean_loss": 2.4898,
+     "top1": 0.4676,
+     "updates": 0
+    },
+    {
+     "mean_loss": 2.2726,
+     "top1": 0.4831,
+     "updates": 21000
+    }
+   ],
+   "export": "3d006c221ebc4f8f65c8e58c64cdf7a8929a5858d4be0f1c1ccad6f72b58212e",
+   "feed_forward_step_size": 3e-05,
+   "kind": "4-bit control",
+   "peak_cuda_allocated_gib": 12.03,
+   "recipe": "0d93d0f4dd5669f8266942ecc7d4350f9d479956b582d7151416f5326bb6992a",
+   "state": "b16dd88bc563bb4ac097fd380e46e692c0891fe06901f2c5b213c0ad1eb154e7",
+   "update_seconds": 3955,
+   "updates": 21000
+  },
+  "w1-2000": {
+   "acceptance_percent": {
+    "panel": 43.71,
+    "screen": 50.67
+   },
+   "dev": [
+    {
+     "mean_loss": 6.2454,
+     "top1": 0.0888,
+     "updates": 0
+    },
+    {
+     "mean_loss": 3.228,
+     "top1": 0.3456,
+     "updates": 2000
+    }
+   ],
+   "export": "9506230dbbb9fb40f8738eace4af31278e292d1901600b6bbdfc68cf95a0c485",
+   "feed_forward_step_size": null,
+   "kind": "one-bit",
+   "peak_cuda_allocated_gib": 12.82,
+   "recipe": "de956819e8e3c53abc41fb16e3c4ae368cf0ace1f1a1004ef9f1683d525dbf2b",
+   "state": "cf41c1b8d2907d34e41d5d36c2f8fa0483d9fa9a5a10d0af5890e2103da2882a",
+   "update_seconds": 453,
+   "updates": 2000
+  },
+  "w1-21000": {
+   "acceptance_percent": {
+    "panel": 46.75,
+    "screen": 55.04,
+    "screen2": 55.66
+   },
+   "dev": [
+    {
+     "mean_loss": 6.2454,
+     "top1": 0.0888,
+     "updates": 0
+    },
+    {
+     "mean_loss": 3.0233,
+     "top1": 0.3398,
+     "updates": 21000
+    }
+   ],
+   "export": "8c0e73aa695282deaeb63e438939ba7b890852444dded2d7242ce406008cdb15",
+   "feed_forward_step_size": null,
+   "kind": "one-bit",
+   "peak_cuda_allocated_gib": 12.86,
+   "recipe": "9dc9621b1706548dc67623d319c38932cfceb746a4f0632d3f3c3c7f1af66247",
+   "state": "3cf8f15e0f9c8c331db8cc4f43486d324310514ef5ae9478dcf64e5bdc52a640",
+   "update_seconds": 4739,
+   "updates": 21000
+  }
+ },
+ "control_nvfp4": {
+  "nvfp4-panel": {
+   "baseline": {
+    "acceptance_percent": 53.02,
+    "correct": true,
+    "execution": "historical",
+    "speed_vs_baseline": 1.0
+   },
+   "candidate": {
+    "acceptance_percent": 54.37,
+    "correct": true,
+    "execution": "measured",
+    "speed_vs_baseline": 1.0126
+   },
+   "target": {
+    "acceptance_percent": null,
+    "correct": true,
+    "execution": "historical",
+    "speed_vs_baseline": 0.6846
+   }
+  },
+  "nvfp4-screen": {
+   "baseline": {
+    "acceptance_percent": 58.23,
+    "correct": true,
+    "execution": "historical",
+    "speed_vs_baseline": 1.0
+   },
+   "candidate": {
+    "acceptance_percent": 62.24,
+    "correct": true,
+    "execution": "measured",
+    "speed_vs_baseline": 1.032
+   },
+   "target": {
+    "acceptance_percent": null,
+    "correct": true,
+    "execution": "historical",
+    "speed_vs_baseline": 0.706
+   }
+  }
+ },
+ "leader_nvfp4": {
+  "nvfp4-panel": {
+   "baseline": {
+    "acceptance_percent": 53.02,
+    "correct": true,
+    "execution": "historical",
+    "speed_vs_baseline": 1.0
+   },
+   "candidate": {
+    "acceptance_percent": 50.03,
+    "correct": true,
+    "execution": "measured",
+    "speed_vs_baseline": 1.0081
+   },
+   "target": {
+    "acceptance_percent": null,
+    "correct": true,
+    "execution": "historical",
+    "speed_vs_baseline": 0.6846
+   }
+  },
+  "nvfp4-screen": {
+   "baseline": {
+    "acceptance_percent": 58.23,
+    "correct": true,
+    "execution": "historical",
+    "speed_vs_baseline": 1.0
+   },
+   "candidate": {
+    "acceptance_percent": 58.33,
+    "correct": true,
+    "execution": "measured",
+    "speed_vs_baseline": 1.0325
+   },
+   "target": {
+    "acceptance_percent": null,
+    "correct": true,
+    "execution": "historical",
+    "speed_vs_baseline": 0.706
+   }
+  }
+ },
+ "paired_acceptance": {
+  "plain-2000-3e-5 minus plain-2000-1e-4": {
+   "panel": {
+    "difference_points": 1.269,
+    "groups": 120,
+    "interval_points": [
+     0.938,
+     1.595
+    ]
+   },
+   "screen": {
+    "difference_points": 1.412,
+    "groups": 60,
+    "interval_points": [
+     0.437,
+     2.331
+    ]
+   }
+  },
+  "plain-2000-3e-5 minus plain-2000-1e-5": {
+   "panel": {
+    "difference_points": 0.113,
+    "groups": 120,
+    "interval_points": [
+     -0.107,
+     0.34
+    ]
+   },
+   "screen": {
+    "difference_points": 0.149,
+    "groups": 60,
+    "interval_points": [
+     -0.582,
+     0.88
+    ]
+   }
+  },
+  "plain-2000-3e-5 minus w1-2000": {
+   "panel": {
+    "difference_points": 10.841,
+    "groups": 120,
+    "interval_points": [
+     10.237,
+     11.408
+    ]
+   },
+   "screen": {
+    "difference_points": 12.594,
+    "groups": 60,
+    "interval_points": [
+     10.851,
+     14.294
+    ]
+   }
+  },
+  "plain-21000-3e-5 minus leader ef068eba": {
+   "panel": {
+    "difference_points": 3.778,
+    "groups": 120,
+    "interval_points": [
+     2.895,
+     4.568
+    ]
+   },
+   "screen": {
+    "difference_points": 3.194,
+    "groups": 60,
+    "interval_points": [
+     1.882,
+     4.525
+    ]
+   },
+   "screen2": {
+    "difference_points": 4.428,
+    "groups": 60,
+    "interval_points": [
+     3.119,
+     5.654
+    ]
+   }
+  },
+  "plain-21000-3e-5 minus plain-2000-3e-5": {
+   "panel": {
+    "difference_points": 0.037,
+    "groups": 120,
+    "interval_points": [
+     -0.288,
+     0.371
+    ]
+   },
+   "screen": {
+    "difference_points": -0.323,
+    "groups": 60,
+    "interval_points": [
+     -1.381,
+     0.746
+    ]
+   }
+  },
+  "plain-21000-3e-5 minus w1-21000": {
+   "panel": {
+    "difference_points": 7.837,
+    "groups": 120,
+    "interval_points": [
+     7.259,
+     8.392
+    ]
+   },
+   "screen": {
+    "difference_points": 7.901,
+    "groups": 60,
+    "interval_points": [
+     6.697,
+     9.102
+    ]
+   },
+   "screen2": {
+    "difference_points": 9.068,
+    "groups": 60,
+    "interval_points": [
+     8.173,
+     9.909
+    ]
+   }
+  },
+  "w1-21000 minus w1-2000": {
+   "panel": {
+    "difference_points": 3.041,
+    "groups": 120,
+    "interval_points": [
+     2.635,
+     3.479
+    ]
+   },
+   "screen": {
+    "difference_points": 4.371,
+    "groups": 60,
+    "interval_points": [
+     2.92,
+     5.952
+    ]
+   }
+  }
+ },
+ "policy": {
+  "control_pooled_orders": {
+   "candidate_sha256": "3d006c221ebc4f8f65c8e58c64cdf7a8929a5858d4be0f1c1ccad6f72b58212e",
+   "code_sha256": "8180f20857446d16e78f1f04a827dd976267ae3b0c3a20d71d1f0997ed3c4935",
+   "development_verdict": {
+    "allowed_shortfalls": 2,
+    "label": "development-only Level 2 slice verdict for short-run finalists; never a release decision",
+    "scenarios": {
+     "agentic-coding": "at-least-baseline",
+     "greedy-long": "insufficient",
+     "greedy-short": "at-least-baseline",
+     "sampled": "at-least-baseline",
+     "thinking-on": "at-least-baseline"
+    },
+    "shortfalls": [],
+    "tolerance_lower_bound": 0.97,
+    "verdict": "not-demonstrated"
+   },
+   "merged_strata_verdicts": {
+    "development": {
+     "allowed_shortfalls": 2,
+     "scenarios": {
+      "agentic-coding": "at-least-baseline",
+      "greedy-long": "at-least-baseline",
+      "greedy-short": "at-least-baseline",
+      "sampled": "at-least-baseline",
+      "thinking-on": "at-least-baseline"
+     },
+     "shortfalls": [],
+     "tolerance_lower_bound": 0.97,
+     "verdict": "passed"
+    },
+    "label": "supplementary: same paired source-group bootstrap with every category stratum of fewer than two source groups merged into one pooled stratum; not the maintained rule and never used by the maintained verdict; recomputed only because count_merged_strata was set",
+    "level3": {
+     "allowed_shortfalls": 2,
+     "scenarios": {
+      "agentic-coding": "at-least-baseline",
+      "greedy-long": "at-least-baseline",
+      "greedy-short": "at-least-baseline",
+      "sampled": "at-least-baseline",
+      "thinking-on": "at-least-baseline"
+     },
+     "shortfalls": [],
+     "tolerance_lower_bound": 0.97,
+     "verdict": "passed"
+    }
+   },
+   "scenarios": {
+    "agentic-coding": {
+     "baseline_acceptance_percent": 63.4,
+     "candidate_acceptance_percent": 85.37,
+     "completion": "held",
+     "correct": true,
+     "merged_strata_95_lower": 1.0926,
+     "pooled_runs": 1,
+     "speed_ratio": 1.1098,
+     "speed_ratio_95_lower": 1.0926
+    },
+    "greedy-long": {
+     "baseline_acceptance_percent": 61.15,
+     "candidate_acceptance_percent": 64.28,
+     "completion": null,
+     "correct": true,
+     "merged_strata_95_lower": 1.0069,
+     "pooled_runs": 2,
+     "speed_ratio": 1.0163,
+     "speed_ratio_95_lower": null
+    },
+    "greedy-short": {
+     "baseline_acceptance_percent": 52.34,
+     "candidate_acceptance_percent": 53.36,
+     "completion": null,
+     "correct": true,
+     "merged_strata_95_lower": 1.007,
+     "pooled_runs": 2,
+     "speed_ratio": 1.0111,
+     "speed_ratio_95_lower": 1.007
+    },
+    "sampled": {
+     "baseline_acceptance_percent": 50.0,
+     "candidate_acceptance_percent": 50.45,
+     "completion": null,
+     "correct": true,
+     "merged_strata_95_lower": 1.0019,
+     "pooled_runs": 2,
+     "speed_ratio": 1.0038,
+     "speed_ratio_95_lower": 1.0019
+    },
+    "thinking-on": {
+     "baseline_acceptance_percent": 66.64,
+     "candidate_acceptance_percent": 67.76,
+     "completion": null,
+     "correct": true,
+     "merged_strata_95_lower": 1.0071,
+     "pooled_runs": 2,
+     "speed_ratio": 1.0103,
+     "speed_ratio_95_lower": 1.0071
+    }
+   }
+  },
+  "control_single_order": {
+   "candidate_sha256": "3d006c221ebc4f8f65c8e58c64cdf7a8929a5858d4be0f1c1ccad6f72b58212e",
+   "code_sha256": "8180f20857446d16e78f1f04a827dd976267ae3b0c3a20d71d1f0997ed3c4935",
+   "development_verdict": {
+    "allowed_shortfalls": 2,
+    "label": "development-only Level 2 slice verdict for short-run finalists; never a release decision",
+    "scenarios": {
+     "agentic-coding": "at-least-baseline",
+     "greedy-long": "insufficient",
+     "greedy-short": "at-least-baseline",
+     "sampled": "at-least-baseline",
+     "thinking-on": "at-least-baseline"
+    },
+    "shortfalls": [],
+    "tolerance_lower_bound": 0.97,
+    "verdict": "not-demonstrated"
+   },
+   "merged_strata_verdicts": {
+    "development": {
+     "allowed_shortfalls": 2,
+     "scenarios": {
+      "agentic-coding": "at-least-baseline",
+      "greedy-long": "at-least-baseline",
+      "greedy-short": "at-least-baseline",
+      "sampled": "at-least-baseline",
+      "thinking-on": "at-least-baseline"
+     },
+     "shortfalls": [],
+     "tolerance_lower_bound": 0.97,
+     "verdict": "passed"
+    },
+    "label": "supplementary: same paired source-group bootstrap with every category stratum of fewer than two source groups merged into one pooled stratum; not the maintained rule and never used by the maintained verdict; recomputed only because count_merged_strata was set",
+    "level3": {
+     "allowed_shortfalls": 2,
+     "scenarios": {
+      "agentic-coding": "at-least-baseline",
+      "greedy-long": "at-least-baseline",
+      "greedy-short": "at-least-baseline",
+      "sampled": "at-least-baseline",
+      "thinking-on": "at-least-baseline"
+     },
+     "shortfalls": [],
+     "tolerance_lower_bound": 0.97,
+     "verdict": "passed"
+    }
+   },
+   "scenarios": {
+    "agentic-coding": {
+     "baseline_acceptance_percent": 63.4,
+     "candidate_acceptance_percent": 85.37,
+     "completion": "held",
+     "correct": true,
+     "merged_strata_95_lower": 1.0926,
+     "pooled_runs": 1,
+     "speed_ratio": 1.1098,
+     "speed_ratio_95_lower": 1.0926
+    },
+    "greedy-long": {
+     "baseline_acceptance_percent": 61.15,
+     "candidate_acceptance_percent": 64.28,
+     "completion": null,
+     "correct": true,
+     "merged_strata_95_lower": 1.0076,
+     "pooled_runs": 1,
+     "speed_ratio": 1.0175,
+     "speed_ratio_95_lower": null
+    },
+    "greedy-short": {
+     "baseline_acceptance_percent": 52.34,
+     "candidate_acceptance_percent": 53.36,
+     "completion": null,
+     "correct": true,
+     "merged_strata_95_lower": 1.0073,
+     "pooled_runs": 1,
+     "speed_ratio": 1.0116,
+     "speed_ratio_95_lower": 1.0073
+    },
+    "sampled": {
+     "baseline_acceptance_percent": 50.0,
+     "candidate_acceptance_percent": 50.45,
+     "completion": null,
+     "correct": true,
+     "merged_strata_95_lower": 1.0025,
+     "pooled_runs": 1,
+     "speed_ratio": 1.0044,
+     "speed_ratio_95_lower": 1.0025
+    },
+    "thinking-on": {
+     "baseline_acceptance_percent": 66.64,
+     "candidate_acceptance_percent": 67.76,
+     "completion": null,
+     "correct": true,
+     "merged_strata_95_lower": 1.0082,
+     "pooled_runs": 1,
+     "speed_ratio": 1.0112,
+     "speed_ratio_95_lower": 1.0082
+    }
+   }
+  },
+  "leader_pooled_orders": {
+   "candidate_sha256": "ef068ebaa1b6e2369ca444748120aade796b2de284637395fd628f5a6301005b",
+   "code_sha256": "8180f20857446d16e78f1f04a827dd976267ae3b0c3a20d71d1f0997ed3c4935",
+   "development_verdict": {
+    "allowed_shortfalls": 2,
+    "label": "development-only Level 2 slice verdict for short-run finalists; never a release decision",
+    "scenarios": {
+     "agentic-coding": "at-least-baseline",
+     "greedy-long": "insufficient",
+     "greedy-short": "tolerated-shortfall",
+     "sampled": "at-least-baseline",
+     "thinking-on": "tolerated-shortfall"
+    },
+    "shortfalls": [
+     "greedy-short",
+     "thinking-on"
+    ],
+    "tolerance_lower_bound": 0.97,
+    "verdict": "not-demonstrated"
+   },
+   "merged_strata_verdicts": {
+    "development": {
+     "allowed_shortfalls": 2,
+     "scenarios": {
+      "agentic-coding": "at-least-baseline",
+      "greedy-long": "at-least-baseline",
+      "greedy-short": "tolerated-shortfall",
+      "sampled": "at-least-baseline",
+      "thinking-on": "tolerated-shortfall"
+     },
+     "shortfalls": [
+      "greedy-short",
+      "thinking-on"
+     ],
+     "tolerance_lower_bound": 0.97,
+     "verdict": "passed"
+    },
+    "label": "supplementary: same paired source-group bootstrap with every category stratum of fewer than two source groups merged into one pooled stratum; not the maintained rule and never used by the maintained verdict; recomputed only because count_merged_strata was set",
+    "level3": {
+     "allowed_shortfalls": 2,
+     "scenarios": {
+      "agentic-coding": "at-least-baseline",
+      "greedy-long": "at-least-baseline",
+      "greedy-short": "tolerated-shortfall",
+      "sampled": "at-least-baseline",
+      "thinking-on": "tolerated-shortfall"
+     },
+     "shortfalls": [
+      "greedy-short",
+      "thinking-on"
+     ],
+     "tolerance_lower_bound": 0.97,
+     "verdict": "passed"
+    }
+   },
+   "scenarios": {
+    "agentic-coding": {
+     "baseline_acceptance_percent": 63.4,
+     "candidate_acceptance_percent": 81.74,
+     "completion": "held",
+     "correct": true,
+     "merged_strata_95_lower": 1.0906,
+     "pooled_runs": 1,
+     "speed_ratio": 1.108,
+     "speed_ratio_95_lower": 1.0906
+    },
+    "greedy-long": {
+     "baseline_acceptance_percent": 61.15,
+     "candidate_acceptance_percent": 60.03,
+     "completion": null,
+     "correct": true,
+     "merged_strata_95_lower": 1.0019,
+     "pooled_runs": 2,
+     "speed_ratio": 1.0128,
+     "speed_ratio_95_lower": null
+    },
+    "greedy-short": {
+     "baseline_acceptance_percent": 52.34,
+     "candidate_acceptance_percent": 49.64,
+     "completion": null,
+     "correct": true,
+     "merged_strata_95_lower": 1.0,
+     "pooled_runs": 2,
+     "speed_ratio": 1.0103,
+     "speed_ratio_95_lower": 1.0
+    },
+    "sampled": {
+     "baseline_acceptance_percent": 50.0,
+     "candidate_acceptance_percent": 47.7,
+     "completion": null,
+     "correct": true,
+     "merged_strata_95_lower": 1.0032,
+     "pooled_runs": 2,
+     "speed_ratio": 1.0113,
+     "speed_ratio_95_lower": 1.0032
+    },
+    "thinking-on": {
+     "baseline_acceptance_percent": 66.64,
+     "candidate_acceptance_percent": 63.02,
+     "completion": null,
+     "correct": true,
+     "merged_strata_95_lower": 0.9975,
+     "pooled_runs": 2,
+     "speed_ratio": 1.0068,
+     "speed_ratio_95_lower": 0.9975
+    }
+   }
+  },
+  "leader_single_order": {
+   "candidate_sha256": "ef068ebaa1b6e2369ca444748120aade796b2de284637395fd628f5a6301005b",
+   "code_sha256": "8180f20857446d16e78f1f04a827dd976267ae3b0c3a20d71d1f0997ed3c4935",
+   "development_verdict": {
+    "allowed_shortfalls": 2,
+    "label": "development-only Level 2 slice verdict for short-run finalists; never a release decision",
+    "scenarios": {
+     "agentic-coding": "at-least-baseline",
+     "greedy-long": "insufficient",
+     "greedy-short": "tolerated-shortfall",
+     "sampled": "at-least-baseline",
+     "thinking-on": "tolerated-shortfall"
+    },
+    "shortfalls": [
+     "greedy-short",
+     "thinking-on"
+    ],
+    "tolerance_lower_bound": 0.97,
+    "verdict": "not-demonstrated"
+   },
+   "merged_strata_verdicts": {
+    "development": {
+     "allowed_shortfalls": 2,
+     "scenarios": {
+      "agentic-coding": "at-least-baseline",
+      "greedy-long": "at-least-baseline",
+      "greedy-short": "tolerated-shortfall",
+      "sampled": "at-least-baseline",
+      "thinking-on": "tolerated-shortfall"
+     },
+     "shortfalls": [
+      "greedy-short",
+      "thinking-on"
+     ],
+     "tolerance_lower_bound": 0.97,
+     "verdict": "passed"
+    },
+    "label": "supplementary: same paired source-group bootstrap with every category stratum of fewer than two source groups merged into one pooled stratum; not the maintained rule and never used by the maintained verdict; recomputed only because count_merged_strata was set",
+    "level3": {
+     "allowed_shortfalls": 2,
+     "scenarios": {
+      "agentic-coding": "at-least-baseline",
+      "greedy-long": "at-least-baseline",
+      "greedy-short": "tolerated-shortfall",
+      "sampled": "at-least-baseline",
+      "thinking-on": "tolerated-shortfall"
+     },
+     "shortfalls": [
+      "greedy-short",
+      "thinking-on"
+     ],
+     "tolerance_lower_bound": 0.97,
+     "verdict": "passed"
+    }
+   },
+   "scenarios": {
+    "agentic-coding": {
+     "baseline_acceptance_percent": 63.4,
+     "candidate_acceptance_percent": 81.74,
+     "completion": "held",
+     "correct": true,
+     "merged_strata_95_lower": 1.0906,
+     "pooled_runs": 1,
+     "speed_ratio": 1.108,
+     "speed_ratio_95_lower": 1.0906
+    },
+    "greedy-long": {
+     "baseline_acceptance_percent": 61.15,
+     "candidate_acceptance_percent": 60.03,
+     "completion": null,
+     "correct": true,
+     "merged_strata_95_lower": 1.0012,
+     "pooled_runs": 1,
+     "speed_ratio": 1.0121,
+     "speed_ratio_95_lower": null
+    },
+    "greedy-short": {
+     "baseline_acceptance_percent": 52.34,
+     "candidate_acceptance_percent": 49.64,
+     "completion": null,
+     "correct": true,
+     "merged_strata_95_lower": 0.9994,
+     "pooled_runs": 1,
+     "speed_ratio": 1.0097,
+     "speed_ratio_95_lower": 0.9994
+    },
+    "sampled": {
+     "baseline_acceptance_percent": 50.0,
+     "candidate_acceptance_percent": 47.7,
+     "completion": null,
+     "correct": true,
+     "merged_strata_95_lower": 1.0028,
+     "pooled_runs": 1,
+     "speed_ratio": 1.0109,
+     "speed_ratio_95_lower": 1.0028
+    },
+    "thinking-on": {
+     "baseline_acceptance_percent": 66.64,
+     "candidate_acceptance_percent": 63.02,
+     "completion": null,
+     "correct": true,
+     "merged_strata_95_lower": 0.9969,
+     "pooled_runs": 1,
+     "speed_ratio": 1.0062,
+     "speed_ratio_95_lower": 0.9969
+    }
+   }
+  }
+ },
+ "saved_acceptance_percent": {
+  "baseline": {
+   "panel": 53.35,
+   "screen": 60.64,
+   "screen2": 62.7
+  },
+  "leader_ef068eba": {
+   "panel": 50.81,
+   "screen": 59.75,
+   "screen2": 60.3
+  }
+ }
+}

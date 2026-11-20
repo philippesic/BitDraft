@@ -10,6 +10,22 @@ See [closeout specification](docs/results.md).
 
 ## Current candidate and retained controls
 
+### F034: Does the leader's result come from one bit or from our training data?
+
+From the data. Baseline's own 4-bit architecture, fine-tuned on `train-final-02-fused` for
+21,000 updates (66 minutes), runs as fast against Baseline as the one-bit leader does after
+335,812 updates:
+- agentic 1.110× against 1.108×, long 1.016× against 1.013×, short 1.011× against 1.010×,
+  thinking-on 1.010× against 1.007×, sampled 1.004× against 1.011×;
+- it passes the owner policy with no shortfall, with exact outputs;
+- at equal data, order and updates it accepts 7.84 panel points more than one-bit
+  (7.26, 8.39), down from 10.84 at 2,000 updates.
+
+The leader stays level only through cheaper rounds, worth about 3.5 acceptance points;
+about half of that is its smaller vocabulary table, not one bit. The control trained 16
+times shorter than the leader, with one seed, on reused DEV data: a floor for 4-bit, not a
+matched-length verdict. [Result](results/one-bit-attribution/result.md).
+
 ### F033: Does fused storage with more data and a longer run pass the release policy?
 
 Yes, on reused DEV data. Fused F16 storage cost −0.18 acceptance points (−0.39, +0.03),

@@ -11,6 +11,7 @@ Each name below is a separate identity. Do not relabel one as another.
 | Candidate | Specific experimental drafter recipe and checkpoint |
 | Incumbent | Best supported experimental candidate; does not replace Baseline |
 | Target-only | Selected target running without a drafter |
+| 4-bit control | Baseline's own architecture fine-tuned on our TRAIN data with plain feed-forward tables; a control, never a candidate |
 | W1A8 | One-bit weights/eight-bit activations in declared components; name the model family |
 | DSpark Q4KM | Historical DSpark-era baseline |
 | Csmallbroad, B0, foundation | Retained historical states with their own identities |

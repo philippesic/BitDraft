@@ -29,6 +29,7 @@ one successful path does not qualify arbitrary inputs or configurations.
 | Selection | Short DEV leader, full-request experimental incumbent and latest recovery are separate. Workflow/harness regressions cannot be hidden by a request score. No automatic deployment promotion. |
 | Generalization | Public source exposure is unknown. Fixed DEV mixtures and one-project workflows do not prove real-traffic prevalence or unseen application transfer. Independent confirmation needs new curation and access receipts. |
 | Per-slot rounding | Qualified on the RTX 5080 for HE4/Q4KM on the 60-request screen: default parity exact, per-round cost 0.002–0.05 ms, no acceptance gain in a 35-minute calibrated run ([result](../results/release-candidate-screen/result.md)). Other cohorts and lengths are unmeasured. |
+| Plain feed-forward control | Qualified on the RTX 5080 for fresh runs on fused TRAIN records with Q4KM target features: 2,000 and 21,000 updates, 12.0 GiB peak, exports served exactly on runtime-v8 for Q4KM and NVFP4 targets ([result](../results/one-bit-attribution/result.md)). No resume, continue or branch; campaign checks and round diagnostics are not wired for it. |
 | Exposure | Dataset-local counters and lineage survive; per-position lifetime history across changed recipes/corpora is incomplete. |
 | Historical data | The eight-prompt discrepancy remains unresolved; see [deduplication](../results/null-topic-deduplication/result.md). |
 
