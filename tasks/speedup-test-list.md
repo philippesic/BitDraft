@@ -77,9 +77,11 @@ shortlist ships natively with the candidate (runtime-v9, +3.3% on the panel); ev
 that Baseline gains +4.4% from the same change
 ([result](../results/release-candidate-screen/result.md)).
 
-Owner decision 2026-11-18: the screen's final export `ae6569f6…` is the provisional acceptance
-leader (+2.41 points (+0.98, +3.78) over `5749a05f…` on the 60-request screen); new states are
-screened against `specs/q4km-screen-leader-ae6569f6.json`.
+Owner decision 2026-11-19: the long fused run's final export `ef068eba…` is the provisional
+acceptance leader. It is +2.1 to +2.9 points over `ae6569f6…` on the screens and passes the
+owner release policy ([result](../results/fused-data-expansion/result.md)). New states are
+screened against `specs/q4km-screen-leader-ef068eba.json` and
+`screen-v2/q4km-screen2-leader-ef068eba.json`.
 
 Starting point for acceptance work, decided by the owner on 2026-11-14: the final state of
 the [learning-curve run](../results/s4-data-curve/result.md) (state `769e184e…`), the best

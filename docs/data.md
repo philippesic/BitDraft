@@ -51,8 +51,17 @@ The [TRAIN expansion](../results/train-bank-expansion/result.md) adds 2,633 reco
 three capture shards under `artifacts/datasets/train-expansion-01/` (874 session records
 and 1,759 single-turn prompts). Its `mixture.json` combines them with the 6K corpus as a
 `corpus-mixture-v1` manifest; bind it from an intent's `corpus` with `corpus_format`.
-That mixture, 8,633 records, is the full TRAIN set. The 6K corpus alone is a subset: use it
-only to match an earlier run.
+That mixture, 8,633 records, was the TRAIN set until 2026-11-18. Its FP16 tap files are
+now retired, so it loads only after token replay.
+
+The full TRAIN set is `artifacts/datasets/train-final-02-fused/mixture.json`
+(`fused-mixture-v1`, 8 components, 13,394 records, 142 GB). It holds the 9,047-record
+`train-final-01` (fused in `train-final-01-fused/`) and two `expansion-03` captures. The
+first adds 3,564 prompts (thinking-on maths and reasoning, writing, conversation, QASPER
+2–8K papers, CommitPack edits); the second adds 405 long-project and 378 short agentic
+sessions. The [expansion result](../results/fused-data-expansion/result.md) records the
+selection and its limits. The eight-tap `train-final-02/mixture.json` names retired tap
+files and is not loadable.
 
 The prompt-bank bodies and role/ID selections remain under `bank/v8`. Portable curation
 metadata is under `bank/v8-relocated-01`; its relocation receipt changes only the old
@@ -194,7 +203,7 @@ update when the corpus fusion identity differs from the model's operand. Every r
 carry the corpus's identity. Fused input skips only the fusion product; the rest of the
 update is unchanged. The calibrated start and the gradual-precision start check sample the
 same fused records and skip the same product. DEV diagnostics keep reading eight-tap captures. Storage is eight times
-smaller (the full TRAIN set: 441.6 GB of eight-tap FP16 against 55.2 GB fused). Fused
+smaller (`train-expansion-01`: 441.6 GB of eight-tap FP16 against 55.2 GB fused). Fused
 storage adds one F16 rounding, so production use needs a matched training check.
 
 ## Token streams and replay

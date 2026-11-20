@@ -10,6 +10,19 @@ See [closeout specification](docs/results.md).
 
 ## Current candidate and retained controls
 
+### F033: Does fused storage with more data and a longer run pass the release policy?
+
+Yes, on reused DEV data. Fused F16 storage cost −0.18 acceptance points (−0.39, +0.03),
+pooled over three seeds, so TRAIN grew to 13,394 fused records (142 GB). Two passes of
+335,812 updates give export `ef068eba…`:
+- +2.1 to +2.9 points over `ae6569f6…` on the three screens, every lower bound above 0;
+- speed against Baseline: agentic 1.108× (1.091), long 1.013×, sampled 1.011×, short
+  1.010× and thinking-on 1.007×;
+- the owner policy passes with two tolerated shortfalls, at lower bounds of 1.000 and 0.998.
+
+It is the provisional acceptance leader since 2026-11-19. A speed claim still needs
+protected confirmation data. [Result](results/fused-data-expansion/result.md).
+
 ### F028: Does broader scenario coverage establish that final S4 is faster?
 
 No. The joint seven-scenario reports include the registered agentic slice and suite:
@@ -236,8 +249,8 @@ arithmetic, fused F16 storage, round-state weighting and per-slot rounding all t
 outputs: the owner's speed policy fails narrowly on thinking-on (lower bound 0.969). A native
 vocabulary shortlist adds 3.3% speed with no acceptance change, but Baseline gains 4.4% from the
 same change. Proposed release recipe: this one sized to about two passes, an extrapolation.
-Its final export `ae6569f6…` is the provisional acceptance leader since 2026-11-18 (+2.41 points
-over `5749a05f…`).
+Its final export `ae6569f6…` was the provisional acceptance leader from 2026-11-18 (+2.41 points
+over `5749a05f…`) until [F033](#f033-does-fused-storage-with-more-data-and-a-longer-run-pass-the-release-policy) superseded it on 2026-11-19.
 [Result](results/release-candidate-screen/result.md).
 
 ## Earlier experiments and durable lessons

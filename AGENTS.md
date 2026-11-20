@@ -6,7 +6,7 @@ heldout24 and its aliases never enter training, calibration or selection.
 
 Checkout: `/home/philip/BitDraft` on the RTX 5080 host.
 All project artifacts live in ignored `artifacts/`; [storage](docs/storage.md) maps the folders.
-The full TRAIN set is `artifacts/datasets/train-expansion-01/mixture.json`; the 6K corpus is a subset ([data](docs/data.md)).
+The full TRAIN set is `artifacts/datasets/train-final-02-fused/mixture.json` (fused F16; [data](docs/data.md)).
 Remote: `git@github.com:philippesic/BitDraft.git` (`origin`). The license remains undecided.
 
 ## Navigation

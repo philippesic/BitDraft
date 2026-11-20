@@ -198,6 +198,10 @@ leader was proposed here; the owner approved it on 2026-11-18. Its screen is the
 `285434a8…` and `runtime-v8-linux-01/specs/q4km-screen-leader-ae6569f6.json` checks new states
 against it. The export stays under `arms/s12-long/output/exports/` while it leads.
 
+Note 2026-11-19: `ef068eba…` superseded it as provisional acceptance leader
+([fused data expansion](../fused-data-expansion/result.md)). `ae6569f6…` stays as the
+prior-leader control until the next leader decision.
+
 ## Evidence and reproduction
 
 All raw evidence lives under `/home/philip/BitDraft/artifacts/feature-validation-01/` (main

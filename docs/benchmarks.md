@@ -237,10 +237,13 @@ runtime-v6 plus `stop_token_cache_v1`, which keeps a stopping token out of the s
 when it was an accepted draft ([stop-token cache](../results/stop-token-cache-exactness/result.md)).
 Target, Baseline and leader references exist for both targets on the four routine cohorts
 ([native Linux references](../results/native-linux-references/result.md)) for the earlier
-leader, export `5749a05f…`. The provisional acceptance leader is export `ae6569f6…` (owner
-decision 2026-11-18, [release candidate screen](../results/release-candidate-screen/result.md));
-only its Q4KM 60-request screen is a saved reference (`285434a8…`), used by
-`specs/q4km-screen-leader-ae6569f6.json`. The other `*-leader.json` specifications still name
+leader, export `5749a05f…`. The provisional acceptance leader is export `ef068eba…` (owner
+decision 2026-11-19, [fused data expansion](../results/fused-data-expansion/result.md)).
+Its saved references are the Q4KM 60-request screen (`93bd262f…`, used by
+`specs/q4km-screen-leader-ef068eba.json`) and screen-v2 (`6d64cd3f…`, used by
+`artifacts/benchmarks/screen-v2/q4km-screen2-leader-ef068eba.json`). Screen-v2's target and
+Baseline references come from the three-arm run in `screen-v2/runs/q4km-screen2/`
+(frozen source `060915bf…`). The other `*-leader.json` specifications still name
 `5749a05f…`. Thinking, sampled and agentic references have not been re-recorded on this host. The shared root is `artifacts/benchmarks/runtime-v8-linux-01/`:
 
 | Path | Contents |
