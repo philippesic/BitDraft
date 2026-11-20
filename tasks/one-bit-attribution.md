@@ -90,14 +90,34 @@ leader on length and the control on starting point. One seed.
 
 | Task | Content | Status |
 | --- | --- | --- |
-| 0 | One-bit arm `w1-21000`, release recipe, source `8c3d9db5…`, recipe `9dc9621b…` | Running since 00:05 |
-| 1 | Its screen, panel and screen-v2, candidate-only | Queued |
-| 2–4 | Control pilots `plain-2000-{3e-5,1e-5,1e-4}`: 2,000 annealed updates each, then screen and panel | Queued |
-| 5 | One-bit arm `w1-2000` with screen and panel: the matched short point | Queued |
-| next | Control `plain-21000` at the pilot's best step size, its checks, then the timed release chain | Not queued |
-| later | Leader `ef068eba…` on the NVFP4 screen and panel, if time remains | Not queued |
+| 0, 1, 6 | One-bit arm `w1-21000` (recipe `9dc9621b…`) with screen, panel and screen-v2 | Done 02:33 |
+| 2–4 | Control pilots `plain-2000-{3e-5,1e-5,1e-4}`, screen and panel | Done |
+| 5 | One-bit arm `w1-2000`, screen and panel | Done |
+| 7 | Control `plain-21000-3e-5`, then screen, panel and screen-v2 | Running since 02:34, about 70 minutes |
+| 8 | Timed release chain, control as candidate: requests, thinking, sampled, agentic, screen | Queued after 7 |
+| later | Reversed-order repeats or a 1e-5 control, decided on task 8's result; leader on NVFP4 if time remains | Not queued |
 
-Jobwatch job `oba-chain2` watches tasks 0–5.
+Jobwatch job `oba-control` watches tasks 7 and 8. Task 1 failed only at screen-v2, which
+needs its own frozen source `060915bf…`; task 6 reran it.
+
+### Measured so far (candidate-only, exact outputs, acceptance in %)
+
+| Arm | Updates | Screen (60) | Panel (120) | Screen-v2 (60) |
+| --- | ---: | ---: | ---: | ---: |
+| Baseline, where the control starts | 0 | 60.64 | 53.35 | 62.70 |
+| Control, step 1e-5 | 2,000 | 63.12 | 54.43 | |
+| Control, step 3e-5 | 2,000 | 63.27 | 54.55 | |
+| Control, step 1e-4 | 2,000 | 61.86 | 53.28 | |
+| One-bit | 2,000 | 50.67 | 43.71 | |
+| One-bit | 21,000 | 55.04 | 46.75 | 55.66 |
+| Leader `ef068eba…`, one-bit | 335,812 | 59.75 | 50.81 | 60.30 |
+
+At 2,000 updates the control leads the one-bit arm by 10.84 panel points (10.24, 11.41)
+and 12.59 screen points (10.85, 14.29), paired source-group bootstrap. Step 3e-5 leads
+1e-4 by 1.27 panel points (0.94, 1.60) and ties 1e-5 (+0.11; −0.11, +0.34); its DEV loss is
+the lowest (2.428 against 2.464 and 2.440, from 2.490). Step 3e-5 is used for the 21,000-update
+control (lead's choice; early gate passed: 63.27 against a bar of 59.6). Peak device memory
+was 12.0 GiB for the control and 12.9 for one-bit; the control trains about 17% faster per update.
 
 Build (Opus, delivered 00:37, merged as `1bd92b47`, full gate passed): intent setting
 `"feed_forward": "plain"` trains the 18 feed-forward tables as full-precision tables in
