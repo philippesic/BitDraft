@@ -1271,7 +1271,8 @@ the 120-request panel the most such tokens in one request was 56 against all TRA
 DFlash2, LiliCorr, DSpark, reduced-vocabulary (`d2t`) and scaled heads are refused.
 
 Selection rule: `vocabulary-variants` builds the shortlist from TRAIN labels only (the
-`label_frequencies` reader refuses any non-TRAIN record); `size` takes the N most frequent
+`label_frequencies` reader takes a `corpus-mixture-v1` or `fused-mixture-v1` mixture and
+refuses any non-TRAIN record); `size` takes the N most frequent
 labels (ties by token ID) or, with `null`, every distinct TRAIN label, which the plan's
 group 4 measured as costing no accepted tokens per round when request tokens are added.
 The written `shortlist.json` records the mixture, size, coverage and token hash.
@@ -1280,13 +1281,45 @@ Claims must keep two effects apart. The scoring time saved comes from scoring fe
 which Baseline gains the same way (its table is the larger Q6_K one), so compare ours with
 the shortlist against Baseline with the same sidecar and Baseline as released, in one panel.
 
+### Shortlist-only vocabulary table
+
+The runtime edit `vocabulary_shortlist_only_v1`, applied after runtime-v9's five edits
+(runtime-v10), serves a drafter file that carries only the shortlisted rows of its tied Q4_K
+table: `drafter-shortlist-only.gguf` from `vocabulary-variants` (`rows_only`). The file has
+the shortlist keys, `dflash.vocab_shortlist.rows_only` true, `.source` (the conversion table
+and its GGUF hash) and `.quantizer`, and a `token_embd.shortlist` tensor holding the export's
+rows in shortlist order, byte for byte; it has no `output.weight`. The loader places those rows
+in host memory with the other input-layer tensors.
+
+At start-up the server allocates one table on the drafter's output device: the shortlisted
+rows (copied from the file), the request rows (per sequence, as in runtime-v9) and one input
+row per batch token (`n_batch` rows). Scoring multiplies views of the first two parts with the
+same graph, shapes, initial request-row padding and selection as runtime-v9 with an embedded
+shortlist. A request or input row outside the shortlist is made on demand from the target's
+Q6_K `token_embd` row: dequantized with ggml's `to_float` and quantized alone with the runtime's
+`ggml_quantize_chunk` (no importance matrix), the call the table quantizer makes. Every input
+token, including the mask token and the anchor, is read through a token-to-row map from this
+table, so input rows are the Q4_K rows the full-table drafter reads. Before each decode the
+server converts any batch token without a row into an input row; this covers the request-row
+overflow case, where runtime-v9 logs one warning and stops scoring later out-of-shortlist
+tokens: those tokens stay unscored, but their input rows are still exact. The map and the
+converted rows persist until a row is reused. The server never holds the full Q4_K table; the
+device holds the shortlisted rows once.
+
+A drafter without `dflash.vocab_shortlist.rows_only`, Baseline and the target run the
+runtime-v9 code paths; a shortlist-only drafter refuses to decode until its shortlist is
+attached and refuses the sidecar flag, DFlash2, LiliCorr, DSpark, reduced vocabularies and
+scaled heads as runtime-v9 does. The design depends on every row converting independently of
+the others; `vocabulary-variants` proves it for each export (below).
+
 ### Lower-bit vocabulary tables
 
 `build-table-quantizer SPEC OUTPUT` compiles `native/quantize-table.cpp` against a runtime
 build's ggml headers and `libggml-base` (`table-quantizer-build-v1`: `runtime`, the build's
 `result.json`). It converts one K-quantized table into another with the runtime's
 `ggml_quantize_chunk`, without an importance matrix, and checks the result with
-`ggml_validate_row_data`.
+`ggml_validate_row_data`. An optional last argument sets how many rows each
+`ggml_quantize_chunk` call converts (default 4,096; 1 converts each row alone).
 
 `vocabulary-variants SPEC OUTPUT` (`vocabulary-variants-v1`) takes an authenticated HE4
 `export` and writes, under OUTPUT, any of:
@@ -1294,6 +1327,13 @@ build's ggml headers and `libggml-base` (`table-quantizer-build-v1`: `runtime`, 
 - `shortlist`: `{"mixture": TRAIN mixture, "size": N or null}`. Produces `shortlist.i32`
   (the sidecar), `shortlist.json` and `drafter-shortlist.gguf` (the export plus the
   shortlist keys; every tensor unchanged).
+- `rows_only` (needs `shortlist`): `source`, `tensor` and `quantizer` as for `tables`.
+  First it requires the quantizer to reproduce the export's Q4_K table from the source, both
+  in 4,096-row calls and one row per call for every row (`row-independence.json`); any
+  difference refuses the output. Then it writes `drafter-shortlist-only.gguf` from the same
+  shortlist as `drafter-shortlist.gguf` ([shortlist-only table](#shortlist-only-vocabulary-table))
+  and reads back its metadata and every row against the export's table. `result.json`
+  records the export, both shortlist files and the row and table sizes.
 - `tables`: `source` (a GGUF), `tensor` (for example `token_embd.weight`), `quantizer` (the
   quantizer build's `result.json`) and `variants`, each a `type` (`Q2_K` or `Q3_K`) and a
   `layout`: `shared` replaces the one tied table used for input rows and scoring;

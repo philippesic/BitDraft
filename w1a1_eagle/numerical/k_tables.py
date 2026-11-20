@@ -28,6 +28,7 @@ def quantize(
     columns: int,
     source: Path,
     output: Path,
+    rows_per_call: int | None = None,
 ) -> Bytes:
     completed = subprocess.run(
         [
@@ -38,6 +39,7 @@ def quantize(
             str(columns),
             str(source),
             str(output),
+            *([] if rows_per_call is None else [str(rows_per_call)]),
         ],
         capture_output=True,
         check=False,
