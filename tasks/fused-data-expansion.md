@@ -254,6 +254,28 @@ Acceptance in %:
 | 252,000 | 57.91 | 50.04 | 59.07 |
 | 266,000 | 59.19 | 50.40 | 60.03 |
 | 280,000 | 58.23 | 50.39 | 59.60 |
+| 294,000 | 58.98 | 50.74 | 60.32 |
+| 308,000 | 59.71 | 50.64 | 60.55 |
+| 322,000 | 59.57 | 50.73 | 60.68 |
+| 335,812 (final) | 59.75 | 50.81 | 60.30 |
+
+The run completed 2026-11-19 18:20. Final export: `ef068eba…` (`seg-24/output/exports/`).
+
+Selection against the leader `ae6569f6…`, as paired source-group bootstraps
+(`step16/selection-*.json`). Every lower bound is above 0, so it meets the selection rule.
+
+| Panel | Final | Leader | Difference (95%) |
+| --- | ---: | ---: | --- |
+| Old screen (60) | 59.75 | 57.64 | +2.11 (+0.74, +3.50) |
+| Panel (120) | 50.81 | 48.73 | +2.08 (+1.59, +2.52) |
+| New screen (60) | 60.30 | 57.38 | +2.92 (+1.63, +4.31) |
+
+Release comparison:
+- queue22 picked the segment-9 export (a sort bug) and was stopped within a minute. Its
+  partial output is in `step16/aborted-seg9/`, to be retired.
+- The comparison was resubmitted through pueue as tasks 0–9 (`step16/pueue-ids`): seven
+  final panels, then three reversed. They run in group `gpu` (started 18:22) under jobwatch
+  `fv-release16`, which watches pueue status through `step16/watch_chain.py`.
 
 Owner decision 2026-11-19 (14:30): only panel falls of more than 0.3 points count toward the
 stop rule. The 0.01 fall at 280,000 updates would otherwise have let noise end the run
