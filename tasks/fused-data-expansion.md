@@ -276,6 +276,26 @@ Release comparison:
 - The comparison was resubmitted through pueue as tasks 0–9 (`step16/pueue-ids`): seven
   final panels, then three reversed. They run in group `gpu` (started 18:22) under jobwatch
   `fv-release16`, which watches pueue status through `step16/watch_chain.py`.
+- All ten tasks succeeded (18:22–20:28). Every output was exact, and agentic completion
+  held.
+
+Release verdict, owner policy with merged strata for `greedy-long` (owner decision
+2026-11-16): **passed** (`step16/policy-pooled-output/result.json`). Under the maintained
+grouping, `greedy-long` has no interval, so that variant reads `not-demonstrated`.
+
+| Scenario | Speed vs Baseline (95% lower) | Acceptance ours / Baseline | Leader `ae6569f6…` |
+| --- | --- | --- | --- |
+| Agentic coding | 1.108 (1.091) | 81.7% / 63.4% | 1.105 (1.089) |
+| Greedy, long | 1.013 (1.002 merged) | 60.0% / 61.1% | 1.002 (0.990) |
+| Sampled | 1.011 (1.003) | 47.7% / 50.0% | 0.994 (0.988) |
+| Greedy, short | 1.010 (1.000) | 49.6% / 52.3% | 0.989 (0.979) |
+| Thinking-on | 1.007 (0.998) | 63.0% / 66.6% | 0.978 (0.969) |
+
+Greedy-short and thinking-on are tolerated shortfalls: their lower bounds fall just below
+1.00 but stay above 0.97. The leader failed this policy (thinking-on 0.969).
+
+Next: the owner decides whether to promote `ef068eba…`, then the close-results closeout
+and retirement of the queue scripts and leftovers.
 
 Owner decision 2026-11-19 (14:30): only panel falls of more than 0.3 points count toward the
 stop rule. The 0.01 fall at 280,000 updates would otherwise have let noise end the run
