@@ -284,6 +284,8 @@ class Intent:
                 "arithmetic",
                 "round_states",
                 "slot_rounding",
+                "feed_forward",
+                "table_quantizer",
             }
             != required
             or type(raw["schema"]) is not int
@@ -365,6 +367,41 @@ class Intent:
             raise ValueError("trained_tables requires an explicit table step size in optimization")
         if table_step and not trained_tables:
             raise ValueError("a table step size requires trained_tables")
+        plain = raw.get("feed_forward", "one-bit")
+        if plain not in ("one-bit", "plain"):
+            raise ValueError("feed_forward is one-bit or plain")
+        if (plain == "plain") != ("table_quantizer" in raw):
+            raise ValueError(
+                "plain feed-forward tables require table_quantizer, and only they use it"
+            )
+        plain_step = "optimization" in raw and optimization(raw["optimization"]).plain
+        if plain_step != (plain == "plain"):
+            raise ValueError(
+                "plain feed-forward tables require exactly norm and feed_forward step sizes"
+                " and a raw latent scale; a feed_forward step size requires them"
+            )
+        if plain == "plain":
+            refused = sorted(
+                key
+                for key in (
+                    "initialization",
+                    "features",
+                    "calibration",
+                    "gradual_precision",
+                    "slot_rounding",
+                    "arithmetic",
+                )
+                if key in raw
+            )
+            if refused:
+                raise ValueError("plain feed-forward tables do not use " + ", ".join(refused))
+            if mode != "fresh":
+                raise ValueError("plain feed-forward tables support fresh runs only")
+            if frozen_format != "baseline-k" or trained_tables:
+                raise ValueError(
+                    "plain feed-forward tables keep Baseline's frozen attention and fusion"
+                    " tables: frozen_format baseline-k without trained_tables"
+                )
         if "blocks" in raw and (
             blocks(raw["blocks"]).position_weights == "reach" and "development" not in raw
         ):
@@ -585,6 +622,18 @@ class Intent:
         return self.raw.get("trained_tables", False) is True
 
     @property
+    def plain_feed_forward(self) -> bool:
+        return self.raw.get("feed_forward", "one-bit") == "plain"
+
+    @property
+    def table_quantizer(self) -> Artifact | None:
+        return (
+            artifact(self.raw["table_quantizer"], self.base)
+            if "table_quantizer" in self.raw
+            else None
+        )
+
+    @property
     def cpu_threads(self) -> int:
         return integer(self.raw.get("cpu_threads", 2))
 
@@ -635,6 +684,19 @@ class Intent:
                     else {}
                 ),
                 **({"trained_tables": True} if self.trained_tables else {}),
+                **(
+                    {
+                        "feed_forward": {
+                            "kind": "plain",
+                            "quantizer": {
+                                "sha256": self.table_quantizer.sha256,
+                                "bytes": self.table_quantizer.size,
+                            },
+                        }
+                    }
+                    if self.table_quantizer is not None
+                    else {}
+                ),
                 **({} if self.features.default else {"features": self.features.encode()}),
                 **({"arithmetic": self.arithmetic} if self.arithmetic != "reference" else {}),
                 **(

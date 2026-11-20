@@ -7,6 +7,8 @@ from w1a1_eagle.clock import Clock
 
 PARAMETER_GROUPS = ("sign", "scale", "midpoint", "gain", "clip", "norm")
 TABLE_GROUP = "table"
+FEED_FORWARD_GROUP = "feed_forward"
+PLAIN_GROUPS = ("norm", FEED_FORWARD_GROUP)
 SLOT_ROUNDING = ("anchor-mask",)
 SOFT_FAMILY = "soft"
 ARITHMETIC = ("reference", "fast-exact", "fast-exact-tf32ff")
@@ -178,6 +180,7 @@ class Optimization:
         if set(self.step_sizes) not in (
             set(PARAMETER_GROUPS),
             {*PARAMETER_GROUPS, TABLE_GROUP},
+            set(PLAIN_GROUPS),
         ) or any(
             type(value) is not float or not math.isfinite(value) or value <= 0
             for value in self.step_sizes.values()
@@ -189,9 +192,17 @@ class Optimization:
             or self.latent_multiple <= 0
         ):
             raise ValueError("bounded latent scale requires a positive finite multiple")
+        if self.plain and self.latent_multiple is not None:
+            raise ValueError("plain feed-forward tables have no sign latents to bound")
+
+    @property
+    def plain(self) -> bool:
+        return FEED_FORWARD_GROUP in self.step_sizes
 
     @property
     def groups(self) -> tuple[str, ...]:
+        if FEED_FORWARD_GROUP in self.step_sizes:
+            return PLAIN_GROUPS
         return PARAMETER_GROUPS + ((TABLE_GROUP,) if TABLE_GROUP in self.step_sizes else ())
 
 

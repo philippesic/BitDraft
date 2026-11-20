@@ -87,12 +87,16 @@ def trained_like(model: HE4) -> HE4:
     with torch.no_grad():
         for module in model.blocks:
             block = cast(Layer, module)
-            for projection in (block.gate, block.down):
+            for projection in (cast(Projection, block.gate), cast(Projection, block.down)):
                 projection.log_gain.copy_(
                     torch.randn(projection.log_gain.shape, generator=generator) * 0.3
                 )
                 projection.log_clip.fill_(-0.5)
-            for projection in (block.gate, block.up, block.down):
+            for projection in (
+                cast(Projection, block.gate),
+                cast(Projection, block.up),
+                cast(Projection, block.down),
+            ):
                 projection.midpoint.copy_(
                     torch.randn(projection.midpoint.shape, generator=generator) * 0.01
                 )
@@ -311,7 +315,7 @@ class TestProbesAndAblations(unittest.TestCase):
             value = torch.randn((4, 4), generator=torch.Generator().manual_seed(3))
             self.assertTrue(
                 torch.equal(
-                    AblatedProjection(block.gate, Ablation()).forward(value),
+                    AblatedProjection(cast(Projection, block.gate), Ablation()).forward(value),
                     block.gate.forward(value),
                 )
             )
@@ -368,5 +372,5 @@ class TestProbesAndAblations(unittest.TestCase):
             restored = TensorWorker(model, corpus, "again")
             restored.restore(parent, 64 * 1024 * 1024, "branch")
             block = cast(Layer, model.blocks[0])
-            self.assertFalse(bool((block.gate.log_gain == 0).all()))
-            self.assertFalse(bool((block.up.midpoint == 0).all()))
+            self.assertFalse(bool((cast(Projection, block.gate).log_gain == 0).all()))
+            self.assertFalse(bool((cast(Projection, block.up).midpoint == 0).all()))

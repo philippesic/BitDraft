@@ -182,6 +182,7 @@ def decode(
     vocabulary: Artifact,
     memory_budget_bytes: int,
     geometry: Geometry = Geometry(),
+    vocabulary_kinds: frozenset[str] = frozenset({"Q4_K"}),
 ) -> tuple[dict[str, Tensor], Tensor, int, tuple[tuple[str, tuple[int, ...], bytes], ...]]:
     api = cast(GGUF, gguf)
     reader = api.GGUFReader(str(source.path))
@@ -206,8 +207,8 @@ def decode(
     vocabulary_reader = api.GGUFReader(str(vocabulary.path))
     lookup = {t.name: t for t in vocabulary_reader.tensors}
     selected = lookup.get("output.weight", lookup.get("token_embd.weight"))
-    if selected is None or selected.tensor_type.name != "Q4_K":
-        raise ValueError("explicit Q4_K vocabulary basis required")
+    if selected is None or selected.tensor_type.name not in vocabulary_kinds:
+        raise ValueError("explicit " + "/".join(sorted(vocabulary_kinds)) + " vocabulary required")
     vocabulary_shape = tuple(int(v) for v in reversed(selected.shape))
     if (
         len(vocabulary_shape) != 2
@@ -257,7 +258,15 @@ def load_he4(
     frozen_format: Literal["Q4_0", "baseline-k"] = "Q4_0",
     frozen_baseline: Artifact | None = None,
     trained_tables: bool = False,
+    plain_feed_forward: bool = False,
 ) -> HE4:
+    if plain_feed_forward and (
+        frozen_baseline is None or trained_tables or initialization is not None
+    ):
+        raise ValueError(
+            "plain feed-forward tables need frozen_format baseline-k, frozen attention tables"
+            " and no materialized initialization"
+        )
     if frozen_format not in {"Q4_0", "baseline-k"}:
         raise ValueError("unsupported frozen table format")
     if (frozen_format == "baseline-k") != (frozen_baseline is not None):
@@ -268,7 +277,13 @@ def load_he4(
             " Baseline and export as Q4_0"
         )
     if initialization is None:
-        tensors, head, mask, codes = decode(source, vocabulary, memory_budget_bytes, geometry)
+        tensors, head, mask, codes = decode(
+            source,
+            vocabulary,
+            memory_budget_bytes,
+            geometry,
+            frozenset({"Q4_K", "Q6_K"}) if plain_feed_forward else frozenset({"Q4_K"}),
+        )
     else:
         initialization.verify()
         source.verify()
@@ -322,6 +337,7 @@ def load_he4(
             )
         codes = tuple(entries)
     native_types: tuple[tuple[str, str], ...] = ()
+    feed_forward_types: list[tuple[str, str]] = []
     parent_frozen_sha256 = None
     if trained_tables:
         parent_frozen_sha256 = frozen_fingerprint(tensors, head, geometry)
@@ -358,7 +374,19 @@ def load_he4(
             types.append((name, item.tensor_type.name))
         codes = tuple(replacements)
         native_types = tuple(types)
-    model = HE4(tensors, head, mask, geometry, trained_tables)
+        if plain_feed_forward:
+            for name in sorted(tensors):
+                if ".ffn_" not in name or name.endswith("norm.weight"):
+                    continue
+                item = records.get(name)
+                if item is None or item.tensor_type.name not in {"Q4_K", "Q6_K"}:
+                    raise ValueError("Baseline feed-forward table must be Q4_K or Q6_K: " + name)
+                if tuple(int(v) for v in reversed(item.shape)) != tuple(tensors[name].shape):
+                    raise ValueError("Baseline feed-forward geometry differs: " + name)
+                feed_forward_types.append((name, item.tensor_type.name))
+    model = HE4(tensors, head, mask, geometry, trained_tables, plain_feed_forward)
+    if plain_feed_forward:
+        model.feed_forward_types = tuple(feed_forward_types)
     model.parent_frozen_sha256 = parent_frozen_sha256
     model.frozen_format = frozen_format
     model.frozen_baseline = None if frozen_baseline is None else frozen_baseline.sha256

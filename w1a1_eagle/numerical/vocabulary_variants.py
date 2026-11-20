@@ -1,6 +1,5 @@
 import hashlib
 import shutil
-import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import BinaryIO, Protocol, Sequence, TypeAlias, cast
@@ -16,6 +15,7 @@ from w1a1_eagle.identity import source_identity
 from w1a1_eagle.numerical.export import ExportAPI, PayloadBytes, write_gguf
 from w1a1_eagle.numerical.gguf_readback import Expected
 from w1a1_eagle.numerical.gguf_readback import verify as verify_gguf
+from w1a1_eagle.numerical.k_tables import BLOCKS, quantize
 from w1a1_eagle.numerical.labels import label_frequencies
 from w1a1_eagle.records import artifact, canonical, read, reference
 from w1a1_eagle.storage import project_root
@@ -28,7 +28,6 @@ SHORTLIST_RULE = (
 )
 TIED_KEY = "dflash.component.tied"
 LAYOUTS = ("shared", "scoring")
-BLOCKS = {"Q2_K": 84, "Q3_K": 110, "Q4_K": 144, "Q6_K": 210}
 PACKED = {"Q4_0": (32, 18), **{name: (256, width) for name, width in BLOCKS.items()}}
 VARIANT_TYPES = ("Q2_K", "Q3_K")
 ROW_CHUNK = 16384
@@ -230,37 +229,6 @@ def table_rows(tensor: TensorView) -> tuple[int, int]:
 def decoded(data: Bytes, kind: str, columns: int) -> Floats:
     values = gguf_api().dequantize(data, table_kind(kind))
     return cast(Floats, values.astype("float32").reshape((-1, columns)))
-
-
-def quantize(
-    quantizer: Path,
-    source_kind: str,
-    target_kind: str,
-    rows: int,
-    columns: int,
-    source: Path,
-    output: Path,
-) -> Bytes:
-    completed = subprocess.run(
-        [
-            str(quantizer),
-            source_kind,
-            target_kind,
-            str(rows),
-            str(columns),
-            str(source),
-            str(output),
-        ],
-        capture_output=True,
-        check=False,
-        timeout=3600,
-    )
-    if completed.returncode != 0:
-        raise ValueError("table quantizer failed: " + completed.stderr.decode(errors="replace"))
-    data = cast(Bytes, np.fromfile(output, dtype=np.uint8))
-    if data.size != rows * columns // 256 * BLOCKS[target_kind]:
-        raise ValueError("table quantizer output size differs")
-    return cast(Bytes, data.reshape(rows, columns // 256 * BLOCKS[target_kind]))
 
 
 def relative_error(

@@ -8,7 +8,7 @@ import torch
 from torch import Tensor
 
 from w1a1_eagle.data import Artifact
-from w1a1_eagle.model import HE4, Geometry, Layer, Table
+from w1a1_eagle.model import HE4, FeedForwardTable, Geometry, Layer, Table
 from w1a1_eagle.numerical.weights import GGUF, TensorRecord, shapes
 
 TABLE_TYPES = {"F32", "F16", "BF16", "Q4_0", "Q8_0", "Q4_K", "Q5_K", "Q6_K"}
@@ -65,11 +65,6 @@ def module_name(tensor: str) -> str:
         return "fusion"
     _, index, part, _ = tensor.split(".")
     return f"blocks.{index}.{MODULES[part]}"
-
-
-class FeedForwardTable(Table):
-    def forward(self, value: Tensor, block: int | None = None) -> Tensor:
-        return super().forward(value)
 
 
 def load_baseline(

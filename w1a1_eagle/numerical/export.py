@@ -9,9 +9,10 @@ from torch import Tensor
 
 from w1a1_eagle.checkpoints.store import StateRef, Store
 from w1a1_eagle.data import Artifact
-from w1a1_eagle.model import Layer
+from w1a1_eagle.model import HE4, Layer, Projection
 from w1a1_eagle.numerical.gguf_readback import Expected, metadata
 from w1a1_eagle.numerical.gguf_readback import verify as verify_gguf
+from w1a1_eagle.numerical.k_tables import plain_codes, quantizer_binary
 from w1a1_eagle.numerical.weights import GGUF, q4_0_codes
 from w1a1_eagle.numerical.worker import TensorWorker
 
@@ -203,6 +204,8 @@ def prepare(
         ):
             add(f"blk.{index}.{name}.weight", value)
         for name, projection in (("gate", block.gate), ("up", block.up), ("down", block.down)):
+            if not isinstance(projection, Projection):
+                raise ValueError("W1Ax export needs one-bit feed-forward projections")
             base = f"blk.{index}.ffn_{name}"
             bound = projection.log_clip.detach().float().cpu().exp()
             if not bool(torch.isfinite(bound)) or float(bound.detach()) <= 0:
@@ -325,6 +328,19 @@ def export_he4(
         if estimate > scratch_bytes:
             raise ValueError("export working memory exceeds scratch budget")
         writer, tensors = prepare(worker, source, vocabulary)
+        return publish(worker, writer, tensors, store, max_bytes, scratch_bytes, worker.identity)
+
+
+def publish(
+    worker: TensorWorker,
+    writer: Writer,
+    tensors: list[ExportTensor],
+    store: Store,
+    max_bytes: int,
+    scratch_bytes: int,
+    recipe: str | None,
+) -> StateRef:
+    with worker.lock:
         required = sum(tensor.data.nbytes for tensor in tensors) + 2 * max(
             tensor.data.nbytes for tensor in tensors
         )
@@ -355,6 +371,92 @@ def export_he4(
             )
 
         def verify(artifact: Artifact) -> None:
-            verify_gguf(artifact.path, expected, worker.identity)
+            verify_gguf(artifact.path, expected, recipe)
 
         return store.commit_with(write, worker.identity, worker.updates, max_bytes, verify)
+
+
+def plain_norms(model: HE4) -> dict[str, Tensor]:
+    norms: dict[str, Tensor] = {
+        "enc.output_norm.weight": model.encoder_norm,
+        "output_norm.weight": model.output_norm,
+    }
+    for index, module in enumerate(model.blocks):
+        block = cast(Layer, module)
+        for name, value in (
+            ("attn_norm", block.attn_norm),
+            ("attn_q_norm", block.q_norm),
+            ("attn_k_norm", block.k_norm),
+            ("ffn_norm", block.ffn_norm),
+        ):
+            norms[f"blk.{index}.{name}.weight"] = value
+    return norms
+
+
+def export_plain(
+    worker: TensorWorker,
+    baseline: Artifact,
+    quantizer: Artifact,
+    store: Store,
+    max_bytes: int,
+    scratch_bytes: int,
+) -> StateRef:
+    with worker.lock:
+        model = worker.model
+        if type(max_bytes) is not int or max_bytes < 1 or type(scratch_bytes) is not int:
+            raise ValueError("positive export byte and scratch budgets required")
+        worker.verify_frozen()
+        worker.verify_finite()
+        worker.progress.validate()
+        if (
+            not model.plain_feed_forward
+            or model.frozen_baseline != baseline.sha256
+            or worker.progress.needs_recovery
+            or worker.updates != worker.progress.updates
+            or worker.cursor != worker.progress.cursor
+            or not worker.ready
+        ):
+            raise ValueError(
+                "plain export requires a complete plain update and its authenticated Baseline"
+            )
+        baseline.verify()
+        binary = quantizer_binary(quantizer)
+        api = cast(ExportAPI, gguf)
+        reader = api.GGUFReader(str(baseline.path))
+        writer = api.GGUFWriter(None, "dflash")
+        for key, value, kind, subtype in metadata(baseline.path):
+            if not key.startswith("GGUF.") and key != "general.architecture":
+                writer.add_key_value(
+                    key,
+                    value,
+                    api.GGUFValueType(kind),
+                    api.GGUFValueType(subtype) if subtype is not None else None,
+                )
+        codes = plain_codes(model, binary.path)
+        norms = plain_norms(model)
+        frozen = {name: data for name, _, data in model.native_codes if name != "output.weight"}
+        kinds = api.GGMLQuantizationType
+        native = {"F32": kinds.F32, "Q4_K": kinds.Q4_K, "Q6_K": kinds.Q6_K}
+        tensors: list[ExportTensor] = []
+        for item in reader.tensors:
+            kind_name = item.tensor_type.name
+            raw = cast(NativeArray, np.ascontiguousarray(cast(NativeArray, item.data)))
+            if item.name in codes:
+                coded_kind, coded = codes.pop(item.name)
+                if coded_kind != kind_name or coded.shape != raw.view(np.uint8).shape:
+                    raise ValueError("plain table type or geometry differs: " + item.name)
+                tensors.append(ExportTensor(item.name, coded, native[kind_name], kind_name))
+            elif item.name in norms:
+                if kind_name != "F32":
+                    raise ValueError("Baseline normalization weight is not F32: " + item.name)
+                value = norms.pop(item.name)
+                tensors.append(ExportTensor(item.name, f32(value), kinds.F32, "F32"))
+            elif item.name in frozen:
+                if raw.view(np.uint8).tobytes() != frozen.pop(item.name):
+                    raise ValueError("frozen Baseline table differs from execution: " + item.name)
+                tensors.append(ExportTensor(item.name, raw, native[kind_name], kind_name))
+            else:
+                raise ValueError("unexpected Baseline tensor: " + item.name)
+        if codes or norms or frozen:
+            raise ValueError("plain export coverage differs from the Baseline file")
+        return publish(worker, writer, tensors, store, max_bytes, scratch_bytes, None)

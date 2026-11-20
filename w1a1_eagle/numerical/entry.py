@@ -24,7 +24,8 @@ from w1a1_eagle.numerical.calibration import calibrate, start_check
 from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.diagnostics import Diagnostics
-from w1a1_eagle.numerical.export import export_he4
+from w1a1_eagle.numerical.export import export_he4, export_plain
+from w1a1_eagle.numerical.k_tables import plain_tables, quantizer_binary
 from w1a1_eagle.numerical.mixture import mixture
 from w1a1_eagle.numerical.weights import exported_tables, fusion_identity, load_he4
 from w1a1_eagle.numerical.worker import TensorWorker, checkpoint_accounting
@@ -145,11 +146,15 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
         "starting_name": intent.parent.path.name if intent.parent else intent.source.path.name,
         "mode": intent.mode,
         "cpu_threads": intent.cpu_threads,
-        "mechanism": "HE4 W1A4/A8/Q4_K weighted CE using each capture’s declared supervision policy",
+        "mechanism": "Baseline graph with trained plain feed-forward tables, weighted CE using each"
+        " capture’s declared supervision policy; export K-quantizes them to Baseline's types"
+        if intent.plain_feed_forward
+        else "HE4 W1A4/A8/Q4_K weighted CE using each capture’s declared supervision policy",
         "grouping": cast(Record, asdict(intent.grouping)),
         "optimization": cast(Record, asdict(intent.optimization)),
         "blocks": intent.blocks.encode(),
         **({"trained_tables": True} if intent.trained_tables else {}),
+        **({"feed_forward": "plain"} if intent.plain_feed_forward else {}),
         **({} if intent.features.default else {"features": intent.features.encode()}),
         **({"arithmetic": intent.arithmetic} if intent.arithmetic != "reference" else {}),
         **({"slot_rounding": intent.slot_rounding} if intent.slot_rounding is not None else {}),
@@ -202,7 +207,24 @@ def preflight(path: Path, sealed: bool = False) -> Record:
         intent.initialization.verify()
     if intent.frozen_baseline is not None:
         intent.frozen_baseline.verify()
+    if intent.table_quantizer is not None:
+        quantizer_binary(intent.table_quantizer)
     return admission(intent, corpus)
+
+
+def export_drafter(worker: TensorWorker, intent: Intent, store: Store) -> StateRef:
+    if intent.table_quantizer is not None and intent.frozen_baseline is not None:
+        return export_plain(
+            worker,
+            intent.frozen_baseline,
+            intent.table_quantizer,
+            store,
+            intent.state_bytes,
+            intent.memory_bytes,
+        )
+    return export_he4(
+        worker, intent.source, intent.vocabulary, store, intent.state_bytes, intent.memory_bytes
+    )
 
 
 def geometry(intent: Intent) -> Geometry:
@@ -407,6 +429,7 @@ def run_leased(
         intent.frozen_format,
         intent.frozen_baseline,
         intent.trained_tables,
+        intent.plain_feed_forward,
     )
     if intent.slot_rounding is not None:
         anchor_bounds(model)
@@ -509,6 +532,8 @@ def run_leased(
     last_loss_updates = worker.updates
     losses: list[float | None] = []
 
+    quantizer = None if intent.table_quantizer is None else quantizer_binary(intent.table_quantizer)
+
     def diagnose(diagnostics: Diagnostics, refresh: bool) -> None:
         nonlocal last_diagnostic_updates
         worker.verify_frozen()
@@ -518,6 +543,8 @@ def run_leased(
         exported = (
             diagnostics.measure(model, tables=exported_tables(model))
             if model.trained_tables
+            else diagnostics.measure(model, tables=plain_tables(model, quantizer.path))
+            if quantizer is not None
             else None
         )
         worker.verify_frozen()
@@ -679,13 +706,8 @@ def run_leased(
     if intent.parent is None:
         initial = worker.checkpoint(states, intent.state_bytes)
         if intent.initial_export:
-            initial_export = export_he4(
-                worker,
-                intent.source,
-                intent.vocabulary,
-                Store(root / "exports", intent.disk_reserve_bytes),
-                intent.state_bytes,
-                intent.memory_bytes,
+            initial_export = export_drafter(
+                worker, intent, Store(root / "exports", intent.disk_reserve_bytes)
             )
             journal.append(
                 {
@@ -742,14 +764,7 @@ def run_leased(
         phase("checkpoint-complete")
         retain_states()
         export_store = Store(root / "exports", intent.disk_reserve_bytes)
-        exported = export_he4(
-            worker,
-            intent.source,
-            intent.vocabulary,
-            export_store,
-            intent.state_bytes,
-            intent.memory_bytes,
-        )
+        exported = export_drafter(worker, intent, export_store)
         phase("export-complete")
         if source_identity(code_root) != intent.raw["code_sha256"]:
             raise ValueError("executable source drifted before boundary publication")

@@ -45,6 +45,9 @@ the down projection has its own gain and clipping. Normalization weights also tr
 Attention and fusion operands and the vocabulary matrix remain frozen, unless the recipe
 sets `trained_tables`; then the attention and fusion tables train in full precision and only
 the vocabulary stays frozen ([trained tables](execution.md#trained-tables)).
+With [plain feed-forward tables](execution.md#plain-feed-forward-tables) the model is Baseline's
+graph instead: the eighteen feed-forward tables are ordinary trained F32 matrices without signs,
+scales or input rounding, and the export quantizes them to Baseline's own types.
 The recipe can fix row scales or clipping bounds at their starting values and switch gains
 (fixed at 1) or midpoints (fixed at 0) off; such parameters leave the optimizer
 ([feature switches](execution.md#feature-switches)).
@@ -98,7 +101,8 @@ the same size as running the single-window path on CPU instead of GPU; see
 [grouped updates](../results/grouped-updates/result.md).
 
 The worker uses separate fused AdamW groups for sign, scale, midpoint, gain, clipping and
-normalization parameters, plus a table group when tables train, without weight decay. Their step sizes, a step-size schedule and
+normalization parameters, plus a table group when tables train, without weight decay. Plain
+feed-forward tables use only a normalization and a `feed_forward` group. Their step sizes, a step-size schedule and
 the latent scale are recipe settings ([execution](execution.md#optimization)). The defaults,
 1e-3 for signs and 1e-5 for the rest at a constant rate with raw latents, were chosen for
 one window per update. A [four-arm test](../results/step-size-schedule-latent-scale/result.md)

@@ -21,6 +21,7 @@ from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.records import canonical
 from w1a1_eagle.round_states import RoundStateWeighting
 from w1a1_eagle.training import (
+    FEED_FORWARD_GROUP,
     MAXIMUM_SLOTS,
     SOFT_FAMILY,
     TABLE_GROUP,
@@ -173,11 +174,25 @@ class TensorWorker:
         for name, parameter in model.named_parameters():
             if parameter.requires_grad:
                 key = suffixes.get(name.rsplit(".", 1)[-1], "norm")
+                if model.plain_feed_forward and name.split(".")[-2:-1] in (
+                    ["gate"],
+                    ["up"],
+                    ["down"],
+                ):
+                    key = FEED_FORWARD_GROUP
                 if key not in groups:
-                    raise ValueError("trained tables require an explicit table step size")
+                    raise ValueError(
+                        "trained tables require an explicit table step size"
+                        if key == TABLE_GROUP
+                        else "the step sizes lack the "
+                        + key
+                        + " group; feed_forward step sizes go with plain feed-forward tables only"
+                    )
                 groups[key].append(parameter)
         if TABLE_GROUP in groups and not groups[TABLE_GROUP]:
             raise ValueError("a table step size requires trained tables")
+        if (FEED_FORWARD_GROUP in groups) != model.plain_feed_forward:
+            raise ValueError("a feed_forward step size requires plain feed-forward tables")
         self.optimizer = torch.optim.AdamW(
             [
                 {"params": values, "lr": rates[key], "name": key}
@@ -207,6 +222,8 @@ class TensorWorker:
             )
             for name, shape, codes in model.native_codes:
                 digest.update(canonical([name, list(shape), hashlib.sha256(codes).hexdigest()]))
+        if model.plain_feed_forward:
+            digest.update(canonical(["plain-feed-forward", list(model.feed_forward_types)]))
         self.frozen_sha256 = digest.hexdigest()
         self.native_codes = model.native_codes
         self.native_types = model.native_types
@@ -702,6 +719,8 @@ class TensorWorker:
         with self.lock:
             self.ready = False
             self.last_publication = None
+            if self.model.plain_feed_forward:
+                raise ValueError("plain feed-forward tables support fresh runs only")
             if (
                 mode not in {"resume", "branch", "continue"}
                 or reference.artifact.size > memory_budget_bytes

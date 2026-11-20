@@ -206,6 +206,11 @@ class Table(nn.Module):
         return functional.linear(value, self.operand)
 
 
+class FeedForwardTable(Table):
+    def forward(self, value: Tensor, block: int | None = None) -> Tensor:
+        return super().forward(value)
+
+
 class Projection(nn.Module):
     def __init__(self, weight: Tensor, bits: int, gain: nn.Parameter, clip: nn.Parameter) -> None:
         super().__init__()
@@ -328,7 +333,12 @@ def clamp_latents(model: nn.Module) -> None:
 
 class Layer(nn.Module):
     def __init__(
-        self, tensors: dict[str, Tensor], prefix: str, geometry: Geometry, trained: bool = False
+        self,
+        tensors: dict[str, Tensor],
+        prefix: str,
+        geometry: Geometry,
+        trained: bool = False,
+        plain: bool = False,
     ) -> None:
         super().__init__()
         self.geometry = geometry
@@ -341,6 +351,14 @@ class Layer(nn.Module):
         self.key = Table(tensors[prefix + "attn_k.weight"], trained)
         self.value = Table(tensors[prefix + "attn_v.weight"], trained)
         self.output = Table(tensors[prefix + "attn_output.weight"], trained)
+        self.gate: Projection | FeedForwardTable
+        self.up: Projection | FeedForwardTable
+        self.down: Projection | FeedForwardTable
+        if plain:
+            self.gate = FeedForwardTable(tensors[prefix + "ffn_gate.weight"], True)
+            self.up = FeedForwardTable(tensors[prefix + "ffn_up.weight"], True)
+            self.down = FeedForwardTable(tensors[prefix + "ffn_down.weight"], True)
+            return
         gain = nn.Parameter(torch.zeros(geometry.hidden))
         clip = nn.Parameter(torch.tensor(0.0))
         self.gate = Projection(tensors[prefix + "ffn_gate.weight"], 4, gain, clip)
@@ -445,10 +463,13 @@ class HE4(nn.Module):
         mask: int,
         geometry: Geometry = Geometry(),
         trained_tables: bool = False,
+        plain_feed_forward: bool = False,
     ) -> None:
         super().__init__()
         self.geometry = geometry
         self.trained_tables = trained_tables
+        self.plain_feed_forward = plain_feed_forward
+        self.feed_forward_types: tuple[tuple[str, str], ...] = ()
         self.mask = mask
         self.origin: tuple[str, str] | None = None
         self.frozen_format = "Q4_0"
@@ -469,7 +490,10 @@ class HE4(nn.Module):
         self.encoder_norm = nn.Parameter(tensors["enc.output_norm.weight"].clone())
         self.output_norm = nn.Parameter(tensors["output_norm.weight"].clone())
         self.blocks = nn.ModuleList(
-            [Layer(tensors, f"blk.{i}.", geometry, trained_tables) for i in range(geometry.layers)]
+            [
+                Layer(tensors, f"blk.{i}.", geometry, trained_tables, plain_feed_forward)
+                for i in range(geometry.layers)
+            ]
         )
 
     def check(
@@ -600,5 +624,6 @@ def named_projections(model: HE4) -> list[tuple[str, Projection]]:
     for index, module in enumerate(model.blocks):
         block = cast(Layer, module)
         for part, projection in (("gate", block.gate), ("up", block.up), ("down", block.down)):
-            result.append((f"blocks.{index}.{part}", projection))
+            if isinstance(projection, Projection):
+                result.append((f"blocks.{index}.{part}", projection))
     return result

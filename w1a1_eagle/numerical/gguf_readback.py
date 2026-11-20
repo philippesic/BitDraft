@@ -113,7 +113,7 @@ def metadata(path: Path) -> list[Metadata]:
         return Reader(source, path.stat().st_size).header(True)[0]
 
 
-def verify(path: Path, expected: Expected, recipe: str) -> None:
+def verify(path: Path, expected: Expected, recipe: str | None) -> None:
     with path.open("rb") as source:
         reader = Reader(source, path.stat().st_size)
         fields, count, alignment = reader.header(False)
