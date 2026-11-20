@@ -72,9 +72,11 @@ its arithmetic. `tests/test_vocabulary_shortlist.py` checks that the runtime sho
 adds guarded code, matches its anchors and stays off unless declared, and that comparisons
 without `shortlists` keep their protocol; `tests/numerical/test_vocabulary_variants.py` checks
 TRAIN-only shortlists from plain and fused mixtures, the metadata round trip, lower-bit table
-readback, the shortlist-only file's byte-identical rows and its refusal when rows converted one
-at a time differ; `tests/test_vocabulary_shortlist_only.py` checks that the shortlist-only edit
-changes runtime-v9 lines only behind its own guard and applies after it. The full gate does not
+readback, the shortlist-only file's byte-identical rows, the derived-rows file without rows and
+the refusal when rows converted one at a time differ; `tests/test_vocabulary_shortlist_only.py`
+checks that the shortlist-only edit changes runtime-v9 lines only behind its own guard and
+applies after it, and `tests/test_vocabulary_shortlist_derived.py` that the derived-rows edit
+keeps runtime-v10's loader lines and row copy and applies after it. The full gate does not
 qualify CUDA kernels.
 Use the [kernel benchmark](benchmarks.md#kernel-benchmark) for per-variant full-output
 byte equality and repeated GPU times at each requested geometry. A failed equality

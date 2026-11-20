@@ -11,6 +11,7 @@ import numpy as np
 from w1a1_eagle.contracts import Record, record
 from w1a1_eagle.data import Artifact
 from w1a1_eagle.numerical.vocabulary_variants import (
+    DERIVED_KEY,
     ROWS_ONLY_KEY,
     ROWS_TENSOR,
     SHORTLIST_KEY,
@@ -422,6 +423,62 @@ class TestRowsOnly(unittest.TestCase):
             proof = json.loads((root / "out" / "row-independence.json").read_text())
             self.assertEqual((proof["rows_checked"], proof["differing_rows"]), (ROWS, 0))
             self.assertFalse((root / "out" / "scratch-rows").exists())
+
+    def test_derived_file_has_no_rows_and_leaves_the_rows_file_unchanged(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = indexed_export(root)
+            train = mixture(root / "train", [[5, 3, 7], [5, 4, 7]])
+            made = []
+            for name, derived in (("plain", None), ("derived", True)):
+                section = rows_only(root, 2)
+                if derived is not None:
+                    section["derived"] = derived
+                spec = specification(
+                    root,
+                    {
+                        "schema": "vocabulary-variants-v1",
+                        "export": reference(source),
+                        "shortlist": {"mixture": reference(train), "size": None},
+                        "rows_only": section,
+                    },
+                )
+                made.append(write_variants(spec, root / name))
+            for filename in ("drafter-shortlist-only.gguf", "drafter-shortlist.gguf"):
+                self.assertEqual(
+                    (root / "plain" / filename).read_bytes(),
+                    (root / "derived" / filename).read_bytes(),
+                )
+            self.assertFalse((root / "plain" / "drafter-shortlist-derived.gguf").exists())
+            produced = root / "derived" / "drafter-shortlist-derived.gguf"
+            stored = tensors(produced)
+            self.assertEqual(
+                stored, {k: v for k, v in tensors(source.path).items() if k != "output.weight"}
+            )
+            values = fields(produced)
+            only = fields(root / "derived" / "drafter-shortlist-only.gguf")
+            self.assertEqual(values[DERIVED_KEY], int(gguf.GGMLQuantizationType.Q4_K))
+            self.assertEqual(
+                {k: v for k, v in values.items() if k != DERIVED_KEY and not k.startswith("GGUF.")},
+                {k: v for k, v in only.items() if not k.startswith("GGUF.")},
+            )
+            report = record(record(made[1]["outputs"])["rows_only"])
+            self.assertEqual(record(report["derived"])["derived_type"], "Q4_K")
+            self.assertIn("drafter_shortlist_derived", record(report["file_bytes"]))
+            self.assertNotIn("derived", record(record(made[0]["outputs"])["rows_only"]))
+            invalid = rows_only(root, 2)
+            invalid["derived"] = "yes"
+            spec = specification(
+                root,
+                {
+                    "schema": "vocabulary-variants-v1",
+                    "export": reference(source),
+                    "shortlist": {"mixture": reference(train), "size": None},
+                    "rows_only": invalid,
+                },
+            )
+            with self.assertRaisesRegex(ValueError, "true or false"):
+                write_variants(spec, root / "invalid")
 
     def test_refuses_rows_that_change_when_converted_alone(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
