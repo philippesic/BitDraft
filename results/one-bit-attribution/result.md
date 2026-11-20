@@ -85,6 +85,15 @@ Three 2,000-update pilots: step 3e-5 beat 1e-4 by 1.27 panel points (0.94, 1.60)
 1e-5 (+0.11; −0.11, +0.34), with the lowest DEV loss (2.428, against 2.464 and 2.440, from
 2.490). The 21,000-update control used 3e-5.
 
+### Second seed of the control (added 2026-11-20, 07:30 PST)
+
+An overnight follow-up to the one-seed limit: the same control with data-order seed 8102
+(recipe `98593f91…`, export `649bff87…`, arm `plain-21000-3e-5-s8102`). It scores 62.93%,
+54.67% and 64.77% on the screen, panel and screen-v2, against 62.94%, 54.58% and 64.73%
+for seed 8101: a panel difference of +0.09 points (−0.21, +0.44). Against the one-bit arm
+it leads by 7.93 panel points (7.40, 8.47). The control's acceptance does not depend on the
+seed at this resolution. The one-bit arm and the timed chain still have one seed.
+
 ### NVFP4 target
 
 Candidate-only against saved NVFP4 references, exact outputs. Speed here is against a
@@ -103,7 +112,8 @@ Both drafters were trained on Q4KM target features and keep their standing on NV
 - **Length is not matched to the leader.** The control trained 16 times shorter. It is a
   floor for 4-bit, not a matched-length verdict; a 4-bit run of the leader's length was not
   made. The matched pairs stop at 21,000 updates.
-- **One seed** per arm, and one step size for the full control. The one-bit recipe was
+- **One seed** for the one-bit arms and the timed chain, two for the control's acceptance,
+  and one step size for the full control. The one-bit recipe was
   tuned over several days; the control had three short pilots.
 - **Reused DEV data.** Every panel was also used to select the leader. The protected
   confirmation sets and heldout24 were not touched.
@@ -173,12 +183,12 @@ recomputed from its saved runs into `leader-final-only/`.
 
 ## Artifact disposition
 
-**Retained** (41 GB in all), owner Philip:
+**Retained** (48 GB in all), owner Philip:
 - the control export `3d006c22…` and the one-bit exports `8c0e73aa…` and `9506230d…`, with
   every arm's intent, journal, run report, check results, timing runs and policy reports;
 - the build deliverables and both executed sources;
-- each arm's final training state (6.4 GB each, 38 GB together) and the three pilot
-  exports. Plain-table states cannot resume, so the four control states have no use. They
+- each arm's final training state (6.4 GB each, 45 GB with the second seed) and the three
+  pilot exports. Plain-table states cannot resume, so the five control states have no use. They
   and the pilot exports are kept only until the owner decides on a longer control, then
   retired through Store retention.
 

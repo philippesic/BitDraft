@@ -814,5 +814,54 @@
    "screen": 59.75,
    "screen2": 60.3
   }
+ },
+ "second_seed_control": {
+  "acceptance_percent": {
+   "panel": 54.67,
+   "screen": 62.93,
+   "screen2": 64.77
+  },
+  "arm": "plain-21000-3e-5-s8102",
+  "export": "649bff87",
+  "feed_forward_step_size": 3e-05,
+  "interval_format": "[difference, 95% lower, 95% upper], paired source-group bootstrap",
+  "minus_seed_8101_points": {
+   "panel": [
+    0.09,
+    -0.21,
+    0.44
+   ],
+   "screen": [
+    -0.02,
+    -0.88,
+    0.91
+   ],
+   "screen2": [
+    0.04,
+    -0.77,
+    0.9
+   ]
+  },
+  "minus_w1_21000_points": {
+   "panel": [
+    7.93,
+    7.4,
+    8.47
+   ],
+   "screen": [
+    7.88,
+    6.49,
+    9.39
+   ],
+   "screen2": [
+    9.11,
+    7.98,
+    10.3
+   ]
+  },
+  "recipe": "98593f91",
+  "seed": 8102,
+  "state": "dd22d069",
+  "updates": 21000
  }
 }
