@@ -133,8 +133,9 @@ Earlier, untrained evidence is from conversions of the older EAGLE drafter in Se
 ## Next
 
 Owner go of 2026-11-20 (confirmed 09:40 PST) covers the lead's four model steps: the 4-bit
-control (done), item 11 (done), a second tool-call convention for agentic coding (next) and
-one confirmation run. The confirmation sets are spent only once the owner names
+control (done), item 11 (done), a second tool-call convention for agentic coding and one
+confirmation run. Owner decision 2026-11-20 (13:40 PST): skip the tool-call convention test for
+now; agentic claims stay limited to the training sessions' own tools and system prompt. The confirmation sets are spent only once the owner names
 the drafter.
 
 The owner decides what follows from the [one-bit attribution](../results/one-bit-attribution/result.md):
