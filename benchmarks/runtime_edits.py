@@ -2819,8 +2819,9 @@ bool llama_context::vocab_shortlist_init_rows(const int32_t * ids, size_t n, uin
     vocab_shortlist = std::move(shortlist);
     cparams.vocab_shortlist = vocab_shortlist.get();
     sched_need_reserve = true;
-    LLAMA_LOG_INFO("%s: vocabulary shortlist of %" PRId64 " %s rows from the shortlist-only table, %" PRId64 " request rows and %" PRId64 " input rows converted from the target's %s %s\n",
-            __func__, n_fixed, ggml_type_name(type), capacity, n_input, ggml_type_name(convert_source->type), convert_source->name);
+    LLAMA_LOG_INFO("%s: vocabulary shortlist of %" PRId64 " %s rows from the shortlist-only table, %" PRId64 " request rows and %" PRId64 " input rows converted from the target's %s %s, %s buffer %.2f MiB\n",
+            __func__, n_fixed, ggml_type_name(type), capacity, n_input, ggml_type_name(convert_source->type), convert_source->name,
+            ggml_backend_buffer_name(vocab_shortlist->buffer), ggml_backend_buffer_get_size(vocab_shortlist->buffer) / 1048576.0);
     return true;
 }
 
