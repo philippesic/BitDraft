@@ -1041,8 +1041,8 @@ with receipts after two later segments.
 `native-build` uses pinned source/headers/compiler, without old objects; helpers rebuild
 rendering/tokenization/capture/verifier tools. It configures `LLAMA_USE_PREBUILT_UI=OFF`:
 the pinned source downloads its web UI at build time, the published assets no longer pass
-its own check, and servers run with `--no-webui`, so builds embed no UI. Source includes the measured sampled-EOG
-repair. An optional `source_edits` list names edit sets in `benchmarks/runtime_edits.py`;
+its own check, and servers run with `--no-webui`, so builds embed no UI. The build applies the measured sampled-EOG
+repair (`rejection_eog_boundary_v1`) to the unpacked source; the bundle itself is unrepaired. An optional `source_edits` list names edit sets in `benchmarks/runtime_edits.py`;
 each edit must match the pinned source exactly once, and `runtime_repairs` records them. Trace builds are diagnostic, excluded from timing. `verify-greedy` independently
 checks target argmax, prefixes, correction/bonus/EOG and counters. `verify-sampler` tests
 both actual native algorithms on probabilities, zero support and EOG. CPU distributions

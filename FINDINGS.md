@@ -10,6 +10,17 @@ See [closeout specification](docs/results.md).
 
 ## Current candidate and retained controls
 
+### F036: Does the leader's file need to ship vocabulary rows at all?
+
+No. Without them the file is 185 MB against Baseline's 381 MB (51.5% smaller). The server
+rebuilds the 68,728 shortlisted rows from the target's table at start-up:
+- the built rows equal the shipped ones byte for byte, and drafts are identical to the
+  284 MB small file's on the 60-request screen and 8 pilot tasks;
+- start-up takes 6.5 seconds against 0.85; GPU memory and speed are unchanged.
+
+Screen and pilot only, one arm order; the file needs runtime-v11.
+[Result](results/shortlist-derived-rows/result.md).
+
 ### F035: Can the leader's file be smaller than Baseline's with nothing else changed?
 
 Yes. Carrying only the 68,728 shortlisted rows of its vocabulary table, the leader's file is
