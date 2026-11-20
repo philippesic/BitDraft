@@ -208,7 +208,9 @@ class Telemetry:
                 "flipped_share": sum(flips.values()) / total,
                 "by_projection": cast(Record, flips),
                 "at_bound_share": None if soft else bounded / total,
-            },
+            }
+            if total
+            else None,
             "inputs": inputs,
             "precision": precision,
             "memory": {

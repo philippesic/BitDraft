@@ -2,7 +2,7 @@ import math
 import tempfile
 import unittest
 from pathlib import Path
-from typing import Callable
+from typing import Callable, cast
 from unittest import mock
 
 import torch
@@ -216,7 +216,7 @@ class TestDeferredChecks(unittest.TestCase):
                 with torch.no_grad():
                     block = target.model.blocks[1]
                     assert isinstance(block, Layer)
-                    block.gate.log_clip.fill_(value)
+                    cast(Projection, block.gate).log_clip.fill_(value)
 
             self.assert_same_failure(damage, ValueError, "invalid learned clipping bound")
 
@@ -240,7 +240,9 @@ class TestDeferredChecks(unittest.TestCase):
         def damage(target: TensorWorker) -> None:
             block = target.model.blocks[0]
             assert isinstance(block, Layer)
-            block.down.scale.register_hook(lambda gradient: torch.full_like(gradient, math.inf))
+            cast(Projection, block.down).scale.register_hook(
+                lambda gradient: torch.full_like(gradient, math.inf)
+            )
 
         self.assert_same_failure(damage, RuntimeError, "")
         error = failing(worker("fast", arithmetic="fast-exact"), damage)

@@ -259,7 +259,8 @@ as an omitted field. Without it training uses today's defaults.
 ```
 
 - `step_sizes` gives every AdamW group a positive base step size. It contains `table`
-  exactly when the recipe sets [`trained_tables`](#trained-tables).
+  exactly when the recipe sets [`trained_tables`](#trained-tables). With
+  [plain feed-forward tables](#plain-feed-forward-tables) it is exactly `norm` and `feed_forward`.
 - `schedule` multiplies all of them by a pure function of the absolute update count `u`:
   (u − start + 1) / warmup during the first `warmup_updates` after `start_update`, then 1
   (`constant`, `final_update` null) or a cosine from 1 to 0 at `final_update` (`cosine`).
@@ -593,3 +594,49 @@ On the native Linux host CUDA sees 15.47 GiB with the display attached. Trained 
 per update; run them with `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`, because without
 it fragmented reserve exhausted the device below the cap
 ([trained tables](../results/trained-attention-tables/result.md)).
+
+## Plain feed-forward tables
+
+The optional intent setting `feed_forward` defaults to `one-bit`. Omission and explicit
+`one-bit` preserve existing recipe identities, states and exports. `plain` builds Baseline's own
+graph: the eighteen feed-forward tables are F32 parameters initialized from the source drafter's
+BF16 values, with no signs, row scales, midpoints, gains, clipping or input rounding. Norm weights
+train as usual; attention and fusion tables stay Baseline's frozen tables. The control answers
+what the one-bit tables cost against the same graph fine-tuned on the same data.
+
+```json
+"feed_forward": "plain",
+"table_quantizer": {"path": ".../quantizer/result.json", "sha256": "...", "bytes": 1110},
+"frozen_format": "baseline-k",
+"frozen_baseline": {"path": ".../dflash-4b-q4km.gguf", "sha256": "...", "bytes": 381456064},
+"optimization": {
+  "step_sizes": {"norm": 1e-05, "feed_forward": 1e-05},
+  "schedule": {"decay": "cosine", "warmup_updates": 420, "start_update": 0, "final_update": 21000},
+  "latent_scale": {"kind": "raw"}
+}
+```
+
+- The tables train in their own AdamW group without weight decay under the shared schedule and
+  gradient-norm clip; `feed_forward` is required with the setting and refused without it.
+- `plain` requires `frozen_format: baseline-k`, a raw latent scale and a fresh run. It refuses
+  `initialization`, `trained_tables`, `features`, `calibration`, `gradual_precision`,
+  `slot_rounding` and `arithmetic`. Resume, continue and branch are refused.
+- `vocabulary` may be a Q6_K table, so the control scores against the target's own
+  `token_embd.weight`, as Baseline is served. The materialized initialization binds the Q4_K
+  basis, so it does not apply.
+- `table_quantizer` is the build record of the native table quantizer
+  (`benchmarks build-table-quantizer`); its binary is authenticated before use. It enters the
+  recipe identity.
+- Export copies Baseline's metadata and its attention and fusion bytes, writes the trained norm
+  weights as F32 and quantizes each table to the type that tensor has in the Baseline file
+  (Q4_K or Q6_K), then reads every payload back. It has no W1Ax metadata or private vocabulary
+  table, so the native runtime serves it as an ordinary DFlash drafter. Before any update the
+  export's tensors equal Baseline's byte for byte: the quantizer reproduces all eighteen
+  Baseline feed-forward tables from the BF16 source. `initial_export` writes that export.
+- Training uses the F32 tables; serving uses their K-quantized values. The DEV diagnostic
+  reports both (`exported_tables`).
+- Device admission counts the tables like sign latents: 424.7 million values, 1.7 GB per F32
+  copy, four copies with gradients and Adam moments. At full size with the vocabulary, frozen
+  tables and 3 GiB of activations the admitted demand is 12.5 GiB.
+- `benchmarks campaign` and round diagnostics still expect one-bit exports; a plain export is
+  screened as a Baseline-layout drafter.

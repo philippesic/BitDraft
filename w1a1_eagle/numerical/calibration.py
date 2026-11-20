@@ -98,7 +98,14 @@ def layer_projections(model: HE4) -> list[tuple[str, tuple[Projection, Projectio
     result: list[tuple[str, tuple[Projection, Projection, Projection]]] = []
     for index, module in enumerate(model.blocks):
         block = cast(Layer, module)
-        result.append((f"blocks.{index}.", (block.gate, block.up, block.down)))
+        gate, up, down = block.gate, block.up, block.down
+        if not (
+            isinstance(gate, Projection)
+            and isinstance(up, Projection)
+            and isinstance(down, Projection)
+        ):
+            raise ValueError("calibration needs one-bit feed-forward projections")
+        result.append((f"blocks.{index}.", (gate, up, down)))
     return result
 
 

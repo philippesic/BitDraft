@@ -263,8 +263,8 @@ def outlier_model(root: Path) -> tuple[Corpus, HE4]:
     with torch.no_grad():
         block = cast(Layer, model.blocks[0])
         block.ffn_norm[:2] = 35.0
-        block.gate.latent_sign[:, :2] *= 0.01
-        block.up.latent_sign[:, :2] *= 0.01
+        cast(Projection, block.gate).latent_sign[:, :2] *= 0.01
+        cast(Projection, block.up).latent_sign[:, :2] *= 0.01
     return corpus, model
 
 
