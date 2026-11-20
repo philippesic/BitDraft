@@ -36,6 +36,11 @@ Remote: `git@github.com:philippesic/BitDraft.git` (`origin`). The license remain
 - GPU work follows the recorded task allocation. Inspect actual GPU clients and
   recorded process owners before starting or recovering work; [execution](docs/execution.md)
   and [benchmarks](docs/benchmarks.md) define the lease, source and recovery rules.
+- One agent owns timing-sensitive GPU runs and names its marker file in the task `State`.
+  While that marker exists, others keep CPU-, memory- and IO-heavy work to reduced
+  geometry or a resource-limited scope.
+- Parallel builds count as integrated only after a reduced-geometry end-to-end run with
+  all merged features enabled together passes on the integration branch.
 - Keep recovery state, provisional acceptance leader and full-comparison incumbent
   distinct. Use authenticated saved controls; exact comparisons and limits belong
   to [benchmarks](docs/benchmarks.md), measured support to [support](docs/support.md).

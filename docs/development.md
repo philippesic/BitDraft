@@ -47,6 +47,11 @@ native runtime. The [data](data.md) and [benchmark](benchmarks.md) guides define
 inputs and preparation. Keep project assets under ignored `artifacts/`, following the
 [storage map](storage.md).
 
+On native Linux, backing capacity is the free space on the checkout filesystem.
+On WSL, the backing check still requires the Windows volume mounted at `/mnt/c`;
+the two free-space observations are never added together. The agentic sandbox
+allows at most 4096 processes per user, including existing desktop threads.
+
 ## Validation and entry points
 
 ```sh
