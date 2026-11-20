@@ -2571,4 +2571,355 @@ bool llama_set_sampler(llama_context * ctx, llama_seq_id seq_id, llama_sampler *
             const int32_t n_block_tokens = is_lilicorr ? block_size""",
         ),
     ),
+    "vocabulary_shortlist_only_v1": (
+        (
+            "src/llama-cparams.h",
+            r"""    std::vector<uint8_t> row;
+
+    llama_vocab_shortlist() = default;
+""",
+            r"""    std::vector<uint8_t> row;
+    ggml_tensor * table = nullptr;
+    ggml_tensor * input_map = nullptr;
+    const ggml_tensor * convert_source = nullptr;
+    int64_t n_fixed = 0;
+    int64_t n_request = 0;
+    int64_t n_input = 0;
+    size_t input_next = 0;
+    std::vector<int32_t> row_of;
+    std::vector<int32_t> input_token;
+    std::vector<uint8_t> input_pinned;
+    std::vector<uint8_t> source_row;
+    std::vector<float> values;
+
+    llama_vocab_shortlist() = default;
+""",
+        ),
+        (
+            "src/llama-model.h",
+            r"""    std::vector<int32_t> dflash_vocab_shortlist;
+""",
+            r"""    std::vector<int32_t> dflash_vocab_shortlist;
+    struct ggml_tensor * dflash_shortlist_rows = nullptr;
+""",
+        ),
+        (
+            "src/models/dflash.cpp",
+            r"""    const bool component_tied = component_tied_it != gguf_kv.end() && component_tied_it->second == "true";
+    if (component_tied) {
+""",
+            r"""    const bool component_tied = component_tied_it != gguf_kv.end() && component_tied_it->second == "true";
+    const auto shortlist_rows_it = gguf_kv.find("dflash.vocab_shortlist.rows_only");
+    if (shortlist_rows_it != gguf_kv.end()) {
+        if (shortlist_rows_it->second != "true" || !component_tied || output || tok_embd || n_vocab_draft != n_vocab ||
+                dflash_vocab_shortlist.empty()) {
+            throw std::runtime_error("invalid shortlist-only DFlash vocabulary table");
+        }
+        dflash_shortlist_rows = create_tensor(tn(LLM_TENSOR_TOKEN_EMBD, "shortlist"), { n_embd, (int64_t) dflash_vocab_shortlist.size() }, 0);
+        if (!ggml_is_quantized(dflash_shortlist_rows->type) || ggml_quantize_requires_imatrix(dflash_shortlist_rows->type)) {
+            throw std::runtime_error("shortlist-only DFlash vocabulary rows need a quantized type without an importance matrix");
+        }
+        LLAMA_LOG_INFO("DFlash shortlist-only vocabulary: %zu %s rows, no full table\n", dflash_vocab_shortlist.size(), ggml_type_name(dflash_shortlist_rows->type));
+    } else if (component_tied) {
+""",
+        ),
+        (
+            "src/models/dflash.cpp",
+            r"""    ggml_tensor * inpL = ggml_get_rows(ctx0, tok_embd, inp_tokens);
+""",
+            r"""    const llama_vocab_shortlist * input_rows = cparams.vocab_shortlist;
+    ggml_tensor * inpL = input_rows && input_rows->input_map
+            ? ggml_get_rows(ctx0, input_rows->table, ggml_reshape_1d(ctx0, ggml_get_rows(ctx0, input_rows->input_map, inp_tokens), n_tokens))
+            : ggml_get_rows(ctx0, tok_embd, inp_tokens);
+""",
+        ),
+        (
+            "src/models/dflash.cpp",
+            r"""    if (shortlist && shortlist->source == output && !output_s && !model.d2t""",
+            r"""    if (shortlist && (shortlist->input_map || (shortlist->source == output && !output_s)) && !model.d2t""",
+        ),
+        (
+            "src/llama-context.h",
+            r"""    uint32_t vocab_shortlist_add(llama_seq_id seq_id, const llama_token * tokens, size_t n);
+""",
+            r"""    uint32_t vocab_shortlist_add(llama_seq_id seq_id, const llama_token * tokens, size_t n);
+    bool vocab_shortlist_init_rows(const int32_t * ids, size_t n, uint32_t rows_per_seq);
+    void vocab_shortlist_convert(llama_token token, int64_t row);
+    void vocab_shortlist_map(llama_token token, int32_t row);
+    bool vocab_shortlist_inputs(const llama_batch_ext & batch);
+""",
+        ),
+        (
+            "src/llama-context.cpp",
+            r"""        LLAMA_LOG_ERROR("%s: a vocabulary shortlist needs a plain DFlash drafter\n", __func__);
+        return false;
+    }
+    const ggml_tensor * source = model.output;
+""",
+            r"""        LLAMA_LOG_ERROR("%s: a vocabulary shortlist needs a plain DFlash drafter\n", __func__);
+        return false;
+    }
+    if (model.dflash_shortlist_rows) {
+        return vocab_shortlist_init_rows(ids, n, rows_per_seq);
+    }
+    const ggml_tensor * source = model.output;
+""",
+        ),
+        (
+            "src/llama-context.cpp",
+            r"""void llama_context::vocab_shortlist_reset(llama_seq_id seq_id) {
+""",
+            r"""static void vocab_shortlist_convert_row(const ggml_tensor * source, ggml_type type, llama_token token,
+        std::vector<uint8_t> & encoded, std::vector<float> & values, uint8_t * out) {
+    const int64_t columns = source->ne[0];
+    const size_t width = source->nb[1];
+    encoded.resize(width);
+    values.resize((size_t) columns);
+    ggml_backend_tensor_get(source, encoded.data(), (size_t) token * width, width);
+    if (!ggml_validate_row_data(source->type, encoded.data(), width)) {
+        GGML_ABORT("vocabulary row %d of the conversion source is invalid", (int) token);
+    }
+    ggml_get_type_traits(source->type)->to_float(encoded.data(), values.data(), columns);
+    const size_t written = ggml_quantize_chunk(type, values.data(), out, 0, 1, columns, nullptr);
+    if (written != ggml_row_size(type, columns)) {
+        GGML_ABORT("vocabulary row %d did not convert to one %s row", (int) token, ggml_type_name(type));
+    }
+}
+
+void llama_context::vocab_shortlist_convert(llama_token token, int64_t row) {
+    auto & shortlist = *vocab_shortlist;
+    vocab_shortlist_convert_row(shortlist.convert_source, shortlist.table->type, token, shortlist.source_row, shortlist.values, shortlist.row.data());
+    ggml_backend_tensor_set(shortlist.table, shortlist.row.data(), (size_t) row * shortlist.row_bytes, shortlist.row_bytes);
+}
+
+void llama_context::vocab_shortlist_map(llama_token token, int32_t row) {
+    auto & shortlist = *vocab_shortlist;
+    shortlist.row_of[(size_t) token] = row;
+    const int32_t value = row < 0 ? 0 : row;
+    ggml_backend_tensor_set(shortlist.input_map, &value, (size_t) token * sizeof(int32_t), sizeof(int32_t));
+}
+
+bool llama_context::vocab_shortlist_init_rows(const int32_t * ids, size_t n, uint32_t rows_per_seq) {
+    const ggml_tensor * rows_source = model.dflash_shortlist_rows;
+    const llama_model * other = cparams.ctx_other ? llama_get_model(cparams.ctx_other) : nullptr;
+    const ggml_tensor * convert_source = other ? other->tok_embd : nullptr;
+    const int64_t n_vocab = (int64_t) model.vocab.n_tokens();
+    const int64_t columns = rows_source->ne[0];
+    if (convert_source == nullptr || convert_source->buffer == nullptr || !ggml_is_contiguous(convert_source) ||
+            convert_source->ne[0] != columns || convert_source->ne[1] != n_vocab || convert_source->ne[2] != 1 || convert_source->ne[3] != 1 ||
+            ggml_get_type_traits(convert_source->type)->to_float == nullptr ||
+            convert_source->nb[1] != ggml_row_size(convert_source->type, columns)) {
+        LLAMA_LOG_ERROR("%s: a shortlist-only drafter needs the target's token embedding table to convert rows\n", __func__);
+        return false;
+    }
+    if (n != model.dflash_vocab_shortlist.size() || rows_source->ne[1] != (int64_t) n ||
+            !std::equal(ids, ids + n, model.dflash_vocab_shortlist.begin())) {
+        LLAMA_LOG_ERROR("%s: the shortlist differs from the drafter's shortlist rows\n", __func__);
+        return false;
+    }
+    const int64_t n_fixed = (int64_t) n;
+    const int64_t capacity = (int64_t) rows_per_seq * (int64_t) cparams.n_seq_max;
+    const int64_t n_input = std::max<int64_t>((int64_t) cparams.n_batch, 1);
+    if (n_fixed < 1 || n_fixed > n_vocab || cparams.n_seq_max > 64 || capacity > n_vocab - n_fixed) {
+        LLAMA_LOG_ERROR("%s: invalid vocabulary shortlist size %" PRId64 " or request rows %" PRId64 "\n", __func__, n_fixed, capacity);
+        return false;
+    }
+    const ggml_type type = rows_source->type;
+    const size_t row_bytes = ggml_row_size(type, columns);
+    if (!ggml_is_contiguous(rows_source) || rows_source->nb[1] != row_bytes || rows_source->ne[2] != 1 || rows_source->ne[3] != 1) {
+        LLAMA_LOG_ERROR("%s: the shortlist rows are not contiguous\n", __func__);
+        return false;
+    }
+    if (model.output_norm == nullptr || model.output_norm->buffer == nullptr) {
+        LLAMA_LOG_ERROR("%s: the drafter has no placed output layer\n", __func__);
+        return false;
+    }
+    auto shortlist = std::make_unique<llama_vocab_shortlist>();
+    shortlist->fixed.assign((size_t) n_vocab, 0);
+    shortlist->row_of.assign((size_t) n_vocab, -1);
+    for (int64_t i = 0; i < n_fixed; ++i) {
+        const int32_t id = ids[i];
+        if (id < 0 || id >= n_vocab || shortlist->fixed[(size_t) id]) {
+            LLAMA_LOG_ERROR("%s: vocabulary shortlist token %d is out of range or repeated\n", __func__, id);
+            return false;
+        }
+        shortlist->fixed[(size_t) id] = 1;
+        shortlist->row_of[(size_t) id] = (int32_t) i;
+    }
+    ggml_init_params init_params = { 8 * ggml_tensor_overhead(), nullptr, true };
+    shortlist->ctx = ggml_init(init_params);
+    if (shortlist->ctx == nullptr) {
+        return false;
+    }
+    shortlist->table = ggml_new_tensor_2d(shortlist->ctx, type, columns, n_fixed + capacity + n_input);
+    ggml_set_name(shortlist->table, "output_shortlist.table");
+    shortlist->rows = ggml_view_2d(shortlist->ctx, shortlist->table, columns, n_fixed, shortlist->table->nb[1], 0);
+    ggml_set_name(shortlist->rows, "output_shortlist.weight");
+    shortlist->ids = ggml_new_tensor_1d(shortlist->ctx, GGML_TYPE_I64, n_fixed);
+    ggml_set_name(shortlist->ids, "output_shortlist.ids");
+    if (capacity > 0) {
+        shortlist->request_rows = ggml_view_2d(shortlist->ctx, shortlist->table, columns, capacity, shortlist->table->nb[1], (size_t) n_fixed * shortlist->table->nb[1]);
+        ggml_set_name(shortlist->request_rows, "output_request.weight");
+        shortlist->request_ids = ggml_new_tensor_1d(shortlist->ctx, GGML_TYPE_I64, capacity);
+        ggml_set_name(shortlist->request_ids, "output_request.ids");
+    }
+    shortlist->input_map = ggml_new_tensor_2d(shortlist->ctx, GGML_TYPE_I32, 1, n_vocab);
+    ggml_set_name(shortlist->input_map, "output_shortlist.input_map");
+    shortlist->buffer = ggml_backend_alloc_ctx_tensors_from_buft(shortlist->ctx, ggml_backend_buffer_get_type(model.output_norm->buffer));
+    if (shortlist->buffer == nullptr) {
+        LLAMA_LOG_ERROR("%s: cannot allocate the vocabulary shortlist\n", __func__);
+        return false;
+    }
+    ggml_backend_buffer_set_usage(shortlist->buffer, GGML_BACKEND_BUFFER_USAGE_WEIGHTS);
+    ggml_backend_buffer_clear(shortlist->buffer, 0);
+    ggml_backend_tensor_copy(rows_source, shortlist->rows);
+    {
+        std::vector<int64_t> fixed_ids(ids, ids + n_fixed);
+        ggml_backend_tensor_set(shortlist->ids, fixed_ids.data(), 0, fixed_ids.size() * sizeof(int64_t));
+    }
+    if (capacity > 0) {
+        shortlist->slot_of.assign((size_t) n_vocab, -1);
+        shortlist->slot_token.assign((size_t) capacity, -1);
+        shortlist->slot_seqs.assign((size_t) capacity, 0);
+        std::vector<uint8_t> padding((size_t) capacity * row_bytes);
+        std::vector<int64_t> padding_ids((size_t) capacity);
+        int64_t slot = 0;
+        for (int64_t token = 0; token < n_vocab && slot < capacity; ++token) {
+            if (shortlist->fixed[(size_t) token]) {
+                continue;
+            }
+            vocab_shortlist_convert_row(convert_source, type, (llama_token) token, shortlist->source_row, shortlist->values, padding.data() + (size_t) slot * row_bytes);
+            padding_ids[(size_t) slot] = token;
+            shortlist->slot_token[(size_t) slot] = (int32_t) token;
+            shortlist->slot_of[(size_t) token] = (int32_t) slot;
+            shortlist->row_of[(size_t) token] = (int32_t) (n_fixed + slot);
+            ++slot;
+        }
+        ggml_backend_tensor_set(shortlist->request_rows, padding.data(), 0, padding.size());
+        ggml_backend_tensor_set(shortlist->request_ids, padding_ids.data(), 0, padding_ids.size() * sizeof(int64_t));
+    }
+    {
+        std::vector<int32_t> map((size_t) n_vocab);
+        for (int64_t token = 0; token < n_vocab; ++token) {
+            map[(size_t) token] = std::max(shortlist->row_of[(size_t) token], 0);
+        }
+        ggml_backend_tensor_set(shortlist->input_map, map.data(), 0, map.size() * sizeof(int32_t));
+    }
+    shortlist->convert_source = convert_source;
+    shortlist->n_vocab = n_vocab;
+    shortlist->row_bytes = row_bytes;
+    shortlist->rows_per_seq = rows_per_seq;
+    shortlist->seq_rows.assign(cparams.n_seq_max, 0);
+    shortlist->row.resize(row_bytes);
+    shortlist->n_fixed = n_fixed;
+    shortlist->n_request = capacity;
+    shortlist->n_input = n_input;
+    shortlist->input_token.assign((size_t) n_input, -1);
+    shortlist->input_pinned.assign((size_t) n_input, 0);
+    vocab_shortlist = std::move(shortlist);
+    cparams.vocab_shortlist = vocab_shortlist.get();
+    sched_need_reserve = true;
+    LLAMA_LOG_INFO("%s: vocabulary shortlist of %" PRId64 " %s rows from the shortlist-only table, %" PRId64 " request rows and %" PRId64 " input rows converted from the target's %s %s, %s buffer %.2f MiB\n",
+            __func__, n_fixed, ggml_type_name(type), capacity, n_input, ggml_type_name(convert_source->type), convert_source->name,
+            ggml_backend_buffer_name(vocab_shortlist->buffer), ggml_backend_buffer_get_size(vocab_shortlist->buffer) / 1048576.0);
+    return true;
+}
+
+bool llama_context::vocab_shortlist_inputs(const llama_batch_ext & batch) {
+    if (model.dflash_shortlist_rows == nullptr) {
+        return true;
+    }
+    if (!vocab_shortlist || !vocab_shortlist->input_map) {
+        LLAMA_LOG_ERROR("%s: a shortlist-only drafter decodes only with its vocabulary shortlist attached\n", __func__);
+        return false;
+    }
+    auto & shortlist = *vocab_shortlist;
+    const int64_t first_input = shortlist.n_fixed + shortlist.n_request;
+    std::fill(shortlist.input_pinned.begin(), shortlist.input_pinned.end(), 0);
+    std::vector<llama_token> missing;
+    for (const auto & tok : batch.tokens) {
+        const llama_token token = tok.id;
+        if (token < 0 || token >= shortlist.n_vocab) {
+            continue;
+        }
+        const int32_t row = shortlist.row_of[(size_t) token];
+        if (row >= first_input) {
+            shortlist.input_pinned[(size_t) (row - first_input)] = 1;
+        } else if (row < 0) {
+            bool seen = false;
+            for (const llama_token other : missing) {
+                seen = seen || other == token;
+            }
+            if (!seen) {
+                missing.push_back(token);
+            }
+        }
+    }
+    if (missing.empty()) {
+        return true;
+    }
+    if ((int64_t) missing.size() > shortlist.n_input) {
+        LLAMA_LOG_ERROR("%s: %zu input tokens outside the vocabulary rows exceed %" PRId64 " input rows\n", __func__, missing.size(), shortlist.n_input);
+        return false;
+    }
+    ggml_backend_sched_synchronize(sched.get());
+    for (const llama_token token : missing) {
+        size_t slot = shortlist.input_next;
+        while (shortlist.input_pinned[slot]) {
+            slot = (slot + 1) % (size_t) shortlist.n_input;
+        }
+        shortlist.input_next = (slot + 1) % (size_t) shortlist.n_input;
+        shortlist.input_pinned[slot] = 1;
+        const int32_t row = (int32_t) (first_input + (int64_t) slot);
+        const llama_token evicted = shortlist.input_token[slot];
+        if (evicted >= 0 && shortlist.row_of[(size_t) evicted] == row) {
+            vocab_shortlist_map(evicted, -1);
+        }
+        vocab_shortlist_convert(token, row);
+        vocab_shortlist_map(token, row);
+        shortlist.input_token[slot] = token;
+    }
+    return true;
+}
+
+void llama_context::vocab_shortlist_reset(llama_seq_id seq_id) {
+""",
+        ),
+        (
+            "src/llama-context.cpp",
+            r"""            ggml_backend_tensor_get(shortlist.source, shortlist.row.data(), (size_t) token * shortlist.row_bytes, shortlist.row_bytes);
+            ggml_backend_tensor_set(shortlist.request_rows, shortlist.row.data(), free_slot * shortlist.row_bytes, shortlist.row_bytes);
+""",
+            r"""            if (shortlist.input_map) {
+                const llama_token evicted = shortlist.slot_token[free_slot];
+                const int32_t slot_row = (int32_t) (shortlist.n_fixed + (int64_t) free_slot);
+                if (evicted >= 0 && shortlist.row_of[(size_t) evicted] == slot_row) {
+                    vocab_shortlist_map(evicted, -1);
+                }
+                vocab_shortlist_convert(token, slot_row);
+                vocab_shortlist_map(token, slot_row);
+            } else {
+                ggml_backend_tensor_get(shortlist.source, shortlist.row.data(), (size_t) token * shortlist.row_bytes, shortlist.row_bytes);
+                ggml_backend_tensor_set(shortlist.request_rows, shortlist.row.data(), free_slot * shortlist.row_bytes, shortlist.row_bytes);
+            }
+""",
+        ),
+        (
+            "src/llama-context.cpp",
+            r"""        LLAMA_LOG_ERROR("%s: embd row width %zu does not match the decoder input %zu\n",
+                __func__, batch_inp.n_embd, batch_inp.n_embd_inp);
+        return -1;
+    }
+""",
+            r"""        LLAMA_LOG_ERROR("%s: embd row width %zu does not match the decoder input %zu\n",
+                __func__, batch_inp.n_embd, batch_inp.n_embd_inp);
+        return -1;
+    }
+
+    if (!vocab_shortlist_inputs(batch_inp)) {
+        return -1;
+    }
+""",
+        ),
+    ),
 }

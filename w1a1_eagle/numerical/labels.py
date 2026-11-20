@@ -142,22 +142,31 @@ class LabelFrequencies:
         return sum(self.counts[:size]) / self.labels if self.labels else None
 
 
+MIXTURE_COMPONENTS = {"corpus-mixture-v1": "corpus-v1", "fused-mixture-v1": "fused-corpus-v1"}
+
+
 def label_frequencies(mixture: Artifact) -> LabelFrequencies:
     mixture.verify()
     raw = read(mixture.path)
-    if raw.get("schema") != "corpus-mixture-v1":
-        raise ValueError("label frequencies require a corpus-mixture-v1 manifest")
+    schema = raw.get("schema")
+    if schema not in MIXTURE_COMPONENTS:
+        raise ValueError(
+            "label frequencies require a corpus-mixture-v1 or fused-mixture-v1 manifest"
+        )
+    kind = MIXTURE_COMPONENTS[string(schema)]
     root = mixture.path.parent
     counts: dict[int, int] = {}
     for value in sequence(raw["components"]):
         component = record(value)
-        if component["kind"] != "corpus-v1":
-            raise ValueError("label frequencies read direct corpus-v1 components only")
+        if component["kind"] != kind:
+            raise ValueError("label frequencies read direct " + kind + " components only")
         source = artifact(component["source"], root)
         source.verify()
         corpus = read(source.path, 64 * 1024 * 1024)
         if corpus["target_sha256"] != raw["target_sha256"]:
             raise ValueError("mixture component target differs")
+        if kind == "fused-corpus-v1" and corpus.get("schema") != kind:
+            raise ValueError("fused mixture components must be fused-corpus-v1 manifests")
         for item in sequence(corpus["records"]):
             row = record(item)
             if row["role"] != "train":

@@ -11,6 +11,8 @@ import numpy as np
 from w1a1_eagle.contracts import Record, record
 from w1a1_eagle.data import Artifact
 from w1a1_eagle.numerical.vocabulary_variants import (
+    ROWS_ONLY_KEY,
+    ROWS_TENSOR,
     SHORTLIST_KEY,
     TIED_KEY,
     shortlist,
@@ -69,6 +71,45 @@ def mixture(root: Path, answers: list[list[int]], role: str = "train") -> Artifa
             "schema": "corpus-mixture-v1",
             "target_sha256": "t",
             "components": [{"kind": "corpus-v1", "source": reference(corpus)}],
+        },
+    )
+
+
+ROW_QUANTIZER = """#!/usr/bin/env python3
+import sys
+source, target, rows, columns, path, output = sys.argv[1:7]
+single = sys.argv[7:] == ["1"]
+data = bytearray()
+for row in range(int(rows)):
+    value = BROKEN if single and row == 2 else row
+    data += bytes([value]) * (int(columns) // 256 * 144)
+open(output, "wb").write(bytes(data))
+"""
+
+
+def fused_mixture(root: Path, answers: list[list[int]], role: str = "train") -> Artifact:
+    root.mkdir(parents=True, exist_ok=True)
+    records = [
+        {
+            "id": f"r{index}",
+            "group": f"g{index}",
+            "topic": "code",
+            "role": role,
+            "metadata": reference(write(root / f"r{index}.json", request([1, 2], answer))),
+            "files": [],
+        }
+        for index, answer in enumerate(answers)
+    ]
+    corpus = write(
+        root / "corpus.json",
+        {"schema": "fused-corpus-v1", "target_sha256": "t", "records": records},
+    )
+    return write(
+        root / "mixture.json",
+        {
+            "schema": "fused-mixture-v1",
+            "target_sha256": "t",
+            "components": [{"kind": "fused-corpus-v1", "source": reference(corpus)}],
         },
     )
 
@@ -294,3 +335,118 @@ class TestTableVariants(unittest.TestCase):
             )
             with self.assertRaisesRegex(ValueError, "Q2_K or Q3_K"):
                 write_variants(unsupported, root / "out-2")
+
+
+def indexed_export(root: Path) -> Artifact:
+    kinds = gguf.GGMLQuantizationType
+    head = np.repeat(np.arange(ROWS, dtype=np.uint8)[:, None], 144, axis=1)
+    return gguf_file(
+        root / "export.gguf",
+        {
+            "output_norm.weight": (np.ones(COLUMNS, dtype=np.float32), kinds.F32),
+            "blk.0.ffn_gate.w1a1_packed": (np.arange(16, dtype=np.int32).reshape(2, 8), kinds.I32),
+            "output.weight": (head, kinds.Q4_K),
+        },
+    )
+
+
+def rows_only(root: Path, broken: int) -> Record:
+    script = root / "row-quantizer"
+    script.write_text(ROW_QUANTIZER.replace("BROKEN", str(broken)))
+    script.chmod(0o755)
+    built = write(root / "row-quantizer.json", {"binary": reference(authenticated(script))})
+    source = gguf_file(
+        root / "target.gguf", {"token_embd.weight": (q6k_rows(), gguf.GGMLQuantizationType.Q6_K)}
+    )
+    return {
+        "source": reference(source),
+        "tensor": "token_embd.weight",
+        "quantizer": reference(built),
+    }
+
+
+class TestFusedLabels(unittest.TestCase):
+    def test_fused_mixture_labels_and_refusals(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fused = fused_mixture(root / "fused", [[5, 3, 7], [5, 4, 7]])
+            self.assertEqual(shortlist(fused, None).tokens, (3, 4, 5, 7))
+            with self.assertRaisesRegex(ValueError, "TRAIN"):
+                shortlist(fused_mixture(root / "dev", [[5, 7]], role="dev"), None)
+            plain = mixture(root / "plain", [[5, 7]])
+            raw = json.loads(plain.path.read_text())
+            raw["schema"] = "fused-mixture-v1"
+            with self.assertRaisesRegex(ValueError, "fused-corpus-v1"):
+                shortlist(write(root / "mixed.json", raw), None)
+
+
+class TestRowsOnly(unittest.TestCase):
+    def test_shortlist_only_file_holds_the_export_rows_and_no_full_table(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = indexed_export(root)
+            train = mixture(root / "train", [[5, 3, 7], [5, 4, 7]])
+            spec = specification(
+                root,
+                {
+                    "schema": "vocabulary-variants-v1",
+                    "export": reference(source),
+                    "shortlist": {"mixture": reference(train), "size": None},
+                    "rows_only": rows_only(root, 2),
+                },
+            )
+            result = write_variants(spec, root / "out")
+            produced = root / "out" / "drafter-shortlist-only.gguf"
+            original = tensors(source.path)
+            stored = tensors(produced)
+            self.assertNotIn("output.weight", stored)
+            self.assertEqual(
+                stored[ROWS_TENSOR], ("Q4_K", b"".join(bytes([t]) * 144 for t in (3, 4, 5, 7)))
+            )
+            self.assertEqual(
+                {k: v for k, v in stored.items() if k != ROWS_TENSOR},
+                {k: v for k, v in original.items() if k != "output.weight"},
+            )
+            values = fields(produced)
+            self.assertIs(values[ROWS_ONLY_KEY], True)
+            self.assertIs(values[TIED_KEY], True)
+            self.assertEqual(values[SHORTLIST_KEY], [3, 4, 5, 7])
+            self.assertEqual(values["dflash.w1ax.config_hash"], "recipe")
+            self.assertEqual(
+                fields(root / "out" / "drafter-shortlist.gguf")[SHORTLIST_KEY], [3, 4, 5, 7]
+            )
+            report = record(record(result["outputs"])["rows_only"])
+            self.assertEqual(record(report["readback"])["rows_compared"], 4)
+            self.assertEqual(report["rows_bytes"], 4 * 144)
+            self.assertEqual(report["full_table_bytes"], ROWS * 144)
+            proof = json.loads((root / "out" / "row-independence.json").read_text())
+            self.assertEqual((proof["rows_checked"], proof["differing_rows"]), (ROWS, 0))
+            self.assertFalse((root / "out" / "scratch-rows").exists())
+
+    def test_refuses_rows_that_change_when_converted_alone(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            train = mixture(root / "train", [[5, 3, 7]])
+            spec = specification(
+                root,
+                {
+                    "schema": "vocabulary-variants-v1",
+                    "export": reference(indexed_export(root)),
+                    "shortlist": {"mixture": reference(train), "size": None},
+                    "rows_only": rows_only(root, 99),
+                },
+            )
+            with self.assertRaisesRegex(ValueError, "not independent"):
+                write_variants(spec, root / "out")
+            self.assertFalse((root / "out" / "drafter-shortlist-only.gguf").exists())
+            alone = specification(
+                root,
+                {
+                    "schema": "vocabulary-variants-v1",
+                    "export": reference(indexed_export(root)),
+                    "tables": tables(root, [{"type": "Q2_K", "layout": "shared"}]),
+                    "rows_only": rows_only(root, 2),
+                },
+            )
+            with self.assertRaisesRegex(ValueError, "needs a shortlist"):
+                write_variants(alone, root / "out-2")

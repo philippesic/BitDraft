@@ -47,7 +47,7 @@ static void decode(ggml_type type, const uint8_t * source, float * destination, 
 
 int main(int argc, char ** argv) {
     try {
-        if (argc != 7) throw std::runtime_error("usage: binary-quantize-table SOURCE_TYPE TARGET_TYPE ROWS COLUMNS INPUT OUTPUT");
+        if (argc != 7 && argc != 8) throw std::runtime_error("usage: binary-quantize-table SOURCE_TYPE TARGET_TYPE ROWS COLUMNS INPUT OUTPUT [ROWS_PER_CALL]");
         const ggml_type source_type = table_type(argv[1]);
         const ggml_type target_type = table_type(argv[2]);
         const int64_t rows = std::stoll(argv[3]);
@@ -63,6 +63,8 @@ int main(int argc, char ** argv) {
         if (!output) throw std::runtime_error("cannot open table output");
         if (target_type != GGML_TYPE_F32) ggml_quantize_init(target_type);
         const int64_t chunk = 4096;
+        const int64_t per_call = argc == 8 ? std::stoll(argv[7]) : chunk;
+        if (per_call < 1 || per_call > chunk || chunk % per_call != 0) throw std::runtime_error("rows per call must divide 4096");
         const size_t target_width = row_bytes(target_type, columns);
         std::vector<uint8_t> encoded;
         std::vector<float> values;
@@ -76,7 +78,12 @@ int main(int argc, char ** argv) {
                 output.write(reinterpret_cast<const char *>(values.data()), std::streamsize(values.size() * sizeof(float)));
             } else {
                 coded.resize(target_width * size_t(count));
-                const size_t written = ggml_quantize_chunk(target_type, values.data(), coded.data(), 0, count, columns, nullptr);
+                size_t written = 0;
+                for (int64_t first = 0; first < count; first += per_call) {
+                    const int64_t calls = std::min(per_call, count - first);
+                    written += ggml_quantize_chunk(target_type, values.data() + size_t(first) * size_t(columns),
+                                                   coded.data() + target_width * size_t(first), 0, calls, columns, nullptr);
+                }
                 if (written != coded.size() || !ggml_validate_row_data(target_type, coded.data(), coded.size())) {
                     throw std::runtime_error("quantized rows are invalid");
                 }
@@ -87,7 +94,8 @@ int main(int argc, char ** argv) {
         output.close();
         if (!output) throw std::runtime_error("cannot close table output");
         std::cout << "{\"rows\":" << rows << ",\"columns\":" << columns << ",\"source\":\"" << argv[1]
-                  << "\",\"target\":\"" << argv[2] << "\",\"bytes\":" << target_width * size_t(rows) << "}" << std::endl;
+                  << "\",\"target\":\"" << argv[2] << "\",\"rows_per_call\":" << per_call
+                  << ",\"bytes\":" << target_width * size_t(rows) << "}" << std::endl;
         return 0;
     } catch (const std::exception & error) {
         std::cerr << error.what() << std::endl;

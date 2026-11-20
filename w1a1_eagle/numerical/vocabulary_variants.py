@@ -15,7 +15,7 @@ from w1a1_eagle.identity import source_identity
 from w1a1_eagle.numerical.export import ExportAPI, PayloadBytes, write_gguf
 from w1a1_eagle.numerical.gguf_readback import Expected
 from w1a1_eagle.numerical.gguf_readback import verify as verify_gguf
-from w1a1_eagle.numerical.k_tables import BLOCKS, quantize
+from w1a1_eagle.numerical.k_tables import BLOCKS, quantize, quantizer_binary
 from w1a1_eagle.numerical.labels import label_frequencies
 from w1a1_eagle.records import artifact, canonical, read, reference
 from w1a1_eagle.storage import project_root
@@ -27,6 +27,8 @@ SHORTLIST_RULE = (
     "request so far"
 )
 TIED_KEY = "dflash.component.tied"
+ROWS_ONLY_KEY = SHORTLIST_KEY + ".rows_only"
+ROWS_TENSOR = "token_embd.shortlist"
 LAYOUTS = ("shared", "scoring")
 PACKED = {"Q4_0": (32, 18), **{name: (256, width) for name, width in BLOCKS.items()}}
 VARIANT_TYPES = ("Q2_K", "Q3_K")
@@ -126,11 +128,19 @@ class TableSettings:
 
 
 @dataclass(frozen=True)
+class RowsOnlySettings:
+    source: Artifact
+    tensor: str
+    quantizer: Artifact
+
+
+@dataclass(frozen=True)
 class Settings:
     export: Artifact
     mixture: Artifact | None
     size: int | None
     tables: TableSettings | None
+    rows_only: RowsOnlySettings | None
 
 
 def shortlist(mixture: Artifact, size: int | None) -> Shortlist:
@@ -153,12 +163,14 @@ def shortlist(mixture: Artifact, size: int | None) -> Shortlist:
 def settings(path: Path) -> Settings:
     raw = read(path)
     root = path.resolve().parent
-    if set(raw) - {"shortlist", "tables"} != {"schema", "export"} or raw["schema"] != (
+    if set(raw) - {"shortlist", "tables", "rows_only"} != {"schema", "export"} or raw["schema"] != (
         "vocabulary-variants-v1"
     ):
         raise ValueError("unsupported vocabulary variants specification")
     if "shortlist" not in raw and "tables" not in raw:
         raise ValueError("vocabulary variants need a shortlist or table variants")
+    if "rows_only" in raw and "shortlist" not in raw:
+        raise ValueError("a shortlist-only table needs a shortlist")
     mixture: Artifact | None = None
     size: int | None = None
     if "shortlist" in raw:
@@ -189,7 +201,17 @@ def settings(path: Path) -> Settings:
             artifact(section["quantizer"], root),
             tuple(variants),
         )
-    return Settings(artifact(raw["export"], root), mixture, size, tables)
+    rows_only: RowsOnlySettings | None = None
+    if "rows_only" in raw:
+        section = record(raw["rows_only"])
+        if set(section) != {"source", "tensor", "quantizer"}:
+            raise ValueError("a shortlist-only table needs source, tensor and quantizer")
+        rows_only = RowsOnlySettings(
+            artifact(section["source"], root),
+            string(section["tensor"]),
+            artifact(section["quantizer"], root),
+        )
+    return Settings(artifact(raw["export"], root), mixture, size, tables, rows_only)
 
 
 def gguf_api() -> ExportAPI:
@@ -266,6 +288,7 @@ def write_variant(
     replaced: dict[str, tuple[Bytes, str]],
     inserted: dict[str, tuple[str, Bytes, str]],
     budget: int,
+    dropped: frozenset[str] = frozenset(),
 ) -> Artifact:
     writer = gguf_api().GGUFWriter(None, "dflash")
     overridden = {key for key, _ in added}
@@ -299,6 +322,8 @@ def write_variant(
         if tensor.name in replaced:
             data, kind = replaced[tensor.name]
             outputs.append(Output(tensor.name, data, table_kind(kind), kind, data.tobytes()))
+            continue
+        if tensor.name in dropped:
             continue
         payload = raw_bytes(tensor).tobytes()
         outputs.append(
@@ -365,20 +390,14 @@ def write_variants(specification: Path, output: Path) -> Record:
         description = selected.record()
         description["train_mixture"] = reference(chosen.mixture)
         store.atomic(store.root / "shortlist.json", canonical(description))
+        keys: list[tuple[str, object]] = [
+            (SHORTLIST_KEY, list(selected.tokens)),
+            (SHORTLIST_KEY + ".size", selected.size or 0),
+            (SHORTLIST_KEY + ".mixture", selected.mixture),
+            (SHORTLIST_KEY + ".rule", SHORTLIST_RULE),
+        ]
         drafter = write_variant(
-            store,
-            "drafter-shortlist.gguf",
-            source,
-            config,
-            [
-                (SHORTLIST_KEY, list(selected.tokens)),
-                (SHORTLIST_KEY + ".size", selected.size or 0),
-                (SHORTLIST_KEY + ".mixture", selected.mixture),
-                (SHORTLIST_KEY + ".rule", SHORTLIST_RULE),
-            ],
-            {},
-            {},
-            budget,
+            store, "drafter-shortlist.gguf", source, config, keys, {}, {}, budget
         )
         outputs["shortlist"] = {
             "sidecar": reference(Artifact.capture(store.root / "shortlist.i32")),
@@ -388,6 +407,20 @@ def write_variants(specification: Path, output: Path) -> Record:
             "distinct_train_labels": selected.distinct,
             "label_coverage": selected.coverage,
         }
+        if chosen.rows_only is not None:
+            outputs["rows_only"] = rows_only_variant(
+                chosen.rows_only,
+                store,
+                source,
+                config,
+                keys,
+                selected.tokens,
+                head,
+                rows,
+                columns,
+                budget,
+                {"export": chosen.export.size, "shortlist": drafter.size},
+            )
     if chosen.tables is not None:
         outputs["tables"] = table_variants(
             chosen.tables, store, source, config, head, rows, columns, budget
@@ -508,3 +541,146 @@ def table_variants(
         return report
     finally:
         shutil.rmtree(scratch.root, ignore_errors=True)
+
+
+def rows_only_variant(
+    settings: RowsOnlySettings,
+    store: Store,
+    source: ReaderView,
+    config: str,
+    keys: list[tuple[str, object]],
+    tokens: tuple[int, ...],
+    head: TensorView,
+    rows: int,
+    columns: int,
+    budget: int,
+    sizes: dict[str, int],
+) -> Record:
+    settings.source.verify()
+    binary = quantizer_binary(settings.quantizer)
+    original = table_tensor(reader(settings.source.path), settings.tensor)
+    source_kind = kind_name(original)
+    if table_rows(original) != (rows, columns):
+        raise ValueError("source table geometry differs from the export's vocabulary")
+    head_rows = cast(Bytes, raw_bytes(head).reshape(rows, -1))
+    scratch = Store(store.root / "scratch-rows")
+    source_path = scratch.root / "source.bin"
+    cast(Bytes, raw_bytes(original).reshape(rows, -1)).tofile(source_path)
+    try:
+        chunked = quantize(
+            binary.path,
+            source_kind,
+            "Q4_K",
+            rows,
+            columns,
+            source_path,
+            scratch.root / "chunked.bin",
+        )
+        if chunked.tobytes() != head_rows.tobytes():
+            raise ValueError(
+                "the quantizer does not reproduce the export's Q4_K table from this source"
+            )
+        single = quantize(
+            binary.path,
+            source_kind,
+            "Q4_K",
+            rows,
+            columns,
+            source_path,
+            scratch.root / "single.bin",
+            rows_per_call=1,
+        )
+        width = int(head_rows.shape[1])
+        alone, table = single.tobytes(), head_rows.tobytes()
+        differing = [
+            index
+            for index in range(rows)
+            if alone[index * width : (index + 1) * width]
+            != table[index * width : (index + 1) * width]
+        ]
+        if differing:
+            raise ValueError(
+                f"{len(differing)} vocabulary rows converted one at a time differ from the "
+                f"export's table, first {differing[0]}: rows are not independent"
+            )
+        proof: Record = {
+            "schema": "vocabulary-row-independence-v1",
+            "source": reference(settings.source),
+            "tensor": settings.tensor,
+            "source_type": source_kind,
+            "target_type": "Q4_K",
+            "quantizer": reference(settings.quantizer),
+            "quantizer_binary": reference(binary),
+            "importance_matrix": None,
+            "rows_checked": rows,
+            "rows_per_call": 1,
+            "export_table_sha256": hashlib.sha256(head_rows.tobytes()).hexdigest(),
+            "chunked_rows_equal_export": True,
+            "single_rows_equal_export": True,
+            "differing_rows": 0,
+        }
+        store.atomic(store.root / "row-independence.json", canonical(proof))
+    finally:
+        shutil.rmtree(scratch.root, ignore_errors=True)
+    selected = cast(Bytes, np.ascontiguousarray(head_rows[np.asarray(tokens, dtype=np.int64)]))
+    produced = write_variant(
+        store,
+        "drafter-shortlist-only.gguf",
+        source,
+        config,
+        [
+            *keys,
+            (ROWS_ONLY_KEY, True),
+            (SHORTLIST_KEY + ".source", settings.tensor + " " + settings.source.sha256),
+            (SHORTLIST_KEY + ".quantizer", binary.sha256),
+        ],
+        {},
+        {"output.weight": (ROWS_TENSOR, selected, "Q4_K")},
+        budget,
+        frozenset({"output.weight"}),
+    )
+    readback = rows_only_readback(produced.path, tokens, head_rows)
+    return {
+        "drafter": reference(produced),
+        "row_independence": reference(Artifact.capture(store.root / "row-independence.json")),
+        "rows": len(tokens),
+        "rows_tensor": ROWS_TENSOR,
+        "row_bytes": int(head_rows.shape[1]),
+        "rows_bytes": int(selected.size),
+        "full_table_bytes": int(head_rows.size),
+        "readback": readback,
+        "file_bytes": {
+            "export": sizes["export"],
+            "drafter_shortlist": sizes["shortlist"],
+            "drafter_shortlist_only": produced.size,
+        },
+    }
+
+
+def rows_only_readback(path: Path, tokens: tuple[int, ...], head_rows: Bytes) -> Record:
+    produced = reader(path)
+    values = {key: field.contents() for key, field in produced.fields.items()}
+    if (
+        values.get(ROWS_ONLY_KEY) is not True
+        or values.get(SHORTLIST_KEY) != list(tokens)
+        or values.get(TIED_KEY) is not True
+        or any(tensor.name == "output.weight" for tensor in produced.tensors)
+    ):
+        raise ValueError("the shortlist-only file metadata or tensors differ")
+    table = table_tensor(produced, ROWS_TENSOR)
+    if kind_name(table) != "Q4_K" or table_rows(table) != (
+        len(tokens),
+        int(head_rows.shape[1]) // 144 * 256,
+    ):
+        raise ValueError("the shortlist-only rows have the wrong type or geometry")
+    stored = cast(Bytes, raw_bytes(table).reshape(len(tokens), -1))
+    width = int(head_rows.shape[1])
+    rows, export = stored.tobytes(), head_rows.tobytes()
+    for index, token in enumerate(tokens):
+        if rows[index * width : (index + 1) * width] != export[token * width : (token + 1) * width]:
+            raise ValueError(f"shortlist-only row {index} differs from export row {token}")
+    return {
+        "rows_compared": len(tokens),
+        "byte_identical": True,
+        "rows_sha256": hashlib.sha256(stored.tobytes()).hexdigest(),
+    }
