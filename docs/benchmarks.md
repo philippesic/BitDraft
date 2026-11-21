@@ -645,7 +645,7 @@ NVFP4.
 ### Frozen request confirmation reserve
 
 `/home/philip/BitDraft/artifacts/benchmarks/scenario-levels-01/confirmation/` holds
-120 new, unexecuted role-`confirmation` requests: 20 each coding, chat/writing,
+120 frozen role-`confirmation` requests: 20 each coding, chat/writing,
 reasoning, long documents, thinking-on and sampled. The agentic confirmation suite
 is a separate workload. Sources are MBPP sanitized, BIG-Bench Hard, GovReport through
 LongBench, and newly authored chat/writing. The frozen source revisions, licenses,
@@ -660,8 +660,10 @@ historical specifications. `protection-receipt.json` authenticates this union an
 superseded first union, which incorrectly included TRAIN identities and was corrected
 before use. `access.json` and `ancestry-audit.json` record curation-only access and no
 training, calibration, selection or inference consumption. A confirmation run is a
-separate explicit operation after the DEV verdict is eligible; never reuse this reserve
-for routine decisions.
+separate explicit operation after the DEV verdict is eligible. The owner spent the Q4KM
+allocation on 2026-11-21 for the 284 MB file. The original access receipts document the
+state before that run. See [release qualification](../results/release-qualification/result.md)
+for the seven completed suites. Keep the spent reserve out of routine decisions.
 
 ## Depth calibration
 
@@ -1450,7 +1452,7 @@ references retain their definitions. These new panels supplement them.
 | --- | --- | --- |
 | `agentic-slice` | Level 2, 12 DEV tasks | One greedy pass, two tasks per project |
 | `agentic-suite` | Level 3, 60 DEV tasks | One greedy pass; project-group bootstrap |
-| `agentic-confirmation` | 15 reserved tasks on Boltons | Frozen, unexecuted; separate one-time confirmation allocation required |
+| `agentic-confirmation` | 15 frozen tasks on Boltons | One-time Q4KM allocation spent on 2026-11-21; see release qualification |
 
 The suite contains bug fixes, small API additions, refactors and test-writing.
 Every DEV task has initial and follow-up acceptance checks; preparation requires

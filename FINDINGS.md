@@ -10,6 +10,16 @@ See [closeout specification](docs/results.md).
 
 ## Current candidate and retained controls
 
+### F040: Does the 284 MB file keep its speed on fresh Q4KM requests?
+
+Yes. It was 1.9–5.6% faster than stock Baseline across six protected request
+suites on the RTX 5080, with all six paired lower bounds above parity.
+The protected agentic suite completed zero assignments in every arm. On DEV,
+a JSON tool-call format reversed the lead's speed advantage over Baseline.
+The 185 MB file matched the 284 MB file's draft counts and request throughput
+on the 120-request DEV panel and added 5.6 seconds to startup.
+[Result](results/release-qualification/result.md).
+
 ### F039: Does bypassing two gate/up input channels help after matched training?
 
 After 21,000 updates, the bypass gained 0.58 points on the 32-request offline DEV

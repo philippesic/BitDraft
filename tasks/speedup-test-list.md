@@ -137,14 +137,12 @@ Earlier, untrained evidence is from conversions of the older EAGLE drafter in Se
 
 ## Next
 
-Owner go of 2026-11-20 (confirmed 09:40 PST) covers the lead's four model steps: the 4-bit
-control (done), item 11 (done), a second tool-call convention for agentic coding and one
-confirmation run. Owner decision 2026-11-20 (13:40 PST): skip the tool-call convention test for
-now; agentic claims stay limited to the training sessions' own tools and system prompt. The confirmation sets are spent only once the owner names
-the drafter.
-
-The owner decides the release form of the leader: the 284 MB small file on runtime-v10 (0.85 s
-start) or the 185 MB file without vocabulary rows on runtime-v11 (6.5 s start).
+Owner decision 2026-11-21: lead with the 284 MB shortlist-only release. The 185 MB
+runtime-v11 file qualifies as an optional download on DEV. The file-form comparison,
+second tool-call convention probe and one protected confirmation are closed in
+[release qualification](../results/release-qualification/result.md). The request
+claim passed on Q4KM. The protected agentic suite had zero completed assignments
+on every arm. The used confirmation allocation is spent.
 
 The 2026-11-21 follow-ups are closed in the [two-channel bypass](../results/two-channel-bypass/result.md)
 and [native references](../results/fresh-native-references/result.md) results. The owner
