@@ -55,12 +55,23 @@ Owner: unassigned (planning thread). Branch: `main`. No artifacts created.
 - **Comparators any claim must name:** stock Baseline, the 4-bit control, the target's built-in
   draft head (57.9% acceptance, no file, 0.964× Baseline; F037) and the stock 2-bit and 3-bit files.
 
+### Owner decisions (2026-11-21)
+
+- **One-bit only.** The release keeps one-bit feed-forward weights. Three-valued weights and a
+  second plane are out of scope.
+- **Qwen3.5-4B first.** A larger target is a later question. The evidence on how one bit scales is
+  summarized under `Scaling to larger targets`.
+- **Rentals.** Do all setup and validation training locally. Rent only once the owner is certain the
+  remaining step is "rent, train, release". Whether response generation rents depends on its
+  measured local duration.
+- **Benchmarks.** The owner's goal is no remaining uncertainty about benchmarking. Proposed form,
+  pending confirmation: local acceptance checks are allowed for selection during training;
+  release requires the standard public suite under a protocol frozen before the run.
+
 ### Workstream A: scope decisions (before anything else)
 
-1. **Release form.** Choose between one-bit only, also allowing three-valued (1.58-bit) weights, or
-   whichever format wins at equal data. This decides which features get serving kernels.
-2. **Targets.** Qwen3.5-4B only, or also a larger target (9B or 27B class) where verification
-   dominates even more and VRAM savings matter. Q4KM only, or also NVFP4 and BF16.
+1. **Release form.** Decided: one-bit only.
+2. **Targets.** Decided: Qwen3.5-4B first. Still open: Q4KM only, or also NVFP4 and BF16.
 3. **Which target produces TRAIN features.** The deployed Q4KM in our runtime, as now, gives exact
    features but slow generation. Batched BF16 in vLLM generates far faster but gives slightly
    different tokens. Pilot the mismatch before choosing.
@@ -68,8 +79,8 @@ Owner: unassigned (planning thread). Branch: `main`. No artifacts created.
    A release nobody can run outside this repo is weak for the resume goal.
 5. **Licence.** Still undecided (`README.md`). The candidate starts from a conversion of Baseline's
    weights, so Baseline's licence and the target's (Qwen, Apache-2.0) constrain it. Check both.
-6. **Rental scope.** The current rule is to rent only for a final, already-promising run. The owner
-   now offers rentals for speed and VRAM. Decide whether pilots and data generation may rent too.
+6. **Rental scope.** Decided: local validation first, one final rented run. The rented run must
+   execute the same pipeline and code that passed locally, at reduced geometry if needed.
 
 ### Workstream B: production TRAIN data
 
@@ -113,7 +124,10 @@ Owner: unassigned (planning thread). Branch: `main`. No artifacts created.
   This needs about 10 GB of extra VRAM for a BF16 4B target, which is easy on a rented 48–80 GB
   card. It is the standard approach in NVIDIA's DFlash recipe and in SpecForge.
   (b) store token IDs only and rebuild features with the existing token replay;
-  (c) rent storage. Recommended: (a) for the final run, plus (b) for reproducibility.
+  (c) rent storage. Recommended: (a) for the final run, plus (b) for reproducibility. Because only
+  the final run rents, (a) must first pass locally. The last trainer used 14–15 GiB of the 5080's
+  15.5 GiB, so local validation of online capture needs reduced geometry or a Q4KM target in our
+  runtime. Check that it fits before choosing (a).
 - **Generation throughput.** About 150M response tokens at 200K conversations. That is a few hours
   of batched generation on one rented H100, and impractical through single-stream llama.cpp on the 5080.
 - **Trainer portability.** Check that the trainer, receipts and authentication run on a rented Linux
@@ -175,8 +189,6 @@ Split every gain into the part only low precision earns and the part Baseline wo
 
 Screen in short matched runs on a pilot slice of the new data. Promote only what survives:
 
-- three-valued weights (+4.2 DEV survival; needs a serving kernel);
-- a second one-bit plane, or higher precision for salient weights only (+3.3 for the full plane);
 - an online Hadamard rotation before 4-bit input rounding, aimed at the largest loss at
   initialization (60.8% to 41.3%);
 - trained attention and fusion tables with a Q4_K export (item 10);
@@ -189,7 +201,8 @@ Screen in short matched runs on a pilot slice of the new data. Promote only what
 
 Previously dropped, not proposed again: zero-skipping and slot-reuse kernels, pre-summed lookup
 tables on GPU, activations below 4 bits, Q2_K/Q3_K vocabulary tables on this runtime, and the
-full-precision drafter teacher (owner, 2026-11-16).
+full-precision drafter teacher (owner, 2026-11-16). Three-valued weights and a second one-bit
+plane are out because the release stays one-bit (owner, 2026-11-21).
 
 ### Workstream G: release packaging
 
@@ -210,7 +223,25 @@ PR, reproducible eval commands, and the compact evidence behind every number.
   the last run's 23.6 GPU hours on the 5080. Divide by the measured rental speed-up. Add data
   generation (a few H100 hours) and both matched arms.
 
+### Scaling to larger targets (evidence and reasoning, not measured)
+
+- Only the 4B target has been measured. There, target verification is about 80% of a round (F030),
+  and the one-bit body saves about 0.16 ms of a round (F034). That bought about 3.5 acceptance points.
+- Drafter cost grows with the target's width. Target cost grows with width and depth, and drafters
+  keep about six layers. Verification therefore takes a larger share of the round on larger
+  targets, and the relative speed-up from a cheaper drafter shrinks.
+- At 4B the one-bit FFN (about 56 MB) fits in the 5080's 64 MB L2 cache, while 4-bit (about
+  250 MB) does not. Wider drafters push both out of cache, which may raise one bit's saving in
+  milliseconds. It still shrinks as a share of the round.
+- Consequence: "at least the same speed" on larger targets needs the acceptance gap to Baseline
+  nearly closed, because a cheaper round will offset less of it. "Smaller" holds at any size.
+- Published one-bit results lose less at greater width, so the gap may narrow on wider drafters.
+  Our drafters have not been tested at another width.
+- Cheap ceiling check, unauthorized: profile rounds of target plus stock Baseline on a 9B-class
+  Q4KM target that fits the 5080. The drafter body's share of the round bounds the one-bit saving
+  there. About 30 GPU minutes, no training.
+
 ## Next
 
-The owner answers A1, A2, A6 and the gate question. With a go, the licence audit and the scaling
-pilot can start first: both are cheap and run locally.
+The owner confirms the benchmark form and says go on the first steps. Those are the licence audit
+and the scaling pilot, both cheap and local, plus optionally the 9B round-profile ceiling check.
