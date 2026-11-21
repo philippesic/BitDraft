@@ -188,11 +188,12 @@ class TensorWorker:
         self.frozen = {name: (value, value._version) for name, value in model.named_buffers()}
         digest = hashlib.sha256()
         for name, (value, _) in self.frozen.items():
-            if value.dtype != torch.float32:
-                raise ValueError("frozen HE4 execution operands must be F32")
+            expected_dtype = torch.int64 if name.endswith(".bypass_columns") else torch.float32
+            if value.dtype != expected_dtype:
+                raise ValueError("invalid frozen HE4 execution operand dtype")
             digest.update(canonical([name, str(value.dtype), list(value.shape)]))
             array = cast(
-                np.ndarray[tuple[int, ...], np.dtype[np.float32]],
+                np.ndarray[tuple[int, ...], np.dtype[np.float32 | np.int64]],
                 value.detach().cpu().contiguous().numpy(),
             )
             data = array.data.cast("B")

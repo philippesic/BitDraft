@@ -9,7 +9,7 @@ from torch import Tensor
 
 from w1a1_eagle.checkpoints.store import StateRef, Store
 from w1a1_eagle.data import Artifact
-from w1a1_eagle.model import Layer
+from w1a1_eagle.model import BYPASS_CHANNELS, Layer, named_projections
 from w1a1_eagle.numerical.gguf_readback import Expected, metadata
 from w1a1_eagle.numerical.gguf_readback import verify as verify_gguf
 from w1a1_eagle.numerical.weights import GGUF, q4_0_codes
@@ -110,7 +110,12 @@ def prepare(
     api = cast(ExportAPI, gguf)
     kinds = api.GGMLQuantizationType
     reader = api.GGUFReader(str(source.path)) if not model.native_codes else None
-    writer = api.GGUFWriter(None, "dflash")
+    bypass = any(
+        projection.bypass_columns is not None for _, projection in named_projections(model)
+    )
+    writer = api.GGUFWriter(None, "dflash-bypass-diagnostic" if bypass else "dflash")
+    if bypass:
+        writer.add_array("dflash.w1ax.bypass_channels", list(BYPASS_CHANNELS))
     if reader is None:
         for key, value, kind, subtype in metadata(source.path):
             if (
@@ -202,6 +207,8 @@ def prepare(
             )
             add(base + ".w1a1_scale", projection.scale.clamp_min(0))
             add(base + ".w1ax_midpoint", projection.midpoint)
+            if projection.bypass_weights is not None:
+                add(base + ".w1ax_bypass", projection.bypass_weights)
             if name != "up":
                 add(base + ".w1ax_gain", projection.log_gain.detach().float().cpu().exp())
     trained = {name: value for name, value in tables.items() if value.requires_grad}

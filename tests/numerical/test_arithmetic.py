@@ -14,6 +14,7 @@ from w1a1_eagle.clock import Monotonic
 from w1a1_eagle.contracts import Record, record
 from w1a1_eagle.intent import Intent
 from w1a1_eagle.model import (
+    BYPASS_CHANNELS,
     DeferredChecks,
     Layer,
     Projection,
@@ -95,6 +96,27 @@ def failing(target: TensorWorker, damage: Callable[[TensorWorker], None]) -> Bas
     if target.optimizer.state or target.optimizer_updates or target.updates:
         raise AssertionError("the optimizer stepped before the error")
     return caught
+
+
+class TestGateUpBypass(unittest.TestCase):
+    def test_exact_columns_bypass_quantization_and_train_the_remaining_weights(self) -> None:
+        module = projection(8, 864, 4, 8101)
+        unchanged = projection(8, 864, 4, 8101)
+        module.enable_bypass()
+        values = torch.randn((4, 864), generator=torch.Generator().manual_seed(8102))
+        values[:, list(BYPASS_CHANNELS)] *= 35
+        masked = values.clone()
+        masked[:, list(BYPASS_CHANNELS)] = 0
+        exact_weights = unchanged.latent_sign.detach()[:, list(BYPASS_CHANNELS)]
+        side = torch.nn.functional.linear(values[:, list(BYPASS_CHANNELS)], exact_weights)
+        expected = unchanged(masked) + side
+        actual = module(values)
+        torch.testing.assert_close(actual, expected, rtol=0, atol=0)
+        actual.sum().backward()
+        gradient = module.latent_sign.grad
+        assert gradient is not None
+        self.assertEqual(int(torch.count_nonzero(gradient[:, list(BYPASS_CHANNELS)])), 0)
+        self.assertGreater(int(torch.count_nonzero(gradient[:, 1:850])), 0)
 
 
 class TestSingleProduct(unittest.TestCase):

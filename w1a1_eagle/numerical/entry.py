@@ -19,7 +19,7 @@ from w1a1_eagle.identity import loaded_identity, source_identity
 from w1a1_eagle.index import IndexReader
 from w1a1_eagle.intent import Intent
 from w1a1_eagle.lifecycle import Journal, control
-from w1a1_eagle.model import HE4, Geometry, bound_latents
+from w1a1_eagle.model import BYPASS_CHANNELS, HE4, Geometry, bound_latents, enable_gate_up_bypass
 from w1a1_eagle.numerical.calibration import calibrate, start_check
 from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.numerical.corpus import Corpus
@@ -150,6 +150,7 @@ def admission(intent: Intent, corpus: Corpus) -> Record:
         "optimization": cast(Record, asdict(intent.optimization)),
         "blocks": intent.blocks.encode(),
         **({"trained_tables": True} if intent.trained_tables else {}),
+        **({"gate_up_bypass": list(BYPASS_CHANNELS)} if intent.raw.get("gate_up_bypass") else {}),
         **({} if intent.features.default else {"features": intent.features.encode()}),
         **({"arithmetic": intent.arithmetic} if intent.arithmetic != "reference" else {}),
         **(
@@ -409,6 +410,11 @@ def run_leased(
         model.trained_tables or fusion_identity(model.fusion.operand) != corpus.fusion
     ):
         raise ValueError("fused corpus and model fusion table identities differ")
+    if intent.raw.get("gate_up_bypass"):
+        enable_gate_up_bypass(model)
+        journal.append(
+            {"kind": "gate-up-bypass", "attempt": attempt, "channels": list(BYPASS_CHANNELS)}
+        )
     model.to(str(intent.raw["device"]))
     if model.vocabulary.device.type == "cuda":
         device_admission(intent, corpus, model)

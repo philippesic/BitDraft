@@ -206,7 +206,13 @@ class Table(nn.Module):
         return functional.linear(value, self.operand)
 
 
+BYPASS_CHANNELS = (0, 850)
+
+
 class Projection(nn.Module):
+    bypass_columns: Tensor | None
+    bypass_weights: Tensor | None
+
     def __init__(self, weight: Tensor, bits: int, gain: nn.Parameter, clip: nn.Parameter) -> None:
         super().__init__()
         if bits not in (4, 8) or weight.ndim != 2 or not bool(torch.isfinite(weight).all()):
@@ -224,6 +230,18 @@ class Projection(nn.Module):
         self.checks: DeferredChecks | None = None
         self.single_product = False
         self.tensor_cores = False
+        self.register_buffer("bypass_columns", None, persistent=False)
+        self.register_buffer("bypass_weights", None, persistent=False)
+
+    def enable_bypass(self) -> None:
+        if self.bits != 4 or self.latent_sign.shape[-1] <= max(BYPASS_CHANNELS):
+            raise ValueError("two-channel bypass requires the 4-bit gate/up input geometry")
+        self.bypass_columns = torch.tensor(BYPASS_CHANNELS, device=self.latent_sign.device)
+        self.bypass_weights = self.latent_sign.detach().index_select(-1, self.bypass_columns)
+
+    def quantizer_input(self, value: Tensor) -> Tensor:
+        columns = self.bypass_columns
+        return value if columns is None else value.index_fill(-1, columns, 0)
 
     @property
     def maximum(self) -> int:
@@ -253,6 +271,14 @@ class Projection(nn.Module):
     def forward(self, value: Tensor) -> Tensor:
         if self.recorded is not None:
             self.recorded.append(value.detach())
+        result = self.project(self.quantizer_input(value))
+        columns = self.bypass_columns
+        weights = self.bypass_weights
+        if columns is not None and weights is not None:
+            result = result + functional.linear(value.index_select(-1, columns).float(), weights)
+        return result
+
+    def project(self, value: Tensor) -> Tensor:
         codes, step = self.quantize(value)
         scale = self.scale.clamp_min(0)
         if self.temperature is not None:
@@ -559,6 +585,12 @@ class HE4(nn.Module):
                 state, block.context(encoded, context_positions), positions, allowed
             )
         return functional.linear(rms(state, self.output_norm, cfg.epsilon), self.vocabulary)
+
+
+def enable_gate_up_bypass(model: HE4) -> None:
+    for _, projection in named_projections(model):
+        if projection.bits == 4:
+            projection.enable_bypass()
 
 
 def named_projections(model: HE4) -> list[tuple[str, Projection]]:

@@ -282,6 +282,7 @@ class Intent:
                 "initial_export",
                 "arithmetic",
                 "round_states",
+                "gate_up_bypass",
             }
             != required
             or type(raw["schema"]) is not int
@@ -329,6 +330,14 @@ class Intent:
             raise ValueError("unsupported training mode")
         if (mode == "fresh") != (raw["parent"] is None):
             raise ValueError("fresh requires no parent; resume/branch require an explicit parent")
+        if "gate_up_bypass" in raw and (
+            raw["gate_up_bypass"] is not True
+            or mode not in {"fresh", "resume"}
+            or "calibration" not in raw
+            or "gradual_precision" in raw
+            or integer(geometry["hidden"]) <= 850
+        ):
+            raise ValueError("gate/up bypass requires calibrated hard-sign training")
         if "retention" in raw:
             retention = record(raw["retention"])
             if (
@@ -628,6 +637,7 @@ class Intent:
                 ),
                 **({"trained_tables": True} if self.trained_tables else {}),
                 **({} if self.features.default else {"features": self.features.encode()}),
+                **({"gate_up_bypass": True} if self.raw.get("gate_up_bypass") else {}),
                 **({"arithmetic": self.arithmetic} if self.arithmetic != "reference" else {}),
                 **(
                     {"round_states": self.round_states.encode()}

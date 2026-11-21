@@ -28,7 +28,7 @@ from w1a1_eagle.drafting import (
     tally,
 )
 from w1a1_eagle.identity import source_identity
-from w1a1_eagle.model import HE4, Geometry
+from w1a1_eagle.model import HE4, Geometry, enable_gate_up_bypass
 from w1a1_eagle.numerical.baseline import load_baseline, table_rows, table_tensor
 from w1a1_eagle.numerical.captures import Capture, load_capture
 from w1a1_eagle.numerical.export import export_he4
@@ -488,7 +488,16 @@ def rounds_report(
 def candidate_model(
     section: Record, root: Path, run: Run, device: str
 ) -> tuple[HE4, StateRef, dict[str, object], str, Artifact, Artifact]:
-    allowed = {"source", "vocabulary", "initialization", "frozen_baseline", "state", "mode", "arm"}
+    allowed = {
+        "source",
+        "vocabulary",
+        "initialization",
+        "frozen_baseline",
+        "state",
+        "mode",
+        "arm",
+        "gate_up_bypass",
+    }
     if not {"source", "vocabulary", "state", "mode"} <= set(section) <= allowed:
         raise ValueError("candidate needs source, vocabulary, state and mode")
     mode = string(section["mode"])
@@ -510,6 +519,10 @@ def candidate_model(
         "Q4_0" if frozen is None else "baseline-k",
         frozen,
     )
+    if "gate_up_bypass" in section:
+        if section["gate_up_bypass"] is not True or mode != "continue":
+            raise ValueError("gate/up bypass diagnostics require a matching checkpoint")
+        enable_gate_up_bypass(model)
     if device == "cuda":
         model = model.cuda()
         gc.collect()

@@ -218,6 +218,8 @@ def calibrate(
         for stage in (((prefix + "gate", gate), (prefix + "up", up)), ((prefix + "down", down),)):
             first = stage[0][1]
             (inputs,) = recorded_inputs(model, selection, slots, [first])
+            if first.bypass_columns is not None:
+                inputs = [first.quantizer_input(value) for value in inputs]
             sources = torch.cat([projection.latent_sign.detach() for _, projection in stage])
             set_bound(first, choose_bound(first, inputs, sources))
             del sources
