@@ -9,7 +9,7 @@ The list is a record of what to test and why, not a schedule.
 ## Authorized
 
 Recording only. Items 1, 2, 3 and 8 were authorized by the owner on 2026-11-14, and items 9
-and 10 on 2026-11-16; all are finished. Items 11 and 12 were authorized on 2026-11-20, and items 13, 14 and 15 on the same day (16:30 PST, "do all 3 yourself"). The other items are listed, not authorized: each starts only on the owner's
+and 10 on 2026-11-16; all are finished. Items 11 and 12 were authorized on 2026-11-20, and items 13, 14 and 15 on the same day (evening, "do all 3 yourself"); all three are finished. The other items are listed, not authorized: each starts only on the owner's
 explicit go-ahead. The overnight screening sheet under State was authorized on 2026-11-15.
 GPU and CPU-heavy work waits until no other thread holds the GPU lease.
 
@@ -21,8 +21,6 @@ Then delete this file.
 ## State
 
 Owner: Philip. Recorded 2026-11-14 from the candidate-overhaul discussion.
-
-Timing owner for items 13–15: the lead agent, marker `artifacts/claim-measurements-01/TIMING-ACTIVE` while a timed run is active.
 
 Rule for adding an item: say whether it depends on low precision or another concrete
 difference of the candidate, what it would do for Baseline, and whether existing drafters
@@ -49,9 +47,9 @@ tables (0.27 ms) are still 4-bit.
 | 10 | Train the attention and fusion tables together with feed-forward, against a matched run with them frozen | Does letting the 4-bit tables adapt to the one-bit feed-forward recover acceptance at no cost in size or speed? | GPU hours, two matched runs | Yes | Partly: the candidate is trained and Baseline is a fixed release, but nothing here needs one-bit arithmetic | Done 2026-11-16 ([result](../results/trained-attention-tables/result.md)): three one-hour matched runs at {32 windows, 1.75 GiB, 15 GiB}, Q4_0 tables. Screen acceptance: frozen 50.14%, small step (1e-5) +1.31 points (+0.55, +2.03), ten times that +0.87 (+0.08, +1.71); DEV within noise. Needs `expandable_segments` on this host. Owner decision pending: a longer confirmation only together with a Q4_K export of trained tables, whose absence costs about as much speed as the gain |
 | 11 | Shortlist-only vocabulary table: look up input tokens in the target's Q6_K `token_embd`, converted to Q4_K on demand; score against our own Q4_K table holding only the shortlisted rows, rebuilt from `train-final-02-fused` labels; convert out-of-shortlist request-token rows on demand | Can the file drop from 517 to about 255 MiB (Baseline 364) and save about 260 MiB of VRAM with identical outputs, acceptance and the shortlist's speed? Our Q4_K table is an exact conversion of the target's Q6_K table (verified 2026-11-17), so no row is lost | About half a day: Opus runtime build of 2–3 hours plus 30–45 GPU minutes to check against the full-table shortlist build | No | No: removes a size handicap. Baseline already borrows the target's table and gains nothing | Done 2026-11-20 on the owner's go of that day ([result](../results/shortlist-only-table/result.md)): 284 MB against Baseline's 381 MB (68,728 rows, more labels than the estimate assumed), 340 MiB less GPU memory, identical drafts, owner policy passed with no shortfall at 1.05–1.13× Baseline as released and about 1.03× against Baseline with the same shortlist (1.12× agentic). Owner decision pending: whether this is the release form |
 | 12 | Small file without vocabulary rows: ship only the body and the shortlist token IDs; the server builds the 68,728 shortlisted Q4_K rows at start-up from the target's Q6_K `token_embd`, with the row conversion runtime-v10 already uses for other rows | Can the file drop from 284 MB to about 184 MB (Baseline 381 MB) with identical drafts, and what does start-up cost? One CPU core converts 8,000 synthetic rows in 0.66 s, so about 6 s for the shortlist (lead's timing, 2026-11-20) | A short runtime build plus GPU minutes on the 60-request screen | No | No: removes a size handicap; Baseline already borrows the target's table. File size only: the rows still sit in GPU memory | Done 2026-11-20 on the owner's go of that day ([result](../results/shortlist-derived-rows/result.md)): 185 MB against Baseline's 381 MB, built rows byte-identical to the shipped ones, identical drafts on the 60-request screen and 8 pilot tasks, start-up 6.5 s against 0.85 s, GPU memory and speed unchanged. Owner decision pending: which serving form is released |
-| 13 | Serve the publisher's Q2_K (244 MB) and Q3_K_M (314 MB) files of Baseline and the target's built-in draft head at 3 steps, on the screen and the panel | Is "smaller at equal acceptance" a one-bit result, or do stock low-bit files or the head, which needs no drafter file, already give it? | About 20 GPU minutes | No | No: measures the comparators the size claim leaves out | Authorized 2026-11-20; running under `artifacts/claim-measurements-01/` |
-| 14 | Serve the 4-bit control with the shipping shortlist beside the leader's small file and Baseline with the shortlist, on the screen and the panel, runtime-v10 | Is the leader as fast as a same-data 4-bit drafter when both use the shortlist? | 15–35 GPU minutes | No | No: measurement | Authorized 2026-11-20; running under `artifacts/claim-measurements-01/` |
-| 15 | Start-quality table with no training: the calibrated one-bit start against (a) two clipped input channels carried outside the clipped path, (b) 8-bit gate/up inputs with a wide bound, (c) Baseline's weights behind the leader's input rounding | Where are the 3.8 points lost: sign weights, input rounding and clipping, or the start? | About 40 GPU minutes | No | Yes | Authorized 2026-11-20; running under `artifacts/claim-measurements-01/` |
+| 13 | Serve the publisher's Q2_K (244 MB) and Q3_K_M (314 MB) files of Baseline and the target's built-in draft head at 3 steps, on the screen and the panel | Is "smaller at equal acceptance" a one-bit result, or do stock low-bit files or the head, which needs no drafter file, already give it? | About 20 GPU minutes | No | No: measures the comparators the size claim leaves out | Done 2026-11-20 ([result](../results/claim-comparators/result.md)): panel acceptance 39.3% for the 2-bit file and 52.0% for the 3-bit file against Baseline's 53.4% and the leader's 50.8%, both slower than Baseline; the built-in head accepts 57.9% with no file at 0.964× Baseline |
+| 14 | Serve the 4-bit control with the shipping shortlist beside the leader's small file and Baseline with the shortlist, on the screen and the panel, runtime-v10 | Is the leader as fast as a same-data 4-bit drafter when both use the shortlist? | 15–35 GPU minutes | No | No: measurement | Done 2026-11-20 ([result](../results/claim-comparators/result.md)): control with shortlist against the leader's small file 0.982 (0.974, 0.991), against the leader's full-table shortlist file 1.011 (1.003, 1.020); the control accepts 3.77 points more |
+| 15 | Start-quality table with no training: the calibrated one-bit start against (a) two clipped input channels carried outside the clipped path, (b) 8-bit gate/up inputs with a wide bound, (c) Baseline's weights behind the leader's input rounding | Where are the 3.8 points lost: sign weights, input rounding and clipping, or the start? | About 40 GPU minutes | No | Yes | Done 2026-11-20 ([result](../results/claim-comparators/result.md)): simulated acceptance at update 0 is 60.8% with exact weights, 41.3% with 4-bit inputs, 60.1% with the two channels carried exactly or with 8-bit inputs; sign weights 10.3%, with the two-channel bypass 30.5%, with 8-bit inputs alone 13.0% |
 
 Evidence behind items 1–3: the November 4 binary-method screen and the November 5 execution
 campaign ([speed and model quality](../results/execution-speed-and-model-quality/result.md),
@@ -146,6 +144,12 @@ the drafter.
 
 The owner decides the release form of the leader: the 284 MB small file on runtime-v10 (0.85 s
 start) or the 185 MB file without vocabulary rows on runtime-v11 (6.5 s start).
+
+The owner decides what follows from the [claim comparators](../results/claim-comparators/result.md):
+the wording of the size and speed claim now that the built-in head and the stock low-bit
+files are measured, and whether a 21,000-update one-bit run with the two-channel bypass
+is made (needs a training-graph change; serving it needs a kernel side-term). Neither a
+calibrated low-bit Baseline near 184 MB nor the head with a shortlist is authorized.
 
 The owner decides what follows from the [one-bit attribution](../results/one-bit-attribution/result.md):
 whether the release stays one-bit, and whether a 4-bit control of the leader's length or a 4-bit
