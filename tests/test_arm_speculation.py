@@ -83,6 +83,8 @@ def test_declared_speculation_parses_binds_identity_and_serves_each_arm(tmp_path
         "arm_depths": {"baseline": 4},
         "arm_speculation": {"baseline": "draft-dspark"},
     }
+    head = declare(path, {"baseline": "draft-mtp"})
+    assert spec_type(server_arguments(head, head.arms[1], 1)) == "draft-mtp"
     for invalid in (
         {"target": "draft-dspark"},
         {"missing": "draft-dspark"},
@@ -99,7 +101,9 @@ def test_generation_check_requires_the_declared_native_mode() -> None:
     verify_generation(answered("draft-dflash"), query, True)
     verify_generation(answered("none"), query, False)
     verify_generation(answered("draft-dspark"), query, True, "draft-dspark")
+    verify_generation(answered("draft-mtp"), query, True, "draft-mtp")
     for response, mode in (
+        (answered("draft-mtp"), "draft-dflash"),
         (answered("draft-dspark"), "draft-dflash"),
         (answered("draft-dflash"), "draft-dspark"),
     ):
