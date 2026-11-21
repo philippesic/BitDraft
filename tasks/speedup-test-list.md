@@ -146,23 +146,13 @@ the drafter.
 The owner decides the release form of the leader: the 284 MB small file on runtime-v10 (0.85 s
 start) or the 185 MB file without vocabulary rows on runtime-v11 (6.5 s start).
 
-On 2026-11-21 the owner approved three follow-ups to the
-[claim comparators](../results/claim-comparators/result.md) and
-[one-bit attribution](../results/one-bit-attribution/result.md):
-
-| Follow-up | State |
-| --- | --- |
-| Two-channel gate/up bypass, 21,000 one-bit updates | Isolated experiment based on the original arm's source. The 64-update checkpoint passed offline replay. The matched arm is running as task 35. Compare with the unchanged 21,000-update arms on the same DEV round replay. |
-| Unchanged one-bit arm on seed 8102 | Done. The 120-request panel scored 46.61% against seed 8101's 46.75%. The offline DEV replay scored 52.81% against 52.90%. |
-| Fresh thinking-on, sampled and agentic references | Done on 2026-11-21. [Same-session results](../results/fresh-native-references/result.md) and registry observations cover all four arms. |
-
-The owner withdrew the longer 4-bit run. The bypass experiment is for offline evaluation.
-Its preflight and execution notes are in `artifacts/one-bit-attribution-01/logs/overnight-preflight.md`.
-The native timing marker is `artifacts/one-bit-attribution-01/TIMING-ACTIVE`.
+The 2026-11-21 follow-ups are closed in the [two-channel bypass](../results/two-channel-bypass/result.md)
+and [native references](../results/fresh-native-references/result.md) results. The owner
+withdrew the longer 4-bit run on 2026-11-21.
 The owner still decides the claim wording, whether the release stays one-bit and whether
 the 4-bit control gets the Q4_K vocabulary table.
 
 The owner decides on item 10 (a longer confirmation with a Q4_K export of trained tables, or
 keep frozen tables) and whether three-valued weights or a second one-bit plane get a serving
 kernel and a longer run. Write result entries for items 1, 2, 3 and 8. Items 5 and 7 can run
-on the native Linux host; item 7's vocabulary probes depend on the item 10 decision. Use the fresh paired references above for the new comparison.
+on the native Linux host; item 7's vocabulary probes depend on the item 10 decision. Use the fresh native references for the three measured Q4KM suites.

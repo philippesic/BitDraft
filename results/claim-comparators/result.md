@@ -142,7 +142,8 @@ against an rms of 0.17 for the other 2,558 channels. By layer 5 they are +16.1 Â
 
 - **Start quality is not trained quality.** The start table has no training. The leader
   recovers from 10% to 50.8% served acceptance over 335,812 updates, and nothing here shows
-  how much of the 20-point start gain survives training.
+  how much of the 20-point start gain survives training. The later
+  [matched bypass run](../two-channel-bypass/result.md) addresses this at 21,000 updates.
 - **Simulated, not served.** Start-table rows are round simulations on 32 DEV captures
   (`broad-precision-dev-01`), not the screen or the panel. The 60-request screen captures
   the earlier diagnostics used were retired. The bypass has no serving kernel.

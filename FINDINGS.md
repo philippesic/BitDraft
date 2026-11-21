@@ -10,6 +10,14 @@ See [closeout specification](docs/results.md).
 
 ## Current candidate and retained controls
 
+### F039: Does bypassing two gate/up input channels help after matched training?
+
+After 21,000 updates, the bypass gained 0.58 points on the 32-request offline DEV
+replay against the same-seed one-bit arm (95% interval −0.07 to +1.42). That falls
+below the one-point threshold. An unchanged second seed differed by 0.14 points on
+the served DEV panel. The bypass still has no native timing. Keep the current
+release recipe. [Result](results/two-channel-bypass/result.md).
+
 ### F038: Do the leader and trained 4-bit control still tie when timed together?
 
 Yes, within 1% on thinking-on, sampled and agentic DEV suites on the RTX 5080.
@@ -33,7 +41,8 @@ Three were measured on the panel, exact outputs, runtime-v10:
 With no training, sign weights collapse the start (10.3% simulated acceptance against
 60.8%), and two near-constant input channels carry most of it: sending them through
 Baseline's own columns gives 30.5%, while 8-bit inputs alone give 13.0%. Whether that
-survives training is untested. One run per tier, reused DEV data, stock conversions only.
+survives training was checked in [F039](#f039-does-bypassing-two-gateup-input-channels-help-after-matched-training).
+One run per tier, reused DEV data, stock conversions only.
 [Result](results/claim-comparators/result.md).
 
 ### F036: Does the leader's file need to ship vocabulary rows at all?
