@@ -145,18 +145,23 @@ the drafter.
 The owner decides the release form of the leader: the 284 MB small file on runtime-v10 (0.85 s
 start) or the 185 MB file without vocabulary rows on runtime-v11 (6.5 s start).
 
-The owner decides what follows from the [claim comparators](../results/claim-comparators/result.md):
-the wording of the size and speed claim now that the built-in head and the stock low-bit
-files are measured, and whether a 21,000-update one-bit run with the two-channel bypass
-is made (needs a training-graph change; serving it needs a kernel side-term). Neither a
-calibrated low-bit Baseline near 184 MB nor the head with a shortlist is authorized.
+On 2026-11-21 the owner approved three follow-ups to the
+[claim comparators](../results/claim-comparators/result.md) and
+[one-bit attribution](../results/one-bit-attribution/result.md):
 
-The owner decides what follows from the [one-bit attribution](../results/one-bit-attribution/result.md):
-whether the release stays one-bit, and whether a 4-bit control of the leader's length or a 4-bit
-drafter with a Q4_K vocabulary table is run. Neither is authorized.
+| Follow-up | State |
+| --- | --- |
+| Two-channel gate/up bypass, 21,000 one-bit updates | Isolated experiment based on the original arm's source. Task 30 qualifies a 64-update train, checkpoint and offline replay. Task 35 waits for it and the unchanged replays in task 31. Compare with the unchanged 21,000-update arms on the same DEV round replay. |
+| Unchanged one-bit arm on seed 8102 | Running in the RTX 5080 queue, task 29. Same 21,000 updates as seed 8101. Measure acceptance on the same 120-request panel and offline DEV replay. |
+| Fresh thinking-on, sampled and agentic references | Existing native Linux runs measured the leader and 4-bit control in separate sessions. Fresh specs put target-only, Baseline, the full-head leader and the 4-bit control in the same suite session. GPU queue tasks 32–34. |
+
+The owner withdrew the longer 4-bit run. The bypass experiment is for offline evaluation.
+Its preflight and execution notes are in `artifacts/one-bit-attribution-01/logs/overnight-preflight.md`.
+The native timing marker is `artifacts/one-bit-attribution-01/TIMING-ACTIVE`.
+The owner still decides the claim wording, whether the release stays one-bit and whether
+the 4-bit control gets the Q4_K vocabulary table.
 
 The owner decides on item 10 (a longer confirmation with a Q4_K export of trained tables, or
 keep frozen tables) and whether three-valued weights or a second one-bit plane get a serving
 kernel and a longer run. Write result entries for items 1, 2, 3 and 8. Items 5 and 7 can run
-on the native Linux host; item 7's vocabulary probes depend on the item 10 decision. Level 2
-and 3 decisions on this host first need thinking, sampled and agentic references.
+on the native Linux host; item 7's vocabulary probes depend on the item 10 decision. Use the fresh paired references above for the new comparison.
