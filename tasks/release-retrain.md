@@ -2,306 +2,327 @@
 
 ## Goal
 
-Retrain the release drafter from scratch on licence-clean, broader and much larger TRAIN data.
-Judge it against standard public benchmarks and against Baseline both as released and fine-tuned
-on the same data. Then publish a release whose claims, data card and licences hold up to
-outside scrutiny.
+Retrain the release drafter on licence-clean, broader and much larger TRAIN data. Training starts
+fresh from the calibrated conversion of the public Baseline weights, as before. Judge the result on
+a frozen public benchmark gate, against Baseline both as released and fine-tuned on the same data.
+Then publish a release whose claims, data card and licences hold up to outside scrutiny.
 
 ## Authorized
 
 Planning only, drafted 2026-11-21 from the owner's request of that day. No data pulls, captures,
-builds, training, rentals or benchmark runs are authorized yet. Each workstream below needs an
-explicit go. A listed item is a proposal, not a decision.
+builds, training, rentals or benchmark runs are authorized yet. Each step below needs an explicit
+go. A listed item is a proposal, not a decision.
 
 ## Done when
 
 - The owner has decided the open questions under `State`.
-- The data card, eval suite and release gate exist and are frozen before the final training run.
-- The final run and every comparison arm are measured, closed through close-results and
-  recorded in FINDINGS.
-- The release ships with a licence, a model card, a data card and reproducible eval commands.
+- The rights audit, data card, public harness and release gate are frozen before TRAIN is acquired.
+- The final run and every comparison arm are measured, closed through close-results and recorded
+  in FINDINGS.
+- The release ships with a licence, model card, data card, pinned runtime and reproducible eval
+  commands, and an outside checkout reproduces one published result.
 
 ## State
 
-Owner: unassigned (planning thread). Branch: `main`. No artifacts created.
+Owner: unassigned (planning thread). Branch: `main`. No artifacts created. GPT-6.2 Astra reviewed
+the plan on 2026-11-21. Its accepted corrections are folded in below.
 
 ### What the previous train taught us
 
-- **Data is the limit, not the recipe.** S4 flattened after about two passes and then mostly
-  memorized (F025, F029). The long fused run was still gaining about 0.3 points per segment at the
-  end (F033). TRAIN is 13,394 records. DFlash-class drafters train on about 800K samples, and the
-  DFlare follow-up trains on 2.4M. We are about 60 times smaller.
-- **The data, not one bit, carried the result.** A 4-bit control trained for 66 minutes matched the
-  leader's speed (F034). Its acceptance on ordinary requests was flat between 2,000 and 21,000
-  updates. It kept gaining only on agentic sessions, from 57% to 69% first choice. That is the
-  owner's observation "about 1% and then it stopped learning". It fits a narrow TRAIN set:
-  Baseline already knows general text better than our 13K records can teach it.
-- **One-bit kept gaining with length.** The gap to the control narrowed from 10.8 to 7.8 panel points
-  between 2,000 and 21,000 updates (F034). Whether much more data closes it is the central
-  scientific question of this retrain.
-- **One tool-call convention is fragile.** Moving the DEV tool tasks to JSON calls dropped the
-  leader's acceptance from 79.7% to 46.7%, while Baseline only fell from 61.8% to 59.9% (F040).
-  The agentic advantage came from training on our harness's own format.
-- **Our evals are home-grown, reused and partly broken.** Every panel is reused DEV selection data.
-  The protected agentic suite completed 0/15 for every arm because of the repeated-assistant rule
-  (F040). The owner-policy rule needed merged strata to produce a verdict at all.
-- **Licence problems in TRAIN.** MATH (`EleutherAI/hendrycks_math`) is AoPS content. Hugging Face
-  disabled it after an AoPS DMCA notice on 2025-01-02. The legacy prompt sources
+- **More distinct data is the leading hypothesis, but it is not isolated.** S4 flattened after
+  about two passes and then mostly memorized (F025). The flattening coincided with the cosine tail,
+  and no control isolated data. The long fused run changed size, mix, storage and length together.
+  It was still gaining about 0.3 points per segment at the end (F033). TRAIN is 13,394 records.
+  DFlash used about 800K samples and DFlare 2.4M.
+- **The data, not one bit, carried the speed result.** A 4-bit control trained for 66 minutes
+  matched the leader's speed (F034). Its acceptance on ordinary requests was flat between 2,000 and
+  21,000 updates. It kept gaining only on agentic sessions, from 57% to 69% first choice. That is
+  the owner's "about 1% and then it stopped learning".
+- **One-bit kept gaining with length.** The gap to the control narrowed from 10.8 to 7.8 panel
+  points between 2,000 and 21,000 updates (F034).
+- **The leader's cheaper round has two parts.** The one-bit feed-forward kernel saves 0.16 ms and
+  our smaller vocabulary table saves 0.17 ms. Together they are worth about 3.5 acceptance points.
+  A 4-bit drafter can also take the second saving (F034).
+- **Tool-call format sensitivity.** On 12 DEV tasks, JSON calls dropped the leader's acceptance
+  from 79.7% to 46.7%, while Baseline only fell from 61.8% to 59.9% (F040). This shows sensitivity
+  to the format. It does not establish what caused the original advantage.
+- **Evaluation state.** The six protected request suites were independent and passed (1.9–5.6%
+  over Baseline, F040). The routine DEV panels are reused selection data. The protected agentic
+  suite completed 0/15 in every arm: eleven assignments hit the repeated-assistant rule and four
+  the turn limit, while eight final workspaces passed their checks. The owner policy needed merged
+  strata to produce a verdict.
+- **Licence problems in TRAIN.** MATH (`EleutherAI/hendrycks_math`) is AoPS content, which Hugging
+  Face disabled after an AoPS DMCA notice on 2025-01-02. The legacy prompt sources
   (`legacy-freeze-002`, `legacy-gsm8k` and others) have no recorded licence audit. UltraChat is
-  MIT-licensed but generated with GPT-3.5, which raises a terms-of-use question to check.
-- **Things that worked and carry over:** calibrated start (+7.4 points), 4-slot blocks for depth 3,
-  cosine schedule, `baseline-k` frozen tables, fused F16 storage, the vocabulary shortlist and the
-  shortlist-only file, the recovered tensor-core kernel, and exact runtime-v10/v11.
+  MIT-licensed but GPT-3.5-generated, so check its terms.
+- **Carries over:** calibrated start (+7.4 points), 4-slot blocks for depth 3, cosine schedule,
+  `baseline-k` frozen tables, fused F16 storage, the vocabulary shortlist, the shortlist-only file,
+  the recovered tensor-core kernel and exact runtime-v10/v11.
 - **Comparators any claim must name:** stock Baseline, the 4-bit control, the target's built-in
   draft head (57.9% acceptance, no file, 0.964× Baseline; F037) and the stock 2-bit and 3-bit files.
 
 ### Owner decisions (2026-11-21)
 
-- **One-bit only.** The release keeps one-bit feed-forward weights. Three-valued weights and a
-  second plane are out of scope.
-- **Qwen3.5-4B first.** A larger target is a later question. The evidence on how one bit scales is
-  summarized under `Scaling to larger targets`.
-- **Rentals.** Do all setup and validation training locally. Rent only once the owner is certain the
+- **One-bit only.** Three-valued weights and a second plane are out of scope.
+- **Qwen3.5-4B first.** A larger target is a later question (see `Scaling to larger targets`).
+- **Rentals.** Do all setup and validation locally. Rent only once the owner is certain the
   remaining step is "rent, train, release". Whether response generation rents depends on its
   measured local duration.
-- **Benchmarks.** The owner's goal is no remaining uncertainty about benchmarking. Proposed form,
-  pending confirmation: local acceptance checks are allowed for selection during training;
-  release requires the standard public suite under a protocol frozen before the run.
+- **Benchmarks.** The goal is no remaining uncertainty about benchmarking. Proposed form, pending
+  confirmation: local acceptance checks for selection during training, and a frozen public gate
+  for release (workstream D).
 
-### Industry practice (web research, 2026-11-21; excerpts and cards, not full re-reads)
+### Industry practice (web research, 2026-11-21; key claims checked by the review)
 
 - **Data scale.** EAGLE-3 reproductions use ShareGPT plus UltraChat, about 320K conversations.
   DFlash uses about 800K samples. DFlare (Peking University and Tencent, June 2026) uses 2.4M from
   Nemotron Post-Training v2, CodeAlpaca and Step-3.5-Flash-SFT. Open-PerfectBlend has about 1.3M
-  samples (chat 17.6%, maths 39.4%, code 38.9%, instruction following 4.1%). SGLang's SpecBundle
-  drafters and NVIDIA's NeMo DFlash and DSpark recipes use it.
-- **Regenerating responses with the target is standard.** Practice keeps only prompts and
-  regenerates answers with the target, using its recommended sampling settings. SpecBundle reports
-  about +5.3% throughput from regeneration alone. We already do this, so the licence question
-  reduces to the prompts.
+  samples from eight components (chat 17.6%, maths 39.4%, code 38.9%, instruction following 4.1%).
+  SGLang's SpecBundle and NVIDIA's NeMo DFlash and DSpark recipes use it.
+- **Regenerating responses with the target is standard practice**, using its recommended sampling
+  settings. Regeneration does not by itself clear rights. Earlier assistant turns, quoted answers
+  and tool outputs survive inside later prompts, and dataset cards carry per-sample licences and
+  downstream-terms warnings.
 - **Licences seen.** Nemotron Post-Training v2 is mostly CC-BY-4.0, with WildChat prompts ODC-BY
-  and StackOverflow CC-BY-SA, and per-sample licences. Its card warns that models trained on it
-  may inherit Qwen and DeepSeek terms through its responses, which regeneration removes.
-  Open-PerfectBlend's licence and the provenance of its components are unconfirmed. Its maths share
-  may derive from MATH or AoPS, so audit each component before use. xLAM-60k is gated, reportedly
-  CC-BY-4.0. Hermes and ToolACE licences are unverified.
-- **Storage.** SpecForge's offline mode needs about 12 TB for UltraChat plus ShareGPT, which is why
-  online feature computation (the target beside the trainer) is the usual large-scale mode.
-  SpecForge, NeMo AutoModel and vLLM Speculators all support DFlash or EAGLE-style training.
-- **Objective.** DistillSpec (ICLR 2024): token acceptance equals 1 minus the total-variation
-  distance between drafter and target. On-policy data matters, and the best divergence depends on
-  greedy versus sampled decoding. This supports the soft-target screen in workstream B.
+  and StackOverflow CC-BY-SA, and per-sample licences. Its card warns about Qwen and DeepSeek terms.
+  Open-PerfectBlend includes 395K MetaMathQA examples, which are augmentations of GSM8K and MATH
+  training problems, so part of it inherits the AoPS problem. Its card is an inventory, not a
+  clearance. xLAM-60k is gated, reportedly CC-BY-4.0. Hermes and ToolACE are unverified.
+- **Training frameworks.** SpecForge, NeMo AutoModel and vLLM Speculators support DFlash- or
+  EAGLE-style training, usually computing target features online at large scale.
+- **Objective.** DistillSpec (ICLR 2024): under speculative sampling, expected token acceptance
+  equals 1 minus the total-variation distance between drafter and target at a shared history.
+  On-policy data matters, and the best divergence depends on decoding mode. This motivates, but
+  does not predict, a top-k KL gain for a multi-slot greedy block drafter.
 - **Multilingual.** Several papers report that drafters accept much less outside English, roughly
-  tracking how much data a language has, and that language-specific data helps.
-- **Evaluation standard.** The DFlash and DFlare papers report τ and speed-up on GSM8K, MATH-500,
-  AIME25, HumanEval, MBPP, LiveCodeBench and MT-Bench, greedy and at temperature 1.
-  SPEED-Bench (NVIDIA, ICML 2026) is the newest dedicated speculative-decoding benchmark. Its
-  qualitative split draws on 18 sources selected for semantic diversity and reports per-category
-  acceptance. Its throughput split covers 1K–32K input buckets across concurrency levels. Its
-  authors fault Spec-Bench for small, low-diversity prompt sets. Licence: NVIDIA Evaluation Dataset
-  License, with some examples masked and fetched through their framework. The framework supports
-  vLLM, SGLang and TensorRT-LLM, not llama.cpp.
-- **Known evaluation pitfalls.** Batch 1 alone overstates gains, which shrink as batch grows.
+  tracking how much data a language has. Language-specific data helps.
+- **Evaluation.** DFlash reports τ and speed-up on GSM8K, MATH-500, AIME25, HumanEval, MBPP,
+  LiveCodeBench and MT-Bench, and DFlare on six of these, greedy and at temperature 1. Shared task
+  names do not make numbers comparable across target precision, block size, runtime, hardware,
+  prompt format, output caps and speed denominator.
+  SPEED-Bench (NVIDIA, ICML 2026) is the newest dedicated benchmark. Its qualitative split draws on
+  18 sources selected for semantic diversity, with per-category acceptance. Its throughput split
+  covers 1K–32K inputs across concurrency levels. Licence: NVIDIA Evaluation Dataset License, with
+  some examples masked behind their framework. That framework supports vLLM, SGLang and
+  TensorRT-LLM, not llama.cpp.
+- **Evaluation pitfalls.** Batch 1 alone overstates gains, which shrink as batch grows.
   Random-token throughput tests distort results. Report τ separately from wall-clock speed-up, and
   state prefix caching, output caps, temperature and the no-draft baseline server.
 - **Closest prior art.** "Quantize the Target, Quantize the Drafter" (Nota, July 2026, an ICML
-  AdaptFM competition report) uses our exact target, Qwen3.5-4B. It trains a 5-layer DFlash drafter
-  against the INT4 target, then quantizes it and adds sliding-window attention. It reports 3.57× on
-  an RTX 5000 Ada. Its drafter bit-width is unread, so read it before making a novelty claim.
-  Two searches found no one-bit or binary drafter. ML-SpecQD (Intel, 2025) only suggests a one-bit
-  target copy as a second-level draft. Novelty is plausible but not established.
+  AdaptFM competition report) uses our target, Qwen3.5-4B. It trains a 5-layer DFlash drafter on
+  the BF16 target, adapts it to the INT4 target, then quantizes it to GPTQ INT4 (group 128) and adds
+  sliding-window attention. Its 3.57× is against the BF16 target alone, and target quantization
+  alone gives 2.16× in the same table, so it is not a drafting-only gain. Two searches found no
+  one-bit drafter. ML-SpecQD (Intel, 2025) only suggests a one-bit target copy as a second-level
+  draft. Novelty is plausible but not established.
 
-### Workstream A: scope decisions (before anything else)
+### Workstream A: scope decisions
 
 1. **Release form.** Decided: one-bit only.
-2. **Targets.** Decided: Qwen3.5-4B first. Still open: Q4KM only, or also NVFP4 and BF16.
-3. **Which target produces TRAIN features.** The deployed Q4KM in our runtime, as now, gives exact
-   features but slow generation. Batched BF16 in vLLM generates far faster but gives slightly
-   different tokens. Pilot the mismatch before choosing.
+2. **Targets.** Decided: Qwen3.5-4B first. Open: Q4KM only, or also NVFP4 and BF16.
+3. **Response and feature source.** Q4KM in our runtime, as now, or BF16 responses from a batched
+   server replayed through Q4KM for features. The redesigned mismatch pilot decides this.
 4. **Serving path for users.** Our llama.cpp fork, an upstream llama.cpp PR, or also vLLM/SGLang.
-   A release nobody can run outside this repo is weak for the resume goal.
-5. **Licence.** Still undecided (`README.md`). The candidate starts from a conversion of Baseline's
-   weights, so Baseline's licence and the target's (Qwen, Apache-2.0) constrain it. Check both.
-6. **Rental scope.** Decided: local validation first, one final rented run. The rented run must
-   execute the same pipeline and code that passed locally, at reduced geometry if needed.
+5. **Licence and provenance.** Undecided (`README.md`). Training starts from a conversion of
+   Baseline's weights, so Baseline's licence and Qwen's (Apache-2.0) constrain the release. The
+   model card must say "trained from converted Baseline weights", not "from scratch".
+6. **Claim.** Which claim the gate tests: "faster than stock Baseline", "comparable speed to a
+   matched fine-tuned Baseline at about half the size", or both. This sets the gate's margins.
 
 ### Workstream B: production TRAIN data
 
-- **Licence audit first.** Every source gets a licence, revision, attribution duty and verdict in
-  the bank definition. Drop MATH, any unaudited legacy source and anything whose terms forbid this
-  use. Prompts carry the licence risk. The responses are regenerated by the target, as now.
-- **Volume target.** Start at about 300K conversations, the low end of current practice, with the
-  option to grow toward 800K or more if the scaling pilot keeps paying. The pilot curve sets the
-  final size.
-- **Base prompt pool.** Proposed: Nemotron Post-Training v2 prompts (CC-BY-4.0 subsets) as the
-  general backbone. Use audited Open-PerfectBlend components only after their provenance is
-  confirmed. Add targeted sources for long documents, multilingual and tools. Open-PerfectBlend's
-  shares (39% maths, 39% code) are a reference point, not our mix. Our scenarios need more chat,
-  long-context and agentic coverage.
-- **Mix (draft shares, to tune by pilot).** Chat and instruction following 20%. Coding (generation,
-  editing, explanation, several languages) 20%. Agentic and tool sessions 15%. Maths and reasoning
-  15%. Long documents (RAG, summarization, QA up to 32K) 10%. Writing 8%. Multilingual 7%.
-  Structured output (JSON, tables, extraction) 5%. Multilingual is absent today, even though Qwen
-  is strongly multilingual.
-- **Candidate permissive sources, each to verify.** Chat: Open-PerfectBlend (used by NVIDIA's DFlash
-  recipe), Nemotron post-training sets, oasst2, WildChat (ODC-BY). Maths: GSM8K train (MIT),
-  Orca-Math, and synthetic problems written by an open Apache model. Code: CommitPackFT,
-  OSS-Instruct-style sets under permissive licences, plus our own repository tasks. Long documents:
-  QASPER (CC-BY, needs attribution), GovReport-like public-domain text. Tools: Glaive, xLAM/APIGen,
-  ToolACE, Hermes function calling, each checked for licence.
+- **Rights audit first.** Per source, record licence, revision, attribution duty, which fields
+  survive into prompts (earlier turns, quoted answers, tool outputs), ancestry and a verdict. Drop
+  MATH, MetaMathQA and other MATH-derived sets, unaudited legacy sources, and anything whose terms
+  forbid this use. Audit the Baseline checkpoint's licence and data notices the same way.
+- **Volume.** Plan for about 300K conversations, the low end of current practice, and grow only if
+  a mid-scale checkpoint keeps paying. The tiny-corpus pilot cannot choose between 300K and 800K.
+- **Base prompt pool.** Nemotron Post-Training v2 prompts (CC-BY-4.0 subsets) as the backbone, plus
+  targeted sources for long documents, multilingual and tools. Open-PerfectBlend's shares are a
+  reference point, not our mix.
+- **Mix (draft shares).** Chat and instruction following 20%. Coding 20%. Agentic and tool sessions
+  15%. Maths and reasoning 15%. Long documents (RAG, summarization, QA up to 32K) 10%. Writing 8%.
+  Multilingual 7%. Structured output 5%.
+- **Candidate sources, each to audit.** Chat: Nemotron v2, oasst2, WildChat (ODC-BY). Maths: GSM8K
+  train (MIT), Orca-Math, synthetic problems written by an open Apache model. Code: CommitPackFT,
+  permissive OSS-Instruct-style sets, our own repository tasks. Long documents: QASPER (CC-BY),
+  public-domain government reports. Tools: Glaive, xLAM/APIGen, ToolACE, Hermes.
 - **Tool-call diversity.** At least four conventions: Qwen native XML, JSON inside the native
-  delimiters, OpenAI-style function JSON, and Markdown/diff-style agents (aider-like edits). Use
-  several agent harnesses and system prompts, MCP-style tool schemas, and parallel and multi-turn
-  calls. Hold one convention out entirely as an evaluation-only transfer test.
-- **Generation settings.** Thinking on and off. Greedy and sampled responses, with sampled using
-  Qwen's recommended settings,
-  because sampled is our weakest scenario. Regenerate every assistant turn of multi-turn sessions
-  with the target.
-- **Soft targets (new).** Store or compute the target's top-k probabilities and add a KL term
-  beside hard-label cross-entropy. This learns from the target, not from a full-precision drafter
-  teacher, so it differs from the rejected teacher idea. It should help sampled decoding most.
-  Screen it first.
-- **Hygiene.** Exact and near-duplicate removal (MinHash), decontamination against every public eval
-  set in workstream D, the existing heldout24 and confirmation exclusions, and per-source caps.
-- **Data card.** Sources, licences, attributions, shares, filters and the generation recipe, shipped
-  with the release.
+  delimiters, OpenAI-style function JSON, and diff-style editing agents. Use several harnesses,
+  system prompts and MCP-style schemas, with parallel and multi-turn calls. Hold one convention
+  out of TRAIN as a transfer test.
+- **Generation.** Thinking on and off. Greedy plus sampled with Qwen's recommended settings, since
+  sampled is our weakest scenario. Regenerate every assistant turn of multi-turn sessions.
+- **Hygiene.** Exact and near-duplicate removal, decontamination against the frozen public gate,
+  the heldout24 and confirmation exclusions, and per-source caps.
+- **Data card** shipped with the release.
 
 ### Workstream C: pipeline and compute
 
-- **Storage blocks stored features.** Fused records average about 10.6 MB, so 200K records would be
-  about 2 TB. Only 291 GB is free (529 GB in `artifacts/`). Options:
-  (a) online capture, where the target runs beside the trainer and computes features on the fly.
-  This needs about 10 GB of extra VRAM for a BF16 4B target, which is easy on a rented 48–80 GB
-  card. It is the standard approach in NVIDIA's DFlash recipe and in SpecForge.
-  (b) store token IDs only and rebuild features with the existing token replay;
-  (c) rent storage. Recommended: (a) for the final run, plus (b) for reproducibility. Because only
-  the final run rents, (a) must first pass locally. The last trainer used 14–15 GiB of the 5080's
-  15.5 GiB, so local validation of online capture needs reduced geometry or a Q4KM target in our
-  runtime. Check that it fits before choosing (a).
-- **Generation throughput.** About 150M response tokens at 200K conversations. That is a few hours
-  of batched generation on one rented H100, and impractical through single-stream llama.cpp on the 5080.
-- **Trainer portability.** Check that the trainer, receipts and authentication run on a rented Linux
-  GPU. Decide whether multi-GPU data-parallel training is worth building, after a one-GPU
-  throughput measurement on the rented card.
-- **Free disk first.** Close and retire obsolete states and captures within authorized scope
-  (`train-final-01-fused` duplicates content held in `train-final-02-fused`, for example). Do this
-  only after the owner approves the list.
+Measured scale from F033: about 10.6 MB per fused record and 23.6 local GPU-hours for 335,812
+updates over 13,394 records.
+
+- **Storage.** 300K records would be about 3.2 TB before soft labels and checkpoints. 291 GB is
+  free (529 GB in `artifacts/`).
+- **Generation time.** At about 750 response tokens each, 300K conversations are 225M tokens. At a
+  sustained 100, 500 or 1,000 tokens/s that is 26, 5.2 or 2.6 days. No BitDraft measurement yet
+  gives a rate for batched generation, locally or rented.
+- **Training time.** Linear extrapolation gives about 529 local GPU-hours per 300K arm at unchanged
+  geometry, for each of the candidate and the matched 4-bit control. This is why the final run
+  rents.
+- **Recommended local pipeline: staged replay.** Save token streams only. Generate, replay
+  features, train and discard features in bounded shards, with a deterministic mixing schedule and
+  resume cursor. Qualify one full cycle locally, including export, restart and byte and label
+  checks. The rented run executes the same code.
+- **Online capture** is an alternative only if a representative long-input memory measurement fits.
+  That measurement must cover target weights, KV cache, optimizer, activations and both runtimes'
+  workspaces. The last trainer already used 14–15 GiB of 15.5 GiB.
+- **Pre-fusion taps.** Fused records already contain the frozen fusion table's output. Training the
+  fusion table (workstream F) needs pre-fusion taps, which changes the storage design. Decide
+  before generating features.
+- **Free disk.** Retire obsolete states and captures after owner approval of the list.
 
 ### Workstream D: evals and the release gate
 
-Three separate tiers, each with its own data role:
+The gate is frozen before TRAIN is acquired. Decontamination depends on it, and the claim scope
+decides which data and measurements matter.
 
-1. **Training screens (private DEV, rebuilt).** New DEV drawn from the new mix's own sources but
-   held out by group, with every scenario present, including multilingual and each tool convention.
-   This tier is for selection only.
-2. **Standard public suite (release gate).** Proposed core: SPEED-Bench's qualitative split for
-   per-category acceptance, and its throughput split for input length and concurrency. Its
-   prompts are used through our llama.cpp harness, so the licence terms must allow that. Add the
-   DFlash/DFlare task set for direct comparison with published numbers: GSM8K, MATH-500, AIME25,
-   HumanEval, MBPP, LiveCodeBench, MT-Bench. MATH-500 and AIME are AoPS content. Evaluating on them
-   is standard practice, but never redistribute their prompts or outputs. Add BFCL prompts for tool calls under several
-   conventions, a long-context set (LongBench subset), and SWE-bench Verified or Terminal-Bench
-   trajectories for agentic work. Report mean accepted length per round (τ, the field's headline
-   number) beside acceptance and speed-up, at temperature 0 and 1. Results then compare directly
-   with published numbers. Decontaminate TRAIN against all of them. Run the gate only on frozen
-   finalists, never during selection.
-3. **Final reserve.** heldout24 stays untouched, as always. A fresh source-disjoint confirmation set
-   is optional once the public suite is the gate.
+1. **Selection tier (private DEV, rebuilt).** Drawn from the new mix's sources, held out by group,
+   covering every scenario including multilingual and each tool convention. For selection only.
+2. **Public gate.** Core: SPEED-Bench's qualitative split for per-category acceptance, and its
+   throughput split for input length and concurrency, if its licence allows use through our
+   harness. Add the DFlash task set for context: GSM8K, MATH-500, AIME25, HumanEval, MBPP,
+   LiveCodeBench, MT-Bench. Do not redistribute MATH-500 or AIME prompts or outputs. Add BFCL tool
+   prompts under several conventions and a LongBench subset. MBPP and GovReport through LongBench
+   overlap the spent confirmation reserve's ancestry, so mark those results as previously exposed.
+3. **Reserve.** heldout24 stays untouched. A claim of independent confirmation needs fresh source
+   families.
 
-Gate design (proposal):
+Freeze before the first run: prompt revisions and IDs, rendering, thinking mode, sampling filters,
+EOS and caps, cache state, depth, request arrival pattern, timing boundaries, denominator, failure
+handling, and exact τ accounting. τ counts accepted draft tokens per round. Emitted tokens per
+round add one target token, so publish both. Keep client concurrency and server batch size as
+separate settings.
 
-- Keep our rigor and drop our custom prompt sets. Use paired source-group 95% intervals per
-  benchmark, exact greedy outputs against target-only, and sampler validity.
-- Pass rule: speed-up against Baseline has a lower bound of at least 1.00 on most categories, and no
-  category falls below a stated tolerance. The owner fixes the numbers before the first run.
-- **Agentic speed without a broken harness.** Greedy outputs are exact, so record target-only
-  agent trajectories once with a standard harness and replay them as multi-turn requests for every
-  arm. Task success becomes irrelevant to drafter speed. Only time and acceptance matter.
-- **Reporting.** Follow the field's checklist. Report τ and wall-clock speed-up separately against
-  a no-draft server, and state prefix caching, output caps, temperature, context and concurrency.
-  Use real prompts only, never random-token throughput.
-- **Deployment breadth.** Measure batch sizes 1, 4 and 16 (speculative gains shrink with batch),
-  several context lengths, and at least one other GPU (a 4090 and an H100 on rental; Apple silicon
-  if the Mac work opens).
+Qualify the port first: run target-only, stock Baseline and the old leader through our harness and
+check outputs and counters against known values.
+
+Gate rule (proposal, numbers set by the owner before any run):
+
+- One preregistered weighted request-throughput ratio. Its paired lower bound must exceed 1.00
+  against stock Baseline. If the claim covers the matched fine-tuned Baseline, its lower bound
+  must also exceed 0.97 against that arm.
+- Simultaneous per-category guardrails set in advance, exact greedy outputs, sampler validity.
+- Size the test from stock-versus-stock reversed-order repeats, which measure session drift, and
+  from resampled historical source groups, aiming to detect a 2% gain.
+- An unavailable interval or an unsupported concurrency setting cannot pass.
+
+**Agentic.** Replaying recorded target-only agent sessions supports a request-speed claim. A
+claim of faster useful agent work also needs live target-only successes across several projects,
+identical greedy trajectories, and tool time and failures retained.
+
+**Reporting.** τ and wall-clock speed-up separately, against a no-draft server. State prefix
+caching, caps, temperature, context and concurrency. Use real prompts only.
 
 ### Workstream E: comparison arms
 
-Every claim reports these arms on the same suite, runtime and depth:
-
 - target-only, the speed-up denominator;
 - stock Baseline;
-- **4-bit control at matched data and length**: Baseline fine-tuned on the new TRAIN for the same
-  updates as the candidate. Also record its learning curve to test the "stops after 1%" hypothesis.
-  If it keeps gaining on broad data, the old plateau was a data effect.
-- 4-bit control with the Q4_K shortlist table (open since F034);
-- the target's built-in draft head;
-- stock 2-bit and 3-bit Baseline files (size claims);
-- the old leader `ef068eba…`, to show what the retrain bought.
+- **4-bit control at matched data and length**, trained by our maintained trainer. Each precision
+  gets an equal, small tuning allowance. Match examples, supervised tokens and updates, report
+  wall-clock cost separately, and record its learning curve to test the "stops after 1%" plateau;
+- 4-bit control with the same shortlist, for attribution;
+- the target's built-in draft head, the stock 2-bit and 3-bit files, and the old leader `ef068eba…`.
 
-Option for credibility: also train the 4-bit control with a standard public DFlash trainer
-(SpecForge or NeMo AutoModel) on the same data, so nobody can say Baseline was trained badly by
-our code. It needs a verified conversion to our GGUF runtime. If that is too costly, record why.
+Report equal-depth attribution separately from each arm's best calibrated depth for deployment.
+Split every gain into what only one bit earns and what Baseline would also gain.
 
-Split every gain into the part only low precision earns and the part Baseline would also get
-(differentiator rule).
+### Workstream F: features to screen at the new scale
 
-### Workstream F: model features to re-screen at the new scale
-
-Screen in short matched runs on a pilot slice of the new data. Promote only what survives:
+Screen in matched runs on new-data slices, and promote only what survives on served outcomes:
 
 - an online Hadamard rotation before 4-bit input rounding, aimed at the largest loss at
   initialization (60.8% to 41.3%);
-- trained attention and fusion tables with a Q4_K export (item 10);
+- trained attention and fusion tables with a Q4_K export (item 10; needs pre-fusion taps);
 - vocabulary-table training (item 7);
-- soft-target KL (workstream B);
-- the two-channel bypass, re-tested at scale (+0.58 at 21,000 updates, below the threshold);
-- a deeper or wider one-bit body, which spends the size headroom on capacity;
-- deeper serving depth if acceptance rises (recalibrate with `calibrate-depth`);
-- 32K training context for long documents and agent sessions.
+- soft-target KL (pilot below);
+- 32K training context for long documents and agent sessions;
+- serving depth recalibrated with `calibrate-depth` if acceptance rises.
 
-Previously dropped, not proposed again: zero-skipping and slot-reuse kernels, pre-summed lookup
-tables on GPU, activations below 4 bits, Q2_K/Q3_K vocabulary tables on this runtime, and the
-full-precision drafter teacher (owner, 2026-11-16). Three-valued weights and a second one-bit
-plane are out because the release stays one-bit (owner, 2026-11-21).
+Deferred: the two-channel bypass retest, a deeper or wider body, a standard-trainer 4-bit control
+with GGUF conversion, the 9B round profile, and extra GPUs. None of these is needed to decide
+whether broader clean data improves the one-bit 4B release.
+
+Previously dropped: zero-skipping and slot-reuse kernels, pre-summed lookup tables on GPU,
+activations below 4 bits, Q2_K/Q3_K vocabulary tables on this runtime, the full-precision drafter
+teacher (owner, 2026-11-16), three-valued weights and a second plane (owner, 2026-11-21).
 
 ### Workstream G: release packaging
 
-Licence, model card with the claim wording, data card, both file forms, runtime build or upstream
-PR, reproducible eval commands, and the compact evidence behind every number.
+- Licence, model card with the claim wording and provenance, data card, pinned target, tokenizer,
+  template, drafter and runtime hashes, and reproducible eval commands.
+- **Clean-install and serving test.** Reproduce one published result from an outside checkout.
+  Check that an incompatible model is rejected, sampler and EOS boundaries, mixed-length concurrent
+  requests, cancellation, KV isolation, context limits and fallback.
+- Publish cold start, peak resident memory, time to first token, inter-token latency and aggregate
+  throughput for the supported settings.
+- Lead with the 284 MB form unless the new release earns a different choice (owner, 2026-11-21).
+  The 185 MB form saves disk only and adds about 5.6 s of start-up.
 
-### Preflight for the costly steps
+### Pilots and preflight
 
-- **Scaling pilot (under 10 GPU minutes per arm, local).** Train one-bit and the 4-bit control on
-  1× and 4× slices of TRAIN at equal updates. It must show that more distinct data raises DEV
-  acceptance at fixed updates, and whether the one-bit gap narrows. If neither moves, a bigger
-  corpus is not justified and the plan stops there.
-- **Generation-mismatch pilot.** Compare token agreement between BF16 vLLM and Q4KM runtime
-  responses on about 200 prompts. It decides question A3.
-- **Rental throughput pilot (about 1 hour rented).** Measure updates per second for online capture
-  on one H100 against the 5080. It sets the final run's cost.
-- Rough final cost, to firm up after the pilots: 200K conversations at two passes is about 15 times
-  the last run's 23.6 GPU hours on the 5080. Divide by the measured rental speed-up. Add data
-  generation (a few H100 hours) and both matched arms.
+- **Scaling, mechanism check (under 10 GPU minutes per arm).** Ten minutes is about 2,370 updates,
+  roughly 190 record-equivalents. Compare 64 against 256 length-balanced source groups at matched
+  token budgets and a fixed schedule, for one-bit and the 4-bit control. Log unique groups,
+  windows, supervised positions and repeat visits. The small arm must revisit its positions at least
+  twice while the large arm still sees fresh ones. A null result here says little about corpus
+  scale.
+- **Scaling, spending decision.** Two paired seeds, identical starts within each precision, matched
+  mix and order, untouched group-disjoint DEV. Estimate the one-bit data benefit and its difference
+  from the 4-bit benefit. Worthwhile: +1 acceptance point for one-bit. An interval spanning 0 and +1
+  is inconclusive. Run length is set from the mechanism check.
+- **Response and feature mismatch.** Step 1: 200 stratified prompts with 32 shared teacher-forced
+  positions each. Measure top-choice agreement, probability mass and feature drift on identical
+  token IDs, with uncertainty clustered by prompt. Step 2: three matched training arms. They are
+  Q4KM responses with Q4KM features, BF16 responses replayed for Q4KM features, and BF16 responses
+  with BF16 features. Decide on served Q4KM acceptance and timing with paired seeds, using a
+  non-inferiority margin of one acceptance point.
+- **Soft targets.** Hard labels alone against hard labels plus one fixed KL weight. Use identical
+  windows and steps, two seeds, and top-32 plus a residual-mass bucket. Record retained mass,
+  shortlist misses and capture cost. The primary outcome is served sampled accepted tokens per
+  round and request speed, with greedy regression checked. Stop if the bound rules out the
+  predeclared useful gain.
+- **Local shard cost.** Before any rental, run one stratified shard end to end: long prompts,
+  thinking, multi-turn tool sessions, generation, replay, training and evaluation. Forecast each
+  phase separately from observed token and window counts. This replaces the earlier one-hour
+  rental pilot, which conflicted with the rental decision.
 
-### Scaling to larger targets (evidence and reasoning, not measured)
+### Order
 
-- Only the 4B target has been measured. There, target verification is about 80% of a round (F030),
-  and the one-bit body saves about 0.16 ms of a round (F034). That bought about 3.5 acceptance points.
-- Drafter cost grows with the target's width. Target cost grows with width and depth, and drafters
-  keep about six layers. Verification therefore takes a larger share of the round on larger
-  targets, and the relative speed-up from a cheaper drafter shrinks.
-- At 4B the one-bit FFN (about 56 MB) fits in the 5080's 64 MB L2 cache, while 4-bit (about
-  250 MB) does not. Wider drafters push both out of cache, which may raise one bit's saving in
-  milliseconds. It still shrinks as a share of the round.
-- Consequence: "at least the same speed" on larger targets needs the acceptance gap to Baseline
-  nearly closed, because a cheaper round will offset less of it. "Smaller" holds at any size.
-- Published one-bit results lose less at greater width, so the gap may narrow on wider drafters.
-  Our drafters have not been tested at another width.
-- Cheap ceiling check, unauthorized: profile rounds of target plus stock Baseline on a 9B-class
-  Q4KM target that fits the 5080. The drafter body's share of the round bounds the one-bit saving
-  there. About 30 GPU minutes, no training.
+1. Rights audit and gate design (CPU), owner sets the claim and gate numbers.
+2. Port the public gate to our harness and qualify it on known arms (GPU minutes).
+3. Scaling mechanism check (local, under 10 minutes per arm).
+4. Mismatch pilot and local shard cost measurement.
+5. Data acquisition and generation, DEV rebuild, feature screens and full local pipeline cycle.
+6. Owner go for the rental: final candidate and matched 4-bit control.
+7. Gate run, clean-install test, closeout and release.
+
+### Scaling to larger targets (reasoning, not measured)
+
+- Only the 4B target has been measured. There, target verification is about 80% of a round (F030).
+  The leader's 0.33 ms cheaper round, half from one bit and half from the smaller vocabulary table,
+  offset about 3.5 acceptance points (F034).
+- Drafter cost grows with the target's width, while target cost grows with width and depth.
+  Verification therefore takes a larger share on larger targets, and a cheaper drafter buys less
+  relative speed.
+- At 4B the one-bit FFN (about 56 MB) fits in the 5080's 64 MB L2 cache and 4-bit (about 250 MB)
+  does not. Wider drafters push both out of cache, which may raise one bit's saving in
+  milliseconds, but its share of the round still shrinks.
+- "At least the same speed" on larger targets therefore needs the acceptance gap nearly closed.
+  "Smaller" holds at any size. Published one-bit results lose less at greater width, but our
+  drafters have not been tested at another width.
 
 ## Next
 
-The owner confirms the benchmark form and says go on the first steps. Those are the licence audit
-and the scaling pilot, both cheap and local, plus optionally the 9B round-profile ceiling check.
+The owner confirms the benchmark form, chooses the claim (A6) and says go on steps 1–3 of `Order`.
+Step 1 is CPU only. Steps 2–3 are short local GPU runs.
