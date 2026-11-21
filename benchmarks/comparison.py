@@ -265,6 +265,10 @@ class Comparison:
                 "output_cap",
             }:
                 raise ValueError("unsupported workload task fields")
+            if task.get("harness") == "json-tools" and (
+                role != "dev" or tier != "pilot" or "fixture" not in task
+            ):
+                raise ValueError("JSON tool calls require a live DEV pilot fixture")
             identity = string(task["id"])
             if identity in seen or not identity.replace("-", "").replace("_", "").isalnum():
                 raise ValueError("duplicate or unsafe task identity")

@@ -1471,6 +1471,12 @@ the excluded call; `raw_wall_seconds` preserves its actual cost. The `by_complet
 summary reports completed and failed tasks separately alongside pooled results.
 Existing `live` tasks retain their original stopping and reference protocol.
 
+A live DEV pilot can set `harness: json-tools` on a fixture-backed task to test
+a second argument format. It retains the tool schemas, fixture and checks, requires
+JSON objects inside the tool-call delimiters, and carries the actual JSON call into
+the next turn. Omit that field for the native Qwen tool template. The pilot stays
+outside release coverage and protected confirmation.
+
 Difficulty calibration uses only an explicit `calibration: "target-only"`, DEV,
 `pilot` specification with the sole arm `target`. Record each revision and its
 target-only completion rate; aim for at least about 60% completion while retaining

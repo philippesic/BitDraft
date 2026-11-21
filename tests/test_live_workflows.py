@@ -84,6 +84,12 @@ def test_native_tool_parser_preserves_code_and_rejects_duplicate_parameters() ->
     assert calls('<tool_call>{"name":"run_tests","arguments":{}}</tool_call>') == [
         ("run_tests", {})
     ]
+    assert calls(
+        '<tool_call>{"name":"read_file","arguments":{"path":"a","start_line":2}}</tool_call>',
+        json_only=True,
+    ) == [("read_file", {"path": "a", "start_line": 2})]
+    with pytest.raises(ValueError, match="JSON object"):
+        calls("<tool_call><function=run_tests></function></tool_call>", json_only=True)
     with pytest.raises(ValueError, match="duplicate"):
         calls(
             "<tool_call><function=read_file><parameter=path>a</parameter><parameter=path>b</parameter></function></tool_call>"

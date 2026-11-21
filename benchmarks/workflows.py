@@ -24,13 +24,15 @@ from w1a1_eagle.identity import freeze_source, source_identity
 from w1a1_eagle.records import artifact, canonical, identity, read
 
 
-def calls(content: str) -> list[tuple[str, Record]]:
+def calls(content: str, json_only: bool = False) -> list[tuple[str, Record]]:
     values: list[tuple[str, Record]] = []
     for body in cast(list[str], re.findall(r"<tool_call>(.*?)</tool_call>", content, re.S)):
         if body.lstrip().startswith("{"):
             raw = record(cast(object, json.loads(body)))
             values.append((string(raw["name"]), record(raw["arguments"])))
             continue
+        if json_only:
+            raise ValueError("tool call must contain a JSON object")
         function = re.fullmatch(r"\s*<function=([a-z_]+)>(.*?)</function>\s*", body, re.S)
         if function is None:
             raise ValueError("malformed native tool call")
@@ -293,6 +295,18 @@ def execute(
     speculation: str = DEFAULT_SPECULATION,
 ) -> tuple[Record, list[Record], list[Record]]:
     messages = [dict(record(value)) for value in sequence(task["messages"])]
+    json_tools = task.get("harness") == "json-tools"
+    if json_tools:
+        instructions = (
+            "Available tools: "
+            + json.dumps(TOOLS, separators=(",", ":"))
+            + '\nTo call a tool, write <tool_call>{"name":"tool_name","arguments":{}}</tool_call>.'
+            + " Put a JSON object inside each tag pair, with arguments matching the tool schema."
+        )
+        if messages[0]["role"] == "system":
+            messages[0]["content"] = string(messages[0]["content"]) + "\n\n" + instructions
+        else:
+            messages.insert(0, {"role": "system", "content": instructions})
     responses: list[Record] = []
     model_seconds, tool_seconds = 0.0, 0.0
     tokens, proposed, accepted = 0, 0, 0
@@ -310,7 +324,10 @@ def execute(
             reason = "task-deadline"
             break
         call_began = now()
-        rendered = request(port, "apply-template", {"messages": messages, "tools": TOOLS})
+        template: Record = {"messages": messages}
+        if not json_tools:
+            template["tools"] = TOOLS
+        rendered = request(port, "apply-template", template)
         identifiers = sequence(
             request(
                 port,
@@ -355,7 +372,7 @@ def execute(
         proposed += integer(counters["proposed"])
         accepted += integer(counters["accepted"])
         try:
-            selected = calls(content)
+            selected = calls(content, json_only=json_tools)
         except (ValueError, KeyError) as error:
             messages.extend(
                 [
@@ -377,20 +394,23 @@ def execute(
             reason = "model-finished"
             break
         ids = ["call_" + str(turn) + "_" + str(index) for index in range(len(selected))]
-        messages.append(
-            {
-                "role": "assistant",
-                "content": "",
-                "tool_calls": [
-                    {
-                        "id": call,
-                        "type": "function",
-                        "function": {"name": name, "arguments": arguments},
-                    }
-                    for call, (name, arguments) in zip(ids, selected, strict=True)
-                ],
-            }
-        )
+        if json_tools:
+            messages.append({"role": "assistant", "content": content})
+        else:
+            messages.append(
+                {
+                    "role": "assistant",
+                    "content": "",
+                    "tool_calls": [
+                        {
+                            "id": call,
+                            "type": "function",
+                            "function": {"name": name, "arguments": arguments},
+                        }
+                        for call, (name, arguments) in zip(ids, selected, strict=True)
+                    ],
+                }
+            )
         for call, (name, arguments) in zip(ids, selected, strict=True):
             start = now()
             try:
