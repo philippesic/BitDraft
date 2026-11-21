@@ -98,7 +98,8 @@ of the [scenario benchmarks](../results/scenario-benchmark-levels/result.md) wer
 on the earlier export `405e326b…`, without this change or the recovered kernel: agentic
 coding ties Baseline, thinking-on requests run at 0.88 of Baseline's speed and sampled
 requests at 0.95. Item 9 re-recorded the four routine cohorts for the leader on native
-Linux; the thinking, sampled and agentic references remain WSL records.
+Linux. The Q4KM thinking, sampled and agentic suites now have separate fresh native
+[references](../results/fresh-native-references/result.md).
 
 The host moved from WSL2 to native Linux on 2026-11-15; item 9 recorded its controls and
 round profile.
@@ -151,9 +152,9 @@ On 2026-11-21 the owner approved three follow-ups to the
 
 | Follow-up | State |
 | --- | --- |
-| Two-channel gate/up bypass, 21,000 one-bit updates | Isolated experiment based on the original arm's source. Task 30 qualifies a 64-update train, checkpoint and offline replay. Task 35 waits for it and the unchanged replays in task 31. Compare with the unchanged 21,000-update arms on the same DEV round replay. |
-| Unchanged one-bit arm on seed 8102 | Running in the RTX 5080 queue, task 29. Same 21,000 updates as seed 8101. Measure acceptance on the same 120-request panel and offline DEV replay. |
-| Fresh thinking-on, sampled and agentic references | Existing native Linux runs measured the leader and 4-bit control in separate sessions. Fresh specs put target-only, Baseline, the full-head leader and the 4-bit control in the same suite session. GPU queue tasks 32–34. |
+| Two-channel gate/up bypass, 21,000 one-bit updates | Isolated experiment based on the original arm's source. The 64-update checkpoint passed offline replay. The matched arm is running as task 35. Compare with the unchanged 21,000-update arms on the same DEV round replay. |
+| Unchanged one-bit arm on seed 8102 | Done. The 120-request panel scored 46.61% against seed 8101's 46.75%. The offline DEV replay scored 52.81% against 52.90%. |
+| Fresh thinking-on, sampled and agentic references | Done on 2026-11-21. [Same-session results](../results/fresh-native-references/result.md) and registry observations cover all four arms. |
 
 The owner withdrew the longer 4-bit run. The bypass experiment is for offline evaluation.
 Its preflight and execution notes are in `artifacts/one-bit-attribution-01/logs/overnight-preflight.md`.

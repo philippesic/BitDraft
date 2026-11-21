@@ -10,6 +10,14 @@ See [closeout specification](docs/results.md).
 
 ## Current candidate and retained controls
 
+### F038: Do the leader and trained 4-bit control still tie when timed together?
+
+Yes, within 1% on thinking-on, sampled and agentic DEV suites on the RTX 5080.
+Both are roughly 11% ahead of Baseline on agentic tasks and complete 37 of 60.
+The 4-bit control accepts more in every suite after 21,000 updates against the
+full-head leader's 335,812. All twelve arm observations are registered.
+[Result](results/fresh-native-references/result.md).
+
 ### F037: Which comparators does the leader's size and speed claim have to survive?
 
 Three were measured on the panel, exact outputs, runtime-v10:
