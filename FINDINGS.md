@@ -10,6 +10,24 @@ See [closeout specification](docs/results.md).
 
 ## Current candidate and retained controls
 
+### F037: Which comparators does the leader's size and speed claim have to survive?
+
+Three were measured on the panel, exact outputs, runtime-v10:
+- stock low-bit files of Baseline do not match the leader: the publisher's 2-bit file
+  (244 MB) accepts 39.3% and the 3-bit file (314 MB) 52.0%, against the leader's 50.8% at
+  284 MB, and both are slower than Baseline;
+- the target's built-in draft head needs no drafter file, accepts 57.9% against Baseline's
+  53.4% and runs at 0.964× Baseline; every size or speed claim has to name it;
+- with the same shortlist the leader's small file is 1.8% faster than the 4-bit control,
+  and 1.1% slower in the matched full-table form; the control accepts 3.8 points more after
+  21,000 updates against the leader's 335,812.
+
+With no training, sign weights collapse the start (10.3% simulated acceptance against
+60.8%), and two near-constant input channels carry most of it: sending them through
+Baseline's own columns gives 30.5%, while 8-bit inputs alone give 13.0%. Whether that
+survives training is untested. One run per tier, reused DEV data, stock conversions only.
+[Result](results/claim-comparators/result.md).
+
 ### F036: Does the leader's file need to ship vocabulary rows at all?
 
 No. Without them the file is 185 MB against Baseline's 381 MB (51.5% smaller). The server

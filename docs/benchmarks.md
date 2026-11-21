@@ -409,9 +409,11 @@ When present, the panel protocol gains `arm_depths`, each arm's server runs with
 counters and `derived_rounds` (null for target-only). `live` and agentic specifications
 accept the same field. Drafting arms run with `--spec-type draft-dflash`, which also serves
 DFlash2 files (the runtime detects their selector). An optional `speculation` mapping, with
-the same naming rules as `depths`, serves an arm with another native type; the only other
-supported value is `"draft-dspark"`, for example `"speculation": {"dspark": "draft-dspark"}`,
-so a DSpark file runs with its Markov head. When present, the panel protocol gains
+the same naming rules as `depths`, serves an arm with another native type. The other
+supported values are `"draft-dspark"`, for example `"speculation": {"dspark": "draft-dspark"}`,
+so a DSpark file runs with its Markov head, and `"draft-mtp"`, which drafts with the target's
+built-in multi-token head: name the target file itself as that arm's drafter (the server then
+loads the target a second time, although the head needs no drafter file). When present, the panel protocol gains
 `arm_speculation` and each response's reported mode must match its arm. Omitting it keeps
 the previous behaviour and protocol identity. An optional `shortlists` mapping, with the
 same naming rules but only for measured `draft-dflash` arms (not saved references), attaches

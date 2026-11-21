@@ -6,7 +6,7 @@ LIVE_TIERS = frozenset({"live", "agentic-slice", "agentic-suite", "agentic-confi
 LIVE_TURNS = 16
 LIVE_SECONDS = 900
 DEFAULT_SPECULATION = "draft-dflash"
-SPECULATION_TYPES = frozenset({DEFAULT_SPECULATION, "draft-dspark"})
+SPECULATION_TYPES = frozenset({DEFAULT_SPECULATION, "draft-dspark", "draft-mtp"})
 
 
 def arguments(
