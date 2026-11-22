@@ -199,13 +199,54 @@ def pg19(path: Path) -> Iterator[Record]:
             break
 
 
+GOVREPORT_CHARACTERS = (8000, 24000, 48000)
+GOVREPORT_TASKS = (
+    (
+        "documents",
+        "report_summary",
+        "Summarize the following government report for a busy reader.\n\n",
+    ),
+    (
+        "documents",
+        "report_question",
+        "Read the following report and list its main findings and recommendations.\n\n",
+    ),
+    (
+        "structured",
+        "extraction",
+        'Read the following report and return a JSON object with keys "agencies" (list), "findings" (list of short strings) and "recommendations" (list). Return only JSON.\n\n',
+    ),
+)
+
+
+def govreport(path: Path) -> Iterator[Record]:
+    for row in parquet_rows(path):
+        report = text_field(row["report"])
+        key = identity({"govreport": report[:2000]})
+        choice = int(key[:4], 16)
+        characters = GOVREPORT_CHARACTERS[choice % len(GOVREPORT_CHARACTERS)]
+        category, subtype, instruction = GOVREPORT_TASKS[(choice // 7) % len(GOVREPORT_TASKS)]
+        excerpt = report[:characters]
+        if len(excerpt) < 4000:
+            continue
+        yield candidate(
+            "govreport",
+            key,
+            key,
+            category,
+            subtype,
+            [{"role": "user", "content": instruction + excerpt}],
+        )
+
+
 SHAREGPT_ROLES = {"system": "system", "human": "user", "user": "user", "gpt": "assistant"}
 TOOLS_BLOCK = re.compile(r"<tools>(.*?)</tools>", re.DOTALL)
 
 
 def tools_from_system(text: str) -> list[Record]:
-    match = TOOLS_BLOCK.search(text)
-    body = cast(str, match.group(1)) if match else text[text.find("[") :]
+    found = [cast(str, m.group(1)) for m in TOOLS_BLOCK.finditer(text)]
+    blocks = [block for block in found if block.strip()]
+    body = blocks[0] if blocks else text[text.find("[") :]
     decoder = json.JSONDecoder()
     tools: list[Record] = []
     body = body.strip()
@@ -254,7 +295,7 @@ def sharegpt_tools(source: str, rows: list[Record]) -> Iterator[Record]:
         if not tools:
             continue
         key = identity({source: messages, "tools": tools})
-        yield candidate(source, key, key, "structured", "tool_request", messages, tools)
+        yield candidate(source, key, key, "tools", "tool_request", messages, tools)
 
 
 def json_list(path: Path) -> list[Record]:
@@ -327,6 +368,7 @@ def swe_rebench(path: Path) -> Iterator[Record]:
             "swe-rebench", instance, instance, "agentic", "session_turn", messages[:cut], tools
         )
         candidate_row["aliases"] = ["repository:" + repository.lower()]
+        candidate_row["split"] = "repository:" + repository.lower()
         yield candidate_row
 
 
@@ -339,6 +381,7 @@ ADAPTERS: dict[str, Callable[[Path], Iterator[Record]]] = {
     "orca-math": orca_math,
     "oss-instruct": oss_instruct,
     "pg19": pg19,
+    "govreport": govreport,
     "glaive": glaive,
     "hermes": hermes,
     "toolace": toolace,

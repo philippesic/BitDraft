@@ -2,7 +2,7 @@ import hashlib
 import json
 import subprocess
 from pathlib import Path
-from typing import Iterator, Protocol, cast
+from typing import Iterator, cast
 
 import pyarrow.parquet
 
@@ -11,18 +11,11 @@ from w1a1_eagle.contracts import Record, integer, record, sequence, string
 from w1a1_eagle.records import canonical
 
 
-class Table(Protocol):
-    def to_pylist(self) -> list[object]: ...
-
-
-class Parquet(Protocol):
-    def read_table(self, source: str) -> Table: ...
-
-
-def parquet_rows(path: Path) -> Iterator[Record]:
-    api = cast(Parquet, pyarrow.parquet)
-    for value in api.read_table(str(path)).to_pylist():
-        yield record(value)
+def parquet_rows(path: Path, columns: list[str] | None = None) -> Iterator[Record]:
+    source = pyarrow.parquet.ParquetFile(str(path))
+    for batch in source.iter_batches(256, columns=columns):
+        for value in batch.to_pylist():
+            yield record(value)
 
 
 def json_rows(path: Path) -> Iterator[Record]:

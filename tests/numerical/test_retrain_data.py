@@ -70,6 +70,8 @@ class RetrainDataTest(unittest.TestCase):
         tagged = '<tools> {"name": "a", "parameters": {}} {"name": "b", "parameters": {}} </tools>'
         names = [str(record(t["function"])["name"]) for t in tools_from_system(tagged)]
         assert names == ["a", "b"]
+        prose = 'Signatures go in <tools> </tools> tags.\n<tools>[{"name": "d"}]</tools>'
+        assert [str(record(t["function"])["name"]) for t in tools_from_system(prose)] == ["d"]
         bare = 'Use: [{"type": "function", "function": {"name": "c"}}]'
         assert len(tools_from_system(bare)) == 1
 

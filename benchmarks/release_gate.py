@@ -210,13 +210,18 @@ def prepare_gate(specification: Path, output: Path) -> Record:
     agent_tools = [
         record(v) for v in sequence(cast(object, json.loads(tools_ref.path.read_text())))
     ]
-    repositories: dict[str, list[Record]] = {}
-    for row in parquet_rows(agentic_ref.path):
-        repositories.setdefault(string(row["repo"]).lower(), []).append(row)
+    repositories: dict[str, list[str]] = {}
+    for row in parquet_rows(agentic_ref.path, ["repo", "instance_id"]):
+        repositories.setdefault(string(row["repo"]).lower(), []).append(string(row["instance_id"]))
     reserved = sorted(repositories, key=by_name(seed))[: integer(counts["agentic_repositories"])]
+    chosen_instances = {min(repositories[name], key=by_name(seed)) for name in reserved}
+    trajectories: dict[str, Record] = {}
+    for row in parquet_rows(agentic_ref.path, ["repo", "instance_id", "trajectory"]):
+        if string(row["instance_id"]) in chosen_instances:
+            trajectories[string(row["repo"]).lower()] = row
     agentic: list[Record] = []
     for repository in reserved:
-        trajectory = sorted(repositories[repository], key=by_order("instance_id", seed))[0]
+        trajectory = trajectories[repository]
         history: list[Record] = []
         cuts: list[int] = []
         size = 0
@@ -249,7 +254,6 @@ def prepare_gate(specification: Path, output: Path) -> Record:
             continue
         cut = cuts[int(order(trajectory["instance_id"], seed)[:4], 16) % len(cuts)]
         key = "swe-rebench:" + string(trajectory["instance_id"])
-        texts.extend(string(m["content"]) for m in history[:cut] if m["role"] != "system")
         agentic.append(
             task(
                 key,
@@ -289,18 +293,17 @@ def prepare_gate(specification: Path, output: Path) -> Record:
 
     files: dict[str, Record] = {}
     sizes: dict[str, int] = {}
+    workload_store = Store(store.root / "workloads")
     for name, tasks in workloads.items():
         if not tasks or len(tasks) > 600:
             for part in range(0, len(tasks), 440):
                 chunk = tasks[part : part + 440]
-                path = store.root / "workloads" / (name + "-" + str(part // 440) + ".json")
-                path.parent.mkdir(parents=True, exist_ok=True)
-                store.atomic(path, canonical({"schema": 1, "tasks": chunk}))
+                path = workload_store.root / (name + "-" + str(part // 440) + ".json")
+                workload_store.atomic(path, canonical({"schema": 1, "tasks": chunk}))
                 files[name + "-" + str(part // 440)] = file_reference(path)
         else:
-            path = store.root / "workloads" / (name + ".json")
-            path.parent.mkdir(parents=True, exist_ok=True)
-            store.atomic(path, canonical({"schema": 1, "tasks": tasks}))
+            path = workload_store.root / (name + ".json")
+            workload_store.atomic(path, canonical({"schema": 1, "tasks": tasks}))
             files[name] = file_reference(path)
         sizes[name] = len(tasks)
     gate_texts = store.root / "gate-texts.jsonl"
@@ -335,6 +338,7 @@ def prepare_gate(specification: Path, output: Path) -> Record:
         "limitations": [
             "multi-turn SPEED-Bench prompts use their first turn only",
             "agentic replay histories come from Qwen3-Coder-480B trajectories, cut before one assistant turn",
+            "agentic histories are decontaminated by repository split only; their shared OpenHands boilerplate would match every trajectory",
         ],
         "code_sha256": source_identity(code_root),
     }

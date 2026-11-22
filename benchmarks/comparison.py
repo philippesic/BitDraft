@@ -198,13 +198,29 @@ class Comparison:
             "thinking-suite",
             "sampled-slice",
             "sampled-suite",
+            "gate",
         }:
             raise ValueError("explicit workload role/tier required")
+        if tier == "gate" and (role != "confirmation" or references or calibration is not None):
+            raise ValueError("release gate workloads run fresh as confirmation")
+        if (
+            tier == "gate"
+            and sampling.temperature > 0
+            and (
+                len(sampling.seeds) != 3
+                or sampling.qualification is None
+                or not routine_sampled(sampling)
+            )
+        ):
+            raise ValueError(
+                "sampled gate requests require three seeds, routine sampling and native verifier qualification"
+            )
         if sampling.temperature > 0 and tier not in {
             "pilot",
             "sampled",
             "sampled-slice",
             "sampled-suite",
+            "gate",
         }:
             raise ValueError("sampled requests require an explicit sampled tier or pilot")
         if tier in {"sampled", "sampled-slice", "sampled-suite"} and (

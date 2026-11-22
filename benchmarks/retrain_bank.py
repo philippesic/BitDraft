@@ -185,6 +185,7 @@ def select_retrain(specification: Path, output: Path) -> Record:
     texts: set[str] = set()
     rejected: Counter[str] = Counter()
     offered: Counter[str] = Counter()
+    available: Counter[str] = Counter()
     for source, row in candidates(raw, root):
         offered[string(source["kind"])] += 1
         names = {
@@ -208,7 +209,8 @@ def select_retrain(specification: Path, output: Path) -> Record:
         if key in gate_exact or gate.matches(text):
             rejected["gate_overlap"] += 1
             continue
-        role = "dev" if bucket(["role", group], seed) < dev_permille else "train"
+        split = string(row.get("split", group))
+        role = "dev" if bucket(["role", split], seed) < dev_permille else "train"
         if row.get("inherited_role") == "dev":
             role = "dev"
         cell = matching_quota(cell_of(row), quotas[role])
@@ -223,7 +225,13 @@ def select_retrain(specification: Path, output: Path) -> Record:
             "repository": source["repository"],
             "revision": source["revision"],
         }
-        pools.setdefault((role, cell), []).append((identity({"id": row["id"], "seed": seed}), row))
+        pool = pools.setdefault((role, cell), [])
+        pool.append((identity({"id": row["id"], "seed": seed}), row))
+        available[role + ":" + cell] += 1
+        bound = 2 * quotas[role][cell] + 100
+        if len(pool) > 2 * bound:
+            pool.sort(key=first)
+            del pool[bound:]
     tokenizer = Tokenizer(binary.path, target.path, store.root / "tokenizer.log")
     selected: list[Record] = []
     filled: dict[str, Record] = {}
@@ -245,7 +253,7 @@ def select_retrain(specification: Path, output: Path) -> Record:
                 filled[role + ":" + cell] = {
                     "quota": quota,
                     "selected": taken,
-                    "available": len(pool),
+                    "available": available[role + ":" + cell],
                 }
     finally:
         tokenizer.close()
