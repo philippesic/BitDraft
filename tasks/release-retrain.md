@@ -9,9 +9,11 @@ Then publish a release whose claims, data card and licences hold up to outside s
 
 ## Authorized
 
-Planning only, drafted 2026-11-21 from the owner's request of that day. No data pulls, captures,
-builds, training, rentals or benchmark runs are authorized yet. Each step below needs an explicit
-go. A listed item is a proposal, not a decision.
+Stage 1 (Prep) authorized by the owner on 2026-11-21: rights audit and source list, public gate
+selection and protocol, plateau rule, held-out tool convention, gate port and qualification on
+local GPU, private DEV rebuild, batched writer and staged-replay pipeline builds. Prompt downloads
+for these are included. Stages 2–4, rentals and production data generation are not authorized.
+Gate margins are proposed by the agent for owner approval at the end of Stage 1.
 
 ## Done when
 
@@ -24,7 +26,10 @@ go. A listed item is a proposal, not a decision.
 
 ## State
 
-Owner: unassigned (planning thread). Branch: `main`. No artifacts created. GPT-6.2 Astra reviewed
+Owner: release-retrain planning thread. Branch: `main`. Stage 1 in progress since 2026-11-21.
+Owner decisions 2026-11-21: Q4KM is the training target, and the frozen public gate also runs on
+NVFP4 in Stage 4 as a measured secondary result. The first release is fork-only, with an upstream
+llama.cpp PR possibly later. GPT-6.2 Astra reviewed
 the plan on 2026-11-21. Its accepted corrections are folded in below.
 
 ### What the previous train taught us
