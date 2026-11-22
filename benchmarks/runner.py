@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import cast
 
 from benchmarks.comparison import SCREENS, Arm, Comparison, task_scenario
-from benchmarks.coverage import length_band, selection_order
+from benchmarks.coverage import reported_band, selection_order
 from benchmarks.measurement import deadline, now, request
 from benchmarks.metrics import (
     native_counts as native_counts,
@@ -184,7 +184,7 @@ def compare_leased(
                                     if field in task
                                 },
                                 "input_tokens": len(identifiers),
-                                "length_band": length_band(len(identifiers)),
+                                "length_band": reported_band(len(identifiers)),
                                 "harness": task.get("harness", "default"),
                                 "stop_type": response["stop_type"],
                                 "cap_hit": response["stop_type"] == "limit",

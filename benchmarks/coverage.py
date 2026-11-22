@@ -31,6 +31,10 @@ def length_band(tokens: int) -> int:
     raise ValueError("prompt exceeds admitted bank length")
 
 
+def reported_band(tokens: int) -> int:
+    return 4 if tokens > 16384 else length_band(tokens)
+
+
 def stratum(row: Record) -> str:
     category, subtype = string(row["category"]), string(row["subtype"])
     if category == "code":

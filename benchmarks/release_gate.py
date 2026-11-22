@@ -9,7 +9,7 @@ from benchmarks.retrain_sources import openhands_call
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, record, sequence, string
 from w1a1_eagle.identity import freeze_source, source_identity
-from w1a1_eagle.numerical.prompting import json_rows, parquet_rows
+from w1a1_eagle.numerical.prompting import Tokenizer, json_rows, parquet_rows
 from w1a1_eagle.records import artifact, canonical, identity, read
 
 FIELDS = {
@@ -22,9 +22,12 @@ FIELDS = {
     "tools",
     "seed",
     "counts",
+    "tokenizer",
+    "target",
 }
 THINKING_CATEGORIES = {"math", "reasoning", "coding", "stem"}
-AGENT_CHARACTERS = (24000, 96000)
+AGENT_CHARACTERS = (8000, 120000)
+AGENT_TOKENS = (6144, 24576)
 
 
 def order(value: object, seed: int) -> str:
@@ -220,6 +223,10 @@ def prepare_gate(specification: Path, output: Path) -> Record:
         if string(row["instance_id"]) in chosen_instances:
             trajectories[string(row["repo"]).lower()] = row
     agentic: list[Record] = []
+    binary, target = artifact(raw["tokenizer"], root), artifact(raw["target"], root)
+    binary.verify()
+    target.verify()
+    tokenizer = Tokenizer(binary.path, target.path, store.root / "tokenizer.log")
     for repository in reserved:
         trajectory = trajectories[repository]
         history: list[Record] = []
@@ -250,10 +257,20 @@ def prepare_gate(specification: Path, output: Path) -> Record:
             elif role in {"system", "user"}:
                 history.append({"role": role, "content": text})
             size += len(text)
-        if not cuts:
-            continue
-        cut = cuts[int(order(trajectory["instance_id"], seed)[:4], 16) % len(cuts)]
-        key = "swe-rebench:" + string(trajectory["instance_id"])
+        instance = string(trajectory["instance_id"])
+        cut = next(
+            (
+                point
+                for _, point in sorted((order([instance, point], seed), point) for point in cuts)
+                if AGENT_TOKENS[0]
+                <= len(tokenizer.tokenize(tokenizer.render(history[:point], agent_tools)))
+                <= AGENT_TOKENS[1]
+            ),
+            None,
+        )
+        if cut is None:
+            raise ValueError("reserved repository has no history in the declared token range")
+        key = "swe-rebench:" + instance
         agentic.append(
             task(
                 key,
@@ -266,6 +283,7 @@ def prepare_gate(specification: Path, output: Path) -> Record:
                 agent_tools,
             )
         )
+    tokenizer.close()
     workloads["agentic-replay"] = agentic
 
     tool_rows: list[Record] = []
@@ -337,7 +355,7 @@ def prepare_gate(specification: Path, output: Path) -> Record:
         "exclusions": file_reference(store.root / "gate-exclusions.json"),
         "limitations": [
             "multi-turn SPEED-Bench prompts use their first turn only",
-            "agentic replay histories come from Qwen3-Coder-480B trajectories, cut before one assistant turn",
+            "agentic replay histories come from Qwen3-Coder-480B trajectories, cut before one assistant turn at 6K-24K rendered tokens",
             "agentic histories are decontaminated by repository split only; their shared OpenHands boilerplate would match every trajectory",
         ],
         "code_sha256": source_identity(code_root),
