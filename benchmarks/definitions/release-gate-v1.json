@@ -1,0 +1,109 @@
+{
+  "schema": "release-gate-definition-v1",
+  "status": "provisional; frozen by the agent 2026-11-22, margins pending owner approval at the rental checkpoint",
+  "target": "Qwen3.5-4B Q4KM (primary); the same frozen gate runs on NVFP4 as a measured secondary result",
+  "role": "Evaluation-only public gate. Never used for training, calibration, selection or tuning; run once on frozen finalists. TRAIN is decontaminated against every source below.",
+  "runtime": "Pinned fork runtime of the release, depth calibrated per arm on DEV and also reported at depth 3, context 32768, batch 1, one server slot, prompt cache off, exact decode consistency on, prefix caching off",
+  "arms": [
+    "target-only (speed-up denominator)",
+    "stock Baseline (DFlash Q4KM, 83586a63...)",
+    "one-bit candidate (the release file)",
+    "4-bit control trained to its plateau on the same TRAIN manifest",
+    "target built-in draft head (descriptive)"
+  ],
+  "sources": [
+    {
+      "name": "speed-bench-qualitative",
+      "repository": "nvidia/SPEED-Bench",
+      "revision": "fa4e669bee2a4393c56aa8ed05a7c667897f9590",
+      "license": "NVIDIA Evaluation Dataset License: evaluation and benchmarking only, results may be published, no training, no redistribution",
+      "preparation": "NVIDIA Model-Optimizer examples/specdec_bench prepare_data.py at 3497c11ea16ff44109e8a2d581026cb1d5a7e828 resolves the masked examples from their upstream sources",
+      "content": "880 prompts, 11 categories x 80: coding, humanities, math, multilingual, qa, rag, reasoning, roleplay, stem, summarization, writing"
+    },
+    {
+      "name": "speed-bench-throughput",
+      "repository": "nvidia/SPEED-Bench",
+      "revision": "fa4e669bee2a4393c56aa8ed05a7c667897f9590",
+      "license": "as above",
+      "content": "throughput_8k and throughput_16k configs; 30 prompts per entropy class per length, seeded stratified selection"
+    },
+    {
+      "name": "swe-rebench-openhands",
+      "repository": "nebius/SWE-rebench-openhands-trajectories",
+      "revision": "35455389ab51bf5e2306bfd436ef72d0f98bf882",
+      "license": "cc-by-4.0",
+      "content": "Agentic replay: 60 trajectories from 60 distinct repositories, each cut before one assistant turn whose context is 6K-24K tokens, rendered with its own tools.json through the native template"
+    },
+    {
+      "name": "bfcl",
+      "repository": "gorilla-llm/Berkeley-Function-Calling-Leaderboard",
+      "revision": "61fc0608cfd831fcfbbaa676ebdfef0ed963eeda",
+      "license": "apache-2.0",
+      "content": "Tool requests: 120 prompts (simple, multiple, parallel, multi-turn) rendered in two conventions: native template tools, and the held-out ReAct text convention"
+    }
+  ],
+  "scenarios": [
+    {
+      "name": "general",
+      "rows": "speed-bench-qualitative, all 880, thinking off, greedy, output cap 1024",
+      "role": "primary"
+    },
+    {
+      "name": "thinking-on",
+      "rows": "speed-bench-qualitative math, reasoning, coding and stem (320), thinking on, greedy, output cap 2048",
+      "role": "guardrail"
+    },
+    {
+      "name": "sampled",
+      "rows": "speed-bench-qualitative, 22 per category seeded (242), thinking off, temperature 0.7, top-p 0.9, no top-k or min-p (the qualified routine sampler), seeds 9201, 9202, 9203, output cap 1024",
+      "role": "guardrail"
+    },
+    {
+      "name": "long-input",
+      "rows": "speed-bench-throughput 8K and 16K (180), greedy, output cap 512",
+      "role": "guardrail"
+    },
+    {
+      "name": "agentic-replay",
+      "rows": "swe-rebench-openhands (60), greedy, output cap 1024",
+      "role": "guardrail"
+    },
+    {
+      "name": "tool-calls",
+      "rows": "bfcl native convention (120), greedy, output cap 512",
+      "role": "guardrail"
+    },
+    {
+      "name": "held-out-convention",
+      "rows": "bfcl ReAct text convention (120), greedy, output cap 512; the convention is absent from TRAIN",
+      "role": "transfer evidence, reported, not a pass condition"
+    }
+  ],
+  "metrics": {
+    "speed": "generated tokens divided by summed full HTTP request seconds, per arm",
+    "comparison": "paired source-group bootstrap (statistics.paired, 2000 draws, category strata), candidate over comparator",
+    "acceptance": "accepted draft tokens / proposed draft tokens",
+    "tau": "accepted draft tokens per verification round; emitted tokens per round (tau + 1) also published",
+    "correctness": "greedy outputs exact against target-only; sampled outputs valid under the native verifier qualification"
+  },
+  "pass_rule_provisional": {
+    "versus_stock_baseline": "general lower bound > 1.00; every guardrail scenario lower bound >= 0.97 with at most two guardrails below 1.00; all outputs correct",
+    "versus_trained_control": "general lower bound >= 0.97; every guardrail lower bound >= 0.95; all outputs correct; claim wording 'within 3% of a Baseline fine-tuned on the same data, or faster'",
+    "unavailable": "a missing scenario, an unavailable interval, or an invalid output cannot pass"
+  },
+  "sensitivity_controls": [
+    "stock Baseline against itself in reversed arm order on the general scenario, to measure session drift before the gate",
+    "detectable effect estimated from historical paired source-group differences before freezing counts"
+  ],
+  "control_plateau_rule": {
+    "checkpoints": "2K, 4K, 8K, 16K, 32K, 64K, ... updates (doublings), constant step size after warm-up",
+    "outcome": "acceptance on the rebuilt DEV screen, overall and on the agentic, sampled and tool-call strata",
+    "stop": "after at least 16K updates, two successive doublings whose paired 95% upper bound on further gain is below +0.5 points overall and below +1.0 on each listed stratum",
+    "extend": "any listed stratum still improving, or intervals too wide to meet the rule",
+    "finish": "a short cosine anneal (10% of the reached updates) on the next unseen part of the manifest, then served timing at calibrated depth",
+    "ceiling": "the candidate's own update count",
+    "disclosure": "publish the whole curve, the reached updates and the manifest fraction consumed"
+  },
+  "decontamination": "TRAIN excludes every source identity above, and every TRAIN prompt sharing a 13-token shingle run (at least 12 shared shingles and 35% containment) with any gate prompt, plus repository families of the agentic replay sources",
+  "exposure": "MBPP and LongBench/GovReport ancestry overlaps the spent confirmation reserve and is not used here; heldout24 stays untouched"
+}

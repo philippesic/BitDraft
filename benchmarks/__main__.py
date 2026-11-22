@@ -50,6 +50,8 @@ def main() -> int:
         "plan-long-projects",
         "prepare-long-projects",
         "select-expansion",
+        "select-retrain",
+        "prepare-gate",
         "profile-native",
         "prepare-project-workflows",
         "prepare-replays",
@@ -91,6 +93,7 @@ def main() -> int:
                 "plan-long-projects": "datasets",
                 "prepare-long-projects": "datasets",
                 "select-expansion": "bank",
+                "select-retrain": "bank",
                 "native-build": "native",
                 "build-kernel-benchmark": "native",
                 "native-helpers": "native",
@@ -140,6 +143,8 @@ def main() -> int:
                     "curate",
                     "admit-bank",
                     "select-expansion",
+                    "select-retrain",
+                    "prepare-gate",
                     "prepare-long-projects",
                     "prepare-replays",
                     "capture",
@@ -291,6 +296,14 @@ def main() -> int:
             from benchmarks.expansion import expand
 
             result = expand(args.input, args.output)
+        elif args.command == "select-retrain":
+            from benchmarks.retrain_bank import select_retrain
+
+            result = select_retrain(args.input, args.output)
+        elif args.command == "prepare-gate":
+            from benchmarks.release_gate import prepare_gate
+
+            result = prepare_gate(args.input, args.output)
         elif args.command == "select-supplement":
             from benchmarks.supplement import supplement
 
