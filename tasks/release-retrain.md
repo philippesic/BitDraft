@@ -65,8 +65,24 @@ the plan on 2026-11-21. Its accepted corrections are folded in below.
   skipped; continuation drops the fresh-only calibration setting.
 - **Full bank done:** `bank-v1`, 100,146 TRAIN and 3,024 DEV; 19,629 thinking, 25,679 sampled;
   tool conventions native 90,035, JSON 6,522, Markdown 6,613.
-- **Pending in Stage 1:** private DEV rebuild with references; owner approval of the frozen gate
-  and source list (at the rental checkpoint, with the margins).
+- **Private DEV rebuilt** (`artifacts/benchmarks/retrain-dev-01/`, from `bank-v1` DEV rows,
+  one per group, 11 scenarios including multilingual and each tool convention): `screen` 96
+  requests (caps 128/256) and `panel` 292 (caps 512/1024), runtime v10, depth 3, Q4KM. Target,
+  Baseline and leader (284 MB file) references are registered; `screen-candidate.json` and
+  `panel-candidate.json` check a new state against them. Panel, leader against Baseline:
+  acceptance 47.6% against 58.2%, speed 0.994×. By scenario the leader wins only native tool
+  calls (1.23×) and loses multilingual (0.86×) and chat-writing (0.97×); others 1.01–1.07×.
+- **Stage 2, batched generation decided by measurement (2026-11-22):** on the 50 greedy rows of
+  the 64-row test, replay found the stream token differing from the target's exact choice at
+  1.71% of positions for 16-slot batched answers and 1.68% for one-slot server answers (5 of 50
+  answers identical between them). The drift is the server path against replay, not batching.
+  One slot gave 190–196 generated tokens/s, 16 slots 430–510 (short shards). Labels stay exact;
+  the 1.7% near-tie histories are far closer to greedy than the 25% sampled rows already in the
+  recipe, and two-seed training arms could not resolve an effect that small, so the training-arm
+  pilot is replaced by this measurement and batched generation is adopted. Owner reviews this
+  at the rental checkpoint.
+- **Pending in Stage 1:** owner approval of the frozen gate and source list (at the rental
+  checkpoint, with the margins).
 
 ### What the previous train taught us
 
