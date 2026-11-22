@@ -132,7 +132,10 @@ the plan on 2026-11-21. Its accepted corrections are folded in below.
    model card must say "trained from converted Baseline weights", not "from scratch".
 6. **Claim.** Decided 2026-11-21: both. The release claims "faster than stock Baseline" and
    "comparable speed to a Baseline fine-tuned on the same data, at about half the size". The gate
-   tests both, with margins the owner sets before any run.
+   tests both, with margins the owner sets before any run. Open conflict (second review,
+   2026-11-21): only the 185 MB file is about half of Baseline's 381 MB (48.6%). The 284 MB file
+   the owner chose to lead with is 74.5%, and vocabulary-table training would rule out the 185 MB
+   form. Both claims must name one exported file and the actual fine-tuned comparator.
 
 ### Workstream B: production TRAIN data
 
@@ -140,8 +143,9 @@ the plan on 2026-11-21. Its accepted corrections are folded in below.
   survive into prompts (earlier turns, quoted answers, tool outputs), ancestry and a verdict. Drop
   MATH, MetaMathQA and other MATH-derived sets, unaudited legacy sources, and anything whose terms
   forbid this use. Audit the Baseline checkpoint's licence and data notices the same way.
-- **Volume.** Plan for about 300K conversations, the low end of current practice, and grow only if
-  a mid-scale checkpoint keeps paying. The tiny-corpus pilot cannot choose between 300K and 800K.
+- **Volume.** About 100K conversations and one pass (about 1.25M updates), reduced if the scaling
+  pilot does not justify it. All-local fallback: about 250K candidate updates (about 17.6 training
+  hours, about 20K old-record equivalents).
 - **Base prompt pool.** Nemotron Post-Training v2 prompts (CC-BY-4.0 subsets) as the backbone, plus
   targeted sources for long documents, multilingual and tools. Open-PerfectBlend's shares are a
   reference point, not our mix.
@@ -164,17 +168,17 @@ the plan on 2026-11-21. Its accepted corrections are folded in below.
 
 ### Workstream C: pipeline and compute
 
-Measured scale from F033: about 10.6 MB per fused record and 23.6 local GPU-hours for 335,812
-updates over 13,394 records.
+Measured scale (F033, train-bank expansion): about 10.6 MB per fused record, 12.5 updates per
+record per pass, and 6.7 s per record for single-stream generation plus capture. A regenerated
+multi-turn conversation need not match an old record's size.
 
-- **Storage.** 300K records would be about 3.2 TB before soft labels and checkpoints. 291 GB is
-  free (529 GB in `artifacts/`).
-- **Generation time.** At about 750 response tokens each, 300K conversations are 225M tokens. At a
-  sustained 100, 500 or 1,000 tokens/s that is 26, 5.2 or 2.6 days. No BitDraft measurement yet
-  gives a rate for batched generation, locally or rented.
-- **Training time.** Linear extrapolation gives about 529 local GPU-hours per 300K arm at unchanged
-  geometry, for each of the candidate and the matched 4-bit control. This is why the final run
-  rents.
+- **Storage.** 100K records would be about 1.06 TB fused. Staged shards keep only a working set,
+  but a restart needs durable token streams, cursor and optimizer state.
+- **Generation.** About 186 local hours single-stream at 100K. Batched writing measured 2.2–2.5×
+  faster on a small greedy writing sample only. Sampled, long and multi-turn writing and replay
+  are untimed, and the batched writer currently expects existing one-at-a-time answers, so
+  production use needs a build.
+- **Training.** About 88 local hours for the candidate's 1.25M updates.
 - **Recommended local pipeline: staged replay.** Save token streams only. Generate, replay
   features, train and discard features in bounded shards, with a deterministic mixing schedule and
   resume cursor. Qualify one full cycle locally, including export, restart and byte and label
@@ -233,9 +237,18 @@ caching, caps, temperature, context and concurrency. Use real prompts only.
 
 - target-only, the speed-up denominator;
 - stock Baseline;
-- **4-bit control at matched data and length**, trained by our maintained trainer. Each precision
-  gets an equal, small tuning allowance. Match examples, supervised tokens and updates, report
-  wall-clock cost separately, and record its learning curve to test the "stops after 1%" plateau;
+- **4-bit control trained to a plateau** (owner, 2026-11-21) by our maintained trainer, with an
+  equal small tuning allowance for each precision. Freeze one group-stratified, deterministically
+  mixed manifest of conversations, token streams and supervised spans. Publish each arm's coverage,
+  tokens and updates, and the control's whole curve. If the control stops on a prefix, the claim
+  reads "fine-tuned on a stratified subset of the same corpus" with the fraction, and same-prefix
+  checkpoints of both arms are compared. Plateau rule (proposal): checkpoint spacing and a minimum
+  worthwhile gain tied to the release margin are fixed in advance. After warm-up, two successive
+  doublings of exposure must show paired upper bounds on further DEV gain below that threshold,
+  accounting for repeated looks, on the weighted outcome and on agentic, sampled and tool-format
+  strata. Extend if any of these still improves, intervals stay too wide, or a decayed step size
+  could explain the flat curve. F034's ordinary panel was flat while agentic first choice rose
+  from 57% to 69%. Confirm the chosen checkpoint with served timing at calibrated depth;
 - 4-bit control with the same shortlist, for attribution;
 - the target's built-in draft head, the stock 2-bit and 3-bit files, and the old leader `ef068eba…`.
 
@@ -261,8 +274,25 @@ what survives on served outcomes. "Before" says why it was not done or not done 
 | Held-out tool convention | Only one convention existed | Acceptance on a convention absent from TRAIN | None |
 | Data scaling | Partly (F025, F033) | Mechanism and spending checks under `Pilots and preflight` | None |
 
-Serving depth is recalibrated with `calibrate-depth` if acceptance rises. If time runs short, the
-rotation kernel and the low-rank correction drop first, as the largest builds.
+Second review (2026-11-21): arm length does not set precision. Earlier short two-seed screens
+resolved +7.4 points but left about one-point effects unresolved (F032, F039). Estimate each
+screen's detectable effect from prior paired differences and allow an inconclusive verdict.
+Order and gating:
+- first: batched generation (with sampled, long and multi-turn records and replay cost) and data
+  scaling;
+- freeze the held-out tool convention before acquisition, and say whether it is selection or
+  independent evidence;
+- verify long supervised windows, memory and long DEV groups before 32K training;
+- vocabulary tables: run item 7's cheap saved-slot probes first, and rebuild the shortlist from
+  new TRAIN labels;
+- attention tables: attention only, as a separate build from rounding-aware training and Q4_K
+  export (F031 trained attention and fusion together);
+- soft targets: measure retained mass, shortlist misses and capture cost first; build full capture
+  only with enough sampled requests to resolve a timing threshold;
+- deferred behind probes, with no builds yet: input rotation (removing input rounding from the
+  trained model barely moved DEV), low-rank correction, one-bit attention (bound its benefit from
+  F030's timing breakdown first), and BF16 responses unless they save measured writing time.
+Serving depth is recalibrated with `calibrate-depth` if acceptance rises.
 
 Deferred: the two-channel bypass retest, a deeper or wider body, a standard-trainer 4-bit control
 with GGUF conversion, the 9B round profile, and extra GPUs. Excluded by the one-bit decision: higher
@@ -313,40 +343,32 @@ teacher (owner, 2026-11-16), three-valued weights and a second plane (owner, 202
   phase separately from observed token and window counts. This replaces the earlier one-hour
   rental pilot, which conflicted with the rental decision.
 
-### Compute and cost estimate (2026-11-21, before any measurement on rented hardware)
+### Compute and cost estimate (revised after the second review, 2026-11-21; no rented measurement)
 
-Anchors: the candidate trains at about 3.95 updates/s on the 5080 (F033) and the 4-bit control at
-about 5.3 (F034). TRAIN averaged about 12.5 updates per record per pass. Local generation plus
-capture took about 6.7 s per record, single-stream (train-bank expansion: 2,633 records in 4.9
-GPU-hours). At 300K records, one pass is about 3.76M updates.
-
-| Item | 5080 hours | Notes |
-| --- | ---: | --- |
-| Candidate, 1 / 2 passes | 264 / 529 | |
-| 4-bit control, 1 / 2 passes | 197 / 394 | |
-| Generation, single-stream as measured | about 560 | Batched serving should be several times faster; unmeasured |
-
-- **GPU choice.** The trainer computes in F32 without tensor cores (`reference` arithmetic). Its
-  speed follows F32 throughput: RTX 5080 about 56 TFLOPS, RTX 5090 about 105, H100 about 67,
-  A100 about 19.5. The RTX 5090 is also the 5080's architecture (sm_120), so the locally validated
-  runtime and kernels run unchanged, and its 32 GB fits the trainer beside a Q4KM target.
-  Datacenter cards pay only if a tensor-core training path is validated locally first.
-- **Rough prices (marketplace listings, November 2026).** RTX 5090 about $0.45–0.95 per hour,
-  H100 about $1.75–2.90, A100 80 GB about $0.60–1.15. RunPod charges no ingress or egress and about
-  $0.05–0.10 per GB-month for storage.
-- **Cost, two arms, 300K records, RTX 5090 assumed 1.0–1.6× the 5080 (unmeasured).** Training
-  runs 290–920 GPU-hours, about $130–870. Generation and feature replay on the rental cost about
-  $10–50. Storage for the run costs about $30–80. With a 25% allowance for restarts, the total is
-  about $250–1,250. Central case (two passes, on-demand 5090, 1.6×): about $800. An 800K corpus
-  multiplies training by about 2.7.
-- **Internet.** Upload only code, prompts and token streams (a few GB). Models download from
-  Hugging Face on the rental, and results are small. Uploading 3.2 TB of features would take days
-  on a home line, so features are always computed where training runs.
-- **Wall-clock on one GPU per arm.** One pass takes about 7 days on a 5090 at 1.6× and two passes
-  about 14. A multi-GPU data-parallel trainer would cut that to 1–3 days for about the same GPU
-  hours. It does not exist, would change the effective batch, and would need local validation.
-- **Largest unknown:** the rented card's real speed-up. A one-hour benchmark of the trainer on a
-  5090 and an H100 would cost about $5 but conflicts with the rental rule unless the owner allows it.
+- **GPU choice.** The trainer uses F32 SIMT arithmetic. The RTX 5090 shares the 5080's
+  architecture (sm_120) and has 32 GB. Its speed-up is unmeasured, and CPU feeding, memory
+  bandwidth and grouping may limit it. Treat 1.0–1.6× as a sensitivity range, not bounds.
+- **Serial rental hours for the one-bit arm at 100K.** About 81 local-equivalent hours of
+  generation (the 2.3× batched rate applied to all historical generation and capture time, an
+  optimistic assumption) plus 88 of training. That is about 169 local hours, or about 105–170
+  rented hours (4.4–7 days) before replay, screens and retries.
+- **Prices.** RTX 5090 roughly $0.45–0.70 per hour on marketplace or community tiers and $1.39
+  on RunPod's on-demand list. That is about $50–120 cheap or about $150–235 on-demand, before
+  overhead. With storage, setup, screens, checkpoint transfer and a restart allowance: about
+  $60–150 cheap, up to about $300 on-demand. Use an actual instance quote.
+- **Controls on spending.** Set a hard dollar ceiling, and stop after the first rented shard if the
+  measured rate projects past it.
+- **Internet.** Upload code, prompts and token streams (a few GB). Models download from Hugging
+  Face on the rental; exports and checkpoints come back. RunPod lists no transfer fees; the cost is
+  paid time while bytes move.
+- **Cross-host identity.** Use identical token IDs, spans, target and template revisions, replay
+  geometry, fusion operand hash and pinned runtime source on both hosts. On the first rented
+  shard, compare tokens, labels, features and an export round trip against a local fixture, with
+  acceptable drift fixed in advance. Rental screens need fresh 5090 controls, or exports return to
+  the 5080. All release timing runs on the 5080.
+- **All-local fallback.** About 250K candidate updates (about 17.6 training hours) on about 20K
+  conversations, plus generation, control, replay and evaluation, costs $0 rented. It stays a
+  credible release experiment if the scaling pilot cannot justify 100K.
 
 ### Order and timeline (owner arrangement 2026-11-21: 4-bit control local; one-bit data generation and training on rented RTX 5090s; batched generation is piloted)
 
@@ -356,12 +378,14 @@ GPU-hours). At 300K records, one pass is about 3.76M updates.
 | 1. Public gate port | Local, GPU hours | Build harness port, qualify on target-only, stock Baseline and old leader | 1–2 days | $0 |
 | 2. Pilots | Local GPU, about 2–3 days busy | Scaling mechanism and spending checks; generation pilot (one-at-a-time Q4KM, batched Q4KM, BF16 replayed for Q4KM features; 2 seeds); soft targets; feature screens (vocabulary-table and attention-table training with rounding in the loop and a Q4_K export, input rotation); one-hour rented 5090 trainer benchmark if the owner allows | 5–7 days | about $1 |
 | 3. Data and pipeline | Local CPU, plus about 1 GPU day | Prompt acquisition, deduplication and decontamination; new private DEV and references; staged-replay pipeline and rental scripts; one reduced shard end to end on the 5080 | 4–6 days, overlaps phase 2 | $0 |
-| 4a. One-bit run | Rented 5090 | Generate 100K conversations, replay features in shards, train 1.25M updates (pilot may shrink this), acceptance screens on the rental | 3–5 days | about $40–130; spot about $40–60 |
+| 4a. One-bit run | Rented 5090 | Generate 100K conversations, replay features in shards, train 1.25M updates (pilot may shrink this), identity check on the first shard, screens | 5–8 days | about $60–150 cheap tier, up to about $300 on-demand; hard ceiling |
 | 4b. 4-bit control | Local, about 1 GPU day | Download token streams for its slice, replay features, train until the DEV curve plateaus, screens | Parallel with 4a | $0 |
 | 5. Gate and release | Local | Frozen public gate on the 5080, clean-install test, close-results, licence, model and data cards | 2–4 days | $0 |
 
-Total: about 3–4 weeks of calendar time, about 5–6 days of 5080 GPU time (roughly $10 of
-electricity), and about $40–130 rented.
+Total: about 3–5 weeks of calendar time and about 6–9 days of 5080 GPU time (roughly $10–15 of
+electricity). The rental costs about $60–150 on a cheap tier, or $0 on the all-local fallback. All
+5080 work (pilots, references, control, gate qualification and final timing) shares one card and
+runs in one schedule. Phase 2 needs the DEV and pipeline pieces of phase 3 first.
 
 Go/no-go points: no data benefit in the scaling pilot stops or shrinks the plan; the generation
 pilot picks the writing method; the screens pick the recipe; the rented benchmark sets a cost cap;
