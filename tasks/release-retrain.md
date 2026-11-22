@@ -97,6 +97,39 @@ the plan on 2026-11-21. Its accepted corrections are folded in below.
     the same streams), training 5 arms of about 12 minutes, screens about 2 minutes each: about
     1.5 GPU-hours.
   - Kill: any refusal or nonfinite loss; a training arm over 20 minutes; generation over 30.
+- **Scaling mechanism check result (2026-11-22)** (`artifacts/datasets/retrain-01/scaling/`,
+  2,370 updates, retrain DEV screen, candidate-only against saved references): one-bit 256
+  records 47.1% and 47.5% acceptance (seeds 8101, 8102; 0.94× and 0.95× Baseline); one-bit 64
+  records 26.5% (0.77×); 4-bit control 256 records 58.0%, 64 records 57.5% (both 0.99×). Mean
+  label visits 4.4 against 16.6. The one-bit drafter loses 21 points to repetition, far beyond
+  its 0.34-point seed spread; the control barely moves. Distinct data is the one-bit lever, so
+  the spending check runs. Grouping uses 2 GiB activations: 3 GiB ran out of GPU memory on
+  these sequences (peak 14.25 GiB), so production intents use 2 GiB.
+- **Preflight: scaling spending check (2026-11-22).**
+  - Question: once the smaller arm is near one pass, as in the all-local fallback (20K records,
+    250K updates, about 12.5 updates per record), does 4× more distinct data still raise one-bit
+    acceptance by the worthwhile +1 point?
+  - Design: 2,370 updates; 192 records (about one pass) against 768 (about a quarter), the 192 a
+    category- and length-stratified subset of the 768; one-bit seeds 8101 and 8102 per size, one
+    4-bit control pair (seed 8101); same start, schedule and grouping (2 GiB); DEV screen against
+    saved references.
+  - Decision-changing result: one-bit 768 minus 192 at least +1 point on both seeds supports
+    the rented 100K scale; a difference below the 0.34-point seed spread supports the fallback;
+    between is inconclusive and the owner decides on cost.
+  - Limitation: a 2,370-update proxy of a 250K-update regime; it tests the data-per-pass
+    mechanism, not the absolute gain at production length.
+  - Cost: write 512 more answers (about 15 minutes), replay 960 records (about 35), fuse, six
+    arms of about 10 minutes: about 1.9 GPU-hours. Kill: refusal, out of memory, an arm over 20
+    minutes.
+- **Shortlist probe (2026-11-22, item 7's cheap probe):** on the 256 pilot answers, labels the
+  leader's 68,728-row shortlist cannot score, even after adding every request token as the
+  runtime does: multilingual 12.6%, conversation 3.0%, writing 0.5%, all others at most 0.15%.
+  This matches the leader's multilingual loss (0.86× Baseline). The 256 answers alone hold 23,673
+  distinct labels, 6,996 outside the old shortlist. The shortlist must be rebuilt from new TRAIN
+  labels (`vocabulary-variants`) before export. Each extra row costs about 1.44 KB of file
+  ((542 − 284) MB over 179,592 rows), so a wider shortlist trades against the "about 25% smaller"
+  claim; the size is an owner decision at the rental checkpoint, from the coverage curve of the
+  generated TRAIN answers.
 - **Pending in Stage 1:** owner approval of the frozen gate and source list (at the rental
   checkpoint, with the margins).
 
