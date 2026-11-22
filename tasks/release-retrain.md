@@ -9,11 +9,13 @@ Then publish a release whose claims, data card and licences hold up to outside s
 
 ## Authorized
 
-Stage 1 (Prep) authorized by the owner on 2026-11-21: rights audit and source list, public gate
-selection and protocol, plateau rule, held-out tool convention, gate port and qualification on
-local GPU, private DEV rebuild, batched writer and staged-replay pipeline builds. Prompt downloads
-for these are included. Stages 2–4, rentals and production data generation are not authorized.
-Gate margins are proposed by the agent for owner approval at the end of Stage 1.
+Stage 1 (Prep) authorized by the owner on 2026-11-21. Extended 2026-11-22: "go thru as much as
+you can before rental", with builds done in this thread rather than delegated. Authorized: all of
+Stage 1, all of Stage 2 (local screening), and the local parts of Stage 3 that precede the rental
+(one local end-to-end chunk, rental scripts). Not authorized: any rental, including the one-hour
+5090 test; production generation of the full corpus; the final runs. The agent proposes gate
+margins and freezes them provisionally; the owner approves them at the rental checkpoint, before
+any final run.
 
 ## Done when
 
