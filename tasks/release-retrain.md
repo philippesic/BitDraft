@@ -131,11 +131,11 @@ the plan on 2026-11-21. Its accepted corrections are folded in below.
    Baseline's weights, so Baseline's licence and Qwen's (Apache-2.0) constrain the release. The
    model card must say "trained from converted Baseline weights", not "from scratch".
 6. **Claim.** Decided 2026-11-21: both. The release claims "faster than stock Baseline" and
-   "comparable speed to a Baseline fine-tuned on the same data, at about half the size". The gate
-   tests both, with margins the owner sets before any run. Open conflict (second review,
-   2026-11-21): only the 185 MB file is about half of Baseline's 381 MB (48.6%). The 284 MB file
-   the owner chose to lead with is 74.5%, and vocabulary-table training would rule out the 185 MB
-   form. Both claims must name one exported file and the actual fine-tuned comparator.
+   "comparable speed to a Baseline fine-tuned on the same data, while smaller". The gate
+   tests both, with margins the owner sets before any run. Size wording decided 2026-11-21 (option
+   b): the release ships the shortlist-only file with its own vocabulary rows (284 MB today,
+   74.5% of Baseline's 381 MB) and claims "about 25% smaller", which keeps vocabulary-table
+   training open. Both claims name that one exported file and the actual fine-tuned comparator.
 
 ### Workstream B: production TRAIN data
 
