@@ -81,6 +81,22 @@ the plan on 2026-11-21. Its accepted corrections are folded in below.
   recipe, and two-seed training arms could not resolve an effect that small, so the training-arm
   pilot is replaced by this measurement and batched generation is adopted. Owner reviews this
   at the rental checkpoint.
+- **Preflight: scaling mechanism check (2026-11-22).**
+  - Question: at a fixed short budget, does more distinct new-mix data beat repeated data, for
+    one-bit and for the 4-bit control? It sets whether, and how long, the spending check runs.
+  - Decision-changing result: one-bit 256-group arm above its 64-group arm on the DEV screen by
+    more than the measured seed spread (second seed of the one-bit 256 arm) means data
+    distinctness already matters at this length; the spending check then runs at the planned
+    length. Otherwise the result is inconclusive by design and the spending check sets its own
+    length from the learning curve (about +1.8 points per doubling).
+  - Preconditions and checks: at 2,370 updates and about 12.5 updates per record per pass, the
+    64-group arm makes about 3 passes and the 256-group arm about 0.74 (training reports log
+    unique positions and visits; the small arm must show mean visits of at least 2). Controls
+    differ only in data: same start, seed, order rule, schedule (40 warmup, cosine to 2,370).
+  - Cost: data about 25 minutes (256 batched answers, replay, fuse; the 64 subset replayed from
+    the same streams), training 5 arms of about 12 minutes, screens about 2 minutes each: about
+    1.5 GPU-hours.
+  - Kill: any refusal or nonfinite loss; a training arm over 20 minutes; generation over 30.
 - **Pending in Stage 1:** owner approval of the frozen gate and source list (at the rental
   checkpoint, with the margins).
 
