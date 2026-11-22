@@ -271,6 +271,15 @@ into fused records, and training reads them as `fused-corpus-v1`. Raw replay is 
 per token and fused storage about 8 MB per record, so production replays, fuses, trains and
 discards one bounded shard at a time.
 
+`benchmarks staged-train` (schema `staged-training-v1`, run from the checkout, not frozen) does
+that cycle. Stage `k` writes `stage_rows` bank rows starting at `first_row + k × stage_rows`,
+replays, fuses, deletes the raw taps, trains to `updates_per_stage × (k + 1)` updates (fresh
+for the first stage, `continue` from the previous stage's latest state after it, with the
+schedule stated once for the whole run in the intent template), then deletes the fused
+features. Token streams, specifications and states stay. Rerunning the same specification
+skips finished stages and resumes an interrupted one; a changed stage specification or code
+identity is refused.
+
 ## Format conversion
 
 Use the configured numerical interpreter reported by the doctor for

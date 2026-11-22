@@ -40,9 +40,16 @@ the plan on 2026-11-21. Its accepted corrections are folded in below.
   (seed 9201). 1,922 tasks: general 880, thinking-on 320, sampled 242, long-input 180,
   agentic-replay 60 (60 reserved repositories), tool-calls 120, held-out ReAct 120. SPEED-Bench
   masked prompts resolved (0 masked). Comparisons accept these files with `tier: gate`.
+- **Gate port qualified on two files** (`release-gate-01/qualification/`, runtime v10, depth 3,
+  Q4KM): every arm's outputs identical to target-only. Tool calls (120): Baseline 63.6% acceptance,
+  leader 87.3%, leader 1.28× Baseline. Agentic replay (60): Baseline 51.5%, leader 64.8%, 1.06×
+  Baseline. The agentic file is from `gate-v2`, which cuts histories at 6K–24K rendered tokens as
+  the definition says (`gate-v1` used a character proxy, up to 37.8K tokens, and is superseded;
+  its other files and decontamination outputs are byte-identical).
 - **Prompt bank:** pilot `artifacts/bank/retrain-01/pilot-v1` (3,428 rows) is good. The full bank
-  (`bank.json`, seed 9301: 100K TRAIN quotas, 3% DEV, agentic DEV split by repository) is
-  building as `bank-v1`; the first attempt stopped on an empty tool description, now fixed.
+  (`bank.json`, seed 9301, 3% DEV, agentic DEV split by repository) first gave 88,146 TRAIN and
+  2,664 DEV; long agentic sessions, PG-19 books and tool rows ran short. Abundant cells are topped
+  up by 12K (`bank-v1` rebuilding).
   Source revisions are in `artifacts/prompt-sources/retrain-01/revisions.txt`. Agentic quota
   is 5,000 (6,306 SWE-rebench issues in 1,823 repositories); tools take the other 2,000.
 - **Local chunk end to end (pipeline only, not a learning measurement):** 64 pilot rows,
@@ -53,9 +60,13 @@ the plan on 2026-11-21. Its accepted corrections are folded in below.
 - **Fixed on the way:** parquet now streams in batches (the 2 GB SWE-rebench file had used
   24 GB); the Hermes tools block parser; gate agentic histories no longer shingle-match every
   trajectory (they are decontaminated by repository); bounded candidate pools.
-- **Pending in Stage 1:** full bank finish; private DEV rebuild with references; staged
-  driver that cycles write, replay, fuse, train-continue and discard per shard; owner approval
-  of the frozen gate and source list (at the rental checkpoint, with the margins).
+- **Staged driver works:** `staged-train`, two 32-row stages of 100 updates
+  (`artifacts/datasets/retrain-01/staged-smoke`), resumed after a fix with the finished stage
+  skipped; continuation drops the fresh-only calibration setting.
+- **Full bank done:** `bank-v1`, 100,146 TRAIN and 3,024 DEV; 19,629 thinking, 25,679 sampled;
+  tool conventions native 90,035, JSON 6,522, Markdown 6,613.
+- **Pending in Stage 1:** private DEV rebuild with references; owner approval of the frozen gate
+  and source list (at the rental checkpoint, with the margins).
 
 ### What the previous train taught us
 

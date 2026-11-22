@@ -1,0 +1,207 @@
+import shutil
+import subprocess
+from pathlib import Path
+
+from benchmarks.native import file_reference
+from w1a1_eagle.checkpoints.store import Store
+from w1a1_eagle.contracts import Record, integer, record, sequence, string
+from w1a1_eagle.identity import source_identity
+from w1a1_eagle.records import canonical, read
+
+FIELDS = {
+    "schema",
+    "writer",
+    "replay",
+    "fuse",
+    "intent",
+    "first_row",
+    "stage_rows",
+    "stages",
+    "updates_per_stage",
+    "scope",
+}
+PYTHON = ("uv", "run", "--locked", "--no-sync", "--offline", "python")
+FEATURE_SUFFIXES = (".f16", ".f32")
+
+
+def completed(path: Path, field: str, value: object) -> bool:
+    return path.exists() and read(path, 64 * 1024 * 1024).get(field) == value
+
+
+def run(argv: list[str], log: Path, root: Path) -> None:
+    with log.open("a") as sink:
+        status = subprocess.run(argv, cwd=root, stdout=sink, stderr=sink, check=False).returncode
+    if status != 0:
+        raise ValueError("stage step failed; inspect " + str(log))
+
+
+def write_spec(store: Store, name: str, value: Record) -> Path:
+    path = store.root / name
+    if path.exists():
+        if read(path, 64 * 1024 * 1024) != value:
+            raise ValueError("stage specification changed; start a new staged root")
+    else:
+        store.atomic(path, canonical(value))
+    return path
+
+
+def latest_state(train: Path) -> Record:
+    pointer = read(train / "states" / "latest.json")
+    sha = string(pointer["sha256"])
+    return {
+        "path": str(train / "states" / (sha + ".bin")),
+        "sha256": sha,
+        "bytes": integer(pointer["bytes"]),
+    }
+
+
+def trained_updates(train: Path) -> int:
+    pointer = train / "states" / "latest.json"
+    return integer(read(pointer)["updates"]) if pointer.exists() else 0
+
+
+def discard_features(root: Path) -> int:
+    freed = 0
+    for path in sorted(root.rglob("*")):
+        if path.is_file() and path.suffix in FEATURE_SUFFIXES:
+            freed += path.stat().st_size
+            path.unlink()
+    return freed
+
+
+def stage_ids(writer: Path) -> tuple[list[Record], list[str]]:
+    shards = sorted((writer / "shards").glob("streams-*.json"))
+    references = [file_reference(path) for path in shards]
+    ids = [
+        string(record(row)["id"])
+        for path in shards
+        for row in sequence(read(path, 1024 * 1024 * 1024)["records"])
+    ]
+    return references, ids
+
+
+def staged_train(specification: Path, output: Path) -> Record:
+    raw = read(specification)
+    if set(raw) != FIELDS or raw["schema"] != "staged-training-v1":
+        raise ValueError("unsupported staged training specification")
+    root = Path(__file__).resolve().parents[1]
+    stages, stage_rows = integer(raw["stages"]), integer(raw["stage_rows"])
+    first_row, per_stage = integer(raw["first_row"]), integer(raw["updates_per_stage"])
+    if stages < 1 or stage_rows < 1 or first_row < 0 or per_stage < 1:
+        raise ValueError("positive stage counts required")
+    template = record(raw["intent"])
+    if template["mode"] != "fresh" or template["parent"] is not None:
+        raise ValueError("the intent template describes the fresh first stage")
+    store = Store(output)
+    write_spec(store, "specification.json", raw)
+    summary: list[Record] = []
+    previous: Path | None = None
+    for index in range(stages):
+        stage = Store(store.root / ("stage-" + str(index).zfill(4)))
+        log = stage.root / "stage.log"
+        writer, replay = stage.root / "writer", stage.root / "replay"
+        fused, train = stage.root / "fused", stage.root / "train"
+        target_updates = per_stage * (index + 1)
+        if trained_updates(train) >= target_updates:
+            summary.append({"stage": index, "status": "trained", "updates": target_updates})
+            previous = train
+            continue
+        writing = record(raw["writer"]) | {
+            "schema": "bank-writing-v1",
+            "first": first_row + index * stage_rows,
+            "count": stage_rows,
+        }
+        path = write_spec(stage, "writer.json", writing)
+        if not completed(writer / "result.json", "status", "complete"):
+            run([*PYTHON, "-m", "benchmarks", "write-bank", str(path), str(writer)], log, root)
+        streams, ids = stage_ids(writer)
+        replaying = record(raw["replay"]) | {
+            "schema": "token-replay-v1",
+            "streams": streams,
+            "ids": ids,
+        }
+        path = write_spec(stage, "replay.json", replaying)
+        if not (fused / "corpus.json").exists():
+            if not completed(replay / "result.json", "status", "complete"):
+                run(
+                    [*PYTHON, "-m", "benchmarks", "replay-tokens", str(path), str(replay)],
+                    log,
+                    root,
+                )
+            if fused.exists():
+                shutil.rmtree(fused)
+            fusing = record(raw["fuse"]) | {
+                "schema": "fused-conversion-v1",
+                "corpus": file_reference(replay / "corpus.json"),
+                "corpus_format": "corpus-v1",
+            }
+            path = write_spec(stage, "fuse.json", fusing)
+            run(
+                [
+                    ".venv/numerical-clean/bin/python",
+                    "-B",
+                    "-m",
+                    "w1a1_eagle.numerical.fusing",
+                    str(path),
+                    str(fused),
+                ],
+                log,
+                root,
+            )
+        discard_features(replay)
+        budget = record(template["budget"]) | {
+            "updates": target_updates,
+            "attempts": target_updates + 1,
+        }
+        intent = template | {
+            "corpus": file_reference(fused / "corpus.json"),
+            "corpus_format": "fused-corpus-v1",
+            "budget": budget,
+            "code_sha256": source_identity(root),
+        }
+        if previous is not None:
+            intent = {key: value for key, value in intent.items() if key != "calibration"}
+            intent |= {"mode": "continue", "parent": latest_state(previous)}
+        if trained_updates(train) > 0:
+            intent = {key: value for key, value in intent.items() if key != "calibration"}
+            intent |= {"mode": "resume", "parent": latest_state(train)}
+            path = write_spec(
+                stage, "intent-resume-" + str(trained_updates(train)) + ".json", intent
+            )
+        else:
+            path = write_spec(stage, "intent.json", intent)
+        run(
+            [
+                *PYTHON,
+                "-m",
+                "w1a1_eagle",
+                "run",
+                str(path),
+                str(train),
+                "--scope",
+                string(raw["scope"]),
+            ],
+            log,
+            root,
+        )
+        if trained_updates(train) < target_updates:
+            raise ValueError("stage training stopped before its update budget")
+        freed = discard_features(fused)
+        summary.append(
+            {
+                "stage": index,
+                "status": "trained",
+                "updates": target_updates,
+                "records": len(ids),
+                "freed_feature_bytes": freed,
+            }
+        )
+        previous = train
+    result: Record = {
+        "schema": "staged-training-result-v1",
+        "stages": summary,
+        "final_state": None if previous is None else latest_state(previous),
+        "rule": "token streams, specifications and training states are kept; features are discarded after use",
+    }
+    store.atomic(store.root / "result.json", canonical(result))
+    return result

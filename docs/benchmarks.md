@@ -23,7 +23,7 @@ explicit paths and the shared saved-reference registry.
 | `prepare-project-workflows`, `prepare-replays`, `prepare-panels` | Project controls, measured histories, live/harness inputs |
 | `capture`, `evaluate` | Teacher features; matched teacher-forced DEV loss |
 | `replay-tokens`, `replay-agreement`, `write-batched` | Rebuild captures from stored token IDs, compare them, measure parallel writing ([data](data.md#token-streams-and-replay)) |
-| `select-retrain`, `write-bank` | Release retrain prompt bank and its batched answers ([data](data.md#retrain-bank)) |
+| `select-retrain`, `write-bank`, `staged-train` | Release retrain prompt bank, its batched answers, and shard-by-shard training ([data](data.md#retrain-bank)) |
 | `prepare-gate` | Public release gate workloads, decontamination texts and exclusions ([release gate](#public-release-gate)) |
 | `compare`, `live` | Isolated native requests; executing tool episodes |
 | `campaign-preflight`, `campaign`, `campaign-report` | CPU admission; training; read-only health |

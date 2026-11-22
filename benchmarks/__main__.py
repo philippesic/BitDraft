@@ -74,6 +74,7 @@ def main() -> int:
         "replay-agreement",
         "write-batched",
         "write-bank",
+        "staged-train",
         "prepare-round-inputs",
     ):
         comparison = commands.add_parser(name)
@@ -88,6 +89,7 @@ def main() -> int:
                 "replay-tokens": "datasets",
                 "write-batched": "datasets",
                 "write-bank": "datasets",
+                "staged-train": "training",
                 "curate": "bank",
                 "admit-bank": "bank",
                 "select-supplement": "bank",
@@ -132,6 +134,7 @@ def main() -> int:
             "reduce-trace",
             "campaign-report",
             "campaign-preflight",
+            "staged-train",
         }:
             root = Path(__file__).resolve().parents[1]
             code = source_identity(root)
@@ -187,6 +190,10 @@ def main() -> int:
             from w1a1_eagle.numerical.agreement import agreement
 
             result = agreement(args.input, args.output)
+        elif args.command == "staged-train":
+            from benchmarks.staged import staged_train
+
+            result = staged_train(args.input, args.output)
         elif args.command == "write-bank":
             from benchmarks.bank_writer import write_bank
 
