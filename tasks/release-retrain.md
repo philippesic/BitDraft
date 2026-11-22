@@ -121,6 +121,18 @@ the plan on 2026-11-21. Its accepted corrections are folded in below.
   - Cost: write 512 more answers (about 15 minutes), replay 960 records (about 35), fuse, six
     arms of about 10 minutes: about 1.9 GPU-hours. Kill: refusal, out of memory, an arm over 20
     minutes.
+- **Scaling spending check result (2026-11-22)** (`artifacts/datasets/retrain-01/spending/`): one-bit
+  768 against 192 records at 2,370 updates: 48.3% against 46.7% (seed 8101, +1.6) and 49.4%
+  against 47.0% (seed 8102, +2.4), both above the +1 bar; 4-bit control 58.6% against 58.5%.
+  Even near one pass, more distinct data still pays for one-bit: the evidence favours the
+  rented 100K scale over the local fallback (owner decides at the checkpoint, on cost).
+- **Replay 4.5× faster, byte-identical (2026-11-22):** replay was CPU-bound on one core with the
+  GPU mostly idle. The capture helper's finiteness check built a heap string per logit (248,320
+  per supervised token), and the per-token argmax ran on one thread. Fixed in `native/capture.cpp`
+  (message as `const char *`, one check per row, argmax across up to 8 threads); helper
+  `artifacts/native/helpers-replay-v3`. 16 records: 33 s to about 7 s in the record loop
+  (42 s to 13 s wall); all 144 tap and label files identical to the old helper. Old rate
+  2.2 s per record (631 tokens/s); 100K-record replay drops from about 60 hours to about 13.
 - **Shortlist probe (2026-11-22, item 7's cheap probe):** on the 256 pilot answers, labels the
   leader's 68,728-row shortlist cannot score, even after adding every request token as the
   runtime does: multilingual 12.6%, conversation 3.0%, writing 0.5%, all others at most 0.15%.

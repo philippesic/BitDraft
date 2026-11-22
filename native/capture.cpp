@@ -10,14 +10,18 @@
 #include <iostream>
 #include <memory>
 #include <stdexcept>
+#include <thread>
 #include <vector>
 
 void llama_set_embeddings_layer_inp(llama_context *, uint32_t, bool);
 float * llama_get_embeddings_layer_inp(llama_context *, uint32_t);
 namespace fs = std::filesystem;
 using json = nlohmann::json;
-static void require(bool okay, const std::string & text) {
+static void require(bool okay, const char * text) {
     if (!okay) throw std::runtime_error(text);
+}
+static bool finite(const float * values, size_t size) {
+    return std::all_of(values, values + size, [](float value) { return std::isfinite(value); });
 }
 static ggml_backend_reg_t backend(const fs::path & path, const char * symbol) {
     auto expected = fs::canonical(path);
@@ -31,11 +35,12 @@ static ggml_backend_reg_t backend(const fs::path & path, const char * symbol) {
 }
 static void write_features(std::ofstream & file, const float * values, size_t size, bool half) {
     require(values != nullptr, "missing feature tap");
-    for (size_t i = 0; i < size; ++i) require(std::isfinite(values[i]), "nonfinite feature");
+    require(finite(values, size), "nonfinite feature");
     if (half) {
         std::vector<ggml_fp16_t> rounded(size);
         ggml_fp32_to_fp16_row(values, rounded.data(), size);
-        for (auto value : rounded) require(std::isfinite(ggml_fp16_to_fp32(value)), "FP16 feature overflow");
+        require(std::all_of(rounded.begin(), rounded.end(), [](ggml_fp16_t value) { return std::isfinite(ggml_fp16_to_fp32(value)); }),
+                "FP16 feature overflow");
         file.write(reinterpret_cast<const char *>(rounded.data()), size * 2);
     } else file.write(reinterpret_cast<const char *>(values), size * 4);
     require(bool(file), "feature write failed");
@@ -138,7 +143,7 @@ int main(int argc, char ** argv) {
                 if (prediction) {
                     const float * logits = llama_get_logits_ith(ctx.get(), count-1);
                     require(logits != nullptr, "missing prediction logits");
-                    for (int i = 0; i < vocabulary; ++i) require(std::isfinite(logits[i]), "nonfinite target logits");
+                    require(finite(logits, size_t(vocabulary)), "nonfinite target logits");
                     next = std::max_element(logits, logits+vocabulary)-logits;
                     positions.push_back(start+count-1); labels.push_back(next);
                 }
@@ -157,11 +162,26 @@ int main(int argc, char ** argv) {
                 llama_synchronize(ctx.get());
                 for (size_t t = 0; t < taps.size(); ++t)
                     write_features(files[t], llama_get_embeddings_layer_inp(ctx.get(), taps[t]), size_t(count)*2560, half);
+                std::vector<const float *> rows(count);
                 for (int i = 0; i < count; ++i) {
-                    const float * logits = llama_get_logits_ith(ctx.get(), i);
-                    require(logits != nullptr, "missing prediction logits");
-                    for (int v = 0; v < vocabulary; ++v) require(std::isfinite(logits[v]), "nonfinite target logits");
-                    next = std::max_element(logits, logits+vocabulary)-logits;
+                    rows[i] = llama_get_logits_ith(ctx.get(), i);
+                    require(rows[i] != nullptr, "missing prediction logits");
+                }
+                std::vector<int> chosen(count);
+                std::vector<char> valid(count);
+                const int workers = std::max(1, std::min(count, int(std::min(8u, std::thread::hardware_concurrency()))));
+                std::vector<std::thread> pool;
+                for (int w = 0; w < workers; ++w)
+                    pool.emplace_back([&, w] {
+                        for (int i = w; i < count; i += workers) {
+                            valid[i] = finite(rows[i], size_t(vocabulary));
+                            chosen[i] = int(std::max_element(rows[i], rows[i]+vocabulary)-rows[i]);
+                        }
+                    });
+                for (auto & worker : pool) worker.join();
+                for (int i = 0; i < count; ++i) {
+                    require(valid[i], "nonfinite target logits");
+                    next = chosen[i];
                     positions.push_back(start+i); labels.push_back(next);
                 }
             };
