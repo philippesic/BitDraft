@@ -126,8 +126,9 @@ the plan on 2026-11-21. Its accepted corrections are folded in below.
 5. **Licence and provenance.** Undecided (`README.md`). Training starts from a conversion of
    Baseline's weights, so Baseline's licence and Qwen's (Apache-2.0) constrain the release. The
    model card must say "trained from converted Baseline weights", not "from scratch".
-6. **Claim.** Which claim the gate tests: "faster than stock Baseline", "comparable speed to a
-   matched fine-tuned Baseline at about half the size", or both. This sets the gate's margins.
+6. **Claim.** Decided 2026-11-21: both. The release claims "faster than stock Baseline" and
+   "comparable speed to a Baseline fine-tuned on the same data, at about half the size". The gate
+   tests both, with margins the owner sets before any run.
 
 ### Workstream B: production TRAIN data
 
@@ -296,6 +297,41 @@ teacher (owner, 2026-11-16), three-valued weights and a second plane (owner, 202
   thinking, multi-turn tool sessions, generation, replay, training and evaluation. Forecast each
   phase separately from observed token and window counts. This replaces the earlier one-hour
   rental pilot, which conflicted with the rental decision.
+
+### Compute and cost estimate (2026-11-21, before any measurement on rented hardware)
+
+Anchors: the candidate trains at about 3.95 updates/s on the 5080 (F033) and the 4-bit control at
+about 5.3 (F034). TRAIN averaged about 12.5 updates per record per pass. Local generation plus
+capture took about 6.7 s per record, single-stream (train-bank expansion: 2,633 records in 4.9
+GPU-hours). At 300K records, one pass is about 3.76M updates.
+
+| Item | 5080 hours | Notes |
+| --- | ---: | --- |
+| Candidate, 1 / 2 passes | 264 / 529 | |
+| 4-bit control, 1 / 2 passes | 197 / 394 | |
+| Generation, single-stream as measured | about 560 | Batched serving should be several times faster; unmeasured |
+
+- **GPU choice.** The trainer computes in F32 without tensor cores (`reference` arithmetic). Its
+  speed follows F32 throughput: RTX 5080 about 56 TFLOPS, RTX 5090 about 105, H100 about 67,
+  A100 about 19.5. The RTX 5090 is also the 5080's architecture (sm_120), so the locally validated
+  runtime and kernels run unchanged, and its 32 GB fits the trainer beside a Q4KM target.
+  Datacenter cards pay only if a tensor-core training path is validated locally first.
+- **Rough prices (marketplace listings, November 2026).** RTX 5090 about $0.45–0.95 per hour,
+  H100 about $1.75–2.90, A100 80 GB about $0.60–1.15. RunPod charges no ingress or egress and about
+  $0.05–0.10 per GB-month for storage.
+- **Cost, two arms, 300K records, RTX 5090 assumed 1.0–1.6× the 5080 (unmeasured).** Training
+  runs 290–920 GPU-hours, about $130–870. Generation and feature replay on the rental cost about
+  $10–50. Storage for the run costs about $30–80. With a 25% allowance for restarts, the total is
+  about $250–1,250. Central case (two passes, on-demand 5090, 1.6×): about $800. An 800K corpus
+  multiplies training by about 2.7.
+- **Internet.** Upload only code, prompts and token streams (a few GB). Models download from
+  Hugging Face on the rental, and results are small. Uploading 3.2 TB of features would take days
+  on a home line, so features are always computed where training runs.
+- **Wall-clock on one GPU per arm.** One pass takes about 7 days on a 5090 at 1.6× and two passes
+  about 14. A multi-GPU data-parallel trainer would cut that to 1–3 days for about the same GPU
+  hours. It does not exist, would change the effective batch, and would need local validation.
+- **Largest unknown:** the rented card's real speed-up. A one-hour benchmark of the trainer on a
+  5090 and an H100 would cost about $5 but conflicts with the rental rule unless the owner allows it.
 
 ### Order
 
