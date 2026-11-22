@@ -68,6 +68,10 @@ the plan on 2026-11-21. Its accepted corrections are folded in below.
 - **Rentals.** Do all setup and validation locally. Rent only once the owner is certain the
   remaining step is "rent, train, release". Whether response generation rents depends on its
   measured local duration.
+- **Budget (later on 2026-11-21).** A rented run costing hundreds of dollars is too expensive.
+  Under discussion: an all-local or nearly free plan at a smaller data scale. Also proposed: train
+  the 4-bit control only until its DEV curve plateaus, instead of at matched length, and show that
+  curve with the claim.
 - **Benchmarks.** The goal is no remaining uncertainty about benchmarking. Proposed form, pending
   confirmation: local acceptance checks for selection during training, and a frozen public gate
   for release (workstream D).
