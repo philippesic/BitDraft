@@ -411,10 +411,9 @@ threads holding the GPU add to these dates.
 | 4b. 4-bit control | Local, about 1 GPU day | Download token streams for its slice, replay features, train until the DEV curve plateaus, screens | Parallel with 4a | $0 |
 | 5. Gate and release | Local | Frozen public gate on the 5080, clean-install test, close-results, licence, model and data cards | 2–4 days | $0 |
 
-Total: about 3–5 weeks of calendar time and about 6–9 days of 5080 GPU time (roughly $10–15 of
-electricity). The rental costs about $60–150 on a cheap tier, or $0 on the all-local fallback. All
-5080 work (pilots, references, control, gate qualification and final timing) shares one card and
-runs in one schedule. Phase 2 needs the DEV and pipeline pieces of phase 3 first.
+Total: dates and durations are set in `Stages and owner checkpoints`, which supersedes this
+table's calendar column. About 4–6 days of 5080 GPU time in all, and about $60–150 rented on a cheap
+tier ($0 on the all-local fallback). All 5080 work shares one card in one schedule.
 
 Go/no-go points: no data benefit in the scaling pilot stops or shrinks the plan; the generation
 pilot picks the writing method; the screens pick the recipe; the rented benchmark sets a cost cap;
