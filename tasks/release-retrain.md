@@ -337,15 +337,25 @@ GPU-hours). At 300K records, one pass is about 3.76M updates.
 - **Largest unknown:** the rented card's real speed-up. A one-hour benchmark of the trainer on a
   5090 and an H100 would cost about $5 but conflicts with the rental rule unless the owner allows it.
 
-### Order
+### Order and timeline (owner arrangement 2026-11-21: 4-bit control local; one-bit data generation and training on rented RTX 5090s; batched generation is piloted)
 
-1. Rights audit and gate design (CPU), owner sets the claim and gate numbers.
-2. Port the public gate to our harness and qualify it on known arms (GPU minutes).
-3. Scaling mechanism check (local, under 10 minutes per arm).
-4. Mismatch pilot and local shard cost measurement.
-5. Data acquisition and generation, DEV rebuild, feature screens and full local pipeline cycle.
-6. Owner go for the rental: final candidate and matched 4-bit control.
-7. Gate run, clean-install test, closeout and release.
+| Phase | Where | Work | Calendar | Cost |
+| --- | --- | --- | --- | --- |
+| 0. Decide and freeze | Local CPU | Rights audit, source list, public gate selection, protocol and margins (owner), decontamination list | 1–2 days | $0 |
+| 1. Public gate port | Local, GPU hours | Build harness port, qualify on target-only, stock Baseline and old leader | 1–2 days | $0 |
+| 2. Pilots | Local GPU, about 2–3 days busy | Scaling mechanism and spending checks; generation pilot (one-at-a-time Q4KM, batched Q4KM, BF16 replayed for Q4KM features; 2 seeds); soft targets; feature screens (vocabulary-table and attention-table training with rounding in the loop and a Q4_K export, input rotation); one-hour rented 5090 trainer benchmark if the owner allows | 5–7 days | about $1 |
+| 3. Data and pipeline | Local CPU, plus about 1 GPU day | Prompt acquisition, deduplication and decontamination; new private DEV and references; staged-replay pipeline and rental scripts; one reduced shard end to end on the 5080 | 4–6 days, overlaps phase 2 | $0 |
+| 4a. One-bit run | Rented 5090 | Generate 100K conversations, replay features in shards, train 1.25M updates (pilot may shrink this), acceptance screens on the rental | 3–5 days | about $40–130; spot about $40–60 |
+| 4b. 4-bit control | Local, about 1 GPU day | Download token streams for its slice, replay features, train until the DEV curve plateaus, screens | Parallel with 4a | $0 |
+| 5. Gate and release | Local | Frozen public gate on the 5080, clean-install test, close-results, licence, model and data cards | 2–4 days | $0 |
+
+Total: about 3–4 weeks of calendar time, about 5–6 days of 5080 GPU time (roughly $10 of
+electricity), and about $40–130 rented.
+
+Go/no-go points: no data benefit in the scaling pilot stops or shrinks the plan; the generation
+pilot picks the writing method; the screens pick the recipe; the rented benchmark sets a cost cap;
+the owner gives an explicit go before any rental; a control curve that has not plateaued means
+either longer control training or a weaker claim.
 
 ### Scaling to larger targets (reasoning, not measured)
 
