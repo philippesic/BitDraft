@@ -23,6 +23,8 @@ explicit paths and the shared saved-reference registry.
 | `prepare-project-workflows`, `prepare-replays`, `prepare-panels` | Project controls, measured histories, live/harness inputs |
 | `capture`, `evaluate` | Teacher features; matched teacher-forced DEV loss |
 | `replay-tokens`, `replay-agreement`, `write-batched` | Rebuild captures from stored token IDs, compare them, measure parallel writing ([data](data.md#token-streams-and-replay)) |
+| `select-retrain`, `write-bank` | Release retrain prompt bank and its batched answers ([data](data.md#retrain-bank)) |
+| `prepare-gate` | Public release gate workloads, decontamination texts and exclusions ([release gate](#public-release-gate)) |
 | `compare`, `live` | Isolated native requests; executing tool episodes |
 | `campaign-preflight`, `campaign`, `campaign-report` | CPU admission; training; read-only health |
 | `prepare-checks`, `record-reference` | Frozen lean cohorts; authenticated reusable references |
@@ -1439,6 +1441,21 @@ cases from the main checkout after verified worktree-copy removal. A relocated
 experimental-server replay also reproduces tokens and proposal/acceptance counts.
 `replay-plan.json` names the retained branch source snapshot and exact commands,
 so replay does not require a surviving worktree or changes to main's source.
+
+## Public release gate
+
+The release gate is defined in
+[release-gate-v1.json](../benchmarks/definitions/release-gate-v1.json): SPEED-Bench
+qualitative and throughput splits, 60 SWE-rebench OpenHands repositories reserved from TRAIN,
+and BFCL v3 tool calls, each at a pinned revision. `prepare-gate` (schema
+`release-gate-prepare-v1`) refuses masked SPEED-Bench prompts (resolve them first with
+NVIDIA Model-Optimizer's `specdec_bench/prepare_data.py`), and writes `workloads/*.json`
+(role `confirmation`, at most 440 tasks per file), `gate-texts.jsonl` for decontamination,
+and `gate-exclusions.json` with the reserved repositories and every gate item. Agentic
+histories are decontaminated by repository only, because their shared OpenHands boilerplate
+would match every trajectory. Comparisons run these files with `tier: gate`, which requires
+role `confirmation`, no cached references and, for sampled requests, three seeds at
+temperature 0.7 and top-p 0.9 with native verifier qualification.
 
 ## Agentic coding panels
 

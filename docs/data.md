@@ -247,6 +247,30 @@ differences. Diverged text is a different data recipe, not a faster equivalent;
 a writing plan falls back to fewer slots or to one at a time (`concurrency: [1]`, or
 `capture`).
 
+## Retrain bank
+
+The release retrain draws prompts only from sources in the
+[retrain source audit](../benchmarks/definitions/retrain-sources-v1.json): permissive licence,
+known provenance, no MATH or AoPS lineage. `benchmarks select-retrain` (schema
+`retrain-bank-v1`) reads each source through its adapter in `benchmarks/retrain_sources.py`,
+drops protected identities (heldout24, earlier DEV and confirmation sets, the public gate's
+reserved repositories and items), repeated groups, duplicate normalized text and any text
+overlapping the gate or earlier DEV texts (13-token shingles, plus exact normalized text). It
+assigns DEV by a seeded bucket of the group, or of the repository for agentic sessions, fills
+category quotas in seeded order, and fixes per row the thinking mode, output cap, sampling
+(temperature, top-p, seed) and tool-call convention (native, JSON or Markdown; ReAct is held
+out for evaluation). Each kept row records its rendered token hash, template, licence and
+source revision. Candidate pools are bounded at twice each quota.
+
+`benchmarks write-bank` (schema `bank-writing-v1`) generates the target's answers for a slice
+of the bank's TRAIN rows in seeded order, with parallel server slots. It refuses a row whose
+prompt no longer tokenizes to the recorded tokens, and writes resumable shards
+(`shards/streams-NNNNN.json`, `token-stream-bank-v1`) of corpus-shaped rows plus per-row
+provenance. `replay-tokens` turns shards into eight-tap captures, `w1a1_eagle.numerical.fusing`
+into fused records, and training reads them as `fused-corpus-v1`. Raw replay is about 41 KB
+per token and fused storage about 8 MB per record, so production replays, fuses, trains and
+discards one bounded shard at a time.
+
 ## Format conversion
 
 Use the configured numerical interpreter reported by the doctor for
