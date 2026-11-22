@@ -73,6 +73,7 @@ def main() -> int:
         "replay-tokens",
         "replay-agreement",
         "write-batched",
+        "write-bank",
         "prepare-round-inputs",
     ):
         comparison = commands.add_parser(name)
@@ -86,6 +87,7 @@ def main() -> int:
                 "capture": "datasets",
                 "replay-tokens": "datasets",
                 "write-batched": "datasets",
+                "write-bank": "datasets",
                 "curate": "bank",
                 "admit-bank": "bank",
                 "select-supplement": "bank",
@@ -145,6 +147,7 @@ def main() -> int:
                     "select-expansion",
                     "select-retrain",
                     "prepare-gate",
+                    "write-bank",
                     "prepare-long-projects",
                     "prepare-replays",
                     "capture",
@@ -184,6 +187,10 @@ def main() -> int:
             from w1a1_eagle.numerical.agreement import agreement
 
             result = agreement(args.input, args.output)
+        elif args.command == "write-bank":
+            from benchmarks.bank_writer import write_bank
+
+            result = write_bank(args.input, args.output)
         elif args.command == "write-batched":
             from benchmarks.batched import write_batched
 
