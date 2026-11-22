@@ -244,18 +244,29 @@ Split every gain into what only one bit earns and what Baseline would also gain.
 
 ### Workstream F: features to screen at the new scale
 
-Screen in matched runs on new-data slices, and promote only what survives on served outcomes:
+Screen locally in matched short runs (about 1–2 GPU hours per arm, two seeds), and promote only
+what survives on served outcomes. "Before" says why it was not done or not done properly.
 
-- an online Hadamard rotation before 4-bit input rounding, aimed at the largest loss at
-  initialization (60.8% to 41.3%);
-- trained attention and fusion tables with a Q4_K export (item 10; needs pre-fusion taps);
-- vocabulary-table training (item 7);
-- soft-target KL (pilot below);
-- 32K training context for long documents and agent sessions;
-- serving depth recalibrated with `calibrate-depth` if acceptance rises.
+| Feature | Before | Screen | Build |
+| --- | --- | --- | --- |
+| Vocabulary-table training | Deferred for memory, never started (item 7) | The 68,728 shortlisted rows only, Q4_K rounding in the loop | Moderate; ships the 284 MB form instead of 185 MB |
+| Attention-table training, done properly | Half batch for memory, Q4_0 export cost about 1.7% speed, export rounding cost about 1 DEV top-1 point (F031) | Q4_K rounding in the loop and a Q4_K export via the runtime's own quantizer; attention only first, since the fusion table needs pre-fusion taps | Q4_K export |
+| Low-rank correction on frozen tables | Never tried | Baseline's tables kept exactly, a small learned correction | Runtime change |
+| Input rotation before 4-bit rounding | Never tried | Targets the largest loss at initialization (60.8% to 41.3%) | Serving kernel |
+| One-bit attention tables | Not started (item 5) | Smaller file and possibly faster rounds; large acceptance risk | Owner decision on scope, then kernel reuse |
+| Soft targets | Never tried | Hard labels against hard labels plus top-32 KL with a residual bucket, served sampled outcome | Capture of top-k |
+| Batched generation | Rejected as a precaution; only 8 of 32 answers matched one-at-a-time; never trained on | Matched training arms on batched against one-at-a-time data | None |
+| BF16 server responses | Never tried | BF16 responses replayed for Q4KM features | Server setup |
+| 32K training context | Long sources ran out | New long-document data | None |
+| Held-out tool convention | Only one convention existed | Acceptance on a convention absent from TRAIN | None |
+| Data scaling | Partly (F025, F033) | Mechanism and spending checks under `Pilots and preflight` | None |
+
+Serving depth is recalibrated with `calibrate-depth` if acceptance rises. If time runs short, the
+rotation kernel and the low-rank correction drop first, as the largest builds.
 
 Deferred: the two-channel bypass retest, a deeper or wider body, a standard-trainer 4-bit control
-with GGUF conversion, the 9B round profile, and extra GPUs. None of these is needed to decide
+with GGUF conversion, the 9B round profile, and extra GPUs. Excluded by the one-bit decision: higher
+precision for salient weights only (about 1.1 bits). None of these is needed to decide
 whether broader clean data improves the one-bit 4B release.
 
 Previously dropped: zero-skipping and slot-reuse kernels, pre-summed lookup tables on GPU,
