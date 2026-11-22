@@ -34,6 +34,29 @@ NVFP4 in Stage 4 as a measured secondary result. The first release is fork-only,
 llama.cpp PR possibly later. GPT-6.2 Astra reviewed
 the plan on 2026-11-21. Its accepted corrections are folded in below.
 
+### Stage 1 progress (2026-11-22)
+
+- **Public gate built:** `artifacts/benchmarks/release-gate-01/gate-v1` from `prepare.json`
+  (seed 9201). 1,922 tasks: general 880, thinking-on 320, sampled 242, long-input 180,
+  agentic-replay 60 (60 reserved repositories), tool-calls 120, held-out ReAct 120. SPEED-Bench
+  masked prompts resolved (0 masked). Comparisons accept these files with `tier: gate`.
+- **Prompt bank:** pilot `artifacts/bank/retrain-01/pilot-v1` (3,428 rows) is good. The full bank
+  (`bank.json`, seed 9301: 100K TRAIN quotas, 3% DEV, agentic DEV split by repository) is
+  building as `bank-v1`; the first attempt stopped on an empty tool description, now fixed.
+  Source revisions are in `artifacts/prompt-sources/retrain-01/revisions.txt`. Agentic quota
+  is 5,000 (6,306 SWE-rebench issues in 1,823 repositories); tools take the other 2,000.
+- **Local chunk end to end (pipeline only, not a learning measurement):** 64 pilot rows,
+  `artifacts/datasets/retrain-01/`. `write-bank` at 16 slots gave 430–510 generated tokens/s
+  with 32-row shards (tail idle; production uses larger shards); `replay-tokens` 149 s
+  (4.0 GB raw, about 41 KB per token); fusing 34 s (511 MB, about 8 MB per record, 13 GB RAM);
+  200 training updates in 127 s with no refusals.
+- **Fixed on the way:** parquet now streams in batches (the 2 GB SWE-rebench file had used
+  24 GB); the Hermes tools block parser; gate agentic histories no longer shingle-match every
+  trajectory (they are decontaminated by repository); bounded candidate pools.
+- **Pending in Stage 1:** full bank finish; private DEV rebuild with references; staged
+  driver that cycles write, replay, fuse, train-continue and discard per shard; owner approval
+  of the frozen gate and source list (at the rental checkpoint, with the margins).
+
 ### What the previous train taught us
 
 - **More distinct data is the leading hypothesis, but it is not isolated.** S4 flattened after
@@ -444,5 +467,6 @@ either longer control training or a weaker claim.
 
 ## Next
 
-The owner confirms the benchmark form, chooses the claim (A6) and says go on steps 1–3 of `Order`.
-Step 1 is CPU only. Steps 2–3 are short local GPU runs.
+Finish the full bank, rebuild the private DEV check and its references, build the staged
+driver, then start the Stage 2 pilots (batched versus one-at-a-time first), each behind a
+preflight.
