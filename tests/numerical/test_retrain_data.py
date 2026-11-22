@@ -57,6 +57,11 @@ class RetrainDataTest(unittest.TestCase):
         assert str(react[2]["content"]).startswith("Action: lookup")
         assert str(react[-1]["content"]).endswith("Observation: a small feline")
 
+    def test_markdown_accepts_tool_without_description(self) -> None:
+        bare: list[Record] = [{"type": "function", "function": {"name": "ping", "description": ""}}]
+        messages, tools = apply("markdown", [{"role": "user", "content": "hi"}], bare)
+        assert "`ping`: " in str(messages[0]["content"]) and tools == []
+
     def test_prompt_messages_stop_at_first_user_turn(self) -> None:
         rows: list[Record] = [
             {"role": "system", "content": ""},

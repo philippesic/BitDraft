@@ -6,6 +6,10 @@ from w1a1_eagle.contracts import Record, record, sequence, string
 CONVENTIONS = ("native", "json", "markdown", "react")
 
 
+def text_of(value: object) -> str:
+    return value if isinstance(value, str) else ""
+
+
 def function_of(tool: Record) -> Record:
     return record(tool["function"]) if "function" in tool else tool
 
@@ -47,7 +51,7 @@ def system_text(convention: str, tools: list[Record]) -> str:
                 "- `"
                 + string(function["name"])
                 + "`: "
-                + string(function.get("description", ""))
+                + text_of(function.get("description"))
                 + "\n  Parameters: "
                 + json.dumps(function.get("parameters", {}), ensure_ascii=False)
             )
