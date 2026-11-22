@@ -370,6 +370,30 @@ teacher (owner, 2026-11-16), three-valued weights and a second plane (owner, 202
   conversations, plus generation, control, replay and evaluation, costs $0 rented. It stays a
   credible release experiment if the scaling pilot cannot justify 100K.
 
+### Stages and owner checkpoints (plan frozen by the owner, 2026-11-21)
+
+Changes after this point happen only at the go/no-go points, by rules fixed in advance. No
+further redesigns or reviews unless a pilot fails its rule.
+
+1. **Prep** (local, mostly CPU; about 1–1.5 weeks; $0). Rights audit and source list; freeze the
+   public gate, protocol and margins, the control's plateau rule and the held-out tool
+   convention; port and qualify the public gate; rebuild the private DEV check; build the batched
+   writer and the staged-replay pipeline. Owner at the start: go, gate margins, fork-only first
+   release and Q4KM only (both recommended). Owner at the end: approve the frozen gate and the
+   source list.
+2. **Screening** (local GPU, about 2–3 days busy; about $1 if the 5090 test is allowed). Batched
+   versus one-at-a-time data, the data-scaling checks, then cheap probes (vocabulary and attention
+   tables, target probabilities), with builds only where a probe justifies one. Owner at the end:
+   the recipe, the scale (100K rented or the all-local fallback), the spending cap and an explicit
+   go for the rental.
+3. **Final training** (about 1–1.5 weeks; about $60–150 cheap tier, or $0 on the fallback). One
+   local end-to-end chunk; the one-bit run on a rented 5090 with the first-chunk identity and pace
+   check; the 4-bit control locally until its plateau rule is met. The owner is involved only if
+   the first-chunk rule trips, the cap would be exceeded, or the control has not plateaued.
+4. **Gate and release** (local, about 2–4 days; $0). Frozen public gate on the 5080,
+   clean-install test, close-results, model and data cards. Owner: licence, claim wording and the
+   go to publish.
+
 ### Order and timeline (owner arrangement 2026-11-21: 4-bit control local; one-bit data generation and training on rented RTX 5090s; batched generation is piloted)
 
 | Phase | Where | Work | Calendar | Cost |
