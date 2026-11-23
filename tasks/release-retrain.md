@@ -650,6 +650,11 @@ saved references; `artifacts/datasets/retrain-01/tables/`.
   gain at this length: stays out of the recipe.
   (New `vocabulary_rows`, the leader's 68,728 shortlist rows, tied input and output, screened as
   shortlist-only files.)
+- Soft targets (top-32 KL at weight 0.5 beside hard labels; 768 records, 2,370 updates, two
+  seeds, soft against hard on the identical fused corpus): greedy −0.22 (−0.90, +0.50) and +0.19
+  (−0.58, +0.94); sampled +0.24 (−0.18, +0.69) and +0.10 (−0.37, +0.61). No measurable effect:
+  not promising, so the long run skips it (owner's overnight rule). The hard s1 arm reproduced
+  the earlier control exactly (48.3%).
 - Disk (2026-11-22): removed my own finished pilot training states (scaling, spending, tables
   arms, `staged-smoke`, `first-check-local`; about 110 GB) and the two failed table attempts;
   exports, screens, journals, specs and the 768/192 fused inputs are kept.
