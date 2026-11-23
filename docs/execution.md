@@ -603,7 +603,11 @@ attention tables of every layer become F32 parameters initialized from Baseline'
 corpora remain usable. It requires `frozen_format: baseline-k`, `table_quantizer` and the `table`
 step size, and refuses `trained_tables` and plain feed-forward tables. Training is in F32; export
 quantizes each trained table to its Baseline type with the table quantizer, and the DEV diagnostic
-reports both the trained and the exported tables. The frozen fingerprint covers the fusion table,
+reports both the trained and the exported tables. With `rounded`, training also sees each table
+through its Baseline type's rounding: a torch port of ggml's Q4_K and Q6_K reference search
+(`k_rounded`) with a straight-through gradient, recomputed once per optimizer step. It
+reproduces Baseline's own tables exactly and moved tables to within about 0.2–1.2% of the table
+quantizer's output; export still uses the table quantizer. The frozen fingerprint covers the fusion table,
 vocabulary and the attention types; states store the tables and their Adam moments, so resume and
 continue work as for the one-bit feed-forward.
 

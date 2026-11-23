@@ -12,7 +12,7 @@ from torch import Tensor
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, record, sequence, string
 from w1a1_eagle.data import Artifact
-from w1a1_eagle.model import HE4, Geometry
+from w1a1_eagle.model import HE4, Geometry, Table
 from w1a1_eagle.numerical.captures import FloatArray
 from w1a1_eagle.records import canonical, reference
 
@@ -261,6 +261,7 @@ def load_he4(
     plain_feed_forward: bool = False,
     trained_attention: bool = False,
     head_rows: tuple[int, ...] = (),
+    attention_rounding: bool = False,
 ) -> HE4:
     if trained_attention and (frozen_baseline is None or trained_tables or plain_feed_forward):
         raise ValueError(
@@ -408,6 +409,19 @@ def load_he4(
     if plain_feed_forward:
         model.feed_forward_types = tuple(feed_forward_types)
     model.attention_types = attention_types
+    if attention_rounding:
+        if not trained_attention:
+            raise ValueError("attention rounding applies to trained attention tables")
+        kinds = dict(attention_types)
+        for index, module in enumerate(model.blocks):
+            for part, name in (
+                ("query", "attn_q"),
+                ("key", "attn_k"),
+                ("value", "attn_v"),
+                ("output", "attn_output"),
+            ):
+                table = cast(Table, getattr(module, part))
+                table.rounding = kinds[f"blk.{index}.{name}.weight"]
     model.parent_frozen_sha256 = parent_frozen_sha256
     model.frozen_format = frozen_format
     model.frozen_baseline = None if frozen_baseline is None else frozen_baseline.sha256

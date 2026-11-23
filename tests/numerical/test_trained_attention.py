@@ -11,7 +11,7 @@ from tests.numerical.test_plain import CFG, MEMORY, baseline_file, payloads, qua
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.clock import Monotonic
 from w1a1_eagle.data import Artifact
-from w1a1_eagle.model import HE4
+from w1a1_eagle.model import HE4, k_rounded
 from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.export import export_he4
 from w1a1_eagle.numerical.k_tables import plain_tables, quantizer_binary, trained_rows
@@ -170,3 +170,43 @@ class TestTrainedVocabularyRows(unittest.TestCase):
             )
             resumed.restore(state, MEMORY)
             self.assertTrue(torch.equal(resumed.model.head_values, model.head_values))
+
+
+class TestRoundedAttention(unittest.TestCase):
+    def test_rounding_keeps_the_grid_and_passes_gradients_straight_through(self) -> None:
+        generator = torch.Generator().manual_seed(1)
+        for kind in ("Q4_K", "Q6_K"):
+            value = (0.02 * torch.randn(4, 512, generator=generator)).requires_grad_()
+            rounded = k_rounded(value, kind)
+            self.assertFalse(torch.equal(rounded.detach(), value.detach()))
+            again = k_rounded(rounded.detach(), kind)
+            self.assertLess(
+                float((again - rounded.detach()).norm() / rounded.detach().norm()), 1e-3, kind
+            )
+            weights = torch.randn(4, 512, generator=generator)
+            (rounded * weights).sum().backward()
+            assert value.grad is not None
+            self.assertTrue(torch.equal(value.grad, weights))
+
+    def test_rounded_setting_marks_every_attention_table(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="binary-rounded-") as directory:
+            root = Path(directory)
+            source, vocabulary = gguf_fixture(root, CFG, seed=5)
+            baseline = baseline_file(root, "coded.gguf", source, quantizer(root))
+            model = load_he4(
+                source,
+                vocabulary,
+                MEMORY,
+                CFG,
+                None,
+                "baseline-k",
+                baseline,
+                trained_attention=True,
+                attention_rounding=True,
+            )
+            block = model.blocks[0]
+            kinds = {
+                part: getattr(block, part).rounding for part in ("query", "key", "value", "output")
+            }
+            self.assertEqual(set(kinds.values()), {"Q4_K"})
+            self.assertIsNone(model.fusion.rounding)

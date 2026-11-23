@@ -46,6 +46,30 @@ static void write_features(std::ofstream & file, const float * values, size_t si
     } else file.write(reinterpret_cast<const char *>(values), size * 4);
     require(bool(file), "feature write failed");
 }
+static void top_k(const float * row, int vocabulary, int soft, int peak_id, std::vector<int32_t> & order, int32_t * ids, float * logprobs) {
+    const float peak = row[peak_id];
+    double total = 0.0;
+    for (int v = 0; v < vocabulary; ++v) total += std::exp(double(row[v] - peak));
+    const float normalizer = peak + float(std::log(total));
+    order.resize(vocabulary);
+    std::iota(order.begin(), order.end(), 0);
+    std::partial_sort(order.begin(), order.begin()+soft, order.end(), [row](int32_t a, int32_t b) {
+        return row[a] > row[b] || (row[a] == row[b] && a < b);
+    });
+    for (int k = 0; k < soft; ++k) {
+        ids[k] = order[k];
+        logprobs[k] = row[order[k]] - normalizer;
+    }
+}
+
+static void write_soft(std::ofstream & file, const float * row, int vocabulary, int soft, int peak_id) {
+    std::vector<int32_t> order, ids(soft);
+    std::vector<float> logprobs(soft);
+    top_k(row, vocabulary, soft, peak_id, order, ids.data(), logprobs.data());
+    file.write(reinterpret_cast<const char *>(ids.data()), sizeof(int32_t)*soft);
+    file.write(reinterpret_cast<const char *>(logprobs.data()), sizeof(float)*soft);
+}
+
 int main(int argc, char ** argv) {
     try {
         const bool replay_mode = argc == 6 && std::string(argv[5]) == "replay";
@@ -154,6 +178,7 @@ int main(int argc, char ** argv) {
                     require(finite(logits, size_t(vocabulary)), "nonfinite target logits");
                     next = std::max_element(logits, logits+vocabulary)-logits;
                     positions.push_back(start+count-1); labels.push_back(next);
+                    if (soft > 0) write_soft(soft_file, logits, vocabulary, soft, next);
                 }
             };
             auto replay_chunk = [&](int start, int count) {
@@ -187,21 +212,8 @@ int main(int argc, char ** argv) {
                         for (int i = w; i < count; i += workers) {
                             valid[i] = finite(rows[i], size_t(vocabulary));
                             chosen[i] = int(std::max_element(rows[i], rows[i]+vocabulary)-rows[i]);
-                            if (soft == 0 || !valid[i]) continue;
-                            const float * row = rows[i];
-                            const float peak = row[chosen[i]];
-                            double total = 0.0;
-                            for (int v = 0; v < vocabulary; ++v) total += std::exp(double(row[v] - peak));
-                            const float normalizer = peak + float(std::log(total));
-                            order.resize(vocabulary);
-                            std::iota(order.begin(), order.end(), 0);
-                            std::partial_sort(order.begin(), order.begin()+soft, order.end(), [row](int32_t a, int32_t b) {
-                                return row[a] > row[b] || (row[a] == row[b] && a < b);
-                            });
-                            for (int k = 0; k < soft; ++k) {
-                                top_ids[size_t(i)*soft+k] = order[k];
-                                top_logprobs[size_t(i)*soft+k] = row[order[k]] - normalizer;
-                            }
+                            if (soft > 0 && valid[i])
+                                top_k(rows[i], vocabulary, soft, chosen[i], order, &top_ids[size_t(i)*soft], &top_logprobs[size_t(i)*soft]);
                         }
                     });
                 for (auto & worker : pool) worker.join();

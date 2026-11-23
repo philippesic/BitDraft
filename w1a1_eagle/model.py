@@ -191,19 +191,129 @@ def cache_storage(value: Tensor, checks: DeferredChecks | None = None) -> Tensor
     return value + (rounded - value).detach()
 
 
+def q4_k_values(value: Tensor) -> Tensor:
+    x = value.reshape(-1, 8, 32)
+    weights = (x.square().mean(-1, keepdim=True)).sqrt() + x.abs()
+    low = x.amin(-1, keepdim=True).clamp_max(0)
+    span = x.amax(-1, keepdim=True) - low
+    flat = span <= 0
+    span = torch.where(flat, torch.ones_like(span), span)
+    total_w = weights.sum(-1, keepdim=True)
+    total_x = (weights * x).sum(-1, keepdim=True)
+    first = (15 / span * (x - low)).round().clamp(0, 15)
+    scales = [span / 15]
+    minima = [low]
+    errors = [(weights * (span / 15 * first + low - x).square()).sum(-1, keepdim=True)]
+    for step in range(21):
+        levels = ((-1 + 0.1 * step + 15) / span * (x - low)).round().clamp(0, 15)
+        sum_l = (weights * levels).sum(-1, keepdim=True)
+        sum_l2 = (weights * levels.square()).sum(-1, keepdim=True)
+        sum_xl = (weights * levels * x).sum(-1, keepdim=True)
+        det = total_w * sum_l2 - sum_l.square()
+        safe = torch.where(det > 0, det, torch.ones_like(det))
+        scale = (total_w * sum_xl - total_x * sum_l) / safe
+        minimum = (sum_l2 * total_x - sum_l * sum_xl) / safe
+        positive = minimum > 0
+        scale = torch.where(positive, sum_xl / sum_l2.clamp_min(1e-30), scale)
+        minimum = torch.where(positive, torch.zeros_like(minimum), minimum)
+        error = (weights * (scale * levels + minimum - x).square()).sum(-1, keepdim=True)
+        error = torch.where(det > 0, error, torch.full_like(error, torch.inf))
+        scales.append(scale)
+        minima.append(minimum)
+        errors.append(error)
+    chosen = torch.cat(errors, -1).argmin(-1, keepdim=True)
+    scale = torch.cat(scales, -1).gather(-1, chosen)
+    minimum = -torch.cat(minima, -1).gather(-1, chosen)
+    scale = torch.where(flat, torch.zeros_like(scale), scale)
+    minimum = torch.where(flat, -low, minimum)
+    top_scale = scale.amax(1, keepdim=True)
+    top_min = minimum.amax(1, keepdim=True)
+    scale_codes = torch.where(
+        top_scale > 0, (63 / top_scale.clamp_min(1e-30) * scale).round().clamp_max(63), 0
+    )
+    min_codes = torch.where(
+        top_min > 0, (63 / top_min.clamp_min(1e-30) * minimum).round().clamp_max(63), 0
+    )
+    d = (top_scale / 63).half().float()
+    dmin = (top_min / 63).half().float()
+    sub_scale = d * scale_codes
+    sub_min = dmin * min_codes
+    safe_scale = torch.where(sub_scale != 0, sub_scale, torch.ones_like(sub_scale))
+    levels = torch.where(
+        sub_scale != 0, ((x + sub_min) / safe_scale).round().clamp(0, 15), torch.zeros_like(x)
+    )
+    return (sub_scale * levels - sub_min).view_as(value)
+
+
+def q6_k_values(value: Tensor) -> Tensor:
+    x = value.reshape(-1, 16, 16)
+    magnitude = x.abs()
+    peak = x.gather(-1, magnitude.argmax(-1, keepdim=True))
+    empty = magnitude.amax(-1, keepdim=True) < 1e-15
+    peak = torch.where(empty, torch.ones_like(peak), peak)
+    weights = x.square()
+    best_scale = torch.zeros_like(peak)
+    best = torch.full_like(peak, -torch.inf)
+    steps: tuple[int, ...] = (0, -9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+    for step in steps:
+        levels = (-(32 + 0.1 * step) / peak * x).round().clamp(-32, 31)
+        sum_lx = (weights * x * levels).sum(-1, keepdim=True)
+        sum_l2 = (weights * levels.square()).sum(-1, keepdim=True)
+        scale = torch.where(sum_l2 > 0, sum_lx / sum_l2.clamp_min(1e-30), torch.zeros_like(sum_l2))
+        if step == 0:
+            best_scale, best = scale, scale * sum_lx
+            continue
+        better = (sum_l2 > 0) & (sum_lx.square() > best * sum_l2)
+        best_scale = torch.where(better, scale, best_scale)
+        best = torch.where(better, scale * sum_lx, best)
+    best_scale = torch.where(empty, torch.zeros_like(best_scale), best_scale)
+    absolute = best_scale.abs()
+    signed = best_scale.gather(1, absolute.argmax(1, keepdim=True))
+    tiny = absolute.amax(1, keepdim=True) < 1e-15
+    signed = torch.where(tiny, torch.ones_like(signed), signed)
+    inverse = -128 / signed
+    d = (1 / inverse).half().float()
+    codes = (inverse * best_scale).round().clamp_max(127)
+    sub = d * codes
+    safe = torch.where(sub != 0, sub, torch.ones_like(sub))
+    levels = torch.where(sub != 0, (x / safe).round().clamp(-32, 31), torch.zeros_like(x))
+    result = sub * levels
+    return torch.where(tiny, torch.zeros_like(result), result).view_as(value)
+
+
+def k_rounded(value: Tensor, kind: str) -> Tensor:
+    with torch.no_grad():
+        if kind == "Q4_K":
+            rounded = q4_k_values(value.detach())
+        elif kind == "Q6_K":
+            rounded = q6_k_values(value.detach())
+        else:
+            raise ValueError("rounding supports Q4_K and Q6_K tables")
+    return value + (rounded - value).detach()
+
+
 class Table(nn.Module):
     operand: Tensor
 
     def __init__(self, weight: Tensor, trained: bool = False) -> None:
         super().__init__()
         value = weight.detach().float().clone()
+        self.rounding: str | None = None
+        self.rounded: tuple[int, Tensor] | None = None
         if trained:
             self.operand = nn.Parameter(value)
         else:
             self.register_buffer("operand", value)
 
     def forward(self, value: Tensor) -> Tensor:
-        return functional.linear(value, self.operand)
+        if self.rounding is None:
+            return functional.linear(value, self.operand)
+        version = self.operand._version
+        if self.rounded is None or self.rounded[0] != version:
+            with torch.no_grad():
+                offset = k_rounded(self.operand.detach(), self.rounding) - self.operand.detach()
+            self.rounded = (version, offset)
+        return functional.linear(value, self.operand + self.rounded[1])
 
 
 class FeedForwardTable(Table):

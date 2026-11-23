@@ -461,6 +461,7 @@ def run_leased(
         intent.plain_feed_forward,
         intent.trained_attention,
         vocabulary_rows(intent.vocabulary_rows),
+        intent.attention_rounding,
     )
     if intent.slot_rounding is not None:
         anchor_bounds(model)

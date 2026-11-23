@@ -362,9 +362,9 @@ class Intent:
                 " copied from Baseline and export as Q4_0"
             )
         attention = raw.get("attention_tables", "frozen")
-        if attention not in ("frozen", "trained"):
-            raise ValueError("attention_tables is frozen or trained")
-        trained_attention = attention == "trained"
+        if attention not in ("frozen", "trained", "rounded"):
+            raise ValueError("attention_tables is frozen, trained or rounded")
+        trained_attention = attention != "frozen"
         trained_rows = "vocabulary_rows" in raw
         if "soft_targets" in raw:
             soft_setting = record(raw["soft_targets"])
@@ -667,7 +667,11 @@ class Intent:
 
     @property
     def trained_attention(self) -> bool:
-        return self.raw.get("attention_tables", "frozen") == "trained"
+        return self.raw.get("attention_tables", "frozen") != "frozen"
+
+    @property
+    def attention_rounding(self) -> bool:
+        return self.raw.get("attention_tables", "frozen") == "rounded"
 
     @property
     def plain_feed_forward(self) -> bool:
@@ -741,7 +745,7 @@ class Intent:
                             if self.plain_feed_forward
                             else "table_quantizer"
                         ): {
-                            "kind": "trained"
+                            "kind": str(self.raw.get("attention_tables"))
                             if self.trained_attention
                             else "plain"
                             if self.plain_feed_forward
