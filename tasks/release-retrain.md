@@ -641,12 +641,16 @@ full recap before approving recipe and gate.
 Stage 2 feature screens (owner 2026-11-22: "I told you to do this already"; the go covers the
 whole Workstream F list). 768 new-mix records, 2,370 updates, two seeds, DEV screen against
 saved references; `artifacts/datasets/retrain-01/tables/`.
-- Trained attention tables (new `attention_tables: trained`, Baseline-type Q4_K/Q6_K export): seed
-  8101 48.2% against the matched control's 48.3% (speed 0.951 against 0.952): no gain. Seed 8102
-  running. States grow by about 3 GB (state budget raised to 10 GiB).
-- Trained vocabulary rows (new `vocabulary_rows`, the leader's 68,728 shortlist rows, tied input
-  and output): two seeds against matched 1.75 GiB controls, screened as shortlist-only files;
-  queued.
+- Trained attention tables (new `attention_tables: trained`, Baseline-type Q4_K/Q6_K export):
+  48.2% and 48.9% against the matched controls' 48.3% and 49.4% (seeds 8101, 8102; −0.1 and
+  −0.5 points; speed 0.951 and 0.961 against 0.952 and 0.962). No gain at this length: stays out
+  of the recipe. States grow by about 3 GB (state budget raised to 10 GiB).
+- Trained vocabulary rows, seed 8101: 47.1% against the 1.75 GiB control's 47.4% (−0.3).
+  (New `vocabulary_rows`, the leader's 68,728 shortlist rows, tied input and output, screened as
+  shortlist-only files.) Seed 8102 running.
+- Disk (2026-11-22): removed my own finished pilot training states (scaling, spending, tables
+  arms, `staged-smoke`, `first-check-local`; about 110 GB) and the two failed table attempts;
+  exports, screens, journals, specs and the 768/192 fused inputs are kept.
 - Soft targets: probe of top-32 retained mass, mass outside the shortlist and capture cost
   (`artifacts/datasets/retrain-01/soft-probe/probe.py`); queued.
 - Input rotation, low-rank correction, one-bit attention, BF16 responses: deferred behind probes
