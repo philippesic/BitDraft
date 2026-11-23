@@ -318,11 +318,11 @@ class Table(nn.Module):
     def forward(self, value: Tensor) -> Tensor:
         if self.rounding is None:
             return functional.linear(value, self.operand)
-        version = self.operand._version
-        if self.rounded is None or self.rounded[0] != version:
+        address = self.operand.data_ptr()
+        if self.rounded is None or self.rounded[0] != address:
             with torch.no_grad():
                 offset = k_rounded(self.operand.detach(), self.rounding) - self.operand.detach()
-            self.rounded = (version, offset)
+            self.rounded = (address, offset)
         return functional.linear(value, self.operand + self.rounded[1])
 
 
@@ -663,6 +663,11 @@ class HE4(nn.Module):
             )
         ):
             raise ValueError("invalid model inputs")
+
+    def refresh_rounding(self) -> None:
+        for module in self.modules():
+            if isinstance(module, Table):
+                module.rounded = None
 
     def embed(self, identifiers: Tensor) -> Tensor:
         state = functional.embedding(identifiers, self.vocabulary)

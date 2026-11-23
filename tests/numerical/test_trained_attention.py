@@ -1,6 +1,7 @@
 import tempfile
 import unittest
 from pathlib import Path
+from typing import cast
 
 import gguf
 import numpy as np
@@ -11,7 +12,7 @@ from tests.numerical.test_plain import CFG, MEMORY, baseline_file, payloads, qua
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.clock import Monotonic
 from w1a1_eagle.data import Artifact
-from w1a1_eagle.model import HE4, k_rounded
+from w1a1_eagle.model import HE4, Layer, k_rounded
 from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.export import export_he4
 from w1a1_eagle.numerical.k_tables import (
@@ -229,3 +230,36 @@ class TestRoundedExport(unittest.TestCase):
             decoded = gguf.dequantize(codes, getattr(gguf.GGMLQuantizationType, kind))
             expected = k_rounded(value, kind).detach().numpy()
             self.assertLess(float(np.abs(decoded.reshape(4, 512) - expected).max()), 1e-8, kind)
+
+
+class TestRoundingRefresh(unittest.TestCase):
+    def test_each_update_sees_the_new_tables_rounded(self) -> None:
+        torch.set_num_threads(1)
+        with tempfile.TemporaryDirectory(prefix="binary-refresh-") as directory:
+            root = Path(directory)
+            source, vocabulary = gguf_fixture(root, CFG, seed=5)
+            baseline = baseline_file(root, "coded.gguf", source, quantizer(root))
+            model = load_he4(
+                source,
+                vocabulary,
+                MEMORY,
+                CFG,
+                None,
+                "baseline-k",
+                baseline,
+                trained_attention=True,
+                attention_rounding=True,
+            )
+            corpus = Corpus(fixture_corpus(root, 256), 17, MEMORY, 256)
+            worker = TensorWorker(model, corpus, "refresh", optimization=rates())
+            table = cast(Layer, model.blocks[0]).query
+            probe = torch.randn(3, CFG.hidden, generator=torch.Generator().manual_seed(4))
+            for budget in (1, 2):
+                self.assertEqual(
+                    worker.run(Monotonic(), Budget(budget, 60, budget), lambda: False),
+                    "update-budget",
+                )
+                with torch.no_grad():
+                    served = table.forward(probe)
+                    fresh = probe @ k_rounded(table.operand.detach(), "Q4_K").T
+                self.assertTrue(torch.allclose(served, fresh, atol=1e-6), budget)

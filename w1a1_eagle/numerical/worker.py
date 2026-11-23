@@ -666,6 +666,7 @@ class TensorWorker:
                 rate = self.precision.step_size
             group["lr"] = rate * multiplier
         self.optimizer.step()
+        self.model.refresh_rounding()
         with torch.no_grad():
             for module in projections:
                 module.scale.clamp_(min=0)
@@ -1095,6 +1096,7 @@ class TensorWorker:
                 saved_weights if self.blocks.position_weights == "reach" else None
             )
             self.updates = updates
+            self.model.refresh_rounding()
             self.ready = True
 
 
