@@ -276,14 +276,22 @@ into fused records, and training reads them as `fused-corpus-v1`. Raw replay is 
 per token and fused storage about 8 MB per record, so production replays, fuses, trains and
 discards one bounded shard at a time.
 
-`benchmarks staged-train` (schema `staged-training-v1`, run from the checkout, not frozen) does
-that cycle. Stage `k` writes `stage_rows` bank rows starting at `first_row + k × stage_rows`,
-replays, fuses, deletes the raw taps, trains to `updates_per_stage × (k + 1)` updates (fresh
-for the first stage, `continue` from the previous stage's latest state after it, with the
-schedule stated once for the whole run in the intent template), then deletes the fused
-features. Token streams, specifications and states stay. Rerunning the same specification
-skips finished stages and resumes an interrupted one; a changed stage specification or code
-identity is refused.
+`benchmarks staged-train SPEC OUTPUT` (schema `staged-training-v1`, run from the checkout, not
+frozen) does that cycle. Stage `k` writes `stage_rows` bank rows starting at
+`first_row + k × stage_rows` (the writer's `order_seed` gives every stage the same category and
+length mix), replays, fuses, deletes the raw taps, trains to `updates_per_stage × (k + 1)` updates
+(fresh for the first stage, `continue` from the previous stage's latest state after it, with the
+schedule stated once for the whole run in the intent template), then deletes the fused features
+and the previous stage's state binaries. Streams, specifications, receipts, exports and the
+latest states stay. Each stage computes the current source identity for its intent.
+
+Rerunning the same specification and output skips stages whose export exists and matches its
+pointer, resumes an interrupted stage from its own state, and rebuilds an interrupted stage's
+replay or fused features when their files are missing (as after restoring a backup on a new
+host). Before each step it waits while another process holds the GPU lease. Control files in
+OUTPUT: `hold` stops before stage 1 onward (the driver writes `held.json`); `expected-source.txt`
+refuses any other source identity; `backup-lag` with `n` waits before stage `k` until
+`backup-ack.json` (written by `artifacts/rental/pull.sh`) acknowledges stage `k − 1 − n`.
 
 ## Format conversion
 
