@@ -598,7 +598,8 @@ exclusive GPU lease forbids it today; unmeasured, not planned.
 
 ## Next
 
-Rental checkpoint (owner). Evidence is under `State`; the agent recommends:
+Rental checkpoint (owner). 2026-11-22: owner answered "not yet" on the rental and asked for a
+full recap before approving recipe and gate. Evidence is under `State`; the agent recommends:
 1. Go for the rented 100K run (`production.json`): the spending check passed (+1.6, +2.4 on two
    seeds); forecast about $40–100 on a marketplace 5090; hard ceiling set from the quote after
    the first-check stage.
