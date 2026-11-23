@@ -464,12 +464,15 @@ class HE4(nn.Module):
         geometry: Geometry = Geometry(),
         trained_tables: bool = False,
         plain_feed_forward: bool = False,
+        trained_attention: bool = False,
     ) -> None:
         super().__init__()
         self.geometry = geometry
         self.trained_tables = trained_tables
         self.plain_feed_forward = plain_feed_forward
+        self.trained_attention = trained_attention
         self.feed_forward_types: tuple[tuple[str, str], ...] = ()
+        self.attention_types: tuple[tuple[str, str], ...] = ()
         self.mask = mask
         self.origin: tuple[str, str] | None = None
         self.frozen_format = "Q4_0"
@@ -491,7 +494,13 @@ class HE4(nn.Module):
         self.output_norm = nn.Parameter(tensors["output_norm.weight"].clone())
         self.blocks = nn.ModuleList(
             [
-                Layer(tensors, f"blk.{i}.", geometry, trained_tables, plain_feed_forward)
+                Layer(
+                    tensors,
+                    f"blk.{i}.",
+                    geometry,
+                    trained_tables or trained_attention,
+                    plain_feed_forward,
+                )
                 for i in range(geometry.layers)
             ]
         )

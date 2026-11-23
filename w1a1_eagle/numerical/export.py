@@ -1,5 +1,6 @@
 import hashlib
 from dataclasses import dataclass
+from pathlib import Path
 from typing import BinaryIO, Protocol, Sequence, TypeAlias, cast
 
 import gguf
@@ -12,7 +13,7 @@ from w1a1_eagle.data import Artifact
 from w1a1_eagle.model import HE4, Layer, Projection
 from w1a1_eagle.numerical.gguf_readback import Expected, metadata
 from w1a1_eagle.numerical.gguf_readback import verify as verify_gguf
-from w1a1_eagle.numerical.k_tables import plain_codes, quantizer_binary
+from w1a1_eagle.numerical.k_tables import attention_codes, plain_codes, quantizer_binary
 from w1a1_eagle.numerical.weights import GGUF, q4_0_codes
 from w1a1_eagle.numerical.worker import TensorWorker
 
@@ -105,7 +106,7 @@ def packed_signs(value: Tensor) -> NativeArray:
 
 
 def prepare(
-    worker: TensorWorker, source: Artifact, vocabulary: Artifact
+    worker: TensorWorker, source: Artifact, vocabulary: Artifact, quantizer: Path | None = None
 ) -> tuple[Writer, list[ExportTensor]]:
     worker.verify_frozen()
     worker.verify_finite()
@@ -228,12 +229,29 @@ def prepare(
             if name != "up":
                 add(base + ".w1ax_gain", projection.log_gain.detach().float().cpu().exp())
     trained = {name: value for name, value in tables.items() if value.requires_grad}
-    if len(trained) != (len(tables) if model.trained_tables else 0):
+    expected = (
+        len(tables)
+        if model.trained_tables
+        else 4 * model.geometry.layers
+        if model.trained_attention
+        else 0
+    )
+    if len(trained) != expected:
         raise ValueError("trained table coverage differs from the model setting")
     frozen = {name: value for name, value in tables.items() if name not in trained}
-    for name, value in trained.items():
-        coded = cast(NativeArray, q4_0_codes(value))
-        tensors.append(ExportTensor(name, coded, kinds.Q4_0, "Q4_0"))
+    if model.trained_attention:
+        if quantizer is None:
+            raise ValueError("trained attention tables export through the table quantizer")
+        codes = attention_codes(model, quantizer)
+        if set(codes) != set(trained):
+            raise ValueError("trained attention code coverage differs")
+        for name, (kind_name, payload) in sorted(codes.items()):
+            native_kind = {"Q4_K": kinds.Q4_K, "Q6_K": kinds.Q6_K}[kind_name]
+            tensors.append(ExportTensor(name, cast(NativeArray, payload), native_kind, kind_name))
+    else:
+        for name, value in trained.items():
+            coded = cast(NativeArray, q4_0_codes(value))
+            tensors.append(ExportTensor(name, coded, kinds.Q4_0, "Q4_0"))
     if model.native_codes:
         cached = {name: (shape, data) for name, shape, data in model.native_codes}
         if len(cached) != len(model.native_codes) or set(cached) != {*frozen, "output.weight"}:
@@ -309,6 +327,7 @@ def export_he4(
     store: Store,
     max_bytes: int,
     scratch_bytes: int,
+    quantizer: Path | None = None,
 ) -> StateRef:
     with worker.lock:
         if (
@@ -327,7 +346,7 @@ def export_he4(
         )
         if estimate > scratch_bytes:
             raise ValueError("export working memory exceeds scratch budget")
-        writer, tensors = prepare(worker, source, vocabulary)
+        writer, tensors = prepare(worker, source, vocabulary, quantizer)
         return publish(worker, writer, tensors, store, max_bytes, scratch_bytes, worker.identity)
 
 

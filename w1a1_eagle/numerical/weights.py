@@ -259,7 +259,12 @@ def load_he4(
     frozen_baseline: Artifact | None = None,
     trained_tables: bool = False,
     plain_feed_forward: bool = False,
+    trained_attention: bool = False,
 ) -> HE4:
+    if trained_attention and (frozen_baseline is None or trained_tables or plain_feed_forward):
+        raise ValueError(
+            "trained attention tables start from Baseline's tables with one-bit feed-forward"
+        )
     if plain_feed_forward and (
         frozen_baseline is None or trained_tables or initialization is not None
     ):
@@ -337,6 +342,7 @@ def load_he4(
             )
         codes = tuple(entries)
     native_types: tuple[tuple[str, str], ...] = ()
+    attention_types: tuple[tuple[str, str], ...] = ()
     feed_forward_types: list[tuple[str, str]] = []
     parent_frozen_sha256 = None
     if trained_tables:
@@ -372,6 +378,10 @@ def load_he4(
             coded = cast(Array, item.data)
             replacements.append((name, coded.shape, coded.tobytes()))
             types.append((name, item.tensor_type.name))
+        if trained_attention:
+            attention_types = tuple(entry for entry in types if ".attn_" in entry[0])
+            replacements = [entry for entry in replacements if ".attn_" not in entry[0]]
+            types = [entry for entry in types if ".attn_" not in entry[0]]
         codes = tuple(replacements)
         native_types = tuple(types)
         if plain_feed_forward:
@@ -384,9 +394,12 @@ def load_he4(
                 if tuple(int(v) for v in reversed(item.shape)) != tuple(tensors[name].shape):
                     raise ValueError("Baseline feed-forward geometry differs: " + name)
                 feed_forward_types.append((name, item.tensor_type.name))
-    model = HE4(tensors, head, mask, geometry, trained_tables, plain_feed_forward)
+    model = HE4(
+        tensors, head, mask, geometry, trained_tables, plain_feed_forward, trained_attention
+    )
     if plain_feed_forward:
         model.feed_forward_types = tuple(feed_forward_types)
+    model.attention_types = attention_types
     model.parent_frozen_sha256 = parent_frozen_sha256
     model.frozen_format = frozen_format
     model.frozen_baseline = None if frozen_baseline is None else frozen_baseline.sha256

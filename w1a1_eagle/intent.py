@@ -286,6 +286,7 @@ class Intent:
                 "slot_rounding",
                 "feed_forward",
                 "table_quantizer",
+                "attention_tables",
             }
             != required
             or type(raw["schema"]) is not int
@@ -358,21 +359,35 @@ class Intent:
                 "trained_tables cannot use frozen_format baseline-k: trained tables are not"
                 " copied from Baseline and export as Q4_0"
             )
+        attention = raw.get("attention_tables", "frozen")
+        if attention not in ("frozen", "trained"):
+            raise ValueError("attention_tables is frozen or trained")
+        trained_attention = attention == "trained"
+        if trained_attention and (frozen_format != "baseline-k" or trained_tables):
+            raise ValueError(
+                "trained attention tables start from Baseline's tables: frozen_format baseline-k"
+                " without trained_tables"
+            )
         if "grouping" in raw:
             grouping(raw["grouping"])
         table_step = (
             "optimization" in raw and TABLE_GROUP in optimization(raw["optimization"]).step_sizes
         )
-        if trained_tables and not table_step:
-            raise ValueError("trained_tables requires an explicit table step size in optimization")
-        if table_step and not trained_tables:
-            raise ValueError("a table step size requires trained_tables")
+        if (trained_tables or trained_attention) and not table_step:
+            raise ValueError("trained tables require an explicit table step size in optimization")
+        if table_step and not (trained_tables or trained_attention):
+            raise ValueError(
+                "a table step size requires trained_tables or trained attention_tables"
+            )
         plain = raw.get("feed_forward", "one-bit")
         if plain not in ("one-bit", "plain"):
             raise ValueError("feed_forward is one-bit or plain")
-        if (plain == "plain") != ("table_quantizer" in raw):
+        if trained_attention and plain == "plain":
+            raise ValueError("trained attention tables apply to the one-bit feed-forward only")
+        if (plain == "plain" or trained_attention) != ("table_quantizer" in raw):
             raise ValueError(
-                "plain feed-forward tables require table_quantizer, and only they use it"
+                "plain feed-forward and trained attention tables require table_quantizer,"
+                " and only they use it"
             )
         plain_step = "optimization" in raw and optimization(raw["optimization"]).plain
         if plain_step != (plain == "plain"):
@@ -622,6 +637,10 @@ class Intent:
         return self.raw.get("trained_tables", False) is True
 
     @property
+    def trained_attention(self) -> bool:
+        return self.raw.get("attention_tables", "frozen") == "trained"
+
+    @property
     def plain_feed_forward(self) -> bool:
         return self.raw.get("feed_forward", "one-bit") == "plain"
 
@@ -686,8 +705,8 @@ class Intent:
                 **({"trained_tables": True} if self.trained_tables else {}),
                 **(
                     {
-                        "feed_forward": {
-                            "kind": "plain",
+                        ("attention_tables" if self.trained_attention else "feed_forward"): {
+                            "kind": "trained" if self.trained_attention else "plain",
                             "quantizer": {
                                 "sha256": self.table_quantizer.sha256,
                                 "bytes": self.table_quantizer.size,

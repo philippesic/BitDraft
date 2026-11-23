@@ -595,6 +595,18 @@ per update; run them with `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`, be
 it fragmented reserve exhausted the device below the cap
 ([trained tables](../results/trained-attention-tables/result.md)).
 
+## Trained attention tables
+
+The optional intent setting `attention_tables` defaults to `frozen`. With `trained`, the four
+attention tables of every layer become F32 parameters initialized from Baseline's decoded
+`Q4_K`/`Q6_K` tables, while the fusion table and vocabulary stay Baseline's frozen tables, so fused
+corpora remain usable. It requires `frozen_format: baseline-k`, `table_quantizer` and the `table`
+step size, and refuses `trained_tables` and plain feed-forward tables. Training is in F32; export
+quantizes each trained table to its Baseline type with the table quantizer, and the DEV diagnostic
+reports both the trained and the exported tables. The frozen fingerprint covers the fusion table,
+vocabulary and the attention types; states store the tables and their Adam moments, so resume and
+continue work as for the one-bit feed-forward.
+
 ## Plain feed-forward tables
 
 The optional intent setting `feed_forward` defaults to `one-bit`. Omission and explicit

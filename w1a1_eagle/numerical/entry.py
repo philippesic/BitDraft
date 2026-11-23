@@ -213,7 +213,11 @@ def preflight(path: Path, sealed: bool = False) -> Record:
 
 
 def export_drafter(worker: TensorWorker, intent: Intent, store: Store) -> StateRef:
-    if intent.table_quantizer is not None and intent.frozen_baseline is not None:
+    if (
+        intent.plain_feed_forward
+        and intent.table_quantizer is not None
+        and intent.frozen_baseline is not None
+    ):
         return export_plain(
             worker,
             intent.frozen_baseline,
@@ -223,7 +227,13 @@ def export_drafter(worker: TensorWorker, intent: Intent, store: Store) -> StateR
             intent.memory_bytes,
         )
     return export_he4(
-        worker, intent.source, intent.vocabulary, store, intent.state_bytes, intent.memory_bytes
+        worker,
+        intent.source,
+        intent.vocabulary,
+        store,
+        intent.state_bytes,
+        intent.memory_bytes,
+        None if intent.table_quantizer is None else quantizer_binary(intent.table_quantizer).path,
     )
 
 
@@ -430,6 +440,7 @@ def run_leased(
         intent.frozen_baseline,
         intent.trained_tables,
         intent.plain_feed_forward,
+        intent.trained_attention,
     )
     if intent.slot_rounding is not None:
         anchor_bounds(model)

@@ -17,7 +17,15 @@ from w1a1_eagle.records import artifact, read
 BLOCKS = {"Q2_K": 84, "Q3_K": 110, "Q4_K": 144, "Q6_K": 210}
 Bytes: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.uint8]]"
 Floats: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.float32]]"
-PARTS = {"ffn_gate": "gate", "ffn_up": "up", "ffn_down": "down"}
+PARTS = {
+    "ffn_gate": "gate",
+    "ffn_up": "up",
+    "ffn_down": "down",
+    "attn_q": "query",
+    "attn_k": "key",
+    "attn_v": "value",
+    "attn_output": "output",
+}
 
 
 def quantize(
@@ -83,10 +91,10 @@ def k_codes(quantizer: Path, value: Tensor, kind: str, scratch: Path, name: str)
         (scratch / (name + ".bin")).unlink(missing_ok=True)
 
 
-def plain_codes(model: HE4, quantizer: Path, workers: int = 6) -> dict[str, tuple[str, Bytes]]:
-    if not model.plain_feed_forward or len(model.feed_forward_types) != 3 * model.geometry.layers:
-        raise ValueError("plain feed-forward codes need the plain model and its Baseline types")
-    with tempfile.TemporaryDirectory(prefix="plain-tables-") as directory:
+def table_codes(
+    model: HE4, types: tuple[tuple[str, str], ...], quantizer: Path, workers: int = 6
+) -> dict[str, tuple[str, Bytes]]:
+    with tempfile.TemporaryDirectory(prefix="trained-tables-") as directory:
         scratch = Path(directory)
 
         def encode(entry: tuple[str, str]) -> tuple[str, tuple[str, Bytes]]:
@@ -95,7 +103,19 @@ def plain_codes(model: HE4, quantizer: Path, workers: int = 6) -> dict[str, tupl
             return name, (kind, k_codes(quantizer, operand, kind, scratch, name))
 
         with ThreadPoolExecutor(max_workers=workers) as pool:
-            return dict(pool.map(encode, model.feed_forward_types))
+            return dict(pool.map(encode, types))
+
+
+def plain_codes(model: HE4, quantizer: Path) -> dict[str, tuple[str, Bytes]]:
+    if not model.plain_feed_forward or len(model.feed_forward_types) != 3 * model.geometry.layers:
+        raise ValueError("plain feed-forward codes need the plain model and its Baseline types")
+    return table_codes(model, model.feed_forward_types, quantizer)
+
+
+def attention_codes(model: HE4, quantizer: Path) -> dict[str, tuple[str, Bytes]]:
+    if not model.trained_attention or len(model.attention_types) != 4 * model.geometry.layers:
+        raise ValueError("attention codes need trained attention tables and their Baseline types")
+    return table_codes(model, model.attention_types, quantizer)
 
 
 def dequantized_codes(codes: Bytes, kind: str, shape: tuple[int, ...]) -> Tensor:
@@ -107,8 +127,9 @@ def dequantized_codes(codes: Bytes, kind: str, shape: tuple[int, ...]) -> Tensor
 
 
 def plain_tables(model: HE4, quantizer: Path) -> dict[str, Tensor]:
+    coded = (attention_codes if model.trained_attention else plain_codes)(model, quantizer)
     result: dict[str, Tensor] = {}
-    for name, (kind, codes) in plain_codes(model, quantizer).items():
+    for name, (kind, codes) in coded.items():
         operand = model.get_parameter(parameter_name(name))
         result[parameter_name(name)] = dequantized_codes(codes, kind, tuple(operand.shape)).to(
             operand.device

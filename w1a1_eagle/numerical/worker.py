@@ -224,6 +224,8 @@ class TensorWorker:
                 digest.update(canonical([name, list(shape), hashlib.sha256(codes).hexdigest()]))
         if model.plain_feed_forward:
             digest.update(canonical(["plain-feed-forward", list(model.feed_forward_types)]))
+        if model.trained_attention:
+            digest.update(canonical(["trained-attention", list(model.attention_types)]))
         self.frozen_sha256 = digest.hexdigest()
         self.native_codes = model.native_codes
         self.native_types = model.native_types
