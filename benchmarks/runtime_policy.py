@@ -19,6 +19,7 @@ def arguments(
     parallel: int = 1,
     speculation: str = DEFAULT_SPECULATION,
     shortlist: Path | None = None,
+    unified_cache: bool = False,
 ) -> list[str]:
     argv = [
         str(binary),
@@ -59,6 +60,8 @@ def arguments(
         "-lv",
         "3",
     ]
+    if unified_cache:
+        argv.append("--kv-unified")
     if drafter:
         argv += [
             "-md",

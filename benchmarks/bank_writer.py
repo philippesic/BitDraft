@@ -32,6 +32,7 @@ FIELDS = {
     "slot_context",
     "shard_records",
 }
+OPTIONAL = {"decode_consistent", "unified_cache", "server_context"}
 PROVENANCE = (
     "source_key",
     "category",
@@ -142,7 +143,7 @@ def provenance(row: Record) -> Record:
 
 def write_bank(specification: Path, output: Path) -> Record:
     raw = read(specification)
-    if set(raw) != FIELDS or raw["schema"] != "bank-writing-v1":
+    if not FIELDS <= set(raw) <= FIELDS | OPTIONAL or raw["schema"] != "bank-writing-v1":
         raise ValueError("unsupported bank writing specification")
     root = specification.resolve().parent
     binary, helper = artifact(raw["binary"], root), artifact(raw["tokenizer"], root)
@@ -185,12 +186,15 @@ def write_bank(specification: Path, output: Path) -> Record:
                 binary,
                 target,
                 None,
-                slot_context * concurrency,
+                integer(raw.get("server_context", slot_context * concurrency)),
                 1,
                 Store(store.root / "server"),
+                consistent=raw.get("decode_consistent", True) is True,
                 parallel=concurrency,
+                unified_cache=raw.get("unified_cache", False) is True,
             ) as port,
         ):
+            pending: list[tuple[int, Path, list[Item], list[str]]] = []
             for index, start in enumerate(range(0, count, shard_records)):
                 path = shards.root / ("streams-" + str(index).zfill(5) + ".json")
                 if path.exists():
@@ -207,62 +211,67 @@ def write_bank(specification: Path, output: Path) -> Record:
                         skipped.append(string(row["id"]))
                         continue
                     items.append(item)
+                pending.append((index, path, items, skipped))
 
-                def run(item: Item) -> Record:
-                    return request(
-                        port,
-                        "completion",
-                        payload(
-                            list(item.prompt),
-                            item.cap,
-                            item.temperature,
-                            item.top_p,
-                            0,
-                            0.0,
-                            item.seed,
-                        ),
-                    )
-
-                began = now()
-                with ThreadPoolExecutor(concurrency) as pool:
-                    responses = list(pool.map(run, items))
-                wall = now() - began
-                records = [
-                    stream_row(item, response, eog, target.sha256)
-                    for item, response in zip(items, responses, strict=True)
-                ]
-                generated = sum(
-                    len(sequence(record(r["stream"])["tokens"])) - len(item.prompt)
-                    for r, item in zip(records, items, strict=True)
-                )
-                shards.atomic(
-                    path,
-                    canonical(
-                        {
-                            "schema": "token-stream-bank-v1",
-                            "target_sha256": target.sha256,
-                            "protected": ["heldout24"],
-                            "records": records,
-                            "provenance": {
-                                string(item.row["id"]): provenance(item.row) for item in items
-                            },
-                            "skipped": skipped,
-                            "wall_seconds": wall,
-                            "generated_tokens": generated,
-                            "code_sha256": code,
-                        }
+            def run(item: Item) -> Record:
+                return request(
+                    port,
+                    "completion",
+                    payload(
+                        list(item.prompt),
+                        item.cap,
+                        item.temperature,
+                        item.top_p,
+                        0,
+                        0.0,
+                        item.seed,
                     ),
                 )
-                measured.append(
-                    {
-                        "shard": index,
-                        "records": len(records),
-                        "skipped": len(skipped),
-                        "generated_tokens": generated,
-                        "wall_seconds": wall,
-                        "generated_tokens_per_second": generated / wall if wall > 0 else 0.0,
-                    }
-                )
+
+            with ThreadPoolExecutor(concurrency) as pool:
+                futures = [[pool.submit(run, item) for item in items] for _, _, items, _ in pending]
+                began = now()
+                for (index, path, items, skipped), submitted in zip(pending, futures, strict=True):
+                    responses = [future.result() for future in submitted]
+                    finished = now()
+                    wall = finished - began
+                    began = finished
+                    records = [
+                        stream_row(item, response, eog, target.sha256)
+                        for item, response in zip(items, responses, strict=True)
+                    ]
+                    generated = sum(
+                        len(sequence(record(r["stream"])["tokens"])) - len(item.prompt)
+                        for r, item in zip(records, items, strict=True)
+                    )
+                    shards.atomic(
+                        path,
+                        canonical(
+                            {
+                                "schema": "token-stream-bank-v1",
+                                "target_sha256": target.sha256,
+                                "protected": ["heldout24"],
+                                "records": records,
+                                "provenance": {
+                                    string(item.row["id"]): provenance(item.row) for item in items
+                                },
+                                "skipped": skipped,
+                                "wall_seconds": wall,
+                                "generated_tokens": generated,
+                                "code_sha256": code,
+                            }
+                        ),
+                    )
+                    measured.append(
+                        {
+                            "shard": index,
+                            "records": len(records),
+                            "skipped": len(skipped),
+                            "generated_tokens": generated,
+                            "wall_seconds": wall,
+                            "generated_tokens_per_second": generated / wall if wall > 0 else 0.0,
+                        }
+                    )
     finally:
         tokenizer.close()
     files = sorted(shards.root.glob("streams-*.json"))

@@ -266,7 +266,12 @@ source revision. Candidate pools are bounded at twice each quota.
 of the bank's TRAIN rows in seeded order, with parallel server slots. It refuses a row whose
 prompt no longer tokenizes to the recorded tokens, and writes resumable shards
 (`shards/streams-NNNNN.json`, `token-stream-bank-v1`) of corpus-shaped rows plus per-row
-provenance. `replay-tokens` turns shards into eight-tap captures, `w1a1_eagle.numerical.fusing`
+provenance. Requests stream across shards without waiting at shard boundaries, and each shard
+is written as soon as its rows finish. Optional `decode_consistent: false` serves without
+single-token arithmetic for small batches, `unified_cache: true` shares one KV pool of
+`server_context` tokens among the slots. On the 5080, 32 slots with both options gave about
+800 generated tokens/s against 500 for 16 consistent slots, with the same 1.7% of positions
+differing from replay's exact choice. `replay-tokens` turns shards into eight-tap captures, `w1a1_eagle.numerical.fusing`
 into fused records, and training reads them as `fused-corpus-v1`. Raw replay is about 41 KB
 per token and fused storage about 8 MB per record, so production replays, fuses, trains and
 discards one bounded shard at a time.
