@@ -661,7 +661,8 @@ saved references; `artifacts/datasets/retrain-01/tables/`.
   table quantizer, whose rounding differs from the training-time port by about 1%. Export now packs
   the trained rounded values itself (decoded difference under 1e-9); attention reruns with exact
   export replace the planned seed-2 run with the old export. Vocabulary rows ran out of GPU memory
-  at 1.75 GiB over 14,000 updates; rerun with its control at 1.5 GiB.
+  at 1.75 GiB over 14,000 updates; rerun with its control at 1.5 GiB: rows 48.1% against 48.8%
+  (shortlist-only files, −0.64).
 - Disk (2026-11-22): removed my own finished pilot training states (scaling, spending, tables
   arms, `staged-smoke`, `first-check-local`; about 110 GB) and the two failed table attempts;
   exports, screens, journals, specs and the 768/192 fused inputs are kept.
