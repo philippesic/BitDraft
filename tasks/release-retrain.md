@@ -599,7 +599,29 @@ exclusive GPU lease forbids it today; unmeasured, not planned.
 ## Next
 
 Rental checkpoint (owner). 2026-11-22: owner answered "not yet" on the rental and asked for a
-full recap before approving recipe and gate. Evidence is under `State`; the agent recommends:
+full recap before approving recipe and gate.
+
+Pre-rental review (GPT-6.2 Astra, 2026-11-22) found four blockers in the prepared rental, so
+`production.json` must not run as is:
+1. Stage order: the writer sorts rows by the same seeded hash the bank used to select them, so
+   scarce cells (agentic, tools, long input) pile into late stages (stage 47: 549 agentic, 1,216
+   tool, 0 multilingual). Stages 42–49 exceed the 160 GB replay limit on prompts alone, and the
+   cosine tail sees a skewed mix. Fix: a separately seeded, category- and length-balanced order
+   with a per-stage raw-byte ceiling (CPU check).
+2. Disk: every stage keeps a 5.1 GB state and a 542 MB export (about 282 GB over 50 stages)
+   beyond the 300 GB plan. Fix: peak-disk calculation and retirement after a verified copy home.
+3. Resume: a crash between the final state and export skips the export; stage-0 resume drops
+   calibration and changes the recipe hash; 25,000-update save spacing. Fix and test
+   interruption at three points.
+4. Runbook: clone before upload, manifest drags in the 13 GB first-check, fixed output paths,
+   copy streams, labels and receipts home after each stage.
+Should fix: the 4-bit control plateau rule needs a sampled DEV screen and matched checkpoints;
+one frozen gate verdict calculation; a pre-set dollar cap and a representative-shard forecast;
+writer completion checks the exact ID list; a file-size ceiling in the shortlist rule; row-level
+licence provenance. Verified sound: zero heldout24, gate or DEV overlap in the bank; all rental
+hashes resolve; deterministic shard order; cosine schedule over continuation.
+
+Earlier recommendations (before the review):
 1. Go for the rented 100K run (`production.json`): the spending check passed (+1.6, +2.4 on two
    seeds); forecast about $40–100 on a marketplace 5090; hard ceiling set from the quote after
    the first-check stage.
