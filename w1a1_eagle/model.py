@@ -316,7 +316,7 @@ class Table(nn.Module):
             self.register_buffer("operand", value)
 
     def forward(self, value: Tensor) -> Tensor:
-        if self.rounding is None:
+        if self.rounding is None or not isinstance(self.operand, nn.Parameter):
             return functional.linear(value, self.operand)
         address = self.operand.data_ptr()
         if self.rounded is None or self.rounded[0] != address:

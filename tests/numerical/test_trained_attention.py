@@ -6,13 +6,14 @@ from typing import cast
 import gguf
 import numpy as np
 import torch
+from torch.func import functional_call
 
 from tests.numerical.test_model import fixture_corpus, gguf_fixture
 from tests.numerical.test_plain import CFG, MEMORY, baseline_file, payloads, quantizer
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.clock import Monotonic
 from w1a1_eagle.data import Artifact
-from w1a1_eagle.model import HE4, Layer, k_rounded
+from w1a1_eagle.model import HE4, Layer, Table, k_rounded
 from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.export import export_he4
 from w1a1_eagle.numerical.k_tables import (
@@ -263,3 +264,21 @@ class TestRoundingRefresh(unittest.TestCase):
                     served = table.forward(probe)
                     fresh = probe @ k_rounded(table.operand.detach(), "Q4_K").T
                 self.assertTrue(torch.allclose(served, fresh, atol=1e-6), budget)
+
+
+class TestDecodedDiagnosticTables(unittest.TestCase):
+    def test_substituted_decoded_tables_are_not_rounded_again(self) -> None:
+        generator = torch.Generator().manual_seed(6)
+        table = Table(0.02 * torch.randn(8, 512, generator=generator), True)
+        table.rounding = "Q4_K"
+        probe = torch.randn(3, 512, generator=generator)
+        decoded = torch.from_numpy(
+            gguf.dequantize(q4_k_codes(table.operand), gguf.GGMLQuantizationType.Q4_K)
+            .reshape(8, 512)
+            .copy()
+        )
+        with torch.no_grad():
+            served = functional_call(table, {"operand": decoded}, (probe,))
+            trained = table.forward(probe)
+        self.assertTrue(torch.equal(served, probe @ decoded.T))
+        self.assertTrue(torch.allclose(trained, served, atol=1e-6))

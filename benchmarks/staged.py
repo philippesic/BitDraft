@@ -82,9 +82,45 @@ def exported_updates(train: Path) -> int:
     if not pointer.exists():
         return 0
     value = read(pointer)
-    if not (train / "exports" / (string(value["sha256"]) + ".bin")).exists():
+    path = train / "exports" / (string(value["sha256"]) + ".bin")
+    if not path.exists() or path.stat().st_size != integer(value["bytes"]):
         return 0
+    if file_reference(path)["sha256"] != value["sha256"]:
+        raise ValueError("exported drafter differs from its pointer: " + str(path))
     return integer(value["updates"])
+
+
+def files_present(corpus: Path) -> bool:
+    for row in sequence(read(corpus, 1024 * 1024 * 1024)["records"]):
+        for value in sequence(record(row)["files"]):
+            ref = record(value)
+            path = Path(string(ref["path"]))
+            if not path.exists() or path.stat().st_size != integer(ref["bytes"]):
+                return False
+    return True
+
+
+def state_present(train: Path) -> bool:
+    pointer = train / "states" / "latest.json"
+    return pointer.exists() and Path(string(latest_state(train)["path"])).exists()
+
+
+def wait_for_backup(root: Path, index: int, log: Path, limit: float = 12 * 3600) -> None:
+    lag_path = root / "backup-lag"
+    if not lag_path.exists():
+        return
+    lag = int(lag_path.read_text().strip())
+    began = now()
+    while True:
+        ack = root / "backup-ack.json"
+        acknowledged = integer(read(ack)["stage"]) if ack.exists() else -1
+        if acknowledged >= index - 1 - lag:
+            return
+        if now() - began > limit:
+            raise ValueError("home backups fell behind; inspect pull.sh")
+        with log.open("a") as sink:
+            sink.write(f"waiting for the home backup of stage {index - 1 - lag}\n")
+        pause(60)
 
 
 def retire_states(train: Path) -> int:
@@ -141,6 +177,9 @@ def staged_train(specification: Path, output: Path) -> Record:
         raise ValueError("the intent template describes the fresh first stage")
     store = Store(output)
     write_spec(store, "specification.json", raw)
+    expected_source = store.root / "expected-source.txt"
+    if expected_source.exists() and expected_source.read_text().strip() != source_identity(root):
+        raise ValueError("executable source differs from expected-source.txt")
     summary: list[Record] = []
     previous: Path | None = None
     for index in range(stages):
@@ -151,9 +190,23 @@ def staged_train(specification: Path, output: Path) -> Record:
         target_updates = per_stage * (index + 1)
         wait_for_gpu(log)
         if exported_updates(train) >= target_updates:
+            if previous is not None:
+                retire_states(previous)
             summary.append({"stage": index, "status": "trained", "updates": target_updates})
             previous = train
             continue
+        if index > 0 and (store.root / "hold").exists():
+            held: Record = {
+                "schema": "staged-training-result-v1",
+                "status": "held",
+                "held_before_stage": index,
+                "stages": summary,
+            }
+            store.atomic(store.root / "held.json", canonical(held))
+            return held
+        if previous is not None and not state_present(previous):
+            raise ValueError("the previous stage's state is missing; restore it before continuing")
+        wait_for_backup(store.root, index, log)
         writing = record(raw["writer"]) | {
             "schema": "bank-writing-v1",
             "first": first_row + index * stage_rows,
@@ -169,7 +222,11 @@ def staged_train(specification: Path, output: Path) -> Record:
             "ids": ids,
         }
         path = write_spec(stage, "replay.json", replaying)
+        if (fused / "corpus.json").exists() and not files_present(fused / "corpus.json"):
+            shutil.rmtree(fused)
         if not (fused / "corpus.json").exists():
+            if (replay / "progress.json").exists() and not files_present(replay / "progress.json"):
+                shutil.rmtree(replay)
             if not completed(replay / "result.json", "status", "complete"):
                 run(
                     [*PYTHON, "-m", "benchmarks", "replay-tokens", str(path), str(replay)],
@@ -199,7 +256,7 @@ def staged_train(specification: Path, output: Path) -> Record:
         discard_features(replay)
         budget = record(template["budget"]) | {
             "updates": target_updates,
-            "attempts": target_updates + per_stage // 10 + 1,
+            "attempts": target_updates + per_stage + 1,
         }
         intent = template | {
             "corpus": file_reference(fused / "corpus.json"),
@@ -210,7 +267,7 @@ def staged_train(specification: Path, output: Path) -> Record:
         if previous is not None:
             intent = {key: value for key, value in intent.items() if key != "calibration"}
             intent |= {"mode": "continue", "parent": latest_state(previous)}
-        if train.exists() and not (train / "states" / "latest.json").exists():
+        if train.exists() and not state_present(train):
             set_aside(train)
         if (train / "states" / "latest.json").exists():
             intent = read(stage.root / "intent.json") | {
