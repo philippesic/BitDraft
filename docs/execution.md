@@ -621,6 +621,16 @@ quantizer, writes them over those rows of `output.weight` and lists them under
 row and requires the trained rows to lie inside the shortlist. The DEV diagnostic reports the
 trained and the exported rows; states store the rows and their Adam moments.
 
+## Soft targets
+
+The optional intent setting `soft_targets: {"weight": w}` (0 < w ≤ 1) mixes each supervised
+position's hard cross-entropy with a top-k soft loss: −Σ p_k log q_k over the target's recorded
+top-k tokens, plus the target's remaining mass times the drafter's log-probability outside them.
+The loss is (1 − w) · hard + w · soft. Captures must carry soft targets (`replay-tokens` with
+`soft_targets: k`, which writes `soft.bin`: per logit position k int32 token ids then k float32
+log-probabilities, described under `soft_targets` in the capture metadata); fusing copies the
+file, and a training position without one is refused.
+
 ## Plain feed-forward tables
 
 The optional intent setting `feed_forward` defaults to `one-bit`. Omission and explicit

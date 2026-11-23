@@ -167,19 +167,25 @@ def stream(row: Record, root: Path, target: str) -> Stream:
     )
 
 
-def request(item: Stream, destination: Path, dtype: str, chunk: int) -> Record:
+def request(item: Stream, destination: Path, dtype: str, chunk: int, soft: int = 0) -> Record:
     return {
         "tokens": list(item.tokens),
         "output_cap": 0,
         "output": str(destination),
         "feature_dtype": dtype,
         "spans": [list(span) for span in item.spans],
-        "replay": {"chunk": chunk},
+        "replay": {"chunk": chunk, **({"soft": soft} if soft else {})},
     }
 
 
 def checked_metadata(
-    item: Stream, metadata: Record, dtype: str, chunk: int, target: str, raw: Record
+    item: Stream,
+    metadata: Record,
+    dtype: str,
+    chunk: int,
+    target: str,
+    raw: Record,
+    soft: int = 0,
 ) -> Record:
     positions = tuple(position for first, last in item.spans for position in range(first, last + 1))
     if (
@@ -189,6 +195,14 @@ def checked_metadata(
         or metadata.get("supervised_spans") != [list(span) for span in item.spans]
         or record(metadata.get("replay", {})).get("chunk") != chunk
         or len(sequence(metadata["greedy_ids"])) != len(positions)
+        or ("soft_targets" in metadata) != bool(soft)
+        or (
+            bool(soft)
+            and (
+                record(metadata["soft_targets"]).get("k") != soft
+                or record(metadata["soft_targets"]).get("positions") != len(positions)
+            )
+        )
     ):
         raise ValueError("replayed tokens, positions or storage differ from the request")
     return metadata | {
@@ -207,7 +221,7 @@ def replay(specification: Path, output: Path) -> Record:
 
     raw = read(specification)
     if (
-        set(raw) - {"corpora", "streams"} != FIELDS
+        set(raw) - {"corpora", "streams", "soft_targets"} != FIELDS
         or not {"corpora", "streams"} & set(raw)
         or raw["schema"] != "token-replay-v1"
     ):
@@ -225,6 +239,9 @@ def replay(specification: Path, output: Path) -> Record:
         raise ValueError("unique nonempty replay selection required")
     dtype, context = string(raw["feature_dtype"]), integer(raw["context"])
     chunk, limit = integer(raw["chunk"]), integer(raw["capture_limit_bytes"])
+    soft = integer(raw.get("soft_targets", 0))
+    if not 0 <= soft <= 64:
+        raise ValueError("soft targets take 0 to 64 entries")
     if dtype not in {"float16", "float32"} or not 1024 <= context <= 32768 or not 1 <= chunk <= 512:
         raise ValueError("invalid replay storage, context or chunk")
     streams, protected = located(
@@ -303,7 +320,9 @@ def replay(specification: Path, output: Path) -> Record:
                         continue
                     item = streams[key]
                     destination = attempt.root / key
-                    process.stdin.write(canonical(request(item, destination, dtype, chunk)) + b"\n")
+                    process.stdin.write(
+                        canonical(request(item, destination, dtype, chunk, soft)) + b"\n"
+                    )
                     process.stdin.flush()
                     response = replies.receive(1800)
                     if response.get("status") != "complete" or response.get("output") != str(
@@ -318,6 +337,7 @@ def replay(specification: Path, output: Path) -> Record:
                         chunk,
                         refs["target"].sha256,
                         file_reference(cell.root / "capture.json"),
+                        soft,
                     )
                     if item.source is not None:
                         cell.atomic(cell.root / "source.json", canonical(item.source))

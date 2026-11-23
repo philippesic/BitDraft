@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <numeric>
 #include <stdexcept>
 #include <thread>
 #include <vector>
@@ -102,6 +103,8 @@ int main(int argc, char ** argv) {
             if (request.contains("spans")) spans = request.at("spans").get<std::vector<std::pair<int,int>>>();
             const bool replay = request.contains("replay");
             const int chunk = replay ? request.at("replay").at("chunk").get<int>() : 1;
+            const int soft = replay && request.at("replay").contains("soft") ? request.at("replay").at("soft").get<int>() : 0;
+            require(soft >= 0 && soft <= 64 && soft < vocabulary, "soft targets take 0 to 64 entries");
             require(!replay || (replay_mode && !spans.empty() && chunk >= 1 && chunk <= outputs),
                     "token replay requires replay mode, spans and a chunk of 1 to 512");
             int previous = -1;
@@ -122,6 +125,11 @@ int main(int argc, char ** argv) {
             for (int tap : taps) {
                 files.emplace_back(output / ("layer-" + std::to_string(tap) + (half ? ".f16" : ".f32")), std::ios::binary);
                 require(bool(files.back()), "cannot create feature file");
+            }
+            std::ofstream soft_file;
+            if (soft > 0) {
+                soft_file.open(output / "soft.bin", std::ios::binary);
+                require(bool(soft_file), "cannot create soft target file");
             }
             std::vector<int> positions, labels, generated;
             int next = -1;
@@ -169,13 +177,31 @@ int main(int argc, char ** argv) {
                 }
                 std::vector<int> chosen(count);
                 std::vector<char> valid(count);
+                std::vector<int32_t> top_ids(size_t(count) * soft);
+                std::vector<float> top_logprobs(size_t(count) * soft);
                 const int workers = std::max(1, std::min(count, int(std::min(8u, std::thread::hardware_concurrency()))));
                 std::vector<std::thread> pool;
                 for (int w = 0; w < workers; ++w)
                     pool.emplace_back([&, w] {
+                        std::vector<int32_t> order;
                         for (int i = w; i < count; i += workers) {
                             valid[i] = finite(rows[i], size_t(vocabulary));
                             chosen[i] = int(std::max_element(rows[i], rows[i]+vocabulary)-rows[i]);
+                            if (soft == 0 || !valid[i]) continue;
+                            const float * row = rows[i];
+                            const float peak = row[chosen[i]];
+                            double total = 0.0;
+                            for (int v = 0; v < vocabulary; ++v) total += std::exp(double(row[v] - peak));
+                            const float normalizer = peak + float(std::log(total));
+                            order.resize(vocabulary);
+                            std::iota(order.begin(), order.end(), 0);
+                            std::partial_sort(order.begin(), order.begin()+soft, order.end(), [row](int32_t a, int32_t b) {
+                                return row[a] > row[b] || (row[a] == row[b] && a < b);
+                            });
+                            for (int k = 0; k < soft; ++k) {
+                                top_ids[size_t(i)*soft+k] = order[k];
+                                top_logprobs[size_t(i)*soft+k] = row[order[k]] - normalizer;
+                            }
                         }
                     });
                 for (auto & worker : pool) worker.join();
@@ -183,6 +209,10 @@ int main(int argc, char ** argv) {
                     require(valid[i], "nonfinite target logits");
                     next = chosen[i];
                     positions.push_back(start+i); labels.push_back(next);
+                    if (soft > 0) {
+                        soft_file.write(reinterpret_cast<const char *>(&top_ids[size_t(i)*soft]), sizeof(int32_t)*soft);
+                        soft_file.write(reinterpret_cast<const char *>(&top_logprobs[size_t(i)*soft]), sizeof(float)*soft);
+                    }
                 }
             };
             auto prefill = [&](int from, int to, bool prediction) {
@@ -205,6 +235,7 @@ int main(int argc, char ** argv) {
                 consume(inputs.size()-1, 1, true);
             }
             for (auto & file : files) { file.close(); require(bool(file), "feature close failed"); }
+            if (soft > 0) { soft_file.close(); require(bool(soft_file), "soft target close failed"); }
             const bool stopped = llama_vocab_is_eog(vocab, next);
             json metadata = {{"schema",2},{"status","native_capture_complete"},{"feature_dtype",dtype},
                 {"feature_semantics","zero_based_pre_block_input_all_tokens"},{"feature_shape",{inputs.size(),2560}},
@@ -215,6 +246,8 @@ int main(int argc, char ** argv) {
                     {"flash_attention","on"},{"consistent",32},{"sampling","raw_argmax_lowest_id_tie"}}}};
             if (!spans.empty()) metadata["supervised_spans"] = spans;
             if (replay) metadata["replay"] = {{"route","token-replay-v1"},{"chunk",chunk},{"outputs",outputs}};
+            if (soft > 0) metadata["soft_targets"] = {{"file","soft.bin"},{"k",soft},{"positions",labels.size()},
+                {"layout","per logit position: k int32 token ids, then k float32 log-probabilities, descending"}};
             std::ofstream meta(output/"capture.json"); meta << metadata.dump(2) << '\n';
             meta.close(); require(bool(meta), "capture metadata write failed");
             std::ifstream maps("/proc/self/maps"); std::ofstream mapped(output/"loaded-library-maps.txt");

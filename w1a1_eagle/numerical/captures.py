@@ -8,9 +8,9 @@ import numpy as np
 import torch
 from torch import Tensor
 
-from w1a1_eagle.contracts import Record, integer, record, sequence
+from w1a1_eagle.contracts import Record, integer, record, sequence, string
+from w1a1_eagle.data import Artifact, Supervision, capture_supervision
 from w1a1_eagle.data import CaptureSpec as CaptureSpec
-from w1a1_eagle.data import Supervision, capture_supervision
 
 HalfArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.float16]]"
 FloatArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.float32]]"
@@ -23,11 +23,19 @@ FUSED_SEMANTICS = "fused_pre_encoder_norm_v1"
 
 
 @dataclass(frozen=True)
+class SoftTargets:
+    rows: dict[int, int]
+    ids: Tensor
+    logprobs: Tensor
+
+
+@dataclass(frozen=True)
 class Capture:
     tokens: tuple[int, ...]
     features: Tensor
     windows: tuple[Supervision, ...]
     fusion: str | None = None
+    soft: SoftTargets | None = None
 
     @property
     def bytes(self) -> int:
@@ -40,6 +48,31 @@ def finite(values: "HalfArray | FloatArray") -> bool:
         return not bool(((half >= 0x7C00) & (half < 0x8000) | (half >= 0xFC00)).any())
     single = values.view(np.uint32)
     return not bool(((single >= 0x7F800000) & (single < 0x80000000) | (single >= 0xFF800000)).any())
+
+
+def soft_targets(metadata: Record, files: dict[str, Artifact]) -> SoftTargets | None:
+    if "soft_targets" not in metadata:
+        return None
+    soft = record(metadata["soft_targets"])
+    positions = tuple(integer(v) for v in sequence(metadata["logit_positions"]))
+    k = integer(soft["k"])
+    ref = files.get(string(soft["file"]))
+    if (
+        ref is None
+        or not 1 <= k <= 64
+        or integer(soft["positions"]) != len(positions)
+        or ref.size != len(positions) * k * 8
+    ):
+        raise ValueError("soft target file geometry differs from the capture")
+    data = bytearray(ref.size)
+    ref.read_verified(memoryview(data))
+    raw = torch.from_numpy(cast(IntArray, np.frombuffer(bytes(data), dtype=np.int32)).copy())
+    rows = raw.view(len(positions), 2, k)
+    ids = rows[:, 0].long()
+    logprobs = rows[:, 1].contiguous().view(torch.float32)
+    if not bool(torch.isfinite(logprobs).all()) or bool((logprobs > 1e-4).any()):
+        raise ValueError("soft target log-probabilities must be finite and at most zero")
+    return SoftTargets({position: row for row, position in enumerate(positions)}, ids, logprobs)
 
 
 def load_capture(
@@ -125,7 +158,7 @@ def load_capture(
     features.copy_(stored.permute(1, 0, 2))
     del stored, taps
     features = features.view(n, len(TAPS) * hidden)
-    return Capture(tokens, features, selected)
+    return Capture(tokens, features, selected, None, soft_targets(metadata, files))
 
 
 def load_fused(
@@ -162,7 +195,9 @@ def load_fused(
     stored.read_verified(values.data.cast("B"))
     if not finite(values):
         raise ValueError("nonfinite fused features")
-    return Capture(tokens, torch.from_numpy(values), selected, fusion)
+    return Capture(
+        tokens, torch.from_numpy(values), selected, fusion, soft_targets(metadata, files)
+    )
 
 
 def validate_capture(spec: CaptureSpec, byte_budget: int) -> Record:

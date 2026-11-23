@@ -135,7 +135,11 @@ def stream_row(item: Item, response: Record, eog: frozenset[int], target: str) -
         "source": row["source"],
         "group": row["group"],
         "topic": row["category"],
-        "aliases": row.get("aliases", []),
+        "aliases": [
+            alias
+            for alias in sequence(row.get("aliases", []))
+            if not string(alias).startswith("repository:")
+        ],
         "role": row["role"],
         "ancestry": "verified",
         "prior_use": row.get("prior_use", "unknown"),

@@ -288,6 +288,7 @@ class Intent:
                 "table_quantizer",
                 "attention_tables",
                 "vocabulary_rows",
+                "soft_targets",
             }
             != required
             or type(raw["schema"]) is not int
@@ -365,6 +366,10 @@ class Intent:
             raise ValueError("attention_tables is frozen or trained")
         trained_attention = attention == "trained"
         trained_rows = "vocabulary_rows" in raw
+        if "soft_targets" in raw:
+            soft_setting = record(raw["soft_targets"])
+            if set(soft_setting) != {"weight"} or not 0 < number(soft_setting["weight"]) <= 1:
+                raise ValueError("soft_targets takes a weight above 0 and at most 1")
         if trained_rows and frozen_format != "baseline-k":
             raise ValueError("trained vocabulary rows use frozen_format baseline-k")
         if trained_attention and (frozen_format != "baseline-k" or trained_tables):
@@ -645,6 +650,14 @@ class Intent:
         return self.raw.get("trained_tables", False) is True
 
     @property
+    def soft_weight(self) -> float:
+        return (
+            number(record(self.raw["soft_targets"])["weight"])
+            if "soft_targets" in self.raw
+            else 0.0
+        )
+
+    @property
     def vocabulary_rows(self) -> Artifact | None:
         return (
             artifact(self.raw["vocabulary_rows"], self.base)
@@ -752,6 +765,7 @@ class Intent:
                     if self.vocabulary_rows is not None
                     else {}
                 ),
+                **({"soft_targets": {"weight": self.soft_weight}} if self.soft_weight else {}),
                 **({} if self.features.default else {"features": self.features.encode()}),
                 **({"arithmetic": self.arithmetic} if self.arithmetic != "reference" else {}),
                 **(

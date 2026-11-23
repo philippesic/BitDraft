@@ -500,6 +500,7 @@ def run_leased(
         round_states=round_state_weighting(intent, corpus),
     )
     worker.fusion_sha256 = corpus.fusion
+    worker.soft_weight = intent.soft_weight
     diagnostics = (
         Diagnostics(artifact(intent.raw["development"], intent.base), corpus, intent.memory_bytes)
         if "development" in intent.raw

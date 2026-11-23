@@ -106,6 +106,17 @@ def optimizer_options(group: object) -> Record:
     }
 
 
+def soft_loss(logits: Tensor, ids: Tensor, logprobs: Tensor) -> Tensor:
+    predicted = torch.log_softmax(logits.float(), -1)
+    inside = predicted.gather(-1, ids)
+    probabilities = logprobs.exp()
+    residual = (1 - probabilities.sum(-1)).clamp_min(0)
+    outside = torch.logsumexp(predicted.scatter(-1, ids, -torch.inf), -1).clamp_min(-100.0)
+    return -(probabilities * inside).sum(-1) - torch.where(
+        residual > 0, residual * outside, torch.zeros_like(residual)
+    )
+
+
 class TensorWorker:
     def __init__(
         self,
@@ -204,6 +215,7 @@ class TensorWorker:
             fused=True,
         )
         self.last_gradient_norm = 0.0
+        self.soft_weight = 0.0
         self.frozen = {name: (value, value._version) for name, value in model.named_buffers()}
         digest = hashlib.sha256()
         for name, (value, _) in self.frozen.items():
@@ -527,16 +539,22 @@ class TensorWorker:
             self.label_tensors(windows, size, positions) if prepared is None else prepared
         )
         targets = labels.shape[0]
+        soft = self.soft_rows(capture, windows, size) if self.soft_weight > 0 else None
         selected = hidden.view(-1, hidden.shape[-1]).index_select(0, rows)
         head = selected.detach().requires_grad_()
         total = torch.zeros((), device=hidden.device)
         for start in range(0, targets, HEAD_ROWS):
             end = start + HEAD_ROWS
+            logits = model.scores(head[start:end])
             losses = torch.nn.functional.cross_entropy(
-                model.scores(head[start:end]),
+                logits,
                 labels[start:end],
                 reduction="none",
             )
+            if soft is not None:
+                losses = (1 - self.soft_weight) * losses + self.soft_weight * soft_loss(
+                    logits, soft[0][start:end], soft[1][start:end]
+                )
             loss = (losses * weights[start:end]).sum()
             torch.autograd.backward(loss)
             total = total + loss.detach()
@@ -550,6 +568,26 @@ class TensorWorker:
                 raise ValueError("nonfinite loss")
         torch.autograd.backward(selected, head.grad)
         return total
+
+    def soft_rows(
+        self, capture: Capture, windows: tuple[Supervision, ...], size: int
+    ) -> tuple[Tensor, Tensor]:
+        if capture.soft is None:
+            raise ValueError("soft targets require captures with recorded top-k targets")
+        try:
+            index = [
+                capture.soft.rows[window.anchor + offset]
+                for window in windows
+                for offset in range(min(len(window.labels), size - 1))
+            ]
+        except KeyError as error:
+            raise ValueError("a supervised position lacks its soft target") from error
+        device = self.model.vocabulary.device
+        chosen = torch.tensor(index, dtype=torch.int64)
+        return (
+            capture.soft.ids.index_select(0, chosen).to(device),
+            capture.soft.logprobs.index_select(0, chosen).to(device),
+        )
 
     def update(
         self, capture: Capture, windows: tuple[Supervision, ...], slots: int | None = None
