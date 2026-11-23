@@ -702,6 +702,18 @@ the all-in dollar cap and stage-0 stop, the file-size ceiling for the "smaller" 
 release licence, and the rental go. Rental provider: a verified datacenter RTX 5090 on Vast.ai
 (on-demand), RunPod Community as fallback.
 
+Speedup pilots (2026-11-23, `artifacts/datasets/retrain-01/speedups/`): telemetry off gives a
+byte-identical export and losses with 3.0% faster training (adopted in `production.json`);
+replay overlap reproduces all 128 identity-fixture tap files byte for byte at about 0.39 s per
+record against 0.47 (adopted, in code); writer batch 1,024 against 512 at 32 slots: 666 against
+652 tokens/s, within noise and changing answers (not adopted); 48 slots need 13.8 GB of KV
+cache and do not fit the 5080, so slot counts are measured on the 5090 speed test
+(`artifacts/rental/speedtest.sh`: 32 and 64 slots, then one 500-row stage at 1,500 updates, no
+DEV diagnostics; `setup.sh` installs, bundles CUDA 13.1 libraries if needed and checks replay
+identity; `manifest-speedtest.txt`, 13.7 GB). Pass test: one pass s1 51.3% greedy, 48.2% sampled
+(against 50.8%/48.4% for the 1.66-pass control); the remaining three arms resume after the speed
+test is set up.
+
 Local rental rehearsals (2026-11-23, retained in `artifacts/rental/`): crash recovery
 (`rehearsal.sh`) passed after the driver learned to wait for a busy GPU; the representative
 1,000-row stage completed in 4,151 s (generation 1,035, replay 481, fusing 153, training 2,359 at
