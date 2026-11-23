@@ -679,8 +679,16 @@ Local rental rehearsals (2026-11-23):
   refused at admission: agentic rows from one repository shared a `repository:` alias, which
   training treats as a duplicate identity (602 shared aliases over 2,994 TRAIN rows; the old
   64-row chunks never paired them). The writer now keeps repository aliases out of training rows
-  (they stay in provenance; gate decontamination already used them). Rerun queued for the
-  training rate.
+  (they stay in provenance; gate decontamination already used them). The rerun completed in
+  4,151 s: generation 1,035 s, replay 481 s, fusing 153 s, 12,500 updates in 2,359 s
+  (5.30 updates/s, faster than the 3.95 assumed), about 120 s of setup.
+- Forecast from the representative stage: about 69 minutes per 1,000-row stage, about 115 local
+  hours for 100 stages (training 66, generation 29, replay 13, fusing 4, setup 3). At an
+  unmeasured 1.0–1.6× 5090 speed-up, 72–115 rented hours (3–4.8 days), about $32–80 at
+  $0.45–0.70 per hour before setup, transfers and retries.
+- Soft targets: the first replay was refused by the loader's geometry check because the helper
+  wrote no soft target at each span's first prediction position; fixed in `native/capture.cpp`,
+  helper rebuilt.
 
 Pre-rental review (GPT-6.2 Astra, 2026-11-22) found four blockers in the prepared rental, so
 `production.json` must not run as is:
