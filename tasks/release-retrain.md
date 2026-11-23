@@ -661,6 +661,19 @@ saved references; `artifacts/datasets/retrain-01/tables/`.
 - Then: sampled DEV screen references, the crash-recovery rehearsal
   (`artifacts/rental/rehearsal.sh`) and a representative 1,000-row local stage for the forecast.
 
+Local rental rehearsals (2026-11-23):
+- Crash recovery (`artifacts/rental/rehearsal.sh`, 2 stages × 64 rows): driver killed before the
+  first checkpoint and mid-stage, then a lost export pointer; both stages finished at 200 and 400
+  updates with exports. It found that a killed driver leaves the trainer running with the GPU
+  lease; the driver now waits for the GPU and re-checks completion before acting.
+- Representative stage (1,000 balanced rows, production settings): generation 747 tokens per
+  prompt at 722 tokens/s (1,035 s), replay 0.47 s and fusing 0.16 s per record. Training was
+  refused at admission: agentic rows from one repository shared a `repository:` alias, which
+  training treats as a duplicate identity (602 shared aliases over 2,994 TRAIN rows; the old
+  64-row chunks never paired them). The writer now keeps repository aliases out of training rows
+  (they stay in provenance; gate decontamination already used them). Rerun queued for the
+  training rate.
+
 Pre-rental review (GPT-6.2 Astra, 2026-11-22) found four blockers in the prepared rental, so
 `production.json` must not run as is:
 1. Stage order: the writer sorts rows by the same seeded hash the bank used to select them, so
