@@ -269,7 +269,8 @@ prompt no longer tokenizes to the recorded tokens, and writes resumable shards
 provenance. Requests stream across shards without waiting at shard boundaries, and each shard
 is written as soon as its rows finish. Optional `decode_consistent: false` serves without
 single-token arithmetic for small batches, `unified_cache: true` shares one KV pool of
-`server_context` tokens among the slots. On the 5080, 32 slots with both options gave about
+`server_context` tokens among the slots, and `batch` sets the server's logical batch (default
+512). On the 5080, 32 slots with both options gave about
 800 generated tokens/s against 500 for 16 consistent slots, with the same 1.7% of positions
 differing from replay's exact choice. `replay-tokens` turns shards into eight-tap captures, `w1a1_eagle.numerical.fusing`
 into fused records, and training reads them as `fused-corpus-v1`. Raw replay is about 41 KB
@@ -286,9 +287,9 @@ and the previous stage's state binaries. Streams, specifications, receipts, expo
 latest states stay. Each stage computes the current source identity for its intent.
 
 Rerunning the same specification and output skips stages whose export exists and matches its
-pointer, resumes an interrupted stage from its own state, and rebuilds an interrupted stage's
-replay or fused features when their files are missing (as after restoring a backup on a new
-host). Before each step it waits while another process holds the GPU lease. Control files in
+pointer, resumes an interrupted stage from its own state, and restarts a stage from the previous
+stage's state when its replay or fused features are missing (as after restoring a backup on a
+new host; the rebuilt corpus has a new identity, so the stage's own checkpoint cannot resume). Before each step it waits while another process holds the GPU lease. Control files in
 OUTPUT: `hold` stops before stage 1 onward (the driver writes `held.json`); `expected-source.txt`
 refuses any other source identity; `backup-lag` with `n` waits before stage `k` until
 `backup-ack.json` (written by `artifacts/rental/pull.sh`) acknowledges stage `k − 1 − n`.

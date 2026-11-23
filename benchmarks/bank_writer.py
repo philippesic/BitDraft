@@ -32,7 +32,7 @@ FIELDS = {
     "slot_context",
     "shard_records",
 }
-OPTIONAL = {"decode_consistent", "unified_cache", "server_context", "order_seed"}
+OPTIONAL = {"decode_consistent", "unified_cache", "server_context", "order_seed", "batch"}
 BANDS = (2048, 8192)
 PROVENANCE = (
     "source_key",
@@ -228,6 +228,7 @@ def write_bank(specification: Path, output: Path) -> Record:
                 consistent=raw.get("decode_consistent", True) is True,
                 parallel=concurrency,
                 unified_cache=raw.get("unified_cache", False) is True,
+                batch=integer(raw.get("batch", 512)),
             ) as port,
         ):
             pending: list[tuple[int, Path, list[Item], list[str]]] = []

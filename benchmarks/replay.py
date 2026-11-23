@@ -315,20 +315,28 @@ def replay(specification: Path, output: Path) -> Record:
                     raise ValueError("replay target did not initialize")
                 owner = ProcessIdentity.read(process.pid)
                 attempt.atomic(attempt.root / "owner.json", canonical(cast(Record, asdict(owner))))
-                for key in selected:
-                    if key in complete:
-                        continue
+                pending = [key for key in selected if key not in complete]
+                stdin = process.stdin
+
+                def send(key: str) -> None:
+                    stdin.write(
+                        canonical(request(streams[key], attempt.root / key, dtype, chunk, soft))
+                        + b"\n"
+                    )
+                    stdin.flush()
+
+                if pending:
+                    send(pending[0])
+                for position, key in enumerate(pending):
                     item = streams[key]
                     destination = attempt.root / key
-                    process.stdin.write(
-                        canonical(request(item, destination, dtype, chunk, soft)) + b"\n"
-                    )
-                    process.stdin.flush()
                     response = replies.receive(1800)
                     if response.get("status") != "complete" or response.get("output") != str(
                         destination
                     ):
                         raise ValueError("native replay response disagrees with requested output")
+                    if position + 1 < len(pending):
+                        send(pending[position + 1])
                     cell = Store(destination)
                     derived = checked_metadata(
                         item,

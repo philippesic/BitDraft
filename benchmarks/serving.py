@@ -64,6 +64,7 @@ def native_server(
     speculation: str = DEFAULT_SPECULATION,
     shortlist: Artifact | None = None,
     unified_cache: bool = False,
+    batch: int = 512,
 ) -> Iterator[int]:
     port = port_number()
     drafter = arm.drafter if arm else None
@@ -78,6 +79,7 @@ def native_server(
         speculation,
         shortlist.path if shortlist is not None else None,
         unified_cache,
+        batch,
     )
     environment = native_environment(binary.path.parent)
     if not consistent:

@@ -52,6 +52,7 @@ def main() -> int:
         "select-expansion",
         "select-retrain",
         "prepare-gate",
+        "gate-verdict",
         "profile-native",
         "prepare-project-workflows",
         "prepare-replays",
@@ -318,6 +319,10 @@ def main() -> int:
             from benchmarks.release_gate import prepare_gate
 
             result = prepare_gate(args.input, args.output)
+        elif args.command == "gate-verdict":
+            from benchmarks.gate_verdict import gate_verdict
+
+            result = gate_verdict(args.input, args.output)
         elif args.command == "select-supplement":
             from benchmarks.supplement import supplement
 

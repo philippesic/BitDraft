@@ -20,6 +20,7 @@ def arguments(
     speculation: str = DEFAULT_SPECULATION,
     shortlist: Path | None = None,
     unified_cache: bool = False,
+    batch: int = 512,
 ) -> list[str]:
     argv = [
         str(binary),
@@ -32,7 +33,7 @@ def arguments(
         "-np",
         str(parallel),
         "-b",
-        "512",
+        str(batch),
         "-ub",
         "512",
         "-t",

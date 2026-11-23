@@ -105,6 +105,18 @@ def state_present(train: Path) -> bool:
     return pointer.exists() and Path(string(latest_state(train)["path"])).exists()
 
 
+def restart_stage(root: Path, log: Path) -> None:
+    with log.open("a") as sink:
+        sink.write("features missing after a restore: rebuilding the stage from its streams\n")
+    for name in ("replay", "fused"):
+        if (root / name).exists():
+            shutil.rmtree(root / name)
+    for path in [root / "fuse.json", *root.glob("intent*.json")]:
+        path.unlink(missing_ok=True)
+    if (root / "train").exists():
+        set_aside(root / "train")
+
+
 def wait_for_backup(root: Path, index: int, log: Path, limit: float = 12 * 3600) -> None:
     lag_path = root / "backup-lag"
     if not lag_path.exists():
@@ -222,11 +234,14 @@ def staged_train(specification: Path, output: Path) -> Record:
             "ids": ids,
         }
         path = write_spec(stage, "replay.json", replaying)
-        if (fused / "corpus.json").exists() and not files_present(fused / "corpus.json"):
-            shutil.rmtree(fused)
+        lost = ((fused / "corpus.json").exists() and not files_present(fused / "corpus.json")) or (
+            not (fused / "corpus.json").exists()
+            and (replay / "progress.json").exists()
+            and not files_present(replay / "progress.json")
+        )
+        if lost:
+            restart_stage(stage.root, log)
         if not (fused / "corpus.json").exists():
-            if (replay / "progress.json").exists() and not files_present(replay / "progress.json"):
-                shutil.rmtree(replay)
             if not completed(replay / "result.json", "status", "complete"):
                 run(
                     [*PYTHON, "-m", "benchmarks", "replay-tokens", str(path), str(replay)],
