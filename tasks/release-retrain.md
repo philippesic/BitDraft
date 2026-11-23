@@ -636,124 +636,53 @@ setup, transfers and retries.
 
 ## Next
 
-Rental checkpoint (owner). 2026-11-22: owner answered "not yet" on the rental and asked for a
-full recap before approving recipe and gate.
+Status (2026-11-23): Stage 1 and Stage 2 are complete. Stage 2 results are closed in
+[release-stage2-screens](../results/release-stage2-screens/result.md) (F041): the recipe is
+unchanged (frozen Baseline tables, hard labels, batched writing, about one pass over 100K distinct
+records). The rental is held until the owner approves it.
 
-Stage 2 feature screens (owner 2026-11-22: "I told you to do this already"; the go covers the
-whole Workstream F list). 768 new-mix records, 2,370 updates, two seeds, DEV screen against
-saved references; `artifacts/datasets/retrain-01/tables/`.
-- Trained attention tables (new `attention_tables: trained`, Baseline-type Q4_K/Q6_K export):
-  48.2% and 48.9% against the matched controls' 48.3% and 49.4% (seeds 8101, 8102; −0.1 and
-  −0.5 points; speed 0.951 and 0.961 against 0.952 and 0.962). No gain at this length: stays out
-  of the recipe. States grow by about 3 GB (state budget raised to 10 GiB).
-- Trained vocabulary rows: 47.1% and 47.3% against the 1.75 GiB controls' 47.4% and 47.4%
-  (seeds 8101, 8102; −0.3 and −0.1 points; speed 0.988 and 0.990 against 0.985 and 0.988). No
-  gain at this length: stays out of the recipe.
-  (New `vocabulary_rows`, the leader's 68,728 shortlist rows, tied input and output, screened as
-  shortlist-only files.)
-- Soft targets (top-32 KL at weight 0.5 beside hard labels; 768 records, 2,370 updates, two
-  seeds, soft against hard on the identical fused corpus): greedy −0.22 (−0.90, +0.50) and +0.19
-  (−0.58, +0.94); sampled +0.24 (−0.18, +0.69) and +0.10 (−0.37, +0.61). No measurable effect:
-  not promising, so the long run skips it (owner's overnight rule). The hard s1 arm reproduced
-  the earlier control exactly (48.3%).
-- Long tests (14,000 updates, rows 1,000–1,999, `artifacts/datasets/retrain-01/long/`): control
-  s1 50.8% greedy, 48.4% sampled. Rounded attention s1 50.0% (−0.87, −1.69 to −0.12): its DEV
-  top-1 was 35.6% while training against 34.8% for the control, but 33.1% after export through the
-  table quantizer, whose rounding differs from the training-time port by about 1%. Export now packs
-  the trained rounded values itself (decoded difference under 1e-9); attention reruns with exact
-  export replace the planned seed-2 run with the old export. Vocabulary rows ran out of GPU memory
-  at 1.75 GiB over 14,000 updates; rerun with its control at 1.5 GiB: rows 48.1% against 48.8%
-  (shortlist-only files, −0.64, −1.34 to +0.02); DEV top-1 trained 34.4%, exported 34.0%, control
-  33.5%.
-- The rounded attention runs (`attn-s1`, `attnx-s1`) never trained through rounding: the cache of
-  rounded tables was keyed on the parameter's version counter, which fused AdamW does not bump,
-  so training kept the step-0 rounding offsets (both runs had identical DEV curves; exported
-  32.3–33.1% against 35.6% in training; served −0.87 and −1.14). Fixed by refreshing the cache
-  after every optimizer step and after restore, with a worker-level test that fails without the
-  refresh. Control s2: 51.1% greedy, 48.2% sampled. Rounded attention with the fix, s1: 50.7%
-  against 50.8% (−0.08, −0.80 to +0.56); DEV top-1 trained and exported agreed through 10,500
-  updates (34.0/34.0, 35.5/35.6) but split at 14,000 (36.1 trained, 35.0 exported; unexplained,
-  served result is the verdict). Training through rounding runs at about 1.4 updates/s against
-  5.3. Seed 2 held: it would have run past the approved window (to about 15:00).
-- Verdicts (2026-11-23): trained attention tables (with and without rounding), trained vocabulary
-  rows and top-32 soft targets show no served gain at 2,370 or 14,000 updates; none enters the
-  release recipe. The code stays (opt-in settings, tested) for later work.
-- Disk (2026-11-22): removed my own finished pilot training states (scaling, spending, tables
-  arms, `staged-smoke`, `first-check-local`; about 110 GB) and the two failed table attempts;
-  exports, screens, journals, specs and the 768/192 fused inputs are kept.
-- Soft targets: probe of top-32 retained mass, mass outside the shortlist and capture cost
-  (`artifacts/datasets/retrain-01/soft-probe/probe.py`); queued.
-- Input rotation, low-rank correction, one-bit attention, BF16 responses: deferred behind probes
-  by the second plan review (removing input rounding barely moved DEV; BF16 saves no writing
-  time with batched Q4KM answers).
-- Then: sampled DEV screen references, the crash-recovery rehearsal
-  (`artifacts/rental/rehearsal.sh`) and a representative 1,000-row local stage for the forecast.
+Owner decisions on record:
+- 2026-11-22: "not yet" on the rental; full recap requested.
+- 2026-11-22: the go covers the whole Workstream F list (screens done; see the result).
+- 2026-11-23 about 01:30: overnight plan approved; done, with rounded attention seed 2 held
+  because it would have overrun (owner may still ask for it).
+- 2026-11-23: fix every finding of the second Astra review before the rental; the held-out ReAct
+  convention is reported transfer evidence, not a pass condition.
 
-Owner decisions (2026-11-23, after the second Astra review): fix every review finding before the
-rental, including a 30-minute local rehearsal of recovery on a replacement host from the pulled
-files only; the held-out ReAct convention stays reported transfer evidence, not a pass condition
-(as `release-gate-v1.json` says; the guardrail list below had it wrong). An Astra performance
-audit (xhigh) of generation, replay, training and evaluation runs in parallel, read-only.
+Second Astra review fixes (2026-11-23):
+- Done: the staged driver rebuilds missing replay or fused features after a restore, verifies
+  export digests, restarts a stage whose state is missing, retires earlier states on restart,
+  allows a full stage of retry attempts, honours `hold`, `expected-source.txt` and `backup-lag`
+  control files; `pull.sh` mirrors the run without features, verifies the newest export and state
+  and writes `backup-ack.json`; the exported-table diagnostic no longer re-rounds decoded values;
+  feature verdicts reworded and closed in the result.
+- In progress: host-loss rehearsal (`artifacts/rental/hostloss.sh`: two simulated machine losses
+  restored from the pulled copy only, the stage-0 hold and backup pacing).
+- To do before the rental: runbook update for the control files and recovery; the 4-bit control's
+  executable schedule (below); release clearance (weights licence, attribution for retained
+  SWE-rebench context); gate verdict calculator exercised on synthetic rows.
 
-Owner approval (2026-11-23, about 01:30; no rental for at least 10 hours): overnight plan, in
-order: finish the representative stage and soft-target short screen; merge rounded attention
-training (`attention_tables: rounded`); generate rows 1,000–1,999 with soft targets; long tests
-at 14,000 updates (`artifacts/datasets/retrain-01/long/long.py`): control s1, rounded attention
-s1, vocabulary rows s1, 1.75 GiB control s1, soft targets s1 (only if the short screen is
-promising), control s2, rounded attention s2; final summary by about 12:00. Seed-2 arms drop
-first if time runs short.
+4-bit control schedule (proposal for the owner, executable with the current trainer): train on
+the candidate's generated stages in production order. One fresh constant-step run over stage 0's
+fused corpus; then `continue` onto each later stage's corpus (exact resume needs the same corpus,
+so each new stage is a continuation). Measure at stage boundaries where updates reach
+12,500 × 2^n (12.5K, 25K, 50K, 100K, ...), on the greedy DEV screen and the sampled DEV screen
+(two seeds, live target and Baseline each time, about 6 minutes, not distribution-qualified).
+Stop under the recorded plateau rule; finish with a cosine anneal of 10% of the reached updates on
+the next unseen stages; report the corpus fraction used. Candidate exports at the same update
+counts give same-prefix comparisons. The ten agentic screen groups cannot resolve a +1-point
+subgroup bound; agentic plateau evidence comes from the panel's 30 agentic tasks.
 
-Local rental rehearsals (2026-11-23):
-- Crash recovery (`artifacts/rental/rehearsal.sh`, 2 stages × 64 rows): driver killed before the
-  first checkpoint and mid-stage, then a lost export pointer; both stages finished at 200 and 400
-  updates with exports. It found that a killed driver leaves the trainer running with the GPU
-  lease; the driver now waits for the GPU and re-checks completion before acting.
-- Representative stage (1,000 balanced rows, production settings): generation 747 tokens per
-  prompt at 722 tokens/s (1,035 s), replay 0.47 s and fusing 0.16 s per record. Training was
-  refused at admission: agentic rows from one repository shared a `repository:` alias, which
-  training treats as a duplicate identity (602 shared aliases over 2,994 TRAIN rows; the old
-  64-row chunks never paired them). The writer now keeps repository aliases out of training rows
-  (they stay in provenance; gate decontamination already used them). The rerun completed in
-  4,151 s: generation 1,035 s, replay 481 s, fusing 153 s, 12,500 updates in 2,359 s
-  (5.30 updates/s, faster than the 3.95 assumed), about 120 s of setup.
-- Forecast from the representative stage: about 69 minutes per 1,000-row stage, about 115 local
-  hours for 100 stages (training 66, generation 29, replay 13, fusing 4, setup 3). At an
-  unmeasured 1.0–1.6× 5090 speed-up, 72–115 rented hours (3–4.8 days), about $32–80 at
-  $0.45–0.70 per hour before setup, transfers and retries.
-- Soft targets: the first replay was refused by the loader's geometry check because the helper
-  wrote no soft target at each span's first prediction position; fixed in `native/capture.cpp`,
-  helper rebuilt.
+Before the rental, the owner approves: the recipe, the gate verdict and margins, the source list,
+the all-in dollar cap and stage-0 stop, the file-size ceiling for the "smaller" claim, the
+release licence, and the rental go. Rental provider: a verified datacenter RTX 5090 on Vast.ai
+(on-demand), RunPod Community as fallback.
 
-Pre-rental review (GPT-6.2 Astra, 2026-11-22) found four blockers in the prepared rental, so
-`production.json` must not run as is:
-1. Stage order: the writer sorts rows by the same seeded hash the bank used to select them, so
-   scarce cells (agentic, tools, long input) pile into late stages (stage 47: 549 agentic, 1,216
-   tool, 0 multilingual). Stages 42–49 exceed the 160 GB replay limit on prompts alone, and the
-   cosine tail sees a skewed mix. Fix: a separately seeded, category- and length-balanced order
-   with a per-stage raw-byte ceiling (CPU check).
-2. Disk: every stage keeps a 5.1 GB state and a 542 MB export (about 282 GB over 50 stages)
-   beyond the 300 GB plan. Fix: peak-disk calculation and retirement after a verified copy home.
-3. Resume: a crash between the final state and export skips the export; stage-0 resume drops
-   calibration and changes the recipe hash; 25,000-update save spacing. Fix and test
-   interruption at three points.
-4. Runbook: clone before upload, manifest drags in the 13 GB first-check, fixed output paths,
-   copy streams, labels and receipts home after each stage.
-Should fix: the 4-bit control plateau rule needs a sampled DEV screen and matched checkpoints;
-one frozen gate verdict calculation; a pre-set dollar cap and a representative-shard forecast;
-writer completion checks the exact ID list; a file-size ceiling in the shortlist rule; row-level
-licence provenance. Verified sound: zero heldout24, gate or DEV overlap in the bank; all rental
-hashes resolve; deterministic shard order; cosine schedule over continuation.
+Local rental rehearsals (2026-11-23, retained in `artifacts/rental/`): crash recovery
+(`rehearsal.sh`) passed after the driver learned to wait for a busy GPU; the representative
+1,000-row stage completed in 4,151 s (generation 1,035, replay 481, fusing 153, training 2,359 at
+5.30 updates/s, setup about 120). Forecast: about 115 local hours for 100 stages; 72–115 rented
+hours at an unmeasured 1.0–1.6× 5090 speed-up, about $30–70 at $0.40–0.60 per hour.
 
-Earlier recommendations (before the review):
-1. Go for the rented 100K run (`production.json`): the spending check passed (+1.6, +2.4 on two
-   seeds); forecast about $40–100 on a marketplace 5090; hard ceiling set from the quote after
-   the first-check stage.
-2. Recipe as piloted: batched writing (32 slots, decode consistency off), staged training with
-   2 GiB grouping, no vocabulary- or attention-table training this release (unscreened; the data
-   effect dominates), the 4-bit control trained locally to its plateau on the same data.
-3. Gate margins as provisional in `release-gate-v1.json`: the DEV panel resolved leader against
-   Baseline speed to ±1.0% at 292 requests, so the 880-request general scenario resolves about
-   ±0.6% (a true gain of about 1.5% clears "lower bound above 1.00"); per-category guardrails
-   (80 prompts) about ±2%.
-4. Approve the frozen gate (`gate-v2`) and the source list (`retrain-sources-v1.json`).
-5. Shortlist: the export rule above (sizes measured on DEV after training).
+First Astra review (2026-11-22): its four blockers (stage order, disk, resume, runbook) and
+should-fix items are fixed; details are in the commit history and the runbook above.

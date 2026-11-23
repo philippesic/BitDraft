@@ -10,6 +10,14 @@ See [closeout specification](docs/results.md).
 
 ## Current candidate and retained controls
 
+### F041: Which Stage 2 screens change the release recipe?
+
+Only data. Four times more distinct data at about one pass raised one-bit acceptance by 1.6 and
+2.4 points, while repetition cost up to 21. Trained attention tables (also with rounding during
+training), trained vocabulary rows and top-32 soft targets showed no resolved served advantage at
+2,370 or 14,000 updates; one-bit attention could save at most 2.6% of round time.
+[Result](results/release-stage2-screens/result.md).
+
 ### F040: Does the 284 MB file keep its speed on fresh Q4KM requests?
 
 Yes. It was 1.9–5.6% faster than stock Baseline across six protected request
