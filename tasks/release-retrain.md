@@ -638,6 +638,23 @@ setup, transfers and retries.
 Rental checkpoint (owner). 2026-11-22: owner answered "not yet" on the rental and asked for a
 full recap before approving recipe and gate.
 
+Stage 2 feature screens (owner 2026-11-22: "I told you to do this already"; the go covers the
+whole Workstream F list). 768 new-mix records, 2,370 updates, two seeds, DEV screen against
+saved references; `artifacts/datasets/retrain-01/tables/`.
+- Trained attention tables (new `attention_tables: trained`, Baseline-type Q4_K/Q6_K export): seed
+  8101 48.2% against the matched control's 48.3% (speed 0.951 against 0.952): no gain. Seed 8102
+  running. States grow by about 3 GB (state budget raised to 10 GiB).
+- Trained vocabulary rows (new `vocabulary_rows`, the leader's 68,728 shortlist rows, tied input
+  and output): two seeds against matched 1.75 GiB controls, screened as shortlist-only files;
+  queued.
+- Soft targets: probe of top-32 retained mass, mass outside the shortlist and capture cost
+  (`artifacts/datasets/retrain-01/soft-probe/probe.py`); queued.
+- Input rotation, low-rank correction, one-bit attention, BF16 responses: deferred behind probes
+  by the second plan review (removing input rounding barely moved DEV; BF16 saves no writing
+  time with batched Q4KM answers).
+- Then: sampled DEV screen references, the crash-recovery rehearsal
+  (`artifacts/rental/rehearsal.sh`) and a representative 1,000-row local stage for the forecast.
+
 Pre-rental review (GPT-6.2 Astra, 2026-11-22) found four blockers in the prepared rental, so
 `production.json` must not run as is:
 1. Stage order: the writer sorts rows by the same seeded hash the bank used to select them, so
