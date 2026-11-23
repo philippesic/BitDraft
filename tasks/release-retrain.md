@@ -662,7 +662,14 @@ saved references; `artifacts/datasets/retrain-01/tables/`.
   the trained rounded values itself (decoded difference under 1e-9); attention reruns with exact
   export replace the planned seed-2 run with the old export. Vocabulary rows ran out of GPU memory
   at 1.75 GiB over 14,000 updates; rerun with its control at 1.5 GiB: rows 48.1% against 48.8%
-  (shortlist-only files, −0.64).
+  (shortlist-only files, −0.64, −1.34 to +0.02); DEV top-1 trained 34.4%, exported 34.0%, control
+  33.5%.
+- The rounded attention runs (`attn-s1`, `attnx-s1`) never trained through rounding: the cache of
+  rounded tables was keyed on the parameter's version counter, which fused AdamW does not bump,
+  so training kept the step-0 rounding offsets (both runs had identical DEV curves; exported
+  32.3–33.1% against 35.6% in training; served −0.87 and −1.14). Fixed by refreshing the cache
+  after every optimizer step and after restore, with a worker-level test that fails without the
+  refresh. Both seeds rerun as `attnr-s1`, `attnr-s2`; control s2: 51.1% greedy, 48.2% sampled.
 - Disk (2026-11-22): removed my own finished pilot training states (scaling, spending, tables
   arms, `staged-smoke`, `first-check-local`; about 110 GB) and the two failed table attempts;
   exports, screens, journals, specs and the 768/192 fused inputs are kept.
