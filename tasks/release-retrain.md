@@ -665,8 +665,16 @@ Second Astra review fixes (2026-11-23):
   control files; `pull.sh` mirrors the run without features, verifies the newest export and state
   and writes `backup-ack.json`; the exported-table diagnostic no longer re-rounds decoded values;
   feature verdicts reworded and closed in the result.
-- In progress: host-loss rehearsal (`artifacts/rental/hostloss.sh`: two simulated machine losses
-  restored from the pulled copy only, the stage-0 hold and backup pacing).
+- Host-loss rehearsal 1 (`artifacts/rental/hostloss.sh`, 3 stages × 64 rows): the stage-0 hold
+  worked; losing the host during stage 1's replay and restoring the 11 GB pulled copy recovered;
+  losing it mid-training in stage 2 did not: the rebuilt replay manifest has a different digest, so
+  the stage's derived specifications no longer matched and the restart refused. Fix (on branch
+  `replay-overlap`, merged after the pass test): a stage whose features are lost restarts cleanly
+  from the previous stage's state (at most one stage of training lost). Rehearsal reruns after.
+- Owner (2026-11-23): test one pass (8,429 updates on the long corpus) against production's 1.55
+  passes (13,083) locally before deciding (`long/pass-preflight.md`; running, pueue task 47); build
+  the low-risk speedups first (training telemetry off, writer slots and batch, replay overlap),
+  each confirmed by a pilot (`artifacts/datasets/retrain-01/speedups/pilots.py`).
 - To do before the rental: runbook update for the control files and recovery; the 4-bit control's
   executable schedule (below); release clearance (weights licence, attribution for retained
   SWE-rebench context); gate verdict calculator exercised on synthetic rows.
