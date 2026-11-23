@@ -359,8 +359,9 @@ the owner's to approve):
 - Primary: the general scenario (880 prompts, both SPEED-Bench files pooled), speed as generated
   tokens over summed request seconds, paired source-group bootstrap with category strata (2,000
   draws). Pass against stock Baseline: lower bound above 1.00.
-- Guardrails: the other six scenarios (thinking-on, sampled, long-input, agentic replay, tool
-  calls, held-out convention), each lower bound at least 0.97 with at most two below 1.00.
+- Guardrails: five scenarios (thinking-on, sampled, long-input, agentic replay, tool calls), each
+  lower bound at least 0.97 with at most two below 1.00. The held-out convention is reported as
+  transfer evidence, not a pass condition (owner, 2026-11-23).
   Categories inside a scenario are descriptive, not guardrails. Multilingual has no gate scenario
   of its own: SPEED-Bench's multilingual category is reported, and the DEV panel's multilingual
   scenario is checked before the gate run.
@@ -687,6 +688,12 @@ saved references; `artifacts/datasets/retrain-01/tables/`.
   time with batched Q4KM answers).
 - Then: sampled DEV screen references, the crash-recovery rehearsal
   (`artifacts/rental/rehearsal.sh`) and a representative 1,000-row local stage for the forecast.
+
+Owner decisions (2026-11-23, after the second Astra review): fix every review finding before the
+rental, including a 30-minute local rehearsal of recovery on a replacement host from the pulled
+files only; the held-out ReAct convention stays reported transfer evidence, not a pass condition
+(as `release-gate-v1.json` says; the guardrail list below had it wrong). An Astra performance
+audit (xhigh) of generation, replay, training and evaluation runs in parallel, read-only.
 
 Owner approval (2026-11-23, about 01:30; no rental for at least 10 hours): overnight plan, in
 order: finish the representative stage and soft-target short screen; merge rounded attention
