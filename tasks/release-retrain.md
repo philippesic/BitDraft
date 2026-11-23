@@ -669,7 +669,14 @@ saved references; `artifacts/datasets/retrain-01/tables/`.
   so training kept the step-0 rounding offsets (both runs had identical DEV curves; exported
   32.3–33.1% against 35.6% in training; served −0.87 and −1.14). Fixed by refreshing the cache
   after every optimizer step and after restore, with a worker-level test that fails without the
-  refresh. Both seeds rerun as `attnr-s1`, `attnr-s2`; control s2: 51.1% greedy, 48.2% sampled.
+  refresh. Control s2: 51.1% greedy, 48.2% sampled. Rounded attention with the fix, s1: 50.7%
+  against 50.8% (−0.08, −0.80 to +0.56); DEV top-1 trained and exported agreed through 10,500
+  updates (34.0/34.0, 35.5/35.6) but split at 14,000 (36.1 trained, 35.0 exported; unexplained,
+  served result is the verdict). Training through rounding runs at about 1.4 updates/s against
+  5.3. Seed 2 held: it would have run past the approved window (to about 15:00).
+- Verdicts (2026-11-23): trained attention tables (with and without rounding), trained vocabulary
+  rows and top-32 soft targets show no served gain at 2,370 or 14,000 updates; none enters the
+  release recipe. The code stays (opt-in settings, tested) for later work.
 - Disk (2026-11-22): removed my own finished pilot training states (scaling, spending, tables
   arms, `staged-smoke`, `first-check-local`; about 110 GB) and the two failed table attempts;
   exports, screens, journals, specs and the 768/192 fused inputs are kept.
