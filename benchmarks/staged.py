@@ -2,9 +2,11 @@ import shutil
 import subprocess
 from pathlib import Path
 
+from benchmarks.measurement import now, pause
 from benchmarks.native import file_reference
 from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, record, sequence, string
+from w1a1_eagle.device import device_lease
 from w1a1_eagle.identity import source_identity
 from w1a1_eagle.records import canonical, read
 
@@ -28,7 +30,22 @@ def completed(path: Path, field: str, value: object) -> bool:
     return path.exists() and read(path, 64 * 1024 * 1024).get(field) == value
 
 
+def wait_for_gpu(log: Path, limit: float = 6 * 3600, delay: float = 30) -> None:
+    began = now()
+    while True:
+        try:
+            with device_lease("cuda"):
+                return
+        except ValueError as error:
+            if now() - began > limit:
+                raise ValueError("the GPU stayed busy; inspect its processes") from error
+            with log.open("a") as sink:
+                sink.write("waiting for the GPU: " + str(error) + "\n")
+            pause(delay)
+
+
 def run(argv: list[str], log: Path, root: Path) -> None:
+    wait_for_gpu(log)
     with log.open("a") as sink:
         status = subprocess.run(argv, cwd=root, stdout=sink, stderr=sink, check=False).returncode
     if status != 0:
