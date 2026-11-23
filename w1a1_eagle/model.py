@@ -192,6 +192,11 @@ def cache_storage(value: Tensor, checks: DeferredChecks | None = None) -> Tensor
 
 
 def q4_k_values(value: Tensor) -> Tensor:
+    d, dmin, scale_codes, min_codes, levels = q4_k_parts(value)
+    return (d * scale_codes * levels - dmin * min_codes).view_as(value)
+
+
+def q4_k_parts(value: Tensor) -> tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
     x = value.reshape(-1, 8, 32)
     weights = (x.square().mean(-1, keepdim=True)).sqrt() + x.abs()
     low = x.amin(-1, keepdim=True).clamp_max(0)
@@ -242,10 +247,16 @@ def q4_k_values(value: Tensor) -> Tensor:
     levels = torch.where(
         sub_scale != 0, ((x + sub_min) / safe_scale).round().clamp(0, 15), torch.zeros_like(x)
     )
-    return (sub_scale * levels - sub_min).view_as(value)
+    return d, dmin, scale_codes, min_codes, levels
 
 
 def q6_k_values(value: Tensor) -> Tensor:
+    d, codes, levels, tiny = q6_k_parts(value)
+    result = d * codes * levels
+    return torch.where(tiny, torch.zeros_like(result), result).view_as(value)
+
+
+def q6_k_parts(value: Tensor) -> tuple[Tensor, Tensor, Tensor, Tensor]:
     x = value.reshape(-1, 16, 16)
     magnitude = x.abs()
     peak = x.gather(-1, magnitude.argmax(-1, keepdim=True))
@@ -277,8 +288,7 @@ def q6_k_values(value: Tensor) -> Tensor:
     sub = d * codes
     safe = torch.where(sub != 0, sub, torch.ones_like(sub))
     levels = torch.where(sub != 0, (x / safe).round().clamp(-32, 31), torch.zeros_like(x))
-    result = sub * levels
-    return torch.where(tiny, torch.zeros_like(result), result).view_as(value)
+    return d, codes, levels, tiny
 
 
 def k_rounded(value: Tensor, kind: str) -> Tensor:

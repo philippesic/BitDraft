@@ -14,7 +14,13 @@ from w1a1_eagle.data import Artifact
 from w1a1_eagle.model import HE4, k_rounded
 from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.export import export_he4
-from w1a1_eagle.numerical.k_tables import plain_tables, quantizer_binary, trained_rows
+from w1a1_eagle.numerical.k_tables import (
+    plain_tables,
+    q4_k_codes,
+    q6_k_codes,
+    quantizer_binary,
+    trained_rows,
+)
 from w1a1_eagle.numerical.weights import load_he4
 from w1a1_eagle.numerical.worker import TensorWorker
 from w1a1_eagle.training import TABLE_GROUP, Budget, Optimization, default_step_sizes
@@ -210,3 +216,16 @@ class TestRoundedAttention(unittest.TestCase):
             }
             self.assertEqual(set(kinds.values()), {"Q4_K"})
             self.assertIsNone(model.fusion.rounding)
+
+
+class TestRoundedExport(unittest.TestCase):
+    def test_packed_codes_decode_to_the_trained_values(self) -> None:
+        generator = torch.Generator().manual_seed(2)
+        for kind, pack in (("Q4_K", q4_k_codes), ("Q6_K", q6_k_codes)):
+            value = 0.02 * torch.randn(4, 512, generator=generator)
+            value[0, :256] = 0
+            codes = pack(value)
+            self.assertEqual(codes.shape, (4, 2 * (144 if kind == "Q4_K" else 210)))
+            decoded = gguf.dequantize(codes, getattr(gguf.GGMLQuantizationType, kind))
+            expected = k_rounded(value, kind).detach().numpy()
+            self.assertLess(float(np.abs(decoded.reshape(4, 512) - expected).max()), 1e-8, kind)

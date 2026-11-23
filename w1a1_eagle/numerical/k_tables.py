@@ -10,7 +10,7 @@ import torch
 from torch import Tensor
 
 from w1a1_eagle.data import Artifact
-from w1a1_eagle.model import HE4
+from w1a1_eagle.model import HE4, Table, q4_k_parts, q6_k_parts
 from w1a1_eagle.numerical.weights import GGUF
 from w1a1_eagle.records import artifact, read
 
@@ -132,6 +132,61 @@ def exported_rows(model: HE4, quantizer: Path) -> dict[str, Tensor]:
     return {"head_values": restored.to(model.head_values.device)}
 
 
+def half_bytes(value: Tensor) -> Tensor:
+    return value.reshape(-1, 1).half().cpu().contiguous().view(torch.uint8)
+
+
+def as_bytes(packed: Tensor, rows: int) -> Bytes:
+    return cast(Bytes, packed.contiguous().numpy()).reshape(rows, -1)
+
+
+def q4_k_codes(value: Tensor) -> Bytes:
+    d, dmin, scale_codes, min_codes, levels = q4_k_parts(value.detach().float())
+    blocks = levels.shape[0]
+    ls = scale_codes.reshape(blocks, 8).cpu().to(torch.uint8)
+    lm = min_codes.reshape(blocks, 8).cpu().to(torch.uint8)
+    scales = torch.cat(
+        [
+            ls[:, 0:4] | ((ls[:, 4:8] >> 4) << 6),
+            lm[:, 0:4] | ((lm[:, 4:8] >> 4) << 6),
+            (ls[:, 4:8] & 0xF) | ((lm[:, 4:8] & 0xF) << 4),
+        ],
+        1,
+    )
+    quants = levels.reshape(blocks, 4, 2, 32).cpu().to(torch.uint8)
+    qs = (quants[:, :, 0, :] | (quants[:, :, 1, :] << 4)).reshape(blocks, 128)
+    packed = torch.cat([half_bytes(d), half_bytes(dmin), scales, qs], 1)
+    return as_bytes(packed, int(value.shape[0]))
+
+
+def q6_k_codes(value: Tensor) -> Bytes:
+    d, codes, levels, tiny = q6_k_parts(value.detach().float())
+    blocks = levels.shape[0]
+    stored = (levels + 32).reshape(blocks, 2, 4, 32).cpu().to(torch.uint8)
+    low = stored & 0xF
+    high = stored >> 4
+    ql = torch.cat(
+        [low[:, :, 0] | (low[:, :, 2] << 4), low[:, :, 1] | (low[:, :, 3] << 4)], 2
+    ).reshape(blocks, 128)
+    qh = (
+        high[:, :, 0] | (high[:, :, 1] << 2) | (high[:, :, 2] << 4) | (high[:, :, 3] << 6)
+    ).reshape(blocks, 64)
+    scales = codes.reshape(blocks, 16).cpu().to(torch.int8).view(torch.uint8)
+    packed = torch.cat([ql, qh, scales, half_bytes(d)], 1)
+    packed[tiny.reshape(blocks).cpu()] = 0
+    return as_bytes(packed, int(value.shape[0]))
+
+
+def rounded_codes(model: HE4) -> dict[str, tuple[str, Bytes]]:
+    if not model.trained_attention or len(model.attention_types) != 4 * model.geometry.layers:
+        raise ValueError("rounded codes need trained attention tables and their Baseline types")
+    result: dict[str, tuple[str, Bytes]] = {}
+    for name, kind in model.attention_types:
+        operand = model.get_parameter(parameter_name(name))
+        result[name] = (kind, q4_k_codes(operand) if kind == "Q4_K" else q6_k_codes(operand))
+    return result
+
+
 def dequantized_codes(codes: Bytes, kind: str, shape: tuple[int, ...]) -> Tensor:
     api = cast(GGUF, gguf)
     kinds = cast(object, api.GGMLQuantizationType)
@@ -140,8 +195,22 @@ def dequantized_codes(codes: Bytes, kind: str, shape: tuple[int, ...]) -> Tensor
     return torch.from_numpy(cast(Floats, values).copy())
 
 
+def rounded_attention(model: HE4) -> bool:
+    return any(
+        cast(Table, getattr(module, part)).rounding is not None
+        for module in model.blocks
+        for part in ("query", "key", "value", "output")
+    )
+
+
 def plain_tables(model: HE4, quantizer: Path) -> dict[str, Tensor]:
-    coded = (attention_codes if model.trained_attention else plain_codes)(model, quantizer)
+    coded = (
+        rounded_codes(model)
+        if rounded_attention(model)
+        else attention_codes(model, quantizer)
+        if model.trained_attention
+        else plain_codes(model, quantizer)
+    )
     result: dict[str, Tensor] = {}
     for name, (kind, codes) in coded.items():
         operand = model.get_parameter(parameter_name(name))

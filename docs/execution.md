@@ -607,7 +607,10 @@ reports both the trained and the exported tables. With `rounded`, training also 
 through its Baseline type's rounding: a torch port of ggml's Q4_K and Q6_K reference search
 (`k_rounded`) with a straight-through gradient, recomputed once per optimizer step. It
 reproduces Baseline's own tables exactly and moved tables to within about 0.2–1.2% of the table
-quantizer's output; export still uses the table quantizer. The frozen fingerprint covers the fusion table,
+quantizer's output, so export packs the same values itself (`q4_k_codes`, `q6_k_codes`) instead
+of calling the table quantizer: the exported tables decode to the trained rounded values. With
+the table quantizer, a 14,000-update run lost 2.5 DEV top-1 points at export (35.6% trained,
+33.1% exported). The frozen fingerprint covers the fusion table,
 vocabulary and the attention types; states store the tables and their Adam moments, so resume and
 continue work as for the one-bit feed-forward.
 

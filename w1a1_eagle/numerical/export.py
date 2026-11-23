@@ -17,6 +17,8 @@ from w1a1_eagle.numerical.k_tables import (
     attention_codes,
     plain_codes,
     quantizer_binary,
+    rounded_attention,
+    rounded_codes,
     trained_rows,
 )
 from w1a1_eagle.numerical.weights import GGUF, q4_0_codes
@@ -248,7 +250,9 @@ def prepare(
     if model.trained_attention:
         if quantizer is None:
             raise ValueError("trained attention tables export through the table quantizer")
-        codes = attention_codes(model, quantizer)
+        codes = (
+            rounded_codes(model) if rounded_attention(model) else attention_codes(model, quantizer)
+        )
         if set(codes) != set(trained):
             raise ValueError("trained attention code coverage differs")
         for name, (kind_name, payload) in sorted(codes.items()):
