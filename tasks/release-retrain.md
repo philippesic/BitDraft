@@ -616,16 +616,25 @@ Balanced order: every 1,000-row stage holds 37–39 agentic, 89–92 tool, 84–
 4. Identity: replay `artifacts/datasets/retrain-01/replay-speed/replay-16-v3.json`; token and
    label files must equal `out-v3` byte for byte, tap files within relative L2 1e-3; anything
    else stops the rental.
-5. Run detached with a fixed output:
-   `staged-train artifacts/rental/production.json artifacts/rental/production-run`.
-   Rerunning the same command resumes; a stage counts as done only once its export exists.
-6. From home, `artifacts/rental/pull.sh HOST` copies everything except features every 15
-   minutes: streams, labels, receipts, exports and the latest state.
-7. After stage 0: project the full run from its measured generation, replay, fuse and update
-   rates, and run the DEV screen on its export at home. Stop if the projection exceeds the cap or
-   the screen falls below the pilot (about 47% at 2,370 updates).
-8. Stop at the cap. Recovery: restore the latest copied stage into a new instance and rerun
-   step 5.
+5. Prepare the output: `mkdir artifacts/rental/production-run`; write the expected source
+   identity (`python -c "from pathlib import Path; from w1a1_eagle.identity import
+   source_identity; print(source_identity(Path('.')))"`, which must equal the value recorded
+   at home for the bundle) to `production-run/expected-source.txt`; `echo 1 > production-run/backup-lag`;
+   `touch production-run/hold`. Set the provider's own spending or time limit to the owner's cap.
+6. Run detached: `python -m benchmarks staged-train artifacts/rental/production.json
+   artifacts/rental/production-run`. From home, `artifacts/rental/pull.sh HOST` mirrors the run
+   without features every 15 minutes, verifies the newest export and state, and writes
+   `backup-ack.json`; with `backup-lag` 1 the driver waits before stage k until stage k−2 is backed
+   up.
+7. Stage 0 stops at the hold (`held.json`). Project the whole run from stage 0's measured
+   generation, replay, fusing and training times; screen its export at home as a diagnostic only
+   (stage 0 ends inside the 25,000-update warmup, so no learning threshold applies). Stop if the
+   projection exceeds the cap; otherwise `rm production-run/hold` and rerun the same command.
+8. Interruption on the same host: rerun the command. Host lost: stop `pull.sh`, rent a new host,
+   repeat steps 1–4, `rsync` the home mirror to `artifacts/rental/production-run`, restart
+   `pull.sh` against the new host, rerun the command; the driver rebuilds any stage whose
+   features were not backed up and resumes from the newest backed-up state.
+9. Stop at the cap.
 
 Forecast (pilot rates, before the representative local stage): generation about 800 tokens/s,
 replay 0.42 s and fusing 0.15 s per record, training 3.95 updates/s give 31 + 12 + 4 + 88 hours
