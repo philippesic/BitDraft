@@ -598,6 +598,16 @@ exclusive GPU lease forbids it today; unmeasured, not planned.
 
 ## Next
 
-Finish the full bank, rebuild the private DEV check and its references, build the staged
-driver, then start the Stage 2 pilots (batched versus one-at-a-time first), each behind a
-preflight.
+Rental checkpoint (owner). Evidence is under `State`; the agent recommends:
+1. Go for the rented 100K run (`production.json`): the spending check passed (+1.6, +2.4 on two
+   seeds); forecast about $40–100 on a marketplace 5090; hard ceiling set from the quote after
+   the first-check stage.
+2. Recipe as piloted: batched writing (32 slots, decode consistency off), staged training with
+   2 GiB grouping, no vocabulary- or attention-table training this release (unscreened; the data
+   effect dominates), the 4-bit control trained locally to its plateau on the same data.
+3. Gate margins as provisional in `release-gate-v1.json`: the DEV panel resolved leader against
+   Baseline speed to ±1.0% at 292 requests, so the 880-request general scenario resolves about
+   ±0.6% (a true gain of about 1.5% clears "lower bound above 1.00"); per-category guardrails
+   (80 prompts) about ±2%.
+4. Approve the frozen gate (`gate-v2`) and the source list (`retrain-sources-v1.json`).
+5. Shortlist: the export rule above (sizes measured on DEV after training).
