@@ -655,6 +655,13 @@ saved references; `artifacts/datasets/retrain-01/tables/`.
   (−0.58, +0.94); sampled +0.24 (−0.18, +0.69) and +0.10 (−0.37, +0.61). No measurable effect:
   not promising, so the long run skips it (owner's overnight rule). The hard s1 arm reproduced
   the earlier control exactly (48.3%).
+- Long tests (14,000 updates, rows 1,000–1,999, `artifacts/datasets/retrain-01/long/`): control
+  s1 50.8% greedy, 48.4% sampled. Rounded attention s1 50.0% (−0.87, −1.69 to −0.12): its DEV
+  top-1 was 35.6% while training against 34.8% for the control, but 33.1% after export through the
+  table quantizer, whose rounding differs from the training-time port by about 1%. Export now packs
+  the trained rounded values itself (decoded difference under 1e-9); attention reruns with exact
+  export replace the planned seed-2 run with the old export. Vocabulary rows ran out of GPU memory
+  at 1.75 GiB over 14,000 updates; rerun with its control at 1.5 GiB.
 - Disk (2026-11-22): removed my own finished pilot training states (scaling, spending, tables
   arms, `staged-smoke`, `first-check-local`; about 110 GB) and the two failed table attempts;
   exports, screens, journals, specs and the 768/192 fused inputs are kept.
