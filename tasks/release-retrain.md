@@ -606,13 +606,20 @@ Balanced order: every 1,000-row stage holds 37–39 agentic, 89–92 tool, 84–
 95–98 document rows; worst-case raw replay (prompt plus output cap) is 92–97 GB per stage.
 
 1. Cap: the owner sets the all-in dollar ceiling before provisioning.
-2. Instance: one RTX 5090 (32 GB), at least 400 GB disk (peak about 210 GB: raw replay under
+2. Instance (Vast.ai on-demand, verified host, reliability at least 98.5%, max duration at least
+   7 days, max CUDA 13.0 or newer, at least 31 GB RAM and 16 threads, 300 Mbps or better):
+   one RTX 5090 (32 GB), at least 400 GB disk (peak about 210 GB: raw replay under
    100 GB, fused features about 11 GB, three states 15 GB, 100 exports 54 GB, inputs 20 GB,
    environments), CUDA 13.1 libraries at `/usr/local/cuda-13.1`, a driver at least 590.
 3. Code first: `git bundle create artifacts/rental/code.bundle main` locally; on the rental clone
    it into `/home/philip/BitDraft`, then from home
    `rsync -aRr --files-from=artifacts/rental/manifest.txt ./ HOST:/home/philip/BitDraft/`.
    Install uv 0.11.32 and the two environments as in `docs/development.md`; write `.host.toml`.
+   If the host lacks CUDA 13.1, install the uploaded runtime libraries the native binaries link
+   (`artifacts/rental/cuda-13.1-libs`, checked by `sha256sum -c SHA256SUMS`) into
+   `/usr/local/cuda-13.1/targets/x86_64-linux/lib`, register that directory in
+   `/etc/ld.so.conf.d/` and run `ldconfig`; minor-version compatibility lets them run on a 13.0
+   driver (580+), and step 4 checks it.
 4. Identity: replay `artifacts/datasets/retrain-01/replay-speed/replay-16-v3.json`; token and
    label files must equal `out-v3` byte for byte, tap files within relative L2 1e-3; anything
    else stops the rental.
