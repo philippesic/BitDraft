@@ -169,6 +169,7 @@ class TensorWorker:
             "log_clip": "clip",
             ANCHOR_CLIP: "clip",
             "operand": TABLE_GROUP,
+            "head_values": TABLE_GROUP,
         }
         groups: dict[str, list[Tensor]] = {key: [] for key in self.optimization.groups}
         for name, parameter in model.named_parameters():
@@ -532,7 +533,7 @@ class TensorWorker:
         for start in range(0, targets, HEAD_ROWS):
             end = start + HEAD_ROWS
             losses = torch.nn.functional.cross_entropy(
-                torch.nn.functional.linear(head[start:end], model.vocabulary),
+                model.scores(head[start:end]),
                 labels[start:end],
                 reduction="none",
             )
@@ -721,8 +722,10 @@ class TensorWorker:
         with self.lock:
             self.ready = False
             self.last_publication = None
-            if self.model.plain_feed_forward:
-                raise ValueError("plain feed-forward tables support fresh runs only")
+            if self.model.plain_feed_forward and mode == "branch":
+                raise ValueError(
+                    "plain feed-forward tables support fresh, resume and continue runs"
+                )
             if (
                 mode not in {"resume", "branch", "continue"}
                 or reference.artifact.size > memory_budget_bytes

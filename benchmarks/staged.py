@@ -60,6 +60,31 @@ def trained_updates(train: Path) -> int:
     return integer(read(pointer)["updates"]) if pointer.exists() else 0
 
 
+def exported_updates(train: Path) -> int:
+    pointer = train / "exports" / "latest.json"
+    if not pointer.exists():
+        return 0
+    value = read(pointer)
+    if not (train / "exports" / (string(value["sha256"]) + ".bin")).exists():
+        return 0
+    return integer(value["updates"])
+
+
+def retire_states(train: Path) -> int:
+    freed = 0
+    for path in sorted((train / "states").glob("*.bin")):
+        freed += path.stat().st_size
+        path.unlink()
+    return freed
+
+
+def set_aside(train: Path) -> None:
+    index = 0
+    while train.with_name(train.name + "-unstarted-" + str(index)).exists():
+        index += 1
+    train.rename(train.with_name(train.name + "-unstarted-" + str(index)))
+
+
 def discard_features(root: Path) -> int:
     freed = 0
     for path in sorted(root.rglob("*")):
@@ -69,15 +94,20 @@ def discard_features(root: Path) -> int:
     return freed
 
 
-def stage_ids(writer: Path) -> tuple[list[Record], list[str]]:
+def stage_ids(writer: Path) -> tuple[list[Record], list[str], list[str]]:
     shards = sorted((writer / "shards").glob("streams-*.json"))
     references = [file_reference(path) for path in shards]
-    ids = [
-        string(record(row)["id"])
-        for path in shards
-        for row in sequence(read(path, 1024 * 1024 * 1024)["records"])
-    ]
-    return references, ids
+    ids: list[str] = []
+    skipped: list[str] = []
+    for path in shards:
+        shard = read(path, 1024 * 1024 * 1024)
+        ids += [string(record(row)["id"]) for row in sequence(shard["records"])]
+        skipped += [string(value) for value in sequence(shard["skipped"])]
+    expected = [string(value) for value in sequence(read(writer / "result.json")["row_ids"])]
+    excluded = set(skipped)
+    if len(set(ids)) != len(ids) or ids != [value for value in expected if value not in excluded]:
+        raise ValueError("written streams do not cover the stage's bank slice exactly")
+    return references, ids, skipped
 
 
 def staged_train(specification: Path, output: Path) -> Record:
@@ -102,7 +132,7 @@ def staged_train(specification: Path, output: Path) -> Record:
         writer, replay = stage.root / "writer", stage.root / "replay"
         fused, train = stage.root / "fused", stage.root / "train"
         target_updates = per_stage * (index + 1)
-        if trained_updates(train) >= target_updates:
+        if exported_updates(train) >= target_updates:
             summary.append({"stage": index, "status": "trained", "updates": target_updates})
             previous = train
             continue
@@ -114,7 +144,7 @@ def staged_train(specification: Path, output: Path) -> Record:
         path = write_spec(stage, "writer.json", writing)
         if not completed(writer / "result.json", "status", "complete"):
             run([*PYTHON, "-m", "benchmarks", "write-bank", str(path), str(writer)], log, root)
-        streams, ids = stage_ids(writer)
+        streams, ids, skipped = stage_ids(writer)
         replaying = record(raw["replay"]) | {
             "schema": "token-replay-v1",
             "streams": streams,
@@ -151,7 +181,7 @@ def staged_train(specification: Path, output: Path) -> Record:
         discard_features(replay)
         budget = record(template["budget"]) | {
             "updates": target_updates,
-            "attempts": target_updates + 1,
+            "attempts": target_updates + per_stage // 10 + 1,
         }
         intent = template | {
             "corpus": file_reference(fused / "corpus.json"),
@@ -162,9 +192,13 @@ def staged_train(specification: Path, output: Path) -> Record:
         if previous is not None:
             intent = {key: value for key, value in intent.items() if key != "calibration"}
             intent |= {"mode": "continue", "parent": latest_state(previous)}
-        if trained_updates(train) > 0:
-            intent = {key: value for key, value in intent.items() if key != "calibration"}
-            intent |= {"mode": "resume", "parent": latest_state(train)}
+        if train.exists() and not (train / "states" / "latest.json").exists():
+            set_aside(train)
+        if (train / "states" / "latest.json").exists():
+            intent = read(stage.root / "intent.json") | {
+                "mode": "resume",
+                "parent": latest_state(train),
+            }
             path = write_spec(
                 stage, "intent-resume-" + str(trained_updates(train)) + ".json", intent
             )
@@ -184,15 +218,18 @@ def staged_train(specification: Path, output: Path) -> Record:
             log,
             root,
         )
-        if trained_updates(train) < target_updates:
-            raise ValueError("stage training stopped before its update budget")
+        if exported_updates(train) < target_updates:
+            raise ValueError("stage training stopped before its update budget and export")
         freed = discard_features(fused)
+        if previous is not None:
+            freed += retire_states(previous)
         summary.append(
             {
                 "stage": index,
                 "status": "trained",
                 "updates": target_updates,
                 "records": len(ids),
+                "skipped": skipped,
                 "freed_feature_bytes": freed,
             }
         )
@@ -201,7 +238,7 @@ def staged_train(specification: Path, output: Path) -> Record:
         "schema": "staged-training-result-v1",
         "stages": summary,
         "final_state": None if previous is None else latest_state(previous),
-        "rule": "token streams, specifications and training states are kept; features are discarded after use",
+        "rule": "token streams, specifications, exports and the latest stage's training state are kept; features and earlier stages' states are discarded after use",
     }
     store.atomic(store.root / "result.json", canonical(result))
     return result

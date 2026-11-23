@@ -287,6 +287,7 @@ class Intent:
                 "feed_forward",
                 "table_quantizer",
                 "attention_tables",
+                "vocabulary_rows",
             }
             != required
             or type(raw["schema"]) is not int
@@ -363,6 +364,9 @@ class Intent:
         if attention not in ("frozen", "trained"):
             raise ValueError("attention_tables is frozen or trained")
         trained_attention = attention == "trained"
+        trained_rows = "vocabulary_rows" in raw
+        if trained_rows and frozen_format != "baseline-k":
+            raise ValueError("trained vocabulary rows use frozen_format baseline-k")
         if trained_attention and (frozen_format != "baseline-k" or trained_tables):
             raise ValueError(
                 "trained attention tables start from Baseline's tables: frozen_format baseline-k"
@@ -373,18 +377,20 @@ class Intent:
         table_step = (
             "optimization" in raw and TABLE_GROUP in optimization(raw["optimization"]).step_sizes
         )
-        if (trained_tables or trained_attention) and not table_step:
+        if (trained_tables or trained_attention or trained_rows) and not table_step:
             raise ValueError("trained tables require an explicit table step size in optimization")
-        if table_step and not (trained_tables or trained_attention):
+        if table_step and not (trained_tables or trained_attention or trained_rows):
             raise ValueError(
                 "a table step size requires trained_tables or trained attention_tables"
             )
         plain = raw.get("feed_forward", "one-bit")
         if plain not in ("one-bit", "plain"):
             raise ValueError("feed_forward is one-bit or plain")
-        if trained_attention and plain == "plain":
-            raise ValueError("trained attention tables apply to the one-bit feed-forward only")
-        if (plain == "plain" or trained_attention) != ("table_quantizer" in raw):
+        if (trained_attention or trained_rows) and plain == "plain":
+            raise ValueError(
+                "trained attention tables and rows apply to the one-bit feed-forward only"
+            )
+        if (plain == "plain" or trained_attention or trained_rows) != ("table_quantizer" in raw):
             raise ValueError(
                 "plain feed-forward and trained attention tables require table_quantizer,"
                 " and only they use it"
@@ -410,8 +416,10 @@ class Intent:
             )
             if refused:
                 raise ValueError("plain feed-forward tables do not use " + ", ".join(refused))
-            if mode != "fresh":
-                raise ValueError("plain feed-forward tables support fresh runs only")
+            if mode == "branch":
+                raise ValueError(
+                    "plain feed-forward tables support fresh, resume and continue runs"
+                )
             if frozen_format != "baseline-k" or trained_tables:
                 raise ValueError(
                     "plain feed-forward tables keep Baseline's frozen attention and fusion"
@@ -637,6 +645,14 @@ class Intent:
         return self.raw.get("trained_tables", False) is True
 
     @property
+    def vocabulary_rows(self) -> Artifact | None:
+        return (
+            artifact(self.raw["vocabulary_rows"], self.base)
+            if "vocabulary_rows" in self.raw
+            else None
+        )
+
+    @property
     def trained_attention(self) -> bool:
         return self.raw.get("attention_tables", "frozen") == "trained"
 
@@ -705,8 +721,18 @@ class Intent:
                 **({"trained_tables": True} if self.trained_tables else {}),
                 **(
                     {
-                        ("attention_tables" if self.trained_attention else "feed_forward"): {
-                            "kind": "trained" if self.trained_attention else "plain",
+                        (
+                            "attention_tables"
+                            if self.trained_attention
+                            else "feed_forward"
+                            if self.plain_feed_forward
+                            else "table_quantizer"
+                        ): {
+                            "kind": "trained"
+                            if self.trained_attention
+                            else "plain"
+                            if self.plain_feed_forward
+                            else "rows",
                             "quantizer": {
                                 "sha256": self.table_quantizer.sha256,
                                 "bytes": self.table_quantizer.size,
@@ -714,6 +740,16 @@ class Intent:
                         }
                     }
                     if self.table_quantizer is not None
+                    else {}
+                ),
+                **(
+                    {
+                        "vocabulary_rows": {
+                            "sha256": self.vocabulary_rows.sha256,
+                            "bytes": self.vocabulary_rows.size,
+                        }
+                    }
+                    if self.vocabulary_rows is not None
                     else {}
                 ),
                 **({} if self.features.default else {"features": self.features.encode()}),

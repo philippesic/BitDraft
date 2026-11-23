@@ -455,6 +455,9 @@ class Layer(nn.Module):
 
 class HE4(nn.Module):
     vocabulary: Tensor
+    head_index: Tensor
+    head_positions: Tensor
+    head_values: nn.Parameter
 
     def __init__(
         self,
@@ -465,6 +468,7 @@ class HE4(nn.Module):
         trained_tables: bool = False,
         plain_feed_forward: bool = False,
         trained_attention: bool = False,
+        head_rows: tuple[int, ...] = (),
     ) -> None:
         super().__init__()
         self.geometry = geometry
@@ -489,6 +493,18 @@ class HE4(nn.Module):
         ):
             raise ValueError("invalid frozen vocabulary geometry or mask")
         self.register_buffer("vocabulary", vocabulary.detach().float().clone())
+        self.head_rows = head_rows
+        if head_rows:
+            if len(set(head_rows)) != len(head_rows) or not all(
+                type(row) is int and 0 <= row < vocabulary.shape[0] for row in head_rows
+            ):
+                raise ValueError("trained vocabulary rows must be distinct token rows")
+            rows = torch.tensor(head_rows, dtype=torch.int64)
+            positions = torch.full((vocabulary.shape[0],), -1.0)
+            positions[rows] = torch.arange(len(head_rows), dtype=torch.float32)
+            self.register_buffer("head_index", rows.float())
+            self.register_buffer("head_positions", positions)
+            self.head_values = nn.Parameter(self.vocabulary[rows].clone())
         self.fusion = Table(tensors["fc.weight"], trained_tables)
         self.encoder_norm = nn.Parameter(tensors["enc.output_norm.weight"].clone())
         self.output_norm = nn.Parameter(tensors["output_norm.weight"].clone())
@@ -528,6 +544,22 @@ class HE4(nn.Module):
         ):
             raise ValueError("invalid model inputs")
 
+    def embed(self, identifiers: Tensor) -> Tensor:
+        state = functional.embedding(identifiers, self.vocabulary)
+        if not self.head_rows:
+            return state
+        positions = self.head_positions[identifiers]
+        chosen = self.head_values[positions.clamp_min(0).long()]
+        return torch.where((positions >= 0)[..., None], chosen, state)
+
+    def scores(self, hidden: Tensor) -> Tensor:
+        logits = functional.linear(hidden, self.vocabulary)
+        if not self.head_rows:
+            return logits
+        return logits.index_copy(
+            -1, self.head_index.long(), functional.linear(hidden, self.head_values)
+        )
+
     def encode(self, features: Tensor, count: int, fused: bool) -> Tensor:
         values = features[:count].to(self.vocabulary.device).float()
         return rms(
@@ -563,7 +595,7 @@ class HE4(nn.Module):
         identifiers = torch.full((len(anchors), size), self.mask, device=device)
         first: list[int] = [tokens[anchor] for anchor in anchors]
         identifiers[:, 0] = torch.tensor(first, device=device)
-        state = functional.embedding(identifiers.reshape(-1), self.vocabulary)
+        state = self.embed(identifiers.reshape(-1))
         if contexts is not None and (
             len(contexts) != cfg.layers or any(part[0].shape[0] < last for part in contexts)
         ):
@@ -614,7 +646,7 @@ class HE4(nn.Module):
         positions = torch.arange(anchor, anchor + size, device=device)
         context_positions = torch.arange(anchor, device=device)
         identifiers = torch.tensor((tokens[anchor],) + (self.mask,) * (size - 1), device=device)
-        state = functional.embedding(identifiers, self.vocabulary)
+        state = self.embed(identifiers)
         encoded = self.encode(features, anchor, fused)
         keys = torch.cat((context_positions, positions))
         for index, module in enumerate(self.blocks):
@@ -625,7 +657,7 @@ class HE4(nn.Module):
             state = block.forward(
                 state, block.context(encoded, context_positions), positions, allowed
             )
-        return functional.linear(rms(state, self.output_norm, cfg.epsilon), self.vocabulary)
+        return self.scores(rms(state, self.output_norm, cfg.epsilon))
 
 
 def named_projections(model: HE4) -> list[tuple[str, Projection]]:

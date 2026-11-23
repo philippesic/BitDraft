@@ -14,7 +14,7 @@ from w1a1_eagle.data import Artifact
 from w1a1_eagle.model import HE4
 from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.export import export_he4
-from w1a1_eagle.numerical.k_tables import plain_tables, quantizer_binary
+from w1a1_eagle.numerical.k_tables import plain_tables, quantizer_binary, trained_rows
 from w1a1_eagle.numerical.weights import load_he4
 from w1a1_eagle.numerical.worker import TensorWorker
 from w1a1_eagle.training import TABLE_GROUP, Budget, Optimization, default_step_sizes
@@ -111,3 +111,62 @@ class TestTrainedAttention(unittest.TestCase):
                 "frozen",
             )
             self.assertNotEqual(frozen.frozen_sha256, worker.frozen_sha256)
+
+
+class TestTrainedVocabularyRows(unittest.TestCase):
+    def test_rows_train_tied_and_export_into_the_output_table(self) -> None:
+        torch.set_num_threads(1)
+        with tempfile.TemporaryDirectory(prefix="binary-rows-") as directory:
+            root = Path(directory)
+            source, vocabulary = gguf_fixture(root, CFG, seed=5)
+            built = quantizer(root)
+            baseline = baseline_file(root, "coded.gguf", source, built)
+            rows = (2, 7, 9, 13)
+            model = load_he4(
+                source, vocabulary, MEMORY, CFG, None, "baseline-k", baseline, head_rows=rows
+            )
+            self.assertTrue(torch.equal(model.head_values, model.vocabulary[list(rows)]))
+            corpus = Corpus(fixture_corpus(root, 256), 17, MEMORY, 256)
+            worker = TensorWorker(model, corpus, "rows", optimization=rates())
+            binary = quantizer_binary(built).path
+            store = Store(root / "exports")
+            initial = export_he4(worker, source, vocabulary, store, 8 << 20, 32 << 20, binary)
+            before = model.head_values.detach().clone()
+            self.assertEqual(
+                worker.run(Monotonic(), Budget(1, 60, 1), lambda: False), "update-budget"
+            )
+            self.assertFalse(torch.equal(before, model.head_values))
+            hidden = torch.randn(5, CFG.hidden, generator=torch.Generator().manual_seed(0))
+            with torch.no_grad():
+                scores = model.scores(hidden)
+                self.assertTrue(torch.allclose(scores[:, list(rows)], hidden @ model.head_values.T))
+                self.assertTrue(torch.allclose(scores[:, 4], hidden @ model.vocabulary[4]))
+                embedded = model.embed(torch.tensor([7, 4]))
+                self.assertTrue(torch.equal(embedded[0], model.head_values[1]))
+                self.assertTrue(torch.equal(embedded[1], model.vocabulary[4]))
+            exported = export_he4(worker, source, vocabulary, store, 8 << 20, 32 << 20, binary)
+            first = payloads(initial.artifact.path)["output.weight"][1]
+            second = payloads(exported.artifact.path)["output.weight"][1]
+            width = len(first) // model.vocabulary.shape[0]
+            coded = trained_rows(model, binary)
+            for row in range(model.vocabulary.shape[0]):
+                old = first[row * width : (row + 1) * width]
+                new = second[row * width : (row + 1) * width]
+                if row in rows:
+                    self.assertEqual(new, coded[rows.index(row)].tobytes(), row)
+                else:
+                    self.assertEqual(old, new, row)
+            self.assertNotEqual(first, second)
+            fields = gguf.GGUFReader(str(exported.artifact.path)).fields
+            self.assertEqual(fields["dflash.vocab_trained_rows"].contents(), list(rows))
+            state = worker.checkpoint(Store(root / "states"), MEMORY)
+            resumed = TensorWorker(
+                load_he4(
+                    source, vocabulary, MEMORY, CFG, None, "baseline-k", baseline, head_rows=rows
+                ),
+                corpus,
+                "rows",
+                optimization=rates(),
+            )
+            resumed.restore(state, MEMORY)
+            self.assertTrue(torch.equal(resumed.model.head_values, model.head_values))

@@ -1,7 +1,10 @@
 import json
+import tempfile
 import unittest
+from pathlib import Path
 from typing import cast
 
+from benchmarks.bank_writer import balanced, shard_matches
 from benchmarks.conventions import apply
 from benchmarks.release_gate import object_types
 from benchmarks.retrain_bank import matching_quota, normalized
@@ -96,3 +99,42 @@ class RetrainDataTest(unittest.TestCase):
         assert matching_quota("writing/writing", quotas) is None
         assert normalized("Hello   World") == normalized("hello world")
         assert chat_label("x" * 7000) == ("documents", "pasted_document")
+
+
+def bank_row(index: int, category: str, length: int) -> Record:
+    return {
+        "id": f"{category}-{index}",
+        "category": category,
+        "input_tokens": length,
+        "output_cap": 0,
+    }
+
+
+class TestBankWriting(unittest.TestCase):
+    def test_balanced_order_spreads_every_stratum_across_prefixes(self) -> None:
+        rows = [bank_row(i, "code", 100) for i in range(600)]
+        rows += [bank_row(i, "agentic", 9000) for i in range(60)]
+        rows += [bank_row(i, "tools", 3000) for i in range(140)]
+        ordered = balanced(rows, 9401)
+        self.assertEqual(
+            sorted(str(row["id"]) for row in ordered), sorted(str(row["id"]) for row in rows)
+        )
+        self.assertEqual(ordered, balanced(list(reversed(rows)), 9401))
+        for start in range(0, 800, 100):
+            chunk = ordered[start : start + 100]
+            counts = {
+                name: sum(row["category"] == name for row in chunk)
+                for name in ("code", "agentic", "tools")
+            }
+            self.assertLessEqual(abs(counts["code"] - 75), 1)
+            self.assertLessEqual(abs(counts["agentic"] - 7.5), 1)
+            self.assertLessEqual(abs(counts["tools"] - 17.5), 1)
+
+    def test_existing_shard_must_match_its_slice(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="bank-shard-") as directory:
+            path = Path(directory) / "streams-00000.json"
+            path.write_text(json.dumps({"records": [{"id": "a"}, {"id": "c"}], "skipped": ["b"]}))
+            self.assertTrue(shard_matches(path, ["a", "b", "c"]))
+            self.assertFalse(shard_matches(path, ["c", "b", "a"]))
+            self.assertFalse(shard_matches(path, ["a", "b", "c", "d"]))
+            self.assertFalse(shard_matches(path, ["a", "c"]))

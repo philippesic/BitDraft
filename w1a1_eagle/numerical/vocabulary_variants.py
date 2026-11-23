@@ -12,7 +12,7 @@ from w1a1_eagle.checkpoints.store import Store
 from w1a1_eagle.contracts import Record, integer, record, sequence, string
 from w1a1_eagle.data import Artifact
 from w1a1_eagle.identity import source_identity
-from w1a1_eagle.numerical.export import ExportAPI, PayloadBytes, write_gguf
+from w1a1_eagle.numerical.export import TRAINED_ROWS_KEY, ExportAPI, PayloadBytes, write_gguf
 from w1a1_eagle.numerical.gguf_readback import Expected
 from w1a1_eagle.numerical.gguf_readback import verify as verify_gguf
 from w1a1_eagle.numerical.k_tables import BLOCKS, quantize, quantizer_binary
@@ -379,6 +379,12 @@ def write_variants(specification: Path, output: Path) -> Record:
     if kind_name(head) != "Q4_K" or string_contents(fields, TIED_KEY) is not True:
         raise ValueError("the export must carry one tied Q4_K vocabulary table")
     rows, columns = table_rows(head)
+    trained_field = fields.get(TRAINED_ROWS_KEY)
+    trained: tuple[int, ...] = (
+        ()
+        if trained_field is None
+        else tuple(integer(value) for value in sequence(trained_field.contents()))
+    )
     budget = chosen.export.size + 2 * rows * columns
     result: Record = {
         "schema": "vocabulary-variants-v1",
@@ -392,6 +398,8 @@ def write_variants(specification: Path, output: Path) -> Record:
         selected = shortlist(chosen.mixture, chosen.size)
         if max(selected.tokens) >= rows:
             raise ValueError("shortlist tokens exceed the vocabulary")
+        if not set(trained) <= set(selected.tokens):
+            raise ValueError("trained vocabulary rows must lie inside the shortlist")
         store.atomic(store.root / "shortlist.i32", selected.payload())
         description = selected.record()
         description["train_mixture"] = reference(chosen.mixture)
@@ -422,6 +430,7 @@ def write_variants(specification: Path, output: Path) -> Record:
                 keys,
                 selected.tokens,
                 head,
+                trained,
                 rows,
                 columns,
                 budget,
@@ -557,6 +566,7 @@ def rows_only_variant(
     keys: list[tuple[str, object]],
     tokens: tuple[int, ...],
     head: TensorView,
+    trained: tuple[int, ...],
     rows: int,
     columns: int,
     budget: int,
@@ -582,7 +592,9 @@ def rows_only_variant(
             source_path,
             scratch.root / "chunked.bin",
         )
-        if chunked.tobytes() != head_rows.tobytes():
+        excluded = set(trained)
+        converted = [index for index in range(rows) if index not in excluded]
+        if not np.array_equal(chunked[converted], head_rows[converted]):
             raise ValueError(
                 "the quantizer does not reproduce the export's Q4_K table from this source"
             )
@@ -601,7 +613,8 @@ def rows_only_variant(
         differing = [
             index
             for index in range(rows)
-            if alone[index * width : (index + 1) * width]
+            if index not in excluded
+            and alone[index * width : (index + 1) * width]
             != table[index * width : (index + 1) * width]
         ]
         if differing:
@@ -618,7 +631,8 @@ def rows_only_variant(
             "quantizer": reference(settings.quantizer),
             "quantizer_binary": reference(binary),
             "importance_matrix": None,
-            "rows_checked": rows,
+            "rows_checked": rows - len(trained),
+            "trained_rows": len(trained),
             "rows_per_call": 1,
             "export_table_sha256": hashlib.sha256(head_rows.tobytes()).hexdigest(),
             "chunked_rows_equal_export": True,

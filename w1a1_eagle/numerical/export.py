@@ -13,11 +13,17 @@ from w1a1_eagle.data import Artifact
 from w1a1_eagle.model import HE4, Layer, Projection
 from w1a1_eagle.numerical.gguf_readback import Expected, metadata
 from w1a1_eagle.numerical.gguf_readback import verify as verify_gguf
-from w1a1_eagle.numerical.k_tables import attention_codes, plain_codes, quantizer_binary
+from w1a1_eagle.numerical.k_tables import (
+    attention_codes,
+    plain_codes,
+    quantizer_binary,
+    trained_rows,
+)
 from w1a1_eagle.numerical.weights import GGUF, q4_0_codes
 from w1a1_eagle.numerical.worker import TensorWorker
 
 ANCHOR_CLIP_KEY = ".w1ax.clip_anchor"
+TRAINED_ROWS_KEY = "dflash.vocab_trained_rows"
 NativeArray: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.uint8 | np.int32 | np.float32]]"
 PayloadBytes: TypeAlias = "np.ndarray[tuple[int, ...], np.dtype[np.uint8]]"
 
@@ -315,6 +321,20 @@ def prepare(
         tensors.append(
             ExportTensor("output.weight", cast(NativeArray, head.data), kinds.Q4_K, "Q4_K")
         )
+    if model.head_rows:
+        if quantizer is None:
+            raise ValueError("trained vocabulary rows export through the table quantizer")
+        found = [i for i, tensor in enumerate(tensors) if tensor.name == "output.weight"]
+        if len(found) != 1 or tensors[found[0]].kind_name != "Q4_K":
+            raise ValueError("trained vocabulary rows need the Q4_K output table")
+        table = tensors[found[0]]
+        coded = np.array(table.data, dtype=np.uint8, copy=True)
+        rows = trained_rows(model, quantizer)
+        if rows.shape[1] != coded.shape[1]:
+            raise ValueError("trained vocabulary row width differs from the output table")
+        coded[list(model.head_rows)] = rows
+        tensors[found[0]] = ExportTensor(table.name, coded, table.kind, "Q4_K")
+        writer.add_array(TRAINED_ROWS_KEY, list(model.head_rows))
     if len({tensor.name for tensor in tensors}) != len(tensors):
         raise ValueError("duplicate export tensor")
     return writer, tensors

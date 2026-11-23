@@ -12,8 +12,8 @@ import torch
 from w1a1_eagle.capacity import backing_available
 from w1a1_eagle.checkpoints.store import StateRef, Store
 from w1a1_eagle.clock import Monotonic
-from w1a1_eagle.contracts import Record, integer, number, record
-from w1a1_eagle.data import Supervision
+from w1a1_eagle.contracts import Record, integer, number, record, sequence
+from w1a1_eagle.data import Artifact, Supervision
 from w1a1_eagle.device import device_lease
 from w1a1_eagle.identity import loaded_identity, source_identity
 from w1a1_eagle.index import IndexReader
@@ -25,12 +25,12 @@ from w1a1_eagle.numerical.captures import Capture
 from w1a1_eagle.numerical.corpus import Corpus
 from w1a1_eagle.numerical.diagnostics import Diagnostics
 from w1a1_eagle.numerical.export import export_he4, export_plain
-from w1a1_eagle.numerical.k_tables import plain_tables, quantizer_binary
+from w1a1_eagle.numerical.k_tables import exported_rows, plain_tables, quantizer_binary
 from w1a1_eagle.numerical.mixture import mixture
 from w1a1_eagle.numerical.weights import exported_tables, fusion_identity, load_he4
 from w1a1_eagle.numerical.worker import TensorWorker, checkpoint_accounting
 from w1a1_eagle.processes import ProcessIdentity
-from w1a1_eagle.records import artifact
+from w1a1_eagle.records import artifact, read
 from w1a1_eagle.round_states import RoundStateWeighting, load_map
 from w1a1_eagle.training import MAXIMUM_SLOTS
 
@@ -237,6 +237,25 @@ def export_drafter(worker: TensorWorker, intent: Intent, store: Store) -> StateR
     )
 
 
+def served_tables(model: HE4, quantizer: Path) -> dict[str, torch.Tensor]:
+    tables = (
+        plain_tables(model, quantizer)
+        if model.plain_feed_forward or model.trained_attention
+        else {}
+    )
+    return tables | (exported_rows(model, quantizer) if model.head_rows else {})
+
+
+def vocabulary_rows(rows: Artifact | None) -> tuple[int, ...]:
+    if rows is None:
+        return ()
+    rows.verify()
+    raw = read(rows.path, 16 * 1024 * 1024)
+    if set(raw) != {"schema", "tokens"} or raw["schema"] != "vocabulary-rows-v1":
+        raise ValueError("unsupported vocabulary rows artifact")
+    return tuple(integer(value) for value in sequence(raw["tokens"]))
+
+
 def geometry(intent: Intent) -> Geometry:
     return Geometry(
         **{key: integer(value) for key, value in record(intent.raw["geometry"]).items()}
@@ -441,6 +460,7 @@ def run_leased(
         intent.trained_tables,
         intent.plain_feed_forward,
         intent.trained_attention,
+        vocabulary_rows(intent.vocabulary_rows),
     )
     if intent.slot_rounding is not None:
         anchor_bounds(model)
@@ -554,7 +574,7 @@ def run_leased(
         exported = (
             diagnostics.measure(model, tables=exported_tables(model))
             if model.trained_tables
-            else diagnostics.measure(model, tables=plain_tables(model, quantizer.path))
+            else diagnostics.measure(model, tables=served_tables(model, quantizer.path))
             if quantizer is not None
             else None
         )

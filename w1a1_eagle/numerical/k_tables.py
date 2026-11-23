@@ -118,6 +118,20 @@ def attention_codes(model: HE4, quantizer: Path) -> dict[str, tuple[str, Bytes]]
     return table_codes(model, model.attention_types, quantizer)
 
 
+def trained_rows(model: HE4, quantizer: Path) -> Bytes:
+    if not model.head_rows:
+        raise ValueError("the model has no trained vocabulary rows")
+    with tempfile.TemporaryDirectory(prefix="trained-rows-") as directory:
+        return k_codes(quantizer, model.head_values, "Q4_K", Path(directory), "rows")
+
+
+def exported_rows(model: HE4, quantizer: Path) -> dict[str, Tensor]:
+    restored = dequantized_codes(
+        trained_rows(model, quantizer), "Q4_K", tuple(model.head_values.shape)
+    )
+    return {"head_values": restored.to(model.head_values.device)}
+
+
 def dequantized_codes(codes: Bytes, kind: str, shape: tuple[int, ...]) -> Tensor:
     api = cast(GGUF, gguf)
     kinds = cast(object, api.GGMLQuantizationType)

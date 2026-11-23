@@ -225,13 +225,26 @@ class TestPlainUpdate(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "one-bit"):
                 export_he4(worker, source, vocabulary, Store(root / "he4"), 8 << 20, 32 << 20)
             state = worker.checkpoint(Store(root / "states"), MEMORY)
-            with self.assertRaisesRegex(ValueError, "fresh runs only"):
+            resumed = TensorWorker(
+                plain_model(source, vocabulary, baseline),
+                corpus,
+                "plain",
+                optimization=Optimization(dict(PLAIN_RATES)),
+            )
+            resumed.restore(state, MEMORY)
+            for name, value in resumed.model.named_parameters():
+                self.assertTrue(torch.equal(value, after[name]), name)
+            self.assertEqual(
+                resumed.run(Monotonic(), Budget(2, 60, 2), lambda: False), "update-budget"
+            )
+            self.assertEqual(resumed.updates, 2)
+            with self.assertRaisesRegex(ValueError, "fresh, resume and continue"):
                 TensorWorker(
                     plain_model(source, vocabulary, baseline),
                     corpus,
                     "plain",
                     optimization=Optimization(dict(PLAIN_RATES)),
-                ).restore(state, MEMORY)
+                ).restore(state, MEMORY, "branch")
             with self.assertRaisesRegex(ValueError, "feed_forward"):
                 TensorWorker(plain_model(source, vocabulary, baseline), corpus, "plain")
 

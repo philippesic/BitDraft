@@ -126,6 +126,10 @@ the plan on 2026-11-21. Its accepted corrections are folded in below.
   against 47.0% (seed 8102, +2.4), both above the +1 bar; 4-bit control 58.6% against 58.5%.
   Even near one pass, more distinct data still pays for one-bit: the evidence favours the
   rented 100K scale over the local fallback (owner decides at the checkpoint, on cost).
+  Qualifications (pre-rental review): paired 96-group intervals +1.64 (+0.60, +2.66) and +2.45
+  (+1.61, +3.24); the arms received 1.41 and 0.39 passes by realized update groups, and their
+  calibrations fitted different values. The result supports paying for distinct data at 2,370
+  updates; it does not isolate volume from calibration or predict the 100K-versus-20K gain.
 - **Replay 4.5× faster, byte-identical (2026-11-22):** replay was CPU-bound on one core with the
   GPU mostly idle. The capture helper's finiteness check built a heap string per logit (248,320
   per supervised token), and the per-token argmax ran on one thread. Fixed in `native/capture.cpp`
@@ -150,8 +154,12 @@ the plan on 2026-11-21. Its accepted corrections are folded in below.
   coverage at 100K answers would likely need 150K+ rows (about 400+ MB, above Baseline's 381 MB).
   Coverage and the size claim conflict. The shortlist is an export-time choice, so it does not
   block the rental. Proposed rule for the owner, fixed before the final export: build 3–4
-  shortlist sizes from the final state's TRAIN labels, measure each on the DEV panel, ship the
-  smallest whose speed is within 1% of the best, and state the size claim from that file.
+  shortlist sizes from exact replay labels of the generated TRAIN answers (sampled histories
+  included), measure each on the DEV panel, and ship the smallest whose speed is within 1% of the
+  best, subject to a preregistered file-size ceiling (owner: for example at most 305 MB, 20%
+  under Baseline's 381 MB) and a multilingual guardrail (DEV multilingual speed at least 0.97×
+  Baseline). If no size passes both, the size claim is dropped or reworded rather than the
+  guardrail. Break-even with Baseline is about 136K rows.
 - **Pending in Stage 1:** owner approval of the frozen gate and source list (at the rental
   checkpoint, with the margins).
 
@@ -289,7 +297,8 @@ the plan on 2026-11-21. Its accepted corrections are folded in below.
   system prompts and MCP-style schemas, with parallel and multi-turn calls. Hold one convention
   out of TRAIN as a transfer test.
 - **Generation.** Thinking on and off. Greedy plus sampled with Qwen's recommended settings, since
-  sampled is our weakest scenario. Regenerate every assistant turn of multi-turn sessions.
+  sampled is our weakest scenario. Agentic sessions keep their recorded earlier assistant and
+  tool turns as context and supervise only the regenerated next response.
 - **Hygiene.** Exact and near-duplicate removal, decontamination against the frozen public gate,
   the heldout24 and confirmation exclusions, and per-source caps.
 - **Data card** shipped with the release.
@@ -344,15 +353,28 @@ separate settings.
 Qualify the port first: run target-only, stock Baseline and the old leader through our harness and
 check outputs and counters against known values.
 
-Gate rule (proposal, numbers set by the owner before any run):
+Gate verdict (one calculation, frozen 2026-11-22 to match `release-gate-v1.json`; margins remain
+the owner's to approve):
 
-- One preregistered weighted request-throughput ratio. Its paired lower bound must exceed 1.00
-  against stock Baseline. If the claim covers the matched fine-tuned Baseline, its lower bound
-  must also exceed 0.97 against that arm.
-- Simultaneous per-category guardrails set in advance, exact greedy outputs, sampler validity.
-- Size the test from stock-versus-stock reversed-order repeats, which measure session drift, and
-  from resampled historical source groups, aiming to detect a 2% gain.
-- An unavailable interval or an unsupported concurrency setting cannot pass.
+- Primary: the general scenario (880 prompts, both SPEED-Bench files pooled), speed as generated
+  tokens over summed request seconds, paired source-group bootstrap with category strata (2,000
+  draws). Pass against stock Baseline: lower bound above 1.00.
+- Guardrails: the other six scenarios (thinking-on, sampled, long-input, agentic replay, tool
+  calls, held-out convention), each lower bound at least 0.97 with at most two below 1.00.
+  Categories inside a scenario are descriptive, not guardrails. Multilingual has no gate scenario
+  of its own: SPEED-Bench's multilingual category is reported, and the DEV panel's multilingual
+  scenario is checked before the gate run.
+- Each arm runs at its own calibrated depth (`calibrate-depth`) for the verdict; equal-depth
+  results are published for attribution only. Sampled prompts run 3 seeds, pooled as one group per
+  prompt. Agentic replay has one task per reserved repository, so groups are repositories.
+- Against the trained 4-bit control: general lower bound at least 0.97, every guardrail at least
+  0.95; claim wording "within 3% of a Baseline fine-tuned on the same data, or faster".
+- Any missing scenario, unavailable interval or invalid output fails. Before the gate, stock
+  Baseline runs against itself in reversed arm order on the general scenario to measure session
+  drift; a lead smaller than that drift is not claimed. The claim covers the measured batch-one
+  request workload only.
+- The ±0.6% resolution at 880 requests is extrapolated from the 292-request DEV panel
+  (0.984–1.005 around 0.994); the reversed-order run measures it on the gate itself.
 
 **Agentic.** Replaying recorded target-only agent sessions supports a request-speed claim. A
 claim of faster useful agent work also needs live target-only successes across several projects,
@@ -377,6 +399,14 @@ caching, caps, temperature, context and concurrency. Use real prompts only.
   strata. Extend if any of these still improves, intervals stay too wide, or a decayed step size
   could explain the flat curve. F034's ordinary panel was flat while agentic first choice rose
   from 57% to 69%. Confirm the chosen checkpoint with served timing at calibrated depth;
+  Executable form (2026-11-22, after the pre-rental review; amends `control_plateau_rule` when
+  the owner approves the margins): the plain control now resumes and continues. It trains one
+  fresh constant-step run on the candidate's generated streams in production order, extended by
+  resume at 12,500 × 2^n updates so its checkpoints sit on candidate stage exports (12.5K, 25K,
+  50K, 100K, ...); outcomes on the DEV screen and a sampled DEV screen (to be built from sampled
+  DEV rows, with saved target and Baseline references); the anneal continues on the next unseen
+  streams with a cosine schedule. Same-prefix comparisons use candidate exports at those counts,
+  noting that the candidate's step size follows its own long cosine;
 - 4-bit control with the same shortlist, for attribution;
 - the target's built-in draft head, the stock 2-bit and 3-bit files, and the old leader `ef068eba…`.
 
@@ -563,38 +593,45 @@ either longer control training or a weaker claim.
   "Smaller" holds at any size. Published one-bit results lose less at greater width, but our
   drafters have not been tested at another width.
 
-### Rental runbook (prepared 2026-11-22; runs only after the owner's go)
+### Rental runbook (revised 2026-11-22 after the pre-rental review; runs only after the owner's go)
 
-Inputs live in `artifacts/rental/`: `production.json` (50 stages × 2,000 bank rows × 25,000
-updates = 1.25M, cosine with 25,000 warmup, 2 GiB grouping, writer at 32 slots without decode
-consistency and a 294,912-token shared KV pool, replay helper v3), `first-check.json` (2 stages ×
-64 rows × 200 updates), `make_production.py`, `make_manifest.py` and `manifest.txt` (42 entries,
-20 GB: models, initialization, bank, DEV diagnostics, binaries and their library folders, and a
-16-record replay fixture). Specs pin absolute paths and SHA256s, so the rental checkout must sit
-at `/home/philip/BitDraft`.
+Inputs live in `artifacts/rental/`: `production.json` (100 stages × 1,000 bank rows × 12,500
+updates = 1.25M, cosine with 25,000 warmup, 2 GiB grouping, checkpoints every 2,500 updates,
+writer at 32 slots without decode consistency, a 294,912-token shared KV pool and the balanced
+bank order `order_seed` 9401, replay helper v3, 120 GB per-stage replay ceiling),
+`make_production.py`, `make_manifest.py`, `manifest.txt` (43 entries, 20 GB) and `pull.sh`.
+Specs pin absolute paths and SHA256s, so the rental checkout must sit at `/home/philip/BitDraft`.
+Balanced order: every 1,000-row stage holds 37–39 agentic, 89–92 tool, 84–86 multilingual and
+95–98 document rows; worst-case raw replay (prompt plus output cap) is 92–97 GB per stage.
 
-1. Instance: one RTX 5090 (32 GB), at least 300 GB disk (a stage's raw replay is about 124 GB),
-   an image with CUDA 13.1 libraries at `/usr/local/cuda-13.1` and a driver at least 590.
-2. Local: `git bundle create artifacts/rental/code.bundle main`, then
-   `rsync -aRr --files-from=artifacts/rental/manifest.txt ./ HOST:/home/philip/BitDraft/` and the
-   bundle.
-3. Rental: clone the bundle into `/home/philip/BitDraft`, install uv 0.11.32 and the two
-   environments as in `docs/development.md` (check group; `.venv/numerical-clean` with
-   `--extra numerical`), write `.host.toml`.
-4. Identity: replay `artifacts/datasets/retrain-01/replay-speed/replay-16-v3.json` and compare
-   every tap and label file with `out-v3` (byte-identical expected; drift beyond F16 rounding,
-   relative L2 above 1e-3, stops the rental).
-5. Rates: `staged-train artifacts/rental/first-check.json`; project the full run from its
-   generation, replay, fuse and update rates and set the hard dollar ceiling from the quote.
-6. Run `staged-train artifacts/rental/production.json` detached; copy each stage's
-   `train/exports` and latest state home as it finishes. Stop at the ceiling.
+1. Cap: the owner sets the all-in dollar ceiling before provisioning.
+2. Instance: one RTX 5090 (32 GB), at least 400 GB disk (peak about 210 GB: raw replay under
+   100 GB, fused features about 11 GB, three states 15 GB, 100 exports 54 GB, inputs 20 GB,
+   environments), CUDA 13.1 libraries at `/usr/local/cuda-13.1`, a driver at least 590.
+3. Code first: `git bundle create artifacts/rental/code.bundle main` locally; on the rental clone
+   it into `/home/philip/BitDraft`, then from home
+   `rsync -aRr --files-from=artifacts/rental/manifest.txt ./ HOST:/home/philip/BitDraft/`.
+   Install uv 0.11.32 and the two environments as in `docs/development.md`; write `.host.toml`.
+4. Identity: replay `artifacts/datasets/retrain-01/replay-speed/replay-16-v3.json`; token and
+   label files must equal `out-v3` byte for byte, tap files within relative L2 1e-3; anything
+   else stops the rental.
+5. Run detached with a fixed output:
+   `staged-train artifacts/rental/production.json artifacts/rental/production-run`.
+   Rerunning the same command resumes; a stage counts as done only once its export exists.
+6. From home, `artifacts/rental/pull.sh HOST` copies everything except features every 15
+   minutes: streams, labels, receipts, exports and the latest state.
+7. After stage 0: project the full run from its measured generation, replay, fuse and update
+   rates, and run the DEV screen on its export at home. Stop if the projection exceeds the cap or
+   the screen falls below the pilot (about 47% at 2,370 updates).
+8. Stop at the cap. Recovery: restore the latest copied stage into a new instance and rerun
+   step 5.
 
-Forecast from today's local rates (generation about 800 tokens/s, replay 0.42 s and fusing
-0.15 s per record, training 3.95 updates/s): 31 + 12 + 4 + 88 hours plus about 3 of stage
-overhead, 138 local hours. At an unmeasured 1.0–1.6× 5090 speed-up that is 86–138 rented hours,
-about $40–100 on a $0.45–0.70 marketplace tier ($120–190 on-demand). Running data preparation
-beside training on the 5090's 32 GB could bring it toward 91 local-equivalent hours, but the
-exclusive GPU lease forbids it today; unmeasured, not planned.
+Forecast (pilot rates, before the representative local stage): generation about 800 tokens/s,
+replay 0.42 s and fusing 0.15 s per record, training 3.95 updates/s give 31 + 12 + 4 + 88 hours
+plus about 6 of stage overhead at 100 stages, about 141 local hours. The generation rate came
+from 512 rows of the old seeded order, which was cheaper than average; the representative local
+stage replaces these rates. At an unmeasured 1.0–1.6× 5090 speed-up, 88–141 rented hours before
+setup, transfers and retries.
 
 ## Next
 

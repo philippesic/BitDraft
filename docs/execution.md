@@ -607,6 +607,20 @@ reports both the trained and the exported tables. The frozen fingerprint covers 
 vocabulary and the attention types; states store the tables and their Adam moments, so resume and
 continue work as for the one-bit feed-forward.
 
+## Trained vocabulary rows
+
+The optional intent setting `vocabulary_rows` names a `vocabulary-rows-v1` artifact
+(`{"schema", "tokens"}`), normally the serving shortlist. Those rows of the tied vocabulary become
+one F32 parameter, initialized from the frozen rows, in the `table` step-size group; the frozen
+vocabulary keeps every other row. The model reads the trained rows wherever the table is used:
+input embeddings of shortlisted tokens and their output scores, as the shortlist-only runtime
+does. It requires `frozen_format: baseline-k`, `table_quantizer` and the `table` step size, and
+refuses plain feed-forward tables. Export quantizes the trained rows to Q4_K with the table
+quantizer, writes them over those rows of `output.weight` and lists them under
+`dflash.vocab_trained_rows`; `vocabulary-variants` then checks row independence on every other
+row and requires the trained rows to lie inside the shortlist. The DEV diagnostic reports the
+trained and the exported rows; states store the rows and their Adam moments.
+
 ## Plain feed-forward tables
 
 The optional intent setting `feed_forward` defaults to `one-bit`. Omission and explicit
@@ -630,9 +644,10 @@ what the one-bit tables cost against the same graph fine-tuned on the same data.
 
 - The tables train in their own AdamW group without weight decay under the shared schedule and
   gradient-norm clip; `feed_forward` is required with the setting and refused without it.
-- `plain` requires `frozen_format: baseline-k`, a raw latent scale and a fresh run. It refuses
+- `plain` requires `frozen_format: baseline-k` and a raw latent scale. It refuses
   `initialization`, `trained_tables`, `features`, `calibration`, `gradual_precision`,
-  `slot_rounding` and `arithmetic`. Resume, continue and branch are refused.
+  `slot_rounding` and `arithmetic`. Resume and continue restore the tables and their Adam
+  moments; branch is refused.
 - `vocabulary` may be a Q6_K table, so the control scores against the target's own
   `token_embd.weight`, as Baseline is served. The materialized initialization binds the Q4_K
   basis, so it does not apply.

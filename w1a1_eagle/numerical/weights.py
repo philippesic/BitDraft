@@ -260,6 +260,7 @@ def load_he4(
     trained_tables: bool = False,
     plain_feed_forward: bool = False,
     trained_attention: bool = False,
+    head_rows: tuple[int, ...] = (),
 ) -> HE4:
     if trained_attention and (frozen_baseline is None or trained_tables or plain_feed_forward):
         raise ValueError(
@@ -395,7 +396,14 @@ def load_he4(
                     raise ValueError("Baseline feed-forward geometry differs: " + name)
                 feed_forward_types.append((name, item.tensor_type.name))
     model = HE4(
-        tensors, head, mask, geometry, trained_tables, plain_feed_forward, trained_attention
+        tensors,
+        head,
+        mask,
+        geometry,
+        trained_tables,
+        plain_feed_forward,
+        trained_attention,
+        head_rows,
     )
     if plain_feed_forward:
         model.feed_forward_types = tuple(feed_forward_types)

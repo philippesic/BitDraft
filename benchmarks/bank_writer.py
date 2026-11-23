@@ -32,7 +32,8 @@ FIELDS = {
     "slot_context",
     "shard_records",
 }
-OPTIONAL = {"decode_consistent", "unified_cache", "server_context"}
+OPTIONAL = {"decode_consistent", "unified_cache", "server_context", "order_seed"}
+BANDS = (2048, 8192)
 PROVENANCE = (
     "source_key",
     "category",
@@ -56,13 +57,34 @@ class Item:
     seed: int
 
 
-def bank_rows(bank: Artifact, role: str, seed: int) -> list[Record]:
+def band(row: Record) -> int:
+    length = integer(row["input_tokens"]) + integer(row["output_cap"])
+    return sum(length > edge for edge in BANDS)
+
+
+def balanced(rows: list[Record], seed: int) -> list[Record]:
+    strata: dict[tuple[str, int], list[tuple[str, int]]] = {}
+    for index, row in enumerate(rows):
+        key = (string(row["category"]), band(row))
+        strata.setdefault(key, []).append((identity({"id": row["id"], "seed": seed}), index))
+    placed: list[tuple[float, str, int]] = []
+    for members in strata.values():
+        members.sort()
+        offset = int(members[0][0][:8], 16) / 16**8
+        for rank, (digest, index) in enumerate(members):
+            placed.append(((rank + offset) / len(members), digest, index))
+    return [rows[index] for _, _, index in sorted(placed)]
+
+
+def bank_rows(bank: Artifact, role: str, seed: int, order_seed: int | None = None) -> list[Record]:
     rows: list[Record] = []
     with bank.path.open() as source:
         for line in source:
             row = record(cast(object, json.loads(line)))
             if row["role"] == role:
                 rows.append(row)
+    if order_seed is not None:
+        return balanced(rows, order_seed)
     keyed = [(identity({"id": row["id"], "seed": seed}), index) for index, row in enumerate(rows)]
     return [rows[index] for _, index in sorted(keyed)]
 
@@ -137,6 +159,15 @@ def stream_row(item: Item, response: Record, eog: frozenset[int], target: str) -
     }
 
 
+def shard_matches(path: Path, expected: list[str]) -> bool:
+    shard = read(path, 1024 * 1024 * 1024)
+    written = [string(record(row)["id"]) for row in sequence(shard["records"])]
+    skipped = {string(value) for value in sequence(shard["skipped"])}
+    return skipped <= set(expected) and written == [
+        value for value in expected if value not in skipped
+    ]
+
+
 def provenance(row: Record) -> Record:
     return {key: row[key] for key in PROVENANCE if key in row}
 
@@ -165,7 +196,8 @@ def write_bank(specification: Path, output: Path) -> Record:
         or not eog
     ):
         raise ValueError("bank writing generates bounded TRAIN slices only")
-    rows = bank_rows(bank, role, seed)[first : first + count]
+    order_seed = integer(raw["order_seed"]) if "order_seed" in raw else None
+    rows = bank_rows(bank, role, seed, order_seed)[first : first + count]
     if len(rows) != count:
         raise ValueError("bank slice extends past the TRAIN rows")
     if output.exists() and read(output / "specification.json") != raw:
@@ -198,6 +230,10 @@ def write_bank(specification: Path, output: Path) -> Record:
             for index, start in enumerate(range(0, count, shard_records)):
                 path = shards.root / ("streams-" + str(index).zfill(5) + ".json")
                 if path.exists():
+                    if not shard_matches(
+                        path, [string(row["id"]) for row in rows[start : start + shard_records]]
+                    ):
+                        raise ValueError("existing shard differs from its bank slice: " + str(path))
                     continue
                 items: list[Item] = []
                 skipped: list[str] = []
@@ -281,6 +317,7 @@ def write_bank(specification: Path, output: Path) -> Record:
         "shards": [file_reference(path) for path in files],
         "this_session": measured,
         "rows_sha256": identity([string(row["id"]) for row in rows]),
+        "row_ids": [string(row["id"]) for row in rows],
         "rule": "batched and sampled answers are a different data recipe from one-at-a-time greedy capture",
         "code_sha256": code,
     }
