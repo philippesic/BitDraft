@@ -553,6 +553,39 @@ either longer control training or a weaker claim.
   "Smaller" holds at any size. Published one-bit results lose less at greater width, but our
   drafters have not been tested at another width.
 
+### Rental runbook (prepared 2026-11-22; runs only after the owner's go)
+
+Inputs live in `artifacts/rental/`: `production.json` (50 stages × 2,000 bank rows × 25,000
+updates = 1.25M, cosine with 25,000 warmup, 2 GiB grouping, writer at 32 slots without decode
+consistency and a 294,912-token shared KV pool, replay helper v3), `first-check.json` (2 stages ×
+64 rows × 200 updates), `make_production.py`, `make_manifest.py` and `manifest.txt` (42 entries,
+20 GB: models, initialization, bank, DEV diagnostics, binaries and their library folders, and a
+16-record replay fixture). Specs pin absolute paths and SHA256s, so the rental checkout must sit
+at `/home/philip/BitDraft`.
+
+1. Instance: one RTX 5090 (32 GB), at least 300 GB disk (a stage's raw replay is about 124 GB),
+   an image with CUDA 13.1 libraries at `/usr/local/cuda-13.1` and a driver at least 590.
+2. Local: `git bundle create artifacts/rental/code.bundle main`, then
+   `rsync -aRr --files-from=artifacts/rental/manifest.txt ./ HOST:/home/philip/BitDraft/` and the
+   bundle.
+3. Rental: clone the bundle into `/home/philip/BitDraft`, install uv 0.11.32 and the two
+   environments as in `docs/development.md` (check group; `.venv/numerical-clean` with
+   `--extra numerical`), write `.host.toml`.
+4. Identity: replay `artifacts/datasets/retrain-01/replay-speed/replay-16-v3.json` and compare
+   every tap and label file with `out-v3` (byte-identical expected; drift beyond F16 rounding,
+   relative L2 above 1e-3, stops the rental).
+5. Rates: `staged-train artifacts/rental/first-check.json`; project the full run from its
+   generation, replay, fuse and update rates and set the hard dollar ceiling from the quote.
+6. Run `staged-train artifacts/rental/production.json` detached; copy each stage's
+   `train/exports` and latest state home as it finishes. Stop at the ceiling.
+
+Forecast from today's local rates (generation about 800 tokens/s, replay 0.42 s and fusing
+0.15 s per record, training 3.95 updates/s): 31 + 12 + 4 + 88 hours plus about 3 of stage
+overhead, 138 local hours. At an unmeasured 1.0–1.6× 5090 speed-up that is 86–138 rented hours,
+about $40–100 on a $0.45–0.70 marketplace tier ($120–190 on-demand). Running data preparation
+beside training on the 5090's 32 GB could bring it toward 91 local-equivalent hours, but the
+exclusive GPU lease forbids it today; unmeasured, not planned.
+
 ## Next
 
 Finish the full bank, rebuild the private DEV check and its references, build the staged
