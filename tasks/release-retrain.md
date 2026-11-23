@@ -661,6 +661,14 @@ saved references; `artifacts/datasets/retrain-01/tables/`.
 - Then: sampled DEV screen references, the crash-recovery rehearsal
   (`artifacts/rental/rehearsal.sh`) and a representative 1,000-row local stage for the forecast.
 
+Owner approval (2026-11-23, about 01:30; no rental for at least 10 hours): overnight plan, in
+order: finish the representative stage and soft-target short screen; merge rounded attention
+training (`attention_tables: rounded`); generate rows 1,000–1,999 with soft targets; long tests
+at 14,000 updates (`artifacts/datasets/retrain-01/long/long.py`): control s1, rounded attention
+s1, vocabulary rows s1, 1.75 GiB control s1, soft targets s1 (only if the short screen is
+promising), control s2, rounded attention s2; final summary by about 12:00. Seed-2 arms drop
+first if time runs short.
+
 Local rental rehearsals (2026-11-23):
 - Crash recovery (`artifacts/rental/rehearsal.sh`, 2 stages × 64 rows): driver killed before the
   first checkpoint and mid-stage, then a lost export pointer; both stages finished at 200 and 400
