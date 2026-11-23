@@ -149,6 +149,7 @@ def staged_train(specification: Path, output: Path) -> Record:
         writer, replay = stage.root / "writer", stage.root / "replay"
         fused, train = stage.root / "fused", stage.root / "train"
         target_updates = per_stage * (index + 1)
+        wait_for_gpu(log)
         if exported_updates(train) >= target_updates:
             summary.append({"stage": index, "status": "trained", "updates": target_updates})
             previous = train
