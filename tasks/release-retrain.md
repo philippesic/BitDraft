@@ -142,6 +142,16 @@ the plan on 2026-11-21. Its accepted corrections are folded in below.
   ((542 − 284) MB over 179,592 rows), so a wider shortlist trades against the "about 25% smaller"
   claim; the size is an owner decision at the rental checkpoint, from the coverage curve of the
   generated TRAIN answers.
+- **Shortlist coverage curve (2026-11-22):** 1,376 new-mix answers, shortlist built on one half
+  and measured on the other (request tokens added as the runtime does). Multilingual labels
+  unreachable: old 68,728 rows 13.6%; plus the 30,000 most frequent new labels (77,008 rows, about
+  +12 MB) 8.1%; plus every new label seen (83,109 rows) 6.6%. Distinct labels outside the old
+  shortlist keep growing by about 18 per answer (24,534 at 1,376 answers), so full multilingual
+  coverage at 100K answers would likely need 150K+ rows (about 400+ MB, above Baseline's 381 MB).
+  Coverage and the size claim conflict. The shortlist is an export-time choice, so it does not
+  block the rental. Proposed rule for the owner, fixed before the final export: build 3–4
+  shortlist sizes from the final state's TRAIN labels, measure each on the DEV panel, ship the
+  smallest whose speed is within 1% of the best, and state the size claim from that file.
 - **Pending in Stage 1:** owner approval of the frozen gate and source list (at the rental
   checkpoint, with the margins).
 
