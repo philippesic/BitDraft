@@ -645,9 +645,11 @@ saved references; `artifacts/datasets/retrain-01/tables/`.
   48.2% and 48.9% against the matched controls' 48.3% and 49.4% (seeds 8101, 8102; −0.1 and
   −0.5 points; speed 0.951 and 0.961 against 0.952 and 0.962). No gain at this length: stays out
   of the recipe. States grow by about 3 GB (state budget raised to 10 GiB).
-- Trained vocabulary rows, seed 8101: 47.1% against the 1.75 GiB control's 47.4% (−0.3).
+- Trained vocabulary rows: 47.1% and 47.3% against the 1.75 GiB controls' 47.4% and 47.4%
+  (seeds 8101, 8102; −0.3 and −0.1 points; speed 0.988 and 0.990 against 0.985 and 0.988). No
+  gain at this length: stays out of the recipe.
   (New `vocabulary_rows`, the leader's 68,728 shortlist rows, tied input and output, screened as
-  shortlist-only files.) Seed 8102 running.
+  shortlist-only files.)
 - Disk (2026-11-22): removed my own finished pilot training states (scaling, spending, tables
   arms, `staged-smoke`, `first-check-local`; about 110 GB) and the two failed table attempts;
   exports, screens, journals, specs and the 768/192 fused inputs are kept.
