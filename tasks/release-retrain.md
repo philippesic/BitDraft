@@ -778,6 +778,39 @@ model card, data card, bank-v2 provenance supplement and SWE-rebench attribution
 control waits for the rental's streams (owner choice: no locally written streams). Nothing
 touches the rental; the GPU is free by morning.
 
+Overnight results (2026-11-24):
+- 4-bit control ready (`artifacts/rental/control/`): `make_control.py` builds `control.json`
+  from `production.json` (same writer, replay, fuse and stages; plain template from
+  `plain-256-s1`: Baseline weights `dflash-4b-bf16.gguf`, plain feed-forward, constant step
+  after a 1,650-update warm-up, the agent's choice, checkpoints every 4,125). `feed.sh` copies
+  each completed candidate stage's streams from `production-home/current` and advances the
+  control's `backup-ack.json` (`backup-lag` -1), so the unchanged staged driver waits for
+  streams and never writes its own; `run_control.sh` relaunches the driver after failures
+  (a checkpoint screen can take the GPU between steps); `screen.sh` runs the greedy and
+  sampled DEV screens and the panel on an export; `plateau.py` applies the plateau rule
+  (overall from the screen, sampled from the sampled screen, agentic and tool-call strata from
+  the panel). End-to-end test (2-stage mini candidate on the 5080 with pull, feeder and
+  control sharing the GPU): streams byte-identical to the candidate's, intents correct,
+  200/400 updates, screens and plateau decision produced. The anneal after a plateau is a
+  single `continue` intent built by hand when needed.
+- Gate verdict v2 (`7b0b2b7b`): every arm must cover each primary and guardrail scenario's
+  exact roster from the gate manifest (sampled seeds 9201–9203); unpaired rows fail instead of
+  crashing; the drift margin is two-sided; the release passes only with both comparators, a
+  drift run and a lead above the margin; held-out transfer completeness is reported. 11 tests.
+- NVFP4 sampled qualification on runtime v10 passed
+  (`artifacts/shortlist-only-table-01/release-final/nvfp4-verifier-v10/`); a served 24-request
+  sampled slice on v10 ran distribution-qualified, all outputs correct.
+- Shortlist tool (`artifacts/rental/shortlist/`): `label_mixture.py` turns the home copies of
+  completed stages' fused manifests into a label mixture (rental paths remapped, every label
+  file hash-checked); `sweep.py` builds shortlist sizes with `vocabulary-variants`. Tested on
+  the 1,000 5090 speed-test answers: 25,731 distinct labels, 222 MB shortlist-only file. The
+  multilingual-light comparison needs the trained candidate.
+- Drafts: `tasks/release-retrain-drafts/` (model card, data card with source counts, licences
+  and attribution including SWE-rebench); bank-v2 provenance supplement in
+  `artifacts/bank/retrain-01/provenance/`.
+- Source identity changed after Step 2 only by the verdict calculator, which the production
+  path does not import. Test outputs (34 GB) deleted; compact results kept beside the scripts.
+
 Owner amendment (2026-11-23, before training): the 4-bit control's plateau checkpoints move from
 2K, 4K, 8K, 16K... to stage-aligned doublings of 8,250 updates (8,250, 16,500, 33,000, 66,000,
 ...), so same-prefix comparisons use candidate stage exports production already keeps. All pass
