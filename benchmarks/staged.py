@@ -1,5 +1,6 @@
 import shutil
 import subprocess
+from collections.abc import Callable
 from pathlib import Path
 
 from benchmarks.measurement import now, pause
@@ -98,6 +99,26 @@ def files_present(corpus: Path) -> bool:
             if not path.exists() or path.stat().st_size != integer(ref["bytes"]):
                 return False
     return True
+
+
+def train_stage(
+    intent: Path,
+    stage: Path,
+    train: Path,
+    scope: str,
+    log: Path,
+    root: Path,
+    runner: Callable[[list[str], Path, Path], None] = run,
+) -> None:
+    try:
+        runner(training_argv(intent, train, scope), log, root)
+    except ValueError:
+        if intent.name == "intent.json":
+            raise
+        with log.open("a") as sink:
+            sink.write("resume refused after an interruption: restarting the stage\n")
+        set_aside(train)
+        runner(training_argv(stage / "intent.json", train, scope), log, root)
 
 
 def training_argv(intent: Path, train: Path, scope: str) -> list[str]:
@@ -304,16 +325,7 @@ def staged_train(specification: Path, output: Path) -> Record:
             )
         else:
             path = write_spec(stage, "intent.json", intent)
-        scope = string(raw["scope"])
-        try:
-            run(training_argv(path, train, scope), log, root)
-        except ValueError:
-            if path.name == "intent.json":
-                raise
-            with log.open("a") as sink:
-                sink.write("resume refused after an interruption: restarting the stage\n")
-            set_aside(train)
-            run(training_argv(stage.root / "intent.json", train, scope), log, root)
+        train_stage(path, stage.root, train, string(raw["scope"]), log, root)
         if exported_updates(train) < target_updates:
             raise ValueError("stage training stopped before its update budget and export")
         freed = discard_features(fused)
