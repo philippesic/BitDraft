@@ -770,6 +770,9 @@ restarts it and the driver resumes (a stopped instance does not hold its GPU, so
 force a move to a new host restored from home). Watchdog scenarios: 23/23 pass with these
 checks. Step 3 waits on the first top-up and the owner's go.
 
+Owner go for Step 3 (2026-11-24): first top-up made (credit $22.67 at launch, about 31 hours at
+$0.72/h); "start the instance from api and get to it".
+
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
 check); NVFP4 sampled qualification on the release runtime; shortlist tooling with the
