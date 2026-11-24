@@ -7,7 +7,7 @@ from typing import cast
 from benchmarks.bank_writer import balanced, shard_matches
 from benchmarks.conventions import apply
 from benchmarks.release_gate import object_types
-from benchmarks.retrain_bank import matching_quota, normalized
+from benchmarks.retrain_bank import matching_quota, normalized, text_fingerprints
 from benchmarks.retrain_sources import chat_label, prompt_messages, tools_from_system
 from w1a1_eagle.contracts import Record, record
 
@@ -138,3 +138,22 @@ class TestBankWriting(unittest.TestCase):
             self.assertFalse(shard_matches(path, ["c", "b", "a"]))
             self.assertFalse(shard_matches(path, ["a", "b", "c", "d"]))
             self.assertFalse(shard_matches(path, ["a", "c"]))
+
+
+class TestProtectedText(unittest.TestCase):
+    def test_fingerprints_cover_raw_and_whitespace_normalized_user_text(self) -> None:
+        text = "  How many  apples\nare left? "
+        row: Record = {
+            "messages": [
+                {"role": "system", "content": "ignore"},
+                {"role": "user", "content": text},
+                {"role": "assistant", "content": "four"},
+            ]
+        }
+        prints = text_fingerprints(row)
+        import hashlib
+
+        self.assertIn(hashlib.sha256(text.encode()).hexdigest(), prints)
+        self.assertIn(hashlib.sha256("How many apples are left?".encode()).hexdigest(), prints)
+        self.assertNotIn(hashlib.sha256(b"ignore").hexdigest(), prints)
+        self.assertNotIn(hashlib.sha256(b"four").hexdigest(), prints)

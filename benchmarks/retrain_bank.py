@@ -1,3 +1,4 @@
+import hashlib
 from collections import Counter
 from pathlib import Path
 from typing import Callable, Iterator
@@ -46,6 +47,19 @@ def gate_index(paths: list[Path]) -> tuple[ProtectedCode, set[str]]:
     for path in paths:
         texts.extend(string(row["text"]) for row in json_rows(path))
     return ProtectedCode(texts), {normalized(text) for text in texts}
+
+
+def text_fingerprints(row: Record) -> set[str]:
+    texts = [
+        string(message["content"])
+        for message in (record(value) for value in sequence(row["messages"]))
+        if message.get("role") == "user" and isinstance(message.get("content"), str)
+    ]
+    return {
+        hashlib.sha256(variant.encode()).hexdigest()
+        for text in texts
+        for variant in (text, " ".join(text.split()))
+    }
 
 
 def normalized(text: str) -> str:
@@ -193,6 +207,7 @@ def select_retrain(specification: Path, output: Path) -> Record:
             string(row["group"]),
             string(row["source_key"]),
             *(string(v) for v in sequence(row.get("aliases", []))),
+            *text_fingerprints(row),
         }
         if names & protected:
             rejected["protected"] += 1

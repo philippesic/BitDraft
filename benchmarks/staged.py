@@ -100,6 +100,16 @@ def files_present(corpus: Path) -> bool:
     return True
 
 
+def training_argv(intent: Path, train: Path, scope: str) -> list[str]:
+    return [*PYTHON, "-m", "w1a1_eagle", "run", str(intent), str(train), "--scope", scope]
+
+
+def verified_state(train: Path) -> Record:
+    if not state_present(train):
+        raise ValueError("the final stage's state binary is missing")
+    return latest_state(train)
+
+
 def state_present(train: Path) -> bool:
     pointer = train / "states" / "latest.json"
     return pointer.exists() and Path(string(latest_state(train)["path"])).exists()
@@ -201,7 +211,7 @@ def staged_train(specification: Path, output: Path) -> Record:
         fused, train = stage.root / "fused", stage.root / "train"
         target_updates = per_stage * (index + 1)
         wait_for_gpu(log)
-        if exported_updates(train) >= target_updates:
+        if exported_updates(train) >= target_updates and state_present(train):
             if previous is not None:
                 retire_states(previous)
             summary.append({"stage": index, "status": "trained", "updates": target_updates})
@@ -294,25 +304,23 @@ def staged_train(specification: Path, output: Path) -> Record:
             )
         else:
             path = write_spec(stage, "intent.json", intent)
-        run(
-            [
-                *PYTHON,
-                "-m",
-                "w1a1_eagle",
-                "run",
-                str(path),
-                str(train),
-                "--scope",
-                string(raw["scope"]),
-            ],
-            log,
-            root,
-        )
+        scope = string(raw["scope"])
+        try:
+            run(training_argv(path, train, scope), log, root)
+        except ValueError:
+            if path.name == "intent.json":
+                raise
+            with log.open("a") as sink:
+                sink.write("resume refused after an interruption: restarting the stage\n")
+            set_aside(train)
+            run(training_argv(stage.root / "intent.json", train, scope), log, root)
         if exported_updates(train) < target_updates:
             raise ValueError("stage training stopped before its update budget and export")
         freed = discard_features(fused)
         if previous is not None:
             freed += retire_states(previous)
+        for aside in sorted(stage.root.glob("train-unstarted-*")):
+            freed += retire_states(aside)
         summary.append(
             {
                 "stage": index,
@@ -327,7 +335,7 @@ def staged_train(specification: Path, output: Path) -> Record:
     result: Record = {
         "schema": "staged-training-result-v1",
         "stages": summary,
-        "final_state": None if previous is None else latest_state(previous),
+        "final_state": None if previous is None else verified_state(previous),
         "rule": "token streams, specifications, exports and the latest stage's training state are kept; features and earlier stages' states are discarded after use",
     }
     store.atomic(store.root / "result.json", canonical(result))
