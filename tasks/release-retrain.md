@@ -717,6 +717,14 @@ held-out ReAct convention reported only; definition `benchmarks/definitions/rele
 shortlist is an export-time choice; a multilingual-light variant will be measured beside fuller
 ones after training (owner question 2026-11-23).
 
+Owner amendment (2026-11-23, before training): the 4-bit control's plateau checkpoints move from
+2K, 4K, 8K, 16K... to stage-aligned doublings of 8,250 updates (8,250, 16,500, 33,000, 66,000,
+...), so same-prefix comparisons use candidate stage exports production already keeps. All pass
+and fail rules are unchanged; `release-gate-v1.json` keeps its frozen bytes and this amendment
+governs `control_plateau_rule.checkpoints`. Final Astra readiness check (2026-11-23): not ready;
+confirmed blockers are being fixed (see below); the owner asked not to rerun the rehearsal yet
+and has not set the cap.
+
 Pre-launch fixes (2026-11-23): bank-v2 (`artifacts/bank/retrain-01/bank-v2`) admits by user-text
 fingerprint too; exactly the 6 protected rows were replaced (by GSM8K and Orca-Math rows), 0
 protected matches against all four indexes, no other row or role changed; `production.json` uses
