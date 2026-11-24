@@ -704,6 +704,24 @@ repo); keep SWE-rebench sessions and document them in the data card. Cross-GPU c
 500 answers trained on the 5080 (−0.38, −1.16 to +0.39; −0.22, −0.81 to +0.38): no material
 difference; disclose that candidate and control train on different GPUs' features.
 
+Pre-launch fixes (2026-11-23): bank-v2 (`artifacts/bank/retrain-01/bank-v2`) admits by user-text
+fingerprint too; exactly the 6 protected rows were replaced (by GSM8K and Orca-Math rows), 0
+protected matches against all four indexes, no other row or role changed; `production.json` uses
+it with checkpoints every 4,125 updates. The driver restarts a stage from the previous stage when
+a resume is refused, retires the previous state only once the current stage's state exists,
+retires set-aside states after success, and verifies the final state binary. `pull.sh` keeps a
+verified last-good generation, compares specification content, refuses a host behind home,
+pulls only completed stages' final states (latest two kept), uses timeouts and acknowledges after
+verification; two bugs (byte comparison of the specification, an empty-glob error) were found by
+the rehearsal and fixed. `setup.sh` enforces the pinned uv, library linkage, home-written source
+identity, the initialization digest and the runbook's identity thresholds. `watchdog.sh` (stop
+call verified against the API) handles restarts, holds, completion, cap and credit. Host-loss
+rehearsal (`hostloss.sh`, 3 stages × 64 rows): hold after stage 0; host lost during stage 1's
+replay and restored from home (stage 0 verified); host lost mid-training in stage 2 and restored
+(stage 1 verified); everything killed mid-training on the same host; final 200/400/600 updates,
+final state verified, home verified through stage 2: passed. The refused-resume fallback was not
+triggered (the same-host resume succeeded), so it remains exercised only by inspection.
+
 Protected-content finding (pre-launch Astra review, verified 2026-11-23): bank admission compared
 row ids, groups, source keys and aliases against the exclusion indexes, but not prompt text, and
 the GSM8K adapter mints new content-derived ids. Hashing each bank row's user text (raw and
