@@ -704,6 +704,16 @@ repo); keep SWE-rebench sessions and document them in the data card. Cross-GPU c
 500 answers trained on the 5080 (−0.38, −1.16 to +0.39; −0.22, −0.81 to +0.38): no material
 difference; disclose that candidate and control train on different GPUs' features.
 
+Owner approval (2026-11-23, before training): the release gate is frozen as written: primary
+general scenario (880 prompts, both files pooled) with paired lower bound above 1.00 against stock
+Baseline; five guardrails (thinking-on, sampled, long-input, agentic replay, tool calls) each at
+least 0.97 with at most two below 1.00; against the trained 4-bit control 0.97 and 0.95; the
+held-out ReAct convention reported only; definition `benchmarks/definitions/release-gate-v1.json`
+(SHA256 `92eb558ca38acb51e5f6b4b3edc6fa2296324f910ae05fae060237b50d2dc3c8`), workloads `gate-v2`, verdict by `gate-verdict`. The source list
+(`retrain-sources-v1.json`) is approved as audited. Any later change needs a new version. The
+shortlist is an export-time choice; a multilingual-light variant will be measured beside fuller
+ones after training (owner question 2026-11-23).
+
 Pre-launch fixes (2026-11-23): bank-v2 (`artifacts/bank/retrain-01/bank-v2`) admits by user-text
 fingerprint too; exactly the 6 protected rows were replaced (by GSM8K and Orca-Math rows), 0
 protected matches against all four indexes, no other row or role changed; `production.json` uses
