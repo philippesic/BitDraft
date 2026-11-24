@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from benchmarks.staged import train_stage, verified_state
+from benchmarks.staged import ATTEMPT_SECONDS, train_stage, training_argv, verified_state
 
 
 def test_refused_resume_restarts_the_stage_from_its_original_intent() -> None:
@@ -62,3 +62,9 @@ def test_the_final_state_must_match_its_pointer() -> None:
         state.write_bytes(payload[:-1] + b"\x00")
         with pytest.raises(ValueError):
             verified_state(train, 8250)
+
+
+def test_stage_attempts_cap_their_wall_reservation() -> None:
+    argv = training_argv(Path("intent.json"), Path("train"), "scope")
+    assert argv[argv.index("--attempt-seconds") + 1] == str(ATTEMPT_SECONDS)
+    assert 3600 <= ATTEMPT_SECONDS < 24 * 3600

@@ -85,7 +85,9 @@ remains available. Journal-capacity rotation preserves global attempt/update/wal
 Failed attempts retain cost; there is no automatic retry. An uninitialized same-recipe
 retry may reuse its root. After initialization, recovery needs explicit parent/resume.
 Live owned work is refused. Lost-controller recovery charges the remaining wall budget
-when its owner is gone rather than guessing elapsed time.
+when its owner is gone rather than guessing elapsed time. `run --attempt-seconds S` caps
+each attempt's reservation, and so that charge, at S; staged training passes 6 hours so
+an interrupted stage can resume.
 
 ## State, resume and branch
 

@@ -50,6 +50,7 @@ class Arguments(argparse.Namespace):
     output: Path
     requested_output: Path | None
     scope: str
+    attempt_seconds: float | None
 
 
 def main() -> int:
@@ -60,6 +61,7 @@ def main() -> int:
     run.add_argument("intent", type=Path)
     run.add_argument("requested_output", metavar="OUTPUT", type=Path, nargs="?")
     run.add_argument("--scope", required=True)
+    run.add_argument("--attempt-seconds", type=float, default=None)
     report_parser = commands.add_parser("report")
     report_parser.add_argument("output", type=Path)
     preflight = commands.add_parser("preflight")
@@ -98,7 +100,13 @@ def main() -> int:
                     flush=True,
                 )
 
-            report = execute(arguments.intent, arguments.output, arguments.scope, emit)
+            report = execute(
+                arguments.intent,
+                arguments.output,
+                arguments.scope,
+                emit,
+                maximum_seconds=arguments.attempt_seconds,
+            )
         else:
             report = Journal(arguments.output).report()
         print(json.dumps(report, sort_keys=True) if arguments.as_json else human(report))

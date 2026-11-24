@@ -25,6 +25,7 @@ FIELDS = {
 }
 PYTHON = ("uv", "run", "--locked", "--no-sync", "--offline", "python")
 FEATURE_SUFFIXES = (".f16", ".f32")
+ATTEMPT_SECONDS = 6 * 3600
 
 
 def completed(path: Path, field: str, value: object) -> bool:
@@ -122,7 +123,18 @@ def train_stage(
 
 
 def training_argv(intent: Path, train: Path, scope: str) -> list[str]:
-    return [*PYTHON, "-m", "w1a1_eagle", "run", str(intent), str(train), "--scope", scope]
+    return [
+        *PYTHON,
+        "-m",
+        "w1a1_eagle",
+        "run",
+        str(intent),
+        str(train),
+        "--scope",
+        scope,
+        "--attempt-seconds",
+        str(ATTEMPT_SECONDS),
+    ]
 
 
 def checked_state(train: Path, updates: int) -> bool:

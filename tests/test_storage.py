@@ -148,10 +148,17 @@ def test_public_capture_and_training_use_local_default_and_explicit_output(
     assert observed[-1] == tmp_path / "artifacts/datasets/followup"
     assert "fixture-only" in capsys.readouterr().out
 
+    limits: list[float | None] = []
+
     def execute_fixture(
-        intent: Path, output: Path, scope: str, emit: Callable[[Record], None]
+        intent: Path,
+        output: Path,
+        scope: str,
+        emit: Callable[[Record], None],
+        maximum_seconds: float | None = None,
     ) -> Record:
         assert intent.name == "training.json" and scope == "fixture-only"
+        limits.append(maximum_seconds)
         output.mkdir(parents=True)
         observed.append(output)
         emit({"scope": scope})
@@ -166,6 +173,14 @@ def test_public_capture_and_training_use_local_default_and_explicit_output(
     assert training_cli.main() == 0
     assert observed[-1].parent == tmp_path / "artifacts/training"
     assert "fixture-only" in capsys.readouterr().out
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["w1a1_eagle", "run", "training.json", "capped", "--scope", "fixture-only"]
+        + ["--attempt-seconds", "21600", "--json"],
+    )
+    assert training_cli.main() == 0
+    assert limits == [None, 21600.0]
 
 
 def test_cpu_cuda_and_native_caches_stay_in_checkout(
