@@ -605,46 +605,35 @@ Specs pin absolute paths and SHA256s, so the rental checkout must sit at `/home/
 Balanced order: every 1,000-row stage holds 37–39 agentic, 89–92 tool, 84–86 multilingual and
 95–98 document rows; worst-case raw replay (prompt plus output cap) is 92–97 GB per stage.
 
-1. Cap: the owner sets the all-in dollar ceiling before provisioning.
-2. Instance (Vast.ai on-demand, verified host, reliability at least 98.5%, max duration at least
-   7 days, max CUDA 13.0 or newer, at least 31 GB RAM and 16 threads, 300 Mbps or better):
-   one RTX 5090 (32 GB), at least 400 GB disk (peak about 210 GB: raw replay under
-   100 GB, fused features about 11 GB, three states 15 GB, 100 exports 54 GB, inputs 20 GB,
-   environments), CUDA 13.1 libraries at `/usr/local/cuda-13.1`, a driver at least 590.
-3. Code first: `git bundle create artifacts/rental/code.bundle main` locally; on the rental clone
-   it into `/home/philip/BitDraft`, then from home
-   `rsync -aRr --files-from=artifacts/rental/manifest.txt ./ HOST:/home/philip/BitDraft/`.
-   Install uv 0.11.32 and the two environments as in `docs/development.md`; write `.host.toml`.
-   If the host lacks CUDA 13.1, install the uploaded runtime libraries the native binaries link
-   (`artifacts/rental/cuda-13.1-libs`, checked by `sha256sum -c SHA256SUMS`) into
-   `/usr/local/cuda-13.1/targets/x86_64-linux/lib`, register that directory in
-   `/etc/ld.so.conf.d/` and run `ldconfig`; minor-version compatibility lets them run on a 13.0
-   driver (580+), and step 4 checks it.
-4. Identity: replay `artifacts/datasets/retrain-01/replay-speed/replay-16-v3.json` against
-   `out-v3`. Tokens must match exactly. A different GPU model cannot match bytes: on the RTX 5090
-   (2026-11-23) 1.67% of labels differed and tap drift was 0.8–1.1% at layer 2, growing to about
-   7% (max 22%) at layer 30, from the first position on (8 of 128 tap files byte-identical). Stop
-   if labels differ by more than 3% or layer-2 drift exceeds 2%; whether this drift matters for
-   training is settled by the cross-GPU check below.
-5. Prepare the output: `mkdir artifacts/rental/production-run`; write the expected source
-   identity (`python -c "from pathlib import Path; from w1a1_eagle.identity import
-   source_identity; print(source_identity(Path('.')))"`, which must equal the value recorded
-   at home for the bundle) to `production-run/expected-source.txt`; `echo 1 > production-run/backup-lag`;
-   `touch production-run/hold`. Set the provider's own spending or time limit to the owner's cap.
-6. Run detached: `python -m benchmarks staged-train artifacts/rental/production.json
-   artifacts/rental/production-run`. From home, `artifacts/rental/pull.sh HOST` mirrors the run
-   without features every 15 minutes, verifies the newest export and state, and writes
-   `backup-ack.json`; with `backup-lag` 1 the driver waits before stage k until stage k−2 is backed
-   up.
-7. Stage 0 stops at the hold (`held.json`). Project the whole run from stage 0's measured
-   generation, replay, fusing and training times; screen its export at home as a diagnostic only
-   (stage 0 ends inside the 25,000-update warmup, so no learning threshold applies). Stop if the
-   projection exceeds the cap; otherwise `rm production-run/hold` and rerun the same command.
-8. Interruption on the same host: rerun the command. Host lost: stop `pull.sh`, rent a new host,
-   repeat steps 1–4, `rsync` the home mirror to `artifacts/rental/production-run`, restart
-   `pull.sh` against the new host, rerun the command; the driver rebuilds any stage whose
-   features were not backed up and resumes from the newest backed-up state.
-9. Stop at the cap.
+1. Cap and credit: the owner sets the all-in dollar cap in `artifacts/rental/watchdog.json` and
+   tops up Vast credit above the projection plus margin.
+2. Host: Vast.ai instance 62255758 (machine 140586, RTX 5090, CUDA 13.2, `ubuntu:26.04`, 450 GB),
+   stopped with every input uploaded. Start it with the API; if the GPU was taken, rent a
+   comparable host and repeat steps 3–4 (about 1.5 hours of upload at the owner's 3–4 MB/s).
+3. Code and inputs: `git bundle create artifacts/rental/code.bundle main`, copy it and fetch
+   `main` on the host; rsync `manifest-rest.txt` (only changed files move: the bank, specs,
+   scripts). Write `artifacts/rental/expected-source.txt` at home from the bundle's commit.
+4. `artifacts/rental/setup.sh` on the host: pinned uv 0.11.32 and Python 3.11.15, both
+   environments, CUDA 13.1 libraries and libgomp checked by `ldd`, the source identity against
+   `expected-source.txt`, the initialization rebuilt and matched to its SHA256, and the replay
+   identity check (16 records, 128 tap files, tokens exact, labels within 3%, layer-2 drift within
+   2%).
+5. Output: `mkdir artifacts/rental/production-run`, copy `expected-source.txt` into it,
+   `echo 1 > production-run/backup-lag`, `touch production-run/hold`.
+6. Home: start `artifacts/rental/pull.sh HOST PORT` (two generations, verified newest stage,
+   refusal on a different spec or a host behind home, acknowledgment after verification) and
+   `artifacts/rental/watchdog.sh` (5-minute checks: restarts the driver up to 3 times in 6
+   hours, stops the instance at completion, unrecoverable failure, cap or an unreleased hold,
+   and wakes the monitoring agent through jobwatch). The watchdog launches the driver.
+7. Stage 0 stops at the hold. The agent projects the run from stage 0's measured times
+   (diagnostic screen only: stage 0 ends inside warmup) and, if within the cap, removes `hold`
+   and `held.json`; the watchdog relaunches.
+8. Interruption on the same host: the driver resumes, or restarts the stage from the previous
+   stage when the resume is refused. Host lost: rent a new host, steps 3–4, restore
+   `production-home/current`, restart pull and watchdog; stages whose features or state were not
+   backed up restart from the newest verified stage.
+9. End: after stage 99 is verified at home the watchdog stops billing. Copy anything still
+   needed, verify, then destroy the instance (storage costs about $2 a day while stopped).
 
 Forecast (pilot rates, before the representative local stage): generation about 800 tokens/s,
 replay 0.42 s and fusing 0.15 s per record, training 3.95 updates/s give 31 + 12 + 4 + 88 hours
