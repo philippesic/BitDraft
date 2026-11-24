@@ -1,9 +1,11 @@
+import hashlib
+import json
 import tempfile
 from pathlib import Path
 
 import pytest
 
-from benchmarks.staged import train_stage
+from benchmarks.staged import train_stage, verified_state
 
 
 def test_refused_resume_restarts_the_stage_from_its_original_intent() -> None:
@@ -42,3 +44,21 @@ def test_a_failed_first_attempt_is_not_retried() -> None:
                 stage / "intent.json", stage, stage / "train", "scope", stage / "log", stage, runner
             )
         assert len(calls) == 1
+
+
+def test_the_final_state_must_match_its_pointer() -> None:
+    with tempfile.TemporaryDirectory(prefix="staged-") as directory:
+        train = Path(directory) / "train"
+        (train / "states").mkdir(parents=True)
+        payload = bytes(range(256)) * 64
+        sha = hashlib.sha256(payload).hexdigest()
+        state = train / "states" / (sha + ".bin")
+        state.write_bytes(payload)
+        pointer = {"sha256": sha, "bytes": len(payload), "updates": 8250}
+        (train / "states" / "latest.json").write_text(json.dumps(pointer))
+        assert verified_state(train, 8250)["sha256"] == sha
+        with pytest.raises(ValueError):
+            verified_state(train, 16500)
+        state.write_bytes(payload[:-1] + b"\x00")
+        with pytest.raises(ValueError):
+            verified_state(train, 8250)

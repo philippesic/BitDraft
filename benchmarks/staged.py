@@ -139,9 +139,9 @@ def checked_state(train: Path, updates: int) -> bool:
     )
 
 
-def verified_state(train: Path) -> Record:
-    if not state_present(train):
-        raise ValueError("the final stage's state binary is missing")
+def verified_state(train: Path, updates: int) -> Record:
+    if not checked_state(train, updates):
+        raise ValueError("the final stage's state is missing or differs from its pointer")
     return latest_state(train)
 
 
@@ -384,7 +384,7 @@ def staged_train(specification: Path, output: Path) -> Record:
     result: Record = {
         "schema": "staged-training-result-v1",
         "stages": summary,
-        "final_state": None if previous is None else verified_state(previous),
+        "final_state": None if previous is None else verified_state(previous, per_stage * stages),
         "rule": "token streams, specifications, exports and the latest stage's training state are kept; features and earlier stages' states are discarded after use",
     }
     store.atomic(store.root / "result.json", canonical(result))
