@@ -770,6 +770,14 @@ restarts it and the driver resumes (a stopped instance does not hold its GPU, so
 force a move to a new host restored from home). Watchdog scenarios: 23/23 pass with these
 checks. Step 3 waits on the first top-up and the owner's go.
 
+Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
+control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
+check); NVFP4 sampled qualification on the release runtime; shortlist tooling with the
+multilingual-light variant measured on existing labels (the final build needs the run's labels);
+model card, data card, bank-v2 provenance supplement and SWE-rebench attribution drafts. The
+control waits for the rental's streams (owner choice: no locally written streams). Nothing
+touches the rental; the GPU is free by morning.
+
 Owner amendment (2026-11-23, before training): the 4-bit control's plateau checkpoints move from
 2K, 4K, 8K, 16K... to stage-aligned doublings of 8,250 updates (8,250, 16,500, 33,000, 66,000,
 ...), so same-prefix comparisons use candidate stage exports production already keeps. All pass
