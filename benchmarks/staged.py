@@ -125,6 +125,20 @@ def training_argv(intent: Path, train: Path, scope: str) -> list[str]:
     return [*PYTHON, "-m", "w1a1_eagle", "run", str(intent), str(train), "--scope", scope]
 
 
+def checked_state(train: Path, updates: int) -> bool:
+    pointer = train / "states" / "latest.json"
+    if not pointer.exists():
+        return False
+    value = read(pointer)
+    path = train / "states" / (string(value["sha256"]) + ".bin")
+    return (
+        path.exists()
+        and path.stat().st_size == integer(value["bytes"])
+        and integer(value["updates"]) == updates
+        and file_reference(path)["sha256"] == value["sha256"]
+    )
+
+
 def verified_state(train: Path) -> Record:
     if not state_present(train):
         raise ValueError("the final stage's state binary is missing")
@@ -225,6 +239,7 @@ def staged_train(specification: Path, output: Path) -> Record:
         raise ValueError("executable source differs from expected-source.txt")
     summary: list[Record] = []
     previous: Path | None = None
+    parent_sha: str | None = None
     for index in range(stages):
         stage = Store(store.root / ("stage-" + str(index).zfill(4)))
         log = stage.root / "stage.log"
@@ -232,11 +247,22 @@ def staged_train(specification: Path, output: Path) -> Record:
         fused, train = stage.root / "fused", stage.root / "train"
         target_updates = per_stage * (index + 1)
         wait_for_gpu(log)
-        if exported_updates(train) >= target_updates and state_present(train):
-            if previous is not None:
+        receipt = stage.root / "complete.json"
+        if receipt.exists():
+            done = read(receipt)
+            if (
+                integer(done["updates"]) != target_updates
+                or exported_updates(train) != target_updates
+                or string(read(train / "exports" / "latest.json")["sha256"]) != done["export"]
+                or done["parent"] != parent_sha
+            ):
+                raise ValueError("stage " + str(index) + " completion receipt or ancestry differs")
+            if previous is not None and checked_state(train, target_updates):
                 retire_states(previous)
+            for aside in sorted(stage.root.glob("train-unstarted-*")):
+                retire_states(aside)
             summary.append({"stage": index, "status": "trained", "updates": target_updates})
-            previous = train
+            previous, parent_sha = train, string(done["state"])
             continue
         if index > 0 and (store.root / "hold").exists():
             held: Record = {
@@ -247,7 +273,7 @@ def staged_train(specification: Path, output: Path) -> Record:
             }
             store.atomic(store.root / "held.json", canonical(held))
             return held
-        if previous is not None and not state_present(previous):
+        if previous is not None and not checked_state(previous, target_updates - per_stage):
             raise ValueError("the previous stage's state is missing; restore it before continuing")
         wait_for_backup(store.root, index, log)
         writing = record(raw["writer"]) | {
@@ -326,8 +352,19 @@ def staged_train(specification: Path, output: Path) -> Record:
         else:
             path = write_spec(stage, "intent.json", intent)
         train_stage(path, stage.root, train, string(raw["scope"]), log, root)
-        if exported_updates(train) < target_updates:
-            raise ValueError("stage training stopped before its update budget and export")
+        if exported_updates(train) < target_updates or not checked_state(train, target_updates):
+            raise ValueError("stage training stopped before a verified export and state")
+        state = latest_state(train)
+        if index > 0 and record(read(stage.root / "intent.json")["parent"])["sha256"] != parent_sha:
+            raise ValueError("stage " + str(index) + " did not continue from the previous stage")
+        store_receipt: Record = {
+            "stage": index,
+            "updates": target_updates,
+            "export": string(read(train / "exports" / "latest.json")["sha256"]),
+            "state": string(state["sha256"]),
+            "parent": parent_sha,
+        }
+        stage.atomic(receipt, canonical(store_receipt))
         freed = discard_features(fused)
         if previous is not None:
             freed += retire_states(previous)
@@ -343,7 +380,7 @@ def staged_train(specification: Path, output: Path) -> Record:
                 "freed_feature_bytes": freed,
             }
         )
-        previous = train
+        previous, parent_sha = train, string(state["sha256"])
     result: Record = {
         "schema": "staged-training-result-v1",
         "stages": summary,
