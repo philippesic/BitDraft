@@ -705,6 +705,18 @@ the all-in dollar cap and stage-0 stop, the file-size ceiling for the "smaller" 
 release licence, and the rental go. Rental provider: a verified datacenter RTX 5090 on Vast.ai
 (on-demand), RunPod Community as fallback.
 
+Protected-content finding (pre-launch Astra review, verified 2026-11-23): bank admission compared
+row ids, groups, source keys and aliases against the exclusion indexes, but not prompt text, and
+the GSM8K adapter mints new content-derived ids. Hashing each bank row's user text (raw and
+whitespace-normalized, the receipts' scheme) against the opaque indexes finds 6 TRAIN rows: 3
+heldout24 prompts and 3 more from the broader development/final/sealed index; 0 DEV rows; 0 gate
+matches. No generated shard anywhere in `artifacts/` contains any of the 6, so nothing protected
+was ever written, replayed or trained (the pass, long, spending, scaling and speed-test slices
+are clean). Astra's count of 239 TRAIN, 9 DEV and 2 pass-test rows did not reproduce with its
+own script; recorded as unverified. Required before the rental: text-fingerprint admission in
+`retrain_bank` with regression tests, a bank without the 6 rows, regenerated specs and a re-upload
+of the bank.
+
 Pass test (2026-11-23, owner-requested; `artifacts/datasets/retrain-01/long/arms/pass*`): on the
 same 1,000 fresh records, one pass (8,429 updates) against production's 1.55 passes (13,083),
 each with its own cosine, seeds 8101 and 8102: greedy 51.3/50.5% against 51.0/50.3%, sampled
