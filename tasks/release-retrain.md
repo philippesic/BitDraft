@@ -761,8 +761,14 @@ verifying; a corrupted successor state kept its predecessor and blocked completi
 rental peak about 164 GB of 450 GB, home about 74 GB (134 GB free). Scripts:
 `artifacts/rental/acceptance/` (`run_all.sh`); report and logs in `artifacts/rental/acceptance-out/`.
 Artifact disposition: the test's run, home and pull-copy trees (24 GB) were deleted after the
-pass; logs and `main-report.json` are kept until the release closeout. Step 3 waits on the
-owner's cap, credit top-up and go.
+pass; logs and `main-report.json` are kept until the release closeout.
+
+Owner decision (2026-11-23): all-in cap $70 (`watchdog.json` `cap_dollars`), with Vast credit
+topped up as the run goes. The watchdog alerts the agent (who pings the owner) when credit
+covers under 8 hours, and stops the instance cleanly under 1 hour; after a top-up the agent
+restarts it and the driver resumes (a stopped instance does not hold its GPU, so a restart can
+force a move to a new host restored from home). Watchdog scenarios: 23/23 pass with these
+checks. Step 3 waits on the first top-up and the owner's go.
 
 Owner amendment (2026-11-23, before training): the 4-bit control's plateau checkpoints move from
 2K, 4K, 8K, 16K... to stage-aligned doublings of 8,250 updates (8,250, 16,500, 33,000, 66,000,
