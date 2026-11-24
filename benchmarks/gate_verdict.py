@@ -8,7 +8,9 @@ from w1a1_eagle.contracts import Record, number, record, sequence, string
 from w1a1_eagle.records import artifact, canonical, read
 
 PRIMARY = "general"
-FIELDS = {"schema", "definition", "results", "candidate", "comparators", "drift"}
+FIELDS = {"schema", "definition", "manifest", "results", "candidate", "comparators", "drift"}
+SEEDS = {"sampled": frozenset({9201, 9202, 9203})}
+GREEDY = frozenset({8101})
 
 
 @dataclass(frozen=True)
@@ -39,6 +41,50 @@ def scenarios(definition: Record) -> tuple[list[str], list[str]]:
         else:
             reported.append(name)
     return guardrails, reported
+
+
+def roster(manifest: Record, definition: Record, root: Path) -> dict[str, frozenset[str]]:
+    if string(record(manifest["definition"])["sha256"]) != string(definition["sha256"]):
+        raise ValueError("the workload manifest belongs to a different gate definition")
+    expected: dict[str, set[str]] = {}
+    for value in record(manifest["workloads"]).values():
+        ref = artifact(value, root)
+        ref.verify()
+        for task in sequence(read(ref.path, 1024 * 1024 * 1024)["tasks"]):
+            item = record(task)
+            expected.setdefault(string(item["scenario"]), set()).add(string(item["id"]))
+    return {name: frozenset(ids) for name, ids in expected.items()}
+
+
+def coverage(
+    rows: list[Record], arms: list[str], expected: dict[str, frozenset[str]]
+) -> dict[str, list[str]]:
+    seen: dict[tuple[str, str], dict[str, set[int]]] = {}
+    for row in rows:
+        key = (string(row["scenario"]), string(row["arm"]))
+        seen.setdefault(key, {}).setdefault(string(row["task"]), set()).add(
+            int(number(row.get("seed", 8101)))
+        )
+    problems: dict[str, list[str]] = {}
+    for scenario, ids in expected.items():
+        seeds = SEEDS.get(scenario, GREEDY)
+        for arm in arms:
+            found = seen.get((scenario, arm), {})
+            missing = len(ids - set(found))
+            extra = len(set(found) - ids)
+            wrong = sum(1 for task in ids & set(found) if frozenset(found[task]) != seeds)
+            if missing or extra or wrong:
+                problems.setdefault(scenario, []).append(
+                    f"{arm}: {missing} missing, {extra} unexpected, {wrong} with wrong seeds"
+                )
+    return problems
+
+
+def drift_margin(summary: Record) -> float | None:
+    if summary.get("interval_available") is not True:
+        return None
+    bounds = record(summary["speed_ratio_95_interval"])
+    return max(abs(1 - number(bounds["lower"])), abs(number(bounds["upper"]) - 1))
 
 
 def lower_bound(summary: Record) -> float | None:
@@ -72,7 +118,12 @@ def judge(
                 continue
             failures.append("missing scenario " + name)
             continue
-        summary = paired(by_scenario[name], candidate, comparator)
+        try:
+            summary = paired(by_scenario[name], candidate, comparator)
+        except ValueError as error:
+            if name not in reported:
+                failures.append(f"{name}: {error}")
+            continue
         outcomes[name] = summary
         if name in reported:
             continue
@@ -109,12 +160,18 @@ def judge(
 
 def gate_verdict(specification: Path, output: Path) -> Record:
     raw = read(specification)
-    if set(raw) != FIELDS or raw["schema"] != "gate-verdict-v1":
+    if set(raw) != FIELDS or raw["schema"] != "gate-verdict-v2":
         raise ValueError("unsupported gate verdict specification")
     root = specification.resolve().parent
     definition_ref = artifact(raw["definition"], root)
     definition_ref.verify()
+    definition = file_reference(definition_ref.path)
     guardrails, reported = scenarios(read(definition_ref.path))
+    manifest_ref = artifact(raw["manifest"], root)
+    manifest_ref.verify()
+    expected = roster(read(manifest_ref.path), definition, root)
+    if set(expected) != {PRIMARY, *guardrails, *reported}:
+        raise ValueError("the workload manifest's scenarios differ from the gate definition")
     rows: list[Record] = []
     sources: list[Record] = []
     for value in sequence(raw["results"]):
@@ -126,30 +183,64 @@ def gate_verdict(specification: Path, output: Path) -> Record:
     comparators = record(raw["comparators"])
     if not set(comparators) <= set(RULES) or not comparators:
         raise ValueError("comparators are stock and/or control")
+    arms = [candidate, *(string(name) for name in comparators.values())]
+    gaps = coverage(rows, arms, expected)
     verdicts = {
         kind: judge(rows, candidate, string(name), RULES[kind], guardrails, reported)
         for kind, name in comparators.items()
     }
+    for verdict in verdicts.values():
+        for scenario in [PRIMARY, *guardrails]:
+            for problem in gaps.get(scenario, []):
+                verdict["failures"] = [
+                    *sequence(verdict["failures"]),
+                    f"incomplete {scenario}: {problem}",
+                ]
+                verdict["passed"] = False
+    transfer = {name: gaps.get(name, []) for name in reported}
     drift: Record | None = None
     if raw["drift"] is not None:
         drift_raw = record(raw["drift"])
         ref = artifact(drift_raw["result"], root)
         ref.verify()
-        drift_rows = [record(row) for row in sequence(read(ref.path, 1024 * 1024 * 1024)["rows"])]
-        drift = paired(drift_rows, string(drift_raw["first"]), string(drift_raw["second"]))
+        drift_rows = [
+            record(row)
+            for row in sequence(read(ref.path, 1024 * 1024 * 1024)["rows"])
+            if string(record(row)["scenario"]) == PRIMARY
+        ]
+        pair = [string(drift_raw["first"]), string(drift_raw["second"])]
+        drift_gaps = coverage(drift_rows, pair, {PRIMARY: expected[PRIMARY]})
+        drift = paired(drift_rows, pair[0], pair[1]) | {
+            "complete": not drift_gaps,
+            "gaps": drift_gaps.get(PRIMARY, []),
+            "margin": None,
+        }
+        margin = drift_margin(drift) if not drift_gaps else None
+        drift["margin"] = margin
         stock = verdicts.get("stock")
         if stock is not None and PRIMARY in record(stock["scenarios"]):
             lead = number(record(record(stock["scenarios"])[PRIMARY])["speed_ratio"]) - 1
-            spread = lower_bound(drift)
-            stock["claimable_lead"] = spread is not None and lead > 1 - spread
+            stock["claimable_lead"] = margin is not None and lead > margin
+    missing = [f"{kind} comparator" for kind in RULES if kind not in verdicts]
+    if drift is None:
+        missing.append("reversed-order drift run")
+    elif record(verdicts.get("stock", {})).get("claimable_lead") is not True:
+        missing.append("a general lead above the measured session drift")
     result: Record = {
-        "schema": "gate-verdict-result-v1",
-        "definition": file_reference(definition_ref.path),
+        "schema": "gate-verdict-result-v2",
+        "definition": definition,
+        "manifest": file_reference(manifest_ref.path),
         "results": sources,
         "candidate": candidate,
         "verdicts": verdicts,
         "drift": drift,
-        "passed": all(verdict["passed"] is True for verdict in verdicts.values()),
+        "transfer_evidence": {
+            "complete": not any(transfer.values()),
+            "gaps": transfer,
+            "role": "reported only; not a pass condition",
+        },
+        "missing_for_release": missing,
+        "passed": not missing and all(verdict["passed"] is True for verdict in verdicts.values()),
     }
     Store(output).atomic(output / "verdict.json", canonical(result))
     return result

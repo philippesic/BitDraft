@@ -1458,16 +1458,22 @@ would match every trajectory. Comparisons run these files with `tier: gate`, whi
 role `confirmation`, no cached references and, for sampled requests, three seeds at
 temperature 0.7 and top-p 0.9 with native verifier qualification.
 
-`gate-verdict SPEC OUTPUT` (schema `gate-verdict-v1`) applies the frozen verdict to gate
-comparison results: `definition` (the gate definition), `results` (comparison `result.json`
-files, both general files included), `candidate`, `comparators` (`stock` and/or `control` arm
-names) and `drift` (null, or the reversed-order stock comparison with its two arm names). The
-general scenario, pooled over its files, is primary; scenarios marked `guardrail` are guardrails;
-others, such as the held-out convention, are reported only. Against stock Baseline the primary
-lower bound must exceed 1.00, every guardrail lower bound reach 0.97 and at most two fall below
-1.00; against the trained control the bounds are 0.97 and 0.95. A missing primary or guardrail
-scenario, an unavailable interval or any inexact or invalid output fails. With `drift`, the stock
-verdict records whether the general lead exceeds the measured session drift.
+`gate-verdict SPEC OUTPUT` (schema `gate-verdict-v2`) applies the frozen verdict to gate
+comparison results: `definition` (the gate definition), `manifest` (the gate workloads'
+`result.json`, bound to that definition), `results` (comparison `result.json` files, both
+general files included), `candidate`, `comparators` (`stock` and/or `control` arm names) and
+`drift` (null, or the reversed-order stock comparison with its two arm names). Every arm must
+cover each primary and guardrail scenario's exact task roster, with seeds 9201, 9202 and 9203
+for sampled tasks and one greedy seed otherwise; a gap fails that comparator. The general
+scenario, pooled over its files, is primary; scenarios marked `guardrail` are guardrails; others,
+such as the held-out convention, are reported only, with their completeness reported separately.
+Against stock Baseline the primary lower bound must exceed 1.00, every guardrail lower bound
+reach 0.97 and at most two fall below 1.00; against the trained control the bounds are 0.97 and
+0.95. A missing primary or guardrail scenario, unpaired rows, an unavailable interval or any
+inexact or invalid output fails. The drift margin is the larger distance of the complete
+reversed-order interval from 1.00 on either side. The release passes only with both
+comparators passing, a drift run, and a general lead above that margin; `missing_for_release`
+lists what is absent.
 
 ## Agentic coding panels
 
