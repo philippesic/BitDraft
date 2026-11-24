@@ -705,6 +705,16 @@ the all-in dollar cap and stage-0 stop, the file-size ceiling for the "smaller" 
 release licence, and the rental go. Rental provider: a verified datacenter RTX 5090 on Vast.ai
 (on-demand), RunPod Community as fallback.
 
+Owner decisions (2026-11-23, after the Astra and Fable pre-launch reviews): fix all eight
+must-fix items before renting; checkpoints "somewhat infrequent, just enough so we don't lose
+data" (every 4,125 updates, twice per stage; only completed stages' final states go home); an
+agent monitors the rental and owns restarts and stopping billing (this thread plus a local
+watchdog using a Vast API key stored in `~/.config/vastai/vast_api_key`, mode 600, outside the
+repo); keep SWE-rebench sessions and document them in the data card. Cross-GPU check: the
+5090-trained export scored 48.40% greedy and 45.97% sampled against 48.78% and 46.19% for the same
+500 answers trained on the 5080 (−0.38, −1.16 to +0.39; −0.22, −0.81 to +0.38): no material
+difference; disclose that candidate and control train on different GPUs' features.
+
 Protected-content finding (pre-launch Astra review, verified 2026-11-23): bank admission compared
 row ids, groups, source keys and aliases against the exclusion indexes, but not prompt text, and
 the GSM8K adapter mints new content-derived ids. Hashing each bank row's user text (raw and
