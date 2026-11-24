@@ -633,8 +633,9 @@ Balanced order: every 1,000-row stage holds 37–39 agentic, 89–92 tool, 84–
    and `held.json`; the watchdog relaunches.
 8. Interruption on the same host: the driver resumes, or restarts the stage from the previous
    stage when the resume is refused. Host lost: rent a new host, steps 3–4, restore
-   `production-home/current`, restart pull and watchdog; stages whose features or state were not
-   backed up restart from the newest verified stage.
+   `production-home/current`, write `backup-ack.json` as `{"stage": K}` for home's verified
+   stage K (the mirrored copy trails by one sync), restart pull and watchdog; stages whose
+   features or state were not backed up restart from the newest verified stage.
 9. End: after stage 99 is verified at home the watchdog stops billing. Copy anything still
    needed, verify, then destroy the instance (storage costs about $2 a day while stopped).
 
@@ -742,6 +743,26 @@ exactly 8,250 updates with a verified home backup and a projection of spend so f
 within the cap; one real stop and start with both watchdog and pull rediscovering the endpoint;
 then release. Go rule: Steps 2 and 3 pass, the run proceeds; a failure is fixed and the full Step 2
 rerun once.
+
+Step 2 result (2026-11-23): PASS on the second full run (commit `d0648e67`, 27 minutes, 64/64
+checks: 22 watchdog, 42 main). The first run found that every resume after an interruption was
+refused: the trainer charges a killed attempt its whole reserved wall budget (10 days), so the
+stage restarted from scratch each time (correct result, up to one stage of paid training lost
+per interruption). Fixed by `run --attempt-seconds`, which staged training sets to 6 hours.
+Also fixed while building the test: the final state is hash-checked before `result.json`
+(`411c7895`); the watchdog alerts when the driver waits on home backups or the final backup
+never verifies, charges its own downtime, refuses to run without a cap, and records the
+driver's own PID. Measured: every kill hit its live phase; the intact-checkpoint resume and the
+export-boundary kill both resumed; a corrupted checkpoint was refused and the stage restarted
+from stage 1's state; a backup two stages behind held stage 3 until home caught up from 0 to 2;
+both host losses restored byte-identically from home; every pull fault left the last good copy
+verifying; a corrupted successor state kept its predecessor and blocked completion; bank-v2 has
+0 protected matches (positive control: bank-v1 finds the 6). Projection to 100 × 1,000 rows:
+rental peak about 164 GB of 450 GB, home about 74 GB (134 GB free). Scripts:
+`artifacts/rental/acceptance/` (`run_all.sh`); report and logs in `artifacts/rental/acceptance-out/`.
+Artifact disposition: the test's run, home and pull-copy trees (24 GB) were deleted after the
+pass; logs and `main-report.json` are kept until the release closeout. Step 3 waits on the
+owner's cap, credit top-up and go.
 
 Owner amendment (2026-11-23, before training): the 4-bit control's plateau checkpoints move from
 2K, 4K, 8K, 16K... to stage-aligned doublings of 8,250 updates (8,250, 16,500, 33,000, 66,000,
