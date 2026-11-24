@@ -620,9 +620,12 @@ Balanced order: every 1,000-row stage holds 37–39 agentic, 89–92 tool, 84–
    `/usr/local/cuda-13.1/targets/x86_64-linux/lib`, register that directory in
    `/etc/ld.so.conf.d/` and run `ldconfig`; minor-version compatibility lets them run on a 13.0
    driver (580+), and step 4 checks it.
-4. Identity: replay `artifacts/datasets/retrain-01/replay-speed/replay-16-v3.json`; token and
-   label files must equal `out-v3` byte for byte, tap files within relative L2 1e-3; anything
-   else stops the rental.
+4. Identity: replay `artifacts/datasets/retrain-01/replay-speed/replay-16-v3.json` against
+   `out-v3`. Tokens must match exactly. A different GPU model cannot match bytes: on the RTX 5090
+   (2026-11-23) 1.67% of labels differed and tap drift was 0.8–1.1% at layer 2, growing to about
+   7% (max 22%) at layer 30, from the first position on (8 of 128 tap files byte-identical). Stop
+   if labels differ by more than 3% or layer-2 drift exceeds 2%; whether this drift matters for
+   training is settled by the cross-GPU check below.
 5. Prepare the output: `mkdir artifacts/rental/production-run`; write the expected source
    identity (`python -c "from pathlib import Path; from w1a1_eagle.identity import
    source_identity; print(source_identity(Path('.')))"`, which must equal the value recorded
@@ -701,6 +704,18 @@ Before the rental, the owner approves: the recipe, the gate verdict and margins,
 the all-in dollar cap and stage-0 stop, the file-size ceiling for the "smaller" claim, the
 release licence, and the rental go. Rental provider: a verified datacenter RTX 5090 on Vast.ai
 (on-demand), RunPod Community as fallback.
+
+5090 speed test (2026-11-23, Vast.ai m:140586, Minnesota, $0.724/h; `artifacts/rental/
+speedtest-home/`): writer 839 generated tokens/s at 32 slots (823 at 64 slots and batch 1,024,
+not adopted), replay 0.35 s/record, fusing about 0.14 s/record, training 10.17 updates/s (1.92×
+the 5080), 4,138 update groups per pass over 500 rows. Projection per 1,000-row stage: about 38
+minutes at one pass, 45 at 1.55 passes; 100 stages about 63 or 75 hours, about $49 or $58 at
+about $0.78/h all-in. Setup lessons: the plain `ubuntu:26.04` image needs `libgomp1` (now in
+`setup.sh`); the 5.8 GB initialization is rebuilt on the host by `prepare-initialization` in 35 s
+and matched its SHA256 exactly, so it is not uploaded; the owner's uplink is about 3–4 MB/s.
+The host holds every rental input (all manifest files verified). Cross-GPU check queued
+(`artifacts/rental/crossgpu.sh`): the same 500 answers replayed and trained on the 5080 with the
+same seed and updates, both exports screened greedy and sampled.
 
 Speedup pilots (2026-11-23, `artifacts/datasets/retrain-01/speedups/`): telemetry off gives a
 byte-identical export and losses with 3.0% faster training (adopted in `production.json`);
