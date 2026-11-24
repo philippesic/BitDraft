@@ -596,8 +596,8 @@ either longer control training or a weaker claim.
 
 ### Rental runbook (revised 2026-11-22 after the pre-rental review; runs only after the owner's go)
 
-Inputs live in `artifacts/rental/`: `production.json` (100 stages × 1,000 bank rows × 12,500
-updates = 1.25M, cosine with 25,000 warmup, 2 GiB grouping, checkpoints every 2,500 updates,
+Inputs live in `artifacts/rental/`: `production.json` (100 stages × 1,000 bank rows × 8,250
+updates = 825,000, about one pass, cosine with 16,500 warmup, telemetry off, 2 GiB grouping, checkpoints every 2,500 updates,
 writer at 32 slots without decode consistency, a 294,912-token shared KV pool and the balanced
 bank order `order_seed` 9401, replay helper v3, 120 GB per-stage replay ceiling),
 `make_production.py`, `make_manifest.py`, `manifest.txt` (43 entries, 20 GB) and `pull.sh`.
@@ -704,6 +704,14 @@ Before the rental, the owner approves: the recipe, the gate verdict and margins,
 the all-in dollar cap and stage-0 stop, the file-size ceiling for the "smaller" claim, the
 release licence, and the rental go. Rental provider: a verified datacenter RTX 5090 on Vast.ai
 (on-demand), RunPod Community as fallback.
+
+Pass test (2026-11-23, owner-requested; `artifacts/datasets/retrain-01/long/arms/pass*`): on the
+same 1,000 fresh records, one pass (8,429 updates) against production's 1.55 passes (13,083),
+each with its own cosine, seeds 8101 and 8102: greedy 51.3/50.5% against 51.0/50.3%, sampled
+48.2/48.4% against 48.1/48.5%; pooled one pass minus 1.55 passes +0.22 (−0.32, +0.77) greedy and
++0.01 (−0.38, +0.41) sampled. By the preregistered rule (keep 1.55 only if it wins by at least 1
+point) production uses one pass: 100 stages × 8,250 updates = 825,000 (`production.json`;
+the 1.25M spec is kept as `production-1250k.json`). Saves about 12 rented hours.
 
 5090 speed test (2026-11-23, Vast.ai m:140586, Minnesota, $0.724/h; `artifacts/rental/
 speedtest-home/`): writer 839 generated tokens/s at 32 slots (823 at 64 slots and batch 1,024,
