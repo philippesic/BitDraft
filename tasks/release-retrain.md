@@ -783,6 +783,12 @@ and relaunched the driver after the hold was released; pull verified again at 12
 released 11:52. 4-bit control started on the 5080 (jobwatch `control-feed`, pueue 67;
 `control-run`, pueue 68; run root `artifacts/rental/control-run`). Credit at launch covers about
 31 hours; the remaining run needs about $21 more.
+Control screens (2026-11-24 13:54): `artifacts/rental/control/screen_loop.sh` (jobwatch
+`control-screens`, pueue task 69 in a new pueue group `screen`, to be removed when the control
+ends) screens each control export at 8,250 x 2^n updates and applies `plateau.py` with the
+candidate's 825,000 as ceiling, into `artifacts/rental/control-screens/`. Pace at 13:54: rental
+4 stages complete (about 39 minutes per stage), control 2 stages (about 31 minutes per stage
+after each feed).
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
