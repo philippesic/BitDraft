@@ -717,6 +717,32 @@ held-out ReAct convention reported only; definition `benchmarks/definitions/rele
 shortlist is an export-time choice; a multilingual-light variant will be measured beside fuller
 ones after training (owner question 2026-11-23).
 
+Frozen verification gate (2026-11-23; plan by the agent, sufficiency reviewed once by Astra; no
+further reviews before launch). Step 1, fix the confirmed bugs: done (driver completion receipts
+and ancestry, verified-state retirement, refused-resume restart; `pull.sh` newest-stage catch-up,
+atomic generations, receipt and parent verification; `watchdog.sh` PID-file liveness, progress
+deadline, endpoint refresh, confirmed stop with retries, latched cap, persisted spend, launches and
+hold timer; `launch.sh` uploads `expected-source.txt` and `init-intent.json` and verifies the
+commit). Step 2, one local PASS/FAIL acceptance test (four 64-row stages, production driver and
+scripts, local pull, fake Vast API and clock): (1) kills during writing, replay, fusing, training
+after a nonfinal checkpoint and right after export, each proven to hit a live phase; (2) resume
+from an intact checkpoint, a forced refused resume, and a restart after several retired stages;
+(3) host loss mid-stage and between stages restored from home only, and a backup two stages behind
+reaching the lag limit; (4) pull killed during transfer, at promotion and before acknowledgment,
+a one-byte corruption in a successor state and in an incoming backup, a wrong spec and a host
+behind home; (5) watchdog: absent and live driver, self-matching probe, repeated crashes, stalled
+worker, SSH loss, unreleased hold, cap, completion with a delayed final backup, restart across a
+clock gap, refused stop and a stop that still reports running; (6) independent invariants after
+every scenario: trainer launch counts, earlier export hashes, parent digests, exact cumulative
+updates, input IDs against assigned rows and skips, home recovery bytes, peak rental and home disk
+projected to production, and the full bank against all four protected indexes. Step 3, opening of
+the paid run: numeric cap, credit and monitoring before billing; on-host commit, scripts, bank-v2,
+spec and input hashes; initialization digest and the 16-record identity check; stage 0 held at
+exactly 8,250 updates with a verified home backup and a projection of spend so far plus 99 stages
+within the cap; one real stop and start with both watchdog and pull rediscovering the endpoint;
+then release. Go rule: Steps 2 and 3 pass, the run proceeds; a failure is fixed and the full Step 2
+rerun once.
+
 Owner amendment (2026-11-23, before training): the 4-bit control's plateau checkpoints move from
 2K, 4K, 8K, 16K... to stage-aligned doublings of 8,250 updates (8,250, 16,500, 33,000, 66,000,
 ...), so same-prefix comparisons use candidate stage exports production already keeps. All pass
