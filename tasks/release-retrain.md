@@ -773,6 +773,17 @@ checks. Step 3 waits on the first top-up and the owner's go.
 Owner go for Step 3 (2026-11-24): first top-up made (credit $22.67 at launch, about 31 hours at
 $0.72/h); "start the instance from api and get to it".
 
+Step 3 result (2026-11-24): PASS. Launch at commit `de2e9427` on the same host (154.7.90.1:47606);
+setup identity 16 records, tokens exact, labels 1.67%, layer-2 drift 1.08%. Stage 0: 8,250
+updates, about 35.5 minutes wall (training 886 s, 9.3 updates/s, 2.4x the 5080), held, verified
+at home 11:45. Projection: 100 stages about 59 hours, about $43 at $0.72/h, within the $70 cap
+(the watchdog counts spend from this launch; earlier upload and storage are outside it). Real
+stop and start at 11:46-11:47: same address, stage-0 state hash intact, watchdog logged the stop
+and relaunched the driver after the hold was released; pull verified again at 12:00. Hold
+released 11:52. 4-bit control started on the 5080 (jobwatch `control-feed`, pueue 67;
+`control-run`, pueue 68; run root `artifacts/rental/control-run`). Credit at launch covers about
+31 hours; the remaining run needs about $21 more.
+
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
 check); NVFP4 sampled qualification on the release runtime; shortlist tooling with the
