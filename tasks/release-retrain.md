@@ -619,8 +619,11 @@ Balanced order: every 1,000-row stage holds 37–39 agentic, 89–92 tool, 84–
    identity check (16 records, 128 tap files, tokens exact, labels within 3%, layer-2 drift within
    2%).
 5. Output: `mkdir artifacts/rental/production-run`, copy `expected-source.txt` into it,
-   `echo 1 > production-run/backup-lag`, `touch production-run/hold`.
-6. Home: start `artifacts/rental/pull.sh HOST PORT` (two generations, verified newest stage,
+   `echo 6 > production-run/backup-lag` (training may run six stages, about four hours, ahead of
+   the home backup before it waits), `touch production-run/hold`.
+6. Home: `systemctl --user enable --now bitdraft-pull bitdraft-watchdog` (user services with
+   lingering, restart after failure or reboot, sleep inhibited while running; host and port from
+   `artifacts/rental/watchdog.json`) runs `artifacts/rental/pull.sh HOST PORT` (two generations, verified newest stage,
    refusal on a different spec or a host behind home, acknowledgment after verification) and
    `artifacts/rental/watchdog.sh` (5-minute checks: restarts the driver up to 3 times in 6
    hours, stops the instance at completion, unrecoverable failure, cap or an unreleased hold,
