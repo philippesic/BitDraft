@@ -605,8 +605,8 @@ Specs pin absolute paths and SHA256s, so the rental checkout must sit at `/home/
 Balanced order: every 1,000-row stage holds 37–39 agentic, 89–92 tool, 84–86 multilingual and
 95–98 document rows; worst-case raw replay (prompt plus output cap) is 92–97 GB per stage.
 
-1. Cap and credit: the owner sets the all-in dollar cap in `artifacts/rental/watchdog.json` and
-   tops up Vast credit above the projection plus margin.
+1. Cap and credit: the all-in cap is $70 in `artifacts/rental/watchdog.json`; the owner tops up
+   Vast credit as the run goes (alert under 8 hours of credit, clean stop under 1 hour).
 2. Host: Vast.ai instance 62255758 (machine 140586, RTX 5090, CUDA 13.2, `ubuntu:26.04`, 450 GB),
    stopped with every input uploaded. Start it with the API; if the GPU was taken, rent a
    comparable host and repeat steps 3–4 (about 1.5 hours of upload at the owner's 3–4 MB/s).
