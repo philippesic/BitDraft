@@ -810,8 +810,13 @@ stage 24's streams; the control finishes stage 24 (264,000 = stage 31 is its nex
 waits for stage 25's streams. Free space without a peak: 111 GB; the rental's home mirror needs
 about 56 GB more, so the paid run is safe. Resume the control (restart `feed.sh` under jobwatch)
 only with at least about 110 GB free beyond the mirror's remaining growth; that needs an owner-
-approved retirement (candidates: `datasets/train-final-01-fused` 68 GB if superseded by
-`train-final-02-fused`, older `training/` and `one-bit-attribution-01` arms).
+approved retirement. Candidates whose results already name a retirement condition (about 55 GB):
+the release-candidate long run's 14K and 28K states (10.2 GB, kept until the owner chose between
+continuing that run and a fresh release run); `one-bit-attribution-01`'s four plain-control states
+and pilot exports (about 26 GB, kept until the owner decided on a longer control); the
+trained-tables pilot and interrupted-attempt states (about 19 GB, "can be retired as superseded").
+Not candidates: `datasets/train-final-01-fused` is a component of the current TRAIN set
+`train-final-02-fused`.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
