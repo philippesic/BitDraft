@@ -843,6 +843,16 @@ feeder now holds a stage while under 120 GB is free (`FEED_MIN_FREE_GB`); restar
 the control's last stages is short by about 30 GB (mirror and control growth of about 93 GB
 against a 97 GB replay peak); the guard holds the control rather than the backup, and space can be
 freed once the release run is verified.
+Local GPU fault (2026-11-25 11:46): the 5080 fell off the bus during the control's stage-25 replay
+(kernel log `NVRM: Xid 79, GPU has fallen off the bus`; recovery action "Node Reboot Required").
+No other GPU client was running. The control driver failed 20 relaunches and `run_control.sh`
+exited (CONTROL-FAILED); stages 0-24 are complete and stage 25 restarts from stage 24. The home
+backup and watchdog are CPU services and keep running. After the owner reboots the machine:
+`nvidia-smi` must list the 5080; then restart the control under jobwatch (job `control-run-2`,
+group `gpu`, `bash artifacts/rental/control/run_control.sh artifacts/rental/control.json
+artifacts/rental/control-run`, log `artifacts/rental/control-run.log`), and the feeder
+(`control-feed-2`) and screen loop (`control-screens`) if the reboot ended them. A repeat Xid 79
+under load points at the card, riser or power rather than chance.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
