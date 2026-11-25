@@ -831,6 +831,18 @@ the driver cannot relaunch. 36 stages were complete; home is verified through st
 is lost beyond the unfinished stage 36. Spent $16.91; Vast credit $4.87. While offline only
 storage bills. Recovery is either the host's own repair (the watchdog relaunches when it returns)
 or runbook step 8 on a new host after a top-up.
+Owner decisions 2026-11-25 about 11:10: wait a few hours for the host to recover, then move to a
+new host (runbook step 8) after the top-up; retire the disk candidates. Correction: the release-
+candidate long run's 14K and 28K states were already retired on 2026-11-18
+(`feature-validation-01/logs/state-retirement-20261118i.json`), so the candidate list overstated
+the space. Retired through Store retention (receipt `receipts/control-disk-retirement-20261125/`,
+about 45 GB): `one-bit-attribution-01`'s four plain-control state stores and `trained-tables-01`'s
+pilot and interrupted t2 states; the three pilot exports (1.2 GB) stay. Free space 160 GB. The
+feeder now holds a stage while under 120 GB is free (`FEED_MIN_FREE_GB`); restarted as
+`control-feed-2` at 11:20, it fed stages 25-35 and the control resumed at stage 25. Free space for
+the control's last stages is short by about 30 GB (mirror and control growth of about 93 GB
+against a 97 GB replay peak); the guard holds the control rather than the backup, and space can be
+freed once the release run is verified.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift

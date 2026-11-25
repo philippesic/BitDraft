@@ -178,12 +178,12 @@ recomputed from its saved runs into `leader-final-only/`.
   every arm's intent, journal, run report, check results, timing runs and policy reports;
 - the build deliverables and both executed sources;
 - each arm's final training state (6.4 GB each, 38 GB together) and the three pilot
-  exports. Plain-table states cannot resume, so the four control states have no use. They
-  and the pilot exports are kept only until the owner decides on a longer control, then
-  retired through Store retention.
+  exports. Plain-table states cannot resume, so the four control states have no use; they
+  were retired through Store retention on 2026-11-25 with owner approval (receipt
+  `receipts/control-disk-retirement-20261125/`). The three pilot exports remain.
 
 **Dependencies:** `train-final-02-fused`, the public BF16 drafter, the Baseline file, the
 target, runtime-v8 and the saved references. None was changed.
 
-**Retired:** nothing. No intermediate states were written; each run checkpointed once at
-its end.
+**Retired:** the four plain-control state stores (2026-11-25, about 27 GB); exact resume of
+those arms is no longer available. No intermediate states were written.

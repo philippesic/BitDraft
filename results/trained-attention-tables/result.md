@@ -75,5 +75,6 @@ trained tables. Otherwise keep the frozen `baseline-k` tables.
 Retained in `artifacts/training/trained-tables-01/`: every arm's intent, journal, report and
 error log; the final state and export of t0, t1 and t2; the pilot's state and export; the
 interrupted t2 attempt's state and export; all screens; the frozen executed source. The failed
-t1 attempt left no state. Nothing was removed; the pilot and interrupted-attempt states (about
-19 GB) can be retired later as superseded.
+t1 attempt left no state. The pilot and interrupted-attempt states (about 19 GB) were retired
+through Store retention on 2026-11-25 with owner approval (receipt
+`artifacts/receipts/control-disk-retirement-20261125/`); their exports and screens remain.

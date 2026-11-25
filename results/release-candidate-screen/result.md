@@ -224,8 +224,8 @@ Retained under `artifacts/` for an identified use:
   repeat the target's generation.
 - **Long run:** the final state (42,000 updates, `26022c2a…`, recovery point) and every export
   (final `ae6569f6…` and the 7K–35K curve exports). The 14K and 28K states (`977779c6…`,
-  `b14ebe63…`, 10.2 GB) stay as branch points until the owner decides between continuing
-  this run and a fresh release run; retire them through the store's route once that is decided.
+  `b14ebe63…`, 10.2 GB) were retired through the store on 2026-11-18 after the owner chose a
+  fresh release run (`logs/state-retirement-20261118i.json`).
 - **Short runs:** every arm's intent, journal, exports, screens and comparison; the calibrated
   control's recovery state `c3ee0c58…` (the recovery reference of every retirement receipt
   and the base for later short screens on this recipe).
