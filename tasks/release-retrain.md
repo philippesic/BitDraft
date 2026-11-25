@@ -789,6 +789,20 @@ ends) screens each control export at 8,250 x 2^n updates and applies `plateau.py
 candidate's 825,000 as ceiling, into `artifacts/rental/control-screens/`. Pace at 13:54: rental
 4 stages complete (about 39 minutes per stage), control 2 stages (about 31 minutes per stage
 after each feed).
+Mid-run candidate check (2026-11-24 21:00, owner request): training events through stage 14
+clean (no non-finite losses, median gradient norm 1.8-2.7, 0 skipped rows); writer answers at
+stages 0, 7, 13: none empty, 2-4 looping tails per 1,000, 34-35% stopped at the length limit (local
+long corpus 34%). DEV teacher-forced top-1 35.5% at stage 0, about 28-29% since (peak learning
+rate; the 14,000-update local run dipped to about 30% mid-schedule and ended at 33.5%). Served DEV
+screens (`artifacts/rental/candidate-screens/`, exports hard-linked there), acceptance at 8,250 /
+66,000 / 115,500 updates: greedy 48.1 / 49.2 / 49.9%, sampled 46.0 / 46.4 / 47.3%, agentic 51.0 /
+60.2 / 64.7%, tool-call 54.5 / 55.9 / 57.8%. Mismatch: the candidate is on a cosine schedule near
+peak step size, not annealed; the 4-bit control runs a constant step on the same data (8,250 /
+66,000: greedy 57.3 / 57.0%, sampled 53.7 / 53.7%, agentic 62.0 / 68.0%); released Baseline
+sampled 55.2%. Local annealed one-bit references at 14,000 updates: 50.8% greedy, 48.4% sampled.
+Disk: rehearsal outputs `representative-run`, `speedtest-local`, `first-check-local` and
+`representative-run-alias-refused` deleted with owner approval (28 GB); control exports are kept
+because the staged driver re-verifies every completed stage's export on relaunch.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
