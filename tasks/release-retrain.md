@@ -865,7 +865,10 @@ measured 4.8 MB/s, so about 3 hours. `bitdraft-watchdog` and `bitdraft-pull` are
 the restore; `watchdog.json` points at 62587388 and `watchdog-state.json` carries the $17.14 spent
 (old copies kept as `*-old-62255758.json`). After RESTORE-DONE: start both services; the watchdog
 records the new address, restarts the pull and launches the driver. The old instance 62255758
-(GPU off the bus) still bills storage until destroyed; destroying it needs the owner's go.
+(GPU off the bus) still bills storage until destroyed. Owner go 2026-11-25 about 14:30: destroy it
+once the new host is training again, not during the upload. Credit topped up to $33.76 (15:26).
+Setup on the new host passed at 15:2x with the same identity figures as the old host (tokens
+exact, labels 1.67%, drift 1.08%); the stage restore runs at about 4.4 MB/s, done about 17:30.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
