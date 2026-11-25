@@ -817,6 +817,14 @@ and pilot exports (about 26 GB, kept until the owner decided on a longer control
 trained-tables pilot and interrupted-attempt states (about 19 GB, "can be retired as superseded").
 Not candidates: `datasets/train-final-01-fused` is a component of the current TRAIN set
 `train-final-02-fused`.
+Same-update screens (2026-11-25 06:10, idle 5080 while the control waits), candidate vs 4-bit
+control acceptance (greedy / sampled / agentic / tool-call, %): 8,250: 48.1 vs 57.3 / 46.0 vs 53.7
+/ 51.0 vs 62.0 / 54.5 vs 63.8; 16,500: 45.2 vs 57.6 / 42.8 vs 54.2 / 44.9 vs 64.7 / 52.1 vs 63.7;
+33,000: 47.5 vs 56.2 / 45.3 vs 53.4 / 56.6 vs 69.4 / 55.0 vs 63.6; 66,000: 49.2 vs 57.0 / 46.4 vs
+53.7 / 60.2 vs 68.0 / 55.9 vs 63.6; 132,000: 49.9 vs 57.4 / 47.2 vs 54.0 / 62.6 vs 70.1 / 58.3 vs
+63.0. Mismatch: candidate cosine (peak step reached at 16,500, not annealed), control constant step;
+same streams and order. The candidate dips at the end of warmup and has risen since; the control
+is flat on greedy, sampled and tool-call.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
