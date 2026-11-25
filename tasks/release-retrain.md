@@ -825,6 +825,12 @@ control acceptance (greedy / sampled / agentic / tool-call, %): 8,250: 48.1 vs 5
 63.0. Mismatch: candidate cosine (peak step reached at 16,500, not annealed), control constant step;
 same streams and order. The candidate dips at the end of warmup and has risen since; the control
 is flat on greedy, sampled and tool-call.
+Rental host fault (2026-11-25 10:17): the 5090 on machine 140586 dropped off its bus ("No devices
+were found"; the container stays reachable, uptime unbroken), Vast marks the instance offline, and
+the driver cannot relaunch. 36 stages were complete; home is verified through stage 35, so nothing
+is lost beyond the unfinished stage 36. Spent $16.91; Vast credit $4.87. While offline only
+storage bills. Recovery is either the host's own repair (the watchdog relaunches when it returns)
+or runbook step 8 on a new host after a top-up.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
