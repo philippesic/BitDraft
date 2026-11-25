@@ -853,6 +853,19 @@ group `gpu`, `bash artifacts/rental/control/run_control.sh artifacts/rental/cont
 artifacts/rental/control-run`, log `artifacts/rental/control-run.log`), and the feeder
 (`control-feed-2`) and screen loop (`control-screens`) if the reboot ended them. A repeat Xid 79
 under load points at the card, riser or power rather than chance.
+Host move (owner go 2026-11-25 13:56, "rent it now"): Ontario machine 155886 ($0.68/h) was rented
+twice (62585589, then 62586901 from the BitDraft template) but never accepted the account SSH key
+on direct or proxy login while Vast reported the key attached; both empty instances were destroyed
+(about $0.30). Rented Norway machine 150443 instead (instance 62587388, $0.725/h with 450 GB,
+driver 595.99.02, the same as the old host; SSH works). `artifacts/rental/restore.sh 62587388 35`
+runs under jobwatch (`rental-restore-2`, pueue group `rental`): code bundle at 4d74a8ca (source
+identity equal to the run's), inputs from `manifest-rest.txt` (14 GB), `setup.sh` on the host,
+then home's verified stages 0-35 (37 GB) into `production-run` with `backup-ack.json` = 35. Upload
+measured 4.8 MB/s, so about 3 hours. `bitdraft-watchdog` and `bitdraft-pull` are stopped during
+the restore; `watchdog.json` points at 62587388 and `watchdog-state.json` carries the $17.14 spent
+(old copies kept as `*-old-62255758.json`). After RESTORE-DONE: start both services; the watchdog
+records the new address, restarts the pull and launches the driver. The old instance 62255758
+(GPU off the bus) still bills storage until destroyed; destroying it needs the owner's go.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
