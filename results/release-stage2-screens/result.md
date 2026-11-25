@@ -77,5 +77,5 @@ Retained: every arm's intent, journal, logs, exports, shortlist variants and scr
 soft-probe summary; the 1,000-record long fused corpus (11 GB) until the owner decides on rounded
 attention seed 2, then retire. Discarded earlier with their decisions recorded: training state
 binaries of finished arms (no resume needed; exports retained), raw replay taps after fusing.
-The 768-record fused inputs (`spending/fused-768`, `soft/fused`, about 11 GB) are retired when the
-rental starts; regeneration needs their streams, which are retained.
+The 768-record fused inputs (`spending/fused-768`, `soft/fused`, 10.7 GB) were retired on
+2026-11-24 after the rental started; regeneration needs their streams, which are retained.
