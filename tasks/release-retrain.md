@@ -803,6 +803,15 @@ sampled 55.2%. Local annealed one-bit references at 14,000 updates: 50.8% greedy
 Disk: rehearsal outputs `representative-run`, `speedtest-local`, `first-check-local` and
 `representative-run-alias-refused` deleted with owner approval (28 GB); control exports are kept
 because the staged driver re-verifies every completed stage's export on relaunch.
+Control paused for disk (2026-11-25 03:30): each control stage's raw replay peaks at 71-97 GB
+before fusing, and permanent use grows about 1.35 GB per stage (home mirror 0.75, control 0.6), so
+free space during a peak fell to 43 GB at stage 24. The feeder (`control-feed`) was stopped after
+stage 24's streams; the control finishes stage 24 (264,000 = stage 31 is its next screen) and
+waits for stage 25's streams. Free space without a peak: 111 GB; the rental's home mirror needs
+about 56 GB more, so the paid run is safe. Resume the control (restart `feed.sh` under jobwatch)
+only with at least about 110 GB free beyond the mirror's remaining growth; that needs an owner-
+approved retirement (candidates: `datasets/train-final-01-fused` 68 GB if superseded by
+`train-final-02-fused`, older `training/` and `one-bit-attribution-01` arms).
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
