@@ -874,6 +874,9 @@ started, the watchdog launched the driver on 62587388, and stage 36 rebuilt from
 streams ("features missing after a restore", the rehearsed path; the "No CUDA GPUs" traceback in
 its log is the old host's fault, copied with the stage). Old instance 62255758 destroyed at 17:36
 per the owner's go. Credit $32.25.
+New-host pace (2026-11-25 19:52): stages 37 and 38 took 39.5 minutes each (old host 37.6). Stages
+39-99 need about 40.2 hours, $29.11 at $0.725/h, finishing about 2026-11-27 11:30; credit $30.54
+covers it with about $0.30 to spare before the one-hour reserve, so a $5 top-up is advised.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
