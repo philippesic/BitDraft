@@ -886,6 +886,15 @@ BIOS and a lower board power limit. The rental is unaffected.
 Owner decision 2026-11-25 about 22:05: reboot with no changes and resume. After the reboot:
 check `nvidia-smi`, commit this record, then restart `control-run-3` (gpu), `control-feed-4`
 (default) and `control-screens-3` (screen) with the same commands as their predecessors.
+Disk guard (2026-11-26): the feeder held stages intermittently from 03:09 and has held stage 59
+since 10:05 (100-116 GB free); the control completed stage 58. Proposed step-1 retirement (owner
+decision pending, about 43 GB): trained-tables-01 final states t0/t1/t2 (29.7 GB), one-bit-
+attribution w1-2000 states (6.8 GB), two-channel bypass pilot state (6.8 GB). Finishing all 100
+control stages needs about 75 GB in total.
+Candidate screens on the idle 5080 (2026-11-26 12:34-13:07, `candidate-screens/screen_more.sh`),
+candidate vs control, greedy / sampled / agentic / tool-call (%): 264,000: 51.4 vs 57.8 / 48.4 vs
+54.4 / 64.8 vs 71.2 / 59.7 vs 64.2; 528,000 (candidate only): 55.1 / 52.5 / 69.4 / 62.8. The
+candidate's cosine step is decaying in the second half and every stratum is still rising.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
