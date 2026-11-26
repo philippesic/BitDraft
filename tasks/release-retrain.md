@@ -869,6 +869,11 @@ records the new address, restarts the pull and launches the driver. The old inst
 once the new host is training again, not during the upload. Credit topped up to $33.76 (15:26).
 Setup on the new host passed at 15:2x with the same identity figures as the old host (tokens
 exact, labels 1.67%, drift 1.08%); the stage restore runs at about 4.4 MB/s, done about 17:30.
+Resumed 2026-11-25 17:31: RESTORE-DONE 17:29 (37.1 GB at about 4.4 MB/s); watchdog and pull
+started, the watchdog launched the driver on 62587388, and stage 36 rebuilt from its backed-up
+streams ("features missing after a restore", the rehearsed path; the "No CUDA GPUs" traceback in
+its log is the old host's fault, copied with the stage). Old instance 62255758 destroyed at 17:36
+per the owner's go. Credit $32.25.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
