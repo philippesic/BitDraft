@@ -877,6 +877,15 @@ per the owner's go. Credit $32.25.
 New-host pace (2026-11-25 19:52): stages 37 and 38 took 39.5 minutes each (old host 37.6). Stages
 39-99 need about 40.2 hours, $29.11 at $0.725/h, finishing about 2026-11-27 11:30; credit $30.54
 covers it with about $0.30 to spare before the one-hour reserve, so a $5 top-up is advised.
+Second local GPU fault (2026-11-25 21:30): the 5080 fell off the bus again under the control's
+load (Xid 79, recovery action "GPU Reset Required"); `nvidia-smi -r` cannot reach it, so a reboot
+is needed. No PCIe AER errors were logged before either fault; the link runs at PCIe 5.0 (32 GT/s).
+The control completed stage 40; `control-run-2` failed after 20 relaunches. A repeat under load
+points at the card, its slot or riser, or power transients; common mitigations are PCIe 4.0 in the
+BIOS and a lower board power limit. The rental is unaffected.
+Owner decision 2026-11-25 about 22:05: reboot with no changes and resume. After the reboot:
+check `nvidia-smi`, commit this record, then restart `control-run-3` (gpu), `control-feed-4`
+(default) and `control-screens-3` (screen) with the same commands as their predecessors.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
