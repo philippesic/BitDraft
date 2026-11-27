@@ -78,3 +78,6 @@ interrupted t2 attempt's state and export; all screens; the frozen executed sour
 t1 attempt left no state. The pilot and interrupted-attempt states (about 19 GB) were retired
 through Store retention on 2026-11-25 with owner approval (receipt
 `artifacts/receipts/control-disk-retirement-20261125/`); their exports and screens remain.
+The final states of t0, t1 and t2 (29.7 GB) were retired the same way on 2026-11-27 with owner
+approval (receipt `artifacts/receipts/control-disk-retirement-20261127/`); exact resume of these
+arms is no longer available, and their exports and screens remain.

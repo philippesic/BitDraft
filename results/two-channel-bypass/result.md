@@ -76,4 +76,7 @@ pilot state and diagnostic export through that same review as the qualification 
 Keep seed 8102's state and native export as the independent data-order control while
 the 21,000-update comparison is used. The project owns these stores and retires them
 through checkpoint retention once those uses end. Preserve the compact evidence,
-frozen sources, and exact reports. No artifacts were retired and exact replay is available.
+frozen sources, and exact reports. The pilot state was retired through Store retention on
+2026-11-27 with owner approval after the release recipe decision (receipt
+`artifacts/receipts/control-disk-retirement-20261127/`); its diagnostic export remains. The full
+bypass state and seed 8102's state remain.

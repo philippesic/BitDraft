@@ -180,10 +180,12 @@ recomputed from its saved runs into `leader-final-only/`.
 - each arm's final training state (6.4 GB each, 38 GB together) and the three pilot
   exports. Plain-table states cannot resume, so the four control states have no use; they
   were retired through Store retention on 2026-11-25 with owner approval (receipt
-  `receipts/control-disk-retirement-20261125/`). The three pilot exports remain.
+  `receipts/control-disk-retirement-20261125/`). The three pilot exports remain. The
+  `w1-2000` state store was retired on 2026-11-27 with owner approval (receipt
+  `receipts/control-disk-retirement-20261127/`); its export remains.
 
 **Dependencies:** `train-final-02-fused`, the public BF16 drafter, the Baseline file, the
 target, runtime-v8 and the saved references. None was changed.
 
-**Retired:** the four plain-control state stores (2026-11-25, about 27 GB); exact resume of
-those arms is no longer available. No intermediate states were written.
+**Retired:** the four plain-control state stores (2026-11-25, about 27 GB) and the `w1-2000`
+store (2026-11-27, 6.8 GB); exact resume of those arms is no longer available. No intermediate states were written.

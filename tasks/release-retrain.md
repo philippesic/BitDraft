@@ -895,6 +895,10 @@ Candidate screens on the idle 5080 (2026-11-26 12:34-13:07, `candidate-screens/s
 candidate vs control, greedy / sampled / agentic / tool-call (%): 264,000: 51.4 vs 57.8 / 48.4 vs
 54.4 / 64.8 vs 71.2 / 59.7 vs 64.2; 528,000 (candidate only): 55.1 / 52.5 / 69.4 / 62.8. The
 candidate's cosine step is decaying in the second half and every stratum is still rising.
+Owner go 2026-11-27 about 00:15: step-1 retirement applied (receipt
+`receipts/control-disk-retirement-20261127/`: trained-tables t0/t1/t2 final states, attribution
+w1-2000 states, bypass pilot state; recovery references kept). Free space 138 GB; the feeder
+resumes the control from stage 59. Owner will top up Vast credit in the morning (reminder due).
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
