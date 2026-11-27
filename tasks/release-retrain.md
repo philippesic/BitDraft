@@ -899,6 +899,12 @@ Owner go 2026-11-27 about 00:15: step-1 retirement applied (receipt
 `receipts/control-disk-retirement-20261127/`: trained-tables t0/t1/t2 final states, attribution
 w1-2000 states, bypass pilot state; recovery references kept). Free space 138 GB; the feeder
 resumes the control from stage 59. Owner will top up Vast credit in the morning (reminder due).
+Control screen at 528,000 (2026-11-27 03:58), candidate vs control, greedy / sampled / agentic /
+tool-call (%): 55.1 vs 57.7 / 52.5 vs 54.9 / 69.4 vs 72.6 / 62.8 vs 64.2. Control gain 264K->528K
+(upper 95% bound): overall -0.1 (0.83), sampled +0.52 (1.12), agentic +1.41 (3.25), tool-call +0.01
+(1.44); not flat on all strata, and the next doubling exceeds the 825,000 ceiling, so the rule
+reads "stop at the ceiling without a plateau; report as such": the control runs to stage 99 and
+the screen loop has ended. The candidate's gap narrowed from about 6 to 2.5 points on greedy.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
