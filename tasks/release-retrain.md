@@ -905,6 +905,13 @@ tool-call (%): 55.1 vs 57.7 / 52.5 vs 54.9 / 69.4 vs 72.6 / 62.8 vs 64.2. Contro
 (1.44); not flat on all strata, and the next doubling exceeds the 825,000 ceiling, so the rule
 reads "stop at the ceiling without a plateau; report as such": the control runs to stage 99 and
 the screen loop has ended. The candidate's gap narrowed from about 6 to 2.5 points on greedy.
+Release run complete (2026-11-27 14:23): all 100 stages (825,000 updates) on the host; home
+verified stage 99 at 14:28 and the watchdog stopped instance 62587388 ("run complete; final stage
+verified at home"). Final export `53c55269…` and final state `c43b5477…` re-hashed at home
+(`production-home/current`, 84 GB). Spent $49.37 by the watchdog's count (cap $70). The stopped
+instance bills storage until destroyed; destroying it needs the owner's go. The control's feeder
+was relaunched as `control-feed-5` with `FEED_MIN_FREE_GB=90` (the 120 GB guard protected the
+rental backup, which no longer grows) and fed stages 90-99; the control was at stage 82.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
