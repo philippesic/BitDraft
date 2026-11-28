@@ -936,6 +936,16 @@ accepted; the 825,000-update control is the fine-tuned comparator and the releas
 not fully plateaued. (2) Run a normal shortlist sweep, select a good shortlist (ideally without the
 multilingual tail if it is significantly larger or slower), then run the release benchmark. The
 agent selects the size and records the evidence.
+Shortlist sweep (2026-11-27 22:00-22:20, `artifacts/rental/shortlist/release-labels` from all 100
+home stages, `release-sweep`): 65,148,253 TRAIN labels, 175,406 distinct (rows-only file 438.1 MB,
+larger than Baseline's 381 MB). Coverage and rows-only size: 49,152 rows 98.0% (~255 MB); 65,536
+98.85% (279.4 MB); 98,304 99.61% (326.7 MB). Screens of the three are queued after the control.
+Disk (23:20): stage 98's fusing was refused at 27 GB free (forecast plus the spec's 20 GB
+reserve). Freed: the sweep's full-vocabulary shortlist GGUFs and the size-all rows-only file
+(regenerable, about 2.5 GB), and the older home backup generation, whose only unique file, the
+1-bit run's stage-97 state `986602d5…` (5.1 GB), was first moved to
+`pstack-2080:~/bitdraft-release-backup-20261127/stage-0097-state/` and hash-checked there.
+Relaunched `control-run-6`; fusing proceeds. `release-screens-2` runs after it.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
