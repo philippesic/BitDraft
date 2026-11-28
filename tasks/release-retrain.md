@@ -931,6 +931,11 @@ measured in the same run, 177.0 against 172.0 tokens/s). For comparison at 528,0
 finished at about 19:45 (the control's stage-92 training step failed once on the lease it held
 and relaunched): agentic 75.8%, tool-call 66.5%, panel overall 56.7%, panel speed 1.024× Baseline
 (528,000: candidate 69.4 / 62.8 / 52.6, 0.987×; control 72.6 / 64.2 / 55.9, 0.982×).
+Owner decisions 2026-11-27 about 22:10: (1) the control's "no plateau reached" outcome is
+accepted; the 825,000-update control is the fine-tuned comparator and the release states it had
+not fully plateaued. (2) Run a normal shortlist sweep, select a good shortlist (ideally without the
+multilingual tail if it is significantly larger or slower), then run the release benchmark. The
+agent selects the size and records the evidence.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
