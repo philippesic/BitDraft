@@ -919,7 +919,11 @@ Local crash (2026-11-27 15:40): the whole machine reset under load (control stag
 faults on 2026-11-25. It came back at about 16:34. The final export `53c55269…` and state
 `c43b5477…` re-hash correctly. The control completed stage 85; the final screen did not finish.
 Three faults under GPU load point at power delivery (PSU or cabling) or the card. The release
-run's only copy is now on this machine.
+run's only copy is now on this machine. Owner decisions 2026-11-27 about 16:45: back up the
+final model only, and resume now. Backup: `pstack-2080:~/bitdraft-release-backup-20261127/` (final
+export and state with their manifests, `complete.json`, `result.json`, `specification.json`,
+`expected-source.txt`; hashes match). Relaunched `control-run-4` (from stage 85; all streams
+were already fed) and `candidate-screens-final-2`.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
