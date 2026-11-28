@@ -912,6 +912,14 @@ verified at home"). Final export `53c55269…` and final state `c43b5477…` re-
 instance bills storage until destroyed; destroying it needs the owner's go. The control's feeder
 was relaunched as `control-feed-5` with `FEED_MIN_FREE_GB=90` (the 120 GB guard protected the
 rental backup, which no longer grows) and fed stages 90-99; the control was at stage 82.
+Rental instance 62587388 destroyed 2026-11-27 about 15:00 with the owner's go; watchdog and pull
+services disabled. Credit left $4.52. Total release-run spend about $49.4.
+Local crash (2026-11-27 15:40): the whole machine reset under load (control stage 86 plus the
+825,000 candidate screen) with no kernel message or shutdown in the journal, after two Xid 79
+faults on 2026-11-25. It came back at about 16:34. The final export `53c55269…` and state
+`c43b5477…` re-hash correctly. The control completed stage 85; the final screen did not finish.
+Three faults under GPU load point at power delivery (PSU or cabling) or the card. The release
+run's only copy is now on this machine.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
