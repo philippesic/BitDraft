@@ -928,7 +928,9 @@ Final candidate screens (825,000 updates, export `53c55269…`, 2026-11-27): gre
 59.3% (speed 1.003× the saved Baseline reference, 222.3 tokens/s), sampled 56.0% (1.029× Baseline
 measured in the same run, 177.0 against 172.0 tokens/s). For comparison at 528,000: candidate
 55.1 / 52.5, control 57.7 / 54.9; released Baseline sampled acceptance 55.2%. The panel screen
-waits for the GPU lease behind the control.
+finished at about 19:45 (the control's stage-92 training step failed once on the lease it held
+and relaunched): agentic 75.8%, tool-call 66.5%, panel overall 56.7%, panel speed 1.024× Baseline
+(528,000: candidate 69.4 / 62.8 / 52.6, 0.987×; control 72.6 / 64.2 / 55.9, 0.982×).
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
