@@ -946,6 +946,9 @@ reserve). Freed: the sweep's full-vocabulary shortlist GGUFs and the size-all ro
 1-bit run's stage-97 state `986602d5…` (5.1 GB), was first moved to
 `pstack-2080:~/bitdraft-release-backup-20261127/stage-0097-state/` and hash-checked there.
 Relaunched `control-run-6`; fusing proceeds. `release-screens-2` runs after it.
+4-bit control complete (2026-11-28 00:26): 100 stages, 825,000 updates, final export
+`acfb6351…`; CONTROL-COMPLETE. Its final screen and the three shortlist screens run as
+`release-screens-2`. The pueue `screen` group was removed.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
