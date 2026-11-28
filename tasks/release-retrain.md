@@ -949,6 +949,15 @@ Relaunched `control-run-6`; fusing proceeds. `release-screens-2` runs after it.
 4-bit control complete (2026-11-28 00:26): 100 stages, 825,000 updates, final export
 `acfb6351…`; CONTROL-COMPLETE. Its final screen and the three shortlist screens run as
 `release-screens-2`. The pueue `screen` group was removed.
+Release screens (2026-11-28 00:27-01:29; acceptance greedy / sampled / agentic / tool-call / panel
+%, then speed vs Baseline on screen / sampled / panel): 1-bit full vocabulary 59.3 / 56.0 / 75.8 /
+66.5 / 56.7, 1.003 / 1.029 / 1.024; shortlist 49,152: 58.9 / 55.6 / 75.5 / 66.2 / 56.4, 1.075 /
+1.062 / 1.082; shortlist 65,536: 59.1 / 55.9 / 75.8 / 66.3 / 56.6, 1.076 / 1.063 / 1.082; shortlist
+98,304: 59.3 / 56.0 / 75.8 / 66.5 / 56.7, 1.073 / 1.062 / 1.080; 4-bit control final (825,000, full
+vocabulary) 59.0 / 55.8 / 70.6 / 64.8 / 56.8, 0.994 / 1.006 / 0.989. Selected shortlist: 65,536 rows
+(rows-only file 279.4 MB, 26.7% smaller than Baseline's 381.5 MB; at most 0.2 points below full
+vocabulary, the same speed as 49,152 and 98,304). Release file:
+`release-sweep/size-65536/drafter-shortlist-only.gguf`.
 
 Overnight plan (owner, 2026-11-24, while the card payment is blocked): build and test the 4-bit
 control driver; fix the gate verdict calculator (incomplete evidence accepted, one-sided drift
